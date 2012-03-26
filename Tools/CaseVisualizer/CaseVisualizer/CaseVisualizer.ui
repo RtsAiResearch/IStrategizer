@@ -1,0 +1,191 @@
+<ui version="4.0" >
+ <class>CaseVisualizerClass</class>
+ <widget class="QMainWindow" name="CaseVisualizerClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1221</width>
+    <height>588</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize" >
+   <size>
+    <width>2000</width>
+    <height>2000</height>
+   </size>
+  </property>
+  <property name="contextMenuPolicy" >
+   <enum>Qt::NoContextMenu</enum>
+  </property>
+  <property name="windowTitle" >
+   <string>Case Visualizer</string>
+  </property>
+  <property name="toolButtonStyle" >
+   <enum>Qt::ToolButtonTextOnly</enum>
+  </property>
+  <widget class="QWidget" name="centralWidget" >
+   <widget class="QFrame" name="caseViewFrame" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>991</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <property name="sizePolicy" >
+     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="contextMenuPolicy" >
+     <enum>Qt::NoContextMenu</enum>
+    </property>
+    <property name="frameShape" >
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow" >
+     <enum>QFrame::Plain</enum>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1221</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuCaseBase" >
+    <property name="title" >
+     <string>Case Base</string>
+    </property>
+    <addaction name="actionOpen" />
+    <addaction name="actionNew" />
+    <addaction name="actionSave" />
+    <addaction name="separator" />
+    <addaction name="actionShow" />
+   </widget>
+   <addaction name="menuCaseBase" />
+  </widget>
+  <widget class="QDockWidget" name="caseBaseViewDockWidget" >
+   <property name="minimumSize" >
+    <size>
+     <width>208</width>
+     <height>540</height>
+    </size>
+   </property>
+   <property name="maximumSize" >
+    <size>
+     <width>208</width>
+     <height>540</height>
+    </size>
+   </property>
+   <property name="allowedAreas" >
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle" >
+    <string>Case Base Explorer</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2" >
+    <widget class="QListWidget" name="lstCases" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>191</width>
+       <height>401</height>
+      </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <family>Tahoma</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="spacing" >
+      <number>2</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnDeleteCase" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>420</y>
+       <width>91</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>Delete Case</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnNewCase" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>450</y>
+       <width>91</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>New Case</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <action name="actionOpen" >
+   <property name="text" >
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionNew" >
+   <property name="text" >
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionSave" >
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionShow" >
+   <property name="text" >
+    <string>Show Explorer</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <tabstops>
+  <tabstop>lstCases</tabstop>
+  <tabstop>btnDeleteCase</tabstop>
+  <tabstop>btnNewCase</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,22 @@
+<ui version="4.0" >
+ <class>PlanGraphViewClass</class>
+ <widget class="QWidget" name="PlanGraphViewClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>805</width>
+    <height>551</height>
+   </rect>
+  </property>
+  <property name="focusPolicy" >
+   <enum>Qt::NoFocus</enum>
+  </property>
+  <property name="windowTitle" >
+   <string>PlanGraphView</string>
+  </property>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <resources/>
+ <connections/>
+</ui>

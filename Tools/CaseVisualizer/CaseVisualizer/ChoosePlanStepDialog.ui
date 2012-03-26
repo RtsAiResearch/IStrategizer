@@ -1,0 +1,71 @@
+<ui version="4.0" >
+ <class>ChoosePlanStepDialogClass</class>
+ <widget class="QDialog" name="ChoosePlanStepDialogClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>170</width>
+    <height>72</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>ChoosePlanStepDialog</string>
+  </property>
+  <widget class="QPushButton" name="btnOK" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>OK</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnCancel" >
+   <property name="geometry" >
+    <rect>
+     <x>90</x>
+     <y>40</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>101</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="focusPolicy" >
+    <enum>Qt::WheelFocus</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblPlanStepType" >
+   <property name="geometry" >
+    <rect>
+     <x>120</x>
+     <y>10</y>
+     <width>31</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Type</string>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <resources/>
+ <connections/>
+</ui>

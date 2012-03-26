@@ -1,0 +1,213 @@
+<ui version="4.0" >
+ <class>CaseViewClass</class>
+ <widget class="QWidget" name="CaseViewClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1020</width>
+    <height>499</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>CaseView</string>
+  </property>
+  <widget class="QFrame" name="frmPlanView" >
+   <property name="geometry" >
+    <rect>
+     <x>260</x>
+     <y>10</y>
+     <width>751</width>
+     <height>480</height>
+    </rect>
+   </property>
+   <property name="sizePolicy" >
+    <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="focusPolicy" >
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="frameShape" >
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow" >
+    <enum>QFrame::Plain</enum>
+   </property>
+  </widget>
+  <widget class="QToolBox" name="toolBox" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>241</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="frameShadow" >
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="currentIndex" >
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="Goal" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>241</width>
+      <height>388</height>
+     </rect>
+    </property>
+    <attribute name="label" >
+     <string>Goal</string>
+    </attribute>
+    <widget class="QTableWidget" name="tblParameters" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>221</width>
+       <height>341</height>
+      </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <family>Tahoma</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="editTriggers" >
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="selectionBehavior" >
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="showGrid" >
+      <bool>false</bool>
+     </property>
+     <property name="gridStyle" >
+      <enum>Qt::NoPen</enum>
+     </property>
+     <property name="cornerButtonEnabled" >
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblGoalName" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <family>MS Shell Dlg 2</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>false</italic>
+       <bold>true</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Goal Name</string>
+     </property>
+     <property name="textFormat" >
+      <enum>Qt::AutoText</enum>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="Game State" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>241</width>
+      <height>388</height>
+     </rect>
+    </property>
+    <attribute name="label" >
+     <string>Game State</string>
+    </attribute>
+    <widget class="QTableWidget" name="tblGameState" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>0</y>
+       <width>221</width>
+       <height>391</height>
+      </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <family>Tahoma</family>
+       <pointsize>8</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy" >
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="showDropIndicator" stdset="0" >
+      <bool>false</bool>
+     </property>
+     <property name="alternatingRowColors" >
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode" >
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
+     <property name="showGrid" >
+      <bool>false</bool>
+     </property>
+     <property name="gridStyle" >
+      <enum>Qt::NoPen</enum>
+     </property>
+     <property name="cornerButtonEnabled" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="Performance" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>241</width>
+      <height>388</height>
+     </rect>
+    </property>
+    <attribute name="label" >
+     <string>Performance</string>
+    </attribute>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <resources/>
+ <connections/>
+</ui>
