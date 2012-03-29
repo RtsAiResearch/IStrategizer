@@ -1,4 +1,7 @@
 ##IStrategizer Specific ignore
+IStrategizerBWAPIClient/
+!Build/IStrategizerBWAPIClient/include
+GeneratedFiles/
 *.lib
 *.idb
 *.type
