@@ -10,6 +10,9 @@ IStrategizerBWAPIClient/lib/
 
 #Exclusions
 !Build/Debug/TypeInfo/
+!Tools/CaseVisualizer/Debug/TypeInfo/
+!Tools/CaseVisualizer/Debug/IdLookup.txt
+
 
 # Windows image file caches
 Thumbs.db
