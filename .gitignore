@@ -1,11 +1,15 @@
 ##IStrategizer Specific ignore
-IStrategizerBWAPIClient/
-!Build/IStrategizerBWAPIClient/include
-GeneratedFiles/
+IStrategizerBWAPIClient/GeneratedFiles/
+IStrategizerBWAPIClient/include/
+IStrategizerBWAPIClient/lib/
 *.lib
 *.idb
 *.type
 *.cb
+
+
+#Exclusions
+!Build/Debug/TypeInfo/
 
 # Windows image file caches
 Thumbs.db
