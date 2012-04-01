@@ -1,8 +1,17 @@
 ##IStrategizer Specific ignore
+GeneratedFiles/
+Build/IStrategizerBWAPIClient/include/
+Build/IStrategizerBWAPIClient/lib/
+Build/StarCraftModel/include/
 *.lib
 *.idb
-*.type
-*.cb
+
+#Exclusions
+Build/Debug/*
+!Build/Debug/TypeInfo/TypeLexer.dfa
+Tools/CaseVisualizer/Debug/*
+!Tools/CaseVisualizer/Debug/IdLookup.txt
+
 
 # Windows image file caches
 Thumbs.db

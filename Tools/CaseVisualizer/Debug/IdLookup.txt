@@ -1,0 +1,390 @@
+131072 Terran Marine
+131073 Terran Ghost
+131074 Terran Vulture
+131075 Terran Goliath
+131076 Terran Siege Tank Tank Mode
+131077 Terran SCV
+131078 Terran Wraith
+131079 Terran Science Vessel
+131080 Hero Gui Montag
+131081 Terran Dropship
+131082 Terran Battlecruiser
+131083 Terran Vulture Spider Mine
+131084 Terran Nuclear Missile
+131085 Terran Civilian
+131086 Hero Sarah Kerrigan
+131087 Hero Alan Schezar
+131088 Hero Jim Raynor Vulture
+131089 Hero Jim Raynor Marine
+131090 Hero Tom Kazansky
+131091 Hero Magellan
+131092 Hero Edmund Duke Tank Mode
+131093 Hero Edmund Duke Siege Mode
+131094 Hero Arcturus Mengsk
+131095 Hero Hyperion
+131096 Hero Norad II
+131097 Terran Siege Tank Siege Mode
+131098 Terran Firebat
+131099 Spell Scanner Sweep
+131100 Terran Medic
+131101 Zerg Larva
+131102 Zerg Egg
+131103 Zerg Zergling
+131104 Zerg Hydralisk
+131105 Zerg Ultralisk
+131106 Zerg Broodling
+131107 Zerg Drone
+131108 Zerg Overlord
+131109 Zerg Mutalisk
+131110 Zerg Guardian
+131111 Zerg Queen
+131112 Zerg Defiler
+131113 Zerg Scourge
+131114 Hero Torrasque
+131115 Hero Matriarch
+131116 Zerg Infested Terran
+131117 Hero Infested Kerrigan
+131118 Hero Unclean One
+131119 Hero Hunter Killer
+131120 Hero Devouring One
+131121 Hero Kukulza Mutalisk
+131122 Hero Kukulza Guardian
+131123 Hero Yggdrasill
+131124 Terran Valkyrie
+131125 Zerg Cocoon
+131126 Protoss Corsair
+131127 Protoss Dark Templar
+131128 Zerg Devourer
+131129 Protoss Dark Archon
+131130 Protoss Probe
+131131 Protoss Zealot
+131132 Protoss Dragoon
+131133 Protoss High Templar
+131134 Protoss Archon
+131135 Protoss Shuttle
+131136 Protoss Scout
+131137 Protoss Arbiter
+131138 Protoss Carrier
+131139 Protoss Interceptor
+131140 Hero Dark Templar
+131141 Hero Zeratul
+131142 Hero Tassadar Zeratul Archon
+131143 Hero Fenix Zealot
+131144 Hero Fenix Dragoon
+131145 Hero Tassadar
+131146 Hero Mojo
+131147 Hero Warbringer
+131148 Hero Gantrithor
+131149 Protoss Reaver
+131150 Protoss Observer
+131151 Protoss Scarab
+131152 Hero Danimoth
+131153 Hero Aldaris
+131154 Hero Artanis
+131155 Critter Rhynadon
+131156 Critter Bengalaas
+131157 Special Cargo Ship
+131158 Special Mercenary Gunship
+131159 Critter Scantid
+131160 Critter Kakaru
+131161 Critter Ragnasaur
+131162 Critter Ursadon
+131163 Zerg Lurker Egg
+131164 Hero Raszagal
+131165 Hero Samir Duran
+131166 Hero Alexei Stukov
+131167 Special Map Revealer
+131168 Hero Gerard DuGalle
+131169 Zerg Lurker
+131170 Hero Infested Duran
+131171 Spell Disruption Web
+131172 Terran Command Center
+131173 Terran Comsat Station
+131174 Terran Nuclear Silo
+131175 Terran Supply Depot
+131176 Terran Refinery
+131177 Terran Barracks
+131178 Terran Academy
+131179 Terran Factory
+131180 Terran Starport
+131181 Terran Control Tower
+131182 Terran Science Facility
+131183 Terran Covert Ops
+131184 Terran Physics Lab
+131185 Terran Machine Shop
+131186 Terran Engineering Bay
+131187 Terran Armory
+131188 Terran Missile Turret
+131189 Terran Bunker
+131190 Special Crashed Norad II
+131191 Special Ion Cannon
+131192 Powerup Uraj Crystal
+131193 Powerup Khalis Crystal
+131194 Zerg Infested Command Center
+131195 Zerg Hatchery
+131196 Zerg Lair
+131197 Zerg Hive
+131198 Zerg Nydus Canal
+131199 Zerg Hydralisk Den
+131200 Zerg Defiler Mound
+131201 Zerg Greater Spire
+131202 Zerg Queens Nest
+131203 Zerg Evolution Chamber
+131204 Zerg Ultralisk Cavern
+131205 Zerg Spire
+131206 Zerg Spawning Pool
+131207 Zerg Creep Colony
+131208 Zerg Spore Colony
+131209 Zerg Sunken Colony
+131210 Special Overmind With Shell
+131211 Special Overmind
+131212 Zerg Extractor
+131213 Special Mature Chrysalis
+131214 Special Cerebrate
+131215 Special Cerebrate Daggoth
+131216 Protoss Nexus
+131217 Protoss Robotics Facility
+131218 Protoss Pylon
+131219 Protoss Assimilator
+131220 Protoss Observatory
+131221 Protoss Gateway
+131222 Protoss Photon Cannon
+131223 Protoss Citadel of Adun
+131224 Protoss Cybernetics Core
+131225 Protoss Templar Archives
+131226 Protoss Forge
+131227 Protoss Stargate
+131228 Special Stasis Cell Prison
+131229 Protoss Fleet Beacon
+131230 Protoss Arbiter Tribunal
+131231 Protoss Robotics Support Bay
+131232 Protoss Shield Battery
+131233 Special Khaydarin Crystal Form
+131234 Special Protoss Temple
+131235 Special XelNaga Temple
+131236 Resource Mineral Field
+131237 Resource Mineral Field Type 2
+131238 Resource Mineral Field Type 3
+131239 Special Independant Starport
+131240 Resource Vespene Geyser
+131241 Special Warp Gate
+131242 Special Psi Disrupter
+131243 Special Zerg Beacon
+131244 Special Terran Beacon
+131245 Special Protoss Beacon
+131246 Special Zerg Flag Beacon
+131247 Special Terran Flag Beacon
+131248 Special Protoss Flag Beacon
+131249 Special Power Generator
+131250 Special Overmind Cocoon
+131251 Spell Dark Swarm
+131252 Special Floor Missile Trap
+131253 Special Floor Hatch
+131254 Special Upper Level Door
+131255 Special Right Upper Level Door
+131256 Special Pit Door
+131257 Special Right Pit Door
+131258 Special Floor Gun Trap
+131259 Special Wall Missile Trap
+131260 Special Wall Flame Trap
+131261 Special Right Wall Missile Trap
+131262 Special Right Wall Flame Trap
+131263 Special Start Location
+131264 Powerup Flag
+131265 Powerup Young Chrysalis
+131266 Powerup Psi Emitter
+131267 Powerup Data Disk
+131268 Powerup Khaydarin Crystal
+131269 Powerup Mineral Cluster Type 1
+131270 Powerup Mineral Cluster Type 2
+131271 Powerup Protoss Gas Orb Type 1
+131272 Powerup Protoss Gas Orb Type 2
+131273 Powerup Zerg Gas Sac Type 1
+131274 Powerup Zerg Gas Sac Type 2
+131275 Powerup Terran Gas Tank Type 1
+131276 Powerup Terran Gas Tank Type 2
+131277 None
+131278 Unknown
+131328 Terran Infantry Armor
+131329 Terran Vehicle Plating
+131330 Terran Ship Plating
+131331 Zerg Carapace
+131332 Zerg Flyer Carapace
+131333 Protoss Ground Armor
+131334 Protoss Air Armor
+131335 Terran Infantry Weapons
+131336 Terran Vehicle Weapons
+131337 Terran Ship Weapons
+131338 Zerg Melee Attacks
+131339 Zerg Missile Attacks
+131340 Zerg Flyer Attacks
+131341 Protoss Ground Weapons
+131342 Protoss Air Weapons
+131343 Protoss Plasma Shields
+131344 U-238 Shells
+131345 Ion Thrusters
+131346 Titan Reactor
+131347 Ocular Implants
+131348 Moebius Reactor
+131349 Apollo Reactor
+131350 Colossus Reactor
+131351 Ventral Sacs
+131352 Antennae
+131353 Pneumatized Carapace
+131354 Metabolic Boost
+131355 Adrenal Glands
+131356 Muscular Augments
+131357 Grooved Spines
+131358 Gamete Meiosis
+131359 Metasynaptic Node
+131360 Singularity Charge
+131361 Leg Enhancements
+131362 Scarab Damage
+131363 Reaver Capacity
+131364 Gravitic Drive
+131365 Sensor Array
+131366 Gravitic Boosters
+131367 Khaydarin Amulet
+131368 Apial Sensors
+131369 Gravitic Thrusters
+131370 Carrier Capacity
+131371 Khaydarin Core
+131372 Argus Jewel
+131373 Argus Talisman
+131374 Caduceus Reactor
+131375 Chitinous Plating
+131376 Anabolic Synthesis
+131377 Charon Boosters
+131378 None
+131379 Unknown
+131455 Stim Packs
+131456 Lockdown
+131457 EMP Shockwave
+131458 Spider Mines
+131459 Scanner Sweep
+131460 Tank Siege Mode
+131461 Defensive Matrix
+131462 Irradiate
+131463 Yamato Gun
+131464 Cloaking Field
+131465 Personnel Cloaking
+131466 Burrowing
+131467 Infestation
+131468 Spawn Broodlings
+131469 Dark Swarm
+131470 Plague
+131471 Consume
+131472 Ensnare
+131473 Parasite
+131474 Psionic Storm
+131475 Hallucination
+131476 Recall
+131477 Stasis Field
+131478 Archon Warp
+131479 Restoration
+131480 Disruption Web
+131481 Mind Control
+131482 Dark Archon Meld
+131483 Feedback
+131484 Optical Flare
+131485 Maelstrom
+131486 Lurker Aspect
+131487 Healing
+131488 None
+131489 Unknown
+131490 Nuclear Strike
+131584 Primary
+131585 Secondary
+131586 Supply
+131840 Self
+131841 Enemy
+131842 Neutral
+132096 Defeat
+132352 Unary Force
+132353 Medium Force
+132354 Large Force
+132864 Win Game
+132865 Build Base
+132866 Train Force
+132867 Attack Enemy
+133120 Train
+133121 Build v1
+133122 Build v2
+133123 Research
+133124 Attack Ground
+133125 Attack Entity
+133632 Entity Class
+133633 Amount
+133634 Entity Object
+133635 Attribute
+133636 Operator
+133637 Value
+133638 Upgrade
+133639 Resource
+133640 Filter Type
+133641 Building Class
+133642 Worker Class
+133643 Worker State
+133644 Target Entity Class
+133645 Target Player
+133646 Strategy
+133647 Base Type
+133648 Force Size
+133649 Attack Type
+133650 Player
+133651 Message
+133652 Trainer Object
+133653 Trainer Class
+133654 Worker Object
+133655 Building Object
+133888 Not Prepared
+133889 Pending
+133890 Executing
+133891 Succeeded
+133892 Failed
+133893 Nill
+134400 Being Constructed
+134401 Idle
+134402 Moving
+134403 Constructing
+134404 Gathering
+134656 Early Tier Rush
+134912 Tier 1
+134913 Tier 2
+134914 Tier 3
+135936 0%
+135937 10%
+135938 20%
+135939 30%
+135940 40%
+135941 50%
+135942 60%
+135943 70%
+135944 80%
+135945 90%
+135946 100%
+136960 Low Level
+136961 Medium Level
+136962 High Level
+196608 State
+196609 Health
+196610 X Position
+196611 Y Position
+196612 Owner
+196613 Center X Position
+196614 Center Y Position
+196864 Max HP
+196865 Can Attack
+196866 Can Build
+196867 Is Building
+196868 Is Coward
+196869 Attack Damage
+196870 Is Primary Resource
+196871 Is Secondary Resource
+196872 Is Supply
+196873 Is Critical
+196874 Tile Width
+196875 Tile Height
+196876 Air Weapon Range
+196877 Ground Weapon Range
+196878 Line of Sight
