@@ -127,7 +127,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGLd4.lib opengl32.lib glu32.lib BWAPId.lib BWAPIClientd.lib BWTAd.lib tinyxmld.lib CGAL-vc90-mt-gd.lib libboost_thread-vc90-mt-gd-1_40.lib gmp-vc90-mt-gd.lib mpfr-vc90-mt-gd.lib IStrategizerD.lib StarCraftModelD.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;..\..\Lib;lib"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;$(OutDir);lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 			/>
@@ -381,18 +381,6 @@
 			SourceControlFiles="false"
 			>
 			<File
-				RelativePath=".\GeneratedFiles\Release\moc_ClientMain.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\GeneratedFiles\Debug\moc_ClientMain.cpp"
 				>
 				<FileConfiguration
@@ -405,10 +393,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\GeneratedFiles\Debug\moc_IMView.cpp"
+				RelativePath=".\GeneratedFiles\Release\moc_ClientMain.cpp"
 				>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -429,10 +417,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\GeneratedFiles\Release\moc_IMViewWidget.cpp"
+				RelativePath=".\GeneratedFiles\Debug\moc_IMView.cpp"
 				>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -445,6 +433,18 @@
 				>
 				<FileConfiguration
 					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\GeneratedFiles\Release\moc_IMViewWidget.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
