@@ -1,14 +1,17 @@
 ##IStrategizer Specific ignore
-IStrategizerBWAPIClient/GeneratedFiles/
-IStrategizerBWAPIClient/include/
-IStrategizerBWAPIClient/lib/
+Build/IStrategizerBWAPIClient/GeneratedFiles/
+Build/IStrategizerBWAPIClient/include/
+Build/IStrategizerBWAPIClient/lib/
+Build/StarCraftModel/include/
 *.lib
 *.idb
 *.type
 *.cb
 
 #Exclusions
+Build/Debug/*
 !Build/Debug/TypeInfo/TypeLexer.dfa
+Tools/CaseVisualizer/Debug/*
 !Tools/CaseVisualizer/Debug/IdLookup.txt
 
 # Windows image file caches
@@ -26,7 +29,7 @@ Desktop.ini
 *.sln.docstates
 
 # Build results
-[Dd]ebug/*
+[Dd]ebug/
 [Rr]elease/
 *_i.c
 *_p.c
