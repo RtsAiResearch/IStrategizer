@@ -257,45 +257,48 @@
 131377 Charon Boosters
 131378 None
 131379 Unknown
+131455 Stim Packs
+131456 Lockdown
+131457 EMP Shockwave
+131458 Spider Mines
+131459 Scanner Sweep
+131460 Tank Siege Mode
+131461 Defensive Matrix
+131462 Irradiate
+131463 Yamato Gun
+131464 Cloaking Field
+131465 Personnel Cloaking
+131466 Burrowing
+131467 Infestation
+131468 Spawn Broodlings
+131469 Dark Swarm
+131470 Plague
+131471 Consume
+131472 Ensnare
+131473 Parasite
+131474 Psionic Storm
+131475 Hallucination
+131476 Recall
+131477 Stasis Field
+131478 Archon Warp
+131479 Restoration
+131480 Disruption Web
+131481 Mind Control
+131482 Dark Archon Meld
+131483 Feedback
+131484 Optical Flare
+131485 Maelstrom
+131486 Lurker Aspect
+131487 Healing
+131488 None
+131489 Unknown
+131490 Nuclear Strike
 131584 Primary
 131585 Secondary
 131586 Supply
-131828 Stim Packs
-131829 Lockdown
-131830 EMP Shockwave
-131831 Spider Mines
-131832 Scanner Sweep
-131833 Tank Siege Mode
-131834 Defensive Matrix
-131835 Irradiate
-131836 Yamato Gun
-131837 Cloaking Field
-131838 Personnel Cloaking
-131839 Burrowing
 131840 Self
 131841 Enemy
-131842 Dark Swarm
-131843 Plague
-131844 Consume
-131845 Ensnare
-131846 Parasite
-131847 Psionic Storm
-131848 Hallucination
-131849 Recall
-131850 Stasis Field
-131851 Archon Warp
-131852 Restoration
-131853 Disruption Web
-131854 Mind Control
-131855 Dark Archon Meld
-131856 Feedback
-131857 Optical Flare
-131858 Maelstrom
-131859 Lurker Aspect
-131860 Healing
-131861 None
-131862 Unknown
-131863 Nuclear Strike
+131842 Neutral
 132096 Defeat
 132352 Unary Force
 132353 Medium Force
@@ -334,6 +337,12 @@
 133653 Trainer Class
 133654 Worker Object
 133655 Building Object
+133888 Not Prepared
+133889 Pending
+133890 Executing
+133891 Succeeded
+133892 Failed
+133893 Nill
 134400 Being Constructed
 134401 Idle
 134402 Moving
@@ -361,7 +370,9 @@
 196609 Health
 196610 X Position
 196611 Y Position
-196612 Type
+196612 Owner
+196613 Center X Position
+196614 Center Y Position
 196864 Max HP
 196865 Can Attack
 196866 Can Build
@@ -374,3 +385,6 @@
 196873 Is Critical
 196874 Tile Width
 196875 Tile Height
+196876 Air Weapon Range
+196877 Ground Weapon Range
+196878 Line of Sight
