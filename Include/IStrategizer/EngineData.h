@@ -7,11 +7,11 @@
 #include "MetaData.h"
 
 #ifndef SVECTOR_H
-	#include "..\..\Tools\Serialization\ObjectSerializer\Include\SVector.h"
+	#include "SVector.h"
 #endif
 
 #ifndef SMAP_H
-	#include "..\..\Tools\Serialization\ObjectSerializer\Include\SMap.h"
+	#include "SMap.h"
 #endif
 
 #ifndef USEROBJECT_H
