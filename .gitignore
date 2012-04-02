@@ -1,4 +1,5 @@
 ##IStrategizer Specific ignore
+GeneratedFiles/
 Build/IStrategizerBWAPIClient/include/
 Build/IStrategizerBWAPIClient/lib/
 Build/StarCraftModel/include/
