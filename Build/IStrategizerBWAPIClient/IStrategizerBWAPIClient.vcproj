@@ -107,7 +107,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;..\..\Include\IStrategizer;..\..\Include\StarCraftModel;include;.\"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;..\..\Include\IStrategizer;..\..\Include\StarCraftModel;include;.\;..\..\..\Serialization\ObjectSerializer\Include\"
 				PreprocessorDefinitions="UNICODE;WIN32;QT_THREAD_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;_DEBUG"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="false"
@@ -212,7 +212,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing ClientMain.h..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -D_DEBUG  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;.\..\..\Include\IStrategizer\.&quot; -I&quot;.\..\..\Include\StarCraftModel\.&quot; -I&quot;.\include\.&quot; -I&quot;.\.&quot; &quot;.\ClientMain.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_ClientMain.cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -D_DEBUG  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;.\..\..\Include\IStrategizer\.&quot; -I&quot;.\..\..\Include\StarCraftModel\.&quot; -I&quot;.\include\.&quot; -I&quot;.\.&quot; -I&quot;.\..\..\..\Serialization\ObjectSerializer\Include\.&quot; &quot;.\ClientMain.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_ClientMain.cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;.\ClientMain.h"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_ClientMain.cpp&quot;"
 					/>
@@ -250,7 +250,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing IMView.h..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -D_DEBUG -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;.\..\..\Include\IStrategizer\.&quot; -I&quot;.\..\..\Include\StarCraftModel\.&quot; -I&quot;.\include\.&quot; -I&quot;.\.&quot; &quot;.\IMView.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_IMView.cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -D_DEBUG  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;.\..\..\Include\IStrategizer\.&quot; -I&quot;.\..\..\Include\StarCraftModel\.&quot; -I&quot;.\include\.&quot; -I&quot;.\.&quot; -I&quot;.\..\..\..\Serialization\ObjectSerializer\Include\.&quot; &quot;.\IMView.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_IMView.cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;.\IMView.h"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_IMView.cpp&quot;"
 					/>
@@ -276,7 +276,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing IMViewWidget.h..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -D_DEBUG -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;.\..\..\Include\IStrategizer\.&quot; -I&quot;.\..\..\Include\StarCraftModel\.&quot; -I&quot;.\include\.&quot; -I&quot;.\.&quot; &quot;.\IMViewWidget.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_IMViewWidget.cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -D_DEBUG  -I&quot;.\GeneratedFiles\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)\.&quot; -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\QtOpenGL\.&quot; -I&quot;.\..\..\Include\IStrategizer\.&quot; -I&quot;.\..\..\Include\StarCraftModel\.&quot; -I&quot;.\include\.&quot; -I&quot;.\.&quot; -I&quot;.\..\..\..\Serialization\ObjectSerializer\Include\.&quot; &quot;.\IMViewWidget.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_IMViewWidget.cpp&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;.\IMViewWidget.h"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_IMViewWidget.cpp&quot;"
 					/>
@@ -381,18 +381,6 @@
 			SourceControlFiles="false"
 			>
 			<File
-				RelativePath=".\GeneratedFiles\Debug\moc_ClientMain.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\GeneratedFiles\Release\moc_ClientMain.cpp"
 				>
 				<FileConfiguration
@@ -405,10 +393,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\GeneratedFiles\Release\moc_IMView.cpp"
+				RelativePath=".\GeneratedFiles\Debug\moc_ClientMain.cpp"
 				>
 				<FileConfiguration
-					Name="Debug|Win32"
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -429,10 +417,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\GeneratedFiles\Debug\moc_IMViewWidget.cpp"
+				RelativePath=".\GeneratedFiles\Release\moc_IMView.cpp"
 				>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Debug|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -445,6 +433,18 @@
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\GeneratedFiles\Debug\moc_IMViewWidget.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool

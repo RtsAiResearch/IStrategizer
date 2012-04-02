@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Include\IStrategizer;..\..\Tools\Serialization\UnrealCompiler;..\..\Include\StarCraftModel;include"
+				AdditionalIncludeDirectories="..\..\Include\IStrategizer;..\..\..\Serialization\UnrealCompiler\;..\..\..\Serialization\ObjectSerializer\Include\;..\..\Include\StarCraftModel;include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
