@@ -41,13 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Build\StarCraftBWAPI\include;..\..\Include\IStrategizer;..\..\Tools\Serialization\UnrealCompiler;..\..\Include\StarCraftModel"
+				AdditionalIncludeDirectories="..\..\Include\IStrategizer;..\..\..\Serialization\UnrealCompiler\;..\..\..\Serialization\ObjectSerializer\Include\;..\..\Include\StarCraftModel;include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="..\..\Lib\$(ProjectName)"
+				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\Lib\$(ProjectName)D.lib"
+				OutputFile="$(OutDir)\$(ProjectName)D.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

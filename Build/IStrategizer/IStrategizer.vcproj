@@ -25,7 +25,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Building TypeInfo database"
-				CommandLine="&quot;$(SolutionDir)..\Tools\Serialization\Debug\TypeInfoCollector.exe&quot; &quot;$(SolutionDir)..\Include\IStrategizer&quot; &quot;$(SolutionDir)IStrategizer&quot;"
+				CommandLine="&quot;$(SolutionDir)..\..\Serialization\Debug\TypeInfoCollector.exe&quot; &quot;$(SolutionDir)..\Include\IStrategizer&quot; &quot;$(OutDir)&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -42,11 +42,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Include\IStrategizer;..\..\Tools\Serialization\UnrealCompiler;..\..\Tools\Serialization\ObjectSerializer\Include"
+				AdditionalIncludeDirectories="..\..\Include\IStrategizer;..\..\..\Serialization\UnrealCompiler;..\..\..\Serialization\ObjectSerializer\Include\"
 				MinimalRebuild="true"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="..\..\Lib\$(ProjectName)"
+				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4273;"
@@ -59,14 +59,14 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
-				Description="Copying TypeInfo databse to IStrategizer, CaseVisualizer and StarCraft BWAPI Client"
-				CommandLine="xcopy &quot;$(SolutionDir)IStrategizer\TypeInfo&quot; &quot;$(SolutionDir)..\Tools\CaseVisualizer\Debug\TypeInfo&quot; /Y /I&#x0D;&#x0A;xcopy &quot;$(SolutionDir)IStrategizer\TypeInfo&quot; &quot;$(SolutionDir)Debug\TypeInfo&quot; /Y /I&#x0D;&#x0A;xcopy &quot;$(SolutionDir)IStrategizer\TypeInfo&quot; &quot;$(SolutionDir)..\..\Starcraft\TypeInfo&quot; /Y /I&#x0D;&#x0A;"
+				Description="Copying TypeInfo databse to CaseVisualizer"
+				CommandLine="xcopy &quot;$(OutDir)\TypeInfo&quot; &quot;$(SolutionDir)..\..\CaseVisualizer\Debug\TypeInfo&quot; /Y /I&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="ObjectSerializer.lib"
-				OutputFile="..\..\Lib\$(ProjectName)D.lib"
-				AdditionalLibraryDirectories="..\..\Tools\Serialization\Debug"
+				OutputFile="$(OutDir)\$(ProjectName)D.lib"
+				AdditionalLibraryDirectories="..\..\..\Serialization\Debug"
 				IgnoreDefaultLibraryNames=""
 			/>
 			<Tool
