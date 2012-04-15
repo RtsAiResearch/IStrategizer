@@ -8,6 +8,7 @@
 class PlanStepEx;
 class GoalEx;
 class Action;
+class CaseEx;
 
 namespace OLCBP
 {
@@ -34,7 +35,9 @@ namespace OLCBP
 		inline bool IsReady() { return _parents.size() == _readyParents.size(); }
 		inline PlanTreeNodeEx* SubPlanGoal() { return _pSubPlanGoal; }
 		inline bool IsNull() { return _type == PTNTYPE_Null; }
-	
+		CaseEx * BelongingCase() const { return _pBelongingCase; }
+		void BelongingCase(CaseEx *p_pCase) { _pBelongingCase = p_pCase; }
+
 		GoalEx* GetGoal();
 		Action* GetAction();
 		void Open();
@@ -55,17 +58,16 @@ namespace OLCBP
 		void DeleteChild(PlanTreeNodeEx* p_pChild);
 		void DeleteParent(PlanTreeNodeEx* p_pParent);
 
-
-
 	private:
-		PlanStepEx*				_pPlanStep;
-		PlanTreeNodeEx*			_pSubPlanGoal;
+		PlanStepEx				*_pPlanStep;
+		PlanTreeNodeEx			*_pSubPlanGoal;
 		PlanTreeNodeType		_type;
 		NodeList				_parents;
 		NodeList				_children;
 		NodeList				_belongingSubPlanChildren;
 		NodeSet					_readyParents;
 		bool					_isOpen;
+		CaseEx					*_pBelongingCase;
 	};
 }
 

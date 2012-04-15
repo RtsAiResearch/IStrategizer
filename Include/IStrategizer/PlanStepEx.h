@@ -49,7 +49,6 @@ protected:
 	StepLevelType			_stepLevelType;
 	CompositeExpression*	_successCondition;
 	CompositeExpression*	_postCondition;
-	CellFeature*			_cellFeature;
 	string					_stepDescription;
 	unsigned				_stateStartTime[COUNT(ExecutionStateType)];
 	unsigned				_stateTimeout[COUNT(ExecutionStateType)];

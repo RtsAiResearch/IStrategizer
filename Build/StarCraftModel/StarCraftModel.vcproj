@@ -50,6 +50,7 @@
 				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4290"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

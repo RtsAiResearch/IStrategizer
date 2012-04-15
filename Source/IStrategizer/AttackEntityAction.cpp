@@ -30,7 +30,6 @@ AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 //----------------------------------------------------------------------------------------------
 AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters, CellFeature *p_cellFeature) : Action(ACTIONEX_AttackEntity, p_parameters)
 {
-	_cellFeature = p_cellFeature;
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePreConditions()

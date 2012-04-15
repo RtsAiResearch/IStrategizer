@@ -3,12 +3,14 @@
 
 #include <hash_map>
 #include <vector>
-
-using namespace std;
-using namespace stdext;
+#include "IStrategizerException.h"
 
 namespace DataStructure
 {
+	using namespace std;
+	using namespace stdext;
+	using namespace IStrategizer;
+
 	template<class T1, class T2>
 	class CrossMap
 	{
@@ -18,6 +20,13 @@ namespace DataStructure
 		vector< pair<T1, T2> >	_data;
 
 	public:
+		class KeyNotFoundException : public Exception
+		{
+		public:
+			KeyNotFoundException(ExceptionLocation p_location)
+				: Exception(p_location, "KeyNotFoundException") {}
+		};
+
 		CrossMap() {};
 		CrossMap(const vector< pair<T1, T2> >& p_data) : _data(p_data)
 		{
@@ -74,13 +83,19 @@ namespace DataStructure
 			}
 		}
 		//----------------------------------------------------------------------------------------------
-		T2 GetByFirst(const T1& p_key) 
+		T2 GetByFirst(const T1& p_key) throw(KeyNotFoundException)
 		{
+			if (!ContainsFirst(p_key))
+				throw KeyNotFoundException(XcptHere);
+
 			return _data[_firstMap[p_key]].second; 
 		};
 		//----------------------------------------------------------------------------------------------
-		T1 GetBySecond(const T2& p_key) 
+		T1 GetBySecond(const T2& p_key) throw(KeyNotFoundException)
 		{
+			if (!ContainsSecond(p_key))
+				throw KeyNotFoundException(XcptHere);
+
 			return _data[_secondMap[p_key]].first; 
 		};
 		//----------------------------------------------------------------------------------------------

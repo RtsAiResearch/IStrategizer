@@ -19,7 +19,7 @@ using namespace IStrategizer;
 using namespace MetaData;
 
 const unsigned MaxPrepTime = 5000;
-const unsigned MaxExecTrialTime = 5000;
+const unsigned MaxExecTrialTime = 500;
 const unsigned MaxExecTime = 5000;
 
 BuildActionEx::BuildActionEx() : Action(ACTIONEX_BuildEx, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false)
@@ -36,10 +36,10 @@ void BuildActionEx::HandleMessage(Message* p_pMsg, bool& p_consumed)
 {
 	if(State() == ESTATE_Executing && p_pMsg->MessageTypeID() == MSG_EntityCreate) 
 	{
-		EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_pMsg);
-		TID	buildingId;
-		GameEntity	*pGameBuilding;
-		Vector2		msgBuildPosition;
+		EntityCreateMessage*	pMsg = static_cast<EntityCreateMessage*>(p_pMsg);
+		TID						buildingId;
+		GameEntity				*pGameBuilding;
+		Vector2					msgBuildPosition;
 
 		if (pMsg->Data()->OwnerId != PLAYER_Self)
 			return;
@@ -54,7 +54,8 @@ void BuildActionEx::HandleMessage(Message* p_pMsg, bool& p_consumed)
 		msgBuildPosition.Y = pMsg->Data()->Y;
 
 		if (msgBuildPosition.X == _buildPosition.X &&
-			msgBuildPosition.Y == _buildPosition.Y)
+			msgBuildPosition.Y == _buildPosition.Y &&
+			pGameBuilding->Type() == _params[PARAM_BuildingClassId])
 		{
 			_buildingId = pGameBuilding->Id();
 			_buildStarted = true;

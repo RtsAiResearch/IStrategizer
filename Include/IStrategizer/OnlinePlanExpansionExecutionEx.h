@@ -38,12 +38,12 @@ namespace OLCBP
 		void NotifyMessegeSent(Message* p_message);
 
 	private:
-		void ExpandGoal(PlanTreeNodeEx* p_rootGoal, PlanGraph* p_supPlan);
+		void ExpandGoal(PlanTreeNodeEx* p_rootGoal, CaseEx* p_pCase);
 		void UpdatePlan(PlanTreeNodeEx* p_rootPlanStep, unsigned long p_cycles);
 		void NotifyChildrenForParentSuccess(PlanTreeNodeEx* p_pNode);
 		void MarkCaseAsTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase);
-		bool IsCaseAsTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase);
-		void DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pPlanGoalNode);
+		bool IsCaseTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase);
+		bool DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pPlanGoalNode);
 		void ConsiderReadyChildrenForUpdate(PlanTreeNodeEx* p_pNode, queue<PlanTreeNodeEx*> &p_updateQueue);
 
 		PlanTreeNodeEx*						_planRoot;

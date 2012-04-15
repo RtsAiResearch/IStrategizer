@@ -35,6 +35,7 @@
 #include "Message.h"
 #endif
 #include "GameStateEx.h"
+#include "AbstractReviser.h"
 #include "Toolbox.h"
 #include <cstdio>
 #include <bitset>
@@ -42,7 +43,6 @@
 using namespace std;
 using namespace IStrategizer;
 using namespace OLCBP;
-
 
 OnlinePlanExpansionExecutionEx::OnlinePlanExpansionExecutionEx(GoalEx* p_initialGoal, CaseBasedReasonerEx *p_casedBasedReasoner)
 {
@@ -61,9 +61,10 @@ void OnlinePlanExpansionExecutionEx::Update(unsigned long p_cycles)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, PlanGraph *p_pSubPlanGraph)
+void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, CaseEx *p_pCase)
 {
-	vector<int>					subPlanGraphRoots = p_pSubPlanGraph->GetRoots();
+	PlanGraph					*pSubPlanGraph = p_pCase->GetPlanGraph();
+	vector<int>					subPlanGraphRoots = pSubPlanGraph->GetRoots();
 	PlanTreeNodeEx::NodeList	preExpansionGoalChildren(p_pGoalNode->BelongingSubPlanChildren().begin(), p_pGoalNode->BelongingSubPlanChildren().end());
 	PlanTreeNodeEx::NodeList	subPlanTreeNodes;
 	vector<int>					planGraphRootIndicies(subPlanGraphRoots.begin(), subPlanGraphRoots.end());
@@ -73,12 +74,15 @@ void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, Pla
 	PlanTreeNodeEx				*pCurrentRoot;
 
 	// 1. Construct plan tree nodes of plan digraph
-	for(unsigned i = 0; i < p_pSubPlanGraph->Size(); ++i)
+	for(unsigned i = 0; i < pSubPlanGraph->Size(); ++i)
 	{
-		subPlanTreeNodes.push_back(new PlanTreeNodeEx(p_pSubPlanGraph->operator [](i)->Value(), p_pGoalNode));
+		PlanTreeNodeEx *pNode = new PlanTreeNodeEx(pSubPlanGraph->operator [](i)->Value(), p_pGoalNode);
+		pNode->BelongingCase(p_pCase);
+		subPlanTreeNodes.push_back(pNode);
 	}
+	p_pGoalNode->BelongingCase(p_pCase);
 
-	visited.resize(p_pSubPlanGraph->Size(), false);
+	visited.resize(pSubPlanGraph->Size(), false);
 	p_pGoalNode->CrossUnlinkChildren();
 
 	// 2. Link the sub plan tree roots with the expanded goal node
@@ -108,7 +112,7 @@ void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, Pla
 		Q.pop();
 
 		pCurrentNode = subPlanTreeNodes[currentNodeIdx];
-		currentNodeChildrenIndicies = p_pSubPlanGraph->GetChildren(currentNodeIdx);
+		currentNodeChildrenIndicies = pSubPlanGraph->GetChildren(currentNodeIdx);
 
 		for(unsigned i = 0; i < currentNodeChildrenIndicies.size(); ++i)
 		{
@@ -131,15 +135,15 @@ void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, Pla
 	}
 
 	// 4. Link the new sub plan subPlanLeafIndicies with the goal subPlanLeafIndicies before expansion
-	vector<int>									subPlanLeafIndicies;
-	PlanTreeNodeEx								*pCurrentPreExpansionGoalChild;
-	PlanTreeNodeEx								*pCurrentSubPlanLeaf;
-	unsigned									subPlanLeafIdx;
+	vector<int>		subPlanLeafIndicies;
+	PlanTreeNodeEx	*pCurrentPreExpansionGoalChild;
+	PlanTreeNodeEx	*pCurrentSubPlanLeaf;
+	unsigned		subPlanLeafIdx;
 
 	// If the goal had no children before expansion, then there is nothing to link and we are done
 	if(!preExpansionGoalChildren.empty())
 	{
-		subPlanLeafIndicies = p_pSubPlanGraph->GetLeaves();
+		subPlanLeafIndicies = pSubPlanGraph->GetLeaves();
 
 		for(unsigned preExpansionGoaldChildIdx = 0;
 			preExpansionGoaldChildIdx < preExpansionGoalChildren.size();
@@ -164,6 +168,7 @@ void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, uns
 	queue<PlanTreeNodeEx*>	Q;
 	PlanTreeNodeEx*			pCurrentNode;
 	PlanStepEx*				pCurrentPlanStep;
+	bool					hasPreviousPlan;
 
 	// Root goal destroyed we may have an empty case-base, or exhausted all cases and nothing succeeded
 	if (p_pPlanRoot == NULL || p_pPlanRoot->IsNull())
@@ -185,15 +190,23 @@ void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, uns
 		{
 			if (pCurrentNode->IsOpen())
 			{
+				hasPreviousPlan = DestroyGoalPlanIfExist(pCurrentNode);
+
+				// The goal was previously expanded with a plan, but it somehow failed
+				// Thats why it is now open
+				// Revise the node belonging case as failed case
+				if (hasPreviousPlan)
+				{
+					_caseBasedReasoner->Reviser()->Revise(pCurrentNode->BelongingCase(), false);
+				}
+
 				CaseEx* caseEx = _caseBasedReasoner->Retriever()->Retrieve(pCurrentNode->GetGoal(), g_Game->Self()->State());
 
-				DestroyGoalPlanIfExist(pCurrentNode);
-
 				if (caseEx != NULL &&
-					!IsCaseAsTried(pCurrentNode, caseEx))
+					!IsCaseTried(pCurrentNode, caseEx))
 				{
 					MarkCaseAsTried(pCurrentNode, caseEx);
-					ExpandGoal(pCurrentNode, caseEx->GetPlanGraph());
+					ExpandGoal(pCurrentNode, caseEx);
 					pCurrentNode->Close();
 
 					NotifyChildrenForParentSuccess(pCurrentNode);
@@ -204,6 +217,7 @@ void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, uns
 					// We surrender!!
 					if (pCurrentNode->SubPlanGoal()->IsNull())
 					{
+						printf("Planner has exhausted all possible cases\n");
 						_planRoot = NULL;
 						return;
 					}
@@ -236,7 +250,10 @@ void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, uns
 			{
 				if (pCurrentPlanStep->State() == ESTATE_Failed)
 				{
-					pCurrentNode->SubPlanGoal()->Open();
+					// We check to make sure that our parent is open before closing
+					// Our sub plan goal may be already open because any of our siblings may have failed and opened our sub plan goal
+					if (!pCurrentNode->SubPlanGoal()->IsOpen())
+						pCurrentNode->SubPlanGoal()->Open();
 				}
 				else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
 				{
@@ -275,7 +292,7 @@ void OLCBP::OnlinePlanExpansionExecutionEx::MarkCaseAsTried(PlanTreeNodeEx* p_pS
 	_triedCases[p_pStep].insert(p_pCase);
 }
 //////////////////////////////////////////////////////////////////////////
-bool OLCBP::OnlinePlanExpansionExecutionEx::IsCaseAsTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase)
+bool OLCBP::OnlinePlanExpansionExecutionEx::IsCaseTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase)
 {
 	return _triedCases[p_pStep].find(p_pCase) != _triedCases[p_pStep].end();
 }
@@ -304,9 +321,10 @@ void OnlinePlanExpansionExecutionEx::NotifyMessegeSent(Message* p_message)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pPlanGoalNode)
+bool OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pPlanGoalNode)
 {
 	queue<PlanTreeNodeEx*>		Q;
+	set<PlanTreeNodeEx*>		visitedNodes;
 	PlanTreeNodeEx*				pCurrentNode;
 	PlanTreeNodeEx::NodeList	children(p_pPlanGoalNode->Children());
 	PlanTreeNodeEx::NodeList	currentNodeChildren;
@@ -316,15 +334,34 @@ void OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pP
 	for (PlanTreeNodeEx::NodeList::const_iterator itr = children.begin();
 		itr != children.end(); ++itr)
 	{
-		Q.push(*itr);
-		p_pPlanGoalNode->CrossUnlinkChild(*itr);
+		// The current child is a result of expanding p_pPlanGoalNode before
+		// Where p_pPlanGoalNode is the current node sub plan goal
+		if ((*itr)->SubPlanGoal() == p_pPlanGoalNode)
+		{
+			Q.push(*itr);
+			visitedNodes.insert(*itr);
+			p_pPlanGoalNode->CrossUnlinkChild(*itr);
+		}
 	}
+
+	// We don't have a sub plan attached to p_pPlanGoalNode
+	// There is nothing to destroy
+	if (Q.empty())
+		return false;
 
 	// Unlink the rest of the sub plan nodes
 	while (!Q.empty())
 	{
 		pCurrentNode = Q.front();
 		Q.pop();
+
+		if (pCurrentNode->Type() == PTNTYPE_Goal)
+		{
+			// If I am a goal then recursively destroy my sub-plan
+			// After the recursive destroy is done, pCurrentNode children should be
+			// Those when p_pPlanGoalNode was originally expanded
+			DestroyGoalPlanIfExist(pCurrentNode);
+		}
 
 		if (!pCurrentNode->Children().empty())
 		{
@@ -334,15 +371,18 @@ void OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pP
 				itr != currentNodeChildren.end(); ++itr)
 			{
 				// Nodes from the original sub plan (as appeared in the case plan graph) should not be considered from unlinking from their children
-				if ((*itr)->SubPlanGoal() == p_pPlanGoalNode)
+				if ((*itr)->SubPlanGoal() == p_pPlanGoalNode &&
+					visitedNodes.find(*itr) == visitedNodes.end())
 				{
 					Q.push(*itr);
+					visitedNodes.insert(*itr);
 				}
 
 				pCurrentNode->CrossUnlinkChild(*itr);
 			}
 		}
-		// Consider the nodes memory management
+		
+		// Consider nodes memory management in the "parallel" plan
 		// delete pCurrentNode;
 	}
 
@@ -354,6 +394,8 @@ void OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pP
 	{
 		p_pPlanGoalNode->CrossLinkChild(*itr);
 	}
+
+	return true;
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecutionEx::ConsiderReadyChildrenForUpdate(PlanTreeNodeEx* p_pNode, queue<PlanTreeNodeEx*> &p_updateQueue)

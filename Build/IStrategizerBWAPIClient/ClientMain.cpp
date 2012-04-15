@@ -18,6 +18,7 @@
 #include "InfluenceMap.h"
 #include "IMViewWidget.h"
 #include "QtGui/QGridLayout"
+#include <iostream>
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
@@ -71,15 +72,22 @@ void ClientMain::InitIStrategizer()
 {
 	IStrategizerParam param;
 
-	m_pGameModel = new StarCraftGame;
-	assert(m_pGameModel);
+	try
+	{
+		m_pGameModel = new StarCraftGame;
+		assert(m_pGameModel);
 
-	param.BuildingDataIMCellSize = TILE_SIZE;
-	param.GroundControlIMCellSize = TILE_SIZE;
-	param.IMSysUpdateInterval = 64;
+		param.BuildingDataIMCellSize = TILE_SIZE;
+		param.GroundControlIMCellSize = TILE_SIZE;
+		param.IMSysUpdateInterval = 64;
 
-	m_pIStrategizer = new IStrategizerEx(param, PHASE_Online, m_pGameModel);
-	assert(m_pIStrategizer);
+		m_pIStrategizer = new IStrategizerEx(param, PHASE_Online, m_pGameModel);
+		assert(m_pIStrategizer);
+	}
+	catch (IStrategizer::Exception& e)
+	{
+		e.To(cout);
+	}
 
 	m_pBuildingDataIMWidget->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
 	m_pGrndCtrlIMWidget->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
@@ -159,14 +167,7 @@ DWORD ClientMain::BwapiThreadStart(PVOID p_pvContext)
 
 	if (pClient)
 	{
-		try
-		{
-			pClient->BwapiMainThread();
-		}
-		catch(...)
-		{
-			printf("IStrategizer unhandled exception\nTerminating...\n");
-		}
+		pClient->BwapiMainThread();
 	}
 
 	return 0;
@@ -221,8 +222,6 @@ void ClientMain::BwapiMainThread()
 		show_bullets=false;
 		show_visibility_data=false;
 
-		InitIStrategizer();
-		
 		if (Broodwar->isReplay())
 		{
 			Broodwar->printf("The following players are in this replay:");
@@ -243,10 +242,11 @@ void ClientMain::BwapiMainThread()
 			InitResourceManager();
 		}
 
+
+		InitIStrategizer();
 		EventLoop();
-
 		FinalizeIStrategizer();
-
+		
 		// Give IM widgets a chance to clear its buffer and redraw
 		UpdateIMViews();
 
@@ -355,7 +355,16 @@ void ClientMain::EventLoop()
 			enemyPlayerCollected = !enemyUnits.empty();
 		}
 
-		m_pIStrategizer->Update(Broodwar->getFrameCount());
+		
+		try
+		{
+			m_pIStrategizer->Update(Broodwar->getFrameCount());
+		}
+		catch (IStrategizer::Exception &e)
+		{
+			e.To(cout);
+		}
+
 		++m_engineCycles;
 
 		UpdateIMViews();

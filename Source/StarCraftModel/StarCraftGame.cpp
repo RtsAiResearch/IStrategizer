@@ -136,22 +136,23 @@ IStrategizer::GameType* StarCraftGame::FetchEntityType(EntityClassType p_id)
 //----------------------------------------------------------------------------------------------
 GameResearch* StarCraftGame::FetchResearch(ResearchType p_id)
 {
-	TID			researchId;
+	TID					researchId;
     string				typeIdent;
 	BWAPI::UpgradeType	upgrade;
 	TechType			tech;
 	GameResearch*		research;
 	
-	researchId = g_Database.UpgradeMapping.GetBySecond(p_id);
-	typeIdent = g_Database.UpgradeIdentMapping.GetByFirst(p_id);
-
-    if(p_id >= TechIdOffset)
+    if(p_id >= ((int)(START(ResearchType) +  TechIdOffset)))
     {
+		researchId = g_Database.TechMapping.GetBySecond(p_id);
+		typeIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
 		tech = TechTypes::getTechType(typeIdent);
 		research = new StarCraftResearch(tech);
     }
     else
     {
+		researchId = g_Database.UpgradeMapping.GetBySecond(p_id);
+		typeIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
 		upgrade = UpgradeTypes::getUpgradeType(typeIdent);
 		research = new StarCraftResearch(upgrade);
     }

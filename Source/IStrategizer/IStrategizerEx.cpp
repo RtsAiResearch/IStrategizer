@@ -6,6 +6,7 @@
 #include "CaseLearningHelper.h"
 #include "IMSystemManager.h"
 #include "DataMessage.h"
+#include "IStrategizerException.h"
 
 #ifndef SERIALIZATIONESSENTIALS_H
 #include "SerializationEssentials.h"
@@ -84,14 +85,25 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
 //--------------------------------------------------------------------------------
 void IStrategizerEx::Update(unsigned long p_gameCycle)
 {
-	g_MessagePump.Update(p_gameCycle);
-    g_WorldClock.Tick(p_gameCycle);
+	try
+	{
+		g_MessagePump.Update(p_gameCycle);
+		g_WorldClock.Tick(p_gameCycle);
 
-	if (p_gameCycle % _param.IMSysUpdateInterval == 0)
-		g_IMSysMgr.Update(p_gameCycle);
+		if (p_gameCycle % _param.IMSysUpdateInterval == 0)
+			g_IMSysMgr.Update(p_gameCycle);
 
-	if (_phase == PHASE_Online)
-		_planner->Update(p_gameCycle);
+		if (_phase == PHASE_Online)
+			_planner->Update(p_gameCycle);
+	}
+	catch (IStrategizer::Exception &e)
+	{
+		e.To(cout);
+	}
+	catch (std::exception &e)
+	{
+		cout << "IStrategizer encountered std exception: " << e.what() << endl;
+	}
 }
 //--------------------------------------------------------------------------------
 void IStrategizerEx::OfflineLearning()
