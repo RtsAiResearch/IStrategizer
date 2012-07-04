@@ -20,7 +20,7 @@ void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 
 	pGameObj = p_pCaller->GetObj(p_pObjEntry);
 	assert(pGameObj);
-	currentPosition.X = pGameO bj->Attr(EOATTR_PosX);
+	currentPosition.X = pGameObj->Attr(EOATTR_PosX);
 	currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
 	
 	// If not dirty, then skip
