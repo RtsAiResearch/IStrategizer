@@ -30,7 +30,7 @@ public:
 	int         TypeSize()  { return sizeof(AttackEntityAction); }
 protected:
 	//----------------------------------------------------------------------------------------------
-	int			ExecuteAux(unsigned long p_cycles);
+	bool		ExecuteAux(unsigned long p_cycles);
 	void		InitializePreConditions();
 	void		InitializeAliveConditions();
 	void		InitializeSuccessConditions();

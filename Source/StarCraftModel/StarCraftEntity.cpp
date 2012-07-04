@@ -10,6 +10,7 @@
 #ifndef ERRORCODE_H
 #include "ErrorCode.h"
 #endif
+#include "IStrategizerException.h"
 
 using namespace StarCraftModel;
 using namespace MetaData;
@@ -85,34 +86,34 @@ ObjectStateType StarCraftEntity::FetchState()
 		return OBJSTATE_BeingConstructed;
 	else if (m_unit->isGatheringGas() || m_unit->isGatheringMinerals())
 		return OBJSTATE_Gathering;
-	else if (m_unit->isMoving())
-		return OBJSTATE_Moving;
 	else if (m_unit->isConstructing())
 		return OBJSTATE_Constructing;
+	else if (m_unit->isMoving())
+		return OBJSTATE_Moving;
 
     return OBJSTATE_END;
 }
 //----------------------------------------------------------------------------------------------
-int	StarCraftEntity::Research(ResearchType p_researchId)
+bool StarCraftEntity::Research(ResearchType p_researchId)
 {
 	Unit*	building = m_unit;
 	bool	bOk;
 
 	// Is tech
-	if ((int)p_researchId >= TechIdOffset)
+	if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
 	{
 		bOk = m_unit->research(g_Database.TechMapping.GetBySecond(p_researchId));
 	}
 	// Is upgrade
 	else
 	{
-		bOk = m_unit->upgrade(g_Database.TechMapping.GetBySecond(p_researchId));
+		bOk = m_unit->upgrade(g_Database.UpgradeMapping.GetBySecond(p_researchId));
 	}
 
-	return bOk ? ERR_Success : ERR_InvalidParameterValue;
+	return bOk;
 }
 //----------------------------------------------------------------------------------------------
-int	StarCraftEntity::Build(EntityClassType p_buildingClassId, int p_x, int p_y) 
+bool StarCraftEntity::Build(EntityClassType p_buildingClassId, int p_x, int p_y) 
 {
 	Unit*			builder = m_unit;
 	TilePosition	pos(TilePositionFromUnitPosition(p_x), TilePositionFromUnitPosition(p_y));
@@ -120,54 +121,40 @@ int	StarCraftEntity::Build(EntityClassType p_buildingClassId, int p_x, int p_y)
 	TID				gameTypeId;
 	string			typeName;
 
-	if (g_Database.EntityMapping.ContainsSecond(p_buildingClassId))
-		gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
-	else
-		return ERR_InvalidParameterValue;
-
-	if (g_Database.EntityIdentMapping.ContainsFirst(gameTypeId))
-		typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
-	else
-		return ERR_InvalidParameterValue;
+	gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
+	typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
 
 	type = BWAPI::UnitTypes::getUnitType(typeName);
 
-	return m_unit->build(pos, type) ? ERR_Success : ERR_InvalidParameterValue;
+	return m_unit->build(pos, type);
 };
 //----------------------------------------------------------------------------------------------
-int	StarCraftEntity::AttackGround(int p_x, int p_y)
+bool StarCraftEntity::AttackGround(int p_x, int p_y)
 {
-	bool		bOk;
 	Unit*		attacker = m_unit;
 	Position	pos(p_x, p_y);
 
-	bOk = attacker->attack(pos);
-
-	return bOk ? ERR_Success : ERR_InvalidParameterValue;
+	return attacker->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
-int	StarCraftEntity::AttackEntity(MetaData::PlayerType p_opponentIndex, int p_targetEntityObjectId)
+bool StarCraftEntity::AttackEntity(MetaData::PlayerType p_opponentIndex, int p_targetEntityObjectId)
 {
-	bool	bOk;
 	Unit*	attacker = m_unit;
 	Unit*	target;
 
 	target = Broodwar->getUnit(p_targetEntityObjectId);
 
 	if (!target)
-		return ERR_InvalidParameterValue;
+		throw ItemNotFoundException(XcptHere);
 
-	bOk = attacker->attack(target);
-
-	return bOk ? ERR_Success : ERR_InvalidParameterValue;
+	return attacker->attack(target);
 };
 //----------------------------------------------------------------------------------------------
-int	StarCraftEntity::Train(EntityClassType p_entityClassId)
+bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 {
-	bool		bOk;
-	Unit*		building = m_unit;
-	TID	unitTypeId;
-	string		typeName;
+	Unit*			building = m_unit;
+	TID				unitTypeId;
+	string			typeName;
 	BWAPI::UnitType	type;
 
 	unitTypeId = g_Database.EntityMapping.GetBySecond(p_entityClassId);
@@ -175,7 +162,5 @@ int	StarCraftEntity::Train(EntityClassType p_entityClassId)
 
 	type = BWAPI::UnitTypes::getUnitType(typeName);
 
-	bOk = building->train(type);
-
-	return bOk ? ERR_Success : ERR_InvalidParameterValue;
+	return building->train(type);
 };

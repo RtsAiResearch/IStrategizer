@@ -37,7 +37,7 @@ bool StarCraftTechTree::ResearchAvailable(ResearchType p_researchId) const
 		return false;
 
 	// Is Tech
-	if ((int)p_researchId >= TechIdOffset)
+	if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
 	{
 		researchId = g_Database.TechMapping.GetBySecond(p_researchId);
 		researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
@@ -67,7 +67,7 @@ bool StarCraftTechTree::ResearchDone(ResearchType p_researchId) const
 		return false;
 
 	// Is Tech
-	if ((int)p_researchId >= TechIdOffset)
+	if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
 	{
 		researchId = g_Database.TechMapping.GetBySecond(p_researchId);
 		researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
@@ -78,6 +78,10 @@ bool StarCraftTechTree::ResearchDone(ResearchType p_researchId) const
 	// Is Upgrade
 	else
 	{
+		researchId = g_Database.UpgradeMapping.GetBySecond(p_researchId);
+		researchIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
+		upgrade = UpgradeTypes::getUpgradeType(researchIdent);
+
 		// FIXME: we restrict upgrade levels to be 1 level only
 		return m_player->getUpgradeLevel(upgrade) > 0;
 	}
@@ -100,7 +104,7 @@ void StarCraftTechTree::GetRequirements(int p_typeOrResearchId, vector<ResearchT
 	if (BELONG(ResearchType, p_typeOrResearchId))
 	{
 		// Is Tech
-		if ((int)p_typeOrResearchId >= TechIdOffset)
+		if ((int)p_typeOrResearchId >= ((int)(RESEARCH_START +  TechIdOffset)))
 		{
 			/*id = g_Database.TechMapping.GetBySecond((ResearchType)p_typeOrResearchId);
 			ident = g_Database.TechIdentMapping.GetByFirst(id);

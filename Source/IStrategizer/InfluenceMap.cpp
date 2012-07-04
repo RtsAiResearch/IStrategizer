@@ -91,16 +91,16 @@ void InfluenceMap::UnregisterGameObj(TID p_objId)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::StampInfluenceShape(Vector2& p_startPosition, int p_width, int p_height, TCell p_value)
+void InfluenceMap::StampInfluenceShape(Vector2& p_startPosition, int p_width, int p_height, TInfluence p_value)
 {
-    int		gridX = (int)((float)p_startPosition.X / m_cellSide);
-    int		gridY = (int)((float)p_startPosition.Y / m_cellSide);
-    int		gridWidth = max((int)(ceil((float)p_width / m_cellSide)), 1);
-	int		gridHeight = max((int)(ceil((float)p_height / m_cellSide)), 1);
-	int		endX = min(gridX + gridWidth, m_gridWidth);
-	int		endY = min(gridY + gridHeight, m_gridHeight);
-	int		idx;
-	TCell	cellInf;
+    int			gridX = (int)((float)p_startPosition.X / m_cellSide);
+    int			gridY = (int)((float)p_startPosition.Y / m_cellSide);
+    int			gridWidth = max((int)(ceil((float)p_width / m_cellSide)), 1);
+	int			gridHeight = max((int)(ceil((float)p_height / m_cellSide)), 1);
+	int			endX = min(gridX + gridWidth, m_gridWidth);
+	int			endY = min(gridY + gridHeight, m_gridHeight);
+	int			idx;
+	TInfluence	cellInf;
 
     for(int y = gridY; y < endY; ++y)
     {
@@ -110,9 +110,9 @@ void InfluenceMap::StampInfluenceShape(Vector2& p_startPosition, int p_width, in
 
 			if (idx < m_numCells)
 			{
-				m_pMap[idx] += p_value;
+				m_pMap[idx].Inf += p_value;
 
-				cellInf = m_pMap[idx];
+				cellInf = m_pMap[idx].Inf;
 
 				if (cellInf > m_statistics.MaxInf)
 				{
@@ -131,7 +131,7 @@ void InfluenceMap::StampInfluenceShape(Vector2& p_startPosition, int p_width, in
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::StampInfluenceGradient(Vector2& p_centerPosition, int p_fastFalloffDistance, int p_slowFalloffDistance, TCell p_initValue)
+void InfluenceMap::StampInfluenceGradient(Vector2& p_centerPosition, int p_fastFalloffDistance, int p_slowFalloffDistance, TInfluence p_initValue)
 {
 	const float	fastFalloffPercentage = 0.90f;
 	const float slowFalloffPercentage = 1.0f;
@@ -142,23 +142,23 @@ void InfluenceMap::StampInfluenceGradient(Vector2& p_centerPosition, int p_fastF
 	if (p_fastFalloffDistance < p_slowFalloffDistance)
 		swap(p_fastFalloffDistance, p_slowFalloffDistance);
 
-	int		centerX = (int)((float)p_centerPosition.X / m_cellSide);
-	int		centerY = (int)((float)p_centerPosition.Y / m_cellSide);
-	int		outerHalfSide = max((int)(ceil((float)p_fastFalloffDistance / m_cellSide)), 1);
-	int		innerHalfSide = max((int)(ceil((float)p_slowFalloffDistance / m_cellSide)), 1);
-	int		outerLeft = max(centerX - outerHalfSide, 0);
-	int		outerTop = max(centerY - outerHalfSide, 0);
-	int		outerRight = min(centerX + outerHalfSide, m_gridWidth - 1);
-	int		outerBottom = min(centerY + outerHalfSide, m_gridHeight - 1);
-	int		innerLeft = max(centerX - innerHalfSide, 0);
-	int		innerTop = max(centerY - innerHalfSide, 0);
-	int		innerRight = min(centerX + innerHalfSide, m_gridWidth - 1);
-	int		innerBottom = min(centerY + innerHalfSide, m_gridHeight - 1);
-	int		maxManhattanDistance = outerHalfSide;
-	float	curFalloffPercentage;
-	int		curManhattanDistance;
-	int		idx;
-	TCell	cellInf;
+	int			centerX = (int)((float)p_centerPosition.X / m_cellSide);
+	int			centerY = (int)((float)p_centerPosition.Y / m_cellSide);
+	int			outerHalfSide = max((int)(ceil((float)p_fastFalloffDistance / m_cellSide)), 1);
+	int			innerHalfSide = max((int)(ceil((float)p_slowFalloffDistance / m_cellSide)), 1);
+	int			outerLeft = max(centerX - outerHalfSide, 0);
+	int			outerTop = max(centerY - outerHalfSide, 0);
+	int			outerRight = min(centerX + outerHalfSide, m_gridWidth - 1);
+	int			outerBottom = min(centerY + outerHalfSide, m_gridHeight - 1);
+	int			innerLeft = max(centerX - innerHalfSide, 0);
+	int			innerTop = max(centerY - innerHalfSide, 0);
+	int			innerRight = min(centerX + innerHalfSide, m_gridWidth - 1);
+	int			innerBottom = min(centerY + innerHalfSide, m_gridHeight - 1);
+	int			maxManhattanDistance = outerHalfSide;
+	float		curFalloffPercentage;
+	int			curManhattanDistance;
+	int			idx;
+	TInfluence	cellInf;
 
 	for(int y = outerTop; y <= outerBottom; ++y)
 	{
@@ -166,7 +166,7 @@ void InfluenceMap::StampInfluenceGradient(Vector2& p_centerPosition, int p_fastF
 		{
 			idx = y * m_gridWidth + x;
 
-			cellInf = m_pMap[idx];
+			cellInf = m_pMap[idx].Inf;
 			curManhattanDistance = abs(y - centerY) + abs(x - centerX);
 
 			if (curManhattanDistance > maxManhattanDistance)
@@ -191,7 +191,7 @@ void InfluenceMap::StampInfluenceGradient(Vector2& p_centerPosition, int p_fastF
 				cellInf += (int)(fastFalloffPercentage * curFalloffPercentage * (float)p_initValue);
 			}
 
-			m_pMap[idx] = cellInf;
+			m_pMap[idx].Inf = cellInf;
 
 			if (cellInf > m_statistics.MaxInf)
 			{
@@ -223,17 +223,20 @@ void InfluenceMap::FromGridToWorld(const Vector2 &p_gridPosition, Vector2 &p_wor
 //////////////////////////////////////////////////////////////////////////
 void InfluenceMap::ClearMap()
 {
+	// NOTE: this memset is correct only if TCell happens to have a non-trivial constructor
+	// Which holds now, but take-care in the future
 	memset(m_pMap, 0, m_numCells * sizeof(TCell));
 }
 //////////////////////////////////////////////////////////////////////////
 void InfluenceMap::ResetStats()
 {
+	// FIXME: not-correct to memset a class with a non-trivial constructor
 	memset(&m_statistics, 0, sizeof(IMStatistics));
 }
 //////////////////////////////////////////////////////////////////////////
-TCell InfluenceMap::SumInfluenceShape(Vector2& p_startPosition, int p_width, int p_height)
+TInfluence InfluenceMap::SumInfluenceShape(Vector2& p_startPosition, int p_width, int p_height)
 {
-    TCell sum = TCell();
+    TInfluence sum = TInfluence();
 	int gridX = (int)((float)p_startPosition.X / m_cellSide);
 	int gridY = (int)((float)p_startPosition.Y / m_cellSide);
 	int gridWidth = max((int)(ceil((float)p_width / m_cellSide)), 1);
@@ -249,7 +252,7 @@ TCell InfluenceMap::SumInfluenceShape(Vector2& p_startPosition, int p_width, int
 			idx = y * m_gridWidth + x;
 
 			if (idx < m_numCells)
-				sum += m_pMap[idx];
+				sum += m_pMap[idx].Inf;
 		}
 	}
 
@@ -370,7 +373,7 @@ void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLen
 //////////////////////////////////////////////////////////////////////////
 void InfluenceMap::ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWidth, int p_areaHeight, CellPredicate p_pfnPred, void *p_pParam)
 {
-	TCell sum = TCell();
+	TInfluence sum = TInfluence();
 	int gridX = (int)((float)p_areaStartPos.X / m_cellSide);
 	int gridY = (int)((float)p_areaStartPos.Y / m_cellSide);
 	int gridWidth = max((int)(ceil((float)p_areaWidth / m_cellSide)), 1);

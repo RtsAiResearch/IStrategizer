@@ -30,7 +30,7 @@ TrainAction::TrainAction(const PlanStepParameters& p_parameters)
 //----------------------------------------------------------------------------------------------
 void TrainAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 {
-	if (State() == ESTATE_Executing && p_pMsg->MessageTypeID() == MSG_EntityCreate)
+	if (PlanStepEx::State() == ESTATE_Executing && p_pMsg->MessageTypeID() == MSG_EntityCreate)
 	{
 		EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_pMsg);
 		assert(pMsg && pMsg->Data());
@@ -80,7 +80,7 @@ bool TrainAction::SuccessConditionsSatisfied()
 	return _trained;
 }
 //----------------------------------------------------------------------------------------------
-int TrainAction::ExecuteAux(unsigned long p_cycles)
+bool TrainAction::ExecuteAux(unsigned long p_cycles)
 {
 	EntityClassType		traineeType = (EntityClassType)_params[PARAM_EntityClassId];
 	GameEntity			*pGameTrainer;

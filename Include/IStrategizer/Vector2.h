@@ -20,9 +20,11 @@ public:
 		return this->X != p_right.X || this->Y == p_right.Y;
 	}
 
+	bool IsNull()					{ return X == -1 && Y == -1; }
     static const Vector2& Zero()	{ static Vector2 zero; return zero; }
     static const Vector2& One()		{ static Vector2 one(1, 1); return one; }
 	static const Vector2& Null()	{ static Vector2 one(-1, -1); return one; }
+	
 };
 
 #endif // VECTOR2_H

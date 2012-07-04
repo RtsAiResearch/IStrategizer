@@ -3,6 +3,7 @@
 
 #include <QtGui/QMainWindow>
 #include "ui_ClientMain.h"
+#include "BwapiClient.h"
 #include <Windows.h>
 #include <vector>
 
@@ -12,13 +13,8 @@ namespace IStrategizer
 	class RtsGame;
 }
 
-namespace BWAPI
-{
-	class Unit;
-}
-
 class IMViewWidget;
-class ClientMain : public QMainWindow
+class ClientMain : public QMainWindow, public BwapiClient
 {
 	Q_OBJECT
 
@@ -26,43 +22,34 @@ public:
 	ClientMain(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~ClientMain();
 
-	void FinalizeIStrategizer();
-	static DWORD BwapiThreadStart(PVOID p_pvContext);
-	void BwapiMainThread();
-
-	void InitResourceManager();
-
 protected:
 	void showEvent(QShowEvent *p_pEvent);
-	void closeEvent(QCloseEvent *p_pEvent) ;
-
+	void closeEvent(QCloseEvent *p_pEvent);
+	void OnClientUpdate();
+	void OnClientLoopStart();
+	void OnClientLoopEnd();
+	void OnMatchStart();
+	void OnMatchEnd(bool p_isWinner);
 	void OnUnitCreate(BWAPI::Unit *p_pUnit);
 	void OnUnitDestroy(BWAPI::Unit *p_pUnit);
 	void OnUniRenegade(BWAPI::Unit *p_pUnit);
 	void OnSendText(const std::string &p_text);
 
 private:
-	void ConnectToBwapiServer();
-	void InitClient();
-
+	void InitResourceManager();
+	void InitIStrategizer();
 	void InitIMView();
-	void Shutdown();
-	void EventLoop();
-
 	void UpdateIMViews();
 	void UpdateStatsView();
-	void UpdateTerrainAnalysis();
-	void InitIStrategizer();
+	void FinalizeIStrategizer();
 
 	Ui::ClientMainClass			ui;
-	HANDLE						m_hBwapiThread;
-	bool						m_bClientInitialized;
 	IStrategizerEx				*m_pIStrategizer;
 	IStrategizer::RtsGame		*m_pGameModel;
 	IMViewWidget				*m_pBuildingDataIMWidget;
 	IMViewWidget				*m_pGrndCtrlIMWidget;
 	std::vector<IMViewWidget*>	m_IMViews;
-	int							m_engineCycles;
+	bool						m_isLearning;
 };
 
 #endif // CLIENTMAIN_H

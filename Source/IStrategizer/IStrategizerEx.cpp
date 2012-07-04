@@ -74,6 +74,8 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
 {
 	switch(p_message->MessageTypeID())
 	{
+	case MSG_GameStart:
+		g_WorldClock.Reset();
 	case MSG_GameEnd:
 		if (_phase == PHASE_Offline)
 		{
@@ -87,14 +89,15 @@ void IStrategizerEx::Update(unsigned long p_gameCycle)
 {
 	try
 	{
-		g_MessagePump.Update(p_gameCycle);
-		g_WorldClock.Tick(p_gameCycle);
+		g_WorldClock.GameTick(p_gameCycle);
+		g_WorldClock.EngineTick();
+		g_MessagePump.Update(g_WorldClock.ElapsedEngineCycles());
 
 		if (p_gameCycle % _param.IMSysUpdateInterval == 0)
-			g_IMSysMgr.Update(p_gameCycle);
+			g_IMSysMgr.Update(g_WorldClock.ElapsedEngineCycles());
 
 		if (_phase == PHASE_Online)
-			_planner->Update(p_gameCycle);
+			_planner->Update(g_WorldClock.ElapsedEngineCycles());
 	}
 	catch (IStrategizer::Exception &e)
 	{
@@ -102,7 +105,7 @@ void IStrategizerEx::Update(unsigned long p_gameCycle)
 	}
 	catch (std::exception &e)
 	{
-		cout << "IStrategizer encountered std exception: " << e.what() << endl;
+		cout << "IStrategizer encountered unhandled std exception: " << e.what() << endl;
 	}
 }
 //--------------------------------------------------------------------------------

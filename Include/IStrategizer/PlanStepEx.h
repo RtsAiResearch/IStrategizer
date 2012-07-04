@@ -54,7 +54,7 @@ protected:
 	unsigned				_stateTimeout[COUNT(ExecutionStateType)];
 	bool					_firstUpdate;
 
-	void					State(ExecutionStateType p_state, unsigned p_cycles);
+	virtual void			State(ExecutionStateType p_state, unsigned p_cycles);
 	bool					IsCurrentStateTimeout(unsigned p_cycles);
 
 	PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);

@@ -4,6 +4,9 @@
 #ifndef ENGINEDATA_H
 #include "EngineData.h"
 #endif
+#ifndef MAPAREA_H
+#include "MapArea.h"
+#endif
 
 class Vector2;
 
@@ -20,7 +23,7 @@ namespace OLCBP
 	class AbstractAdapter
 	{
 	public:
-		virtual Vector2 AdaptPositionForBuilding(EntityClassType p_buildingType) = 0;
+		virtual MapArea AdaptPositionForBuilding(EntityClassType p_buildingType) = 0;
 		virtual	TID AdaptWorkerForBuild() = 0;
 		virtual TID AdaptBuildingForTraining(EntityClassType p_traineeType) = 0;
 		virtual TID AdaptBuildingForResearch(ResearchType p_researchType) = 0;

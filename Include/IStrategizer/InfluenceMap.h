@@ -14,7 +14,15 @@ namespace IStrategizer
 	class InfluenceMap;
 	struct RegObjEntry;
 
-	typedef int TCell;
+	typedef int TInfluence;
+	typedef int TInfData;
+
+	struct TCell
+	{
+		TInfluence	Inf;
+		TInfData	Data;
+	};
+
 	typedef std::list<RegObjEntry*> RegObjectList;
 	typedef void (*RegObjCallback)(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry);
 
@@ -27,7 +35,6 @@ namespace IStrategizer
 	// The position passed is in world coordinates not the IM
 	typedef bool (*SpiralMovePredicate)(unsigned p_worldX, unsigned p_worldY, const TCell* p_pCell, void *p_pParam);
 
-
 	struct RegObjEntry
 	{
 		TID				ObjId;
@@ -39,25 +46,14 @@ namespace IStrategizer
 		RegObjEntry() : ObjId(TID()), LastPosition(Vector2::Null()), Stamped(false) {}
 	};
 
-	struct IMCell
-	{
-		void	*pHead;
-		TCell	Influence;
-
-		IMCell() : Influence(TCell()), pHead(NULL) {}
-		IMCell(TCell p_influence) : Influence(p_influence), pHead(NULL) {}
-
-		operator TCell&() { return Influence; }
-	};
-
 	struct IMStatistics
 	{
-		TCell	MaxInf;
-		Vector2	MaxInfGridPos;
-		TCell	MinInf;
-		Vector2	MinInfGridPos;
+		TInfluence	MaxInf;
+		Vector2		MaxInfGridPos;
+		TInfluence	MinInf;
+		Vector2		MinInfGridPos;
 
-		IMStatistics() : MaxInf(TCell()), MinInf(TCell()), 
+		IMStatistics() : MaxInf(TInfluence()), MinInf(TInfluence()), 
 			MaxInfGridPos(Vector2::Zero()), MinInfGridPos(Vector2::Zero()) {}
 	};
 
@@ -71,9 +67,9 @@ namespace IStrategizer
 		virtual void Reset();
 		virtual void RegisterGameObj(TID p_objId, PlayerType p_ownerId);
 		virtual void UnregisterGameObj(TID p_objectId);
-		virtual void StampInfluenceShape(Vector2& p_startPosition, int p_width, int p_height, TCell p_value);
-		virtual void StampInfluenceGradient(Vector2& p_centerPosition, int p_fastFalloffDistance, int p_slowFalloffDistance, TCell p_initValue);
-		TCell  SumInfluenceShape(Vector2& p_startPosition, int p_width, int p_height);
+		virtual void StampInfluenceShape(Vector2& p_startPosition, int p_width, int p_height, TInfluence p_value);
+		virtual void StampInfluenceGradient(Vector2& p_centerPosition, int p_fastFalloffDistance, int p_slowFalloffDistance, TInfluence p_initValue);
+		TInfluence  SumInfluenceShape(Vector2& p_startPosition, int p_width, int p_height);
 		const IStrategizer::RegObjectList &RegisteredObjects() const { return m_registeredObjects; }
 		IStrategizer::IMType TypeId() const { return m_typeId; }
 		int CellSide() const { return m_cellSide; }
@@ -96,13 +92,14 @@ namespace IStrategizer
 		bool InBound(int p_gridX, int p_gridY);
 
 		RegObjectList	m_registeredObjects;
+
+		IMStatistics	m_statistics;
 		int				m_cellSide;
 		int				m_numCells;
 		int				m_worldWidth;
 		int				m_worldHeight;
 		int				m_gridWidth;
 		int				m_gridHeight;
-		IMStatistics	m_statistics;
 		TCell*			m_pMap;
 		IMType			m_typeId;
 	};

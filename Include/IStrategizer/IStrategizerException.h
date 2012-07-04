@@ -46,6 +46,20 @@ namespace IStrategizer
 		NotImplementedException(ExceptionLocation p_location)
 			: Exception(p_location, "NotImplementedException") {}
 	};
+
+	class ItemNotFoundException : public IStrategizer::Exception
+	{
+	public:
+		ItemNotFoundException(ExceptionLocation p_location)
+			: Exception(p_location, "ItemNotFoundException") {}
+	};
+
+	class ItemAlreadyExistsException : public IStrategizer::Exception
+	{
+	public:
+		ItemAlreadyExistsException(ExceptionLocation p_location)
+			: Exception(p_location, "ItemAlreadyExistsException") {}
+	};
 }
 
 #endif // ISTRATEGIZEREXCEPTIONS_H

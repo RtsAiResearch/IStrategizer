@@ -81,21 +81,22 @@ void AttackEntityAction::InitializePostConditions()
 	_postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-int AttackEntityAction::ExecuteAux(unsigned long p_cycles)
+bool AttackEntityAction::ExecuteAux(unsigned long p_cycles)
 {
-	return g_Assist.ExecuteAttackEntity(((ConditionEx*)_aliveCondition->At(0))->Parameter(PARAM_EntityObjectId), 
-		PLAYER_Enemy, ((ConditionEx*)_aliveCondition->At(1))->Parameter(PARAM_EntityObjectId));
+	throw NotImplementedException(XcptHere);
+	/*return g_Assist.ExecuteAttackEntity(((ConditionEx*)_aliveCondition->At(0))->Parameter(PARAM_EntityObjectId), 
+		PLAYER_Enemy, ((ConditionEx*)_aliveCondition->At(1))->Parameter(PARAM_EntityObjectId));*/
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::Update(unsigned long p_cycles)
 {
 	Action::Update(p_cycles);
-	if(State() == ESTATE_Succeeded)
+	if(PlanStepEx::State() == ESTATE_Succeeded)
 	{
 		EntityClassExist* m_cond = (EntityClassExist*)_preCondition->operator [](0);
 		GameEntity* m_entity = g_Game->GetPlayer(PLAYER_Self)->GetEntity(m_cond->GetEntityIdByIndex(0));
-		assert(m_entity->Locked());
-		m_entity->Unlock();
+		assert(m_entity->IsLocked());
+		m_entity->Unlock(this);
 	}
 }
 //----------------------------------------------------------------------------------------------
