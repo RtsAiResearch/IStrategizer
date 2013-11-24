@@ -13,10 +13,7 @@
 #include <cassert>
 #include <string>
 #include <map>
-#include "bwapi/Game.h"
-#include "bwapi/TechType.h"
-#include "bwapi/UpgradeType.h"
-#include "bwapi/UnitType.h"
+#include "BWAPI.h"
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
@@ -41,7 +38,7 @@ bool StarCraftTechTree::ResearchAvailable(ResearchType p_researchId) const
 	{
 		researchId = g_Database.TechMapping.GetBySecond(p_researchId);
 		researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
-		bwapiTech = TechTypes::getTechType(researchIdent);
+		bwapiTech = TechType::getType(researchIdent);
 
 		return m_player->isResearchAvailable(bwapiTech);
 	}
@@ -50,7 +47,7 @@ bool StarCraftTechTree::ResearchAvailable(ResearchType p_researchId) const
 	{
 		researchId = g_Database.UpgradeMapping.GetBySecond(p_researchId);
 		researchIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
-		bwapiUpgrade = UpgradeTypes::getUpgradeType(researchIdent);
+		bwapiUpgrade = UpgradeType::getType(researchIdent);
 
 		return (m_player->getMaxUpgradeLevel(bwapiUpgrade) > 0);
 	}
@@ -71,7 +68,7 @@ bool StarCraftTechTree::ResearchDone(ResearchType p_researchId) const
 	{
 		researchId = g_Database.TechMapping.GetBySecond(p_researchId);
 		researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
-		tech = TechTypes::getTechType(researchIdent);
+		tech = TechType::getType(researchIdent);
 
 		return m_player->hasResearched(tech);
 	}
@@ -80,7 +77,7 @@ bool StarCraftTechTree::ResearchDone(ResearchType p_researchId) const
 	{
 		researchId = g_Database.UpgradeMapping.GetBySecond(p_researchId);
 		researchIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
-		upgrade = UpgradeTypes::getUpgradeType(researchIdent);
+		upgrade = UpgradeType::getType(researchIdent);
 
 		// FIXME: we restrict upgrade levels to be 1 level only
 		return m_player->getUpgradeLevel(upgrade) > 0;
@@ -108,7 +105,7 @@ void StarCraftTechTree::GetRequirements(int p_typeOrResearchId, vector<ResearchT
 		{
 			/*id = g_Database.TechMapping.GetBySecond((ResearchType)p_typeOrResearchId);
 			ident = g_Database.TechIdentMapping.GetByFirst(id);
-			bwapiTech = TechTypes::getTechType(ident);
+			bwapiTech = TechType::getType(ident);
 
 			bwapiSourceType = bwapiTech.whatResearches();
 			requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
@@ -119,7 +116,7 @@ void StarCraftTechTree::GetRequirements(int p_typeOrResearchId, vector<ResearchT
 		{
 			id = g_Database.UpgradeMapping.GetBySecond((ResearchType)p_typeOrResearchId);
 			ident = g_Database.UpgradeIdentMapping.GetByFirst(id);
-			bwapiUpgrade = UpgradeTypes::getUpgradeType(ident);
+			bwapiUpgrade = UpgradeType::getType(ident);
 
 			/*bwapiSourceType = bwapiUpgrade.whatUpgrades();
 			requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
@@ -138,7 +135,7 @@ void StarCraftTechTree::GetRequirements(int p_typeOrResearchId, vector<ResearchT
 	{
 		id = g_Database.EntityMapping.GetBySecond((EntityClassType)p_typeOrResearchId);
 		ident = g_Database.EntityIdentMapping.GetByFirst(id);
-		bwapiUnitType = UnitTypes::getUnitType(ident);
+		bwapiUnitType = UnitType::getType(ident);
 
 		/*bwapiSourceType = bwapiUnitType.whatBuilds().first;
 		requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
@@ -233,7 +230,7 @@ EntityClassType StarCraftTechTree::SourceEntity(int p_typeOrResearchId) const
 		{
 			id = g_Database.TechMapping.GetBySecond((ResearchType)p_typeOrResearchId);
 			ident = g_Database.TechIdentMapping.GetByFirst(id);
-			tech = TechTypes::getTechType(ident);
+			tech = TechType::getType(ident);
 			sourceType = tech.whatResearches();
 
 			return g_Database.EntityMapping.GetByFirst(sourceType.getID());
@@ -243,7 +240,7 @@ EntityClassType StarCraftTechTree::SourceEntity(int p_typeOrResearchId) const
 		{
 			id = g_Database.UpgradeMapping.GetBySecond((ResearchType)p_typeOrResearchId);
 			ident = g_Database.UpgradeIdentMapping.GetByFirst(id);
-			upgrade = UpgradeTypes::getUpgradeType(ident);
+			upgrade = UpgradeType::getType(ident);
 			sourceType = upgrade.whatUpgrades();
 
 			return g_Database.EntityMapping.GetByFirst(sourceType.getID());
@@ -253,7 +250,7 @@ EntityClassType StarCraftTechTree::SourceEntity(int p_typeOrResearchId) const
     {
         id = g_Database.EntityMapping.GetBySecond((EntityClassType)p_typeOrResearchId);
 		ident = g_Database.EntityIdentMapping.GetByFirst(id);
-		unitType = UnitTypes::getUnitType(ident);
+		unitType = UnitType::getType(ident);
 		sourceType = unitType.whatBuilds().first;
 
         return g_Database.EntityMapping.GetByFirst(sourceType.getID());

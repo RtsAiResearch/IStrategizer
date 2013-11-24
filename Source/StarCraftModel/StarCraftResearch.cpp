@@ -8,8 +8,7 @@
 #include "WorldResources.h"
 #endif
 #include <cassert>
-#include "bwapi/TechType.h"
-#include "bwapi/UpgradeType.h"
+#include "BWAPI.h"
 
 using namespace StarCraftModel;
 using namespace BWAPI;

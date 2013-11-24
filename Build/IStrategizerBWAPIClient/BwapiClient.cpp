@@ -2,8 +2,6 @@
 #include <cstdio>
 #include <cassert>
 #include <set>
-#include "BWAPI.h"
-#include "BWAPI\Client.h"
 #include "CmnHdr.h"
 
 using namespace std;
@@ -35,7 +33,6 @@ DWORD BwapiClient::BwapiThreadStart(PVOID p_pvContext)
 //////////////////////////////////////////////////////////////////////////
 void BwapiClient::BwapiMainThread()
 {
-	BWAPI::BWAPI_init();
 
 	while(!m_bShutdown)
 	{
@@ -72,7 +69,7 @@ void BwapiClient::BwapiMainThread()
 		if (Broodwar->isReplay())
 		{
 			Broodwar->printf("The following players are in this replay:");
-			for(std::set<Player*>::iterator p=Broodwar->getPlayers().begin();p!=Broodwar->getPlayers().end();p++)
+			for(BWAPI::Playerset::iterator p=Broodwar->getPlayers().begin();p!=Broodwar->getPlayers().end();p++)
 			{
 				if (!(*p)->getUnits().empty() && !(*p)->isNeutral())
 				{
@@ -138,7 +135,7 @@ void BwapiClient::ClientLoop()
 //////////////////////////////////////////////////////////////////////////
 void BwapiClient::HandleGameEvents()
 {
-	for(std::list<BWAPI::Event>::iterator e = Broodwar->getEvents().begin();
+	for(std::list<BWAPI::Event>::const_iterator e = Broodwar->getEvents().begin();
 		!m_bShutdown && e != Broodwar->getEvents().end(); e++)
 	{
 		switch(e->getType())

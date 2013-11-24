@@ -1,16 +1,20 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B086163D-D289-4E97-B657-61096F84C73C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IStrategizer", "IStrategizer\IStrategizer.vcproj", "{CA0A224E-C279-40AC-8171-4643A29E466E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IStrategizer", "IStrategizer\IStrategizer.vcxproj", "{CA0A224E-C279-40AC-8171-4643A29E466E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StarCraftModel", "StarCraftModel\StarCraftModel.vcproj", "{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StarCraftModel", "StarCraftModel\StarCraftModel.vcxproj", "{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CA0A224E-C279-40AC-8171-4643A29E466E} = {CA0A224E-C279-40AC-8171-4643A29E466E}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IStrategizerBWAPIClient", "IStrategizerBWAPIClient\IStrategizerBWAPIClient.vcproj", "{B617C4F1-92B7-401F-BAA5-10B29CAB2396}"
-	GlobalSection(Qt) = preSolution
-		Integration = True
-	EndGlobalSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IStrategizerBWAPIClient", "IStrategizerBWAPIClient\IStrategizerBWAPIClient.vcxproj", "{B617C4F1-92B7-401F-BAA5-10B29CAB2396}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CA0A224E-C279-40AC-8171-4643A29E466E} = {CA0A224E-C279-40AC-8171-4643A29E466E}
+		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28} = {0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,5 +37,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
 	EndGlobalSection
 EndGlobal

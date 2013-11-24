@@ -5,11 +5,7 @@
 #include "GamePlayer.h"
 #endif
 
-namespace BWAPI
-{
-	class Player;
-	class Game;
-}
+#include "BWAPI.h"
 
 namespace MetaData
 {
@@ -24,7 +20,7 @@ namespace StarCraftModel
     class StarCraftPlayer : public GamePlayer
     {
     public:
-		StarCraftPlayer(Player *p_pPlayer);
+		StarCraftPlayer(Player p_pPlayer);
 		const GameStateEx*	State();
 		EntityClassType		GetWorkerType() { return m_workerTypeId; }
 		EntityClassType		GetBaseType() { return m_baseTypeId; }
@@ -34,7 +30,7 @@ namespace StarCraftModel
 		GameEntity*			FetchEntity(TID p_id);
 
 	private:
-		Player			*m_pPlayer;
+		Player			m_pPlayer;
 		EntityClassType m_workerTypeId;
 		EntityClassType	m_baseTypeId;
     };

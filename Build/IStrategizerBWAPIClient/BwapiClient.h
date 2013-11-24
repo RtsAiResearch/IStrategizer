@@ -4,10 +4,8 @@
 #include <Windows.h>
 #include <string>
 
-namespace BWAPI
-{
-	class Unit;
-}
+#include "BWAPI.h"
+#include "BWAPI\Client.h"
 
 class BwapiClient
 {
@@ -25,10 +23,10 @@ protected:
 	virtual void OnClientUpdate() = 0;
 	virtual void OnClientLoopStart() {};
 	virtual void OnClientLoopEnd() {};
-	virtual void OnUnitCreate(BWAPI::Unit *p_pUnit) {}
-	virtual void OnUnitDestroy(BWAPI::Unit *p_pUnit) {}
-	virtual void OnUniRenegade(BWAPI::Unit *p_pUnit) {}
-	virtual void OnUnitMorph(BWAPI::Unit *p_pUnit) {}
+	virtual void OnUnitCreate(BWAPI::Unit p_pUnit) {}
+	virtual void OnUnitDestroy(BWAPI::Unit p_pUnit) {}
+	virtual void OnUniRenegade(BWAPI::Unit p_pUnit) {}
+	virtual void OnUnitMorph(BWAPI::Unit p_pUnit) {}
 	virtual void OnMatchStart() {};
 	virtual void OnMatchEnd(bool p_isWinner) {}
 	virtual void OnSendText(const std::string &p_text) {}

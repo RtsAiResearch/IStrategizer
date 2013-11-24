@@ -2,9 +2,7 @@
 #include "StarCraftMap.h"
 #endif
 
-#include "bwapi/Game.h"
-#include "bwapi/Region.h"
-#include "bwapi/Constants.h"
+#include "BWAPI.h"
 
 using namespace StarCraftModel;
 using namespace BWAPI;

@@ -30,9 +30,9 @@ protected:
 	void OnClientLoopEnd();
 	void OnMatchStart();
 	void OnMatchEnd(bool p_isWinner);
-	void OnUnitCreate(BWAPI::Unit *p_pUnit);
-	void OnUnitDestroy(BWAPI::Unit *p_pUnit);
-	void OnUniRenegade(BWAPI::Unit *p_pUnit);
+	void OnUnitCreate(BWAPI::Unit p_pUnit);
+	void OnUnitDestroy(BWAPI::Unit p_pUnit);
+	void OnUniRenegade(BWAPI::Unit p_pUnit);
 	void OnSendText(const std::string &p_text);
 
 private:
@@ -44,12 +44,12 @@ private:
 	void FinalizeIStrategizer();
 
 	Ui::ClientMainClass			ui;
-	IStrategizerEx				*m_pIStrategizer;
+	IStrategizerEx				  *m_pIStrategizer;
 	IStrategizer::RtsGame		*m_pGameModel;
-	IMViewWidget				*m_pBuildingDataIMWidget;
-	IMViewWidget				*m_pGrndCtrlIMWidget;
+	IMViewWidget				    *m_pBuildingDataIMWidget;
+	IMViewWidget				    *m_pGrndCtrlIMWidget;
 	std::vector<IMViewWidget*>	m_IMViews;
-	bool						m_isLearning;
+	bool						        m_isLearning;
 };
 
 #endif // CLIENTMAIN_H

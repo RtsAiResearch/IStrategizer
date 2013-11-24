@@ -8,8 +8,7 @@
 #include "WorldResources.h"
 #endif
 
-#include "bwapi/UnitType.h"
-#include "bwapi/WeaponType.h"
+#include "BWAPI.h"
 
 using namespace IStrategizer;
 using namespace StarCraftModel;

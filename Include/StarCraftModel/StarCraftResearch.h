@@ -5,8 +5,7 @@
 #include "GameResearch.h"
 #endif
 
-#include "bwapi/UpgradeType.h"
-#include "bwapi/TechType.h"
+#include "BWAPI.h"
 
 namespace StarCraftModel
 {

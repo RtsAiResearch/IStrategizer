@@ -146,7 +146,7 @@ void ClientMain::OnSendText(const string& p_text)
 	g_MessagePump.Send(pTxtMsg);
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnUnitCreate(BWAPI::Unit *p_pUnit)
+void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 {
 	EntityMessageData	*pData = NULL;
 	EntityCreateMessage	*pMsg = NULL;
@@ -160,8 +160,8 @@ void ClientMain::OnUnitCreate(BWAPI::Unit *p_pUnit)
 
 	if (p_pUnit->getType().isBuilding())
 	{
-		pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x());
-		pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y());
+		pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x);
+		pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y);
 	}
 	else
 	{
@@ -175,7 +175,7 @@ void ClientMain::OnUnitCreate(BWAPI::Unit *p_pUnit)
 	g_MessagePump.Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnUnitDestroy(BWAPI::Unit *p_pUnit)
+void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 {
 	EntityMessageData		*pData = NULL;
 	EntityDestroyMessage	*pMsg = NULL;
@@ -190,8 +190,8 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit *p_pUnit)
 
 	if (p_pUnit->getType().isBuilding())
 	{
-		pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x());
-		pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y());
+		pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x);
+		pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y);
 	}
 	else
 	{
@@ -205,7 +205,7 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit *p_pUnit)
 	g_MessagePump.Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnUniRenegade(BWAPI::Unit *p_pUnit)
+void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
 {
 	EntityMessageData		*pData = NULL;
 	EntityRenegadeMessage	*pMsg = NULL;
@@ -219,8 +219,8 @@ void ClientMain::OnUniRenegade(BWAPI::Unit *p_pUnit)
 
 	if (p_pUnit->getType().isBuilding())
 	{
-		pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x());
-		pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y());
+		pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x);
+		pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y);
 	}
 	else
 	{
@@ -284,7 +284,7 @@ void ClientMain::UpdateStatsView()
 	ui.lblEngineRatioData->setText(tr("%1").arg(engineRatio));
 	ui.lblGameRatioData->setText(tr("%1").arg(gameRatio));
 	ui.lblFrameDiffData->setText(tr("%1").arg(
-		abs(g_WorldClock.ElapsedEngineCycles() - Broodwar->getFrameCount())));
+		abs((int)(g_WorldClock.ElapsedEngineCycles() - Broodwar->getFrameCount()))));
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -296,9 +296,9 @@ void ClientMain::OnClientUpdate()
 	{
 		// This to solve the bug that the game does not send  messages about creating enemy units at game start
 		TID enemyPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy);
-		const set<BWAPI::Unit*> &enemyUnits = Broodwar->getPlayer(enemyPlayerID)->getUnits();
+		const Unitset &enemyUnits = Broodwar->getPlayer(enemyPlayerID)->getUnits();
 
-		for (set<BWAPI::Unit*>::const_iterator itr = enemyUnits.begin();
+		for (Unitset::iterator itr = enemyUnits.begin();
 			itr != enemyUnits.end(); ++itr)
 		{
 			OnUnitCreate(*itr);
@@ -329,15 +329,15 @@ void ClientMain::UpdateIMViews()
 void ClientMain::InitResourceManager()
 {
 	//send each worker to the mineral field that is closest to it
-	for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++)
+	for(Unitset::iterator i = Broodwar->self()->getUnits().begin(); i != Broodwar->self()->getUnits().end(); i++)
 	{
 		if ((*i)->getType().isWorker())
 		{
-			Unit* closestMineral=NULL;
-			for(std::set<Unit*>::iterator m=Broodwar->getMinerals().begin();m!=Broodwar->getMinerals().end();m++)
+			Unit closestMineral=NULL;
+			for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
 			{
-				if (closestMineral==NULL || (*i)->getDistance(*m)<(*i)->getDistance(closestMineral))
-					closestMineral=*m;
+				if (closestMineral==NULL || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
+					closestMineral = *m;
 			}
 			if (closestMineral!=NULL)
 				(*i)->rightClick(closestMineral);
@@ -351,10 +351,10 @@ void ClientMain::InitResourceManager()
 			}
 			else //if we are Zerg, we need to select a larva and morph it into a drone
 			{
-				std::set<Unit*> myLarva=(*i)->getLarva();
+				const Unitset &myLarva=(*i)->getLarva();
 				if (myLarva.size()>0)
 				{
-					Unit* larva=*myLarva.begin();
+					Unit larva=*myLarva.begin();
 					larva->morph(UnitTypes::Zerg_Drone);
 				}
 			}
