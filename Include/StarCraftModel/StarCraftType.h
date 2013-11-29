@@ -5,7 +5,7 @@
 #include "GameType.h"
 #endif
 
-#include "bwapi/UnitType.h"
+#include "BWAPI.h"
 
 namespace StarCraftModel
 {

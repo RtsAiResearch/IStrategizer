@@ -93,7 +93,7 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_world
 	return stopSearch;
 }
 //////////////////////////////////////////////////////////////////////////
-Vector2 AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
+MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
 {
 	/*
 	Position Adaptation Algorithm Outline:
@@ -129,17 +129,22 @@ Vector2 AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
 
 	colonyCenter = GetBotColonyCenter();
 	pBuildingIM->SpiralMove(colonyCenter, searchRadius, BuildPositionSearchPredicate, &searchData);
-	// There is exist an area in the map free to build on
-	assert(searchData.CandidateBuildPos != Vector2::Null());
+	
+	if (searchData.CandidateBuildPos == Vector2::Null())
+	{
+		return MapArea::Null();
+	}
+	else
+	{
+		// Shift the build position so that the building will be padded by a space
+		searchData.CandidateBuildPos.X += m_buildingSpacing;
+		searchData.CandidateBuildPos.Y += m_buildingSpacing;
 
-	// Shift the build position so that the building will be padded by a space
-	searchData.CandidateBuildPos.X += m_buildingSpacing;
-	searchData.CandidateBuildPos.Y += m_buildingSpacing;
-
-	//areaReserved = pBuildingIM->ReserveArea(searchData.CandidateBuildPos, searchData.BuildingWidth, searchData.BuildingHeight);
-	//assert(areaReserved);
-
-	return searchData.CandidateBuildPos;
+		return MapArea(
+			searchData.CandidateBuildPos,
+			pGameType->Attr(ECATTR_Width),
+			pGameType->Attr(ECATTR_Height));
+	}
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptWorkerForBuild()
@@ -176,7 +181,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 		pEntity = pPlayer->GetEntity(entityIds[i]);
 		assert(pEntity);
 
-		if (workerTypeId == pEntity->Type())
+		if (workerTypeId == pEntity->Type() && !pEntity->IsLocked())
 		{
 			curWorkerState = (ObjectStateType)pEntity->Attr(EOATTR_State);
 

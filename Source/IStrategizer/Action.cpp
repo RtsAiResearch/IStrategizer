@@ -20,6 +20,21 @@ Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, 
 	_stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
 }
 //////////////////////////////////////////////////////////////////////////
+void Action::State(ExecutionStateType p_state, unsigned p_cycles)
+{
+	PlanStepEx::State(p_state, p_cycles);
+
+	switch (p_state)
+	{
+	case ESTATE_Succeeded:
+		OnSucccess(p_cycles);
+		break;
+	case ESTATE_Failed:
+		OnFailure(p_cycles);
+		break;
+	}
+}
+//////////////////////////////////////////////////////////////////////////
 void Action::InitializeConditions()
 {
 	InitializePreConditions();
@@ -51,25 +66,25 @@ int Action::PrepareForExecution(unsigned p_cyles)
 	return ERR_Success;
 }
 //////////////////////////////////////////////////////////////////////////
-int Action::Execute(unsigned p_cycles)
+bool Action::Execute(unsigned p_cycles)
 {
-	int m_returnValue = ERR_Success;
+	bool bOk;
 
-	assert(State() == ESTATE_Pending);
-	m_returnValue = ExecuteAux(p_cycles);
+	assert(PlanStepEx::State() == ESTATE_Pending);
+	bOk = ExecuteAux(p_cycles);
 
-	return m_returnValue;
+	return bOk;
 }
 //////////////////////////////////////////////////////////////////////////
 void Action::Reset(unsigned p_cycles)
 {
-	if (State() != ESTATE_NotPrepared)
+	if (PlanStepEx::State() != ESTATE_NotPrepared)
 		State(ESTATE_NotPrepared, p_cycles);
 }
 //////////////////////////////////////////////////////////////////////////
 void Action::UpdateAux(unsigned p_cycles)
 {
-	ExecutionStateType state = State();
+	ExecutionStateType state = PlanStepEx::State();
 	
 	switch (state)
 	{
@@ -79,7 +94,7 @@ void Action::UpdateAux(unsigned p_cycles)
 		break;
 
 	case ESTATE_Pending:
-		if (Execute(p_cycles) == ERR_Success)
+		if (Execute(p_cycles))
 			State(ESTATE_Executing, p_cycles);
 		else
 			printf("Planner: Executing '%s' failed\n", ToString());

@@ -162,7 +162,7 @@ int EngineAssist::ExecuteResearch(ResearchType p_researchId, TID p_sourceBuildin
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_sourceBuildingObjectId);
 	int ret = m_entity->Research(p_researchId);
-	m_entity->Unlock();
+	m_entity->Unlock(NULL);
 
 	return ret;
 }
@@ -176,7 +176,7 @@ int EngineAssist::ExecuteBuild(EntityClassType p_buildingClassId, TID p_workerOb
 	assert(0);
 	p_buildingObjectId = 0;
 
-	m_entity->Unlock();
+	m_entity->Unlock(NULL);
 
 	return ret;
 }
@@ -186,7 +186,7 @@ int EngineAssist::ExecuteTrain(TID p_trainerObjectId, EntityClassType p_entityCl
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_trainerObjectId);
 	int ret = m_entity->Train(p_entityClassId);
-	m_entity->Unlock();
+	m_entity->Unlock(NULL);
 
     return ret;
 }
@@ -195,7 +195,7 @@ int EngineAssist::ExecuteAttackGround(TID p_entityObjectId, const Vector2& p_pos
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_entityObjectId);
 	int ret = m_entity->AttackGround(p_pos.X,p_pos.Y);
-	m_entity->Unlock();
+	m_entity->Unlock(NULL);
 
 	return ret;
 }
@@ -203,7 +203,7 @@ int EngineAssist::ExecuteAttackGround(TID p_entityObjectId, const Vector2& p_pos
 int EngineAssist::ExecuteAttackEntity(TID p_attackerObjectId, PlayerType p_opponentIndex, TID p_targetEntityObjectId)
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_attackerObjectId);
-	assert(m_entity->Locked());
+	assert(m_entity->IsLocked());
 	int ret = m_entity->AttackEntity(p_opponentIndex, p_targetEntityObjectId);
 
     return ret;
@@ -530,7 +530,7 @@ int EngineAssist::EntityClassExist(const map<EntityClassType, unsigned> &p_entit
 				// Building are considered exist if and only if it is constructed
 				if (pType->Attr(ECATTR_IsBuilding))
 				{
-					if (pEntity->Attr(EOATTR_State) != OBJSTATE_BeingConstructed)
+					if (pEntity->Attr(EOATTR_State) != (int)OBJSTATE_BeingConstructed)
 						++matches;
 				}
 				else

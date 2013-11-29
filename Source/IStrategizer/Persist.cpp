@@ -88,5 +88,3 @@ string Persist::ReadFile(string p_filePath)
     m_eye.close();
     return m_file.str();
 }
-
-

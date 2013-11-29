@@ -49,13 +49,12 @@ protected:
 	StepLevelType			_stepLevelType;
 	CompositeExpression*	_successCondition;
 	CompositeExpression*	_postCondition;
-	CellFeature*			_cellFeature;
 	string					_stepDescription;
 	unsigned				_stateStartTime[COUNT(ExecutionStateType)];
 	unsigned				_stateTimeout[COUNT(ExecutionStateType)];
 	bool					_firstUpdate;
 
-	void					State(ExecutionStateType p_state, unsigned p_cycles);
+	virtual void			State(ExecutionStateType p_state, unsigned p_cycles);
 	bool					IsCurrentStateTimeout(unsigned p_cycles);
 
 	PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);

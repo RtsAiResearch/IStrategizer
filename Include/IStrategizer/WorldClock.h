@@ -5,13 +5,20 @@ namespace IStrategizer
 {
     class WorldClock
     {
-        int m_lastTick;
-    protected:
-        WorldClock() : m_lastTick(0) {}
     public:
-        void        Tick(unsigned p_gameCycle) { m_lastTick = p_gameCycle; }
-        unsigned    ElapsedCycles() const { return m_lastTick; }
+        void        GameTick(unsigned p_gameCycle) { m_lastGameCycle = p_gameCycle; }
+		void		EngineTick() { ++m_lastEngineCycle; }
+        unsigned    ElapsedGameCycles() const { return m_lastGameCycle; }
+		unsigned	ElapsedEngineCycles() const { return m_lastEngineCycle; }
+		unsigned	ElapsedMilliseconds();
+		void		Reset();
         static WorldClock& Instance() { static WorldClock instance; return instance; }
+	protected:
+		WorldClock() : m_lastGameCycle(0), m_lastEngineCycle(0) {}
+	private:
+		unsigned long long	m_timerStart;
+		unsigned			m_lastGameCycle;
+		unsigned			m_lastEngineCycle;
     };
 
 #define g_WorldClock WorldClock::Instance()

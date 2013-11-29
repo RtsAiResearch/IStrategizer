@@ -38,13 +38,13 @@ void DefinitionCrossMapping::InitEntities()
 	const char *name;
 
 	int currentId = (int)ECLASS_START;
-	for(std::set<BWAPI::UnitType>::const_iterator i = UnitTypes::allUnitTypes().begin();
+	for(UnitType::set::iterator i = UnitTypes::allUnitTypes().begin();
 		i != UnitTypes::allUnitTypes().end();
 		++i)
 	{
-		entities.push_back(make_pair(i->getID(), (EntityClassType)currentId));
+		entities.push_back(make_pair((*i).getID(), (EntityClassType)currentId));
 
-		name = i->getName().c_str();
+		name = (*i).getName().c_str();
 		Enums[currentId] = _strdup(name);
 
 		++currentId;
@@ -61,13 +61,13 @@ void DefinitionCrossMapping::InitUpgrades()
 	int currentId = (int)RESEARCH_START;
 	assert(UpgradeTypes::allUpgradeTypes().size() < (COUNT(ResearchType) / 2));
 
-	for(std::set<UpgradeType>::const_iterator i = UpgradeTypes::allUpgradeTypes().begin();
+	for(UpgradeType::set::iterator i = UpgradeTypes::allUpgradeTypes().begin();
 		i != UpgradeTypes::allUpgradeTypes().end();
 		++i)
 	{
-		upgrades.push_back(make_pair(i->getID(), (ResearchType)currentId));
+		upgrades.push_back(make_pair((*i).getID(), (ResearchType)currentId));
 
-		name = i->getName().c_str();
+		name = (*i).getName().c_str();
 		Enums[currentId] = _strdup(name);
 
 		++currentId;
@@ -84,13 +84,13 @@ void DefinitionCrossMapping::InitTeches()
 	int currentId = (int)RESEARCH_START + TechIdOffset;
 	assert(TechTypes::allTechTypes().size() < (COUNT(ResearchType) / 2));
 
-	for(std::set<TechType>::const_iterator i = TechTypes::allTechTypes().begin();
+	for(TechType::set::iterator i = TechTypes::allTechTypes().begin();
 		i != TechTypes::allTechTypes().end();
 		++i)
 	{
-		m_teches.push_back(make_pair(i->getID(), (ResearchType)currentId));
+		m_teches.push_back(make_pair((*i).getID(), (ResearchType)currentId));
 
-		name = i->getName().c_str();
+		name = (*i).getName().c_str();
 		Enums[currentId] = _strdup(name);
 
 		++currentId;
@@ -102,11 +102,11 @@ void DefinitionCrossMapping::InitTeches()
 void DefinitionCrossMapping::InitPlayers()
 {
 	vector< pair<TID, MetaData::PlayerType> > m_players;
-	set<BWAPI::Player*> &players = Broodwar->getPlayers();
-	BWAPI::Player *pPlayer;
+	const Playerset &players = Broodwar->getPlayers();
+	BWAPI::Player pPlayer;
 
-	for(set<BWAPI::Player*>::const_iterator i = players.begin();
-		i != players.end();
+	for (Playerset::iterator i = players.begin();
+    i != players.end();
 		++i)
 	{
 		pPlayer = (*i);
@@ -126,11 +126,11 @@ void DefinitionCrossMapping::InitEntityIdents()
 {
 	vector< pair<TID, TName> > entities;
 
-	for(std::set<BWAPI::UnitType>::const_iterator i = UnitTypes::allUnitTypes().begin();
+	for(UnitType::set::iterator i = UnitTypes::allUnitTypes().begin();
 		i != UnitTypes::allUnitTypes().end();
 		++i)
 	{
-		entities.push_back(make_pair(i->getID(), i->getName()));
+		entities.push_back(make_pair((*i).getID(), (*i).getName()));
 	}
 
 	EntityIdentMapping = CrossMap<TID, TName>(entities);
@@ -140,11 +140,11 @@ void DefinitionCrossMapping::InitUpgradeIdents()
 {
 	vector< pair<TID, TName> > m_upgrades;
 
-	for(std::set<UpgradeType>::const_iterator i = UpgradeTypes::allUpgradeTypes().begin();
+	for(UpgradeType::set::iterator i = UpgradeTypes::allUpgradeTypes().begin();
 		i != UpgradeTypes::allUpgradeTypes().end();
 		++i)
 	{
-		m_upgrades.push_back(make_pair(i->getID(), i->getName()));
+		m_upgrades.push_back(make_pair((*i).getID(), (*i).getName()));
 	}
 
 	UpgradeIdentMapping = CrossMap<TID, TName>(m_upgrades);
@@ -154,11 +154,11 @@ void DefinitionCrossMapping::InitTechIdents()
 {
 	vector< pair<TID, TName> > m_teches;
 
-	for(std::set<TechType>::const_iterator i = TechTypes::allTechTypes().begin();
+	for(TechType::set::iterator i = TechTypes::allTechTypes().begin();
 		i != TechTypes::allTechTypes().end();
 		++i)
 	{
-		m_teches.push_back(make_pair(i->getID(), i->getName()));
+		m_teches.push_back(make_pair((*i).getID(), (*i).getName()));
 	}
 
 	TechIdentMapping = CrossMap<TID, TName>(m_teches);

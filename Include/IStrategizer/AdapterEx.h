@@ -32,7 +32,7 @@ namespace OLCBP
 	{
 	public:
 		AdapterEx();
-		Vector2 AdaptPositionForBuilding(EntityClassType p_buildingType);
+		MapArea AdaptPositionForBuilding(EntityClassType p_buildingType);
 		TID AdaptWorkerForBuild();
 		TID AdaptBuildingForTraining(EntityClassType p_traineeType);
 		TID AdaptBuildingForResearch(ResearchType p_researchType);

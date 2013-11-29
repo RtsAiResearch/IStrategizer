@@ -389,6 +389,7 @@ namespace MetaData
 		MSG_START			= 0x21900, 
 		MSG_Input,
 		MSG_GameExit,
+		MSG_GameStart,
 		MSG_GameEnd,
 		MSG_BuildingBuilt,
 		MSG_EntityTrained,

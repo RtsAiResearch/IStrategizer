@@ -17,14 +17,10 @@
 #include "StarCraftTechTree.h"
 #endif
 
-#include "bwapi/Player.h"
-#include "bwapi/Unit.h"
-#include "bwapi/Game.h"
-
 using namespace IStrategizer;
 using namespace StarCraftModel;
 
-StarCraftPlayer::StarCraftPlayer(Player *p_pPlayer)  : m_pPlayer(p_pPlayer)
+StarCraftPlayer::StarCraftPlayer(Player p_pPlayer)  : m_pPlayer(p_pPlayer)
 {
     m_id = g_Database.PlayerMapping.GetByFirst( p_pPlayer->getID());
     m_pResources = new StarCraftPlayerResources(m_pPlayer);
@@ -41,7 +37,7 @@ StarCraftPlayer::StarCraftPlayer(Player *p_pPlayer)  : m_pPlayer(p_pPlayer)
 //----------------------------------------------------------------------------------------------
 GameEntity* StarCraftPlayer::FetchEntity(TID p_id)
 {
-	BWAPI::Unit *pUnit = Broodwar->getUnit(p_id);
+	BWAPI::Unit pUnit = Broodwar->getUnit(p_id);
 
 	if (pUnit)
 		return new StarCraftEntity(pUnit);

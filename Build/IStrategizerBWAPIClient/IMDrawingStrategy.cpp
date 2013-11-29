@@ -1,5 +1,6 @@
 #include "IMDrawingStrategy.h"
 #include "InfluenceMap.h"
+#include "OccupanceDataIM.h"
 #include <cassert>
 #include <cmath>
 
@@ -24,12 +25,11 @@ void IMDrawingStrategy::DrawBuildingDataIM(const InfluenceMap *p_pIM, QPainter &
 {
 	QPen		pen(Qt::black, 0);
 	QBrush		occupanceBrush(Qt::blue);
-	QBrush		reserveBrush(Qt::green);
+	QBrush		reserveBrush(Qt::yellow, Qt::Dense5Pattern);
 	int			endX = p_pIM->GridWidth();
 	int			endY = p_pIM->GridHeight();
 	int			dX = p_pIM->CellSide();
 	int			dY = p_pIM->CellSide();
-	TCell		cellInf;
 	const TCell *pIMData = p_pIM->Map();
 
 	if (!(endX && endX && dX && dY))
@@ -44,17 +44,18 @@ void IMDrawingStrategy::DrawBuildingDataIM(const InfluenceMap *p_pIM, QPainter &
 	{
 		for (int y = 0; y < endY; ++y)
 		{
-			cellInf = pIMData[y * endX + x];
+			const TCell &cellInf = pIMData[y * endX + x];
 
-			if (cellInf > 0)
+			if (cellInf.Inf > 0)
 			{
 				p_painter.setBrush(occupanceBrush);
 				p_painter.drawRect(x * dX, y * dY, dX, dY);
 			}
-			else if (cellInf < 0)
+
+			if (cellInf.Data == OccupanceDataIM::CELL_Reserved)
 			{
 				p_painter.setBrush(reserveBrush);
-				p_painter.drawRect(x * dX, y * dY, dX, dY);
+				p_painter.drawEllipse(x * dX, y * dY, dX, dY);
 			}
 		}
 	}
@@ -72,7 +73,6 @@ void IMDrawingStrategy::DrawGroundControlIM(const InfluenceMap *p_pIM, QPainter 
 	int					endY = p_pIM->GridHeight();
 	int					dX = p_pIM->CellSide();
 	int					dY = p_pIM->CellSide();
-	TCell				cellInf;
 	int					intenisty;
 	const TCell			*pIMData = p_pIM->Map();
 	const IMStatistics	&stat = p_pIM->Statistics();
@@ -92,20 +92,20 @@ void IMDrawingStrategy::DrawGroundControlIM(const InfluenceMap *p_pIM, QPainter 
 	{
 		for (int y = 0; y < endY; ++y)
 		{
-			cellInf = pIMData[y * endX + x];
+			const TCell &cellInf = pIMData[y * endX + x];
 			
-			if (cellInf == 0)
+			if (cellInf.Inf == 0)
 				continue;
 
-			if (cellInf > 0)
+			if (cellInf.Inf > 0)
 			{
-				intenisty = (int)fabs(((float)cellInf / (float)stat.MaxInf) * 255.0f);
+				intenisty = (int)fabs(((float)cellInf.Inf / (float)stat.MaxInf) * 255.0f);
 				playerBrush.setColor(QColor(intenisty, 0, 0));
 				p_painter.setBrush(playerBrush);
 			}
-			else if (cellInf < 0)
+			else if (cellInf.Inf < 0)
 			{
-				intenisty = (int)fabs(((float)cellInf / (float)stat.MinInf) * 255.0f);
+				intenisty = (int)fabs(((float)cellInf.Inf / (float)stat.MinInf) * 255.0f);
 				enemyBrush.setColor(QColor(0, 0, intenisty));
 				p_painter.setBrush(enemyBrush);
 			}

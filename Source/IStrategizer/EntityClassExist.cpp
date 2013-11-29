@@ -69,13 +69,13 @@ bool EntityClassExist::Evaluate()
 
 			m_entity = m_player->GetEntity(m_entityObjectId);
 
-			if(_blocking && m_entity->Locked())
+			if(_blocking && m_entity->IsLocked())
 				continue;
 
 			if (m_entity->Type() == _conditionParameters[PARAM_EntityClassId] && MatchesAttributes(m_entityObjectId))
 			{
 				if(_blocking)
-					m_entity->Lock();
+					m_entity->Lock(NULL);
 
 				_entityObjectIds.push_back(m_entityObjectId);
 

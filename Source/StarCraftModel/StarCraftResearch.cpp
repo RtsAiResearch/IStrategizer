@@ -8,8 +8,7 @@
 #include "WorldResources.h"
 #endif
 #include <cassert>
-#include "bwapi/TechType.h"
-#include "bwapi/UpgradeType.h"
+#include "BWAPI.h"
 
 using namespace StarCraftModel;
 using namespace BWAPI;
@@ -18,7 +17,7 @@ void StarCraftResearch::InitializeAux()
 {
 	if (m_isTech)
 	{
-		m_id                = g_Database.UpgradeMapping.GetByFirst(m_tech.getID());
+		m_id                = g_Database.TechMapping.GetByFirst(m_tech.getID());
 		m_requiredResources = new WorldResources(0, m_tech.gasPrice(), m_tech.mineralPrice());
 	}
 	else
