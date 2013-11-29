@@ -9,6 +9,9 @@
 #ifndef VECTOR2_H
 #include "Vector2.h"
 #endif
+#ifndef MAPAREA_H
+#include "MapArea.h"
+#endif
 
 namespace IStrategizer
 {
@@ -19,10 +22,11 @@ using namespace IStrategizer;
 ///> parent=Action
 class BuildActionEx : public Action
 {
-	TID				_buildingId;
-	TID				_builderId;
-	Vector2			_buildPosition;
-	bool			_buildStarted;
+	TID						_buildingId;
+	TID						_builderId;
+	IStrategizer::MapArea	_buildArea;
+	bool					_buildStarted;
+	bool					_buildIssued;
 
 public:
 	BuildActionEx();
@@ -38,7 +42,9 @@ public:
 	UserObject* Prototype() { return new BuildActionEx; }	
 protected:
 	//----------------------------------------------------------------------------------------------
-	int			ExecuteAux(unsigned long p_cycles );
+	void		OnSucccess(unsigned p_cycles);
+	void		OnFailure(unsigned p_cycles);
+	bool		ExecuteAux(unsigned long p_cycles );
 	void		HandleMessage(Message* p_pMsg, bool& p_consumed);
 };
 #endif	// BUILDACTIONEX_H

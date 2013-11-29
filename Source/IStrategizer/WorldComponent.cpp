@@ -9,6 +9,6 @@ using namespace IStrategizer;
 
 void WorldComponent::Update()
 {
-    m_lastUpdate = g_WorldClock.ElapsedCycles();
+    m_lastUpdate = g_WorldClock.ElapsedEngineCycles();
     UpdateAux();
 }

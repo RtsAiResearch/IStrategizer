@@ -36,7 +36,7 @@ public:
 	UserObject* Prototype() { return new TrainAction; }	
 protected:
 	//----------------------------------------------------------------------------------------------
-	int			ExecuteAux(unsigned long p_cycles );
+	bool		ExecuteAux(unsigned long p_cycles );
 	void		HandleMessage(Message* p_pMsg, bool& p_consumed);
 };
 #endif	// TRAINACTION_H

@@ -35,6 +35,6 @@ public:
 	UserObject* Prototype() { return new ResearchAction; }	
 protected:
 	//----------------------------------------------------------------------------------------------
-	int			ExecuteAux(unsigned long p_cycles );
+	bool		ExecuteAux(unsigned long p_cycles );
 };
 #endif	// RESEARCHACTION_H

@@ -45,10 +45,15 @@ struct EntityMessageData
 	int	X;
 	int	Y;
 };
-//----------------------------------------------------------------------------------------------
 typedef DataMessage<EntityMessageData> EntityCreateMessage;
 typedef DataMessage<EntityMessageData> EntityDestroyMessage;
 typedef DataMessage<EntityMessageData> EntityRenegadeMessage;
+//----------------------------------------------------------------------------------------------
+struct GameEndMessageData
+{
+	bool IsWinner;
+};
+typedef DataMessage<GameEndMessageData> GameEndMessage;
 //----------------------------------------------------------------------------------------------
 struct EntityTrainedMessageData
 {

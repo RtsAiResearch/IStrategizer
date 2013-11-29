@@ -7,11 +7,11 @@
 
 using namespace IStrategizer;
 
-const TCell PositiveInfluence = 1;
-const TCell NegativeInfluence = -1;
-const TCell NullInfluence = 0;
+const TInfluence PositiveInfluence = 1;
+const TInfluence NegativeInfluence = -1;
+const TInfluence NullInfluence = 0;
 
-TCell GetInfluenceSign(PlayerType p_playerId)
+TInfluence GetInfluenceSign(PlayerType p_playerId)
 {
 	switch (p_playerId)
 	{
@@ -25,9 +25,9 @@ TCell GetInfluenceSign(PlayerType p_playerId)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDistance, TCell &p_initValue)
+void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDistance, TInfluence &p_initValue)
 {
-	TCell			infSign = GetInfluenceSign((PlayerType)p_pGameObj->Attr(EOATTR_OwnerId));
+	TInfluence		infSign = GetInfluenceSign((PlayerType)p_pGameObj->Attr(EOATTR_OwnerId));
 	EntityClassType typeId;
 	GameType		*pObjType = NULL;
 	
@@ -50,7 +50,7 @@ void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 	Vector2		centerPosition;
 	int			effectiveDistance;
 	int			maxDistance;
-	TCell		initValue;
+	TInfluence	initValue;
 
 	pGameObj = p_pCaller->GetObj(p_pObjEntry);
 	assert(pGameObj);

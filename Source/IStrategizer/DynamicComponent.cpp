@@ -1,7 +1,6 @@
 #ifndef DYNAMICCOMPONENT_H
 #include "DynamicComponent.h"
 #endif
-
 #ifndef WORLDCLOCK_H
 #include "WorldClock.h"
 #endif
@@ -19,9 +18,9 @@ bool DynamicComponent::IsInvalid()
     else
     {
         if(m_globalInvalidation)
-            return g_WorldClock.ElapsedCycles() - m_lastUpdate > m_globalInvalidationInterval; 
+            return g_WorldClock.ElapsedEngineCycles() - m_lastUpdate > m_globalInvalidationInterval; 
         else
-            return g_WorldClock.ElapsedCycles() - m_lastUpdate > m_invalidationInterval; 
+            return g_WorldClock.ElapsedEngineCycles() - m_lastUpdate > m_invalidationInterval; 
     }
 }
 //----------------------------------------------------------------------------------------------

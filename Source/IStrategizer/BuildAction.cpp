@@ -10,6 +10,7 @@
 #include "AbstractAdapter.h"
 #include "CellFeature.h"
 #include "CaseBasedReasonerEx.h"
+#include "IStrategizerException.h"
 
 #ifndef DATAMESSAGE_H
 #include "DataMessage.h"
@@ -98,7 +99,7 @@ void BuildAction::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 void BuildAction::HandleMessage(Message* p_msg, bool& p_consumed)
 {
-	if(State() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_BuildingBuilt) 
+	if(PlanStepEx::State() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_BuildingBuilt) 
 	{
 		DataMessage<PlanStepParameters>* m_msg = static_cast<DataMessage<PlanStepParameters>*>(p_msg);
 		EntityClassExist* m_cond = (EntityClassExist*)_preCondition->operator [](0);
@@ -114,14 +115,16 @@ void BuildAction::HandleMessage(Message* p_msg, bool& p_consumed)
 	}
 }
 //----------------------------------------------------------------------------------------------
-int BuildAction::ExecuteAux(unsigned long p_cycles)
+bool BuildAction::ExecuteAux(unsigned long p_cycles)
 {
-	Vector2 targetPosition = Vector2::Null(); // g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptPositionForBuilding(_targetCell, 0, 0);
-	EntityClassExist* m_cond = (EntityClassExist*)_preCondition->operator [](0);
+	throw NotImplementedException(XcptHere);
 
-	return g_Assist.ExecuteBuild((EntityClassType)_params[PARAM_BuildingClassId], 
-		m_cond->GetEntityIdByIndex(0), 
-		targetPosition, _buildingObjectId);
+	//Vector2 targetPosition = Vector2::Null(); // g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptPositionForBuilding(_targetCell, 0, 0);
+	//EntityClassExist* m_cond = (EntityClassExist*)_preCondition->operator [](0);
+
+	//return g_Assist.ExecuteBuild((EntityClassType)_params[PARAM_BuildingClassId], 
+	//	m_cond->GetEntityIdByIndex(0), 
+	//	targetPosition, _buildingObjectId) == ERR;
 }
 //----------------------------------------------------------------------------------------------
 void BuildAction::Copy(IClonable* p_dest)

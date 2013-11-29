@@ -2,7 +2,7 @@
 #include "StarCraftPlayerResources.h"
 #endif
 
-#include "bwapi/Player.h"
+#include "BWAPI.h"
 
 using namespace StarCraftModel;
 using namespace BWAPI;

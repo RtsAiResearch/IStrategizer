@@ -8,9 +8,9 @@ using namespace IStrategizer;
 using namespace MetaData;
 using namespace std;
 
-const TCell PositiveInfluence = 1;
-const TCell NegativeInfluence = -1;
-const TCell NullInfluence = 0;
+const TInfluence PositiveInfluence = 1;
+const TInfluence NegativeInfluence = -1;
+const TInfluence NullInfluence = 0;
 
 //////////////////////////////////////////////////////////////////////////
 void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
@@ -89,13 +89,17 @@ void OccupanceDataIM::UnregisterGameObj(TID p_objId)
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
 {
-	bool stopSearch;
+	bool stopSearch = false;
+
 	assert(p_pParam);
-	bool &allCellsFree = *((bool*)p_pParam);
+	bool *pAllCellsFree = (bool*)p_pParam;
 
 	assert(p_pCell);
-	allCellsFree &= (*p_pCell == 0);
-	stopSearch = !allCellsFree;
+	if (p_pCell->Inf != NullInfluence || p_pCell->Data != CELL_Free)
+	{
+		stopSearch = true;
+		*pAllCellsFree = false;
+	}
 
 	return stopSearch;
 }
@@ -111,28 +115,60 @@ bool OccupanceDataIM::IsAreaOccupied(const Vector2& p_areaPos, int p_areaWidth, 
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::ReservePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
 {
-	bool stopSearch;
+	bool stopSearch = false;
+
 	assert(p_pParam);
-	bool &allCellsFree = *((bool*)p_pParam);
+	bool *pReserveOk = (bool*)p_pParam;
 
 	assert(p_pCell);
-	allCellsFree &= (*p_pCell == 0);
-	
-	if (allCellsFree)
+	if (p_pCell->Data == CELL_Free)
 	{
-		*p_pCell = NegativeInfluence;
+		p_pCell->Data = CELL_Reserved;
 	}
-
-	stopSearch = !allCellsFree;
+	else
+	{
+		stopSearch = true;
+		*pReserveOk = false;
+	}
 
 	return stopSearch;
 }
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::ReserveArea(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight)
 {
-	bool allCellsFree = true;
+	bool reserveOk = true;
 
-	ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, ReservePredicate, &allCellsFree);
+	ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, ReservePredicate, &reserveOk);
 
-	return allCellsFree;
+	return reserveOk;
+}
+//////////////////////////////////////////////////////////////////////////
+bool OccupanceDataIM::FreePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
+{
+	bool stopSearch = false;
+
+	assert(p_pParam);
+	bool *pFreeOk = (bool*)p_pParam;
+
+	assert(p_pCell);
+	if (p_pCell->Data == CELL_Reserved)
+	{
+		p_pCell->Data = CELL_Free;
+	}
+	else
+	{
+		stopSearch = true;
+		*pFreeOk = false;
+	}
+
+	return stopSearch;
+}
+//////////////////////////////////////////////////////////////////////////
+bool OccupanceDataIM::FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight)
+{
+	bool freeOk = true;
+
+	ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, FreePredicate, &freeOk);
+
+	return freeOk;
 }

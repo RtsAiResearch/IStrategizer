@@ -12,11 +12,12 @@ MessagePump::MessagePump()
 	AddMessage(MSG_EntityCreate);
 	AddMessage(MSG_EntityDestroy);
 	AddMessage(MSG_EntityRenegade);
+	AddMessage(MSG_GameStart);
+	AddMessage(MSG_GameEnd);
 
 	// Obsolete Messages
 	AddMessage(MSG_Log);
 	AddMessage(MSG_GameExit);
-	AddMessage(MSG_GameEnd);
 	AddMessage(MSG_EntityAttacked);
 	AddMessage(MSG_EntityKilled);
 	AddMessage(MSG_EntityTrained);

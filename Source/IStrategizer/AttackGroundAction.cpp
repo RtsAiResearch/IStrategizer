@@ -69,11 +69,12 @@ void AttackGroundAction::InitializePostConditions()
 	_postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-int AttackGroundAction::ExecuteAux(unsigned long p_cycles)
+bool AttackGroundAction::ExecuteAux(unsigned long p_cycles)
 {
-	//Vector2 targetPosition = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptPosition(_targetCell);
-	Vector2 targetPosition = Vector2::Null();
-	EntityClassExist* m_cond = (EntityClassExist*)_aliveCondition->operator [](0);
+	throw NotImplementedException(XcptHere);
+	////Vector2 targetPosition = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptPosition(_targetCell);
+	//Vector2 targetPosition = Vector2::Null();
+	//EntityClassExist* m_cond = (EntityClassExist*)_aliveCondition->operator [](0);
 
-	return g_Assist.ExecuteAttackGround(m_cond->Parameter(PARAM_EntityObjectId), targetPosition);
+	//return g_Assist.ExecuteAttackGround(m_cond->Parameter(PARAM_EntityObjectId), targetPosition);
 }

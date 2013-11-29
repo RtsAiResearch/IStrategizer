@@ -53,7 +53,7 @@ namespace IStrategizer
 		void						GetBases(vector<TID> &p_basesIds);
         virtual const GameStateEx*	State() = 0;
 		void						NotifyMessegeSent(Message* p_pMessage);
-
+		
 	protected:
 		virtual GameEntity*		FetchEntity(TID p_id) = 0;
 		virtual	void			Finalize();

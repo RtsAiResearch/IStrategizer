@@ -33,7 +33,7 @@ public:
 protected:
 	void		InitializeAddressesAux() ;
 	//----------------------------------------------------------------------------------------------
-	int			ExecuteAux(unsigned long p_cycles);
+	bool		ExecuteAux(unsigned long p_cycles);
 	void		InitializePreConditions();
 	void		InitializeAliveConditions();
 	void		InitializeSuccessConditions();

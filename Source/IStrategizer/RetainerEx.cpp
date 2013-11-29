@@ -92,5 +92,6 @@ void RetainerEx::ExecuteCommand(const char* p_cmd)
 //-------------------------------------------------------------------------------------------------------------------------------
 RetainerEx::~RetainerEx()
 {
+	Flush();
     Toolbox::MemoryClean(_caseBase);
 }
