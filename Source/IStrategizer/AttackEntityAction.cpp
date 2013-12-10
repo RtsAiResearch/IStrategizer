@@ -30,6 +30,43 @@ AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 //----------------------------------------------------------------------------------------------
 AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters, CellFeature *p_cellFeature) : Action(ACTIONEX_AttackEntity, p_parameters)
 {
+
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::OnSucccess(unsigned p_cycles)
+{
+	
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::OnFailure(unsigned p_cycles)
+{
+	
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
+{
+	
+}
+//----------------------------------------------------------------------------------------------
+bool AttackEntityAction::PreconditionsSatisfied()
+{
+	return _preCondition->Evaluate();
+}
+//----------------------------------------------------------------------------------------------
+bool AttackEntityAction::AliveConditionsSatisfied()
+{
+	return _aliveCondition->Evaluate();
+}
+//----------------------------------------------------------------------------------------------
+bool AttackEntityAction::SuccessConditionsSatisfied()
+{
+	return _successCondition->Evaluate();
+}
+//----------------------------------------------------------------------------------------------
+bool AttackEntityAction::ExecuteAux(unsigned long p_cycles)
+{
+	return g_Assist.ExecuteAttackEntity(((ConditionEx*)_aliveCondition->At(0))->Parameter(PARAM_EntityObjectId), 
+		PLAYER_Enemy, ((ConditionEx*)_aliveCondition->At(1))->Parameter(PARAM_EntityObjectId));
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePreConditions()
@@ -76,16 +113,8 @@ void AttackEntityAction::InitializePostConditions()
 {
 	vector<Expression*> m_terms;
 	
-	//FIXME : LFHD use this condition
-	//m_terms.push_back(new CheckPositionFilterCount(PLAYER_Enemy, FILTER_AnyUnit, RELOP_Equal, 0, PositionFeatureVector::Null()));
+	m_terms.push_back(new CheckPositionFilterCount(PLAYER_Enemy, FILTER_AnyUnit, RELOP_Equal, 0, Vector2::Null()));
 	_postCondition = new And(m_terms);
-}
-//----------------------------------------------------------------------------------------------
-bool AttackEntityAction::ExecuteAux(unsigned long p_cycles)
-{
-	throw NotImplementedException(XcptHere);
-	/*return g_Assist.ExecuteAttackEntity(((ConditionEx*)_aliveCondition->At(0))->Parameter(PARAM_EntityObjectId), 
-		PLAYER_Enemy, ((ConditionEx*)_aliveCondition->At(1))->Parameter(PARAM_EntityObjectId));*/
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::Update(unsigned long p_cycles)
@@ -108,3 +137,12 @@ void AttackEntityAction::Copy(IClonable* p_dest)
 
     //_targetEntityPosDescription.Copy(&m_dest->_targetEntityPosDescription);
 }
+//----------------------------------------------------------------------------------------------
+/*
+bool AttackEntityAction::ExecuteAux(unsigned long p_cycles)
+{
+	throw NotImplementedException(XcptHere);
+	return g_Assist.ExecuteAttackEntity(((ConditionEx*)_aliveCondition->At(0))->Parameter(PARAM_EntityObjectId), 
+		PLAYER_Enemy, ((ConditionEx*)_aliveCondition->At(1))->Parameter(PARAM_EntityObjectId));
+}
+*/
