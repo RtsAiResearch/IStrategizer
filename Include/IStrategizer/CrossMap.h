@@ -88,18 +88,30 @@ namespace DataStructure
 		//----------------------------------------------------------------------------------------------
 		const T2& GetByFirst(const T1& p_key) throw(KeyNotFoundException)
 		{
-            /*
 			if (!ContainsFirst(p_key))
             {
-				throw KeyNotFoundException(XcptHere, );
-            */
+                std::string xcptWhat;
+                xcptWhat += "Key ";
+                xcptWhat += p_key;
+                xcptWhat += " not found";
+
+                throw KeyNotFoundException(XcptHere, xcptWhat.c_str());
+            }
+
 			return _data[_firstMap[p_key]].second; 
 		};
 		//----------------------------------------------------------------------------------------------
 		const T1& GetBySecond(const T2& p_key) throw(KeyNotFoundException)
 		{
 			if (!ContainsSecond(p_key))
-				throw KeyNotFoundException(XcptHere);
+            {
+                std::string xcptWhat;
+                xcptWhat += "Key ";
+                xcptWhat += p_key;
+                xcptWhat += " not found";
+
+				throw KeyNotFoundException(XcptHere, xcptWhat.c_str());
+            }
 
 			return _data[_secondMap[p_key]].first; 
 		};
@@ -176,13 +188,13 @@ namespace DataStructure
 			}
 		}
 		//----------------------------------------------------------------------------------------------
-		bool TryGetBySecond(const T2& p_key1, T1& p_key2)
+		bool TryGetBySecond(const T2& p_key2, T1& p_key1)
 		{ 
-			hash_map<T1, int>::const_iterator itr = _secondMap.find(p_key1);
+			hash_map<T2, int>::const_iterator itr = _secondMap.find(p_key2);
 
 			if (itr != _secondMap.end())
 			{
-				p_key2 = _data[(*itr).second].first;
+				p_key1 = _data[(*itr).second].first;
 				return true;
 			}
 			else
