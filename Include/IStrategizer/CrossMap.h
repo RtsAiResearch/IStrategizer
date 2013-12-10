@@ -23,6 +23,9 @@ namespace DataStructure
 		class KeyNotFoundException : public Exception
 		{
 		public:
+            KeyNotFoundException(ExceptionLocation p_location, const char* p_what)
+                : Exception(p_location, p_what) {}
+
 			KeyNotFoundException(ExceptionLocation p_location)
 				: Exception(p_location, "KeyNotFoundException") {}
 		};
@@ -83,18 +86,32 @@ namespace DataStructure
 			}
 		}
 		//----------------------------------------------------------------------------------------------
-		T2 GetByFirst(const T1& p_key) throw(KeyNotFoundException)
+		const T2& GetByFirst(const T1& p_key) throw(KeyNotFoundException)
 		{
 			if (!ContainsFirst(p_key))
-				throw KeyNotFoundException(XcptHere);
+            {
+                std::string xcptWhat;
+                xcptWhat += "Key ";
+                xcptWhat += p_key;
+                xcptWhat += " not found";
+
+                throw KeyNotFoundException(XcptHere, xcptWhat.c_str());
+            }
 
 			return _data[_firstMap[p_key]].second; 
 		};
 		//----------------------------------------------------------------------------------------------
-		T1 GetBySecond(const T2& p_key) throw(KeyNotFoundException)
+		const T1& GetBySecond(const T2& p_key) throw(KeyNotFoundException)
 		{
 			if (!ContainsSecond(p_key))
-				throw KeyNotFoundException(XcptHere);
+            {
+                std::string xcptWhat;
+                xcptWhat += "Key ";
+                xcptWhat += p_key;
+                xcptWhat += " not found";
+
+				throw KeyNotFoundException(XcptHere, xcptWhat.c_str());
+            }
 
 			return _data[_secondMap[p_key]].first; 
 		};
@@ -171,13 +188,13 @@ namespace DataStructure
 			}
 		}
 		//----------------------------------------------------------------------------------------------
-		bool TryGetBySecond(const T2& p_key1, T1& p_key2)
+		bool TryGetBySecond(const T2& p_key2, T1& p_key1)
 		{ 
-			hash_map<T1, int>::const_iterator itr = _secondMap.find(p_key1);
+			hash_map<T2, int>::const_iterator itr = _secondMap.find(p_key2);
 
 			if (itr != _secondMap.end())
 			{
-				p_key2 = _data[(*itr).second].first;
+				p_key1 = _data[(*itr).second].first;
 				return true;
 			}
 			else

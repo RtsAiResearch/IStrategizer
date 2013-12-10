@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <ostream>
+#include <sstream>
 
 namespace IStrategizer
 {
@@ -22,15 +23,31 @@ namespace IStrategizer
 	{
 	public:
 		Exception(ExceptionLocation p_location)
-			: std::exception("Exception"), m_location(p_location) {}
+			: std::exception("Exception"), m_location(p_location) 
+        {
+            Init();
+        }
 
 		Exception(ExceptionLocation p_location, const char* p_pWhat)
-			: std::exception(p_pWhat), m_location(p_location) {}
+			: std::exception(p_pWhat), m_location(p_location) 
+        {
+            Init();
+        }
 
-		void To(std::ostream& p_out);
+		void To(std::ostream& p_out) const;
+        const char* what() const { return m_formattedXcpt.c_str(); }
 
 	protected:
+        void Init()
+        {
+            std::stringstream sstream;
+            To(sstream);
+
+            m_formattedXcpt = sstream.str();
+        }
+
 		ExceptionLocation	m_location;
+        std::string         m_formattedXcpt;
 	};
 
 	class InvalidParameterException : public Exception
