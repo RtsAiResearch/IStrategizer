@@ -27,8 +27,42 @@ AttackGroundAction::AttackGroundAction(const PlanStepParameters& p_parameters, C
 void  AttackGroundAction::InitializeAddressesAux()
 {
 	Action::InitializeAddressesAux();
-	/*AddMemberAddress(1,
-		&_targetCell);*/
+	/*AddMemberAddress(1, &_targetCell);*/
+}
+//----------------------------------------------------------------------------------------------
+void AttackGroundAction::OnSucccess(unsigned p_cycles)
+{
+	
+}
+//----------------------------------------------------------------------------------------------
+void AttackGroundAction::OnFailure(unsigned p_cycles)
+{
+	
+}
+//----------------------------------------------------------------------------------------------
+void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
+{
+	
+}
+//----------------------------------------------------------------------------------------------
+bool AttackGroundAction::PreconditionsSatisfied()
+{
+	return true;
+}
+//----------------------------------------------------------------------------------------------
+bool AttackGroundAction::AliveConditionsSatisfied()
+{
+	return true;
+}
+//----------------------------------------------------------------------------------------------
+bool AttackGroundAction::SuccessConditionsSatisfied()
+{
+	return true;
+}
+//----------------------------------------------------------------------------------------------
+bool AttackGroundAction::ExecuteAux(unsigned long p_cycles)
+{
+	return true;
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializeSuccessConditions()
@@ -69,6 +103,7 @@ void AttackGroundAction::InitializePostConditions()
 	_postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
+/*
 bool AttackGroundAction::ExecuteAux(unsigned long p_cycles)
 {
 	throw NotImplementedException(XcptHere);
@@ -78,3 +113,4 @@ bool AttackGroundAction::ExecuteAux(unsigned long p_cycles)
 
 	//return g_Assist.ExecuteAttackGround(m_cond->Parameter(PARAM_EntityObjectId), targetPosition);
 }
+*/

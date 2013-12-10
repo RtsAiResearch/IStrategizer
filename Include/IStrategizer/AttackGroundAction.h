@@ -16,12 +16,15 @@ using namespace IStrategizer;
 ///> parent=Action
 class AttackGroundAction : public Action
 {
-	
+	////> type=CellFeature*
+	CellFeature	*_targetCell;
+
 public:
                 AttackGroundAction();
 				AttackGroundAction(const PlanStepParameters& p_parameters, CellFeature* p_targetCell);
-	////> type=CellFeature*
-	CellFeature	*_targetCell;
+	bool		PreconditionsSatisfied();
+	bool		AliveConditionsSatisfied();
+	bool		SuccessConditionsSatisfied();
 	//----------------------------------------------------------------------------------------------
 	// Serialization
 public:
@@ -33,7 +36,10 @@ public:
 protected:
 	void		InitializeAddressesAux() ;
 	//----------------------------------------------------------------------------------------------
-	bool		ExecuteAux(unsigned long p_cycles);
+	void		OnSucccess(unsigned p_cycles);
+	void		OnFailure(unsigned p_cycles);
+	bool		ExecuteAux(unsigned long p_cycles );
+	void		HandleMessage(Message* p_pMsg, bool& p_consumed);
 	void		InitializePreConditions();
 	void		InitializeAliveConditions();
 	void		InitializeSuccessConditions();

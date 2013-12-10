@@ -22,6 +22,9 @@ public:
 	            AttackEntityAction(const PlanStepParameters& p_parameters, CellFeature *p_cellFeature);
     void        Copy(IClonable* p_dest);
 	void		Update(unsigned long p_cycles);
+	bool		PreconditionsSatisfied();
+	bool		AliveConditionsSatisfied();
+	bool		SuccessConditionsSatisfied();
 	//----------------------------------------------------------------------------------------------
 	// Serialization
 public:
@@ -31,6 +34,9 @@ public:
 protected:
 	//----------------------------------------------------------------------------------------------
 	bool		ExecuteAux(unsigned long p_cycles);
+	void		OnSucccess(unsigned p_cycles);
+	void		OnFailure(unsigned p_cycles);
+	void		HandleMessage(Message* p_pMsg, bool& p_consumed);
 	void		InitializePreConditions();
 	void		InitializeAliveConditions();
 	void		InitializeSuccessConditions();
