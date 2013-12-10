@@ -11,8 +11,8 @@
 
 using namespace std;
 
-#ifndef MESSAGEPUMPOBSERVER_H
-#include "MessagePumpObserver.h"
+#ifndef ENGINECOMPONENT_H
+#include "EngineComponent.h"
 #endif
 
 class PlanGraph;
@@ -29,7 +29,7 @@ namespace OLCBP
 {
 	class PlanTreeNodeEx;
 	class CaseBasedReasonerEx;
-	class OnlinePlanExpansionExecutionEx : public MessagePumpObserver
+	class OnlinePlanExpansionExecutionEx : public EngineComponent
 	{
 
 	public:

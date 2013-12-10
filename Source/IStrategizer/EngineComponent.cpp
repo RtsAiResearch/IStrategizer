@@ -13,8 +13,8 @@
 
 EngineComponent::EngineComponent(const char* p_name)  : TraceableComponent(p_name)
 {
+    LogInfo("initializing...");
     g_MessagePump.RegisterForMessage(MSG_Input, this);
-    Log(LOG_Information, "initializing...");
 }
 //----------------------------------------------------------------------------------------------
 void EngineComponent::NotifyMessegeSent(Message *p_message)
@@ -30,6 +30,5 @@ void EngineComponent::NotifyMessegeSent(Message *p_message)
 //----------------------------------------------------------------------------------------------
 EngineComponent::~EngineComponent()
 {
-    Log(LOG_Information, "finalizing...");
-    WriteLog(_name);
+    LogInfo("finalizing...");
 }

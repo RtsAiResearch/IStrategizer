@@ -45,6 +45,7 @@ using namespace IStrategizer;
 using namespace OLCBP;
 
 OnlinePlanExpansionExecutionEx::OnlinePlanExpansionExecutionEx(GoalEx* p_initialGoal, CaseBasedReasonerEx *p_casedBasedReasoner)
+    : EngineComponent("OnlinePlanner")
 {
 	_caseBasedReasoner = p_casedBasedReasoner;
 	_planRoot = PlanTreeNodeEx::CreatePlanRoot(p_initialGoal);

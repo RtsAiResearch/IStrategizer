@@ -14,8 +14,8 @@ using namespace std;
 class EngineComponent : public TraceableComponent, public MessagePumpObserver
 {
 protected:
+    virtual void ExecuteCommand(const char* p_cmd) { LogError("Command '%s' not supported", p_cmd); }
 
-    virtual void ExecuteCommand(const char* p_cmd) = 0;
 public:
             EngineComponent(const char* p_name);
     void    NotifyMessegeSent(Message* p_message);

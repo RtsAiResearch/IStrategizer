@@ -26,7 +26,7 @@ public:
 	void UnregisterForAllMessages(MessagePumpObserver* p_observer);
     void AddMessage(MetaData::MessageType p_messageTypeID);
     void OnMessageSent(Message* p_message);
-    ~MessagePumpSubject();
+    virtual ~MessagePumpSubject();
 };
 
 #endif // MESSAGEPUMPSUBJECT_H
