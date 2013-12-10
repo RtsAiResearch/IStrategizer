@@ -114,10 +114,10 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Build(EntityClassType p_buildingClassId, int p_x, int p_y) 
 {
-  Unit            builder = m_unit;
-  TilePosition	  pos(TilePositionFromUnitPosition(p_x), TilePositionFromUnitPosition(p_y));
+  Unit				builder = m_unit;
+  TilePosition		pos(TilePositionFromUnitPosition(p_x), TilePositionFromUnitPosition(p_y));
   BWAPI::UnitType	type;
-  TID             gameTypeId;
+  TID				gameTypeId;
   string	        typeName;
 
   gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
@@ -151,7 +151,7 @@ bool StarCraftEntity::AttackEntity(MetaData::PlayerType p_opponentIndex, int p_t
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 {
-  Unit			building = m_unit;
+  Unit			    building = m_unit;
   TID				unitTypeId;
   string			typeName;
   BWAPI::UnitType	type;
