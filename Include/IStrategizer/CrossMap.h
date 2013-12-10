@@ -23,6 +23,9 @@ namespace DataStructure
 		class KeyNotFoundException : public Exception
 		{
 		public:
+            KeyNotFoundException(ExceptionLocation p_location, const char* p_what)
+                : Exception(p_location, p_what) {}
+
 			KeyNotFoundException(ExceptionLocation p_location)
 				: Exception(p_location, "KeyNotFoundException") {}
 		};
@@ -83,15 +86,17 @@ namespace DataStructure
 			}
 		}
 		//----------------------------------------------------------------------------------------------
-		T2 GetByFirst(const T1& p_key) throw(KeyNotFoundException)
+		const T2& GetByFirst(const T1& p_key) throw(KeyNotFoundException)
 		{
+            /*
 			if (!ContainsFirst(p_key))
-				throw KeyNotFoundException(XcptHere);
-
+            {
+				throw KeyNotFoundException(XcptHere, );
+            */
 			return _data[_firstMap[p_key]].second; 
 		};
 		//----------------------------------------------------------------------------------------------
-		T1 GetBySecond(const T2& p_key) throw(KeyNotFoundException)
+		const T1& GetBySecond(const T2& p_key) throw(KeyNotFoundException)
 		{
 			if (!ContainsSecond(p_key))
 				throw KeyNotFoundException(XcptHere);
