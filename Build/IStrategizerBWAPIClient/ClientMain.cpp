@@ -16,7 +16,7 @@
 #include "IMSystemManager.h"
 #include "InfluenceMap.h"
 #include "IMViewWidget.h"
-#include "QtGui/QGridLayout"
+#include <QGridLayout>
 #include "WorldClock.h"
 #include <iostream>
 
@@ -28,7 +28,7 @@ using namespace std;
 #define TilePositionFromUnitPosition(UnitPos)	(UnitPos / 32)
 #define UnitPositionFromTilePosition(TilePos)	(TilePos * 32)
 
-ClientMain::ClientMain(QWidget *parent, Qt::WFlags flags)
+ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
 : QMainWindow(parent, flags), m_pIStrategizer(NULL), m_pGameModel(NULL), m_isLearning(true)
 {
 	ui.setupUi(this);

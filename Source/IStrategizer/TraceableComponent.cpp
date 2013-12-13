@@ -4,28 +4,28 @@
 
 #include <fstream>
 #include <cassert>
+#include <crtdefs.h>
+#include <Windows.h>
 
-void TraceableComponent::Log(LogType p_type, string p_log)
+void TraceableComponent::Log(LogType p_type, const char* p_format, ...)
 {
-    char buffer[LogBufferMax];
-    const char* logTypeName[] = { "warning", "error", "information" };
+    char buffer1[LogBufferMax];
+    char buffer2[LogBufferMax];
+    const char* logTypeName[] = { "Warning", "Error", "Info" };
+    
+    va_list formatArgs;
+    va_start(formatArgs, p_format);
+    vsprintf_s(buffer1, p_format, formatArgs);
+    va_end(formatArgs);
 
-    sprintf_s(buffer, LogBufferMax, "[%d] %s: %s\n", ++_lastLogIdx, logTypeName[(int)p_type], p_log.c_str());
-    _logStream << buffer;
+    SYSTEMTIME sysTime;
+    GetLocalTime(&sysTime);
 
-    if(_lastLogIdx + 1 % FlushRate)
-        WriteLog(_name);
-}
-//----------------------------------------------------------------------------------------------
-void TraceableComponent::WriteLog(string p_filePath)
-{
-    fstream pen;
-    p_filePath += "-log.txt";
-    pen.open(p_filePath.c_str(), ios::out);
-    assert(pen.is_open());
+    sprintf_s(buffer2, LogBufferMax, "[%s] %s@%02d:%02d:%02d.%03d: %s\n",
+        _name,
+        logTypeName[(unsigned)p_type],
+        sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
+        buffer1);
 
-    string buffer = _logStream.str();
-    pen.write(buffer.c_str(), buffer.size());
-
-    pen.close();
+    printf_s(buffer2);
 }

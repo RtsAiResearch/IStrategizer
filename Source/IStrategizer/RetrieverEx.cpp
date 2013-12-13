@@ -33,7 +33,7 @@ using namespace OLCBP;
 
 const int KNeighbours = 4;
 
-RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pRetainer, "retriever")
+RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pRetainer, "Retriever")
 {
 }
 //----------------------------------------------------------------------------------------------

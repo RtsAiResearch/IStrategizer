@@ -6,9 +6,6 @@
 #include <vector>
 using namespace std;
 
-const int LogBufferMax  = 256;
-const int FlushRate     = 1;
-
 class TraceableComponent
 {
 protected:
@@ -16,17 +13,22 @@ protected:
     {
         LOG_Warning,
         LOG_Error,
-        LOG_Information,
+        LOG_Info,
     };
 
     const char*     _name;
-    stringstream    _logStream;
-    int             _lastLogIdx;
-    void Log(LogType p_type, string p_log);
+    virtual void Log(LogType p_type, const char* p_format, ...);
+    const char* Name() { return _name; }
+
+#define LogWarning(Format, ...)   Log(LOG_Warning, __VA_ARGS__)
+#define LogError(Format, ...)     Log(LOG_Error, Format, __VA_ARGS__)
+#define LogInfo(Format, ...)      Log(LOG_Info, Format, __VA_ARGS__)
+
 public:
-                        TraceableComponent(const char* p_name) : _name(p_name), _lastLogIdx(-1) {}
-    void                WriteLog(string p_filePath);
-    const stringstream& GetLog() const { return _logStream; }
+    const static unsigned LogBufferMax  = 256;
+    const static unsigned FlushRate     = 4;
+
+                        TraceableComponent(const char* p_name) : _name(p_name) {}
     virtual             ~TraceableComponent() {}
 };
 

@@ -113,7 +113,6 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
 	unsigned			searchRadius;
 	Vector2				colonyCenter;
 	SpiralSearchData	searchData;
-	bool				areaReserved;
 
 	pGameType = g_Game->GetEntityType(p_buildingType);
 	assert(pGameType);
