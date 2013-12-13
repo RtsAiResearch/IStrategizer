@@ -1,7 +1,7 @@
 #ifndef CLIENTMAIN_H
 #define CLIENTMAIN_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include "ui_ClientMain.h"
 #include "BwapiClient.h"
 #include <Windows.h>
@@ -19,7 +19,7 @@ class ClientMain : public QMainWindow, public BwapiClient
 	Q_OBJECT
 
 public:
-	ClientMain(QWidget *parent = 0, Qt::WFlags flags = 0);
+	ClientMain(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~ClientMain();
 
 protected:

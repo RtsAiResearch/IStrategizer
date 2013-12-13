@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "ClientMain.h"
 #include "Console.h"
 
