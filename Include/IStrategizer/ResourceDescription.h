@@ -3,7 +3,7 @@
 
 
 #include "MetaData.h"
-using namespace MetaData;
+using namespace IStrategizer;
 
 namespace IStrategizer
 {

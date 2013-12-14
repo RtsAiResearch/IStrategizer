@@ -14,7 +14,7 @@ class TripleEx;
 class TraceEx;
 class Action;
 
-namespace OLCBP
+namespace IStrategizer
 {
     class RetainerEx;
 }
@@ -25,7 +25,7 @@ class LearningFromHumanDemonstrationEx
 {
 private:
     CaseLearningHelper*	_helper;
-    OLCBP::RetainerEx*  _retainer;
+    IStrategizer::RetainerEx*  _retainer;
 
     vector<RawCaseEx*>	LearnRawCases(vector<TraceEx*>& p_traces);
     void				AddAction(RawCaseEx* p_case, int p_actionId, PlanStepParameters& p_params, int p_traceId);

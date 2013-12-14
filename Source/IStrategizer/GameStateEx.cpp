@@ -3,7 +3,7 @@
 #include "MetaData.h"
 #endif
 
-using namespace MetaData;
+using namespace IStrategizer;
 
 GameStateEx::GameStateEx()
 {

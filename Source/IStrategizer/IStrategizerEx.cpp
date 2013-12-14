@@ -27,7 +27,7 @@
 #include "IMSystemManager.h"
 
 using namespace IStrategizer;
-using namespace OLCBP;
+using namespace IStrategizer;
 using namespace IStrategizer;
 
 IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_phase, RtsGame* p_rtsGame)
@@ -37,7 +37,7 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_pha
     g_Game->Init();
 
 	SerializationEssentials::Init();
-	MetaData::Init();
+	IStrategizer::Init();
 
 	PlanStepParameters params;
 	params[PARAM_PlayerId] = _self;

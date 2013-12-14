@@ -28,7 +28,7 @@
 
 #include "CellFeature.h"
 
-using namespace MetaData;
+using namespace IStrategizer;
 using namespace IStrategizer;
 
 class ConditionEx;

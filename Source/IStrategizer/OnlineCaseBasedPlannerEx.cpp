@@ -46,9 +46,9 @@
 #include "CellFeature.h"
 #include "BuildAction.h"
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
-OLCBP::OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner = NULL;
+IStrategizer::OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner = NULL;
 
 OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() : _caseBasedReasoner(NULL), _onlineExpansionExecution(NULL)
 {

@@ -6,7 +6,7 @@
 #endif
 #include <cstdio>
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
 void Reviser::Revise(CaseEx* p_case, bool p_succeeded)
 {

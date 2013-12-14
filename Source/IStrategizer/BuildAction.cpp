@@ -19,7 +19,7 @@
 #include "False.h"
 #endif
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
 BuildAction::BuildAction() : Action(ACTIONEX_Build), _targetCell(NULL)
 {

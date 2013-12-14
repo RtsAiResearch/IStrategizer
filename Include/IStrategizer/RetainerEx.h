@@ -8,7 +8,7 @@
 #include <string>
 using namespace std;
 
-namespace OLCBP
+namespace IStrategizer
 {
     class RetainerEx : public AbstractRetainer
     {

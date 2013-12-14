@@ -5,21 +5,12 @@
 #include "StaticComponent.h"
 #endif
 
-#include <string>
-#include <vector>
-using namespace std;
-
-namespace MetaData
-{
-    enum ResearchType;
-}
-
 namespace IStrategizer
 {
+	enum ResearchType;
     class WorldResources;
     class GameDependency;
 
-    using namespace MetaData;
     class GameResearch : public StaticComponent
     {
     protected:
@@ -27,7 +18,7 @@ namespace IStrategizer
         WorldResources* m_requiredResources;
 
     public:
-		GameResearch() : m_requiredResources(NULL) {}
+		GameResearch() : m_requiredResources(nullptr) {}
         int             Id() const { return m_id; }
         WorldResources* RequiredResources() const { return m_requiredResources; }
     };

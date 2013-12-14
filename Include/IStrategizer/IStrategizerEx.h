@@ -6,7 +6,7 @@
 #include "MessagePumpObserver.h"
 
 using namespace std;
-using namespace MetaData;
+using namespace IStrategizer;
 
 class MessagePump;
 class TraceEx;
@@ -14,7 +14,7 @@ class CaseBaseEx;
 class LearningFromHumanDemonstrationEx;
 class GameAPI;
 
-namespace OLCBP
+namespace IStrategizer
 {
     class OnlineCaseBasedPlannerEx;
 }
@@ -23,7 +23,7 @@ namespace IStrategizer
     class RtsGame;
 }
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
 struct IStrategizerParam
 {
@@ -46,6 +46,7 @@ public:
             IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_phaseType, IStrategizer::RtsGame* p_rtsGame);
 	void	Update(unsigned long p_gameCycle);
 	void	OfflineLearning();
+	const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
 	void	NotifyMessegeSent(Message* p_message);
             ~IStrategizerEx();
 };

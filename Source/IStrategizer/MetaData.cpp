@@ -1,6 +1,6 @@
 #include "MetaData.h"
 
-namespace MetaData
+namespace IStrategizer
 {
 	const char* Enums[ENUMS_SIZE] = { NULL };
 

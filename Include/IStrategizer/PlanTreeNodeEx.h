@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <set>
+#include <queue>
 #include <cassert>
 
 class PlanStepEx;
@@ -10,7 +11,7 @@ class GoalEx;
 class Action;
 class CaseEx;
 
-namespace OLCBP
+namespace IStrategizer
 {
 	enum PlanTreeNodeType
 	{
@@ -22,14 +23,16 @@ namespace OLCBP
 	class PlanTreeNodeEx
 	{
 	public:
-		typedef std::vector<PlanTreeNodeEx*> NodeList;
-		typedef std::set<PlanTreeNodeEx*> NodeSet;
+		typedef std::vector<PlanTreeNodeEx*> List;
+		typedef std::set<PlanTreeNodeEx*> Set;
+		typedef std::queue<PlanTreeNodeEx*> Queue;
+
 		PlanTreeNodeEx(PlanStepEx* p_pPlanStep, PlanTreeNodeEx* p_pSubPlanGoal);
 
 		inline PlanTreeNodeType Type(){return _type;}
-		inline const NodeList& Children(){ return _children; }
-		inline const NodeList& Parents(){ return _parents; }
-		inline const NodeList& BelongingSubPlanChildren() { return _belongingSubPlanChildren; }
+		inline const List& Children(){ return _children; }
+		inline const List& Parents(){ return _parents; }
+		inline const List& BelongingSubPlanChildren() { return _belongingSubPlanChildren; }
 		inline PlanStepEx* PlanStep(){ return _pPlanStep; }
 		inline bool IsOpen() { return _isOpen; }
 		inline bool IsReady() { return _parents.size() == _readyParents.size(); }
@@ -62,10 +65,10 @@ namespace OLCBP
 		PlanStepEx				*_pPlanStep;
 		PlanTreeNodeEx			*_pSubPlanGoal;
 		PlanTreeNodeType		_type;
-		NodeList				_parents;
-		NodeList				_children;
-		NodeList				_belongingSubPlanChildren;
-		NodeSet					_readyParents;
+		List				_parents;
+		List				_children;
+		List				_belongingSubPlanChildren;
+		Set					_readyParents;
 		bool					_isOpen;
 		CaseEx					*_pBelongingCase;
 	};

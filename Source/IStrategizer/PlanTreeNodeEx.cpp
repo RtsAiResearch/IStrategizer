@@ -18,7 +18,7 @@
 #include <cassert>
 #include <Windows.h>
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
 //////////////////////////////////////////////////////////////////////////
 void* PlanTreeNodeEx::operator new (size_t p_size)
@@ -114,9 +114,9 @@ void PlanTreeNodeEx::AddParent(PlanTreeNodeEx *p_pParent)
 //////////////////////////////////////////////////////////////////////////
 void PlanTreeNodeEx::CrossUnlinkChildren()
 {
-	NodeList tempChildren(_children);
+	List tempChildren(_children);
 
-	for (NodeList::iterator itr = tempChildren.begin();
+	for (List::iterator itr = tempChildren.begin();
 		itr != tempChildren.end(); ++itr)
 	{
 		CrossUnlinkChild(*itr);
@@ -127,7 +127,7 @@ void PlanTreeNodeEx::CrossUnlinkChildren()
 //////////////////////////////////////////////////////////////////////////
 void PlanTreeNodeEx::DeleteChild(PlanTreeNodeEx* p_pChild)
 {
-	NodeList::iterator itrWhere = find(_children.begin(), _children.end(), p_pChild);
+	List::iterator itrWhere = find(_children.begin(), _children.end(), p_pChild);
 	assert(itrWhere != _children.end());
 
 	_children.erase(itrWhere);
@@ -135,7 +135,7 @@ void PlanTreeNodeEx::DeleteChild(PlanTreeNodeEx* p_pChild)
 //////////////////////////////////////////////////////////////////////////
 void PlanTreeNodeEx::DeleteParent(PlanTreeNodeEx* p_pParent)
 {
-	NodeList::iterator itrWhere = find(_parents.begin(), _parents.end(), p_pParent);
+	List::iterator itrWhere = find(_parents.begin(), _parents.end(), p_pParent);
 	assert(itrWhere != _parents.end());
 
 	_parents.erase(itrWhere);

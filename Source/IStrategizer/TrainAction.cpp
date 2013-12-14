@@ -14,9 +14,9 @@
 #include "GameType.h"
 #include "GameEntity.h"
 
-using namespace OLCBP;
 using namespace IStrategizer;
-using namespace MetaData;
+using namespace IStrategizer;
+using namespace IStrategizer;
 
 TrainAction::TrainAction() : Action(ACTIONEX_Train), _trained(false)
 {

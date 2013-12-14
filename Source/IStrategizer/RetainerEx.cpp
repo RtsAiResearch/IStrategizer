@@ -17,7 +17,7 @@
 #include <fstream>
 using namespace std;
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
 RetainerEx::RetainerEx(string p_caseBasePath) : AbstractRetainer("Retainer"), _caseBasePath(p_caseBasePath), _caseBaseLoaded(false)
 {

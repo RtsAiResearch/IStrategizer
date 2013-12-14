@@ -5,7 +5,7 @@
 #include "Vector2.h"
 
 using namespace IStrategizer;
-using namespace MetaData;
+using namespace IStrategizer;
 using namespace std;
 
 const TInfluence PositiveInfluence = 1;

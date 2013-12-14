@@ -9,7 +9,7 @@ class GoalEx;
 class CaseEx;
 class GameStateEx;
 
-namespace OLCBP
+namespace IStrategizer
 {
 	class AbstractRetainer;
 

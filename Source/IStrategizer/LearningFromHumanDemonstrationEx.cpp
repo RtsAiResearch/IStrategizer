@@ -23,7 +23,7 @@
 #include <functional>
 
 using namespace std;
-using namespace OLCBP;
+using namespace IStrategizer;
 
 LearningFromHumanDemonstrationEx::LearningFromHumanDemonstrationEx(PlayerType p_player, PlayerType p_enemy)
 {

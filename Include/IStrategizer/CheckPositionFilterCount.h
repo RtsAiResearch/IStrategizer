@@ -6,7 +6,7 @@
 #include "MetaData.h"
 #include "Vector2.h"
 
-using namespace MetaData;
+using namespace IStrategizer;
 
 
 ///> class=CheckPositionFilterCount

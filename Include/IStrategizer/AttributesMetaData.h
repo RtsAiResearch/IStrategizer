@@ -5,7 +5,7 @@
 #include "RootMetaData.h"
 #endif
 
-namespace MetaData
+namespace IStrategizer
 {
 	//---------------------------------------------------------------------------
 #define Prefix_EntityObjectAttribute EOATTR

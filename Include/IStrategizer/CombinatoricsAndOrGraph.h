@@ -10,7 +10,7 @@
 #ifndef METADATA_H
 	#include "MetaData.h"
 #endif
-using namespace MetaData;
+using namespace IStrategizer;
 
 #ifndef DELEGATE_H
 	#include "Delegate.h"

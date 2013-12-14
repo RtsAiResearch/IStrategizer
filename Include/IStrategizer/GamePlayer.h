@@ -17,26 +17,19 @@
 #include "MessagePumpObserver.h"
 #endif
 #include <vector>
-using namespace std;
-
-namespace MetaData
-{
-    enum PlayerType;
-    enum ResearchType;
-}
 
 class GameStateEx;
 class Message;
 
 namespace IStrategizer
 {
+	enum PlayerType;
+	enum ResearchType;
     class GameEntity;
     class PlayerResources;
     class GameTechTree;
 
 	typedef MapEx<TID, GameEntity*> EntitiesMap;
-
-    using namespace MetaData;
 
 	class GamePlayer : MessagePumpObserver
     {
@@ -46,11 +39,11 @@ namespace IStrategizer
         virtual PlayerType			Id() { return m_id; }
         PlayerResources*			Resources();
         GameTechTree*				TechTree()const;
-        void						Entities(vector<TID>& p_entityIds);
+        void						Entities(std::vector<TID>& p_entityIds);
         GameEntity*					GetEntity(TID p_id);
 		virtual EntityClassType		GetWorkerType() = 0;
 		virtual EntityClassType		GetBaseType() = 0;
-		void						GetBases(vector<TID> &p_basesIds);
+		void						GetBases(std::vector<TID> &p_basesIds);
         virtual const GameStateEx*	State() = 0;
 		void						NotifyMessegeSent(Message* p_pMessage);
 		

@@ -28,7 +28,7 @@
 #include "GameResearch.h"
 
 using namespace IStrategizer;
-using namespace MetaData;
+using namespace IStrategizer;
 
 #include <vector>
 #include <cassert>

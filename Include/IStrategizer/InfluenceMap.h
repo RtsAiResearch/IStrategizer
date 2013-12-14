@@ -8,8 +8,6 @@
 
 namespace IStrategizer
 {
-	using namespace MetaData;
-
 	class GameEntity;
 	class InfluenceMap;
 	struct RegObjEntry;

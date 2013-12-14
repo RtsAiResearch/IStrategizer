@@ -2,7 +2,7 @@
 #define COMPARER_H
 
 #include "MetaData.h"
-using namespace MetaData;
+using namespace IStrategizer;
 
 class Comparer
 {

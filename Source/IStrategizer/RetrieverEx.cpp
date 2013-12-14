@@ -29,7 +29,7 @@
 #include "CaseBaseEx.h"
 #include <map>
 using namespace std;
-using namespace OLCBP;
+using namespace IStrategizer;
 
 const int KNeighbours = 4;
 

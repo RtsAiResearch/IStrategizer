@@ -21,21 +21,16 @@ namespace DataStructure
     class MapEx;
 }
 
-namespace MetaData
-{
-    enum PlayerType;
-    enum EntityClassType;
-    enum ResearchType;
-}
-
 namespace IStrategizer
 {
+	enum PlayerType;
+	enum EntityClassType;
+	enum ResearchType;
     class GamePlayer;
     class GameType;
     class GameEntity;
     class GameResearch;
     class WorldMap;
-    using namespace MetaData;
 
 	class RtsGame : public EngineComponent
     {

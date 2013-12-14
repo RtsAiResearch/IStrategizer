@@ -34,7 +34,7 @@
 #include <map>
 #include <algorithm>
 
-using namespace OLCBP;
+using namespace IStrategizer;
 using namespace IStrategizer;
 using namespace std;
 

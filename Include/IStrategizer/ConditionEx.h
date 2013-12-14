@@ -10,7 +10,7 @@
 #include "Expression.h"
 
 using namespace std;
-using namespace MetaData;
+using namespace IStrategizer;
 
 ///> class=ConditionEx
 ///> parent=Expression

@@ -16,8 +16,8 @@
 #include "InfluenceMap.h"
 #include "OccupanceDataIM.h"
 
-using namespace OLCBP;
-using namespace MetaData;
+using namespace IStrategizer;
+using namespace IStrategizer;
 using namespace IStrategizer;
 using namespace std;
 

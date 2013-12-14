@@ -15,7 +15,7 @@
 #include "RtsGame.h"
 
 using namespace StarCraftModel;
-using namespace MetaData;
+using namespace IStrategizer;
 using namespace BWAPI;
 
 #define TilePositionFromUnitPosition(UnitPos)	(UnitPos / 32)
@@ -134,7 +134,7 @@ bool StarCraftEntity::AttackGround(int p_x, int p_y)
   return attacker->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::AttackEntity(MetaData::PlayerType p_opponentIndex, int p_targetEntityObjectId)
+bool StarCraftEntity::AttackEntity(IStrategizer::PlayerType p_opponentIndex, int p_targetEntityObjectId)
 {
   Unit	attacker = m_unit;
   Unit	target;
