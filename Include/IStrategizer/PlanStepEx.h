@@ -28,7 +28,6 @@
 
 #include "CellFeature.h"
 
-using namespace std;
 using namespace MetaData;
 using namespace IStrategizer;
 
@@ -49,7 +48,7 @@ protected:
 	StepLevelType			_stepLevelType;
 	CompositeExpression*	_successCondition;
 	CompositeExpression*	_postCondition;
-	string					_stepDescription;
+	std::string				_stepDescription;
 	unsigned				_stateStartTime[COUNT(ExecutionStateType)];
 	unsigned				_stateTimeout[COUNT(ExecutionStateType)];
 	bool					_firstUpdate;

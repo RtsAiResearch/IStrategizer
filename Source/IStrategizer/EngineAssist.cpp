@@ -61,8 +61,10 @@ int EngineAssist::GetRequiredResources(PlayerType p_playerIndex, TID p_classId, 
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetRequiredBuildings(PlayerType p_playerIndex, TID p_classId, vector<EntityClassType>& p_requiredBuildings)
 {
+	vector<ResearchType> requiredResearches;
 	map<EntityClassType, unsigned> requiredBuildings;
-	g_Game->GetPlayer(p_playerIndex)->TechTree()->GetRequirements(p_classId, vector<ResearchType>(), requiredBuildings);
+
+	g_Game->GetPlayer(p_playerIndex)->TechTree()->GetRequirements(p_classId, requiredResearches, requiredBuildings);
 	
 	for (map<EntityClassType, unsigned>::const_iterator i = requiredBuildings.begin(); i != requiredBuildings.end(); ++i)
 	{
@@ -75,7 +77,9 @@ int EngineAssist::GetRequiredBuildings(PlayerType p_playerIndex, TID p_classId, 
 int EngineAssist::GetRequiredResearches(PlayerType p_playerIndex, TID p_classId, vector<ResearchType>& p_requiredResearches)
 {
     vector<ResearchType> requiredResearches;
-	g_Game->GetPlayer(p_playerIndex)->TechTree()->GetRequirements(p_classId, requiredResearches, map<EntityClassType, unsigned>());
+	map<EntityClassType, unsigned> requiredBuildings;
+
+	g_Game->GetPlayer(p_playerIndex)->TechTree()->GetRequirements(p_classId, requiredResearches, requiredBuildings);
 	
 	for (vector<ResearchType>::const_iterator i = requiredResearches.begin(); i != requiredResearches.end(); ++i)
 	{

@@ -170,12 +170,12 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameSta
 //----------------------------------------------------------------------------------------------
 void RetrieverEx::ExecuteCommand(const char* p_cmd)
 {
-    if(!strcmp(p_cmd, "retrieve"))
-    {
-        PlanStepParameters m_parameters;
-        m_parameters[PARAM_PlayerId] = PLAYER_Self;
-        m_parameters[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
+    //if(!strcmp(p_cmd, "retrieve"))
+    //{
+    //    PlanStepParameters m_parameters;
+    //    m_parameters[PARAM_PlayerId] = PLAYER_Self;
+    //    m_parameters[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
 
-        CaseEx* myCase = Retrieve(g_GoalFactory.GetGoal(GOALEX_WinGame, m_parameters), g_Game->Self()->State());
-    }
+    //    CaseEx* myCase = Retrieve(g_GoalFactory.GetGoal(GOALEX_WinGame, m_parameters), g_Game->Self()->State());
+    //}
 }

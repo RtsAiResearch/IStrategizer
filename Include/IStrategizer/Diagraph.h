@@ -36,7 +36,6 @@ private:
 
 		for (unsigned i = 0; i < p_candidateMatched.size() && !p_match; ++i)
 		{
-			bool m_matched = false;
 			m_candidateIndex = p_candidateMatched[i];
 
 			for (unsigned j = 0; j < p_primaryMatched.size() && !p_match; ++j)
@@ -218,7 +217,6 @@ public:
 	{
 		vector<int> m_roots = p_candidate.GetRoots();
 		vector<int>	m_matching;
-		int			m_cMatchCount = 0;
 		vector<int>	m_primaryMatched;
 		vector<int>	m_candidateMatched;
 		vector<int>	m_currentMatched;

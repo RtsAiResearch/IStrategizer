@@ -16,26 +16,23 @@ using namespace IStrategizer;
 ///> parent=Action
 class BuildAction : public Action
 {
-    CellFeature*	_targetCell;
-	int				_buildingObjectId;
-
 public:
+	OBJECT_SERIALIZABLE(BuildAction);
+
                 BuildAction();
 	            BuildAction(const PlanStepParameters& p_parameters, CellFeature *p_targetCell);
     void        Copy(IClonable* p_dest);
-	//----------------------------------------------------------------------------------------------
-	// Serialization
-public:
-	string      TypeName()  { return "BuildAction"; }
-	int         TypeSize()  { return sizeof(BuildAction); }
-    UserObject* Prototype() { return new BuildAction; }	
+
 protected:
-	//----------------------------------------------------------------------------------------------
 	bool		ExecuteAux(unsigned long p_cycles );
 	void		InitializePreConditions();
 	void		InitializeAliveConditions();
 	void		InitializeSuccessConditions();
 	void		InitializePostConditions();
 	void		HandleMessage(Message* p_msg, bool& p_consumed);
+
+private:
+	CellFeature*	_targetCell;
+	int				_buildingObjectId;
 };
 #endif	// BUILDACTION_H

@@ -51,10 +51,10 @@ public:
             EvaluateOr(0, -1, -1);
     }
     //----------------------------------------------------------------------------------------------
-    bool EvaluateOr( int p_levelIdx , int p_parentGroupIdx, int p_parentNodeIdx)
+    bool EvaluateOr( unsigned p_levelIdx , int p_parentGroupIdx, int p_parentNodeIdx)
     {
         // Base case: node is leaf
-        if(p_levelIdx == m_levels.size())
+        if(p_levelIdx == (unsigned)m_levels.size())
         {
             return OnEvaluatePath(p_levelIdx - 1, p_parentGroupIdx, p_parentNodeIdx);
         }
@@ -63,7 +63,7 @@ public:
         {
             Level &currentLevel = m_levels[p_levelIdx];
             bool result = false;
-            for(int groupIdx = 0; groupIdx < currentLevel.size(); ++groupIdx)
+            for(size_t groupIdx = 0; groupIdx < currentLevel.size(); ++groupIdx)
             {
                 result |= EvaluateAnd(p_levelIdx, groupIdx);
             }
@@ -75,7 +75,7 @@ public:
     bool EvaluateAnd( int p_levelIdx, int p_groupIdx )
     {
         Group &currentGroup = m_levels[p_levelIdx][p_groupIdx];
-        for(int nodeIdx = 0; nodeIdx < currentGroup.size(); ++nodeIdx)
+        for(size_t nodeIdx = 0; nodeIdx < currentGroup.size(); ++nodeIdx)
         {
             m_path.push_back(m_levels[p_levelIdx][p_groupIdx][nodeIdx]);
             if(!EvaluateOr(p_levelIdx + 1, p_groupIdx, nodeIdx))

@@ -92,7 +92,6 @@ ObjectStateType StarCraftEntity::FetchState()
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Research(ResearchType p_researchId)
 {
-  Unit	building = m_unit;
   bool	bOk;
 
   // Is tech
@@ -114,7 +113,6 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Build(EntityClassType p_buildingClassId, int p_x, int p_y) 
 {
-  Unit            builder = m_unit;
   TilePosition	  pos(TilePositionFromUnitPosition(p_x), TilePositionFromUnitPosition(p_y));
   BWAPI::UnitType	type;
   TID             gameTypeId;

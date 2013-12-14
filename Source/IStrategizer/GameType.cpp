@@ -5,6 +5,7 @@
 #ifndef TOOLBOX_H
 #include "Toolbox.h"
 #endif
+#include "WorldResources.h"
 
 using namespace IStrategizer;
 

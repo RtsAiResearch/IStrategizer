@@ -14,29 +14,26 @@ namespace IStrategizer
 {
 	class CellFeature;
 }
-using namespace IStrategizer;
+
 ///> class=TrainAction
 ///> parent=Action
 class TrainAction : public Action
 {
-	TID				_trainerId;
-	bool			_trained;
-
 public:
+	OBJECT_SERIALIZABLE(TrainAction);
+
 	TrainAction();
 	TrainAction(const PlanStepParameters& p_parameters);
 	bool		PreconditionsSatisfied();
 	bool		AliveConditionsSatisfied();
 	bool		SuccessConditionsSatisfied();
-	//----------------------------------------------------------------------------------------------
-	// Serialization
-public:
-	string      TypeName()  { return "TrainAction"; }
-	int         TypeSize()  { return sizeof(TrainAction); }
-	UserObject* Prototype() { return new TrainAction; }	
+
 protected:
-	//----------------------------------------------------------------------------------------------
 	bool		ExecuteAux(unsigned long p_cycles );
 	void		HandleMessage(Message* p_pMsg, bool& p_consumed);
+
+private:
+	TID		_trainerId;
+	bool	_trained;
 };
 #endif	// TRAINACTION_H

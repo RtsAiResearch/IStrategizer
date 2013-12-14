@@ -111,7 +111,7 @@ void IStrategizerEx::Update(unsigned long p_gameCycle)
 //--------------------------------------------------------------------------------
 void IStrategizerEx::OfflineLearning()
 {
-	CaseBaseEx* m_learntCases = _caseLearning->CaseBaseAcquisition();
+	// CaseBaseEx* m_learntCases = _caseLearning->CaseBaseAcquisition();
 }
 //----------------------------------------------------------------------------------------------
 IStrategizerEx::~IStrategizerEx()

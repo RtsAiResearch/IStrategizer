@@ -18,18 +18,14 @@ class AttackEntityAction : public Action
 {
 
 public:
+	OBJECT_SERIALIZABLE(AttackEntityAction);
+
                 AttackEntityAction();
 	            AttackEntityAction(const PlanStepParameters& p_parameters, CellFeature *p_cellFeature);
     void        Copy(IClonable* p_dest);
 	void		Update(unsigned long p_cycles);
-	//----------------------------------------------------------------------------------------------
-	// Serialization
-public:
-	string      TypeName()  { return "AttackEntityAction"; }
-	UserObject* Prototype() { return new AttackEntityAction; }	
-	int         TypeSize()  { return sizeof(AttackEntityAction); }
+
 protected:
-	//----------------------------------------------------------------------------------------------
 	bool		ExecuteAux(unsigned long p_cycles);
 	void		InitializePreConditions();
 	void		InitializeAliveConditions();

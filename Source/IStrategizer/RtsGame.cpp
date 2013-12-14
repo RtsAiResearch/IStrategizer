@@ -25,6 +25,7 @@
 #ifndef GAMETYPE_H
 #include "GameType.h"
 #endif
+#include "GameResearch.h"
 
 using namespace IStrategizer;
 using namespace MetaData;

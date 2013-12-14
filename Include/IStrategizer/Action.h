@@ -38,10 +38,8 @@ public:
 	virtual bool			AliveConditionsSatisfied() { return _aliveCondition->Evaluate(); }
 	virtual bool			PreconditionsSatisfied() { return _preCondition->Evaluate(); }
 	void                    Copy(IClonable* p_dest);
-	//----------------------------------------------------------------------------------------------
-	// Serialization
+
 protected:
-	//----------------------------------------------------------------------------------------------
 	virtual bool			ExecuteAux(unsigned long p_cycles) = 0;
 	virtual void			InitializePreConditions() {}
 	virtual void			InitializeAliveConditions() {}

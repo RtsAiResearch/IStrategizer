@@ -104,7 +104,7 @@ void AttackEntityAction::Copy(IClonable* p_dest)
 {
 	Action::Copy(p_dest);
 
-	AttackEntityAction* m_dest = static_cast<AttackEntityAction*>(p_dest);
+	// AttackEntityAction* m_dest = static_cast<AttackEntityAction*>(p_dest);
 
     //_targetEntityPosDescription.Copy(&m_dest->_targetEntityPosDescription);
 }

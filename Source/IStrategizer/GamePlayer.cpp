@@ -17,6 +17,7 @@
 #ifndef TOOLBOX_H
 #include "Toolbox.h"
 #endif
+#include "GameTechTree.h"
 #include "IMSystemManager.h"
 #include "DataMessage.h"
 #include "GameStateEx.h"

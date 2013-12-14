@@ -71,7 +71,7 @@ bool CompositeExpression::Equals(const Expression* p_rhs) const
 bool CompositeExpression::PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_matchSide, vector<pair<Expression*,Expression*>>& p_matchedLeafs) const
 {
     bool m_equals = false;
-	for(int lhsIdx = 0; lhsIdx < _expressions.size(); ++lhsIdx)
+	for(size_t lhsIdx = 0; lhsIdx < _expressions.size(); ++lhsIdx)
 	{
 		m_equals |= _expressions[lhsIdx]->PartiallyEqualsAux(p_rhs, p_matchSide, p_matchedLeafs);
 	}
@@ -154,7 +154,7 @@ void CompositeExpression::Copy(IClonable* p_dest)
     CompositeExpression* m_dest = static_cast<CompositeExpression*>(p_dest);
 
 	m_dest->_expressions.resize(_expressions.size());
-	for (int i = 0; i < _expressions.size(); ++i)
+	for (size_t i = 0; i < _expressions.size(); ++i)
 	{
         m_dest->_expressions[i] = _expressions[i] ? static_cast<Expression*>(_expressions[i]->Clone()) : NULL;
 	}
