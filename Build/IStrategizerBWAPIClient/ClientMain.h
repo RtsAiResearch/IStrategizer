@@ -14,6 +14,8 @@ namespace IStrategizer
 }
 
 class IMViewWidget;
+class PlannerViewWidget;
+
 class ClientMain : public QMainWindow, public BwapiClient
 {
 	Q_OBJECT
@@ -39,17 +41,19 @@ private:
 	void InitResourceManager();
 	void InitIStrategizer();
 	void InitIMView();
-	void UpdateIMViews();
+	void UpdateViews();
 	void UpdateStatsView();
 	void FinalizeIStrategizer();
+	void InitPlannerView();
 
 	Ui::ClientMainClass			ui;
-	IStrategizerEx				  *m_pIStrategizer;
+	IStrategizerEx				*m_pIStrategizer;
 	IStrategizer::RtsGame		*m_pGameModel;
-	IMViewWidget				    *m_pBuildingDataIMWidget;
-	IMViewWidget				    *m_pGrndCtrlIMWidget;
+	IMViewWidget				*m_pBldngDataIMWdgt;
+	IMViewWidget				*m_pGrndCtrlIMWdgt;
 	std::vector<IMViewWidget*>	m_IMViews;
-	bool						        m_isLearning;
+	PlannerViewWidget			*m_pPlannerViewWdgt;
+	bool						m_isLearning;
 };
 
 #endif // CLIENTMAIN_H

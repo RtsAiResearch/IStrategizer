@@ -29,7 +29,6 @@
 #include "CellFeature.h"
 
 using namespace IStrategizer;
-using namespace IStrategizer;
 
 class ConditionEx;
 class Message;
@@ -48,7 +47,6 @@ protected:
 	StepLevelType			_stepLevelType;
 	CompositeExpression*	_successCondition;
 	CompositeExpression*	_postCondition;
-	std::string				_stepDescription;
 	unsigned				_stateStartTime[COUNT(ExecutionStateType)];
 	unsigned				_stateTimeout[COUNT(ExecutionStateType)];
 	bool					_firstUpdate;
@@ -80,7 +78,7 @@ public:
 	void						Update(unsigned p_cycles);
 	virtual void				UpdateAux(unsigned p_cycles) = 0;
 	virtual void				Reset(unsigned p_cycles) = 0;
-	virtual const char*			ToString();
+	virtual std::string			ToString() const;
 	//----------------------------------------------------------------------------------------------------------------------------------------------------	
 	// Serialization
 protected:

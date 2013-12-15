@@ -70,7 +70,7 @@ void PlanStepEx::Copy(IClonable* p_dest)
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::State(ExecutionStateType p_state, unsigned p_cycles)
 {
-	printf("%s: '%s'->'%s'\n", ToString(), Enums[_state], Enums[p_state]);
+	printf("%s: '%s'->'%s'\n", ToString().c_str(), Enums[_state], Enums[p_state]);
 	_stateStartTime[INDEX(p_state, ExecutionStateType)] = p_cycles;
 	_state = p_state;
 }
@@ -103,34 +103,33 @@ void PlanStepEx::Update(unsigned p_cycles)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-const char* PlanStepEx::ToString()
+std::string PlanStepEx::ToString() const
 {
-	if (_stepDescription.empty())
+	string stepDescription;
+
+	const char* stepName = Enums[_stepTypeId];
+	unsigned	paramIdx = 0;
+
+	stepDescription = '(';
+	stepDescription += stepName;
+	stepDescription += ')';
+	stepDescription += '<';
+
+	for (PlanStepParameters::const_iterator itr = _params.begin();
+		itr != _params.end(); ++itr)
 	{
-		const char* stepName = Enums[_stepTypeId];
-		unsigned	paramIdx = 0;
+		stepDescription += Enums[itr->second];
 
-		_stepDescription = '(';
-		_stepDescription += stepName;
-		_stepDescription += ')';
-		_stepDescription += '<';
-
-		for (PlanStepParameters::iterator itr = _params.begin();
-			itr != _params.end(); ++itr)
+		if (paramIdx < _params.size() - 1)
 		{
-			_stepDescription += Enums[itr->second];
-
-			if (paramIdx < _params.size() - 1)
-			{
-				_stepDescription += ',';
-				_stepDescription += ' ';
-			}
-
-			++paramIdx;
+			stepDescription += ',';
+			stepDescription += ' ';
 		}
 
-		_stepDescription += '>';
+		++paramIdx;
 	}
-	
-	return _stepDescription.c_str();
+
+	stepDescription += '>';
+
+	return stepDescription;
 }

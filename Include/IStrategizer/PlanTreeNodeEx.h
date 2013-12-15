@@ -33,7 +33,8 @@ namespace IStrategizer
 		inline const List& Children(){ return _children; }
 		inline const List& Parents(){ return _parents; }
 		inline const List& BelongingSubPlanChildren() { return _belongingSubPlanChildren; }
-		inline PlanStepEx* PlanStep(){ return _pPlanStep; }
+		inline const PlanStepEx* PlanStep() const { return _pPlanStep; }
+		inline PlanStepEx* PlanStep() { return _pPlanStep; }
 		inline bool IsOpen() { return _isOpen; }
 		inline bool IsReady() { return _parents.size() == _readyParents.size(); }
 		inline PlanTreeNodeEx* SubPlanGoal() { return _pSubPlanGoal; }

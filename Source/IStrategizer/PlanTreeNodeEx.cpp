@@ -92,14 +92,14 @@ void PlanTreeNodeEx::Open()
 {
 	assert(_isOpen == false);
 	_isOpen = true;
-	printf("Planner: '%s' Opened\n", _pPlanStep->ToString());
+	printf("Planner: '%s' Opened\n", _pPlanStep->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanTreeNodeEx::Close()
 {
 	assert(_isOpen == true);
 	_isOpen = false; 
-	printf("Planner: '%s' Closed\n", _pPlanStep->ToString());
+	printf("Planner: '%s' Closed\n", _pPlanStep->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanTreeNodeEx::AddChild(PlanTreeNodeEx *p_pChild)

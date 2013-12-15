@@ -19,6 +19,9 @@
 #include <QGridLayout>
 #include "WorldClock.h"
 #include <iostream>
+#include "PlannerViewWidget.h"
+#include "OnlineCaseBasedPlannerEx.h"
+#include "OnlinePlanExpansionExecutionEx.h"
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
@@ -60,8 +63,9 @@ void ClientMain::InitIStrategizer()
 		e.To(cout);
 	}
 
-	m_pBuildingDataIMWidget->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
-	m_pGrndCtrlIMWidget->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+	m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
+	m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+	m_pPlannerViewWdgt->Planner(m_pIStrategizer->Planner()->ExpansionExecution());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
@@ -71,7 +75,7 @@ void ClientMain::InitIMView()
 
 	// 1. Init Building Data IM
 	pIMView = new IMViewWidget;
-	m_pBuildingDataIMWidget= pIMView;
+	m_pBldngDataIMWdgt= pIMView;
 	m_IMViews.push_back(pIMView);
 
 	gridLayout = new QGridLayout;
@@ -83,7 +87,7 @@ void ClientMain::InitIMView()
 
 	// 2. Init Ground Control IM
 	pIMView = new IMViewWidget;
-	m_pGrndCtrlIMWidget = pIMView;
+	m_pGrndCtrlIMWdgt = pIMView;
 	m_IMViews.push_back(pIMView);
 
 	gridLayout = new QGridLayout;
@@ -92,6 +96,20 @@ void ClientMain::InitIMView()
 	ui.tbGrndCtrlIM->layout()->addWidget(pIMView);
 	ui.tbGrndCtrlIM->layout()->setMargin(0);
 	ui.tbGrndCtrlIM->layout()->setSpacing(0);
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::InitPlannerView()
+{
+	m_pPlannerViewWdgt = new PlannerViewWidget;
+
+	QGridLayout		*gridLayout;
+
+	gridLayout = new QGridLayout;
+	ui.tbPlanner->setLayout(gridLayout);
+	ui.tbPlanner->layout()->setAlignment(Qt::AlignCenter);
+	ui.tbPlanner->layout()->addWidget(m_pPlannerViewWdgt);
+	ui.tbPlanner->layout()->setMargin(0);
+	ui.tbPlanner->layout()->setSpacing(0);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeIStrategizer()
@@ -109,6 +127,7 @@ void ClientMain::showEvent(QShowEvent *pEvent)
 	{
 		InitClient();
 		InitIMView();
+		InitPlannerView();
 	}
 
 	QMainWindow::showEvent(pEvent);
@@ -134,7 +153,7 @@ void ClientMain::OnClientLoopEnd()
 {
 	FinalizeIStrategizer();
 	// Give IM widgets a chance to clear its buffer and redraw
-	UpdateIMViews();
+	UpdateViews();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnSendText(const string& p_text)
@@ -316,14 +335,16 @@ void ClientMain::OnClientUpdate()
 		e.To(cout);
 	}
 
-	UpdateIMViews();
+	UpdateViews();
 	UpdateStatsView();
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::UpdateIMViews()
+void ClientMain::UpdateViews()
 {
 	for (int i = 0, size = m_IMViews.size(); i < size; ++i)
 		m_IMViews[i]->update();
+
+	m_pPlannerViewWdgt->update();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitResourceManager()
@@ -344,7 +365,7 @@ void ClientMain::InitResourceManager()
 		}
 		else if ((*i)->getType().isResourceDepot())
 		{
-			//if this is a center, tell it to build the appropiate type of worker
+			//if this is a center, tell it to build the appropriate type of worker
 			if ((*i)->getType().getRace()!=Races::Zerg)
 			{
 				(*i)->train(Broodwar->self()->getRace().getWorker());
