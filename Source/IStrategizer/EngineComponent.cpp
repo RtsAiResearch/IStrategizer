@@ -11,9 +11,10 @@
 #include <string>
 #include <cassert>
 
-EngineComponent::EngineComponent(const char* p_name)  : TraceableComponent(p_name)
+EngineComponent::EngineComponent(const char* p_pName)
+	: m_pName(p_pName)
 {
-    LogInfo("initializing...");
+    LogInfo("%s is initializing ...", m_pName);
     g_MessagePump.RegisterForMessage(MSG_Input, this);
 }
 //----------------------------------------------------------------------------------------------
@@ -22,13 +23,13 @@ void EngineComponent::NotifyMessegeSent(Message *p_message)
     assert(p_message->MessageTypeID() == MSG_Input);
     DataMessage<string>* inputMessage = static_cast<DataMessage<string>*>(p_message);
 
-    if(!strncmp(inputMessage->Data()->c_str(), _name, strlen(_name)))
+    if(!strncmp(inputMessage->Data()->c_str(), m_pName, strlen(m_pName)))
     {
-        ExecuteCommand(inputMessage->Data()->c_str() + strlen(_name) + 1);
+        ExecuteCommand(inputMessage->Data()->c_str() + strlen(m_pName) + 1);
     }
 }
 //----------------------------------------------------------------------------------------------
 EngineComponent::~EngineComponent()
 {
-    LogInfo("finalizing...");
+    LogInfo("%s is finalizing ...", m_pName);
 }

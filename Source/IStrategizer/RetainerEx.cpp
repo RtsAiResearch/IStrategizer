@@ -16,7 +16,6 @@
 
 #include <fstream>
 using namespace std;
-
 using namespace IStrategizer;
 
 RetainerEx::RetainerEx(string p_caseBasePath) : AbstractRetainer("Retainer"), _caseBasePath(p_caseBasePath), _caseBaseLoaded(false)
@@ -55,13 +54,13 @@ void RetainerEx::Flush()
 {
 	if (_caseBaseLoaded && _caseBase)
 	{
-		LogInfo("flushing case-base");
+		LogInfo("Flushing case-base");
 
 		g_ObjectSerializer.Serialize(_caseBase, _caseBasePath);
 	}
     else
 	{
-		Log(LOG_Error, "failed to flushing case-base");
+		LogError("Failed to flushing case-base");
 	}
 }
 //-------------------------------------------------------------------------------------------------------------------------------

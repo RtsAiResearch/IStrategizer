@@ -38,12 +38,15 @@ namespace IStrategizer
 	private:
 		void ExpandGoal(PlanTreeNodeEx* p_rootGoal, CaseEx* p_pCase);
 		void UpdatePlan(PlanTreeNodeEx* p_rootPlanStep, unsigned long p_cycles);
+
+
 		void NotifyChildrenForParentSuccess(PlanTreeNodeEx* p_pNode);
 		void MarkCaseAsTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase);
 		bool IsCaseTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase);
 		bool DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pPlanGoalNode);
 		void ConsiderReadyChildrenForUpdate(PlanTreeNodeEx* p_pNode, PlanTreeNodeEx::Queue &p_updateQueue);
-
+		void UpdateActionNode(PlanTreeNodeEx* pCurrentNode, unsigned long p_cycles, PlanTreeNodeEx::Queue& p_updateQ);
+		void UpdateGoalNode(PlanTreeNodeEx* p_pCurrentNode, unsigned p_cycles, PlanTreeNodeEx::Queue& p_updateQ);
 
 		PlanTreeNodeEx*						_planRoot;
 		CaseBasedReasonerEx*				_caseBasedReasoner;

@@ -363,22 +363,5 @@ void ClientMain::InitResourceManager()
 			if (closestMineral!=NULL)
 				(*i)->rightClick(closestMineral);
 		}
-		else if ((*i)->getType().isResourceDepot())
-		{
-			//if this is a center, tell it to build the appropriate type of worker
-			if ((*i)->getType().getRace()!=Races::Zerg)
-			{
-				(*i)->train(Broodwar->self()->getRace().getWorker());
-			}
-			else //if we are Zerg, we need to select a larva and morph it into a drone
-			{
-				const Unitset &myLarva=(*i)->getLarva();
-				if (myLarva.size()>0)
-				{
-					Unit larva=*myLarva.begin();
-					larva->morph(UnitTypes::Zerg_Drone);
-				}
-			}
-		}
 	}
 }

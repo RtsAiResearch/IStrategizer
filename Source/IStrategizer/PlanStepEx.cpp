@@ -4,8 +4,10 @@
 
 #include <cstdio>
 #include <algorithm>
+#include "Logger.h"
 
 using namespace std;
+using namespace IStrategizer;
 
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeAddressesAux()
@@ -70,7 +72,7 @@ void PlanStepEx::Copy(IClonable* p_dest)
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::State(ExecutionStateType p_state, unsigned p_cycles)
 {
-	printf("%s: '%s'->'%s'\n", ToString().c_str(), Enums[_state], Enums[p_state]);
+	LogInfo("%s: '%s'->'%s'", ToString().c_str(), Enums[_state], Enums[p_state]);
 	_stateStartTime[INDEX(p_state, ExecutionStateType)] = p_cycles;
 	_state = p_state;
 }

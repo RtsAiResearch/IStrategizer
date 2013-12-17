@@ -3,6 +3,7 @@
 #ifndef AND_H
 #include "And.h"
 #endif
+#include "Logger.h"
 
 Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
 : PlanStepEx(p_actionType, ESTATE_END), _preCondition(NULL), _aliveCondition(NULL)
@@ -97,7 +98,7 @@ void Action::UpdateAux(unsigned p_cycles)
 		if (Execute(p_cycles))
 			State(ESTATE_Executing, p_cycles);
 		else
-			printf("Planner: Executing '%s' failed\n", ToString());
+			LogInfo("Executing '%s' failed", ToString().c_str());
 		break;
 
 	case ESTATE_Executing:

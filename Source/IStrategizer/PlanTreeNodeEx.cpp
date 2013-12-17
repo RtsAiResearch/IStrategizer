@@ -13,7 +13,7 @@
 #ifndef ENGINEDATA_H
 #include "EngineData.h"
 #endif
-
+#include "Logger.h"
 #include <algorithm>
 #include <cassert>
 #include <Windows.h>
@@ -92,14 +92,14 @@ void PlanTreeNodeEx::Open()
 {
 	assert(_isOpen == false);
 	_isOpen = true;
-	printf("Planner: '%s' Opened\n", _pPlanStep->ToString().c_str());
+	LogInfo("'%s' is opened", _pPlanStep->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanTreeNodeEx::Close()
 {
 	assert(_isOpen == true);
 	_isOpen = false; 
-	printf("Planner: '%s' Closed\n", _pPlanStep->ToString().c_str());
+	LogInfo("'%s' is closed", _pPlanStep->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanTreeNodeEx::AddChild(PlanTreeNodeEx *p_pChild)

@@ -30,7 +30,7 @@ namespace IStrategizer
         void    ExecuteCommand(const char* p_cmd);
 		void	BuildCaseCluster();
 
-		stdext::hash_map<GoalType, vector<CaseEx*>> _caseCluster;
+		stdext::hash_map<GoalType, std::vector<CaseEx*>> _caseCluster;
     };
 }
 
