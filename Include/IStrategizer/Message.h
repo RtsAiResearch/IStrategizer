@@ -1,7 +1,7 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-namespace MetaData
+namespace IStrategizer
 {
 	enum MessageType;
 }
@@ -9,7 +9,7 @@ namespace MetaData
 class Message
 {
 private:
-	MetaData::MessageType _messageTypeID;
+	IStrategizer::MessageType _messageTypeID;
     unsigned long				_gameCycle; 
     bool						_delivered;
     int							_priority;
@@ -19,7 +19,7 @@ public:
     bool Delivered();
     void Delivered(bool p_delivered);
     int Priority();
-    Message(unsigned long p_gameCycle, MetaData::MessageType p_messageTypeID);
+    Message(unsigned long p_gameCycle, IStrategizer::MessageType p_messageTypeID);
 	virtual ~Message();
 };
 

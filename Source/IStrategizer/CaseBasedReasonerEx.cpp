@@ -20,7 +20,7 @@
 #include "Toolbox.h"
 #endif
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
 void CaseBasedReasonerEx::Initialize()
 {

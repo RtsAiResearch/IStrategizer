@@ -33,7 +33,7 @@ protected:
     bool        EvaluatePath();
     TPathKey    Hash(int p_goalIdx, list<NodeType>& p_parameters);
     void        GeneratePossibleParams();
-    void        GeneratePossibleParamsAux(int p_abstractGoalIdx, int p_level, TPathKey p_path, int& p_lastParamGoalIdx);
+    void        GeneratePossibleParamsAux(int p_abstractGoalIdx, unsigned p_level, TPathKey p_path, int& p_lastParamGoalIdx);
     GoalEx*     GetGoal(TPathKey p_pathId, list<NodeType>& p_path);
 public:
     void    Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot);

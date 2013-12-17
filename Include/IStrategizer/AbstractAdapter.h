@@ -13,12 +13,6 @@ class Vector2;
 namespace IStrategizer
 {
 	class CellFeature;
-}
-
-namespace OLCBP
-{
-	using namespace IStrategizer;
-	using namespace MetaData;
 
 	class AbstractAdapter
 	{

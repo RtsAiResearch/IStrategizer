@@ -11,9 +11,6 @@
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{c516ba86-6d97-445e-9e85-7b59f7549353}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utilities\Logging">
-      <UniqueIdentifier>{da8c08d8-f51f-4472-b5f4-3c8fa4156643}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Utilities\Data Structures">
       <UniqueIdentifier>{0a3e91e0-211c-44e6-92f7-b75abcfa6b5e}</UniqueIdentifier>
     </Filter>
@@ -71,9 +68,6 @@
     </Filter>
     <Filter Include="Header Files\Utilities">
       <UniqueIdentifier>{62161c21-2837-4fa6-823e-fc64d99fbc27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Utilities\Logging">
-      <UniqueIdentifier>{f26c7726-6eaa-434b-adc5-ae73e4e2c630}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Utilities\Data Structures">
       <UniqueIdentifier>{d701fb88-d430-4731-9b37-e3313bf376d6}</UniqueIdentifier>
@@ -202,9 +196,6 @@
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TraceableComponent.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CombinatoricsAndOrGraph.cpp">
@@ -375,6 +366,9 @@
     <ClCompile Include="..\..\Source\IStrategizer\MetaData.cpp">
       <Filter>Source Files\EngineData</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h">
@@ -425,14 +419,8 @@
     <ClInclude Include="..\..\Include\IStrategizer\Predicate.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\TraceableComponent.h">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Vector2.h">
       <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\Log.h">
-      <Filter>Header Files\Utilities\Logging</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\CombinatoricsAndOrGraph.h">
       <Filter>Header Files\Utilities\Data Structures</Filter>
@@ -721,6 +709,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\OccupanceDataIM.h">
       <Filter>Header Files\InfluenceMaps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\Logger.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

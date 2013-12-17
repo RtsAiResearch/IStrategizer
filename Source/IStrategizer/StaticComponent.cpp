@@ -12,8 +12,3 @@ void StaticComponent::Initialize()
         m_initalized = true;
     }
 }
-//----------------------------------------------------------------------------------------------
-StaticComponent::~StaticComponent()
-{
-
-}

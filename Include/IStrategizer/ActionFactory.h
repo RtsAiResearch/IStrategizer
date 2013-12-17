@@ -5,7 +5,7 @@
 #include "MetaData.h"
 
 using namespace std;
-using namespace MetaData;
+using namespace IStrategizer;
 
 class Action;
 namespace IStrategizer

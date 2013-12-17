@@ -10,16 +10,12 @@
 
 class Action;
 
-namespace MetaData
-{
-    enum EntityClassType;
-    enum EntityObjectAttribute;
-	enum PlayerType;
-}
-
 namespace IStrategizer
 {
-    using namespace MetaData;
+	enum EntityClassType;
+	enum EntityObjectAttribute;
+	enum PlayerType;
+
 	class GameEntity : public SharedResource
     {
     public:

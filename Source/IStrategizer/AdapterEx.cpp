@@ -16,8 +16,8 @@
 #include "InfluenceMap.h"
 #include "OccupanceDataIM.h"
 
-using namespace OLCBP;
-using namespace MetaData;
+using namespace IStrategizer;
+using namespace IStrategizer;
 using namespace IStrategizer;
 using namespace std;
 
@@ -249,7 +249,7 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 	GameEntity			*pEntity;
 	vector<TID>			entityIds;
 	EntityClassType		trainerType;
-	TID					id;
+	TID					id = TID();
 
 	trainerType = g_Game->Self()->TechTree()->SourceEntity(p_traineeType);
 	pPlayer = g_Game->Self();

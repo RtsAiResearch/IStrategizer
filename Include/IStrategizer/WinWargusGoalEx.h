@@ -4,7 +4,7 @@
 
 #include "GoalEx.h"
 #include "CheckEntityClassAttribute.h"
-using namespace MetaData;
+using namespace IStrategizer;
 
 ///> class=WinWargusGoalEx
 ///> parent=GoalEx

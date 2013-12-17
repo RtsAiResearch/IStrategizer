@@ -9,16 +9,11 @@
 #include "MetaData.h"
 #endif
 
-#include <string>
-#include <vector>
-using namespace std;
-
 namespace IStrategizer
 {
     class WorldResources;
     class GameDependency;
 
-    using namespace MetaData;
     class GameType : public StaticComponent
     {
     protected:

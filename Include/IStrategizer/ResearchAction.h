@@ -19,22 +19,20 @@ using namespace IStrategizer;
 ///> parent=Action
 class ResearchAction : public Action
 {
-	TID				_researcherId;
 
 public:
+	OBJECT_SERIALIZABLE(ResearchAction);
+
 	ResearchAction();
 	ResearchAction(const PlanStepParameters& p_parameters);
 	bool		PreconditionsSatisfied();
 	bool		AliveConditionsSatisfied();
 	bool		SuccessConditionsSatisfied();
-	//----------------------------------------------------------------------------------------------
-	// Serialization
-public:
-	string      TypeName()  { return "ResearchAction"; }
-	int         TypeSize()  { return sizeof(ResearchAction); }
-	UserObject* Prototype() { return new ResearchAction; }	
+
 protected:
-	//----------------------------------------------------------------------------------------------
 	bool		ExecuteAux(unsigned long p_cycles );
+
+private:
+	TID		_researcherId;
 };
 #endif	// RESEARCHACTION_H

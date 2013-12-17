@@ -22,29 +22,26 @@ using namespace IStrategizer;
 ///> parent=Action
 class BuildActionEx : public Action
 {
-	TID						_buildingId;
-	TID						_builderId;
-	IStrategizer::MapArea	_buildArea;
-	bool					_buildStarted;
-	bool					_buildIssued;
-
 public:
+	OBJECT_SERIALIZABLE(BuildActionEx);
+
 	BuildActionEx();
 	BuildActionEx(const PlanStepParameters& p_parameters);
 	bool		PreconditionsSatisfied();
 	bool		AliveConditionsSatisfied();
 	bool		SuccessConditionsSatisfied();
-	//----------------------------------------------------------------------------------------------
-	// Serialization
-public:
-	string      TypeName()  { return "BuildActionEx"; }
-	int         TypeSize()  { return sizeof(BuildActionEx); }
-	UserObject* Prototype() { return new BuildActionEx; }	
+
 protected:
-	//----------------------------------------------------------------------------------------------
 	void		OnSucccess(unsigned p_cycles);
 	void		OnFailure(unsigned p_cycles);
 	bool		ExecuteAux(unsigned long p_cycles );
 	void		HandleMessage(Message* p_pMsg, bool& p_consumed);
+
+private:
+	TID						_buildingId;
+	TID						_builderId;
+	IStrategizer::MapArea	_buildArea;
+	bool					_buildStarted;
+	bool					_buildIssued;
 };
 #endif	// BUILDACTIONEX_H

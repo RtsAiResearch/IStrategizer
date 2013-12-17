@@ -6,7 +6,7 @@
 #include <cmath>
 
 using namespace IStrategizer;
-using namespace MetaData;
+using namespace IStrategizer;
 
 void ResourceDescription::AddEntity(GameEntity *p_entity)
 {

@@ -125,10 +125,10 @@ bool EntityClassExist::MatchesAttributes(int p_entityObjectId)
 {   
 	return true;
 
-	if(_entityObjectAttributes.size() == 0)
+	/*if(_entityObjectAttributes.size() == 0)
 		return true;
 	else
-		return CheckEntityObjectSimilarity(_playerType, p_entityObjectId, _entityObjectAttributes, _similarityThreshold).Evaluate();
+		return CheckEntityObjectSimilarity(_playerType, p_entityObjectId, _entityObjectAttributes, _similarityThreshold).Evaluate();*/
 }
 //---------------------------------------------------------------------------------------------------
 void EntityClassExist::Copy(IClonable* p_dest)

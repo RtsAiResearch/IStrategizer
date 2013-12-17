@@ -4,7 +4,7 @@
 #ifndef METADATA_H
 #include "MetaData.h"
 #endif
-using namespace MetaData;
+using namespace IStrategizer;
 
 MessagePump::MessagePump()
 {

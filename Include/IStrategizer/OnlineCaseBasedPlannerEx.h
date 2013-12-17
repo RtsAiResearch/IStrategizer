@@ -4,13 +4,13 @@
 #include <string>
 class GoalEx;
 
-namespace MetaData
+namespace IStrategizer
 {
 	enum PlayerType;
 }
 
-using namespace MetaData;
-namespace OLCBP
+using namespace IStrategizer;
+namespace IStrategizer
 {
     const std::string g_CaseBasePath = "IStrategizerEx.cb";
    
@@ -27,12 +27,12 @@ namespace OLCBP
         OnlineCaseBasedPlannerEx();
         void       Update(unsigned long p_gameCycle);
         void       Init(GoalEx *p_initialGoal);
-		CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
-		OnlinePlanExpansionExecutionEx* Planner() const { return _onlineExpansionExecution; }
+		const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
+		const OnlinePlanExpansionExecutionEx* ExpansionExecution() const { return _onlineExpansionExecution; }
         virtual    ~OnlineCaseBasedPlannerEx();
     };
 }
 
-extern OLCBP::OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner;
+extern IStrategizer::OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner;
 
 #endif	// OnlineCaseBasedPlannerEx

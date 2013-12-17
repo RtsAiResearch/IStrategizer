@@ -8,15 +8,10 @@
 #include "Vector2.h"
 #endif
 
-namespace MetaData
-{
-    enum TileFlagType;
-}
-
 namespace IStrategizer
 {
+	enum TileFlagType;
 	class CellFeature;
-    using namespace MetaData;
 
 	class WorldMap
     {

@@ -19,7 +19,7 @@
 #include "False.h"
 #endif
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
 BuildAction::BuildAction() : Action(ACTIONEX_Build), _targetCell(NULL)
 {
@@ -36,7 +36,7 @@ BuildAction::BuildAction(const PlanStepParameters& p_parameters, CellFeature* p_
 void BuildAction::InitializePreConditions()
 {
 	Cost							m_cost;
-	int								aIndex, i;
+	size_t							aIndex, i;
 	vector<EntityClassType>			m_requiredBuildings;
 	map<EntityObjectAttribute, int>	m_workerAttributes;
 
@@ -131,7 +131,7 @@ void BuildAction::Copy(IClonable* p_dest)
 {
 	Action::Copy(p_dest);
 
-	BuildAction* m_dest = static_cast<BuildAction*>(p_dest);
+	// BuildAction* m_dest = static_cast<BuildAction*>(p_dest);
 
 	//_posDescription.Copy(&m_dest->_posDescription);
 }

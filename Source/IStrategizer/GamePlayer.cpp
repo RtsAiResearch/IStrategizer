@@ -17,14 +17,15 @@
 #ifndef TOOLBOX_H
 #include "Toolbox.h"
 #endif
+#include "GameTechTree.h"
 #include "IMSystemManager.h"
 #include "DataMessage.h"
 #include "GameStateEx.h"
 #include "MessagePump.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
 using namespace DataStructure;
-using namespace IStrategizer;
 
 GamePlayer::GamePlayer() : m_pState(new GameStateEx()), m_pResources(NULL), m_pTechTree(NULL)
 {
@@ -143,7 +144,7 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
 
 		m_entities[entityId] = pEntity;
 
-		printf("[%s] Unit '%s':%d created at <%d, %d>\n",
+		LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
 			Enums[m_id], Enums[pEntity->Type()], pEntity->Id(), pEntity->Attr(EOATTR_PosX), pEntity->Attr(EOATTR_PosY));
 
 		g_IMSysMgr.RegisterGameObj(entityId, pCreateMsg->Data()->OwnerId);
@@ -169,7 +170,7 @@ void GamePlayer::OnEntityDestroy(Message* p_pMessage)
 
 		g_IMSysMgr.UnregisterGameObj(entityId);
 
-		printf("[%s] Unit '%s':%d destroyed\n",
+		LogInfo("[%s] Unit '%s':%d destroyed",
 			Enums[m_id], Enums[pEntity->Type()], pEntity->Id());
 
 		Toolbox::MemoryClean(pEntity);
@@ -196,7 +197,7 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
 
 		m_entities[entityId] = pEntity;
 
-		printf("[%s] Unit '%s':%d renegaded TO me\n",
+		LogInfo("[%s] Unit '%s':%d renegaded TO me",
 			Enums[m_id], Enums[pEntity->Type()], pEntity->Id());
 
 		g_IMSysMgr.RegisterGameObj(entityId, pRenMsg->Data()->OwnerId);
@@ -211,7 +212,7 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
 
 		g_IMSysMgr.UnregisterGameObj(entityId);
 
-		printf("[%s] Unit '%s':%d renegaded from me\n",
+		LogInfo("[%s] Unit '%s':%d renegaded from me",
 			Enums[m_id], Enums[pEntity->Type()], pEntity->Id());
 
 		Toolbox::MemoryClean(pEntity);

@@ -9,7 +9,7 @@
 #include "MessagePumpObserver.h"
 #endif
 
-namespace MetaData
+namespace IStrategizer
 {
 	enum MessageType;
 }
@@ -22,7 +22,7 @@ class EventTriggered : public ConditionEx, public MessagePumpObserver
 	bool		_triggered;
 public:
 	EventTriggered() : _triggered(false) {}
-	EventTriggered(MetaData::MessageType p_eventTypeId, const PlanStepParameters& p_eventArgs);
+	EventTriggered(IStrategizer::MessageType p_eventTypeId, const PlanStepParameters& p_eventArgs);
 	bool	    Evaluate();
 	void        Copy(IClonable* p_dest);
 	bool		Consume(int p_amount) { return true; }

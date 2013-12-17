@@ -5,16 +5,12 @@
 #include <map>
 using namespace std;
 
-namespace MetaData
-{
-    enum ResearchType;
-    enum EntityClassType;
-    enum BaseType;
-}
-
 namespace IStrategizer
 {
-    using namespace MetaData;
+	enum ResearchType;
+	enum EntityClassType;
+	enum BaseType;
+
     class GameTechTree
     {
     public:

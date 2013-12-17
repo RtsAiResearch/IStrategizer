@@ -4,7 +4,7 @@
 class CaseBaseEx;
 class CaseEx;
 
-namespace OLCBP
+namespace IStrategizer
 {
     class AbstractReviser
     {

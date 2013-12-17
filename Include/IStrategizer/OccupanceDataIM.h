@@ -5,8 +5,6 @@
 
 namespace IStrategizer
 {
-	using namespace MetaData;
-	
 	class OccupanceDataIM : public InfluenceMap
 	{
 	public:

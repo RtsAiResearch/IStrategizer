@@ -11,7 +11,7 @@
 #endif
 
 using namespace std;
-using namespace MetaData;
+using namespace IStrategizer;
 using namespace Serialization;
 
 enum MatchSide

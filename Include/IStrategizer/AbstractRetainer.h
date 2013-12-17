@@ -11,7 +11,7 @@ using namespace std;
 class CaseEx;
 class CaseBaseEx;
 
-namespace OLCBP
+namespace IStrategizer
 {
     class AbstractRetainer : public EngineComponent
     {

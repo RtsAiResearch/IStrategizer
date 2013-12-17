@@ -17,7 +17,6 @@
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
-using namespace MetaData;
 using namespace DataStructure;
 using namespace BWAPI;
 using namespace std;

@@ -5,7 +5,7 @@
 #include "TypesMetaData.h"
 #include "AttributesMetaData.h"
 
-namespace MetaData
+namespace IStrategizer
 {
 	void Init();
 	void InitAbstractionMetaData();

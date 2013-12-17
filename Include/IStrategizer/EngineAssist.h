@@ -9,7 +9,7 @@
 #include "Misc.h"
 #include "EngineData.h"
 
-using namespace MetaData;
+using namespace IStrategizer;
 using namespace std;
 
 class Colony;

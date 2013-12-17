@@ -5,7 +5,7 @@
 #include "AbstractReviser.h"
 #endif
 
-namespace OLCBP
+namespace IStrategizer
 {
 	class Reviser : public AbstractReviser
 	{

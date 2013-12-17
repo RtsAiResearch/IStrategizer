@@ -6,7 +6,7 @@
 #include "RtsGame.h"
 #include "WorldMap.h"
 
-using namespace MetaData;
+using namespace IStrategizer;
 using namespace IStrategizer;
 using namespace std;
 

@@ -5,7 +5,7 @@
 #include "ConditionEx.h"
 #include "MetaData.h"
 #include "Colony.h"
-using namespace MetaData;
+using namespace IStrategizer;
 
 ///> class=CheckColonyFilterCount
 ///> parent=ConditionEx

@@ -15,11 +15,6 @@ namespace IStrategizer
 {
 	class CellFeature;
 	class WorldMap;
-}
-
-namespace OLCBP
-{
-	using namespace IStrategizer;
 
 	struct SpiralSearchData
 	{

@@ -39,7 +39,6 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_paramete
 //----------------------------------------------------------------------------------------------
 GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
 {
-	int m_index = 0;
 	GoalEx* goal;
 
 	switch(p_goalType)

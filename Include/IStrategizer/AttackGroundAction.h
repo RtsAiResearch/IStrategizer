@@ -16,18 +16,13 @@ using namespace IStrategizer;
 ///> parent=Action
 class AttackGroundAction : public Action
 {
-	
 public:
+	OBJECT_SERIALIZABLE(AttackGroundAction);
+
                 AttackGroundAction();
 				AttackGroundAction(const PlanStepParameters& p_parameters, CellFeature* p_targetCell);
 	////> type=CellFeature*
 	CellFeature	*_targetCell;
-	//----------------------------------------------------------------------------------------------
-	// Serialization
-public:
-	string      TypeName()  { return "AttackGroundAction"; }
-    int         TypeSize()  { return sizeof(AttackGroundAction); }
-    UserObject* Prototype() { return new AttackGroundAction; }	
 	//----------------------------------------------------------------------------------------------
 	// Serialization
 protected:

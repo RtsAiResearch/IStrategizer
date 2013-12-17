@@ -29,16 +29,16 @@ private:
 public:
 	bool ExportGameIds(std::string p_exportPath);
 	bool ExportAllIds(std::string p_exportPath);
-	void EntityTypes(std::vector<MetaData::EntityClassType>& p_entityTypes);
-	void ResearchTypes(std::vector<MetaData::ResearchType>& p_researchTypes);
+	void EntityTypes(std::vector<IStrategizer::EntityClassType>& p_entityTypes);
+	void ResearchTypes(std::vector<IStrategizer::ResearchType>& p_researchTypes);
 	void Init();
 
 	inline static DefinitionCrossMapping& Instance() { static DefinitionCrossMapping m_instance; return m_instance; }
 
-	CrossMap<TID, MetaData::EntityClassType>	EntityMapping;
-	CrossMap<TID, MetaData::ResearchType>		UpgradeMapping;
-	CrossMap<TID, MetaData::ResearchType>		TechMapping;
-	CrossMap<TID, MetaData::PlayerType>			PlayerMapping;
+	CrossMap<TID, IStrategizer::EntityClassType>	EntityMapping;
+	CrossMap<TID, IStrategizer::ResearchType>		UpgradeMapping;
+	CrossMap<TID, IStrategizer::ResearchType>		TechMapping;
+	CrossMap<TID, IStrategizer::PlayerType>			PlayerMapping;
 	CrossMap<TID, TName>						EntityIdentMapping;		
 	CrossMap<TID, TName>						UpgradeIdentMapping;
 	CrossMap<TID, TName>						TechIdentMapping;

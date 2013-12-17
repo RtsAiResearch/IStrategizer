@@ -6,7 +6,6 @@
 
 namespace IStrategizer
 {
-	using namespace MetaData;
 	class InfluenceMap;
 
 	enum IMType

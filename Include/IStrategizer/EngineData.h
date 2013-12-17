@@ -20,7 +20,7 @@
 using namespace Serialization;
 
 using namespace std;
-using namespace MetaData;
+using namespace IStrategizer;
 
 class PlanStepEx;
 class GameStateEx;

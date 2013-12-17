@@ -23,7 +23,7 @@
 #include <functional>
 
 using namespace std;
-using namespace OLCBP;
+using namespace IStrategizer;
 
 LearningFromHumanDemonstrationEx::LearningFromHumanDemonstrationEx(PlayerType p_player, PlayerType p_enemy)
 {
@@ -251,7 +251,7 @@ void LearningFromHumanDemonstrationEx::UnnecessaryStepsElimination(CookedCase* p
 	//p_case->dGraph = new PlanGraph(fSteps);
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::NecessaryStepsExtraction(PlanGraph* p_graph, int p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)
+void LearningFromHumanDemonstrationEx::NecessaryStepsExtraction(PlanGraph* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)
 {
     vector< pair<int, PlanStepEx*> >	rSteps;
     unsigned							i;
@@ -275,7 +275,7 @@ void LearningFromHumanDemonstrationEx::NecessaryStepsExtraction(PlanGraph* p_gra
     }
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::HierarchicalComposition(CookedPlan* p_plan, const vector<CookedPlan*>& p_plans, int p_index)
+void LearningFromHumanDemonstrationEx::HierarchicalComposition(CookedPlan* p_plan, const vector<CookedPlan*>& p_plans, unsigned p_index)
 {
 	int				m_maxSubgraphIndex = INT_MAX;
 	int				m_maxMatchedCount = 0;

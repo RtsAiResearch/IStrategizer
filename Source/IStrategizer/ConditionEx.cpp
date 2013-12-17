@@ -55,7 +55,6 @@ bool ConditionEx::PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_anchor
 					return false;
 			}
 
-            ConditionEx* me = const_cast<ConditionEx*>(this);
 			if(p_anchor == MATCHSIDE_Left)
 			{	
 				p_matchedLeafs.push_back(make_pair(const_cast<ConditionEx*>(this), const_cast<Expression*>(p_rhs)));

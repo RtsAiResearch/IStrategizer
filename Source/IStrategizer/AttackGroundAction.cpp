@@ -11,7 +11,7 @@
 #include "CellFeature.h"
 #include "CaseBasedReasonerEx.h"
 
-using namespace OLCBP;
+using namespace IStrategizer;
 
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)
