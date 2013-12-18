@@ -4,10 +4,10 @@
 #include <QWidget>
 #include "ui_PlannerViewWidget.h"
 
-class PlanStepEx;
 namespace IStrategizer
 {
 	class OnlinePlanExpansionExecutionEx;
+	class PlanStepEx;
 };
 
 class PlannerViewWidget : public QWidget
@@ -19,7 +19,7 @@ public:
 	~PlannerViewWidget();
 	void update();
 	void DrawPlanTree();
-	QTreeWidgetItem * TreeItemFromPlanStep(const PlanStepEx* p_pPlanStep);
+	QTreeWidgetItem * TreeItemFromPlanStep(const IStrategizer::PlanStepEx* p_pPlanStep);
 	void Planner(const IStrategizer::OnlinePlanExpansionExecutionEx *p_pPlanner) { m_pPlanner = p_pPlanner; }
 private:
 	Ui::PlannerViewWidget ui;

@@ -80,6 +80,8 @@
 	#include "PlanGraph.h"
 #endif
 
+using namespace IStrategizer;
+
 void SerializationEssentials::Init()
 {
 	static bool initialized = false;

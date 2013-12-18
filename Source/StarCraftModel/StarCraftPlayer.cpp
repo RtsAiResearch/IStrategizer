@@ -42,7 +42,7 @@ GameEntity* StarCraftPlayer::FetchEntity(TID p_id)
 	if (pUnit)
 		return new StarCraftEntity(pUnit);
 	else
-		return NULL;
+		return nullptr;
 }
 //----------------------------------------------------------------------------------------------
 const GameStateEx* StarCraftPlayer::State()

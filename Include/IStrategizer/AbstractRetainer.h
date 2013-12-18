@@ -5,18 +5,15 @@
 #include "EngineComponent.h"
 #endif
 
-#include <string>
-using namespace std;
-
-class CaseEx;
-class CaseBaseEx;
-
 namespace IStrategizer
 {
+	class CaseEx;
+	class CaseBaseEx;
+
     class AbstractRetainer : public EngineComponent
     {
     public:
-                            AbstractRetainer(const char* p_name) : EngineComponent(p_name), _caseBase(NULL) {}
+                            AbstractRetainer(const char* p_name) : EngineComponent(p_name), _caseBase(nullptr) {}
         virtual void	    ReadCaseBase() = 0;
         virtual void	    Flush() = 0;
         virtual void        Retain(const CaseEx* p_case) = 0;

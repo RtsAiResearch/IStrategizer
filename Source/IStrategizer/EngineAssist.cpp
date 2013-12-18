@@ -35,7 +35,6 @@
 #include <algorithm>
 
 using namespace IStrategizer;
-using namespace IStrategizer;
 using namespace std;
 
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -130,7 +129,7 @@ int EngineAssist::GetSourceBuilding(IN PlayerType p_playerIndex, TID p_entityCla
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetObject(PlayerType p_playerIndex, TID p_entityObjectId)
 {
-    int m_exists = g_Game->GetPlayer(p_playerIndex)->GetEntity(p_entityObjectId) != NULL;
+    int m_exists = g_Game->GetPlayer(p_playerIndex)->GetEntity(p_entityObjectId) != nullptr;
     return ((m_exists) ? ERR_Success : ERR_EntityDoesNotExist);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -166,7 +165,7 @@ int EngineAssist::ExecuteResearch(ResearchType p_researchId, TID p_sourceBuildin
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_sourceBuildingObjectId);
 	int ret = m_entity->Research(p_researchId);
-	m_entity->Unlock(NULL);
+	m_entity->Unlock(nullptr);
 
 	return ret;
 }
@@ -180,7 +179,7 @@ int EngineAssist::ExecuteBuild(EntityClassType p_buildingClassId, TID p_workerOb
 	assert(0);
 	p_buildingObjectId = 0;
 
-	m_entity->Unlock(NULL);
+	m_entity->Unlock(nullptr);
 
 	return ret;
 }
@@ -190,7 +189,7 @@ int EngineAssist::ExecuteTrain(TID p_trainerObjectId, EntityClassType p_entityCl
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_trainerObjectId);
 	int ret = m_entity->Train(p_entityClassId);
-	m_entity->Unlock(NULL);
+	m_entity->Unlock(nullptr);
 
     return ret;
 }
@@ -199,7 +198,7 @@ int EngineAssist::ExecuteAttackGround(TID p_entityObjectId, const Vector2& p_pos
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_entityObjectId);
 	int ret = m_entity->AttackGround(p_pos.X,p_pos.Y);
-	m_entity->Unlock(NULL);
+	m_entity->Unlock(nullptr);
 
 	return ret;
 }
@@ -296,7 +295,7 @@ int EngineAssist::GetPlayerColonies(IN PlayerType p_playerType, OUT vector<Colon
     for(int i = 0, size = m_entitiesIds.size(); i < size; ++i)
     {
         m_entity = m_player->GetEntity(m_entitiesIds[i]);
-        assert(m_entity != NULL);
+        assert(m_entity != nullptr);
         m_posX = m_entity->Attr(EOATTR_PosX);
         m_posY = m_entity->Attr(EOATTR_PosY);
         m_points.push_back(make_pair(m_posX, m_posY));
@@ -354,7 +353,7 @@ int EngineAssist::GetEntityObjectFromEntityClass(PlayerType p_playerIndex, Entit
 {
     vector<TID> m_entityIds;
     GamePlayer* m_player = g_Game->GetPlayer(p_playerIndex);
-    GameEntity* m_entity = NULL;
+    GameEntity* m_entity = nullptr;
     m_player->Entities(m_entityIds);
 
     for(int i = 0, size = m_entityIds.size(); i < size; ++i)
@@ -561,7 +560,7 @@ int EngineAssist::EntityObjectExist(TID p_entityObject, bool &p_exist, PlayerTyp
 	assert(pPlayer);
 
 	pEntity = pPlayer->GetEntity(p_entityObject);
-	p_exist = (pEntity != NULL);
+	p_exist = (pEntity != nullptr);
 
 	return ERR_Success;
 }
@@ -580,7 +579,7 @@ int EngineAssist::EntityObjectExist(const vector<TID> &p_entityObjects, bool &p_
 	{
 		pEntity = pPlayer->GetEntity(p_entityObjects[i]);
 
-		if (p_exist == NULL)
+		if (pEntity == nullptr)
 		{
 			p_exist = false;
 			break;
@@ -617,12 +616,12 @@ int	EngineAssist::ResearchesDone(const vector<ResearchType> &p_researchTypes, bo
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_satisfied, PlayerType p_playerType)
 {
-	GamePlayer						*pPlayer = NULL;
-	GameTechTree					*pTechTree = NULL;
-	GameType						*pEntityType = NULL;
-	GameResearch					*pResearchType = NULL;
-	WorldResources					*pReqResources = NULL;
-	PlayerResources					*pPlayerResources = NULL;
+	GamePlayer						*pPlayer = nullptr;
+	GameTechTree					*pTechTree = nullptr;
+	GameType						*pEntityType = nullptr;
+	GameResearch					*pResearchType = nullptr;
+	WorldResources					*pReqResources = nullptr;
+	PlayerResources					*pPlayerResources = nullptr;
 	EntityClassType					sourceEntity;
 	vector<ResearchType>			reqResearches;
 	map<EntityClassType, unsigned>	reqEntities;

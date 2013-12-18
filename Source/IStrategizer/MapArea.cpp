@@ -5,9 +5,9 @@ using namespace IStrategizer;
 
 MapArea& MapArea::Null()
 {
-	static MapArea nullArea(Vector2::Null(), -1, -1);
+	static MapArea nullptrArea(Vector2::Null(), -1, -1);
 
-	return nullArea;
+	return nullptrArea;
 }
 //////////////////////////////////////////////////////////////////////////
 bool MapArea::IsNull()

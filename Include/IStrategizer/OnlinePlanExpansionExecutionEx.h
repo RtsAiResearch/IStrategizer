@@ -12,21 +12,16 @@ using namespace std;
 #include "EngineComponent.h"
 #endif
 
-class PlanGraph;
-class CaseEx;
-class GoalEx;
-
 namespace IStrategizer
 {
 	enum PlayerType;
-}
-
-namespace IStrategizer
-{
+	class PlanGraph;
+	class CaseEx;
+	class GoalEx;
 	class CaseBasedReasonerEx;
+
 	class OnlinePlanExpansionExecutionEx : public EngineComponent
 	{
-
 	public:
 		typedef std::set<CaseEx*> CaseSet;
 
@@ -54,6 +49,5 @@ namespace IStrategizer
 		std::map<PlanTreeNodeEx*, CaseEx*>	_cases;
 	};
 }
-
 
 #endif	// ONLINEPLANEXPANSIONEXECUTIONEX_H

@@ -225,7 +225,7 @@ bool DefinitionCrossMapping::ExportAllIds(string p_exportPath)
 		name = Enums[id];
 
 		// Has a name defined
-		if (name != NULL)
+		if (name != nullptr)
 		{
 			stream << id << ' ' << name << endl;
 		}

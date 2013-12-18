@@ -21,7 +21,7 @@
 
 using namespace IStrategizer;
 
-BuildAction::BuildAction() : Action(ACTIONEX_Build), _targetCell(NULL)
+BuildAction::BuildAction() : Action(ACTIONEX_Build), _targetCell(nullptr)
 {
 	_params[PARAM_BuildingClassId]	= ECLASS_START;
 	_params[PARAM_WorkerClassId]	= ECLASS_START;

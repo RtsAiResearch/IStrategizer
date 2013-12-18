@@ -6,38 +6,36 @@
 #include "EngineData.h"
 
 #ifndef USEROBJECT_H
-	#include "UserObject.h"
+#include "UserObject.h"
 #endif
 
 #ifndef SVECTOR_H
-	#include "SVector.h"
+#include "SVector.h"
 #endif
-using namespace Serialization;
 
-///> class=GameStateEx
-class GameStateEx: public UserObject
+namespace IStrategizer
 {
-private:
-    ///> type=ShallowFeaturesEx
-	ShallowFeaturesEx	_shallowFeatures;
-    ///> type=DeepFeaturesEx
-	DeepFeaturesEx		_deepFeatures;
+	///> class=GameStateEx
+	class GameStateEx: public Serialization::UserObject
+	{
+		OBJECT_SERIALIZABLE(GameStateEx);
 
-public:
-	GameStateEx();
-	GameStateEx(const ShallowFeaturesEx& p_shallowFeatures, const DeepFeaturesEx& p_deepFeatures) : _shallowFeatures(p_shallowFeatures), _deepFeatures(p_deepFeatures){}
-    //----------------------------------------------------------------------------------------------
-	ShallowFeaturesEx&	ShallowFeatures() { return _shallowFeatures; }
-	DeepFeaturesEx&		DeepFeatures() { return _deepFeatures; }
-    //----------------------------------------------------------------------------------------------
-    // Serialization
-    string              TypeName()  { return "GameStateEx"; }
-    int                 TypeSize()  { return sizeof(GameStateEx); }
-    UserObject*         Prototype() { return new GameStateEx; }
+	private:
+		///> type=ShallowFeaturesEx
+		ShallowFeaturesEx	_shallowFeatures;
+		///> type=DeepFeaturesEx
+		DeepFeaturesEx		_deepFeatures;
 
-protected:
-    void                InitializeAddressesAux();
-    //----------------------------------------------------------------------------------------------
-};
+	public:
+		GameStateEx();
+		GameStateEx(const ShallowFeaturesEx& p_shallowFeatures, const DeepFeaturesEx& p_deepFeatures) : _shallowFeatures(p_shallowFeatures), _deepFeatures(p_deepFeatures){}
+		//----------------------------------------------------------------------------------------------
+		ShallowFeaturesEx&	ShallowFeatures() { return _shallowFeatures; }
+		DeepFeaturesEx&		DeepFeatures() { return _deepFeatures; }
+
+	protected:
+		void                InitializeAddressesAux();
+	};
+}
 
 #endif	// GAMESTATEEX_H

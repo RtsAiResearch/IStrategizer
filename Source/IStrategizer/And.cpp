@@ -1,5 +1,8 @@
 #include "And.h"
 
+using namespace std;
+using namespace IStrategizer;
+
 bool And::Evaluate()
 {
 	if(_shortCircuit)

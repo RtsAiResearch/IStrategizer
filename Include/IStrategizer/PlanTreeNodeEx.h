@@ -6,19 +6,19 @@
 #include <queue>
 #include <cassert>
 
-class PlanStepEx;
-class GoalEx;
-class Action;
-class CaseEx;
-
 namespace IStrategizer
 {
 	enum PlanTreeNodeType
 	{
 		PTNTYPE_Goal,
 		PTNTYPE_Action,
-		PTNTYPE_Null
+		PTNTYPE_nullptr
 	};
+
+	class PlanStepEx;
+	class GoalEx;
+	class Action;
+	class CaseEx;
 
 	class PlanTreeNodeEx
 	{
@@ -38,7 +38,7 @@ namespace IStrategizer
 		inline bool IsOpen() { return _isOpen; }
 		inline bool IsReady() { return _parents.size() == _readyParents.size(); }
 		inline PlanTreeNodeEx* SubPlanGoal() { return _pSubPlanGoal; }
-		inline bool IsNull() { return _type == PTNTYPE_Null; }
+		inline bool IsNull() { return _type == PTNTYPE_nullptr; }
 		CaseEx * BelongingCase() const { return _pBelongingCase; }
 		void BelongingCase(CaseEx *p_pCase) { _pBelongingCase = p_pCase; }
 

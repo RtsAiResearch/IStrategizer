@@ -72,7 +72,7 @@ void StarCraftGame::EnumeratePlayers()
   for (int i = 0, size = gamePlayerIds.size(); i < size; ++i)
   {
     typeId = g_Database.PlayerMapping.GetByFirst(gamePlayerIds[i]);
-    m_players[typeId] = NULL;
+    m_players[typeId] = nullptr;
   }
 }
 //----------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void StarCraftGame::EnumerateEntityTypes()
 
   for(unsigned i = 0, size = newEntityTypes.size(); i < size; ++i)
   {
-    m_entityTypes[(EntityClassType)newEntityTypes[i]] = NULL;
+    m_entityTypes[(EntityClassType)newEntityTypes[i]] = nullptr;
   }
 }
 //----------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void StarCraftGame::EnumerateResearches()
 
   for(unsigned i = 0, size = newResearchTypes.size(); i < size; ++i)
   {
-    m_researches[(ResearchType)newResearchTypes[i]] = NULL;
+    m_researches[(ResearchType)newResearchTypes[i]] = nullptr;
   }
 }
 //----------------------------------------------------------------------------------------------

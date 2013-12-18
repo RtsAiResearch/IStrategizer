@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------------------------------
 Action* ActionFactory::GetAction(ActionType p_actionType, PlanStepParameters& p_paramaters, IStrategizer::CellFeature *p_cellFeature, bool p_initConditions)
 {
-    Action* m_action = NULL;
+    Action* m_action = nullptr;
 
 	switch(p_actionType)
     {
@@ -50,7 +50,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, PlanStepParameters& p_
 //-------------------------------------------------------------------------------------------------------
 Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
 {
-	Action* m_action = NULL;
+	Action* m_action = nullptr;
 
 	switch(p_actionType)
 	{

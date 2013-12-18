@@ -7,10 +7,10 @@
 #include <Windows.h>
 #include <vector>
 
-class IStrategizerEx;
 namespace IStrategizer
 {
 	class RtsGame;
+	class IStrategizerEx;
 }
 
 class IMViewWidget;
@@ -46,14 +46,14 @@ private:
 	void FinalizeIStrategizer();
 	void InitPlannerView();
 
-	Ui::ClientMainClass			ui;
-	IStrategizerEx				*m_pIStrategizer;
-	IStrategizer::RtsGame		*m_pGameModel;
-	IMViewWidget				*m_pBldngDataIMWdgt;
-	IMViewWidget				*m_pGrndCtrlIMWdgt;
-	std::vector<IMViewWidget*>	m_IMViews;
-	PlannerViewWidget			*m_pPlannerViewWdgt;
-	bool						m_isLearning;
+	Ui::ClientMainClass				ui;
+	IStrategizer::IStrategizerEx	*m_pIStrategizer;
+	IStrategizer::RtsGame			*m_pGameModel;
+	IMViewWidget					*m_pBldngDataIMWdgt;
+	IMViewWidget					*m_pGrndCtrlIMWdgt;
+	std::vector<IMViewWidget*>		m_IMViews;
+	PlannerViewWidget				*m_pPlannerViewWdgt;
+	bool							m_isLearning;
 };
 
 #endif // CLIENTMAIN_H

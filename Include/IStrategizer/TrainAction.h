@@ -13,27 +13,28 @@
 namespace IStrategizer
 {
 	class CellFeature;
+
+	///> class=TrainAction
+	///> parent=Action
+	class TrainAction : public Action
+	{
+		OBJECT_SERIALIZABLE(TrainAction);
+
+	public:
+		TrainAction();
+		TrainAction(const PlanStepParameters& p_parameters);
+		bool		PreconditionsSatisfied();
+		bool		AliveConditionsSatisfied();
+		bool		SuccessConditionsSatisfied();
+
+	protected:
+		bool		ExecuteAux(unsigned long p_cycles );
+		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
+
+	private:
+		TID		_trainerId;
+		bool	_trained;
+	};
 }
 
-///> class=TrainAction
-///> parent=Action
-class TrainAction : public Action
-{
-public:
-	OBJECT_SERIALIZABLE(TrainAction);
-
-	TrainAction();
-	TrainAction(const PlanStepParameters& p_parameters);
-	bool		PreconditionsSatisfied();
-	bool		AliveConditionsSatisfied();
-	bool		SuccessConditionsSatisfied();
-
-protected:
-	bool		ExecuteAux(unsigned long p_cycles );
-	void		HandleMessage(Message* p_pMsg, bool& p_consumed);
-
-private:
-	TID		_trainerId;
-	bool	_trained;
-};
 #endif	// TRAINACTION_H

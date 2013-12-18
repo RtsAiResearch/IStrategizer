@@ -1,10 +1,12 @@
 #include "EntityObjectExist.h"
 
+using namespace IStrategizer;
+
 bool EntityObjectExist::Evaluate()
 {
 	if(_conditionParameters.find(PARAM_EntityObjectId) == _conditionParameters.end())
 	{
-		assert(_entityIdPtr != NULL);
+		assert(_entityIdPtr != nullptr);
 		_conditionParameters[PARAM_EntityObjectId] = *_entityIdPtr;
 	}
 

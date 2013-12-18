@@ -13,16 +13,11 @@
 
 #include <vector>
 #include <map>
-using namespace std;
-
-namespace DataStructure
-{
-    template<class TKey, class TValue>
-    class MapEx;
-}
 
 namespace IStrategizer
 {
+    template<class TKey, class TValue>
+    class MapEx;
 	enum PlayerType;
 	enum EntityClassType;
 	enum ResearchType;
@@ -53,13 +48,13 @@ namespace IStrategizer
         virtual void            InitializeMap() = 0;
 
     public:
-                        RtsGame() : EngineComponent("game"), m_pMap(NULL), m_initialized(false) {}
+                        RtsGame() : EngineComponent("game"), m_pMap(nullptr), m_initialized(false) {}
         virtual         ~RtsGame();
         virtual void    Init();
 		virtual	void	Finalize();
-        void            Players(vector<PlayerType>& p_playerIds);
-        void            EntityTypes(vector<EntityClassType>& p_entityTypeIds);
-        void            Researches(vector<ResearchType>& p_researchTypeIds);
+        void            Players(std::vector<PlayerType>& p_playerIds);
+        void            EntityTypes(std::vector<EntityClassType>& p_entityTypeIds);
+        void            Researches(std::vector<ResearchType>& p_researchTypeIds);
         GamePlayer*     GetPlayer(PlayerType p_id);
         GameType*       GetEntityType(EntityClassType p_id);
         GameResearch*   GetResearch(ResearchType p_id);

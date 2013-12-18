@@ -1,10 +1,13 @@
 #ifndef SERIALIZATIONESSENTIALS_H
 #define SERIALIZATIONESSENTIALS_H
 
-class SerializationEssentials
+namespace IStrategizer
 {
-public:
-    static void Init();
-};
+	class SerializationEssentials
+	{
+	public:
+		static void Init();
+	};
+}
 #endif // SERIALIZATIONESSENTIALS_H
 

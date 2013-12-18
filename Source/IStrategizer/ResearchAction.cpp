@@ -15,8 +15,6 @@
 #include "GameEntity.h"
 
 using namespace IStrategizer;
-using namespace IStrategizer;
-using namespace IStrategizer;
 
 ResearchAction::ResearchAction() : Action(ACTIONEX_Research)
 {

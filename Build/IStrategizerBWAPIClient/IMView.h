@@ -14,7 +14,7 @@ class IMView : public QWidget
 	Q_OBJECT
 
 public:
-	IMView(QWidget *p_pParent = NULL);
+	IMView(QWidget *p_pParent = nullptr);
 	~IMView();
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;

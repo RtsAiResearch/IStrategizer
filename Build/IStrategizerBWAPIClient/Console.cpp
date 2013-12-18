@@ -52,11 +52,11 @@ BOOL CConsole::InitializeCrtHandles()
 
 	// 2. Associate a stream with the previously associated CRT files in step 1
 	m_pNewStdIn = _tfdopen(m_iCrtStdInDescriptor, CRT_READ);
-	if (m_pNewStdIn == NULL)
+	if (m_pNewStdIn == nullptr)
 		return FALSE;
 
 	m_pNewStdOut = _tfdopen(m_iCrtStdOutDescriptor, CRT_WRITE);
-	if (m_pNewStdOut == NULL)
+	if (m_pNewStdOut == nullptr)
 		return FALSE;
 
 	// 3. Copy the current std stream address in case we want to restore the original streams later

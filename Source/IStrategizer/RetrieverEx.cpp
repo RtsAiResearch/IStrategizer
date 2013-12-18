@@ -29,6 +29,7 @@
 #include "CaseBaseEx.h"
 #include "Logger.h"
 #include <map>
+
 using namespace std;
 using namespace IStrategizer;
 

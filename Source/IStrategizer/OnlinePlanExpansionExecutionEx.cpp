@@ -170,7 +170,7 @@ void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, uns
 	PlanTreeNodeEx*			pCurrentNode;
 
 	// Root goal destroyed we may have an empty case-base, or exhausted all cases and nothing succeeded
-	if (p_pPlanRoot == NULL || p_pPlanRoot->IsNull())
+	if (p_pPlanRoot == nullptr || p_pPlanRoot->IsNull())
 		return;
 
 	if(p_pPlanRoot->Children().empty() &&

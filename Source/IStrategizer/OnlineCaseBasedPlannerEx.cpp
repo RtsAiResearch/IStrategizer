@@ -48,9 +48,9 @@
 
 using namespace IStrategizer;
 
-IStrategizer::OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner = NULL;
+OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner = nullptr;
 
-OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() : _caseBasedReasoner(NULL), _onlineExpansionExecution(NULL)
+OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() : _caseBasedReasoner(nullptr), _onlineExpansionExecution(nullptr)
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
     _onlineExpansionExecution = new OnlinePlanExpansionExecutionEx(p_initialGoal, _caseBasedReasoner);
 }
 //----------------------------------------------------------------------------------------------
-void OnlineCaseBasedPlannerEx::Update(unsigned long p_gameCycle)
+void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)
 {
 	//static unsigned long lastGameCycle = INT_MAX;
 	//if(p_gameCycle < lastGameCycle)
@@ -107,7 +107,7 @@ void OnlineCaseBasedPlannerEx::Update(unsigned long p_gameCycle)
 	//	lastGameCycle = p_gameCycle;
 	//}
 
-	_onlineExpansionExecution->Update(p_gameCycle);
+	_onlineExpansionExecution->Update(p_clock.ElapsedEngineCycles());
 }
 //----------------------------------------------------------------------------------------------
 OnlineCaseBasedPlannerEx::~OnlineCaseBasedPlannerEx()

@@ -75,7 +75,7 @@ bool EntityClassExist::Evaluate()
 			if (m_entity->Type() == _conditionParameters[PARAM_EntityClassId] && MatchesAttributes(m_entityObjectId))
 			{
 				if(_blocking)
-					m_entity->Lock(NULL);
+					m_entity->Lock(nullptr);
 
 				_entityObjectIds.push_back(m_entityObjectId);
 

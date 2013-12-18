@@ -1,5 +1,7 @@
 #include "ResourceExist.h"
 
+using namespace IStrategizer;
+
 ResourceExist::ResourceExist(PlayerType p_player, int p_resourceId, int p_amount) : ConditionEx(p_player, CONDEX_ResourceExist)
 {
 	_conditionParameters[PARAM_ResourceId] = p_resourceId;

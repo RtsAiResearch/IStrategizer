@@ -7,15 +7,14 @@
 
 #include <hash_map>
 
-class CaseEx;
-class GoalEx;
-class GameStateEx;
-class CaseBaseEx;
-
 namespace IStrategizer
 {
 	enum GoalType;
 	class AbstractRetainer;
+	class CaseEx;
+	class GoalEx;
+	class GameStateEx;
+	class CaseBaseEx;
 
     class RetrieverEx : public AbstractRetriever
     {

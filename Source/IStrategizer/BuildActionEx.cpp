@@ -15,8 +15,6 @@
 #include "GameEntity.h"
 
 using namespace IStrategizer;
-using namespace IStrategizer;
-using namespace IStrategizer;
 
 const unsigned MaxPrepTime = 5000;
 const unsigned MaxExecTrialTime = 500;
@@ -118,7 +116,7 @@ bool BuildActionEx::AliveConditionsSatisfied()
 {
 	int			ret;
 	bool		success = false;
-	GameEntity	*pEntity = NULL;
+	GameEntity	*pEntity = nullptr;
 
 	assert(PlanStepEx::State() == ESTATE_Executing);
 

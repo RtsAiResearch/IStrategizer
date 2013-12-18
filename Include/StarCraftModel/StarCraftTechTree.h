@@ -22,7 +22,7 @@ namespace StarCraftModel
   using namespace IStrategizer;
   using namespace std;
   using namespace BWAPI;
-  using namespace DataStructure;
+  using namespace IStrategizer;
 
   class StarCraftTechTree : public IStrategizer::GameTechTree
   {

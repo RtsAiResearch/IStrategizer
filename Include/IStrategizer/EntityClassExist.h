@@ -5,12 +5,16 @@
 #include "ConditionEx.h"
 #include "CheckEntityObjectAttribute.h"
 
+namespace IStrategizer
+{
 ///> class=EntityClassExist
 ///> parent=ConditionEx
 class EntityClassExist : public ConditionEx
 {
+	OBJECT_SERIALIZABLE(EntityClassExist);
+
 private:
-	vector<TID>		_entityObjectIds;
+	std::vector<TID>		_entityObjectIds;
     ///> type=map(pair(int,int))
     Serialization::SMap< EntityObjectAttribute, int >   _entityObjectAttributes;
     ///> type=int
@@ -24,7 +28,7 @@ private:
 public:
                         EntityClassExist() {}
 						EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, 
-										 map< EntityObjectAttribute,int > p_entityObjectAttributes, 
+										 std::map< EntityObjectAttribute,int > p_entityObjectAttributes, 
 										 int p_similarityThreshold = ExactSimilarity, bool p_blocking = false);
 						EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, bool p_oneUse = false, bool p_blocking = false);
 	bool				MatchesAttributes(int p_entityObjectId);
@@ -33,16 +37,11 @@ public:
 	bool				Evaluate();
     void	            Copy(IClonable* p_dest);
 	bool				Consume(int p_amount);
-	//----------------------------------------------------------------------------------------------
-	// Serialization
-public:
-	string      TypeName()  { return "EntityClassExist"; }
-	int         TypeSize()  { return sizeof(EntityClassExist); }
-    UserObject* Prototype() { return new EntityClassExist; }	
+
 protected:
 	void InitializeAddressesAux();
 	//----------------------------------------------------------------------------------------------
-
-
 };
+}
+
 #endif	// ENTITYCLASSEXIST_H

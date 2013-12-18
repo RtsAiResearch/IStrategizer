@@ -5,7 +5,7 @@
 using namespace IStrategizer;
 
 IMViewWidget::IMViewWidget(QWidget *parent)
-	: QWidget(parent), m_pIM(NULL)
+	: QWidget(parent), m_pIM(nullptr)
 {
 	ui.setupUi(this);
 	m_pIMView = new IMView;
@@ -16,7 +16,7 @@ IMViewWidget::IMViewWidget(QWidget *parent)
 IMViewWidget::~IMViewWidget()
 {
 	delete m_pIMView;
-	m_pIMView = NULL;
+	m_pIMView = nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
 void IMViewWidget::SetIM(const InfluenceMap *p_pIM)
@@ -27,7 +27,7 @@ void IMViewWidget::SetIM(const InfluenceMap *p_pIM)
 //////////////////////////////////////////////////////////////////////////
 void IMViewWidget::update()
 {
-	if (m_pIM != NULL)
+	if (m_pIM != nullptr)
 	{
 		m_pIMView->update();
 		ui.lblWorlSizeData->setText(tr("<%1, %2>").arg(m_pIM->WorldWidth()).arg(m_pIM->WorldHeight()));

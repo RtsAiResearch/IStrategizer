@@ -1,11 +1,11 @@
 #ifndef ABSTRACTREVISER_H
 #define ABSTRACTREVISER_H
 
-class CaseBaseEx;
-class CaseEx;
-
 namespace IStrategizer
 {
+	class CaseBaseEx;
+	class CaseEx;
+
     class AbstractReviser
     {
     public:

@@ -272,7 +272,7 @@ GoalEx* GoalSatisfactionRow::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
         }
 
         GoalEx* m_goal = g_GoalFactory.GetGoal((GoalType)GET(_currentGoal, GoalType), m_params);
-        assert(m_goal != NULL);
+        assert(m_goal != nullptr);
         _goals[p_pathId] = m_goal;
     }
 
@@ -282,7 +282,7 @@ GoalEx* GoalSatisfactionRow::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
 //----------------------------------------------------------------------------------------------
 GoalEx* GoalSatisfactionRow::GetGoal(int p_goalIdx)
 {
-    GoalEx* m_goal = NULL;
+    GoalEx* m_goal = nullptr;
     for(map<TPathKey, int>::iterator itr = _keyToIdxMapping.begin();
         itr != _keyToIdxMapping.end();
         itr++)
@@ -295,6 +295,6 @@ GoalEx* GoalSatisfactionRow::GetGoal(int p_goalIdx)
     }
 
     // this function should return a goal of and only if it succeeded during a previous goal satisfaction row computation
-    assert(m_goal != NULL);
+    assert(m_goal != nullptr);
     return m_goal;
 }

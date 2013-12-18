@@ -18,8 +18,6 @@
 #endif
 #include <vector>
 
-class GameStateEx;
-class Message;
 
 namespace IStrategizer
 {
@@ -28,6 +26,8 @@ namespace IStrategizer
     class GameEntity;
     class PlayerResources;
     class GameTechTree;
+	class GameStateEx;
+	class Message;
 
 	typedef MapEx<TID, GameEntity*> EntitiesMap;
 

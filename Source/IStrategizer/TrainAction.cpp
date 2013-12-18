@@ -15,8 +15,6 @@
 #include "GameEntity.h"
 
 using namespace IStrategizer;
-using namespace IStrategizer;
-using namespace IStrategizer;
 
 TrainAction::TrainAction() : Action(ACTIONEX_Train), _trained(false)
 {

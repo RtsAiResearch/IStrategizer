@@ -22,6 +22,8 @@
 #include "Not.h"
 #endif
 
+using namespace IStrategizer;
+
 AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 {
 	_params[PARAM_EntityClassId]		= ECLASS_START;

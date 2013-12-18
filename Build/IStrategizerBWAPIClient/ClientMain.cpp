@@ -32,7 +32,7 @@ using namespace std;
 #define UnitPositionFromTilePosition(TilePos)	(TilePos * 32)
 
 ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
-: QMainWindow(parent, flags), m_pIStrategizer(NULL), m_pGameModel(NULL), m_isLearning(true)
+: QMainWindow(parent, flags), m_pIStrategizer(nullptr), m_pGameModel(nullptr), m_isLearning(true)
 {
 	ui.setupUi(this);
 }
@@ -70,7 +70,7 @@ void ClientMain::InitIStrategizer()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
 {
-	IMViewWidget	*pIMView = NULL;
+	IMViewWidget	*pIMView = nullptr;
 	QGridLayout		*gridLayout;
 
 	// 1. Init Building Data IM
@@ -115,10 +115,10 @@ void ClientMain::InitPlannerView()
 void ClientMain::FinalizeIStrategizer()
 {
 	delete m_pIStrategizer;
-	m_pIStrategizer = NULL;
+	m_pIStrategizer = nullptr;
 
 	delete m_pGameModel;
-	m_pGameModel = NULL;
+	m_pGameModel = nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::showEvent(QShowEvent *pEvent)
@@ -167,8 +167,8 @@ void ClientMain::OnSendText(const string& p_text)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 {
-	EntityMessageData	*pData = NULL;
-	EntityCreateMessage	*pMsg = NULL;
+	EntityMessageData	*pData = nullptr;
+	EntityCreateMessage	*pMsg = nullptr;
 
 	pData = new EntityMessageData;
 	assert(pData);
@@ -196,8 +196,8 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 {
-	EntityMessageData		*pData = NULL;
-	EntityDestroyMessage	*pMsg = NULL;
+	EntityMessageData		*pData = nullptr;
+	EntityDestroyMessage	*pMsg = nullptr;
 
 	pData = new EntityMessageData;
 	assert(pData);
@@ -226,8 +226,8 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
 {
-	EntityMessageData		*pData = NULL;
-	EntityRenegadeMessage	*pMsg = NULL;
+	EntityMessageData		*pData = nullptr;
+	EntityRenegadeMessage	*pMsg = nullptr;
 
 	pData = new EntityMessageData;
 	assert(pData);
@@ -265,8 +265,8 @@ void ClientMain::OnMatchStart()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchEnd(bool p_isWinner)
 {
-	GameEndMessageData	*pData = NULL;
-	GameEndMessage		*pMsg = NULL;
+	GameEndMessageData	*pData = nullptr;
+	GameEndMessage		*pMsg = nullptr;
 
 	pData = new GameEndMessageData;
 	assert(pData);
@@ -354,13 +354,13 @@ void ClientMain::InitResourceManager()
 	{
 		if ((*i)->getType().isWorker())
 		{
-			Unit closestMineral=NULL;
+			Unit closestMineral=nullptr;
 			for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
 			{
-				if (closestMineral==NULL || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
+				if (closestMineral==nullptr || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
 					closestMineral = *m;
 			}
-			if (closestMineral!=NULL)
+			if (closestMineral!=nullptr)
 				(*i)->rightClick(closestMineral);
 		}
 	}

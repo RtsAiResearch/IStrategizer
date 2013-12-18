@@ -4,9 +4,12 @@
 #include "And.h"
 #endif
 #include "Logger.h"
+#include "CompositeExpression.h"
+
+using namespace IStrategizer;
 
 Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
-: PlanStepEx(p_actionType, ESTATE_END), _preCondition(NULL), _aliveCondition(NULL)
+: PlanStepEx(p_actionType, ESTATE_END), _preCondition(nullptr), _aliveCondition(nullptr)
 {
 	_stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
 	_stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
@@ -14,7 +17,7 @@ Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxEx
 }
 //////////////////////////////////////////////////////////////////////////
 Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, unsigned p_maxPrepTime,  unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
-: PlanStepEx(p_actionType, ESTATE_END, p_parameters), _preCondition(NULL), _aliveCondition(NULL)
+: PlanStepEx(p_actionType, ESTATE_END, p_parameters), _preCondition(nullptr), _aliveCondition(nullptr)
 {
 	_stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
 	_stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
@@ -116,6 +119,6 @@ void Action::Copy(IClonable* p_dest)
 
 	Action* m_dest = static_cast<Action*>(p_dest);
 
-	m_dest->_preCondition	= _preCondition ? static_cast<CompositeExpression*>(_preCondition->Clone()) : NULL;
-	m_dest->_aliveCondition	= _aliveCondition ? static_cast<CompositeExpression*>(_aliveCondition->Clone()) : NULL;
+	m_dest->_preCondition	= _preCondition ? static_cast<CompositeExpression*>(_preCondition->Clone()) : nullptr;
+	m_dest->_aliveCondition	= _aliveCondition ? static_cast<CompositeExpression*>(_aliveCondition->Clone()) : nullptr;
 }

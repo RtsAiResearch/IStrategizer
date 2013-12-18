@@ -2,6 +2,8 @@
 #include "RtsGame.h"
 #include <cassert>
 
+using namespace IStrategizer;
+
 CheckEntityClassAttribute::CheckEntityClassAttribute(PlayerType p_player, int p_entityClssId, int p_attributeId, int p_operator, int p_value)
 : ConditionEx(p_player, CONDEX_CheckEntityClassAttribute)
 {

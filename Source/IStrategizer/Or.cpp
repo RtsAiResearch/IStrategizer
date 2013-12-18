@@ -1,5 +1,7 @@
 #include "Or.h"
 
+using namespace IStrategizer;
+
 bool Or::Evaluate()
 {
     if(_shortCircuit)

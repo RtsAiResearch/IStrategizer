@@ -6,8 +6,6 @@
 #include <cassert>
 #include <cstdarg>
 #include <ostream>
-using namespace std;
-using namespace stdext;
 
 #ifndef MULTIINDEX_H
 #include "MultiIndex.h"
@@ -21,7 +19,7 @@ using namespace stdext;
 #include "SetOperator.h"
 #endif
 
-namespace DataStructure
+namespace IStrategizer
 {
     template<class TPKey, class TSKey, class TValue>
     class MultiIndexContainer
@@ -40,13 +38,13 @@ namespace DataStructure
         typedef hash_map<TPKey, Record*>    PKeyIndexTable;
 
         SetOperator<TPKey>  m_setOperator;
-        TSKey               m_nullSKey;
+        TSKey               m_nullptrSKey;
         SKeyIndexTable      m_sIndices[MaxIndices];
         int                 m_sIndexCount;
         PKeyIndexTable      m_pIndices;
 
         //----------------------------------------------------------------------------------------------
-        MultiIndexContainer(int p_sIndexCount, TSKey p_nullSKey) : m_sIndexCount(p_sIndexCount), m_nullSKey(p_nullSKey)
+        MultiIndexContainer(int p_sIndexCount, TSKey p_nullptrSKey) : m_sIndexCount(p_sIndexCount), m_nullptrSKey(p_nullptrSKey)
         {
 
         }
@@ -61,8 +59,8 @@ namespace DataStructure
 
             for(int i = 0; i < p_indices.Count; ++i)
             {
-                // null value
-                if(p_indices.Components[i] == m_nullSKey)
+                // nullptr value
+                if(p_indices.Components[i] == m_nullptrSKey)
                     continue;
                 else
                 {
@@ -75,7 +73,7 @@ namespace DataStructure
         void Delete(TPKey p_pkey)
         {
             Record* record = TryGetRecord(p_pkey);
-            assert(record != NULL);
+            assert(record != nullptr);
 
             MultiIndex<TSKey>& sIndices = record->SKeys;
             for(int i = 0; i < sIndices.Count; ++i)
@@ -83,7 +81,7 @@ namespace DataStructure
                 SKeyIndexTable& sIndexTable = m_sIndices[i];
                 TSKey skey = sIndices.Components[i];
 
-                if(skey == m_nullSKey)
+                if(skey == m_nullptrSKey)
                     continue;
 
                 sIndexTable[skey]->erase(p_pkey);
@@ -102,7 +100,7 @@ namespace DataStructure
                 SKeyIndexTable& sIndexTable = m_sIndices[i];
                 TSKey skey = p_sIndicies.Components[i];
 
-                if(skey == m_nullSKey)
+                if(skey == m_nullptrSKey)
                     continue;
 
                 SKeyIndexTable::iterator where = sIndexTable.find(skey);
@@ -139,8 +137,8 @@ namespace DataStructure
                     p_output << "\tIndex [" << indexItr->first << "]" << "\tBucket [";
                     Bucket* b = indexItr->second;
 
-                    if(b == NULL)
-                        p_output << "\t\tNull";
+                    if(b == nullptr)
+                        p_output << "\t\tNULL";
                     else
                     {
                         for(Bucket::iterator bucketItr = b->begin();
@@ -150,7 +148,7 @@ namespace DataStructure
                             p_output << *bucketItr << ", ";
                         }
                     }
-                    p_output << "Null]" << endl;
+                    p_output << "NULL]" << endl;
                 }
             }
 
@@ -190,7 +188,7 @@ namespace DataStructure
             PKeyIndexTable::iterator itr = m_pIndices.find(p_pkey);
 
             if(itr == m_pIndices.end())
-                return NULL;
+                return nullptr;
             else
                 return itr->second;
         }
@@ -213,7 +211,7 @@ namespace DataStructure
                 ++itr)
             {
                 Bucket*& b = itr->second;
-                if(b != NULL)
+                if(b != nullptr)
                     delete b;
             }
         }
@@ -225,7 +223,7 @@ namespace DataStructure
                 ++itr)
             {
                 Record*& r = itr->second;
-                if(r != NULL)
+                if(r != nullptr)
                     delete r;
             }
 
@@ -234,7 +232,7 @@ namespace DataStructure
         void FreeRecord(const TPKey& p_pkey)
         {
             Record* record = m_pIndices[p_pkey];
-            assert(record != NULL);
+            assert(record != nullptr);
             delete record;
             m_pIndices.erase(p_pkey);
         }

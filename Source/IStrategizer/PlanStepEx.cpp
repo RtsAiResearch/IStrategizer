@@ -1,7 +1,4 @@
-#ifndef PLANSTEPEX_H
 #include "PlanStepEx.h"
-#endif
-
 #include <cstdio>
 #include <algorithm>
 #include "Logger.h"
@@ -17,14 +14,14 @@ void PlanStepEx::InitializeAddressesAux()
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) :
-_stepTypeId(p_stepTypeId), _state(p_state), _successCondition(NULL), _postCondition(NULL), _firstUpdate(true)
+_stepTypeId(p_stepTypeId), _state(p_state), _successCondition(nullptr), _postCondition(nullptr), _firstUpdate(true)
 {
 	memset(_stateStartTime, 0, sizeof(_stateStartTime));
 	memset(_stateTimeout, 0, sizeof(_stateTimeout));
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters) : 
-_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _successCondition(NULL), _postCondition(NULL), _firstUpdate(true)
+_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _successCondition(nullptr), _postCondition(nullptr), _firstUpdate(true)
 {
 	memset(_stateStartTime, 0, sizeof(_stateStartTime));
 	memset(_stateTimeout, 0, sizeof(_stateTimeout));
@@ -64,8 +61,8 @@ void PlanStepEx::Copy(IClonable* p_dest)
 	m_dest->_stepTypeId         = _stepTypeId;
 	m_dest->_state              = _state;
 	m_dest->_params         = _params;
-    m_dest->_successCondition   = _successCondition ? static_cast<CompositeExpression*>(_successCondition->Clone()) : NULL;
-    m_dest->_postCondition      = _postCondition ?    static_cast<CompositeExpression*>(_postCondition->Clone()) : NULL;
+    m_dest->_successCondition   = _successCondition ? static_cast<CompositeExpression*>(_successCondition->Clone()) : nullptr;
+    m_dest->_postCondition      = _postCondition ?    static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
 	m_dest->_stepLevelType      = _stepLevelType;
     m_dest->_data               = _data;
 }
