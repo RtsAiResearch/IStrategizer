@@ -15,7 +15,7 @@ namespace IStrategizer
 {
 	///> class=GraphEdge(TAnnotation)
 	template<class TAnnotation>
-	struct GraphEdge : public UserObject
+	struct GraphEdge : public Serialization::UserObject
 	{
 		OBJECT_SERIALIZABLE(GraphEdge);
 
