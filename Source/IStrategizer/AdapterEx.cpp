@@ -175,7 +175,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 	pPlayer->Entities(entityIds);
 	workerTypeId = pPlayer->GetWorkerType();
 
-	for (int i = 0, size = entityIds.size(); i < size; ++i)
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
 	{
 		pEntity = pPlayer->GetEntity(entityIds[i]);
 		assert(pEntity);
@@ -257,7 +257,7 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 
 	pPlayer->Entities(entityIds);
 	
-	for (int i = 0, size = entityIds.size(); i < size; ++i)
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
 	{
 		pEntity = pPlayer->GetEntity(entityIds[i]);
 		assert(pEntity);

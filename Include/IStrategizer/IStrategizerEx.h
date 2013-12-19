@@ -4,6 +4,7 @@
 #include <vector>
 #include "MetaData.h"
 #include "MessagePumpObserver.h"
+#include "WorldClock.h"
 
 namespace IStrategizer
 {
@@ -32,6 +33,7 @@ namespace IStrategizer
 		PhaseType							_phase;
 		IStrategizerParam					_param;
 		bool								_isFirstUpdate;
+		WorldClock							_clock;
 
 	public:
 		IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_phaseType, RtsGame* p_rtsGame);
@@ -39,6 +41,7 @@ namespace IStrategizer
 		void	OfflineLearning();
 		const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
 		void	NotifyMessegeSent(Message* p_message);
+		const WorldClock& Clock() const { return _clock; }
 		~IStrategizerEx();
 	};
 }

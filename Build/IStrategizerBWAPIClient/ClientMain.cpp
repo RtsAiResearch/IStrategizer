@@ -119,6 +119,15 @@ void ClientMain::FinalizeIStrategizer()
 
 	delete m_pGameModel;
 	m_pGameModel = nullptr;
+
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::FinalizeViews()
+{
+	m_pPlannerViewWdgt->Planner(nullptr);
+
+	for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
+		m_IMViews[i]->SetIM(nullptr);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::showEvent(QShowEvent *pEvent)
@@ -283,10 +292,10 @@ void ClientMain::UpdateStatsView()
 {
 	float engineRatio, gameRatio;
 
-	ui.lblEngineCycleData->setText(tr("%1").arg(g_WorldClock.ElapsedEngineCycles()));
+	ui.lblEngineCycleData->setText(tr("%1").arg(m_pIStrategizer->Clock().ElapsedEngineCycles()));
 	ui.lblGameCyclesData->setText(tr("%1").arg(Broodwar->getFrameCount()));
 
-	engineRatio = (float)g_WorldClock.ElapsedEngineCycles();
+	engineRatio = (float)m_pIStrategizer->Clock().ElapsedEngineCycles();
 	gameRatio = (float)Broodwar->getFrameCount();
 
 	if (engineRatio > gameRatio)
@@ -303,7 +312,7 @@ void ClientMain::UpdateStatsView()
 	ui.lblEngineRatioData->setText(tr("%1").arg(engineRatio));
 	ui.lblGameRatioData->setText(tr("%1").arg(gameRatio));
 	ui.lblFrameDiffData->setText(tr("%1").arg(
-		abs((int)(g_WorldClock.ElapsedEngineCycles() - Broodwar->getFrameCount()))));
+		abs((int)(m_pIStrategizer->Clock().ElapsedEngineCycles() - Broodwar->getFrameCount()))));
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -341,7 +350,7 @@ void ClientMain::OnClientUpdate()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateViews()
 {
-	for (int i = 0, size = m_IMViews.size(); i < size; ++i)
+	for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
 		m_IMViews[i]->update();
 
 	m_pPlannerViewWdgt->update();

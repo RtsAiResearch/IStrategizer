@@ -69,7 +69,7 @@ void AttackGroundAction::InitializePostConditions()
 	_postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackGroundAction::ExecuteAux(unsigned long p_cycles)
+bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 {
 	throw NotImplementedException(XcptHere);
 	////Vector2 targetPosition = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptPosition(_targetCell);

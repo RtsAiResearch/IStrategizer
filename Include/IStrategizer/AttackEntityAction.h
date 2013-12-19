@@ -24,10 +24,10 @@ namespace IStrategizer
 		AttackEntityAction();
 		AttackEntityAction(const PlanStepParameters& p_parameters, CellFeature *p_cellFeature);
 		void        Copy(IClonable* p_dest);
-		void		Update(unsigned long p_cycles);
+		void		Update(const WorldClock& p_clock);
 
 	protected:
-		bool		ExecuteAux(unsigned long p_cycles);
+		bool		ExecuteAux(const WorldClock& p_clock);
 		void		InitializePreConditions();
 		void		InitializeAliveConditions();
 		void		InitializeSuccessConditions();

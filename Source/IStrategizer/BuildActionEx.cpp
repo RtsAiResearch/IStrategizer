@@ -31,7 +31,7 @@ Action(ACTIONEX_BuildEx, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTim
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnSucccess(unsigned p_cycles)
+void BuildActionEx::OnSucccess(const WorldClock& p_clock)
 {
 	if (_buildIssued)
 	{
@@ -45,7 +45,7 @@ void BuildActionEx::OnSucccess(unsigned p_cycles)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnFailure(unsigned p_cycles)
+void BuildActionEx::OnFailure(const WorldClock& p_clock)
 {
 	if (_buildIssued)
 	{
@@ -156,7 +156,7 @@ bool BuildActionEx::SuccessConditionsSatisfied()
 	return false;
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::ExecuteAux(unsigned long p_cycles)
+bool BuildActionEx::ExecuteAux(const WorldClock& p_clock)
 {
 	EntityClassType		builderType;
 	EntityClassType		buildingType;

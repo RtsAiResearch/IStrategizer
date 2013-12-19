@@ -78,7 +78,7 @@ bool TrainAction::SuccessConditionsSatisfied()
 	return _trained;
 }
 //----------------------------------------------------------------------------------------------
-bool TrainAction::ExecuteAux(unsigned long p_cycles)
+bool TrainAction::ExecuteAux(const WorldClock& p_clock)
 {
 	EntityClassType		traineeType = (EntityClassType)_params[PARAM_EntityClassId];
 	GameEntity			*pGameTrainer;

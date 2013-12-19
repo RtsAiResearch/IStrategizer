@@ -57,7 +57,7 @@ bool ResearchAction::SuccessConditionsSatisfied()
 	return g_Game->Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_EntityClassId]);
 }
 //----------------------------------------------------------------------------------------------
-bool ResearchAction::ExecuteAux(unsigned long p_cycles)
+bool ResearchAction::ExecuteAux(const WorldClock& p_clock)
 {
 	ResearchType	researchType = (ResearchType)_params[PARAM_EntityClassId];
 	GameEntity		*pGameResearcher;

@@ -67,14 +67,14 @@ void PlanStepEx::Copy(IClonable* p_dest)
     m_dest->_data               = _data;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::State(ExecutionStateType p_state, unsigned p_cycles)
+void PlanStepEx::State(ExecutionStateType p_state, const WorldClock& p_clock)
 {
 	LogInfo("%s: '%s'->'%s'", ToString().c_str(), Enums[_state], Enums[p_state]);
-	_stateStartTime[INDEX(p_state, ExecutionStateType)] = p_cycles;
+	_stateStartTime[INDEX(p_state, ExecutionStateType)] = p_clock.ElapsedMilliseconds();
 	_state = p_state;
 }
 //////////////////////////////////////////////////////////////////////////
-bool PlanStepEx::IsCurrentStateTimeout(unsigned p_cycles)
+bool PlanStepEx::IsCurrentStateTimeout(const WorldClock& p_clock)
 {
 	unsigned timeout = _stateTimeout[INDEX(_state, ExecutionStateType)];
 	unsigned startTime = _stateStartTime[INDEX(_state, ExecutionStateType)];
@@ -83,22 +83,22 @@ bool PlanStepEx::IsCurrentStateTimeout(unsigned p_cycles)
 	if (timeout == 0)
 		return false;
 	else
-		return ((p_cycles - startTime) > timeout);
+		return ((p_clock.ElapsedMilliseconds() - startTime) > timeout);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::Update(unsigned p_cycles)
+void PlanStepEx::Update(const WorldClock& p_clock)
 {
 	if (_firstUpdate)
 	{
-		Reset(p_cycles);
+		Reset(p_clock);
 		_firstUpdate = false;
 	}
 
-	if (IsCurrentStateTimeout(p_cycles))
-		State(ESTATE_Failed, p_cycles);
+	if (IsCurrentStateTimeout(p_clock))
+		State(ESTATE_Failed, p_clock);
 	else
 	{
-		UpdateAux(p_cycles);
+		UpdateAux(p_clock);
 	}
 }
 //////////////////////////////////////////////////////////////////////////

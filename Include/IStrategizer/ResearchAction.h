@@ -28,7 +28,7 @@ namespace IStrategizer
 		bool		SuccessConditionsSatisfied();
 
 	protected:
-		bool		ExecuteAux(unsigned long p_cycles );
+		bool		ExecuteAux(const WorldClock& p_clock );
 
 	private:
 		TID		_researcherId;

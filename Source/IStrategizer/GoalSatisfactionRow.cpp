@@ -218,8 +218,12 @@ bool GoalSatisfactionRow::EvaluatePath()
     }
     
     TPathKey m_pathId = Hash(_currentGoal, m_path);
-    GoalEx* m_goal = GetGoal(m_pathId, m_path);
-    m_goal->Update(_lastGameCycle);
+    
+
+	assert(0);
+	// FIXME: Lines blow were commented to fix compilation error
+	// GoalEx* m_goal = GetGoal(m_pathId, m_path);
+    //m_goal->Update(_lastGameCycle);
     
     int m_goalIdx = _keyToIdxMapping[m_pathId];
     bool m_res = _goals[m_pathId]->State() == ESTATE_Succeeded;

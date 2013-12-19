@@ -115,7 +115,7 @@ void BuildAction::HandleMessage(Message* p_msg, bool& p_consumed)
 	}
 }
 //----------------------------------------------------------------------------------------------
-bool BuildAction::ExecuteAux(unsigned long p_cycles)
+bool BuildAction::ExecuteAux(const WorldClock& p_clock)
 {
 	throw NotImplementedException(XcptHere);
 

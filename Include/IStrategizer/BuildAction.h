@@ -23,7 +23,7 @@ namespace IStrategizer
 		void        Copy(IClonable* p_dest);
 
 	protected:
-		bool		ExecuteAux(unsigned long p_cycles );
+		bool		ExecuteAux(const WorldClock& p_clock );
 		void		InitializePreConditions();
 		void		InitializeAliveConditions();
 		void		InitializeSuccessConditions();

@@ -520,7 +520,7 @@ int EngineAssist::EntityClassExist(const map<EntityClassType, unsigned> &p_entit
 	{
 		matches = 0;
 
-		for (int i = 0, size = entities.size(); i < size; ++i)
+		for (size_t i = 0, size = entities.size(); i < size; ++i)
 		{
 			pEntity = pPlayer->GetEntity(entities[i]);
 			assert(pEntity);
@@ -575,7 +575,7 @@ int EngineAssist::EntityObjectExist(const vector<TID> &p_entityObjects, bool &p_
 
 	p_exist = true;
 
-	for (int i = 0, size = p_entityObjects.size(); i < size; ++i)
+	for (size_t i = 0, size = p_entityObjects.size(); i < size; ++i)
 	{
 		pEntity = pPlayer->GetEntity(p_entityObjects[i]);
 
@@ -602,7 +602,7 @@ int	EngineAssist::ResearchesDone(const vector<ResearchType> &p_researchTypes, bo
 
 	p_done = true;
 
-	for (int i = 0, size = p_researchTypes.size(); i < size; ++i)
+	for (size_t i = 0, size = p_researchTypes.size(); i < size; ++i)
 	{
 		if (!pTechTree->ResearchDone(p_researchTypes[i]))
 		{
@@ -638,7 +638,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
 	p_satisfied = true;
 
 	// 1. Required researches done
-	for (int i = 0, size = reqResearches.size(); i < size && p_satisfied; ++i)
+	for (size_t i = 0, size = reqResearches.size(); i < size && p_satisfied; ++i)
 	{
 		p_satisfied = pTechTree->ResearchDone(reqResearches[i]);
 	}

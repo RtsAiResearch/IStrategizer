@@ -10,11 +10,11 @@ namespace IStrategizer
     class WorldComponent : public DynamicComponent
     {
     protected:
-        virtual void UpdateAux() = 0;
+        virtual void UpdateAux(const WorldClock& p_clock) = 0;
 
     public:
                 WorldComponent(unsigned p_invalidationInterval) : DynamicComponent(p_invalidationInterval) {}
-        void    Update();
+        void    Update(const WorldClock& p_clock);
     };
 }
 

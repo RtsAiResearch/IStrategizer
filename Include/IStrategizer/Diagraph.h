@@ -91,7 +91,7 @@ namespace IStrategizer
 		{
 			std::vector<int> m_inDegree = std::vector<int>(_adjacencyMatrix.size(), 0);
 
-			for (int i = 0; i < _adjacencyMatrix.size(); ++i)
+			for (size_t i = 0; i < _adjacencyMatrix.size(); ++i)
 			{
 				m_inDegree[i] = _adjacencyMatrix[i]->InDegree();
 			}
@@ -173,7 +173,7 @@ namespace IStrategizer
 		{
 			std::vector<TAnnotation> m_totalInAnnotations;
 
-			for (int i = 0; i < _adjacencyMatrix.size(); ++i)
+			for (size_t i = 0; i < _adjacencyMatrix.size(); ++i)
 			{
 				if (IsConnected(i, p_node))
 				{
@@ -188,7 +188,7 @@ namespace IStrategizer
 		{
 			std::vector<TAnnotation> m_totalOutAnnotations;
 
-			for (int i = 0; i < _adjacencyMatrix.size(); ++i)
+			for (size_t i = 0; i < _adjacencyMatrix.size(); ++i)
 			{
 				if (IsConnected(p_node, i))
 				{
@@ -263,7 +263,7 @@ namespace IStrategizer
 		{
 			std::vector<int> m_parents;
 
-			for (int i = 0; i < _adjacencyMatrix.size(); ++i)
+			for (size_t i = 0; i < _adjacencyMatrix.size(); ++i)
 			{
 				if (_adjacencyMatrix[i]->IsConnected(p_nodeIndex) &&
 					find(p_execluded.begin(), p_execluded.end(), i) == p_execluded.end())

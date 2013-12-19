@@ -54,11 +54,11 @@ OnlinePlanExpansionExecutionEx::OnlinePlanExpansionExecutionEx(GoalEx* p_initial
 	g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecutionEx::Update(unsigned long p_cycles)
+void OnlinePlanExpansionExecutionEx::Update(const WorldClock& p_clock)
 {
 	if (_planRoot)
 	{
-		UpdatePlan(_planRoot, p_cycles);
+		UpdatePlan(_planRoot, p_clock);
 	}
 }
 //////////////////////////////////////////////////////////////////////////
@@ -164,7 +164,7 @@ void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, Cas
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, unsigned long p_cycles)
+void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, const WorldClock& p_clock)
 {
 	PlanTreeNodeEx::Queue	Q;
 	PlanTreeNodeEx*			pCurrentNode;
@@ -189,11 +189,11 @@ void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, uns
 
 		if (pCurrentNode->Type() == PTNTYPE_Goal)
 		{
-			UpdateGoalNode(pCurrentNode, p_cycles, Q);
+			UpdateGoalNode(pCurrentNode, p_clock, Q);
 		}
 		else if (pCurrentNode->Type() == PTNTYPE_Action)
 		{
-			UpdateActionNode(pCurrentNode, p_cycles, Q);
+			UpdateActionNode(pCurrentNode, p_clock, Q);
 		}
 	}
 }
@@ -220,7 +220,7 @@ bool IStrategizer::OnlinePlanExpansionExecutionEx::IsCaseTried(PlanTreeNodeEx* p
 	return _triedCases[p_pStep].find(p_pCase) != _triedCases[p_pStep].end();
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateGoalNode(PlanTreeNodeEx* p_pCurrentNode, unsigned p_cycles, PlanTreeNodeEx::Queue& p_updateQ)
+void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateGoalNode(PlanTreeNodeEx* p_pCurrentNode, const WorldClock& p_clock, PlanTreeNodeEx::Queue& p_updateQ)
 {
 	assert(p_pCurrentNode);
 	PlanStepEx*		pCurrentPlanStep = p_pCurrentNode->PlanStep();
@@ -280,13 +280,13 @@ void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateGoalNode(PlanTreeNodeEx
 				pCurrentPlanStep->State() == ESTATE_Succeeded ||
 				pCurrentPlanStep->State() == ESTATE_END);
 
-			pCurrentPlanStep->Update(p_cycles);
+			pCurrentPlanStep->Update(p_clock);
 			ConsiderReadyChildrenForUpdate(p_pCurrentNode, p_updateQ);
 		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateActionNode(PlanTreeNodeEx* p_pCurrentNode, unsigned long p_cycles, PlanTreeNodeEx::Queue& p_updateQ)
+void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateActionNode(PlanTreeNodeEx* p_pCurrentNode, const WorldClock& p_clock, PlanTreeNodeEx::Queue& p_updateQ)
 {
 	assert(p_pCurrentNode);
 	PlanStepEx *pCurrentPlanStep  = p_pCurrentNode->PlanStep();
@@ -313,7 +313,7 @@ void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateActionNode(PlanTreeNode
 				pCurrentPlanStep->State() == ESTATE_Executing ||
 				pCurrentPlanStep->State() == ESTATE_END);
 
-			pCurrentPlanStep->Update(p_cycles);
+			pCurrentPlanStep->Update(p_clock);
 		}
 	}
 	else

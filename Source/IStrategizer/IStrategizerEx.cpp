@@ -79,7 +79,7 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
 	switch(p_message->MessageTypeID())
 	{
 	case MSG_GameStart:
-		g_WorldClock.Reset();
+		_clock.Reset();
 	case MSG_GameEnd:
 		if (_phase == PHASE_Offline)
 		{
@@ -95,18 +95,18 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 	{
 		if (_isFirstUpdate)
 		{
-			g_WorldClock.Reset();
+			_clock.Reset();
 			_isFirstUpdate = false;
 		}
 
-		g_WorldClock.Update(p_gameCycle);
-		g_MessagePump.Update(g_WorldClock);
+		_clock.Update(p_gameCycle);
+		g_MessagePump.Update(_clock);
 
 		if (p_gameCycle % _param.IMSysUpdateInterval == 0)
-			g_IMSysMgr.Update(g_WorldClock);
+			g_IMSysMgr.Update(_clock);
 
 		if (_phase == PHASE_Online)
-			_planner->Update(g_WorldClock);
+			_planner->Update(_clock);
 	}
 	catch (IStrategizer::Exception &e)
 	{

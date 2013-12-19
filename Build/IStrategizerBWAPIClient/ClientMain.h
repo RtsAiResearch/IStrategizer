@@ -45,7 +45,7 @@ private:
 	void UpdateStatsView();
 	void FinalizeIStrategizer();
 	void InitPlannerView();
-
+	void FinalizeViews();
 	Ui::ClientMainClass				ui;
 	IStrategizer::IStrategizerEx	*m_pIStrategizer;
 	IStrategizer::RtsGame			*m_pGameModel;

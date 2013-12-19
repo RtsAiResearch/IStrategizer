@@ -28,7 +28,7 @@ namespace IStrategizer
 		bool		SuccessConditionsSatisfied();
 
 	protected:
-		bool		ExecuteAux(unsigned long p_cycles );
+		bool		ExecuteAux(const WorldClock& p_clock );
 		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
 
 	private:

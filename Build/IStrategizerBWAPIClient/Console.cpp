@@ -76,10 +76,5 @@ BOOL CConsole::ResetCrtHandles()
 	*stdin	= m_oldStdIn;
 	*stdout	= m_oldStdOut;
 
-	BOOL bOk;
-	// 2. free the previously created console streams
-	bOk = !fclose(m_pNewStdIn);
-	bOk = !fclose(m_pNewStdOut);
-
-	return bOk;
+	return TRUE;
 }

@@ -27,7 +27,7 @@ namespace IStrategizer
 	protected:
 		void		InitializeAddressesAux() ;
 		//----------------------------------------------------------------------------------------------
-		bool		ExecuteAux(unsigned long p_cycles);
+		bool		ExecuteAux(const WorldClock& p_clock);
 		void		InitializePreConditions();
 		void		InitializeAliveConditions();
 		void		InitializeSuccessConditions();

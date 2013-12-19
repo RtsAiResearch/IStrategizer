@@ -107,7 +107,7 @@ void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)
 	//	lastGameCycle = p_gameCycle;
 	//}
 
-	_onlineExpansionExecution->Update(p_clock.ElapsedEngineCycles());
+	_onlineExpansionExecution->Update(p_clock);
 }
 //----------------------------------------------------------------------------------------------
 OnlineCaseBasedPlannerEx::~OnlineCaseBasedPlannerEx()
