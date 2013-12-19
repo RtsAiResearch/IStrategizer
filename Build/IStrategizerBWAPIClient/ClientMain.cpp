@@ -65,7 +65,7 @@ void ClientMain::InitIStrategizer()
 
 	m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
 	m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
-	m_pPlannerViewWdgt->Planner(m_pIStrategizer->Planner()->ExpansionExecution());
+	// m_pPlannerViewWdgt->Planner(m_pIStrategizer->Planner()->ExpansionExecution());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
@@ -136,7 +136,7 @@ void ClientMain::showEvent(QShowEvent *pEvent)
 	{
 		InitClient();
 		InitIMView();
-		InitPlannerView();
+		//InitPlannerView();
 	}
 
 	QMainWindow::showEvent(pEvent);

@@ -108,7 +108,10 @@ void Action::UpdateAux(const WorldClock& p_clock)
 		if (SuccessConditionsSatisfied())
 			State(ESTATE_Succeeded, p_clock);
 		else if (!AliveConditionsSatisfied())
+		{
+			LogInfo("%s alive conditions not satisfied, failing it", ToString().c_str());
 			State(ESTATE_Failed, p_clock);
+		}
 		break;
 	}
 }

@@ -27,6 +27,6 @@ namespace IStrategizer
 #define g_Logger					IStrategizer::Logger::Instance()
 #define LogWarning(Format, ...)		g_Logger.Log(IStrategizer::Logger::LOG_Warning, __FUNCTION__, Format, __VA_ARGS__)
 #define LogError(Format, ...)		g_Logger.Log(IStrategizer::Logger::LOG_Error, __FUNCTION__, Format, __VA_ARGS__)
-#define LogInfo(Format, ...)		g_Logger.Log(IStrategizer::Logger::LOG_Info, typeid(*this).name(), Format, __VA_ARGS__)
+#define LogInfo(Format, ...)		g_Logger.Log(IStrategizer::Logger::LOG_Info, __FUNCTION__, Format, __VA_ARGS__)
 
 #endif // LOGGER_H

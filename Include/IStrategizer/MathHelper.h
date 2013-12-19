@@ -7,6 +7,22 @@
 
 namespace IStrategizer
 {
+	template< class T>
+	class Rectangle
+	{
+	public:
+		Rectangle() 
+			: X(T()),
+			Y(T()),
+			Width(T()),
+			Height(T()) {}
+
+		T X;
+		T Y;
+		T Width;
+		T Height;
+	};
+
 	class MathHelper
 	{
 	public:
@@ -90,6 +106,17 @@ namespace IStrategizer
 				p_width = farthestWidth - p_topLeftYCoord;
 				p_height = farthestHeight - p_topLeftYCoord;
 			}
+		}
+
+		// Test whether rectangle r1 is fully contained in rectangle r2
+		template<class T>
+		static bool RectangleMembership(const Rectangle<T>& r1, const Rectangle<T> r2)
+		{
+			return
+				r1.X >= r2.X &&
+				r1.Y >= r2.Y &&
+				r1.X + r1.Width <= r2.Width &&
+				r1.Y + r1.Height <= r2.Y + r2.Height;
 		}
 	};
 }

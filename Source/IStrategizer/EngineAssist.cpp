@@ -30,6 +30,7 @@
 #include "AbstractAdapter.h"
 #endif
 
+#include "MathHelper.h"
 #include "Vector2.h"
 #include <map>
 #include <algorithm>
@@ -551,29 +552,29 @@ int EngineAssist::EntityClassExist(const map<EntityClassType, unsigned> &p_entit
 	return ERR_Success;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::EntityObjectExist(TID p_entityObject, bool &p_exist, PlayerType p_playerType)
+bool EngineAssist::IsEntityObjectExist(TID p_entityObject, PlayerType p_playerType)
 {
 	GamePlayer	*pPlayer;
 	GameEntity	*pEntity;
+	bool		exist;
 
 	pPlayer = g_Game->GetPlayer(p_playerType);
 	assert(pPlayer);
 
 	pEntity = pPlayer->GetEntity(p_entityObject);
-	p_exist = (pEntity != nullptr);
+	exist = (pEntity != nullptr);
 
-	return ERR_Success;
+	return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::EntityObjectExist(const vector<TID> &p_entityObjects, bool &p_exist, PlayerType p_playerType)
+bool EngineAssist::IsEntityObjectExist(const vector<TID> &p_entityObjects, PlayerType p_playerType)
 {
 	GamePlayer	*pPlayer;
 	GameEntity	*pEntity;
+	bool		exist = true;
 
 	pPlayer = g_Game->GetPlayer(p_playerType);
 	assert(pPlayer);
-
-	p_exist = true;
 
 	for (size_t i = 0, size = p_entityObjects.size(); i < size; ++i)
 	{
@@ -581,12 +582,12 @@ int EngineAssist::EntityObjectExist(const vector<TID> &p_entityObjects, bool &p_
 
 		if (pEntity == nullptr)
 		{
-			p_exist = false;
+			exist = false;
 			break;
 		}
 	}
 	
-	return ERR_Success;
+	return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int	EngineAssist::ResearchesDone(const vector<ResearchType> &p_researchTypes, bool &p_done, PlayerType p_playerType)
@@ -687,3 +688,26 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
 
 	return ret;
 }
+//
+//bool EngineAssist::IsEntityInsideEntity(TID p_cotainedEntityID, TID p_containerEntityID, PlayerType p_containedEntityPlayer, PlayerType p_containerEntityPlayer)
+//{
+//	GameEntity* pContainedEntity = g_Game->GetPlayer(p_containedEntityPlayer)->GetEntity(p_containerEntityID);
+//	GameEntity* pContainerEntity = g_Game->GetPlayer(p_containerEntityPlayer)->GetEntity(p_containerEntityID);
+//
+//	if (nullptr == pContainedEntity ||
+//		nullptr == pContainerEntity)
+//		throw ObjectDoesnotExistException(XcptHere);
+//
+//	Vector2	containedPoint;
+//	IStrategizer::Rectangle<int> containedRect;
+//
+//	containerRect.X = pContainerEntity->Attr(EOATTR_PosX);
+//	containerRect.Y = pContainerEntity->Attr(EOATTR_PosY);
+//	containerRect.Width = pContainerEntity->Attr(EOATTR_Width);
+//	containerRect.Height = pContainerEntity->Attr(EOATTR_Height);
+//
+//	containedPoint.X = pContainedEntity->Attr(EOATTR_PosCenterX);
+//	containedPoint.Y = pContainedEntity->Attr(EOATTR_PosCenterY);
+//
+//	return MathHelper::RectangleMembership(containerRect.X, containerRect.Y, containerRect.Width, containerRect.Height, containedPoint.X, containedPoint.Y);
+//}

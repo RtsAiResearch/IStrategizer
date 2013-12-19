@@ -119,7 +119,7 @@ float RetrieverEx::StateSimilarity(const GameStateEx *p_gs1, const GameStateEx *
 //----------------------------------------------------------------------------------------------
 float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const GameStateEx* p_gameState)
 {
-    float alpha = 0.75;
+    float alpha = 0.95f;
     float goalSimilarity    = GoalSimilarity(p_case->Goal(), p_goal);
     float stateSimilarity   = StateSimilarity(p_case->GameState(), p_gameState);
 

@@ -48,9 +48,9 @@ namespace IStrategizer
 		CheckReturn int GetEntities(IN PlayerType p_playerType, IN const vector<EntityClassType>& p_entityTypes, OUT vector<TID>& p_entityObjects);
 
 		CheckReturn int EntityClassExist(IN pair<EntityClassType, unsigned> p_entityType, OUT bool &p_exist, IN PlayerType p_playerType = PLAYER_Self);
-		CheckReturn int EntityClassExist(IN const map<EntityClassType, unsigned> &p_entityTypes, OUT bool &p_exist, IN PlayerType p_playerType = PLAYER_Self);
-		CheckReturn int EntityObjectExist(IN TID p_entityObject, OUT bool &p_exist, IN PlayerType p_playerType = PLAYER_Self);
-		CheckReturn int EntityObjectExist(IN const vector<TID> &p_entityObjects, OUT bool &p_exist, IN PlayerType p_playerType = PLAYER_Self);
+		CheckReturn int EntityClassExist(IN const std::map<EntityClassType, unsigned> &p_entityTypes, OUT bool &p_exist, IN PlayerType p_playerType = PLAYER_Self);
+		CheckReturn bool IsEntityObjectExist(IN TID p_entityObject, IN PlayerType p_playerType = PLAYER_Self);
+		CheckReturn bool IsEntityObjectExist(IN const vector<TID> &p_entityObjects, IN PlayerType p_playerType = PLAYER_Self);
 		CheckReturn int	ResearchesDone(IN const vector<ResearchType> &p_researchTypes, OUT bool &p_done, IN PlayerType p_playerType = PLAYER_Self);
 		CheckReturn int PrerequisitesSatisfied(IN int p_entityOrResearchType, OUT bool &p_satisfied, IN PlayerType p_playerType = PLAYER_Self);
 

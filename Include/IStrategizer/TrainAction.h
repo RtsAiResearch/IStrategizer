@@ -33,7 +33,8 @@ namespace IStrategizer
 
 	private:
 		TID		_trainerId;
-		bool	_trained;
+		TID		_traineeId;
+		bool	_trainStarted;
 	};
 }
 

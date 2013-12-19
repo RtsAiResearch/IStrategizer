@@ -95,7 +95,13 @@ void PlanStepEx::Update(const WorldClock& p_clock)
 	}
 
 	if (IsCurrentStateTimeout(p_clock))
+	{
+		LogInfo(
+			"State %s timed-out after %dms",
+			Enums[(int)State()],
+			_stateTimeout[INDEX(State(), ExecutionStateType)]);
 		State(ESTATE_Failed, p_clock);
+	}
 	else
 	{
 		UpdateAux(p_clock);
