@@ -189,3 +189,17 @@ bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId)
 		traineeObj->getPosition().x,
 		traineeObj->getPosition().y);
 }
+//----------------------------------------------------------------------------------------------
+std::string StarCraftModel::StarCraftEntity::ToString() const
+{
+	std::string asSharedResource = SharedResource::ToString();
+
+	std::string description = m_unit->getType().getName();
+	description += "(";
+	description += m_unit->getID();
+	description += ",";
+	description += asSharedResource;
+	description += ")";
+
+	return description;
+}

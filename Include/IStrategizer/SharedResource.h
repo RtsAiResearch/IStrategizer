@@ -57,7 +57,7 @@ namespace IStrategizer
 			RecursiveLockException,
 			AlreadyLockedException);
 
-		virtual const char*	ToString() { return m_rescourceDescription.c_str(); }
+		virtual std::string	ToString() const { return m_rescourceDescription; }
 		void Unlock(Action *p_pOwner);
 		bool IsLocked() { return m_pOwner != nullptr; }
 

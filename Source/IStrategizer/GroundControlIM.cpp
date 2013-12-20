@@ -71,7 +71,7 @@ void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 	p_pCaller->StampInfluenceGradient(centerPosition, maxDistance, effectiveDistance, initValue);
 }
 //////////////////////////////////////////////////////////////////////////
-void GroundControlIM::Update(unsigned p_gameCycle)
+void GroundControlIM::Update(const WorldClock& p_clock)
 {
 	ClearMap();
 	ResetStats();

@@ -23,6 +23,7 @@ namespace IStrategizer
 		virtual ~GameEntity() {}
         TID             Id() const { return m_id; }
         EntityClassType Type() const { return m_type; }
+		virtual std::string ToString() const = 0;
         virtual int Attr(EntityObjectAttribute p_attrId) = 0;
 		virtual bool Research(ResearchType p_researchId) = 0;
 		virtual bool Build(EntityClassType p_buildingClassId, int p_x, int p_y) = 0;
@@ -30,7 +31,6 @@ namespace IStrategizer
 		virtual bool AttackEntity(PlayerType p_opponentIndex, int p_targetEntityObjectId) = 0;
 		virtual bool Train(EntityClassType p_entityClassId) = 0;
 		virtual bool IsTraining(TID p_traineeId) = 0;
-
 		bool Acquire() { return true; }
 		bool Release() { return true; }
 

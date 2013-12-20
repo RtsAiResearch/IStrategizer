@@ -688,26 +688,3 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
 
 	return ret;
 }
-//
-//bool EngineAssist::IsEntityInsideEntity(TID p_cotainedEntityID, TID p_containerEntityID, PlayerType p_containedEntityPlayer, PlayerType p_containerEntityPlayer)
-//{
-//	GameEntity* pContainedEntity = g_Game->GetPlayer(p_containedEntityPlayer)->GetEntity(p_containerEntityID);
-//	GameEntity* pContainerEntity = g_Game->GetPlayer(p_containerEntityPlayer)->GetEntity(p_containerEntityID);
-//
-//	if (nullptr == pContainedEntity ||
-//		nullptr == pContainerEntity)
-//		throw ObjectDoesnotExistException(XcptHere);
-//
-//	Vector2	containedPoint;
-//	IStrategizer::Rectangle<int> containedRect;
-//
-//	containerRect.X = pContainerEntity->Attr(EOATTR_PosX);
-//	containerRect.Y = pContainerEntity->Attr(EOATTR_PosY);
-//	containerRect.Width = pContainerEntity->Attr(EOATTR_Width);
-//	containerRect.Height = pContainerEntity->Attr(EOATTR_Height);
-//
-//	containedPoint.X = pContainedEntity->Attr(EOATTR_PosCenterX);
-//	containedPoint.Y = pContainedEntity->Attr(EOATTR_PosCenterY);
-//
-//	return MathHelper::RectangleMembership(containerRect.X, containerRect.Y, containerRect.Width, containerRect.Height, containedPoint.X, containedPoint.Y);
-//}

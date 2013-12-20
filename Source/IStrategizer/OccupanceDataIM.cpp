@@ -52,7 +52,7 @@ void StampNonDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 	p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, PositiveInfluence);
 }
 //////////////////////////////////////////////////////////////////////////
-void OccupanceDataIM::Update(unsigned p_gameCycle)
+void OccupanceDataIM::Update(const WorldClock& p_clock)
 {
     if (m_registeredObjects.empty())
         return;
