@@ -1,7 +1,7 @@
 #ifndef GAMEDEPENDENCY_H
 #define GAMEDEPENDENCY_H
 
-namespace MetaData
+namespace IStrategizer
 {
     enum EntityClassType;
     enum ResearchType;
@@ -9,7 +9,7 @@ namespace MetaData
 
 namespace IStrategizer
 {
-    using namespace MetaData;
+    using namespace IStrategizer;
     class GameDependency
     {
     protected:

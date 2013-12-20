@@ -1,11 +1,10 @@
-#ifndef PLANSTEPEX_H
 #include "PlanStepEx.h"
-#endif
-
 #include <cstdio>
 #include <algorithm>
+#include "Logger.h"
 
 using namespace std;
+using namespace IStrategizer;
 
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeAddressesAux()
@@ -15,14 +14,14 @@ void PlanStepEx::InitializeAddressesAux()
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) :
-_stepTypeId(p_stepTypeId), _state(p_state), _successCondition(NULL), _postCondition(NULL), _firstUpdate(true)
+_stepTypeId(p_stepTypeId), _state(p_state), _successCondition(nullptr), _postCondition(nullptr), _firstUpdate(true)
 {
 	memset(_stateStartTime, 0, sizeof(_stateStartTime));
 	memset(_stateTimeout, 0, sizeof(_stateTimeout));
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters) : 
-_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _successCondition(NULL), _postCondition(NULL), _firstUpdate(true)
+_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _successCondition(nullptr), _postCondition(nullptr), _firstUpdate(true)
 {
 	memset(_stateStartTime, 0, sizeof(_stateStartTime));
 	memset(_stateTimeout, 0, sizeof(_stateTimeout));
@@ -62,20 +61,20 @@ void PlanStepEx::Copy(IClonable* p_dest)
 	m_dest->_stepTypeId         = _stepTypeId;
 	m_dest->_state              = _state;
 	m_dest->_params         = _params;
-    m_dest->_successCondition   = _successCondition ? static_cast<CompositeExpression*>(_successCondition->Clone()) : NULL;
-    m_dest->_postCondition      = _postCondition ?    static_cast<CompositeExpression*>(_postCondition->Clone()) : NULL;
+    m_dest->_successCondition   = _successCondition ? static_cast<CompositeExpression*>(_successCondition->Clone()) : nullptr;
+    m_dest->_postCondition      = _postCondition ?    static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
 	m_dest->_stepLevelType      = _stepLevelType;
     m_dest->_data               = _data;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::State(ExecutionStateType p_state, unsigned p_cycles)
+void PlanStepEx::State(ExecutionStateType p_state, const WorldClock& p_clock)
 {
-	printf("%s: '%s'->'%s'\n", ToString(), Enums[_state], Enums[p_state]);
-	_stateStartTime[INDEX(p_state, ExecutionStateType)] = p_cycles;
+	LogInfo("%s: '%s'->'%s'", ToString().c_str(), Enums[_state], Enums[p_state]);
+	_stateStartTime[INDEX(p_state, ExecutionStateType)] = p_clock.ElapsedMilliseconds();
 	_state = p_state;
 }
 //////////////////////////////////////////////////////////////////////////
-bool PlanStepEx::IsCurrentStateTimeout(unsigned p_cycles)
+bool PlanStepEx::IsCurrentStateTimeout(const WorldClock& p_clock)
 {
 	unsigned timeout = _stateTimeout[INDEX(_state, ExecutionStateType)];
 	unsigned startTime = _stateStartTime[INDEX(_state, ExecutionStateType)];
@@ -84,53 +83,58 @@ bool PlanStepEx::IsCurrentStateTimeout(unsigned p_cycles)
 	if (timeout == 0)
 		return false;
 	else
-		return ((p_cycles - startTime) > timeout);
+		return ((p_clock.ElapsedMilliseconds() - startTime) > timeout);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::Update(unsigned p_cycles)
+void PlanStepEx::Update(const WorldClock& p_clock)
 {
 	if (_firstUpdate)
 	{
-		Reset(p_cycles);
+		Reset(p_clock);
 		_firstUpdate = false;
 	}
 
-	if (IsCurrentStateTimeout(p_cycles))
-		State(ESTATE_Failed, p_cycles);
+	if (IsCurrentStateTimeout(p_clock))
+	{
+		LogInfo(
+			"State %s timed-out after %dms",
+			Enums[(int)State()],
+			_stateTimeout[INDEX(State(), ExecutionStateType)]);
+		State(ESTATE_Failed, p_clock);
+	}
 	else
 	{
-		UpdateAux(p_cycles);
+		UpdateAux(p_clock);
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-const char* PlanStepEx::ToString()
+std::string PlanStepEx::ToString() const
 {
-	if (_stepDescription.empty())
+	string stepDescription;
+
+	const char* stepName = Enums[_stepTypeId];
+	unsigned	paramIdx = 0;
+
+	stepDescription = '(';
+	stepDescription += stepName;
+	stepDescription += ')';
+	stepDescription += '<';
+
+	for (PlanStepParameters::const_iterator itr = _params.begin();
+		itr != _params.end(); ++itr)
 	{
-		const char* stepName = Enums[_stepTypeId];
-		unsigned	paramIdx = 0;
+		stepDescription += Enums[itr->second];
 
-		_stepDescription = '(';
-		_stepDescription += stepName;
-		_stepDescription += ')';
-		_stepDescription += '<';
-
-		for (PlanStepParameters::iterator itr = _params.begin();
-			itr != _params.end(); ++itr)
+		if (paramIdx < _params.size() - 1)
 		{
-			_stepDescription += Enums[itr->second];
-
-			if (paramIdx < _params.size() - 1)
-			{
-				_stepDescription += ',';
-				_stepDescription += ' ';
-			}
-
-			++paramIdx;
+			stepDescription += ',';
+			stepDescription += ' ';
 		}
 
-		_stepDescription += '>';
+		++paramIdx;
 	}
-	
-	return _stepDescription.c_str();
+
+	stepDescription += '>';
+
+	return stepDescription;
 }

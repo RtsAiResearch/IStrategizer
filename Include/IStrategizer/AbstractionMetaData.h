@@ -5,8 +5,4 @@
 #include "RootMetaData.h"
 #endif
 
-namespace MetaData
-{
-
-}
 #endif // ABSTRACTIONMETADATA_H

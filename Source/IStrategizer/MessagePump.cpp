@@ -4,7 +4,7 @@
 #ifndef METADATA_H
 #include "MetaData.h"
 #endif
-using namespace MetaData;
+using namespace IStrategizer;
 
 MessagePump::MessagePump()
 {
@@ -51,7 +51,7 @@ void MessagePump::DeliverMessage(Message* p_message)
     delete p_message;
 }
 //----------------------------------------------------------------------------------------------
-void MessagePump::Update(unsigned long p_gameCycle)
+void MessagePump::Update(const WorldClock& p_clock)
 {
     Message* m_message;
 

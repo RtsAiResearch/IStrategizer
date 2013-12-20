@@ -18,7 +18,7 @@ DrawIMCallback IMDrawingStrategy::GetStrategy(IMType p_type)
 	}
 
 	assert(0);
-	return NULL;
+	return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
 void IMDrawingStrategy::DrawBuildingDataIM(const InfluenceMap *p_pIM, QPainter &p_painter)

@@ -1,7 +1,7 @@
 #ifndef COLLECTION_H
 #define COLLECTION_H
 
-namespace DataStructure
+namespace IStrategizer
 {
     const int MaxItems    = 512;
 

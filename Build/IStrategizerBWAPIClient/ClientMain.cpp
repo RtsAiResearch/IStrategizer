@@ -16,9 +16,12 @@
 #include "IMSystemManager.h"
 #include "InfluenceMap.h"
 #include "IMViewWidget.h"
-#include "QtGui/QGridLayout"
+#include <QGridLayout>
 #include "WorldClock.h"
 #include <iostream>
+#include "PlannerViewWidget.h"
+#include "OnlineCaseBasedPlannerEx.h"
+#include "OnlinePlanExpansionExecutionEx.h"
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
@@ -28,8 +31,8 @@ using namespace std;
 #define TilePositionFromUnitPosition(UnitPos)	(UnitPos / 32)
 #define UnitPositionFromTilePosition(TilePos)	(TilePos * 32)
 
-ClientMain::ClientMain(QWidget *parent, Qt::WFlags flags)
-: QMainWindow(parent, flags), m_pIStrategizer(NULL), m_pGameModel(NULL), m_isLearning(true)
+ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
+: QMainWindow(parent, flags), m_pIStrategizer(nullptr), m_pGameModel(nullptr), m_isLearning(true)
 {
 	ui.setupUi(this);
 }
@@ -60,18 +63,19 @@ void ClientMain::InitIStrategizer()
 		e.To(cout);
 	}
 
-	m_pBuildingDataIMWidget->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
-	m_pGrndCtrlIMWidget->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+	m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
+	m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+	// m_pPlannerViewWdgt->Planner(m_pIStrategizer->Planner()->ExpansionExecution());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
 {
-	IMViewWidget	*pIMView = NULL;
+	IMViewWidget	*pIMView = nullptr;
 	QGridLayout		*gridLayout;
 
 	// 1. Init Building Data IM
 	pIMView = new IMViewWidget;
-	m_pBuildingDataIMWidget= pIMView;
+	m_pBldngDataIMWdgt= pIMView;
 	m_IMViews.push_back(pIMView);
 
 	gridLayout = new QGridLayout;
@@ -83,7 +87,7 @@ void ClientMain::InitIMView()
 
 	// 2. Init Ground Control IM
 	pIMView = new IMViewWidget;
-	m_pGrndCtrlIMWidget = pIMView;
+	m_pGrndCtrlIMWdgt = pIMView;
 	m_IMViews.push_back(pIMView);
 
 	gridLayout = new QGridLayout;
@@ -94,13 +98,36 @@ void ClientMain::InitIMView()
 	ui.tbGrndCtrlIM->layout()->setSpacing(0);
 }
 //////////////////////////////////////////////////////////////////////////
+void ClientMain::InitPlannerView()
+{
+	m_pPlannerViewWdgt = new PlannerViewWidget;
+
+	QGridLayout		*gridLayout;
+
+	gridLayout = new QGridLayout;
+	ui.tbPlanner->setLayout(gridLayout);
+	ui.tbPlanner->layout()->setAlignment(Qt::AlignCenter);
+	ui.tbPlanner->layout()->addWidget(m_pPlannerViewWdgt);
+	ui.tbPlanner->layout()->setMargin(0);
+	ui.tbPlanner->layout()->setSpacing(0);
+}
+//////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeIStrategizer()
 {
 	delete m_pIStrategizer;
-	m_pIStrategizer = NULL;
+	m_pIStrategizer = nullptr;
 
 	delete m_pGameModel;
-	m_pGameModel = NULL;
+	m_pGameModel = nullptr;
+
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::FinalizeViews()
+{
+	m_pPlannerViewWdgt->Planner(nullptr);
+
+	for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
+		m_IMViews[i]->SetIM(nullptr);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::showEvent(QShowEvent *pEvent)
@@ -109,6 +136,7 @@ void ClientMain::showEvent(QShowEvent *pEvent)
 	{
 		InitClient();
 		InitIMView();
+		//InitPlannerView();
 	}
 
 	QMainWindow::showEvent(pEvent);
@@ -134,7 +162,7 @@ void ClientMain::OnClientLoopEnd()
 {
 	FinalizeIStrategizer();
 	// Give IM widgets a chance to clear its buffer and redraw
-	UpdateIMViews();
+	UpdateViews();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnSendText(const string& p_text)
@@ -148,8 +176,8 @@ void ClientMain::OnSendText(const string& p_text)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 {
-	EntityMessageData	*pData = NULL;
-	EntityCreateMessage	*pMsg = NULL;
+	EntityMessageData	*pData = nullptr;
+	EntityCreateMessage	*pMsg = nullptr;
 
 	pData = new EntityMessageData;
 	assert(pData);
@@ -177,8 +205,8 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 {
-	EntityMessageData		*pData = NULL;
-	EntityDestroyMessage	*pMsg = NULL;
+	EntityMessageData		*pData = nullptr;
+	EntityDestroyMessage	*pMsg = nullptr;
 
 	pData = new EntityMessageData;
 	assert(pData);
@@ -207,8 +235,8 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
 {
-	EntityMessageData		*pData = NULL;
-	EntityRenegadeMessage	*pMsg = NULL;
+	EntityMessageData		*pData = nullptr;
+	EntityRenegadeMessage	*pMsg = nullptr;
 
 	pData = new EntityMessageData;
 	assert(pData);
@@ -246,8 +274,8 @@ void ClientMain::OnMatchStart()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchEnd(bool p_isWinner)
 {
-	GameEndMessageData	*pData = NULL;
-	GameEndMessage		*pMsg = NULL;
+	GameEndMessageData	*pData = nullptr;
+	GameEndMessage		*pMsg = nullptr;
 
 	pData = new GameEndMessageData;
 	assert(pData);
@@ -264,10 +292,10 @@ void ClientMain::UpdateStatsView()
 {
 	float engineRatio, gameRatio;
 
-	ui.lblEngineCycleData->setText(tr("%1").arg(g_WorldClock.ElapsedEngineCycles()));
+	ui.lblEngineCycleData->setText(tr("%1").arg(m_pIStrategizer->Clock().ElapsedEngineCycles()));
 	ui.lblGameCyclesData->setText(tr("%1").arg(Broodwar->getFrameCount()));
 
-	engineRatio = (float)g_WorldClock.ElapsedEngineCycles();
+	engineRatio = (float)m_pIStrategizer->Clock().ElapsedEngineCycles();
 	gameRatio = (float)Broodwar->getFrameCount();
 
 	if (engineRatio > gameRatio)
@@ -284,7 +312,7 @@ void ClientMain::UpdateStatsView()
 	ui.lblEngineRatioData->setText(tr("%1").arg(engineRatio));
 	ui.lblGameRatioData->setText(tr("%1").arg(gameRatio));
 	ui.lblFrameDiffData->setText(tr("%1").arg(
-		abs((int)(g_WorldClock.ElapsedEngineCycles() - Broodwar->getFrameCount()))));
+		abs((int)(m_pIStrategizer->Clock().ElapsedEngineCycles() - Broodwar->getFrameCount()))));
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -316,14 +344,16 @@ void ClientMain::OnClientUpdate()
 		e.To(cout);
 	}
 
-	UpdateIMViews();
+	UpdateViews();
 	UpdateStatsView();
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::UpdateIMViews()
+void ClientMain::UpdateViews()
 {
-	for (int i = 0, size = m_IMViews.size(); i < size; ++i)
+	for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
 		m_IMViews[i]->update();
+
+	m_pPlannerViewWdgt->update();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitResourceManager()
@@ -333,31 +363,14 @@ void ClientMain::InitResourceManager()
 	{
 		if ((*i)->getType().isWorker())
 		{
-			Unit closestMineral=NULL;
+			Unit closestMineral=nullptr;
 			for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
 			{
-				if (closestMineral==NULL || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
+				if (closestMineral==nullptr || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
 					closestMineral = *m;
 			}
-			if (closestMineral!=NULL)
+			if (closestMineral!=nullptr)
 				(*i)->rightClick(closestMineral);
-		}
-		else if ((*i)->getType().isResourceDepot())
-		{
-			//if this is a center, tell it to build the appropiate type of worker
-			if ((*i)->getType().getRace()!=Races::Zerg)
-			{
-				(*i)->train(Broodwar->self()->getRace().getWorker());
-			}
-			else //if we are Zerg, we need to select a larva and morph it into a drone
-			{
-				const Unitset &myLarva=(*i)->getLarva();
-				if (myLarva.size()>0)
-				{
-					Unit larva=*myLarva.begin();
-					larva->morph(UnitTypes::Zerg_Drone);
-				}
-			}
 		}
 	}
 }

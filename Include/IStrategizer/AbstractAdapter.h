@@ -8,17 +8,11 @@
 #include "MapArea.h"
 #endif
 
-class Vector2;
 
 namespace IStrategizer
 {
+	class Vector2;
 	class CellFeature;
-}
-
-namespace OLCBP
-{
-	using namespace IStrategizer;
-	using namespace MetaData;
 
 	class AbstractAdapter
 	{

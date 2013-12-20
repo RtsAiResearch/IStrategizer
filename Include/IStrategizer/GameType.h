@@ -9,16 +9,11 @@
 #include "MetaData.h"
 #endif
 
-#include <string>
-#include <vector>
-using namespace std;
-
 namespace IStrategizer
 {
     class WorldResources;
     class GameDependency;
 
-    using namespace MetaData;
     class GameType : public StaticComponent
     {
     protected:
@@ -29,7 +24,7 @@ namespace IStrategizer
     protected:
         void            Attr(EntityClassAttribute p_attrId, int p_val) { m_attributes[INDEX(p_attrId, EntityClassAttribute)] = p_val; }
     public:
-                        GameType() : m_requiredResources(NULL) {}
+                        GameType() : m_requiredResources(nullptr) {}
                         ~GameType();
         int             Id() const { return m_id; }
         WorldResources* RequiredResources() const { return m_requiredResources; }

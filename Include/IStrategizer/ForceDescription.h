@@ -6,7 +6,7 @@
 #include "MetaData.h"
 #include "UserObject.h"
 #include "SVector.h"
-using namespace MetaData;
+using namespace IStrategizer;
 using namespace Serialization;
 
 namespace IStrategizer

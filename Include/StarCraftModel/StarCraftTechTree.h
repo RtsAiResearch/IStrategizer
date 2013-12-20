@@ -10,7 +10,7 @@
 
 #include "BWAPI.h"
 
-namespace MetaData
+namespace IStrategizer
 {
   enum PlayerType;
   enum ResearchType;
@@ -19,15 +19,15 @@ namespace MetaData
 
 namespace StarCraftModel
 {
-  using namespace MetaData;
+  using namespace IStrategizer;
   using namespace std;
   using namespace BWAPI;
-  using namespace DataStructure;
+  using namespace IStrategizer;
 
   class StarCraftTechTree : public IStrategizer::GameTechTree
   {
-    typedef std::vector<MetaData::EntityClassType> Entities;
-    typedef std::vector<MetaData::ResearchType> Researches;
+    typedef std::vector<IStrategizer::EntityClassType> Entities;
+    typedef std::vector<IStrategizer::ResearchType> Researches;
     typedef std::pair<Entities, Researches> Dependency;
 
     Player m_player;

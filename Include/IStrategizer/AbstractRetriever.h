@@ -5,12 +5,11 @@
 #include "EngineComponent.h"
 #endif
 
-class GoalEx;
-class CaseEx;
-class GameStateEx;
-
-namespace OLCBP
+namespace IStrategizer
 {
+	class GoalEx;
+	class CaseEx;
+	class GameStateEx;
 	class AbstractRetainer;
 
     class AbstractRetriever : public EngineComponent

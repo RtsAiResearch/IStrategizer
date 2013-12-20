@@ -27,13 +27,17 @@
 #endif
 #include "AbstractRetainer.h"
 #include "CaseBaseEx.h"
+#include "Logger.h"
 #include <map>
+
 using namespace std;
-using namespace OLCBP;
+using namespace IStrategizer;
 
-const int KNeighbours = 4;
+// The number of samples the KNN algorithm should use to calculate the most similar case to the
+// case to be retrieved
+const size_t KNeighbours = 4;
 
-RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pRetainer, "retriever")
+RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pRetainer, "Retriever")
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -115,7 +119,7 @@ float RetrieverEx::StateSimilarity(const GameStateEx *p_gs1, const GameStateEx *
 //----------------------------------------------------------------------------------------------
 float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const GameStateEx* p_gameState)
 {
-    float alpha = 0.75;
+    float alpha = 0.95f;
     float goalSimilarity    = GoalSimilarity(p_case->Goal(), p_goal);
     float stateSimilarity   = StateSimilarity(p_case->GameState(), p_gameState);
 
@@ -124,58 +128,64 @@ float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, con
 //----------------------------------------------------------------------------------------------
 CaseEx* RetrieverEx::Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameState)
 {
-    SVector<CaseEx*>&			cases = m_pRetainer->CaseBase()->CaseContainer;
-	multimap<float, CaseEx*>	caseRelevanceTable;
-	float						caseRelevance;
+    SVector<CaseEx*>& cases = m_pRetainer->CaseBase()->CaseContainer;
+	multimap<float, CaseEx*, greater<float> >	caseRelevanceTable;
+	float caseRelevance;
+
+	LogInfo("Retrieving case for goal={%s} and current game-state", p_goal->ToString().c_str());
 
 	if (cases.empty())
-		return NULL;
+	{
+		LogError("Case-base is empty, retrieval failed");
+		return nullptr;
+	}
 
-    for(int i = 0, size = cases.size(); i < size; ++i)
+	// Calculate the relevance between each case in the case-base and
+	// the current situation using the goal and game-state params
+    for(size_t i = 0, size = cases.size(); i < size; ++i)
     {
         caseRelevance = CaseRelevance(cases[i], p_goal, p_gameState);
 		caseRelevanceTable.insert(make_pair(caseRelevance, cases[i]));
     }
 
-	int				i = 0;
-	float			outcome;
-	float			currentPerformance;
-	int				maxPerformanceIdx = -1;
-	vector<pair<CaseEx*, float>>	kCasesPerformance;
-	CaseEx*			c;
+	int					i = 0;
+	float				outcome;
+	float				currCasePerformance;
+	CaseEx*				currCase;
+	CaseEx*				bestCase = nullptr;
+	float				bestCasePerformance = 0.0f;
 
-	kCasesPerformance.reserve(KNeighbours);
-
-	for(multimap<float, CaseEx*>::iterator itr = caseRelevanceTable.begin();
+	for(multimap<float, CaseEx*, greater<float> >::iterator itr = caseRelevanceTable.begin();
 		itr != caseRelevanceTable.end() && i < 5;
 		++itr, ++i)
 	{
-		c = itr->second;
-		outcome = (float)c->SuccessCount() / (float)c->TrialCount();
+		currCase = itr->second;
+		outcome = (float)currCase->SuccessCount() / (float)currCase->TrialCount();
 		assert(outcome != 0);
-		currentPerformance = itr->first * outcome;
-		kCasesPerformance.push_back(make_pair(c, currentPerformance));
+		currCasePerformance = itr->first * outcome;
 
-		if(maxPerformanceIdx == -1)
-			maxPerformanceIdx = 0;
-		else if(currentPerformance > kCasesPerformance[maxPerformanceIdx].second)
+		if (currCasePerformance > bestCasePerformance)
 		{
-			maxPerformanceIdx = i;
+			bestCasePerformance = currCasePerformance;
+			bestCase = currCase;
 		}
 	}
 
-	assert(maxPerformanceIdx > -1);
-    return kCasesPerformance[maxPerformanceIdx].first;
+	LogInfo("Retrieved case '%s' with max performance=%f",
+		bestCase->Goal()->ToString().c_str(),
+		bestCasePerformance);
+
+    return bestCase;
 }
 //----------------------------------------------------------------------------------------------
 void RetrieverEx::ExecuteCommand(const char* p_cmd)
 {
-    if(!strcmp(p_cmd, "retrieve"))
-    {
-        PlanStepParameters m_parameters;
-        m_parameters[PARAM_PlayerId] = PLAYER_Self;
-        m_parameters[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
+    //if(!strcmp(p_cmd, "retrieve"))
+    //{
+    //    PlanStepParameters m_parameters;
+    //    m_parameters[PARAM_PlayerId] = PLAYER_Self;
+    //    m_parameters[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
 
-        CaseEx* myCase = Retrieve(g_GoalFactory.GetGoal(GOALEX_WinGame, m_parameters), g_Game->Self()->State());
-    }
+    //    CaseEx* myCase = Retrieve(g_GoalFactory.GetGoal(GOALEX_WinGame, m_parameters), g_Game->Self()->State());
+    //}
 }

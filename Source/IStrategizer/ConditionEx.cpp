@@ -1,5 +1,7 @@
 #include "ConditionEx.h"
 
+using namespace IStrategizer;
+
 void ConditionEx::InitializeAddressesAux()
 {
     Expression::InitializeAddressesAux();
@@ -16,7 +18,7 @@ bool ConditionEx::Equals(const Expression* p_rhs) const
 
     const ConditionEx* m_rhs = static_cast<const ConditionEx*>(p_rhs);
 
-    if(m_rhs == NULL)
+    if(m_rhs == nullptr)
         return false;
 
 	bool m_equal = (_conditionType == m_rhs->_conditionType) &&
@@ -55,7 +57,6 @@ bool ConditionEx::PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_anchor
 					return false;
 			}
 
-            ConditionEx* me = const_cast<ConditionEx*>(this);
 			if(p_anchor == MATCHSIDE_Left)
 			{	
 				p_matchedLeafs.push_back(make_pair(const_cast<ConditionEx*>(this), const_cast<Expression*>(p_rhs)));

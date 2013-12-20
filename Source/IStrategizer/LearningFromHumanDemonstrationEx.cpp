@@ -23,7 +23,7 @@
 #include <functional>
 
 using namespace std;
-using namespace OLCBP;
+using namespace IStrategizer;
 
 LearningFromHumanDemonstrationEx::LearningFromHumanDemonstrationEx(PlayerType p_player, PlayerType p_enemy)
 {
@@ -87,14 +87,14 @@ CaseBaseEx* LearningFromHumanDemonstrationEx::CaseBaseAcquisition()
 
  //   LearnCookedCases(m_cookedPlans);
 	//
-    return NULL;
+    return nullptr;
 }
 //------------------------------------------------------------------------------------------------
 vector<RawCaseEx*> LearningFromHumanDemonstrationEx::LearnRawCases(vector<TraceEx*>& p_traces)
 {
     unsigned            m_rowSize = _helper->GoalSatisfactionRow().GetRowSize();
     vector<RawCaseEx*>	m_learntRawCases = vector<RawCaseEx*>();
-    vector<RawCaseEx*>	m_currentCases = vector<RawCaseEx*>(m_rowSize, NULL);
+    vector<RawCaseEx*>	m_currentCases = vector<RawCaseEx*>(m_rowSize, nullptr);
     RawPlanEx			m_tempRPlan;
     unsigned			i, g;
 
@@ -104,9 +104,9 @@ vector<RawCaseEx*> LearningFromHumanDemonstrationEx::LearnRawCases(vector<TraceE
         {
             if (!p_traces[i]->GoalSatisfaction()[g] && !m_currentCases[g])
             {
-                m_tempRPlan = RawPlanEx(NULL, SequentialPlan());
+                m_tempRPlan = RawPlanEx(nullptr, SequentialPlan());
                 m_currentCases[g] = new RawCaseEx(m_tempRPlan, p_traces[i]->GameState());
-                //m_currentCases[g] = new RawCaseEx(m_tempRPlan, NULL);
+                //m_currentCases[g] = new RawCaseEx(m_tempRPlan, nullptr);
                 AddAction(m_currentCases[g], p_traces[i]->AbstractActionId(), p_traces[i]->AbstractParametersId(), i);
             }
             else if(!p_traces[i]->GoalSatisfaction()[g] && m_currentCases[g])
@@ -118,7 +118,7 @@ vector<RawCaseEx*> LearningFromHumanDemonstrationEx::LearnRawCases(vector<TraceE
                 m_currentCases[g]->rawPlan.Goal = _helper->GoalSatisfactionRow().GetGoal(g);
                 AddAction(m_currentCases[g], p_traces[i]->AbstractActionId(), p_traces[i]->AbstractParametersId(), i);
                 m_learntRawCases.push_back(m_currentCases[g]);
-                m_currentCases[g] = NULL;
+                m_currentCases[g] = nullptr;
             }
         }
     }
@@ -185,7 +185,7 @@ bool LearningFromHumanDemonstrationEx::Depends(CompositeExpression* p_candidateN
 			m_precondition = (ConditionEx*)m_candidateConditions[i].second;
 			m_postCondition = (ConditionEx*)m_candidateConditions[i].first;
 
-			if (m_postCondition->Consume( (m_precondition->ContainsParameter(PARAM_Amount)) ? m_precondition->Parameter(PARAM_Amount) : NULL ))
+			if (m_postCondition->Consume( (m_precondition->ContainsParameter(PARAM_Amount)) ? m_precondition->Parameter(PARAM_Amount) : 0 ))
 			{
 				p_matchedConditions.push_back(m_candidateConditions[i].first);
 				p_dependentNode->RemoveExpression(m_candidateConditions[i].second);
@@ -251,7 +251,7 @@ void LearningFromHumanDemonstrationEx::UnnecessaryStepsElimination(CookedCase* p
 	//p_case->dGraph = new PlanGraph(fSteps);
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::NecessaryStepsExtraction(PlanGraph* p_graph, int p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)
+void LearningFromHumanDemonstrationEx::NecessaryStepsExtraction(PlanGraph* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)
 {
     vector< pair<int, PlanStepEx*> >	rSteps;
     unsigned							i;
@@ -275,7 +275,7 @@ void LearningFromHumanDemonstrationEx::NecessaryStepsExtraction(PlanGraph* p_gra
     }
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::HierarchicalComposition(CookedPlan* p_plan, const vector<CookedPlan*>& p_plans, int p_index)
+void LearningFromHumanDemonstrationEx::HierarchicalComposition(CookedPlan* p_plan, const vector<CookedPlan*>& p_plans, unsigned p_index)
 {
 	int				m_maxSubgraphIndex = INT_MAX;
 	int				m_maxMatchedCount = 0;
@@ -304,7 +304,7 @@ void LearningFromHumanDemonstrationEx::HierarchicalComposition(CookedPlan* p_pla
 //----------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstrationEx::LearnCookedCases( vector<CookedPlan*>& p_cookedPlans )
 {
-    CaseEx*     m_learntCase    = NULL;
+    CaseEx*     m_learntCase    = nullptr;
     for(int i = 0, size = p_cookedPlans.size(); i < size; ++i)
     {
         m_learntCase = CaseEx::From(p_cookedPlans[i]);

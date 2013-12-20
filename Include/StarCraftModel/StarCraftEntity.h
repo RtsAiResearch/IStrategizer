@@ -7,7 +7,7 @@
 
 #include "BWAPI.h"
 
-namespace MetaData
+namespace IStrategizer
 {
   enum ObjectStateType;
   enum EntityClassType;
@@ -17,7 +17,7 @@ namespace MetaData
 namespace StarCraftModel
 {
   using namespace IStrategizer;
-  using namespace MetaData;
+  using namespace IStrategizer;
   using namespace BWAPI;
 
   class StarCraftEntity : public GameEntity
@@ -29,15 +29,16 @@ namespace StarCraftModel
     bool Research(ResearchType p_researchId);
     bool Build(EntityClassType p_buildingClassId, int p_x, int p_y);
     bool AttackGround(int p_x, int p_y);
-    bool AttackEntity(MetaData::PlayerType p_opponentIndex, int p_targetEntityObjectId);
+    bool AttackEntity(IStrategizer::PlayerType p_opponentIndex, int p_targetEntityObjectId);
     bool Train(EntityClassType p_entityClassId);
+	bool IsTraining(TID p_traineeId);
 
   protected:
     ObjectStateType FetchState();
 
   private:
     Unit	m_unit;
-    MetaData::PlayerType m_ownerId;
+    IStrategizer::PlayerType m_ownerId;
   };
 }
 

@@ -60,10 +60,12 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4273;4290;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4480;4273;4290;4100%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying TypeInfo databse to CaseVisualizer</Message>
@@ -109,7 +111,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Colony.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\TraceableComponent.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CombinatoricsAndOrGraph.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GoalSatisfactionRow.cpp" />
@@ -184,9 +186,8 @@
     <ClInclude Include="..\..\Include\IStrategizer\Misc.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Persist.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Predicate.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\TraceableComponent.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\Logger.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Vector2.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\Log.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CombinatoricsAndOrGraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MapEx.h" />

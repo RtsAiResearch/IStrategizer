@@ -25,15 +25,15 @@
 #ifndef GAMETYPE_H
 #include "GameType.h"
 #endif
+#include "GameResearch.h"
 
 using namespace IStrategizer;
-using namespace MetaData;
 
 #include <vector>
 #include <cassert>
 using namespace std;
 
-IStrategizer::RtsGame* g_Game = NULL;
+IStrategizer::RtsGame* g_Game = nullptr;
 
 RtsGame::~RtsGame()
 {
@@ -129,7 +129,7 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
     if (m_players.Contains(p_id))
 		return m_players[p_id];
 
-	return NULL;
+	return nullptr;
 }
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
@@ -139,7 +139,7 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
 	if (m_entityTypes.Contains(p_id))
 		return m_entityTypes[p_id];
 
-    return NULL;
+    return nullptr;
 }
 //----------------------------------------------------------------------------------------------
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
@@ -149,7 +149,7 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
     if (m_researches.Contains(p_id))
 		return m_researches[p_id];
 
-    return NULL;
+    return nullptr;
 }
 //----------------------------------------------------------------------------------------------
 WorldMap* RtsGame::Map()

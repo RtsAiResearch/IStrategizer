@@ -26,7 +26,7 @@ void WinWargusGoalEx::InitializeSuccessConditions()
 	int                 m_index = 0;
 
 	m_terms.resize(m_playerIds.size() - 1);
-	for (int m_playerIndex = 0; m_playerIndex < m_playerIds.size(); m_playerIndex++)
+	for (size_t m_playerIndex = 0; m_playerIndex < m_playerIds.size(); m_playerIndex++)
 	{
 		if(m_playerIds[m_playerIndex] == m_enginePlayer)
 			continue;

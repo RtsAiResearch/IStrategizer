@@ -7,7 +7,7 @@
 
 #include "BWAPI.h"
 
-namespace MetaData
+namespace IStrategizer
 {
 	enum EntityClassType;
 }

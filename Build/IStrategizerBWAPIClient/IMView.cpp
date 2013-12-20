@@ -7,7 +7,7 @@
 using namespace IStrategizer;
 
 IMView::IMView(QWidget *parent)
-: QWidget(parent), m_pIM(NULL), m_pfnIMDrawer(NULL), m_transformationCached(false)
+: QWidget(parent), m_pIM(nullptr), m_pfnIMDrawer(nullptr), m_transformationCached(false)
 {
 	setBackgroundRole(QPalette::Dark);
 	setAutoFillBackground(true);

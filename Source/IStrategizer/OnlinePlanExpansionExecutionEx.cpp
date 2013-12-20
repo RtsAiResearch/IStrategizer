@@ -39,12 +39,13 @@
 #include "Toolbox.h"
 #include <cstdio>
 #include <bitset>
+#include "Logger.h"
 
 using namespace std;
 using namespace IStrategizer;
-using namespace OLCBP;
 
 OnlinePlanExpansionExecutionEx::OnlinePlanExpansionExecutionEx(GoalEx* p_initialGoal, CaseBasedReasonerEx *p_casedBasedReasoner)
+    : EngineComponent("OnlinePlanner")
 {
 	_caseBasedReasoner = p_casedBasedReasoner;
 	_planRoot = PlanTreeNodeEx::CreatePlanRoot(p_initialGoal);
@@ -53,11 +54,11 @@ OnlinePlanExpansionExecutionEx::OnlinePlanExpansionExecutionEx(GoalEx* p_initial
 	g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecutionEx::Update(unsigned long p_cycles)
+void OnlinePlanExpansionExecutionEx::Update(const WorldClock& p_clock)
 {
 	if (_planRoot)
 	{
-		UpdatePlan(_planRoot, p_cycles);
+		UpdatePlan(_planRoot, p_clock);
 	}
 }
 //////////////////////////////////////////////////////////////////////////
@@ -65,8 +66,8 @@ void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, Cas
 {
 	PlanGraph					*pSubPlanGraph = p_pCase->GetPlanGraph();
 	vector<int>					subPlanGraphRoots = pSubPlanGraph->GetRoots();
-	PlanTreeNodeEx::NodeList	preExpansionGoalChildren(p_pGoalNode->BelongingSubPlanChildren().begin(), p_pGoalNode->BelongingSubPlanChildren().end());
-	PlanTreeNodeEx::NodeList	subPlanTreeNodes;
+	PlanTreeNodeEx::List	preExpansionGoalChildren(p_pGoalNode->BelongingSubPlanChildren().begin(), p_pGoalNode->BelongingSubPlanChildren().end());
+	PlanTreeNodeEx::List	subPlanTreeNodes;
 	vector<int>					planGraphRootIndicies(subPlanGraphRoots.begin(), subPlanGraphRoots.end());
 	queue<int>					Q;
 	vector<bool>				visited;
@@ -163,19 +164,21 @@ void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, Cas
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, unsigned long p_cycles)
+void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, const WorldClock& p_clock)
 {
-	queue<PlanTreeNodeEx*>	Q;
+	PlanTreeNodeEx::Queue	Q;
 	PlanTreeNodeEx*			pCurrentNode;
-	PlanStepEx*				pCurrentPlanStep;
-	bool					hasPreviousPlan;
 
 	// Root goal destroyed we may have an empty case-base, or exhausted all cases and nothing succeeded
-	if (p_pPlanRoot == NULL || p_pPlanRoot->IsNull())
+	if (p_pPlanRoot == nullptr || p_pPlanRoot->IsNull())
 		return;
 
-	if(p_pPlanRoot->Children().empty())
+	if(p_pPlanRoot->Children().empty() &&
+		!_triedCases.empty())
+	{
+		LogInfo("Plan root node has no children, clearing the tried-cases");
 		_triedCases.clear();
+	}
 
 	Q.push(p_pPlanRoot);
 
@@ -184,118 +187,143 @@ void OnlinePlanExpansionExecutionEx::UpdatePlan(PlanTreeNodeEx* p_pPlanRoot, uns
 		pCurrentNode = Q.front();
 		Q.pop();
 
-		pCurrentPlanStep = pCurrentNode->PlanStep();
-
 		if (pCurrentNode->Type() == PTNTYPE_Goal)
 		{
-			if (pCurrentNode->IsOpen())
-			{
-				hasPreviousPlan = DestroyGoalPlanIfExist(pCurrentNode);
-
-				// The goal was previously expanded with a plan, but it somehow failed
-				// Thats why it is now open
-				// Revise the node belonging case as failed case
-				if (hasPreviousPlan)
-				{
-					_caseBasedReasoner->Reviser()->Revise(pCurrentNode->BelongingCase(), false);
-				}
-
-				CaseEx* caseEx = _caseBasedReasoner->Retriever()->Retrieve(pCurrentNode->GetGoal(), g_Game->Self()->State());
-
-				if (caseEx != NULL &&
-					!IsCaseTried(pCurrentNode, caseEx))
-				{
-					MarkCaseAsTried(pCurrentNode, caseEx);
-					ExpandGoal(pCurrentNode, caseEx);
-					pCurrentNode->Close();
-
-					NotifyChildrenForParentSuccess(pCurrentNode);
-				}
-				else
-				{
-					// The planner exhausted all possible plans form the case-base and nothing can succeed
-					// We surrender!!
-					if (pCurrentNode->SubPlanGoal()->IsNull())
-					{
-						printf("Planner has exhausted all possible cases\n");
-						_planRoot = NULL;
-						return;
-					}
-					else
-						pCurrentNode->SubPlanGoal()->Open();
-				}
-			}
-			else
-			{
-				if (pCurrentPlanStep->State() == ESTATE_Failed)
-				{
-					pCurrentNode->Open();
-				}
-				else
-				{
-					assert(pCurrentPlanStep->State() == ESTATE_Pending ||
-						pCurrentPlanStep->State() == ESTATE_Succeeded ||
-						pCurrentPlanStep->State() == ESTATE_END);
-
-					pCurrentPlanStep->Update(p_cycles);
-					ConsiderReadyChildrenForUpdate(pCurrentNode, Q);
-				}
-			}
+			UpdateGoalNode(pCurrentNode, p_clock, Q);
 		}
 		else if (pCurrentNode->Type() == PTNTYPE_Action)
 		{
-			assert(pCurrentNode->IsReady());
-
-			if (pCurrentNode->IsOpen())
-			{
-				if (pCurrentPlanStep->State() == ESTATE_Failed)
-				{
-					// We check to make sure that our parent is open before closing
-					// Our sub plan goal may be already open because any of our siblings may have failed and opened our sub plan goal
-					if (!pCurrentNode->SubPlanGoal()->IsOpen())
-						pCurrentNode->SubPlanGoal()->Open();
-				}
-				else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
-				{
-					pCurrentNode->Close();
-					NotifyChildrenForParentSuccess(pCurrentNode);
-				}
-				else
-				{
-					assert(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
-						pCurrentPlanStep->State() == ESTATE_Pending ||
-						pCurrentPlanStep->State() == ESTATE_Executing ||
-						pCurrentPlanStep->State() == ESTATE_END);
-
-					pCurrentPlanStep->Update(p_cycles);
-				}
-			}
-			else
-			{
-				assert(pCurrentPlanStep->State() == ESTATE_Succeeded);
-
-				ConsiderReadyChildrenForUpdate(pCurrentNode, Q);
-			}
+			UpdateActionNode(pCurrentNode, p_clock, Q);
 		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecutionEx::NotifyChildrenForParentSuccess(PlanTreeNodeEx* p_pNode)
 {
-	for(unsigned i = 0; i < p_pNode->Children().size(); i++)
+	LogInfo("Notifying node '%s' children with their parent success", p_pNode->PlanStep()->ToString().c_str());
+
+	for(size_t i = 0; i < p_pNode->Children().size(); ++i)
 		p_pNode->Children().at(i)->NotifyParentSuccess(p_pNode);
 }
 //////////////////////////////////////////////////////////////////////////
-void OLCBP::OnlinePlanExpansionExecutionEx::MarkCaseAsTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase)
+void IStrategizer::OnlinePlanExpansionExecutionEx::MarkCaseAsTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase)
 {
 	assert(_triedCases[p_pStep].find(p_pCase) == _triedCases[p_pStep].end());
+
+	LogInfo("Marking case '%s'@%x as tried case for node %x", p_pCase->Goal()->ToString().c_str(), (void*)p_pCase, (void*)p_pStep);
+
 	_triedCases[p_pStep].insert(p_pCase);
 }
 //////////////////////////////////////////////////////////////////////////
-bool OLCBP::OnlinePlanExpansionExecutionEx::IsCaseTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase)
+bool IStrategizer::OnlinePlanExpansionExecutionEx::IsCaseTried(PlanTreeNodeEx* p_pStep, CaseEx* p_pCase)
 {
 	return _triedCases[p_pStep].find(p_pCase) != _triedCases[p_pStep].end();
 }
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateGoalNode(PlanTreeNodeEx* p_pCurrentNode, const WorldClock& p_clock, PlanTreeNodeEx::Queue& p_updateQ)
+{
+	assert(p_pCurrentNode);
+	PlanStepEx*		pCurrentPlanStep = p_pCurrentNode->PlanStep();
+	bool			hasPreviousPlan = false;
+
+	if (p_pCurrentNode->IsOpen())
+	{
+		hasPreviousPlan = DestroyGoalPlanIfExist(p_pCurrentNode);
+
+		// The goal was previously expanded with a plan, but it somehow failed
+		// Thats why it is now open
+		// Revise the node belonging case as failed case
+		if (hasPreviousPlan)
+		{
+			LogInfo("Node with plan-step '%s' is open and has children nodes, case is sent for revision and children have been destroyed", p_pCurrentNode->PlanStep()->ToString().c_str());
+			_caseBasedReasoner->Reviser()->Revise(p_pCurrentNode->BelongingCase(), false);
+		}
+
+		CaseEx* caseEx = _caseBasedReasoner->Retriever()->Retrieve(p_pCurrentNode->GetGoal(), g_Game->Self()->State());
+
+		if (caseEx != nullptr &&
+			!IsCaseTried(p_pCurrentNode, caseEx))
+		{
+			LogInfo("Retrieved case '%s' has not been tried before, and its goal is being sent for expansion",
+				caseEx->Goal()->ToString().c_str());
+
+			MarkCaseAsTried(p_pCurrentNode, caseEx);
+			ExpandGoal(p_pCurrentNode, caseEx);
+
+			p_pCurrentNode->Close();
+
+			NotifyChildrenForParentSuccess(p_pCurrentNode);
+		}
+		else
+		{
+			// The planner exhausted all possible plans form the case-base and nothing can succeed
+			// We surrender!!
+			if (p_pCurrentNode->SubPlanGoal()->IsNull())
+			{
+				LogWarning("Planner has exhausted all possible cases");
+				_planRoot = nullptr;
+				return;
+			}
+			else
+				p_pCurrentNode->SubPlanGoal()->Open();
+		}
+	}
+	else
+	{
+		if (pCurrentPlanStep->State() == ESTATE_Failed)
+		{
+			p_pCurrentNode->Open();
+		}
+		else
+		{
+			assert(pCurrentPlanStep->State() == ESTATE_Pending ||
+				pCurrentPlanStep->State() == ESTATE_Succeeded ||
+				pCurrentPlanStep->State() == ESTATE_END);
+
+			pCurrentPlanStep->Update(p_clock);
+			ConsiderReadyChildrenForUpdate(p_pCurrentNode, p_updateQ);
+		}
+	}
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateActionNode(PlanTreeNodeEx* p_pCurrentNode, const WorldClock& p_clock, PlanTreeNodeEx::Queue& p_updateQ)
+{
+	assert(p_pCurrentNode);
+	PlanStepEx *pCurrentPlanStep  = p_pCurrentNode->PlanStep();
+	assert(p_pCurrentNode->IsReady());
+
+	if (p_pCurrentNode->IsOpen())
+	{
+		if (pCurrentPlanStep->State() == ESTATE_Failed)
+		{
+			// We check to make sure that our parent is open before closing
+			// Our sub plan goal may be already open because any of our siblings may have failed and opened our sub plan goal
+			if (!p_pCurrentNode->SubPlanGoal()->IsOpen())
+				p_pCurrentNode->SubPlanGoal()->Open();
+		}
+		else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
+		{
+			p_pCurrentNode->Close();
+			NotifyChildrenForParentSuccess(p_pCurrentNode);
+		}
+		else
+		{
+			assert(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
+				pCurrentPlanStep->State() == ESTATE_Pending ||
+				pCurrentPlanStep->State() == ESTATE_Executing ||
+				pCurrentPlanStep->State() == ESTATE_END);
+
+			pCurrentPlanStep->Update(p_clock);
+		}
+	}
+	else
+	{
+		assert(pCurrentPlanStep->State() == ESTATE_Succeeded);
+
+		ConsiderReadyChildrenForUpdate(p_pCurrentNode, p_updateQ);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecutionEx::NotifyMessegeSent(Message* p_message)
 {
@@ -323,15 +351,15 @@ void OnlinePlanExpansionExecutionEx::NotifyMessegeSent(Message* p_message)
 //////////////////////////////////////////////////////////////////////////
 bool OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pPlanGoalNode)
 {
-	queue<PlanTreeNodeEx*>		Q;
-	set<PlanTreeNodeEx*>		visitedNodes;
-	PlanTreeNodeEx*				pCurrentNode;
-	PlanTreeNodeEx::NodeList	children(p_pPlanGoalNode->Children());
-	PlanTreeNodeEx::NodeList	currentNodeChildren;
-	PlanTreeNodeEx::NodeList	preExpansionChildren(p_pPlanGoalNode->BelongingSubPlanChildren());
+	PlanTreeNodeEx::Queue	Q;
+	PlanTreeNodeEx::Set		visitedNodes;
+	PlanTreeNodeEx*			pCurrentNode;
+	PlanTreeNodeEx::List	children(p_pPlanGoalNode->Children());
+	PlanTreeNodeEx::List	currentNodeChildren;
+	PlanTreeNodeEx::List	preExpansionChildren(p_pPlanGoalNode->BelongingSubPlanChildren());
 
 	// Unlink sub plan roots
-	for (PlanTreeNodeEx::NodeList::const_iterator itr = children.begin();
+	for (PlanTreeNodeEx::List::const_iterator itr = children.begin();
 		itr != children.end(); ++itr)
 	{
 		// The current child is a result of expanding p_pPlanGoalNode before
@@ -367,7 +395,7 @@ bool OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pP
 		{
 			currentNodeChildren = pCurrentNode->Children();
 
-			for (PlanTreeNodeEx::NodeList::const_iterator itr = currentNodeChildren.begin();
+			for (PlanTreeNodeEx::List::const_iterator itr = currentNodeChildren.begin();
 				itr != currentNodeChildren.end(); ++itr)
 			{
 				// Nodes from the original sub plan (as appeared in the case plan graph) should not be considered from unlinking from their children
@@ -389,7 +417,7 @@ bool OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pP
 	assert(p_pPlanGoalNode->Children().empty());
 
 	// Cross link the old pre-expansion children with the plan goal node
-	for (PlanTreeNodeEx::NodeList::const_iterator itr = preExpansionChildren.begin();
+	for (PlanTreeNodeEx::List::const_iterator itr = preExpansionChildren.begin();
 		itr != preExpansionChildren.end(); ++itr)
 	{
 		p_pPlanGoalNode->CrossLinkChild(*itr);
@@ -398,11 +426,11 @@ bool OnlinePlanExpansionExecutionEx::DestroyGoalPlanIfExist(PlanTreeNodeEx* p_pP
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecutionEx::ConsiderReadyChildrenForUpdate(PlanTreeNodeEx* p_pNode, queue<PlanTreeNodeEx*> &p_updateQueue)
+void OnlinePlanExpansionExecutionEx::ConsiderReadyChildrenForUpdate(PlanTreeNodeEx* p_pNode, PlanTreeNodeEx::Queue &p_updateQueue)
 {
-	const PlanTreeNodeEx::NodeList& children =  p_pNode->Children();
+	const PlanTreeNodeEx::List& children =  p_pNode->Children();
 
-	for(unsigned i = 0; i < children.size(); i++)
+	for(size_t i = 0; i < children.size(); i++)
 	{
 		if (children[i]->IsReady())
 		{

@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <cassert>
 
+using namespace IStrategizer;
+
 //----------------------------------------------------------------------------------------------
 void CompositeExpression::InitializeAddressesAux()
 {
@@ -48,7 +50,7 @@ bool CompositeExpression::Equals(const Expression* p_rhs) const
 
     const CompositeExpression* m_rhs = static_cast<const CompositeExpression*>(p_rhs);
     
-    if(m_rhs == NULL)
+    if(m_rhs == nullptr)
         return false;
 
     // assuming that the condition checking is not deep (this is not a CFG for checking equivalence)
@@ -71,7 +73,7 @@ bool CompositeExpression::Equals(const Expression* p_rhs) const
 bool CompositeExpression::PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_matchSide, vector<pair<Expression*,Expression*>>& p_matchedLeafs) const
 {
     bool m_equals = false;
-	for(int lhsIdx = 0; lhsIdx < _expressions.size(); ++lhsIdx)
+	for(size_t lhsIdx = 0; lhsIdx < _expressions.size(); ++lhsIdx)
 	{
 		m_equals |= _expressions[lhsIdx]->PartiallyEqualsAux(p_rhs, p_matchSide, p_matchedLeafs);
 	}
@@ -85,7 +87,7 @@ Expression* CompositeExpression::operator[](int p_index)
     Expression* m_exp = GetTermAux(m_seed, p_index);
     
     // Term index out of range
-    assert(m_exp != NULL);
+    assert(m_exp != nullptr);
     
     return m_exp;
 }
@@ -96,7 +98,7 @@ Expression* CompositeExpression::At(int p_index)
     Expression* m_exp = GetTermAux(m_seed, p_index);
 
     // Term index out of range
-    assert(m_exp != NULL);
+    assert(m_exp != nullptr);
 
     return m_exp;
 }
@@ -106,7 +108,7 @@ void CompositeExpression::Clear()
 	for(int i = 0, size = _expressions.size(); i < size; ++i)
 	{
 		delete _expressions[i];
-		_expressions[i] = NULL;
+		_expressions[i] = nullptr;
 	}
 
 	_expressions.Clear();
@@ -114,7 +116,7 @@ void CompositeExpression::Clear()
 //----------------------------------------------------------------------------------------------
 Expression* CompositeExpression::GetTermAux(int p_currentIdex, int p_targetIndex)
 {
-    CompositeExpression* m_compositeExp = NULL;
+    CompositeExpression* m_compositeExp = nullptr;
 
     for(vector<Expression*>::iterator itr = _expressions.begin();
         itr != _expressions.end();
@@ -135,16 +137,16 @@ Expression* CompositeExpression::GetTermAux(int p_currentIdex, int p_targetIndex
         }
         else
         {
-            m_compositeExp = NULL;
+            m_compositeExp = nullptr;
             m_compositeExp = static_cast<CompositeExpression*>(*itr);
-            assert(m_compositeExp != NULL);
+            assert(m_compositeExp != nullptr);
 
             return m_compositeExp->GetTermAux(p_currentIdex, p_targetIndex);
         }
     }
 
     // term index out of range
-    return NULL;
+    return nullptr;
 }
 //----------------------------------------------------------------------------------------------
 void CompositeExpression::Copy(IClonable* p_dest)
@@ -154,9 +156,9 @@ void CompositeExpression::Copy(IClonable* p_dest)
     CompositeExpression* m_dest = static_cast<CompositeExpression*>(p_dest);
 
 	m_dest->_expressions.resize(_expressions.size());
-	for (int i = 0; i < _expressions.size(); ++i)
+	for (size_t i = 0; i < _expressions.size(); ++i)
 	{
-        m_dest->_expressions[i] = _expressions[i] ? static_cast<Expression*>(_expressions[i]->Clone()) : NULL;
+        m_dest->_expressions[i] = _expressions[i] ? static_cast<Expression*>(_expressions[i]->Clone()) : nullptr;
 	}
 	
 	_shortCircuit = m_dest->_shortCircuit;

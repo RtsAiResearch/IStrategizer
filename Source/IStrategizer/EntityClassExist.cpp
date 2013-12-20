@@ -75,7 +75,7 @@ bool EntityClassExist::Evaluate()
 			if (m_entity->Type() == _conditionParameters[PARAM_EntityClassId] && MatchesAttributes(m_entityObjectId))
 			{
 				if(_blocking)
-					m_entity->Lock(NULL);
+					m_entity->Lock(nullptr);
 
 				_entityObjectIds.push_back(m_entityObjectId);
 
@@ -125,10 +125,10 @@ bool EntityClassExist::MatchesAttributes(int p_entityObjectId)
 {   
 	return true;
 
-	if(_entityObjectAttributes.size() == 0)
+	/*if(_entityObjectAttributes.size() == 0)
 		return true;
 	else
-		return CheckEntityObjectSimilarity(_playerType, p_entityObjectId, _entityObjectAttributes, _similarityThreshold).Evaluate();
+		return CheckEntityObjectSimilarity(_playerType, p_entityObjectId, _entityObjectAttributes, _similarityThreshold).Evaluate();*/
 }
 //---------------------------------------------------------------------------------------------------
 void EntityClassExist::Copy(IClonable* p_dest)

@@ -3,7 +3,7 @@
 
 class CaseBaseEx;
 
-namespace OLCBP
+namespace IStrategizer
 {
     class AbstractRetainer;
     class AbstractReviser;

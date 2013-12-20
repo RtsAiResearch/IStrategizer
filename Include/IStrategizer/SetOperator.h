@@ -3,25 +3,24 @@
 
 #include <set>
 #include <cassert>
-using namespace std;
 
 #ifndef COLLECTION_H
 #include "Collection.h"
 #endif
 
-namespace DataStructure
+namespace IStrategizer
 {
     const int MaxSets = 16;
 
     template<class T>
     class SetOperator
     {
-        typename set<T>::iterator   m_indices[MaxSets];
-        int                         m_setsCount;
-        set<T>**                    m_sets;
+        typename std::set<T>::iterator		m_indices[MaxSets];
+        int									m_setsCount;
+        std::set<T>**						m_sets;
 
     public:
-        void Intersect(set<T>** p_sets, int p_setsCount, Collection<T>& p_result)
+        void Intersect(std::set<T>** p_sets, int p_setsCount, Collection<T>& p_result)
         {
             assert(p_setsCount > 0);
 
@@ -97,7 +96,7 @@ namespace DataStructure
         }
 
         //----------------------------------------------------------------------------------------------
-        bool AdvanceIndex(typename set<T>::iterator& p_currentItr, const set<T>* p_set, typename set<T>::iterator& p_targetValItr)
+        bool AdvanceIndex(typename std::set<T>::iterator& p_currentItr, const std::set<T>* p_set, typename set<T>::iterator& p_targetValItr)
         {
             while(p_currentItr != p_set->end() && *p_currentItr < *p_targetValItr)
                 ++p_currentItr;
@@ -105,7 +104,7 @@ namespace DataStructure
             return p_currentItr != p_set->end();
         }
         //----------------------------------------------------------------------------------------------
-        bool AdvanceIndex(typename set<T>::iterator& p_currentItr, const set<T>* p_set)
+        bool AdvanceIndex(typename std::set<T>::iterator& p_currentItr, const std::set<T>* p_set)
         {
             if(p_currentItr != p_set->end())
                 ++p_currentItr;

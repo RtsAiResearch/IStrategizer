@@ -5,8 +5,6 @@
 
 namespace IStrategizer
 {
-	using namespace MetaData;
-
 	class GroundControlIM : public InfluenceMap
 	{
 	public:

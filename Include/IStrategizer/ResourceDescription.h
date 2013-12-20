@@ -1,9 +1,7 @@
 #ifndef RESOURCEDESCRIPTION_H
 #define RESOURCEDESCRIPTION_H
 
-
 #include "MetaData.h"
-using namespace MetaData;
 
 namespace IStrategizer
 {

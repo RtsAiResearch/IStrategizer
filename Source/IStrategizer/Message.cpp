@@ -3,7 +3,8 @@
 #ifndef METADATA_H
 #include "MetaData.h"
 #endif
-using namespace MetaData;
+
+using namespace IStrategizer;
 
 Message::Message(unsigned long p_gameCycle, MessageType p_messageTypeID)
 {

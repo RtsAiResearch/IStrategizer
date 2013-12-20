@@ -11,7 +11,7 @@
 #ifndef MESSAGEPUMP_H
 #include "MessagePump.h"
 #endif
-using namespace MetaData;
+using namespace IStrategizer;
 
 EventTriggered::EventTriggered(MessageType p_eventTypeId, const PlanStepParameters& p_eventArgs) : _triggered(false) 
 {

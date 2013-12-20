@@ -18,7 +18,7 @@
 #define IDX(X)					(X && 0x0000ffff)
 #define ENUMS_SIZE				0xfffff
 
-namespace MetaData
+namespace IStrategizer
 {
 	/*
 	ID format:

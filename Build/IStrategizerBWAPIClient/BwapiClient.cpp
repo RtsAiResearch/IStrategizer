@@ -7,14 +7,14 @@
 using namespace std;
 using namespace BWAPI;
 
-BwapiClient::BwapiClient() : m_bShutdown(false), m_hBwapiThread(NULL), m_bClientInitialized(false) {}
+BwapiClient::BwapiClient() : m_bShutdown(false), m_hBwapiThread(nullptr), m_bClientInitialized(false) {}
 //////////////////////////////////////////////////////////////////////////
 void BwapiClient::InitClient()
 {
     if (m_bClientInitialized)
         return;
 
-    m_hBwapiThread = chBEGINTHREADEX(NULL, 0, BwapiThreadStart, this, 0, NULL);
+    m_hBwapiThread = chBEGINTHREADEX(nullptr, 0, BwapiThreadStart, this, 0, nullptr);
     assert(m_hBwapiThread);
 
     if (m_hBwapiThread)

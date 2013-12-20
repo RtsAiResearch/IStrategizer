@@ -13,28 +13,26 @@
 namespace IStrategizer
 {
 	class CellFeature;
-}
-using namespace IStrategizer;
-///> class=ResearchAction
-///> parent=Action
-class ResearchAction : public Action
-{
-	TID				_researcherId;
 
-public:
-	ResearchAction();
-	ResearchAction(const PlanStepParameters& p_parameters);
-	bool		PreconditionsSatisfied();
-	bool		AliveConditionsSatisfied();
-	bool		SuccessConditionsSatisfied();
-	//----------------------------------------------------------------------------------------------
-	// Serialization
-public:
-	string      TypeName()  { return "ResearchAction"; }
-	int         TypeSize()  { return sizeof(ResearchAction); }
-	UserObject* Prototype() { return new ResearchAction; }	
-protected:
-	//----------------------------------------------------------------------------------------------
-	bool		ExecuteAux(unsigned long p_cycles );
-};
+	///> class=ResearchAction
+	///> parent=Action
+	class ResearchAction : public Action
+	{
+		OBJECT_SERIALIZABLE(ResearchAction);
+
+	public:
+		ResearchAction();
+		ResearchAction(const PlanStepParameters& p_parameters);
+		bool		PreconditionsSatisfied();
+		bool		AliveConditionsSatisfied();
+		bool		SuccessConditionsSatisfied();
+
+	protected:
+		bool		ExecuteAux(const WorldClock& p_clock );
+
+	private:
+		TID		_researcherId;
+	};
+}
+
 #endif	// RESEARCHACTION_H

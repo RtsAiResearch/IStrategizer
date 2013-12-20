@@ -7,6 +7,8 @@
 #include "DefinitionCrossMapping.h"
 #endif
 
+using namespace IStrategizer;
+
 Message* MessageFactory::GetMessage(MessageType p_message, void* p_rawMessageData)
 {
 	switch (p_message)

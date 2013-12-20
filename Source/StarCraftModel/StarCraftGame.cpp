@@ -42,7 +42,7 @@
 
 using namespace StarCraftModel;
 using namespace IStrategizer;
-using namespace MetaData;
+using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
@@ -60,7 +60,7 @@ void StarCraftGame::EnumeratePlayers()
 {
   vector<GamePlayer*>		oldPlayers;
   vector<TID>				gamePlayerIds;
-  MetaData::PlayerType	typeId;
+  IStrategizer::PlayerType	typeId;
 
   m_players.Values(oldPlayers);
 
@@ -72,7 +72,7 @@ void StarCraftGame::EnumeratePlayers()
   for (int i = 0, size = gamePlayerIds.size(); i < size; ++i)
   {
     typeId = g_Database.PlayerMapping.GetByFirst(gamePlayerIds[i]);
-    m_players[typeId] = NULL;
+    m_players[typeId] = nullptr;
   }
 }
 //----------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void StarCraftGame::EnumerateEntityTypes()
 
   for(unsigned i = 0, size = newEntityTypes.size(); i < size; ++i)
   {
-    m_entityTypes[(EntityClassType)newEntityTypes[i]] = NULL;
+    m_entityTypes[(EntityClassType)newEntityTypes[i]] = nullptr;
   }
 }
 //----------------------------------------------------------------------------------------------
@@ -106,11 +106,11 @@ void StarCraftGame::EnumerateResearches()
 
   for(unsigned i = 0, size = newResearchTypes.size(); i < size; ++i)
   {
-    m_researches[(ResearchType)newResearchTypes[i]] = NULL;
+    m_researches[(ResearchType)newResearchTypes[i]] = nullptr;
   }
 }
 //----------------------------------------------------------------------------------------------
-GamePlayer* StarCraftGame::FetchPlayer(MetaData::PlayerType p_id)
+GamePlayer* StarCraftGame::FetchPlayer(IStrategizer::PlayerType p_id)
 {
   TID typeId = g_Database.PlayerMapping.GetBySecond(p_id);
   BWAPI::Player pPlayer = Broodwar->getPlayer(typeId);

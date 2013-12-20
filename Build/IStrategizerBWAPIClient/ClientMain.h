@@ -1,25 +1,27 @@
 #ifndef CLIENTMAIN_H
 #define CLIENTMAIN_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include "ui_ClientMain.h"
 #include "BwapiClient.h"
 #include <Windows.h>
 #include <vector>
 
-class IStrategizerEx;
 namespace IStrategizer
 {
 	class RtsGame;
+	class IStrategizerEx;
 }
 
 class IMViewWidget;
+class PlannerViewWidget;
+
 class ClientMain : public QMainWindow, public BwapiClient
 {
 	Q_OBJECT
 
 public:
-	ClientMain(QWidget *parent = 0, Qt::WFlags flags = 0);
+	ClientMain(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~ClientMain();
 
 protected:
@@ -39,17 +41,19 @@ private:
 	void InitResourceManager();
 	void InitIStrategizer();
 	void InitIMView();
-	void UpdateIMViews();
+	void UpdateViews();
 	void UpdateStatsView();
 	void FinalizeIStrategizer();
-
-	Ui::ClientMainClass			ui;
-	IStrategizerEx				  *m_pIStrategizer;
-	IStrategizer::RtsGame		*m_pGameModel;
-	IMViewWidget				    *m_pBuildingDataIMWidget;
-	IMViewWidget				    *m_pGrndCtrlIMWidget;
-	std::vector<IMViewWidget*>	m_IMViews;
-	bool						        m_isLearning;
+	void InitPlannerView();
+	void FinalizeViews();
+	Ui::ClientMainClass				ui;
+	IStrategizer::IStrategizerEx	*m_pIStrategizer;
+	IStrategizer::RtsGame			*m_pGameModel;
+	IMViewWidget					*m_pBldngDataIMWdgt;
+	IMViewWidget					*m_pGrndCtrlIMWdgt;
+	std::vector<IMViewWidget*>		m_IMViews;
+	PlannerViewWidget				*m_pPlannerViewWdgt;
+	bool							m_isLearning;
 };
 
 #endif // CLIENTMAIN_H

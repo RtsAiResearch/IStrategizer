@@ -1,5 +1,6 @@
 #include "CheckPositionFilterCount.h"
 
+using namespace IStrategizer;
 
 CheckPositionFilterCount::CheckPositionFilterCount(PlayerType p_player, int p_filterTypeId, int p_operatorId, int p_value, const Vector2& p_cellIndex)
 : ConditionEx(p_player, CONDEX_CheckPositionFilterCount)

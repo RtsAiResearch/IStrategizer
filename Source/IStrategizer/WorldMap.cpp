@@ -20,7 +20,7 @@ void WorldMap::Initialize()
 	m_cellFeatureMatrixWidth = (Size().X / m_cellFeatureWidth) + (Size().X % m_cellFeatureWidth != 0);
 	m_cellFeatureMatrixHeight = (Size().Y / m_cellFeatureHeight) + (Size().Y % m_cellFeatureHeight != 0);
 	m_cellFeatureMatrix = new CellFeature* [m_cellFeatureMatrixHeight];
-	for (int i = 0 ; i < m_cellFeatureMatrixHeight ; i++)
+	for (unsigned i = 0 ; i < m_cellFeatureMatrixHeight ; i++)
 	{
 		m_cellFeatureMatrix[i] = new CellFeature[m_cellFeatureMatrixWidth];
 	}
@@ -39,9 +39,9 @@ void WorldMap::UpdateAux()
 		Initialize();
 	}
 
-	for (int i = 0; i < m_cellFeatureMatrixHeight; i++)
+	for (unsigned i = 0; i < m_cellFeatureMatrixHeight; i++)
 	{
-		for (int j = 0; j < m_cellFeatureMatrixWidth; j++)
+		for (unsigned j = 0; j < m_cellFeatureMatrixWidth; j++)
 		{
 			m_cellFeatureMatrix[i][j].Clear();
 		}
@@ -50,11 +50,11 @@ void WorldMap::UpdateAux()
 	g_Game->Players(players);
 	entites.resize(players.size());
 
-	for (int i = 0 ; i < players.size(); i++)
+	for (unsigned i = 0 ; i < players.size(); i++)
 	{
 		g_Game->GetPlayer(players[i])->Entities(entites[i]); 
 		
-		for (int j = 0 ; j < entites[i].size(); j++)
+		for (unsigned j = 0 ; j < entites[i].size(); j++)
 		{
 			currentEntity = g_Game->GetPlayer(players[i])->GetEntity(entites[i][j]);
 			cellX = currentEntity->Attr(EOATTR_PosX) / m_cellFeatureWidth;
@@ -85,9 +85,9 @@ Vector2	WorldMap::GetNearestCell(CellFeature* p_cell, double p_threshold) const
 	Vector2 bestCellPosition(-1,-1);
 	double  bestDistance = INT_MAX;
 	double  otherDistance;
-	for (int i = 0 ; i < m_cellFeatureMatrixHeight ; i++)
+	for (unsigned i = 0 ; i < m_cellFeatureMatrixHeight ; i++)
 	{
-		for (int j = 0 ; j < m_cellFeatureMatrixWidth ; j++)
+		for (unsigned j = 0 ; j < m_cellFeatureMatrixWidth ; j++)
 		{
 			otherDistance = m_cellFeatureMatrix[i][j].GetDistance(p_cell);
 			if(bestDistance > otherDistance)
@@ -110,7 +110,7 @@ WorldMap::~WorldMap()
 	if(!m_initialized)
 		return;
 
-	for (int i = 0 ; i < m_cellFeatureMatrixHeight ; i++)
+	for (unsigned i = 0 ; i < m_cellFeatureMatrixHeight ; i++)
 	{
 		delete[] m_cellFeatureMatrix[i];
 	}

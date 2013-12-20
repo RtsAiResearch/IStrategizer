@@ -4,11 +4,6 @@
 
 #include <vector>
 
-class GoalEx;
-class PlanGraph;
-class GameStateEx;
-class CookedPlan;
-
 #ifndef USEROBJECT_H
 #include "UserObject.h"
 #endif
@@ -29,46 +24,47 @@ class CookedPlan;
 #include "EngineData.h"
 #endif
 
-
-using namespace std;
-using namespace MetaData;
-
-
-///> class=CaseEx
-class CaseEx : public UserObject
+namespace IStrategizer
 {
-private:
-    ///> type=PlanGraph*
-    PlanGraph*				_planGraph;
-    ///> type=GoalEx*
-    GoalEx*					_goal;
-    ///> type=GameStateEx*
-    GameStateEx*			_gameState;
-	///> type=int
-	int						_trialCount;
-	///> type=int
-	int						_successCount;
-	
-public:
-    CaseEx() : _planGraph(NULL), _goal(NULL), _gameState(NULL), _trialCount(1), _successCount(1) {};
-    CaseEx(PlanGraph* p_planGraph, GoalEx* p_goal, GameStateEx* p_gameState, int p_trialCount, int p_successCount);
-    //----------------------------------------------------------------------------------------------------------------------------------------------------
-    PlanGraph*      GetPlanGraph() const { return _planGraph; }
-    GoalEx*         Goal() const { return _goal; }
-    GameStateEx*    GameState() const { return _gameState; }
-	int				TrialCount() const { return _trialCount; }
-	int				SuccessCount() const { return _successCount; }
-	void			TrialCount(int val) { _trialCount = val; }
-	void			SuccessCount(int val) { _successCount = val; }
+	class GoalEx;
+	class PlanGraph;
+	class GameStateEx;
+	class CookedPlan;
 
-    static CaseEx*  From(CookedPlan* p_cookedPlan);
-    //----------------------------------------------------------------------------------------------------------------------------------------------------	
-    // Serialization
-    string          TypeName()  { return "CaseEx"; }
-    UserObject*     Prototype() { return new CaseEx; }
-    int             TypeSize()  { return sizeof(CaseEx); }
-protected:
-    void            InitializeAddressesAux();
-    //----------------------------------------------------------------------------------------------------------------------------------------------------	
-};
+	///> class=CaseEx
+	class CaseEx : public Serialization::UserObject
+	{
+		OBJECT_SERIALIZABLE(CaseEx);
+
+	private:
+		///> type=PlanGraph*
+		PlanGraph*				_planGraph;
+		///> type=GoalEx*
+		GoalEx*					_goal;
+		///> type=GameStateEx*
+		GameStateEx*			_gameState;
+		///> type=int
+		int						_trialCount;
+		///> type=int
+		int						_successCount;
+
+	public:
+		CaseEx() : _planGraph(nullptr), _goal(nullptr), _gameState(nullptr), _trialCount(1), _successCount(1) {};
+		CaseEx(PlanGraph* p_planGraph, GoalEx* p_goal, GameStateEx* p_gameState, int p_trialCount, int p_successCount);
+		//----------------------------------------------------------------------------------------------------------------------------------------------------
+		PlanGraph*      GetPlanGraph() const { return _planGraph; }
+		GoalEx*         Goal() const { return _goal; }
+		GameStateEx*    GameState() const { return _gameState; }
+		int				TrialCount() const { return _trialCount; }
+		int				SuccessCount() const { return _successCount; }
+		void			TrialCount(int val) { _trialCount = val; }
+		void			SuccessCount(int val) { _successCount = val; }
+
+		static CaseEx*  From(CookedPlan* p_cookedPlan);
+
+	protected:
+		void            InitializeAddressesAux();
+	};
+}
+
 #endif	// CASEEX_H

@@ -101,7 +101,7 @@ void DefinitionCrossMapping::InitTeches()
 //----------------------------------------------------------------------------------------------
 void DefinitionCrossMapping::InitPlayers()
 {
-	vector< pair<TID, MetaData::PlayerType> > m_players;
+	vector< pair<TID, IStrategizer::PlayerType> > m_players;
 	const Playerset &players = Broodwar->getPlayers();
 	BWAPI::Player pPlayer;
 
@@ -119,7 +119,7 @@ void DefinitionCrossMapping::InitPlayers()
 			m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Neutral));
 	}
 
-	PlayerMapping = CrossMap<TID, MetaData::PlayerType>(m_players);
+	PlayerMapping = CrossMap<TID, IStrategizer::PlayerType>(m_players);
 }
 //----------------------------------------------------------------------------------------------
 void DefinitionCrossMapping::InitEntityIdents()
@@ -225,7 +225,7 @@ bool DefinitionCrossMapping::ExportAllIds(string p_exportPath)
 		name = Enums[id];
 
 		// Has a name defined
-		if (name != NULL)
+		if (name != nullptr)
 		{
 			stream << id << ' ' << name << endl;
 		}
@@ -242,7 +242,7 @@ void DefinitionCrossMapping::EntityTypes(vector<EntityClassType>& p_entityTypes)
 	EntityMapping.SecondValues(p_entityTypes);
 }
 //----------------------------------------------------------------------------------------------
-void DefinitionCrossMapping::ResearchTypes(vector<MetaData::ResearchType>& p_researchTypes)
+void DefinitionCrossMapping::ResearchTypes(vector<IStrategizer::ResearchType>& p_researchTypes)
 {
 	UpgradeMapping.SecondValues(p_researchTypes);
 	TechMapping.SecondValues(p_researchTypes, true);

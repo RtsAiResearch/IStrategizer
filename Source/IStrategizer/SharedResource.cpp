@@ -1,6 +1,8 @@
 #include "SharedResource.h"
 #include "Action.h"
 
+using namespace IStrategizer;
+
 SharedResource::ResourceList SharedResource::s_resources;
 
 void SharedResource::AddResource(SharedResource *p_pResource)
@@ -30,14 +32,14 @@ void SharedResource::RemoveResource(SharedResource *p_pResource)
 void SharedResource::Lock(Action *p_pOwner)
 {
 	// Invalid owner
-	if (p_pOwner == NULL)
+	if (p_pOwner == nullptr)
 	{
 		throw IStrategizer::InvalidParameterException(XcptHere);
 	}
 	else
 	{
 		// No owner, so it is FREE, acquire the lock
-		if (m_pOwner == NULL)
+		if (m_pOwner == nullptr)
 		{
 			if (Acquire())
 			{
@@ -64,14 +66,14 @@ void SharedResource::Lock(Action *p_pOwner)
 void SharedResource::Unlock(Action *p_pOwner)
 {
 	// Invalid owner
-	if (p_pOwner == NULL)
+	if (p_pOwner == nullptr)
 	{
 		throw IStrategizer::InvalidParameterException(XcptHere);
 	}
 	else
 	{
 		// No owner, so it is FREE
-		if (m_pOwner == NULL)
+		if (m_pOwner == nullptr)
 		{
 			throw DifferentOwnerException(XcptHere);
 		}
@@ -80,7 +82,7 @@ void SharedResource::Unlock(Action *p_pOwner)
 		{
 			if (Release())
 			{
-				m_pOwner = NULL;
+				m_pOwner = nullptr;
 				RemoveResource(this);
 			}
 			else

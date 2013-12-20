@@ -16,8 +16,8 @@
 #include "InfluenceMap.h"
 #include "OccupanceDataIM.h"
 
-using namespace OLCBP;
-using namespace MetaData;
+using namespace IStrategizer;
+using namespace IStrategizer;
 using namespace IStrategizer;
 using namespace std;
 
@@ -46,7 +46,7 @@ Vector2 AdapterEx::GetBotColonyCenter()
 	// We didn't calculate player colony center yet ?
 	if (m_botColonyCenter == Vector2::Null())
 	{
-		GameEntity		*pPlayerBase = NULL;
+		GameEntity		*pPlayerBase = nullptr;
 		vector<TID>		playerBases;
 
 		g_Game->Self()->GetBases(playerBases);
@@ -113,7 +113,6 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
 	unsigned			searchRadius;
 	Vector2				colonyCenter;
 	SpiralSearchData	searchData;
-	bool				areaReserved;
 
 	pGameType = g_Game->GetEntityType(p_buildingType);
 	assert(pGameType);
@@ -154,7 +153,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 	IF player has workers THEN
 			return the worker with the best state
 	ELSE
-		adaptation failed and return NULL worker Id
+		adaptation failed and return nullptr worker Id
 	*/
 	GamePlayer			*pPlayer;
 	GameEntity			*pEntity;
@@ -168,7 +167,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 	candidateWorkerState = OBJSTATE_Idle;
 
 	if (!IsValidWorkerState(candidateWorkerState))
-		return NULL;
+		return TID();
 
 	pPlayer = g_Game->Self();
 	assert(pPlayer);
@@ -176,7 +175,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 	pPlayer->Entities(entityIds);
 	workerTypeId = pPlayer->GetWorkerType();
 
-	for (int i = 0, size = entityIds.size(); i < size; ++i)
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
 	{
 		pEntity = pPlayer->GetEntity(entityIds[i]);
 		assert(pEntity);
@@ -217,7 +216,7 @@ unsigned AdapterEx::GetWorkerStateIndex(ObjectStateType p_workerState)
 {
 	const ObjectStateType* pStart = WorkerStatesRank;
 	const ObjectStateType* pEnd = WorkerStatesRank + WorkerStatesSize;
-	const ObjectStateType* pWhere = NULL;
+	const ObjectStateType* pWhere = nullptr;
 
 	pWhere = find(pStart, pEnd, p_workerState);
 	assert(pWhere);
@@ -250,7 +249,7 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 	GameEntity			*pEntity;
 	vector<TID>			entityIds;
 	EntityClassType		trainerType;
-	TID					id;
+	TID					id = TID();
 
 	trainerType = g_Game->Self()->TechTree()->SourceEntity(p_traineeType);
 	pPlayer = g_Game->Self();
@@ -258,7 +257,7 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 
 	pPlayer->Entities(entityIds);
 	
-	for (int i = 0, size = entityIds.size(); i < size; ++i)
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
 	{
 		pEntity = pPlayer->GetEntity(entityIds[i]);
 		assert(pEntity);

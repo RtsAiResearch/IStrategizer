@@ -2,6 +2,8 @@
 	#include "Colony.h"
 #endif
 
+using namespace IStrategizer;
+
 IClonable* Colony::Clone()
 {
     Colony* m_clone = new Colony();

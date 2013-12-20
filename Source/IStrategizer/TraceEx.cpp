@@ -1,6 +1,8 @@
 #include "TraceEx.h"
 #include "GameStateEx.h"
 
+using namespace IStrategizer;
+
 TraceEx::TraceEx(unsigned long p_gameCycle, int p_abstractActionId, const PlanStepParameters& p_abstractParametersId, 
 				 const GoalSatisfactionEx& p_goalSatisfaction, GameStateEx* p_gameState, PlayerType p_player, PlayerType p_enemy)
 				 : _gameCycle(p_gameCycle), _abstractActionId(p_abstractActionId), _abstractParametersId(p_abstractParametersId),

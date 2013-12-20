@@ -51,8 +51,8 @@ void InfluenceMap::Reset()
 void InfluenceMap::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
 {
     RegObjEntry	*pNewObj = new RegObjEntry;
-	GameEntity	*pGameObj = NULL;
-	GameType	*pObjType = NULL;
+	GameEntity	*pGameObj = nullptr;
+	GameType	*pObjType = nullptr;
 
     pNewObj->ObjId = p_objId;
 	pNewObj->OwnerId = p_ownerId;
@@ -261,8 +261,8 @@ TInfluence InfluenceMap::SumInfluenceShape(Vector2& p_startPosition, int p_width
 //////////////////////////////////////////////////////////////////////////
 GameEntity* InfluenceMap::GetObj(RegObjEntry* p_pObjEntry)
 {
-	GameEntity	*pGameObj = NULL;
-	GamePlayer	*pPlayer = NULL;
+	GameEntity	*pGameObj = nullptr;
+	GamePlayer	*pPlayer = nullptr;
 
 	pPlayer = g_Game->GetPlayer(p_pObjEntry->OwnerId);
 	assert(pPlayer);
@@ -373,7 +373,6 @@ void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLen
 //////////////////////////////////////////////////////////////////////////
 void InfluenceMap::ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWidth, int p_areaHeight, CellPredicate p_pfnPred, void *p_pParam)
 {
-	TInfluence sum = TInfluence();
 	int gridX = (int)((float)p_areaStartPos.X / m_cellSide);
 	int gridY = (int)((float)p_areaStartPos.Y / m_cellSide);
 	int gridWidth = max((int)(ceil((float)p_areaWidth / m_cellSide)), 1);

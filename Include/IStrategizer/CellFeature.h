@@ -11,7 +11,6 @@
 
 namespace IStrategizer
 {
-	using namespace MetaData;
 	using namespace Serialization;
 	using namespace std;
 

@@ -29,7 +29,7 @@ void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDi
 {
 	TInfluence		infSign = GetInfluenceSign((PlayerType)p_pGameObj->Attr(EOATTR_OwnerId));
 	EntityClassType typeId;
-	GameType		*pObjType = NULL;
+	GameType		*pObjType = nullptr;
 	
 	typeId = p_pGameObj->Type();
 	pObjType = g_Game->GetEntityType(typeId);
@@ -45,7 +45,7 @@ void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDi
 //////////////////////////////////////////////////////////////////////////
 void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 {
-	GameEntity	*pGameObj = NULL;
+	GameEntity	*pGameObj = nullptr;
 	Vector2		currentPosition;
 	Vector2		centerPosition;
 	int			effectiveDistance;

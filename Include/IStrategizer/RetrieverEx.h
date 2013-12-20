@@ -6,23 +6,15 @@
 #endif
 
 #include <hash_map>
-using namespace stdext;
 
-class CaseEx;
-class GoalEx;
-class GameStateEx;
-class CaseBaseEx;
-
-namespace MetaData
+namespace IStrategizer
 {
 	enum GoalType;
-}
-
-namespace OLCBP
-{
-	using namespace MetaData;
-
 	class AbstractRetainer;
+	class CaseEx;
+	class GoalEx;
+	class GameStateEx;
+	class CaseBaseEx;
 
     class RetrieverEx : public AbstractRetriever
     {
@@ -37,9 +29,8 @@ namespace OLCBP
         void    ExecuteCommand(const char* p_cmd);
 		void	BuildCaseCluster();
 
-		hash_map<GoalType, vector<CaseEx*>> _caseCluster;
+		stdext::hash_map<GoalType, std::vector<CaseEx*>> _caseCluster;
     };
 }
-
 
 #endif // RETRIEVEREX_H

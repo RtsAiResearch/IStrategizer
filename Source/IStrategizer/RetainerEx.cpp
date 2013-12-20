@@ -16,16 +16,15 @@
 
 #include <fstream>
 using namespace std;
+using namespace IStrategizer;
 
-using namespace OLCBP;
-
-RetainerEx::RetainerEx(string p_caseBasePath) : AbstractRetainer("retainer"), _caseBasePath(p_caseBasePath), _caseBaseLoaded(false)
+RetainerEx::RetainerEx(string p_caseBasePath) : AbstractRetainer("Retainer"), _caseBasePath(p_caseBasePath), _caseBaseLoaded(false)
 {
 }
 //----------------------------------------------------------------------------------------------
 void RetainerEx::ReadCaseBase()
 {
-    Log(LOG_Information, "reading case-base");
+    LogInfo("reading case-base");
 
     Toolbox::MemoryClean(_caseBase);
     _caseBase = new CaseBaseEx();
@@ -55,13 +54,13 @@ void RetainerEx::Flush()
 {
 	if (_caseBaseLoaded && _caseBase)
 	{
-		Log(LOG_Information, "flushing case-base");
+		LogInfo("Flushing case-base");
 
 		g_ObjectSerializer.Serialize(_caseBase, _caseBasePath);
 	}
     else
 	{
-		Log(LOG_Error, "failed to flushing case-base");
+		LogError("Failed to flushing case-base");
 	}
 }
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -70,7 +69,7 @@ void RetainerEx::Retain(const CaseEx* p_case)
     assert(_caseBaseLoaded);
 	assert(p_case);
 
-    Log(LOG_Information, "retaining case");
+    LogInfo("retaining case");
 
     _caseBase->CaseContainer.push_back(const_cast<CaseEx*>(p_case));
 }

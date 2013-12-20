@@ -14,13 +14,11 @@
 #include "GameType.h"
 #include "GameEntity.h"
 
-using namespace OLCBP;
 using namespace IStrategizer;
-using namespace MetaData;
 
-const unsigned MaxPrepTime = 5000;
-const unsigned MaxExecTrialTime = 500;
-const unsigned MaxExecTime = 5000;
+const unsigned MaxPrepTime = 60000;
+const unsigned MaxExecTrialTime = 60000;
+const unsigned MaxExecTime = 60000;
 
 BuildActionEx::BuildActionEx() :
 Action(ACTIONEX_BuildEx, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
@@ -33,7 +31,7 @@ Action(ACTIONEX_BuildEx, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTim
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnSucccess(unsigned p_cycles)
+void BuildActionEx::OnSucccess(const WorldClock& p_clock)
 {
 	if (_buildIssued)
 	{
@@ -47,7 +45,7 @@ void BuildActionEx::OnSucccess(unsigned p_cycles)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnFailure(unsigned p_cycles)
+void BuildActionEx::OnFailure(const WorldClock& p_clock)
 {
 	if (_buildIssued)
 	{
@@ -55,7 +53,7 @@ void BuildActionEx::OnFailure(unsigned p_cycles)
 		_buildArea.Unlock(this);
 
 		GameEntity *pEntity = g_Game->Self()->GetEntity(_builderId);
-		
+
 		if (pEntity)
 			pEntity->Unlock(this);
 	}
@@ -116,25 +114,47 @@ bool BuildActionEx::PreconditionsSatisfied()
 //////////////////////////////////////////////////////////////////////////
 bool BuildActionEx::AliveConditionsSatisfied()
 {
-	int			ret;
+	bool		builderExist = false;
+	bool		buildingExist = false;
+	bool		isBuilderConstructing = false;
 	bool		success = false;
-	GameEntity	*pEntity = NULL;
+	GameEntity	*pEntity = nullptr;
 
 	assert(PlanStepEx::State() == ESTATE_Executing);
 
-	ret = g_Assist.EntityObjectExist(_builderId, success);
-	assert(ret == ERR_Success);
+	builderExist = g_Assist.IsEntityObjectExist(_builderId);
 
-	if (success)
+	if (builderExist)
 	{
 		pEntity = g_Game->Self()->GetEntity(_builderId);
-		success = (pEntity->Attr(EOATTR_State) == OBJSTATE_Constructing);
-	}
 
-	if (success && _buildStarted)
+		assert(pEntity);
+		isBuilderConstructing = (pEntity->Attr(EOATTR_State) == OBJSTATE_Constructing);
+
+		if (!isBuilderConstructing)
+		{
+			LogInfo("Builder with ID=%d of action %s is not in the constructing state", _builderId, ToString().c_str());
+		}
+		else
+		{
+			if (_buildStarted)
+			{
+				buildingExist = g_Assist.IsEntityObjectExist(_buildingId);
+
+				if (buildingExist)
+				{
+					success = true;
+				}
+			}
+			else
+			{
+				success = true;
+			}
+		}
+	}
+	else
 	{
-		ret = g_Assist.EntityObjectExist(_buildingId, success);
-		assert(ret == ERR_Success);
+		LogInfo("Builder with ID=%d of action %s does not exist", _builderId, ToString().c_str());
 	}
 
 	return success;
@@ -158,7 +178,7 @@ bool BuildActionEx::SuccessConditionsSatisfied()
 	return false;
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::ExecuteAux(unsigned long p_cycles)
+bool BuildActionEx::ExecuteAux(const WorldClock& p_clock)
 {
 	EntityClassType		builderType;
 	EntityClassType		buildingType;

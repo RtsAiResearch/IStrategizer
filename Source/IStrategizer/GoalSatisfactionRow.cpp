@@ -142,16 +142,16 @@ void GoalSatisfactionRow::GeneratePossibleParams()
 {
     // Perform a DFS traversal
     int m_lastParamGoalIdx = -1;
-    for(int i = 0; i < _goalParamGraph.size(); ++i)
+    for(size_t i = 0; i < _goalParamGraph.size(); ++i)
     {
         GeneratePossibleParamsAux(i, 0, i, m_lastParamGoalIdx);
     }
 }
 //----------------------------------------------------------------------------------------------
-void GoalSatisfactionRow::GeneratePossibleParamsAux(int p_abstractGoalIdx, int p_level, TPathKey p_path, int& p_lastParamGoalIdx)
+void GoalSatisfactionRow::GeneratePossibleParamsAux(int p_abstractGoalIdx, unsigned p_level, TPathKey p_path, int& p_lastParamGoalIdx)
 {
     // Base Case: reached a leaf, and we have a complete path
-    if(p_level == _goalParamGraph[p_abstractGoalIdx].Levels().size())
+    if(p_level == (unsigned)_goalParamGraph[p_abstractGoalIdx].Levels().size())
     {
         ++p_lastParamGoalIdx;
         _keyToIdxMapping[p_path] = p_lastParamGoalIdx;
@@ -164,10 +164,10 @@ void GoalSatisfactionRow::GeneratePossibleParamsAux(int p_abstractGoalIdx, int p
         TPathKey m_newPath;
         int m_numBits;
 
-        for(int groupIdx = 0; groupIdx < m_currentLevel.size(); ++groupIdx)
+        for(size_t groupIdx = 0; groupIdx < m_currentLevel.size(); ++groupIdx)
         {
             Group& m_currentGroup = m_currentLevel[groupIdx];
-            for(int elementIdx = 0; elementIdx < m_currentGroup.size(); ++elementIdx)
+            for(size_t elementIdx = 0; elementIdx < m_currentGroup.size(); ++elementIdx)
             {
                 m_childIdx = m_currentGroup[elementIdx].second - _parameterStart[(ParameterType)m_currentGroup[elementIdx].first];
 
@@ -217,9 +217,13 @@ bool GoalSatisfactionRow::EvaluatePath()
         m_params[(ParameterType)itr->first] = itr->second;
     }
     
-    int m_pathId = Hash(_currentGoal, m_path);
-    GoalEx* m_goal = GetGoal(m_pathId, m_path);
-    m_goal->Update(_lastGameCycle);
+    TPathKey m_pathId = Hash(_currentGoal, m_path);
+    
+
+	assert(0);
+	// FIXME: Lines blow were commented to fix compilation error
+	// GoalEx* m_goal = GetGoal(m_pathId, m_path);
+    //m_goal->Update(_lastGameCycle);
     
     int m_goalIdx = _keyToIdxMapping[m_pathId];
     bool m_res = _goals[m_pathId]->State() == ESTATE_Succeeded;
@@ -239,7 +243,7 @@ TPathKey GoalSatisfactionRow::Hash(int p_goalIdx, list<NodeType>& p_parameters)
         itr != p_parameters.end();
         itr++)
     {
-        idx = (float)itr->second - _parameterStart[(ParameterType)itr->first];
+        idx = itr->second - _parameterStart[(ParameterType)itr->first];
 
         if(idx == 0)
         {
@@ -247,7 +251,7 @@ TPathKey GoalSatisfactionRow::Hash(int p_goalIdx, list<NodeType>& p_parameters)
         }
         else
         {
-            m_numBits = log10((float)idx) / log10(2.0);
+            m_numBits = (int)(log10((float)idx) / log10(2.0));
             ++m_numBits;
         }
       
@@ -272,7 +276,7 @@ GoalEx* GoalSatisfactionRow::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
         }
 
         GoalEx* m_goal = g_GoalFactory.GetGoal((GoalType)GET(_currentGoal, GoalType), m_params);
-        assert(m_goal != NULL);
+        assert(m_goal != nullptr);
         _goals[p_pathId] = m_goal;
     }
 
@@ -282,7 +286,7 @@ GoalEx* GoalSatisfactionRow::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
 //----------------------------------------------------------------------------------------------
 GoalEx* GoalSatisfactionRow::GetGoal(int p_goalIdx)
 {
-    GoalEx* m_goal = NULL;
+    GoalEx* m_goal = nullptr;
     for(map<TPathKey, int>::iterator itr = _keyToIdxMapping.begin();
         itr != _keyToIdxMapping.end();
         itr++)
@@ -295,6 +299,6 @@ GoalEx* GoalSatisfactionRow::GetGoal(int p_goalIdx)
     }
 
     // this function should return a goal of and only if it succeeded during a previous goal satisfaction row computation
-    assert(m_goal != NULL);
+    assert(m_goal != nullptr);
     return m_goal;
 }
