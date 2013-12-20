@@ -60,7 +60,7 @@ namespace IStrategizer
 	public:
 		InfluenceMap(IMType p_typeId) : m_typeId(p_typeId) {}
 		virtual ~InfluenceMap();
-		virtual void Update(const WorldClock& p_clock) {}
+		virtual void Update(const WorldClock& p_clock) = 0;
 		virtual void Init(int p_cellWidth, int p_cellHeight, int p_worldWidth, int p_worldHeight);
 		virtual void Reset();
 		virtual void RegisterGameObj(TID p_objId, PlayerType p_ownerId);

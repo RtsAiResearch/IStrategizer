@@ -353,7 +353,7 @@ void ClientMain::UpdateViews()
 	for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
 		m_IMViews[i]->update();
 
-	m_pPlannerViewWdgt->update();
+	// m_pPlannerViewWdgt->update();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitResourceManager()

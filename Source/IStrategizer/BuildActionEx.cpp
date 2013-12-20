@@ -16,9 +16,9 @@
 
 using namespace IStrategizer;
 
-const unsigned MaxPrepTime = 60000;
-const unsigned MaxExecTrialTime = 60000;
-const unsigned MaxExecTime = 60000;
+const unsigned MaxPrepTime = 120000;
+const unsigned MaxExecTrialTime = 120000;
+const unsigned MaxExecTime = 120000;
 
 BuildActionEx::BuildActionEx() :
 Action(ACTIONEX_BuildEx, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
