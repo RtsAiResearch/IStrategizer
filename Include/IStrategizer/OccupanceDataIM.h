@@ -25,9 +25,7 @@ namespace IStrategizer
 		static bool OccupancePredicate(unsigned p_cellX, unsigned p_cellY, TCell* p_pCell, void *p_pParam);
 		static bool ReservePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam);
 		static bool FreePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam);
-
 	};
-
 }
 
 #endif // OCCUPANCEDATAIM_H

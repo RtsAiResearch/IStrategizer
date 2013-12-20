@@ -2,6 +2,8 @@
 	#include "Expression.h"
 #endif
 
+using namespace IStrategizer;
+
 void Expression::InitializeAddressesAux()
 {
     AddMemberAddress(3,

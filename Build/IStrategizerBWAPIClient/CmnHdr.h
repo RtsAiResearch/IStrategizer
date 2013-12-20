@@ -196,7 +196,7 @@ typedef unsigned (__stdcall *PTHREAD_START) (void *);
 
 inline void chMB(PCSTR szMsg) {
    char szTitle[MAX_PATH];
-   GetModuleFileNameA(NULL, szTitle, _countof(szTitle));
+   GetModuleFileNameA(nullptr, szTitle, _countof(szTitle));
    MessageBoxA(GetActiveWindow(), szMsg, szTitle, MB_OK);
 }
 
@@ -276,9 +276,9 @@ inline void chSETDLGICONS(HWND hWnd, int idi) {
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
-#define SAFE_CLOSE(X) { if (X) { CloseHandle(X); X = NULL; } }
-#define SAFE_DELETE(X) { if (X) { delete X; X = NULL;} }
-#define SAFE_ARRAY_DELETE { if (X) { delete[] X; X = NULL; } }
+#define SAFE_CLOSE(X) { if (X) { CloseHandle(X); X = nullptr; } }
+#define SAFE_DELETE(X) { if (X) { delete X; X = nullptr;} }
+#define SAFE_ARRAY_DELETE { if (X) { delete[] X; X = nullptr; } }
 
 
 ///////////////////////////////// End of File /////////////////////////////////

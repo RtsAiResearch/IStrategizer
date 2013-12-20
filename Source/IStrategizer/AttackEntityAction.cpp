@@ -22,6 +22,8 @@
 #include "Not.h"
 #endif
 
+using namespace IStrategizer;
+
 AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 {
 	_params[PARAM_EntityClassId]		= ECLASS_START;
@@ -81,16 +83,16 @@ void AttackEntityAction::InitializePostConditions()
 	_postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::ExecuteAux(unsigned long p_cycles)
+bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
 {
 	throw NotImplementedException(XcptHere);
 	/*return g_Assist.ExecuteAttackEntity(((ConditionEx*)_aliveCondition->At(0))->Parameter(PARAM_EntityObjectId), 
 		PLAYER_Enemy, ((ConditionEx*)_aliveCondition->At(1))->Parameter(PARAM_EntityObjectId));*/
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::Update(unsigned long p_cycles)
+void AttackEntityAction::Update(const WorldClock& p_clock)
 {
-	Action::Update(p_cycles);
+	Action::Update(p_clock);
 	if(PlanStepEx::State() == ESTATE_Succeeded)
 	{
 		EntityClassExist* m_cond = (EntityClassExist*)_preCondition->operator [](0);

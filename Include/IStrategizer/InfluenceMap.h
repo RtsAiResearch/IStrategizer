@@ -60,7 +60,7 @@ namespace IStrategizer
 	public:
 		InfluenceMap(IMType p_typeId) : m_typeId(p_typeId) {}
 		virtual ~InfluenceMap();
-		virtual void Update(unsigned p_gameCycle) {}
+		virtual void Update(const WorldClock& p_clock) {}
 		virtual void Init(int p_cellWidth, int p_cellHeight, int p_worldWidth, int p_worldHeight);
 		virtual void Reset();
 		virtual void RegisterGameObj(TID p_objId, PlayerType p_ownerId);
@@ -68,14 +68,14 @@ namespace IStrategizer
 		virtual void StampInfluenceShape(Vector2& p_startPosition, int p_width, int p_height, TInfluence p_value);
 		virtual void StampInfluenceGradient(Vector2& p_centerPosition, int p_fastFalloffDistance, int p_slowFalloffDistance, TInfluence p_initValue);
 		TInfluence  SumInfluenceShape(Vector2& p_startPosition, int p_width, int p_height);
-		const IStrategizer::RegObjectList &RegisteredObjects() const { return m_registeredObjects; }
-		IStrategizer::IMType TypeId() const { return m_typeId; }
+		const RegObjectList &RegisteredObjects() const { return m_registeredObjects; }
+		IMType TypeId() const { return m_typeId; }
 		int CellSide() const { return m_cellSide; }
 		int WorldWidth() const { return m_worldWidth; }
 		int WorldHeight() const { return m_worldHeight; }
 		int GridWidth() const { return m_gridWidth; }
 		int GridHeight() const { return m_gridHeight; }
-		const IStrategizer::IMStatistics &Statistics() const { return m_statistics; }
+		const IMStatistics &Statistics() const { return m_statistics; }
 		static GameEntity* GetObj(RegObjEntry* p_pObjEntry);
 		const TCell* Map() const { return m_pMap; }
 		void SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLength, SpiralMovePredicate p_pfnPred, void *p_pParam);

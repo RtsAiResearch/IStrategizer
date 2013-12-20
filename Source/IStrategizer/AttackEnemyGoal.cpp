@@ -49,7 +49,7 @@ void AttackEnemyGoal::InitializeSuccessConditions()
 		//         m_ret = g_EngineAPI.GetPlayerColonyObjectsId(PLAYER_Enemy, _cachedColony, m_colonyObjectIds);
 		//         assert(m_ret == ERR_Success);
 		//         
-		//         srand(time(NULL));
+		//         srand(time(nullptr));
 		//         int m_randomIdx = rand() % m_colonyObjectIds.size();
 		//         int m_chosenTargetEntityObject = m_colonyObjectIds[m_randomIdx];
 		// 

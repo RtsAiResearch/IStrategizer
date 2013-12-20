@@ -7,7 +7,7 @@
 #include "CrossMap.h"
 #include "EngineData.h"
 
-using namespace DataStructure;
+using namespace IStrategizer;
 
 typedef std::string TName;
 

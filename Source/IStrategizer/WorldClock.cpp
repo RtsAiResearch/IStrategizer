@@ -24,7 +24,7 @@ void WorldClock::Reset()
 	m_timerStart = uliTimerStart.QuadPart;
 }
 //////////////////////////////////////////////////////////////////////////
-unsigned WorldClock::ElapsedMilliseconds()
+void WorldClock::CalculateElapsedMilliseconds()
 {
 	FILETIME ftTimerNow;
 	ULARGE_INTEGER uliTimerNow;
@@ -34,5 +34,12 @@ unsigned WorldClock::ElapsedMilliseconds()
 	uliTimerNow.LowPart = ftTimerNow.dwLowDateTime;
 	uliTimerNow.HighPart = ftTimerNow.dwHighDateTime;
 
-	return (unsigned)MillisecondFrom100Nano(uliTimerNow.QuadPart - m_timerStart);
+	m_elapsedMilliseconds = (unsigned)MillisecondFrom100Nano(uliTimerNow.QuadPart - m_timerStart);
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::WorldClock::Update(unsigned p_gameCycle)
+{
+	GameTick(p_gameCycle);
+	EngineTick();
+	CalculateElapsedMilliseconds();
 }

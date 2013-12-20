@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cstdlib>
 
-namespace DataStructure
+namespace IStrategizer
 {
     const int MaxIndices    = 16;
 

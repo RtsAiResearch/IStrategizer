@@ -2,7 +2,7 @@
 
 namespace IStrategizer
 {
-	const char* Enums[ENUMS_SIZE] = { NULL };
+	const char* Enums[ENUMS_SIZE] = { nullptr };
 
 	void Init()
 	{

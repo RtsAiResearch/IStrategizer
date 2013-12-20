@@ -218,8 +218,12 @@ bool GoalSatisfactionRow::EvaluatePath()
     }
     
     TPathKey m_pathId = Hash(_currentGoal, m_path);
-    GoalEx* m_goal = GetGoal(m_pathId, m_path);
-    m_goal->Update(_lastGameCycle);
+    
+
+	assert(0);
+	// FIXME: Lines blow were commented to fix compilation error
+	// GoalEx* m_goal = GetGoal(m_pathId, m_path);
+    //m_goal->Update(_lastGameCycle);
     
     int m_goalIdx = _keyToIdxMapping[m_pathId];
     bool m_res = _goals[m_pathId]->State() == ESTATE_Succeeded;
@@ -272,7 +276,7 @@ GoalEx* GoalSatisfactionRow::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
         }
 
         GoalEx* m_goal = g_GoalFactory.GetGoal((GoalType)GET(_currentGoal, GoalType), m_params);
-        assert(m_goal != NULL);
+        assert(m_goal != nullptr);
         _goals[p_pathId] = m_goal;
     }
 
@@ -282,7 +286,7 @@ GoalEx* GoalSatisfactionRow::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
 //----------------------------------------------------------------------------------------------
 GoalEx* GoalSatisfactionRow::GetGoal(int p_goalIdx)
 {
-    GoalEx* m_goal = NULL;
+    GoalEx* m_goal = nullptr;
     for(map<TPathKey, int>::iterator itr = _keyToIdxMapping.begin();
         itr != _keyToIdxMapping.end();
         itr++)
@@ -295,6 +299,6 @@ GoalEx* GoalSatisfactionRow::GetGoal(int p_goalIdx)
     }
 
     // this function should return a goal of and only if it succeeded during a previous goal satisfaction row computation
-    assert(m_goal != NULL);
+    assert(m_goal != nullptr);
     return m_goal;
 }

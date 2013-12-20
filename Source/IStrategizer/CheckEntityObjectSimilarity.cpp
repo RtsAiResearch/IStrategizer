@@ -1,6 +1,7 @@
 #include "MathHelper.h"
 #include "CheckEntityObjectSimilarity.h"
 
+using namespace IStrategizer;
 
 CheckEntityObjectSimilarity::CheckEntityObjectSimilarity(PlayerType p_player, int p_entityObjectId, const map<EntityObjectAttribute, int>& p_similarityFeatures, int p_similarityThreshold)
 : ConditionEx(p_player, CONDEX_CheckEntityObjectSimilarity)

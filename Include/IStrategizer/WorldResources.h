@@ -20,5 +20,4 @@ namespace IStrategizer
     };
 }
 
-
 #endif // WORLDRESOURCES_H

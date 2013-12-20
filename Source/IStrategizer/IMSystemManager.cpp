@@ -7,14 +7,13 @@
 #include "WorldMap.h"
 
 using namespace IStrategizer;
-using namespace IStrategizer;
 using namespace std;
 
-void IMSystemManager::Update(unsigned p_gameCycle)
+void IMSystemManager::Update(const WorldClock& p_clock)
 {
 	for (IMContainer::iterator itr = m_managedMaps.begin(); itr != m_managedMaps.end(); ++itr)
 	{
-		itr->second->Update(p_gameCycle);
+		itr->second->Update(p_clock);
 	}
 }
 //////////////////////////////////////////////////////////////////////////
@@ -38,7 +37,7 @@ void IMSystemManager::Init(const IMSysManagerParam& p_param)
 {
 	int			worldWidth;
 	int			worldHeight;
-	WorldMap	*pMap = NULL;
+	WorldMap	*pMap = nullptr;
 	int			cellSize;
 
 	if (m_initialized)
@@ -92,7 +91,7 @@ void IMSystemManager::RegisterIM(InfluenceMap *p_pMap, IMType p_mapTypeId)
 InfluenceMap* IMSystemManager::GetIM(IMType p_mapTypeId)
 {
 	if (m_managedMaps.find(p_mapTypeId) == m_managedMaps.end())
-		return NULL;
+		return nullptr;
 
 	return m_managedMaps[p_mapTypeId];
 }

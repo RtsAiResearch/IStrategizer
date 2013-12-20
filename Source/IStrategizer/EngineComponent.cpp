@@ -11,6 +11,8 @@
 #include <string>
 #include <cassert>
 
+using namespace IStrategizer;
+
 EngineComponent::EngineComponent(const char* p_pName)
 	: m_pName(p_pName)
 {

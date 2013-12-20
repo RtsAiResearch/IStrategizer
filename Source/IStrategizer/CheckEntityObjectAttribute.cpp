@@ -1,5 +1,7 @@
 #include "CheckEntityObjectAttribute.h"
 
+using namespace IStrategizer;
+
 CheckEntityObjectAttribute::CheckEntityObjectAttribute(PlayerType p_player, int p_entityObjectId, int p_attributeId, int p_operator, int p_value)
 : ConditionEx(p_player, CONDEX_CheckEntityObjectAttribute)
 {
@@ -22,7 +24,7 @@ bool CheckEntityObjectAttribute::Evaluate()
 {
 	if(_conditionParameters.find(PARAM_EntityObjectId) == _conditionParameters.end())
 	{
-		assert(_entityObjectIdPtr != NULL);
+		assert(_entityObjectIdPtr != nullptr);
 		_conditionParameters[PARAM_EntityObjectId] = *_entityObjectIdPtr;
 	}
 

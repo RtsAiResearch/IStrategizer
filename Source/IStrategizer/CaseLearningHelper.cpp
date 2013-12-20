@@ -32,15 +32,15 @@ GoalSatisfactionEx CaseLearningHelper::ComputeGoalSatisfactionRow(unsigned long 
 //--------------------------------------------------------------------------------------------------------------------------------------------
 void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 {
-	DataMessage<TraceEx>* m_dataMessage = NULL;
-    TraceEx* m_trace = NULL;
+	DataMessage<TraceEx>* m_dataMessage = nullptr;
+    TraceEx* m_trace = nullptr;
 
 	m_dataMessage = reinterpret_cast<DataMessage<TraceEx>*>(p_message);
 	switch(p_message->MessageTypeID())
 	{
 	case MSG_Log:
-		if(m_dataMessage != NULL && 
-		   m_dataMessage->Data() != NULL &&
+		if(m_dataMessage != nullptr && 
+		   m_dataMessage->Data() != nullptr &&
            m_dataMessage->Data()->Player() == _humanPlayer)
 		{
             m_trace = const_cast<TraceEx*>(m_dataMessage->Data());

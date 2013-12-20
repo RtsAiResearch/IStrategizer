@@ -48,19 +48,19 @@ _pPlanStep(p_pPlanStep), _pSubPlanGoal(p_pSubPlanGoal), _isOpen(true)
 	}
 	else
 	{
-		_type = PTNTYPE_Null;
+		_type = PTNTYPE_nullptr;
 	}
 }
 //////////////////////////////////////////////////////////////////////////
 PlanTreeNodeEx& PlanTreeNodeEx::Null()
 {
-	static PlanTreeNodeEx sentinelNode(NULL, NULL);
+	static PlanTreeNodeEx sentinelNode(nullptr, nullptr);
 	return sentinelNode;
 }
 //////////////////////////////////////////////////////////////////////////
 PlanTreeNodeEx* PlanTreeNodeEx::CreatePlanRoot(PlanStepEx *p_pPlanStep)
 {
-	PlanTreeNodeEx *pPlanRoot = NULL;
+	PlanTreeNodeEx *pPlanRoot = nullptr;
 
 	// Initialize plan root
 	pPlanRoot = new PlanTreeNodeEx(p_pPlanStep, &PlanTreeNodeEx::Null());

@@ -21,7 +21,7 @@
 
 using namespace IStrategizer;
 
-BuildAction::BuildAction() : Action(ACTIONEX_Build), _targetCell(NULL)
+BuildAction::BuildAction() : Action(ACTIONEX_Build), _targetCell(nullptr)
 {
 	_params[PARAM_BuildingClassId]	= ECLASS_START;
 	_params[PARAM_WorkerClassId]	= ECLASS_START;
@@ -115,7 +115,7 @@ void BuildAction::HandleMessage(Message* p_msg, bool& p_consumed)
 	}
 }
 //----------------------------------------------------------------------------------------------
-bool BuildAction::ExecuteAux(unsigned long p_cycles)
+bool BuildAction::ExecuteAux(const WorldClock& p_clock)
 {
 	throw NotImplementedException(XcptHere);
 

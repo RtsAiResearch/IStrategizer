@@ -11,16 +11,16 @@ bool DynamicComponent::m_realTime = false;
 bool DynamicComponent::m_globalInvalidation = false;
 unsigned DynamicComponent::m_globalInvalidationInterval = DefaultInvalidationInterval;
 
-bool DynamicComponent::IsInvalid()
+bool DynamicComponent::IsInvalid(const WorldClock& p_clock)
 {
     if(m_realTime)
         return true;
     else
     {
         if(m_globalInvalidation)
-            return g_WorldClock.ElapsedEngineCycles() - m_lastUpdate > m_globalInvalidationInterval; 
+            return p_clock.ElapsedEngineCycles() - m_lastUpdate > m_globalInvalidationInterval; 
         else
-            return g_WorldClock.ElapsedEngineCycles() - m_lastUpdate > m_invalidationInterval; 
+            return p_clock.ElapsedEngineCycles() - m_lastUpdate > m_invalidationInterval; 
     }
 }
 //----------------------------------------------------------------------------------------------

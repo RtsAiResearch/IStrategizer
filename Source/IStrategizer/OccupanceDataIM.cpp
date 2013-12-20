@@ -10,12 +10,12 @@ using namespace std;
 
 const TInfluence PositiveInfluence = 1;
 const TInfluence NegativeInfluence = -1;
-const TInfluence NullInfluence = 0;
+const TInfluence nullptrInfluence = 0;
 
 //////////////////////////////////////////////////////////////////////////
 void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 {
-	GameEntity *pGameObj = NULL;
+	GameEntity *pGameObj = nullptr;
 	Vector2		currentPosition;
 
 	pGameObj = p_pCaller->GetObj(p_pObjEntry);
@@ -34,7 +34,7 @@ void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 //////////////////////////////////////////////////////////////////////////
 void StampNonDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 {
-	GameEntity *pGameObj = NULL;
+	GameEntity *pGameObj = nullptr;
 	Vector2 currentPosition;
 
 	pGameObj = p_pCaller->GetObj(p_pObjEntry);
@@ -95,7 +95,7 @@ bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, T
 	bool *pAllCellsFree = (bool*)p_pParam;
 
 	assert(p_pCell);
-	if (p_pCell->Inf != NullInfluence || p_pCell->Data != CELL_Free)
+	if (p_pCell->Inf != nullptrInfluence || p_pCell->Data != CELL_Free)
 	{
 		stopSearch = true;
 		*pAllCellsFree = false;

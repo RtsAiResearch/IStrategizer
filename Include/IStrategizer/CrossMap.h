@@ -5,11 +5,10 @@
 #include <vector>
 #include "IStrategizerException.h"
 
-namespace DataStructure
+namespace IStrategizer
 {
 	using namespace std;
 	using namespace stdext;
-	using namespace IStrategizer;
 
 	template<class T1, class T2>
 	class CrossMap

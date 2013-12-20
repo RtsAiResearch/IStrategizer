@@ -1,13 +1,13 @@
 #include "GoalEx.h"
 #include <cassert>
 
-void GoalEx::Reset(unsigned p_cycles)
+void GoalEx::Reset(const WorldClock& p_clock)
 {
 	if (State() != ESTATE_Pending)
-		State(ESTATE_Pending, p_cycles);
+		State(ESTATE_Pending, p_clock);
 }
 //////////////////////////////////////////////////////////////////////////
-void GoalEx::UpdateAux(unsigned p_cycles)
+void GoalEx::UpdateAux(const WorldClock& p_clock)
 {
     ExecutionStateType state = State();
 
@@ -15,7 +15,7 @@ void GoalEx::UpdateAux(unsigned p_cycles)
 	{
 	case ESTATE_Pending:
 		if (SuccessConditionsSatisfied())
-			State(ESTATE_Succeeded, p_cycles);
+			State(ESTATE_Succeeded, p_clock);
 		break;
 	}
 }

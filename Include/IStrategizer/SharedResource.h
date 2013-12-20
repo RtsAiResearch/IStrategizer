@@ -4,10 +4,10 @@
 #include "IStrategizerException.h"
 #include <set>
 
-class Action;
-
 namespace IStrategizer
 {
+	class Action;
+
 	class SharedResource
 	{
 	public:
@@ -59,7 +59,7 @@ namespace IStrategizer
 
 		virtual const char*	ToString() { return m_rescourceDescription.c_str(); }
 		void Unlock(Action *p_pOwner);
-		bool IsLocked() { return m_pOwner != NULL; }
+		bool IsLocked() { return m_pOwner != nullptr; }
 
 		static void AddResource(SharedResource *p_pResource) throw(IStrategizer::ItemAlreadyExistsException);
 		static void RemoveResource(SharedResource *p_pResource) throw(IStrategizer::ItemNotFoundException);

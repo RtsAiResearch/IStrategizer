@@ -8,10 +8,10 @@
 #include "MapArea.h"
 #endif
 
-class Vector2;
 
 namespace IStrategizer
 {
+	class Vector2;
 	class CellFeature;
 
 	class AbstractAdapter

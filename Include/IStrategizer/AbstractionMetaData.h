@@ -5,8 +5,4 @@
 #include "RootMetaData.h"
 #endif
 
-namespace IStrategizer
-{
-
-}
 #endif // ABSTRACTIONMETADATA_H

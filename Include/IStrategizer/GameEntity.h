@@ -29,6 +29,8 @@ namespace IStrategizer
 		virtual bool AttackGround(int p_x, int p_y) = 0;
 		virtual bool AttackEntity(PlayerType p_opponentIndex, int p_targetEntityObjectId) = 0;
 		virtual bool Train(EntityClassType p_entityClassId) = 0;
+		virtual bool IsTraining(TID p_traineeId) = 0;
+
 		bool Acquire() { return true; }
 		bool Release() { return true; }
 

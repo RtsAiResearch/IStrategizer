@@ -4,9 +4,12 @@
 #include "And.h"
 #endif
 #include "Logger.h"
+#include "CompositeExpression.h"
+
+using namespace IStrategizer;
 
 Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
-: PlanStepEx(p_actionType, ESTATE_END), _preCondition(NULL), _aliveCondition(NULL)
+: PlanStepEx(p_actionType, ESTATE_END), _preCondition(nullptr), _aliveCondition(nullptr)
 {
 	_stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
 	_stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
@@ -14,24 +17,24 @@ Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxEx
 }
 //////////////////////////////////////////////////////////////////////////
 Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, unsigned p_maxPrepTime,  unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
-: PlanStepEx(p_actionType, ESTATE_END, p_parameters), _preCondition(NULL), _aliveCondition(NULL)
+: PlanStepEx(p_actionType, ESTATE_END, p_parameters), _preCondition(nullptr), _aliveCondition(nullptr)
 {
 	_stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
 	_stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
 	_stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::State(ExecutionStateType p_state, unsigned p_cycles)
+void Action::State(ExecutionStateType p_state, const WorldClock& p_clock)
 {
-	PlanStepEx::State(p_state, p_cycles);
+	PlanStepEx::State(p_state, p_clock);
 
 	switch (p_state)
 	{
 	case ESTATE_Succeeded:
-		OnSucccess(p_cycles);
+		OnSucccess(p_clock);
 		break;
 	case ESTATE_Failed:
-		OnFailure(p_cycles);
+		OnFailure(p_clock);
 		break;
 	}
 }
@@ -42,7 +45,7 @@ void Action::InitializeConditions()
 	InitializePostConditions();
 }
 //////////////////////////////////////////////////////////////////////////
-int Action::PrepareForExecution(unsigned p_cyles)
+int Action::PrepareForExecution(const WorldClock& p_clock)
 {
 	assert(0);
 	//assert(State() == ESTATE_NotPrepared);
@@ -67,23 +70,23 @@ int Action::PrepareForExecution(unsigned p_cyles)
 	return ERR_Success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool Action::Execute(unsigned p_cycles)
+bool Action::Execute(const WorldClock& p_clock)
 {
 	bool bOk;
 
 	assert(PlanStepEx::State() == ESTATE_Pending);
-	bOk = ExecuteAux(p_cycles);
+	bOk = ExecuteAux(p_clock);
 
 	return bOk;
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::Reset(unsigned p_cycles)
+void Action::Reset(const WorldClock& p_clock)
 {
 	if (PlanStepEx::State() != ESTATE_NotPrepared)
-		State(ESTATE_NotPrepared, p_cycles);
+		State(ESTATE_NotPrepared, p_clock);
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::UpdateAux(unsigned p_cycles)
+void Action::UpdateAux(const WorldClock& p_clock)
 {
 	ExecutionStateType state = PlanStepEx::State();
 	
@@ -91,21 +94,24 @@ void Action::UpdateAux(unsigned p_cycles)
 	{
 	case ESTATE_NotPrepared:
 		if (PreconditionsSatisfied())
-			State(ESTATE_Pending, p_cycles);
+			State(ESTATE_Pending, p_clock);
 		break;
 
 	case ESTATE_Pending:
-		if (Execute(p_cycles))
-			State(ESTATE_Executing, p_cycles);
+		if (Execute(p_clock))
+			State(ESTATE_Executing, p_clock);
 		else
 			LogInfo("Executing '%s' failed", ToString().c_str());
 		break;
 
 	case ESTATE_Executing:
 		if (SuccessConditionsSatisfied())
-			State(ESTATE_Succeeded, p_cycles);
+			State(ESTATE_Succeeded, p_clock);
 		else if (!AliveConditionsSatisfied())
-			State(ESTATE_Failed, p_cycles);
+		{
+			LogInfo("%s alive conditions not satisfied, failing it", ToString().c_str());
+			State(ESTATE_Failed, p_clock);
+		}
 		break;
 	}
 }
@@ -116,6 +122,6 @@ void Action::Copy(IClonable* p_dest)
 
 	Action* m_dest = static_cast<Action*>(p_dest);
 
-	m_dest->_preCondition	= _preCondition ? static_cast<CompositeExpression*>(_preCondition->Clone()) : NULL;
-	m_dest->_aliveCondition	= _aliveCondition ? static_cast<CompositeExpression*>(_aliveCondition->Clone()) : NULL;
+	m_dest->_preCondition	= _preCondition ? static_cast<CompositeExpression*>(_preCondition->Clone()) : nullptr;
+	m_dest->_aliveCondition	= _aliveCondition ? static_cast<CompositeExpression*>(_aliveCondition->Clone()) : nullptr;
 }

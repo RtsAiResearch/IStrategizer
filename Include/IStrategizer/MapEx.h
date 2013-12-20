@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 
-namespace DataStructure
+namespace IStrategizer
 {
     template<class TKey, class TValue>
     class MapEx : public std::map<TKey, TValue>
