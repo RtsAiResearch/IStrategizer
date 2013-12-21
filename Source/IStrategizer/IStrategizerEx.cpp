@@ -63,7 +63,7 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_pha
 
 	IMSysManagerParam imSysMgrParam;
 	imSysMgrParam.BuildingDataIMCellSize = _param.BuildingDataIMCellSize;
-	imSysMgrParam.GroundControlIMCellSize = _param.GroundControlIMCellSize;
+	imSysMgrParam.GroundControlIMCellSize = _param.GrndCtrlIMCellSize;
 
 	g_IMSysMgr.Init(imSysMgrParam);
 	g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
@@ -101,9 +101,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 
 		_clock.Update(p_gameCycle);
 		g_MessagePump.Update(_clock);
-
-		if (p_gameCycle % _param.IMSysUpdateInterval == 0)
-			g_IMSysMgr.Update(_clock);
+		g_IMSysMgr.Update(_clock);
 
 		if (_phase == PHASE_Online)
 			_planner->Update(_clock);
