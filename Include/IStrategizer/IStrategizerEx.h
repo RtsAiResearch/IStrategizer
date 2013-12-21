@@ -18,9 +18,10 @@ namespace IStrategizer
 
 	struct IStrategizerParam
 	{
-		int IMSysUpdateInterval;
+		unsigned GrndCtrlIMUpdateInterval;
+		unsigned OccupanceIMUpdateInterval;
 		int BuildingDataIMCellSize;
-		int GroundControlIMCellSize;
+		int GrndCtrlIMCellSize;
 	};
 
 	class IStrategizerEx : public MessagePumpObserver

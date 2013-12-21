@@ -12,7 +12,7 @@ namespace StarCraftModel
     class StarCraftGame : public RtsGame
     {
     protected:
-        void            EnumeratePlayers();
+		void            EnumeratePlayers();
         void			EnumerateEntityTypes();
         void			EnumerateResearches();
         GamePlayer*     FetchPlayer(PlayerType p_id);

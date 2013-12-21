@@ -52,8 +52,9 @@ void ClientMain::InitIStrategizer()
 		assert(m_pGameModel);
 
 		param.BuildingDataIMCellSize = TILE_SIZE;
-		param.GroundControlIMCellSize = TILE_SIZE;
-		param.IMSysUpdateInterval = 64;
+		param.GrndCtrlIMCellSize = TILE_SIZE;
+		param.OccupanceIMUpdateInterval = 250;
+		param.GrndCtrlIMUpdateInterval = 1000;
 
 		m_pIStrategizer = new IStrategizerEx(param, PHASE_Online, m_pGameModel);
 		assert(m_pIStrategizer);
