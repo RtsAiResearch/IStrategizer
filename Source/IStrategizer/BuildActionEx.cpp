@@ -16,7 +16,7 @@
 
 using namespace IStrategizer;
 
-const unsigned MaxPrepTime = 120000;
+const unsigned MaxPrepTime = 300000;
 const unsigned MaxExecTrialTime = 120000;
 const unsigned MaxExecTime = 120000;
 
