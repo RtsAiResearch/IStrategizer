@@ -5,16 +5,33 @@
 #include "GroundControlIM.h"
 #include "RtsGame.h"
 #include "WorldMap.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
 using namespace std;
 
 void IMSystemManager::Update(const WorldClock& p_clock)
 {
+	unsigned elapsedTimeSinceLastUpdateMs = p_clock.ElapsedMilliseconds() - m_lastUpdateTimeMs;
+
 	for (IMContainer::iterator itr = m_managedMaps.begin(); itr != m_managedMaps.end(); ++itr)
 	{
+		switch (itr->first)
+		{
+		case IM_BuildingData:
+			if (elapsedTimeSinceLastUpdateMs > m_params.OccupanceIMUpdateInterval)
+				continue;
+			break;
+		case IM_GroundControl:
+			if (elapsedTimeSinceLastUpdateMs > m_params.GrndCtrlIMUpdateInterval)
+				continue;
+			break;
+		}
+
 		itr->second->Update(p_clock);
 	}
+
+	m_lastUpdateTimeMs = p_clock.ElapsedMilliseconds();
 }
 //////////////////////////////////////////////////////////////////////////
 void IMSystemManager::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
@@ -33,7 +50,7 @@ void IMSystemManager::UnregisterGameObj(TID p_objId)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void IMSystemManager::Init(const IMSysManagerParam& p_param)
+void IMSystemManager::Init(const IMSysManagerParam& p_params)
 {
 	int			worldWidth;
 	int			worldHeight;
@@ -41,13 +58,18 @@ void IMSystemManager::Init(const IMSysManagerParam& p_param)
 	int			cellSize;
 
 	if (m_initialized)
+	{
+		LogError("IMSystemManager already initialized, will do nothing ...");
 		return;
+	}
+
+	m_params = p_params;
 
 	pMap = g_Game->Map();
 	worldWidth = pMap->Size().X;
 	worldHeight = pMap->Size().Y;
 	
-	cellSize = p_param.BuildingDataIMCellSize;
+	cellSize = p_params.BuildingDataIMCellSize;
 	cellSize = min(cellSize, worldWidth);
 	while (worldWidth % cellSize != 0)
 		++cellSize;
@@ -57,7 +79,7 @@ void IMSystemManager::Init(const IMSysManagerParam& p_param)
 	pBuildingDataIM->Init(cellSize, cellSize, worldWidth, worldHeight);
 	RegisterIM(pBuildingDataIM, IM_BuildingData);
 
-	cellSize = p_param.GroundControlIMCellSize;
+	cellSize = p_params.GroundControlIMCellSize;
 	cellSize = min(cellSize, worldWidth);
 	while (worldWidth % cellSize != 0)
 		++cellSize;

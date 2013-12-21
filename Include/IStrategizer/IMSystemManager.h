@@ -19,6 +19,8 @@ namespace IStrategizer
 
 	struct IMSysManagerParam
 	{
+		unsigned GrndCtrlIMUpdateInterval;
+		unsigned OccupanceIMUpdateInterval;
 		int BuildingDataIMCellSize;
 		int GroundControlIMCellSize;
 	};
@@ -36,9 +38,15 @@ namespace IStrategizer
 		static IMSystemManager& Instance() { static IMSystemManager inst; return inst; }
 
 	private:
-		IMSystemManager() {}
+		IMSystemManager()
+		: m_initialized(false),
+		m_lastUpdateTimeMs(0)
+		{}
+
 		bool		m_initialized;
 		IMContainer m_managedMaps;
+		IMSysManagerParam m_params;
+		unsigned m_lastUpdateTimeMs;
 	};
 
 #define g_IMSysMgr IMSystemManager::Instance()
