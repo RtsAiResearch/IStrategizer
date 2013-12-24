@@ -9,6 +9,7 @@ Build/StarCraftModel/include/
 #Exclusions
 Build/Debug/*
 !Build/Debug/TypeInfo/TypeLexer.dfa
+!Build/IStrategizerEx.cb
 
 # Windows image file caches
 Thumbs.db
