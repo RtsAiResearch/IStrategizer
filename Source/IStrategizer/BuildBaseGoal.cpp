@@ -2,6 +2,8 @@
 #include "And.h"
 #include "False.h"
 
+using namespace IStrategizer;
+
 BuildBaseGoal::BuildBaseGoal() : GoalEx(GOALEX_BuildBase)
 {
 	_params[PARAM_BaseTypeId]	= BASETYPE_START;

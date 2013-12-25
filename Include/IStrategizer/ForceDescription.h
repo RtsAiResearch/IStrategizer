@@ -2,43 +2,37 @@
 #ifndef FORCEDESCRIPTION_H
 #define FORCEDESCRIPTION_H
 
-
 #include "MetaData.h"
 #include "UserObject.h"
 #include "SVector.h"
-using namespace IStrategizer;
-using namespace Serialization;
 
 namespace IStrategizer
 {
 	class GameEntity;
+
 	///> class=ForceDescription
-	class ForceDescription : public UserObject
+	class ForceDescription : public Serialization::UserObject
     {
-	public:
-		///> type=int
-		int							m_numberOfUnits;
-		///> type=int
-		int							m_totalHP;
-		///> type=int
-		int							m_totalDamage;
-		//////> type=vector(int)
-		//Serialization::SVector<int>	m_numberOfUnitsType;
+		OBJECT_SERIALIZABLE(ForceDescription);
 
 	public:
-		void					AddEntity(GameEntity *p_entity);
-		void					RemoveEntity(GameEntity *p_entity);
-		void					Clear();
-		double					GetDistance(ForceDescription *p_other);
-		//----------------------------------------------------------------------------------------------
-		// Serialization
+		///> type=int
+		int	m_numberOfUnits;
+
+		///> type=int
+		int	m_totalHP;
+		
+		///> type=int
+		int	m_totalDamage;
+
 	public:
-		string      TypeName()  { return "ForceDescription"; }
-		int         TypeSize()  { return sizeof(ForceDescription); }
-		UserObject* Prototype() { return new ForceDescription; }	
+		void	AddEntity(GameEntity *p_entity);
+		void	RemoveEntity(GameEntity *p_entity);
+		void	Clear();
+		double	GetDistance(ForceDescription *p_other);
+
 	protected:
-		void        InitializeAddressesAux();
-		//----------------------------------------------------------------------------------------------
+		void	InitializeAddressesAux();
     };
 }
 

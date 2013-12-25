@@ -168,6 +168,19 @@ namespace IStrategizer
 		PARAM_TrainerClassId,
 		PARAM_WorkerObjectId,
 		PARAM_BuildingObjectId,
+		PARAM_NumberOfPrimaryResources,
+		PARAM_NumberOfSecondaryResources,
+		PARAM_NumberOfSupplyResources,
+		PARAM_EnemyUnitsCount,
+		PARAM_EnemyUnitsTotalHP,
+		PARAM_EnemyUnitsTotalDamage,
+		PARAM_AlliedUnitsCount,
+		PARAM_AlliedUnitsTotalHP,
+		PARAM_AlliedUnitsTotalDamage,
+		PARAM_EnemyBuildingsCount,
+		PARAM_EnemyCriticalBuildingsCount,
+		PARAM_AlliedBuildingsCount,
+		PARAM_AlliedCriticalBuildingsCount,
 		PARAM_END
 	};
 #define Define_ParameterType \
@@ -194,7 +207,20 @@ namespace IStrategizer
 	Enums[PARAM_TrainerObjectId] = "Trainer Object"; \
 	Enums[PARAM_TrainerClassId] = "Trainer Class"; \
 	Enums[PARAM_WorkerObjectId] = "Worker Object"; \
-	Enums[PARAM_BuildingObjectId] = "Building Object";
+	Enums[PARAM_BuildingObjectId] = "Building Object"; \
+	Enums[PARAM_NumberOfPrimaryResources] = "Primary Resource"; \
+	Enums[PARAM_NumberOfSecondaryResources] = "Secondary Resource"; \
+	Enums[PARAM_NumberOfSupplyResources] = "Supply"; \
+	Enums[PARAM_EnemyUnitsCount] = "Enemy Units Count"; \
+	Enums[PARAM_EnemyUnitsTotalHP] = "Enemy Units Total HP"; \
+	Enums[PARAM_EnemyUnitsTotalDamage] = "Enemy Units Total Damage"; \
+	Enums[PARAM_AlliedUnitsCount] = "Allied Units Count"; \
+	Enums[PARAM_AlliedUnitsTotalHP] = "Allied Units Total HP"; \
+	Enums[PARAM_AlliedUnitsTotalDamage] = "Allied Units Total Damage"; \
+	Enums[PARAM_EnemyBuildingsCount] = "Enemy Buildings Count"; \
+	Enums[PARAM_EnemyCriticalBuildingsCount] = "Enemy Critical Buildings Count"; \
+	Enums[PARAM_AlliedBuildingsCount] = "Allied Buildings Count"; \
+	Enums[PARAM_AlliedCriticalBuildingsCount] = "Allied Critical Buildings Count"; \
 	//---------------------------------------------------------------------------
 #define Prefix_ExecutionStateType ESTATE
 	enum ExecutionStateType

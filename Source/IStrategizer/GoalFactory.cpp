@@ -4,6 +4,8 @@
 #include "TrainForceGoal.h"
 #include "GoalFactory.h"
 
+using namespace IStrategizer;
+
 //-------------------------------------------------------------------------------------------------------------------------
 GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_parameters, bool p_initConditions)
 {

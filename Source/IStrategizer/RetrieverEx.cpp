@@ -32,6 +32,7 @@
 
 using namespace std;
 using namespace IStrategizer;
+using namespace Serialization;
 
 // The number of samples the KNN algorithm should use to calculate the most similar case to the
 // case to be retrieved

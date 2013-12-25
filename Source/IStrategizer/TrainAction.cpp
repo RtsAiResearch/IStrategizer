@@ -72,12 +72,14 @@ bool TrainAction::PreconditionsSatisfied()
 	EntityClassType	traineeType = (EntityClassType)_params[PARAM_EntityClassId];
 	bool			success = false;
 
+	// Condition #1: make sure that the source building exists
 	trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
 	g_Assist.EntityClassExist(make_pair(trainerType, 1), success);
 
 	if (!success)
 		return false;
 
+	// Condition #2: assure that we have enough resources
 	g_Assist.PrerequisitesSatisfied(traineeType, success);
 
 	return success;

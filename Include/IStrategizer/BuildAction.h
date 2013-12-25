@@ -19,7 +19,7 @@ namespace IStrategizer
 		OBJECT_SERIALIZABLE(BuildAction);
 
 		BuildAction();
-		BuildAction(const PlanStepParameters& p_parameters, CellFeature *p_targetCell);
+		BuildAction(const PlanStepParameters& p_parameters);
 		void        Copy(IClonable* p_dest);
 
 	protected:

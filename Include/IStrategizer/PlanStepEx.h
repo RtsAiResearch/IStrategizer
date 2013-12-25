@@ -28,6 +28,7 @@
 
 #include "CellFeature.h"
 #include "WorldClock.h"
+#include "UserObject.h"
 
 namespace IStrategizer
 {
@@ -35,7 +36,7 @@ namespace IStrategizer
 	class Message;
 
 	///> class=PlanStepEx
-	class PlanStepEx : public UserObject, public IComparable, public IClonable
+	class PlanStepEx : public Serialization::UserObject, public IComparable, public IClonable
 	{
 	private:
 		ExecutionStateType		_state;

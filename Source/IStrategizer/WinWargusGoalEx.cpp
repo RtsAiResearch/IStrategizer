@@ -5,6 +5,8 @@
 #include <cassert>
 #include "TypesMetaData.h"
 
+using namespace IStrategizer;
+
 WinWargusGoalEx::WinWargusGoalEx() : GoalEx(GOALEX_WinGame)
 {
 	_params[PARAM_StrategyTypeId]	= STRTYPE_START;

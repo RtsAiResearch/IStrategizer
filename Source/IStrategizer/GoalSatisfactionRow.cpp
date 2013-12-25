@@ -16,6 +16,8 @@
 
 #include <cmath>
 
+using namespace IStrategizer;
+
 //----------------------------------------------------------------------------------------------
 int GoalSatisfactionRow::GetRowSize()
 {
