@@ -9,7 +9,7 @@
 
 using namespace IStrategizer;
 
-Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, IStrategizer::CellFeature *p_cellFeature, bool p_initConditions){
+Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions){
     Action* m_action = nullptr;
 
 	switch(p_actionType)

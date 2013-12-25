@@ -36,6 +36,7 @@ protected:
 	void OnUnitDestroy(BWAPI::Unit p_pUnit);
 	void OnUniRenegade(BWAPI::Unit p_pUnit);
 	void OnSendText(const std::string &p_text);
+	void OnGameFrame();
 
 private:
 	void InitResourceManager();
@@ -46,6 +47,7 @@ private:
 	void FinalizeIStrategizer();
 	void InitPlannerView();
 	void FinalizeViews();
+	void CollectGameTraces();
 	Ui::ClientMainClass				ui;
 	IStrategizer::IStrategizerEx	*m_pIStrategizer;
 	IStrategizer::RtsGame			*m_pGameModel;
