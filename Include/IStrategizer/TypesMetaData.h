@@ -264,6 +264,7 @@ namespace IStrategizer
 		OBJSTATE_Constructing,
 		OBJSTATE_Gathering,
 		OBJSTATE_Training,
+		OBJSTATE_Attacking,
 		OBJSTATE_END
 	};
 #define Define_ObjectStateType \
@@ -272,7 +273,8 @@ namespace IStrategizer
 	Enums[OBJSTATE_Moving] = "Moving"; \
 	Enums[OBJSTATE_Constructing] = "Constructing"; \
 	Enums[OBJSTATE_Gathering] = "Gathering"; \
-	Enums[OBJSTATE_Training] = "Training";
+	Enums[OBJSTATE_Training] = "Training"; \
+	Enums[OBJSTATE_Attacking] = "Attacking";
 	//---------------------------------------------------------------------------
 #define Prefix_StrategyType STRTYPE
 	enum StrategyType

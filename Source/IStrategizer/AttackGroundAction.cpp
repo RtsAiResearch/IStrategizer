@@ -15,6 +15,7 @@
 #include "GameEntity.h"
 
 using namespace IStrategizer;
+using namespace Serialization;
 
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)
@@ -46,7 +47,7 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 	GameEntity			*pGameAttacker;
 	AbstractAdapter		*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
-	_attackerId = pAdapter->AdaptBuildingForTraining(attackerType);
+	_attackerId = pAdapter->AdaptAttacker(attackerType);
 
 	pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
 	assert(pGameAttacker);
@@ -64,7 +65,7 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 {
-	throw NotImplementedException(XcptHere);
+	
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::PreconditionsSatisfied()
@@ -72,7 +73,7 @@ bool AttackGroundAction::PreconditionsSatisfied()
 	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
 	bool success = false;
 
-	g_Assist.EntityClassExist(make_pair(attacker, 1), success);
+	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
 
 	if (!success)
 		return false;
@@ -80,7 +81,7 @@ bool AttackGroundAction::PreconditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
-	throw NotImplementedException(XcptHere);
+	return true;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied()

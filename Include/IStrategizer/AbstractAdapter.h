@@ -21,6 +21,7 @@ namespace IStrategizer
 		virtual	TID AdaptWorkerForBuild() = 0;
 		virtual TID AdaptBuildingForTraining(EntityClassType p_traineeType) = 0;
 		virtual TID AdaptBuildingForResearch(ResearchType p_researchType) = 0;
+		virtual TID AdaptAttacker(EntityClassType p_attackerType) = 0;
 	};
 }
 
