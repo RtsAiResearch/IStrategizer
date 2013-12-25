@@ -34,14 +34,15 @@ public:
 	void Init();
 
 	inline static DefinitionCrossMapping& Instance() { static DefinitionCrossMapping m_instance; return m_instance; }
-
+	void InitActions();
 	CrossMap<TID, IStrategizer::EntityClassType>	EntityMapping;
 	CrossMap<TID, IStrategizer::ResearchType>		UpgradeMapping;
 	CrossMap<TID, IStrategizer::ResearchType>		TechMapping;
 	CrossMap<TID, IStrategizer::PlayerType>			PlayerMapping;
-	CrossMap<TID, TName>						EntityIdentMapping;		
-	CrossMap<TID, TName>						UpgradeIdentMapping;
-	CrossMap<TID, TName>						TechIdentMapping;
+	CrossMap<TID, IStrategizer::ActionType>			ActionMapping;
+	CrossMap<TID, TName>							EntityIdentMapping;		
+	CrossMap<TID, TName>							UpgradeIdentMapping;
+	CrossMap<TID, TName>							TechIdentMapping;
 };
 
 #define g_Database DefinitionCrossMapping::Instance()

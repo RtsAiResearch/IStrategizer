@@ -11,6 +11,7 @@ namespace IStrategizer
 {
 	class RtsGame;
 	class IStrategizerEx;
+	class GameTraceCollector;
 }
 
 class IMViewWidget;
@@ -47,7 +48,6 @@ private:
 	void FinalizeIStrategizer();
 	void InitPlannerView();
 	void FinalizeViews();
-	void CollectGameTraces();
 	Ui::ClientMainClass				ui;
 	IStrategizer::IStrategizerEx	*m_pIStrategizer;
 	IStrategizer::RtsGame			*m_pGameModel;
@@ -56,6 +56,7 @@ private:
 	std::vector<IMViewWidget*>		m_IMViews;
 	PlannerViewWidget				*m_pPlannerViewWdgt;
 	bool							m_isLearning;
+	IStrategizer::GameTraceCollector *m_pTraceCollector;
 };
 
 #endif // CLIENTMAIN_H

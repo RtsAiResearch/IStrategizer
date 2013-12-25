@@ -37,7 +37,7 @@ namespace IStrategizer
 			: m_gameCycle(p_gameCycle),
 			m_action(p_action),
 			m_actionParams(p_actionParams),
-			m_gameState(),
+			m_gameState(p_pGameState),
 			m_self(p_self),
 			m_enemy(p_enemy) {}
 

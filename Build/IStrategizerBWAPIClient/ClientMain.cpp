@@ -22,6 +22,7 @@
 #include "PlannerViewWidget.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "OnlinePlanExpansionExecutionEx.h"
+#include "GameTraceCollector.h"
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
@@ -32,7 +33,11 @@ using namespace std;
 #define UnitPositionFromTilePosition(TilePos)	(TilePos * 32)
 
 ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
-: QMainWindow(parent, flags), m_pIStrategizer(nullptr), m_pGameModel(nullptr), m_isLearning(true)
+: QMainWindow(parent, flags),
+m_pIStrategizer(nullptr),
+m_pGameModel(nullptr),
+m_isLearning(false),
+m_pTraceCollector(nullptr)
 {
 	ui.setupUi(this);
 }
@@ -40,6 +45,8 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
 ClientMain::~ClientMain()
 {
 	FinalizeIStrategizer();
+	
+	delete m_pTraceCollector;
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIStrategizer()
@@ -57,7 +64,11 @@ void ClientMain::InitIStrategizer()
 		param.GrndCtrlIMUpdateInterval = 1000;
 
 		if (Broodwar->isReplay())
+		{
+			m_pTraceCollector = new GameTraceCollector();
 			param.Phase = PHASE_Offline;
+			m_isLearning = true;
+		}
 		else
 			param.Phase = PHASE_Online;
 
@@ -385,11 +396,7 @@ void ClientMain::OnGameFrame()
 {
 	if (Broodwar->isReplay())
 	{
-		CollectGameTraces();
+		assert(m_pTraceCollector);
+		m_pTraceCollector->OnGameFrame();
 	}
-}
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::CollectGameTraces()
-{
-	throw std::logic_error("The method or operation is not implemented.");
 }

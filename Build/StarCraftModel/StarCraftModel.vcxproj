@@ -90,6 +90,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\StarCraftModel\DefinitionCrossMapping.cpp" />
+    <ClCompile Include="..\..\Source\StarCraftModel\GameTraceCollector.cpp" />
     <ClCompile Include="..\..\Source\StarCraftModel\MessageFactory.cpp" />
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftEntity.cpp" />
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftGame.cpp" />
@@ -102,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\StarCraftModel\DefinitionCrossMapping.h" />
+    <ClInclude Include="..\..\Include\StarCraftModel\GameTraceCollector.h" />
     <ClInclude Include="..\..\Include\StarCraftModel\MessageFactory.h" />
     <ClInclude Include="..\..\Include\StarCraftModel\RawMessageData.h" />
     <ClInclude Include="..\..\Include\StarCraftModel\StarCraftEntity.h" />

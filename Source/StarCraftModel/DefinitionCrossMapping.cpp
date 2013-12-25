@@ -25,6 +25,7 @@ void DefinitionCrossMapping::Init()
 	InitUpgrades();
 	InitTeches();
 	InitPlayers();
+	InitActions();
 	InitEntityIdents();
 	InitUpgradeIdents();
 	InitTechIdents();
@@ -246,4 +247,8 @@ void DefinitionCrossMapping::ResearchTypes(vector<IStrategizer::ResearchType>& p
 {
 	UpgradeMapping.SecondValues(p_researchTypes);
 	TechMapping.SecondValues(p_researchTypes, true);
+}
+//----------------------------------------------------------------------------------------------
+void DefinitionCrossMapping::InitActions()
+{
 }

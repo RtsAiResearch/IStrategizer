@@ -60,7 +60,7 @@ void PlanStepEx::Copy(IClonable* p_dest)
 
 	m_dest->_stepTypeId         = _stepTypeId;
 	m_dest->_state              = _state;
-	m_dest->_params         = _params;
+	m_dest->_params				= _params;
     m_dest->_successCondition   = _successCondition ? static_cast<CompositeExpression*>(_successCondition->Clone()) : nullptr;
     m_dest->_postCondition      = _postCondition ?    static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
 	m_dest->_stepLevelType      = _stepLevelType;
@@ -69,7 +69,12 @@ void PlanStepEx::Copy(IClonable* p_dest)
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::State(ExecutionStateType p_state, const WorldClock& p_clock)
 {
-	LogInfo("%s: '%s'->'%s'", ToString().c_str(), Enums[_state], Enums[p_state]);
+	string stepName = ToString();
+	const char* oldStateName = Enums[_state];
+	const char* newStateName = Enums[p_state];
+
+	LogInfo("%s: '%s'->'%s'", stepName.c_str(), oldStateName, newStateName);
+
 	_stateStartTime[INDEX(p_state, ExecutionStateType)] = p_clock.ElapsedMilliseconds();
 	_state = p_state;
 }
@@ -132,7 +137,7 @@ std::string PlanStepEx::ToString() const
 
 		// Parameter value is not an engine defined ID,
 		// convert the int type to string
-		if (ISREALVAL(ParameterType, itr->second))
+		if (ISREALVAL(ParameterType, itr->first))
 		{
 			_itoa_s(itr->second, paramRealVal, 10);
 			stepDescription += paramRealVal;
