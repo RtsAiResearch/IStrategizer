@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\StarCraftModel\GameTraceCollector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\StarCraftModel\DefinitionCrossMapping.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\StarCraftModel\StarCraftType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\StarCraftModel\GameTraceCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

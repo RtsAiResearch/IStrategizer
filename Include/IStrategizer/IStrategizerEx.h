@@ -29,7 +29,7 @@ namespace IStrategizer
 	{
 	private:
 		OnlineCaseBasedPlannerEx*			_planner;
-		LearningFromHumanDemonstration*	_caseLearning;
+		LearningFromHumanDemonstration*		_caseLearning;
 		PlayerType							_self;
 		PlayerType							_enemy;
 		IStrategizerParam					_param;
