@@ -8,6 +8,8 @@
 #define PREFIX(ENAME)			Prefix_##ENAME
 #define START(ENAME)			(PREFIX(ENAME)##_START)
 #define END(ENAME)				(PREFIX(ENAME)##_END)
+#define REALVALSTART(ENAME)		(PREFIX(ENAME)##_REALVALSTART)
+#define REALVALEND(ENAME)		(PREFIX(ENAME)##_REALVALEND)
 #define COUNT(ENAME)			(END(ENAME) - START(ENAME))
 #define INDEX(EMEMBER, ENAME)   (EMEMBER - START(ENAME))
 #define GET(EINDEX, ENAME)		(EINDEX + START(ENAME))
@@ -16,6 +18,7 @@
 #define CATEGORY(X)				(X >> 24)
 #define TYPE(X)					((X >> 16) && 0x000000ff)
 #define IDX(X)					(X && 0x0000ffff)
+#define ISREALVAL(ENAME, EVALUE) (EVALUE >= REALVALSTART(ENAME) && EVALUE < REALVALEND(ENAME))		
 #define ENUMS_SIZE				0xfffff
 
 namespace IStrategizer

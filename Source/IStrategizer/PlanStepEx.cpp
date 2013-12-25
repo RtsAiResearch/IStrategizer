@@ -111,6 +111,8 @@ void PlanStepEx::Update(const WorldClock& p_clock)
 std::string PlanStepEx::ToString() const
 {
 	string stepDescription;
+	// INT_MAX is 10 digits, reserve array of 16 for performance
+	char paramRealVal[16];
 
 	const char* stepName = Enums[_stepTypeId];
 	unsigned	paramIdx = 0;
@@ -123,7 +125,24 @@ std::string PlanStepEx::ToString() const
 	for (PlanStepParameters::const_iterator itr = _params.begin();
 		itr != _params.end(); ++itr)
 	{
-		stepDescription += Enums[itr->second];
+		// Parameters format is:
+		// <key>=<value>, ...
+		stepDescription += Enums[itr->first];
+		stepDescription += '=';
+
+		// Parameter value is not an engine defined ID,
+		// convert the int type to string
+		if (ISREALVAL(ParameterType, itr->second))
+		{
+			_itoa_s(itr->second, paramRealVal, 10);
+			stepDescription += paramRealVal;
+		}
+		// Parameter value is an engine defined ID
+		// Use the Enums lookup table to translate it to string
+		else
+		{
+			stepDescription += Enums[itr->second];
+		}
 
 		if (paramIdx < _params.size() - 1)
 		{
