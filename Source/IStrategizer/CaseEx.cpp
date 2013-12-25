@@ -4,6 +4,8 @@
 	#include "EngineData.h"
 #endif
 
+using namespace IStrategizer;
+
 CaseEx::CaseEx(PlanGraph* p_planGraph, GoalEx* p_goal, GameStateEx* p_gameState, int p_trialCount, int p_successCount)
                : _planGraph(p_planGraph), _goal(p_goal), _gameState(p_gameState),
                _trialCount(p_trialCount), _successCount(p_successCount) { }

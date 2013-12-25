@@ -7,18 +7,20 @@
 #include "ResourceDescription.h"
 #include "MetaData.h"
 #include "UserObject.h"
+#include "EngineData.h"
 #include  <map>
 
 namespace IStrategizer
 {
-	using namespace Serialization;
-	using namespace std;
-
 	class GameEntity;
+
 	///> class=CellFeature
-	class CellFeature : public UserObject
+	class CellFeature : public Serialization::UserObject
     {
+		OBJECT_SERIALIZABLE(CellFeature);
+
 	public:
+		///> type=ResourceDescription
 		ResourceDescription		m_resourceDescription;
 		///> type=ForceDescription
 		ForceDescription		m_alliedForceDescription;
@@ -28,21 +30,18 @@ namespace IStrategizer
 		BuildingDescription		m_alliedBuildingDescription;
 		///> type=BuildingDescription
 		BuildingDescription		m_enemyBuildingDescription;
+
 	public:
-		CellFeature() { Clear(); }
-		void							AddEntity(GameEntity *p_entity,bool p_isAllied);
-		void							RemoveEntity(GameEntity *p_entity, bool p_isAllied);
-		void							Clear();
-		double							GetDistance(CellFeature *p_other);
-		//----------------------------------------------------------------------------------------------
-		// Serialization
-	public:
-		string      TypeName()  { return "CellFeature"; }
-		int         TypeSize()  { return sizeof(CellFeature); }
-		UserObject* Prototype() { return new CellFeature; }	
+				CellFeature() { Clear(); }
+				CellFeature(const PlanStepParameters& p_parameters);
+		void	AddEntity(GameEntity *p_entity,bool p_isAllied);
+		void	RemoveEntity(GameEntity *p_entity, bool p_isAllied);
+		void	Clear();
+		void	To(PlanStepParameters& p_parameters);
+		double	GetDistance(CellFeature *p_other);
+
 	protected:
-		void        InitializeAddressesAux();
-		//----------------------------------------------------------------------------------------------
+		void	InitializeAddressesAux();
     };
 }
 

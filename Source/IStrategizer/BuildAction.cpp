@@ -27,8 +27,8 @@ BuildAction::BuildAction() : Action(ACTIONEX_Build), _targetCell(nullptr)
 	_params[PARAM_WorkerClassId]	= ECLASS_START;
 }
 //----------------------------------------------------------------------------------------------
-BuildAction::BuildAction(const PlanStepParameters& p_parameters, CellFeature* p_targetCell)
-: Action(ACTIONEX_Build, p_parameters), _targetCell(p_targetCell)
+BuildAction::BuildAction(const PlanStepParameters& p_parameters)
+: Action(ACTIONEX_Build, p_parameters)
 {
 
 }

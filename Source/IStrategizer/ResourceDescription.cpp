@@ -1,4 +1,5 @@
 #include "ResourceDescription.h"
+
 #include "GameEntity.h"
 #include "MetaData.h"
 #include "RtsGame.h"
@@ -6,8 +7,15 @@
 #include <cmath>
 
 using namespace IStrategizer;
-using namespace IStrategizer;
 
+void ResourceDescription::InitializeAddressesAux()
+{
+	AddMemberAddress(3,
+		&m_numberOfPrimary,
+		&m_numberOfSecondary,
+		&m_numberOfSupply);
+}
+//----------------------------------------------------------------------------------------------
 void ResourceDescription::AddEntity(GameEntity *p_entity)
 {
 	EntityClassType typeId = p_entity->Type();
@@ -18,14 +26,14 @@ void ResourceDescription::AddEntity(GameEntity *p_entity)
 
 	if (pType->Attr(ECATTR_IsPrimaryResource))
 	{
-		++m_numberOfSources[INDEX(RESOURCE_Primary, ResourceType)];
+		++m_numberOfPrimary;
 	}
 	else if (pType->Attr(ECATTR_IsSecondaryResource))
 	{
-		++m_numberOfSources[INDEX(RESOURCE_Secondary, ResourceType)];
+		++m_numberOfSecondary;
 	}
 }
-
+//----------------------------------------------------------------------------------------------
 void ResourceDescription::RemoveEntity(GameEntity *p_entity)
 {
 	EntityClassType typeId = p_entity->Type();
@@ -36,28 +44,28 @@ void ResourceDescription::RemoveEntity(GameEntity *p_entity)
 
 	if(pType && pType->Attr(ECATTR_IsPrimaryResource))
 	{
-		--m_numberOfSources[INDEX(RESOURCE_Primary, ResourceType)];
+		--m_numberOfPrimary;
 	}
 	else if (pType->Attr(ECATTR_IsSecondaryResource))
 	{
-		--m_numberOfSources[INDEX(RESOURCE_Secondary, ResourceType)];
+		--m_numberOfSecondary;
 	}
 }
-
+//----------------------------------------------------------------------------------------------
 void ResourceDescription::Clear()
 {
-	for (int i = 0 ; i < COUNT(ResourceType) ; i++)
-	{
-		m_numberOfSources[i] = 0;
-	}
+	m_numberOfPrimary = 0;
+	m_numberOfSecondary = 0;
+	m_numberOfSupply = 0;
 }
-
+//----------------------------------------------------------------------------------------------
 double ResourceDescription::GetDistance(ResourceDescription *p_other)
 {
 	double dist = 0.0;
-	for (int i = 0 ; i < COUNT(ResourceType) ; i++)
-	{
-		dist += abs(m_numberOfSources[i] - p_other->m_numberOfSources[i]);
-	}
+	dist += m_numberOfPrimary - p_other->m_numberOfPrimary;
+	dist += m_numberOfSecondary - p_other->m_numberOfSecondary;
+	dist += m_numberOfSupply - p_other->m_numberOfSupply;
+
 	return dist;
 }
+//----------------------------------------------------------------------------------------------

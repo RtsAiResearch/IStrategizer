@@ -16,6 +16,8 @@
 
 #include <cmath>
 
+using namespace IStrategizer;
+
 //----------------------------------------------------------------------------------------------
 void GoalSatisfactionRow::Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot)
 {

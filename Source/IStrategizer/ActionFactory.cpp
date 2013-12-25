@@ -7,9 +7,9 @@
 #include "ActionFactory.h"
 #include "CellFeature.h"
 
-//----------------------------------------------------------------------------------------------------
-Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, IStrategizer::CellFeature *p_cellFeature, bool p_initConditions)
-{
+using namespace IStrategizer;
+
+Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, IStrategizer::CellFeature *p_cellFeature, bool p_initConditions){
     Action* m_action = nullptr;
 
 	switch(p_actionType)
@@ -19,7 +19,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
 		
 		break;
 	case ACTIONEX_Build:
-        m_action = new BuildAction(p_paramaters, p_cellFeature);
+        m_action = new BuildAction(p_paramaters);
         break;
 
 	case ACTIONEX_BuildEx:
@@ -31,11 +31,11 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
 		break;
 
 	case ACTIONEX_AttackGround:
-        m_action = new AttackGroundAction(p_paramaters, p_cellFeature);
+        m_action = new AttackGroundAction(p_paramaters);
 		break;
 
 	case ACTIONEX_AttackEntity:
-        return new AttackEntityAction(p_paramaters, p_cellFeature);
+        return new AttackEntityAction(p_paramaters);
 		 break;
 
 	default:

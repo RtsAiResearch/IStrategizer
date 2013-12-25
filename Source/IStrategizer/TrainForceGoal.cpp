@@ -3,6 +3,8 @@
 #include "EntityClassExist.h"
 #include "And.h"
 
+using namespace IStrategizer;
+
 TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce)
 {
 	_params[PARAM_ForceSizeId]	= FORCESIZE_START;

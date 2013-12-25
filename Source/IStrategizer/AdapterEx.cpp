@@ -17,8 +17,6 @@
 #include "OccupanceDataIM.h"
 
 using namespace IStrategizer;
-using namespace IStrategizer;
-using namespace IStrategizer;
 using namespace std;
 
 typedef pair<TID, ObjectStateType> WorkerEntry;
@@ -187,7 +185,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 			if (curWorkerState == candidateWorkerState)
 				adaptedWorkerId = pEntity->Id();
 			else if (IsValidWorkerState(curWorkerState))
-				validWorkers.push_back(MakePair(pEntity->Id(), curWorkerState));
+				validWorkers.push_back(make_pair(pEntity->Id(), curWorkerState));
 		}
 	}
 

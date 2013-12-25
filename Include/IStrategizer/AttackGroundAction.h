@@ -10,7 +10,7 @@
 namespace IStrategizer
 {
 	class CellFeature;
-
+	
 	///> class=AttackGroundAction
 	///> parent=Action
 	class AttackGroundAction : public Action
@@ -19,19 +19,26 @@ namespace IStrategizer
 		OBJECT_SERIALIZABLE(AttackGroundAction);
 
 		AttackGroundAction();
-		AttackGroundAction(const PlanStepParameters& p_parameters, CellFeature* p_targetCell);
-		////> type=CellFeature*
-		CellFeature	*_targetCell;
-		//----------------------------------------------------------------------------------------------
-		// Serialization
+		AttackGroundAction(const PlanStepParameters& p_parameters);
+		bool		PreconditionsSatisfied();
+		bool		AliveConditionsSatisfied();
+		bool		SuccessConditionsSatisfied();
+
 	protected:
+		bool		ExecuteAux(const WorldClock& p_clock );
 		void		InitializeAddressesAux() ;
-		//----------------------------------------------------------------------------------------------
-		bool		ExecuteAux(const WorldClock& p_clock);
+		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
 		void		InitializePreConditions();
 		void		InitializeAliveConditions();
 		void		InitializeSuccessConditions();
 		void		InitializePostConditions();
+
+	private:
+		////> type=int
+		TID			 _attackerId;
+		
+		////> type=CellFeature*
+		CellFeature	*_targetCell;
 	};
 }
 

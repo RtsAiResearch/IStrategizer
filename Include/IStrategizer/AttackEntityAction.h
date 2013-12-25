@@ -22,7 +22,7 @@ namespace IStrategizer
 
 	public:
 		AttackEntityAction();
-		AttackEntityAction(const PlanStepParameters& p_parameters, CellFeature *p_cellFeature);
+		AttackEntityAction(const PlanStepParameters& p_parameters);
 		void        Copy(IClonable* p_dest);
 		void		Update(const WorldClock& p_clock);
 

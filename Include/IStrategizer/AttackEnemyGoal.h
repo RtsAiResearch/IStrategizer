@@ -5,28 +5,27 @@
 #include "GoalEx.h"
 #include "Colony.h"
 
-///> class=AttackEnemyGoal
-///> parent=GoalEx
-class AttackEnemyGoal : public GoalEx
+namespace IStrategizer
 {
-private:
-    ForceDescriptionEx _forceDescription;
-    Colony             _cachedColony;
+	///> class=AttackEnemyGoal
+	///> parent=GoalEx
+	class AttackEnemyGoal : public GoalEx
+	{
+		OBJECT_SERIALIZABLE(AttackEnemyGoal);
 
-public:
-                AttackEnemyGoal();
-	            AttackEnemyGoal(const PlanStepParameters& p_parameters);
-    void		InitSuccessConditions();
-    void        Copy(IClonable* p_dest);
-    //----------------------------------------------------------------------------------------------
-    // Serialization
-    string      TypeName()  { return "AttackEnemyGoal"; }
-    int         TypeSize()  { return sizeof(AttackEnemyGoal); }
-    UserObject* Prototype() { return new AttackEnemyGoal; }
-    //----------------------------------------------------------------------------------------------
-protected:
-	void InitializeSuccessConditions();
-	void InitializePostConditions();
-};
+	private:
+		ForceDescriptionEx _forceDescription;
+		Colony             _cachedColony;
 
+	public:
+					AttackEnemyGoal();
+					AttackEnemyGoal(const PlanStepParameters& p_parameters);
+		void		InitSuccessConditions();
+		void        Copy(IClonable* p_dest);
+
+	protected:
+		void InitializeSuccessConditions();
+		void InitializePostConditions();
+	};
+}
 #endif	// ATTACKENEMYGOAL_H

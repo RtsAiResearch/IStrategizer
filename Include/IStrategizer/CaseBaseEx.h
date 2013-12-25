@@ -17,7 +17,7 @@
 namespace IStrategizer
 {
 	///> class=CaseBaseEx
-	class CaseBaseEx : public UserObject
+	class CaseBaseEx : public Serialization::UserObject
 	{
 		OBJECT_SERIALIZABLE(CaseBaseEx);
 

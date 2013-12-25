@@ -30,7 +30,7 @@ AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 	_params[PARAM_TargetEntityClassId]	= ECLASS_START;
 }
 //----------------------------------------------------------------------------------------------
-AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters, CellFeature *p_cellFeature) : Action(ACTIONEX_AttackEntity, p_parameters)
+AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackEntity, p_parameters)
 {
 }
 //----------------------------------------------------------------------------------------------

@@ -13,6 +13,8 @@
 #ifndef SVECTOR_H
 	#include "SVector.h"
 #endif
+
+using namespace IStrategizer;
 using namespace std;
 
 CaseLearningHelper::CaseLearningHelper(PlayerType p_humanPlayer, PlayerType p_staticAIBot) : _humanPlayer(p_humanPlayer), _staticAIBot(p_staticAIBot)
