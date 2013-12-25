@@ -169,6 +169,7 @@ namespace IStrategizer
 		PARAM_WorkerObjectId,
 		PARAM_BuildingObjectId,
 		PARAM_NumberOfPrimaryResources,
+		PARAM_REALVALSTART = PARAM_NumberOfPrimaryResources,
 		PARAM_NumberOfSecondaryResources,
 		PARAM_NumberOfSupplyResources,
 		PARAM_EnemyUnitsCount,
@@ -181,7 +182,8 @@ namespace IStrategizer
 		PARAM_EnemyCriticalBuildingsCount,
 		PARAM_AlliedBuildingsCount,
 		PARAM_AlliedCriticalBuildingsCount,
-		PARAM_END
+		PARAM_REALVALEND,
+		PARAM_END = PARAM_REALVALEND
 	};
 #define Define_ParameterType \
 	Enums[PARAM_EntityClassId] = "Entity Class"; \
