@@ -9,8 +9,6 @@ namespace IStrategizer
 	enum PlayerType;
 	class GoalEx;
 
-	const std::string g_CaseBasePath = "IStrategizerEx.cb";
-
 	class OnlinePlanExpansionExecutionEx;
 	class CaseBasedReasonerEx;
 

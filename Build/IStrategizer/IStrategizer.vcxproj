@@ -115,8 +115,8 @@
     <ClCompile Include="..\..\Source\IStrategizer\CombinatoricsAndOrGraph.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GoalSatisfactionRow.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstrationEx.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\TraceEx.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstration.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CaseEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GameStateEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\PlanStepEx.cpp" />
@@ -236,8 +236,8 @@
     <ClInclude Include="..\..\Include\IStrategizer\WinWargusGoalEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GoalSatisfactionRow.h" />
-    <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstrationEx.h" />
-    <CustomBuildStep Include="..\..\Include\IStrategizer\TraceEx.h" />
+    <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstration.h" />
+    <CustomBuildStep Include="..\..\Include\IStrategizer\GameTrace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineComponent.h" />
     <ClInclude Include="..\..\Include\IStrategizer\OnlineCaseBasedPlannerEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecutionEx.h" />

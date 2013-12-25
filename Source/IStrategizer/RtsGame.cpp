@@ -128,8 +128,8 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 
     if (m_players.Contains(p_id))
 		return m_players[p_id];
-
-	return nullptr;
+	else
+		throw ItemNotFoundException(XcptHere);
 }
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)

@@ -1,7 +1,7 @@
 #include "CaseLearningHelper.h"
-#include "TraceEx.h"
 #include "DataMessage.h"
 #include "GameStateEx.h"
+#include "MessagePump.h"
 
 #ifndef GOALSATISFACTIONROW_H
 #include "GoalSatisfactionRow.h"
@@ -20,11 +20,11 @@ CaseLearningHelper::CaseLearningHelper(PlayerType p_humanPlayer, PlayerType p_st
     _goalSatisfactionRow.Initialize(p_humanPlayer, p_staticAIBot);
     _row.resize(_goalSatisfactionRow.GetRowSize());
 
-	g_MessagePump.RegisterForMessage(MSG_Log, this);
+	g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
 	g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------
-GoalSatisfactionEx CaseLearningHelper::ComputeGoalSatisfactionRow(unsigned long p_gameCycle)
+GoalMatrix CaseLearningHelper::ComputeGoalSatisfactionRow(unsigned long p_gameCycle)
 {
     _goalSatisfactionRow.Compute(p_gameCycle, _row);
 	return _row;
@@ -32,26 +32,26 @@ GoalSatisfactionEx CaseLearningHelper::ComputeGoalSatisfactionRow(unsigned long 
 //--------------------------------------------------------------------------------------------------------------------------------------------
 void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 {
-	DataMessage<TraceEx>* m_dataMessage = nullptr;
-    TraceEx* m_trace = nullptr;
+	DataMessage<GameTrace>* m_dataMessage = nullptr;
+    GameTrace* m_trace = nullptr;
 
-	m_dataMessage = reinterpret_cast<DataMessage<TraceEx>*>(p_message);
+	m_dataMessage = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
 	switch(p_message->MessageTypeID())
 	{
-	case MSG_Log:
+	case MSG_GameActionLog:
 		if(m_dataMessage != nullptr && 
 		   m_dataMessage->Data() != nullptr &&
-           m_dataMessage->Data()->Player() == _humanPlayer)
+           m_dataMessage->Data()->Self() == _humanPlayer)
 		{
-            m_trace = const_cast<TraceEx*>(m_dataMessage->Data());
-            m_trace->GoalSatisfaction(ComputeGoalSatisfactionRow(m_trace->GameCycle()));
+            m_trace = const_cast<GameTrace*>(m_dataMessage->Data());
+            //m_trace->GoalSatisfaction(ComputeGoalSatisfactionRow(m_trace->GameCycle()));
             _observedTraces.push_back(m_trace);
 		}
 		break;
 
-	case MSG_GameEnd:
+	/*case MSG_GameEnd:
 		_observedTraces[_observedTraces.size() - 1]->GoalSatisfaction(ComputeGoalSatisfactionRow(_observedTraces[_observedTraces.size() - 1]->GameCycle()));
-		break;
+		break;*/
 	}
 }
 

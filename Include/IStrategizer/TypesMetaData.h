@@ -387,7 +387,7 @@ namespace IStrategizer
 #define Prefix_MessageType MSG
 	enum MessageType
 	{
-		MSG_Log				= 0x21900,
+		MSG_GameActionLog				= 0x21900,
 		MSG_START			= 0x21900, 
 		MSG_Input,
 		MSG_GameExit,

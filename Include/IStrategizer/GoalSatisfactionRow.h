@@ -14,6 +14,7 @@
 #endif
 
 #include <map>
+#include "GameTrace.h"
 
 namespace IStrategizer
 {
@@ -24,7 +25,7 @@ namespace IStrategizer
 		vector<CombinatoricsAndOrGraph<GoalSatisfactionRow>> _goalParamGraph;
 		std::map<ParameterType, int> _parameterStart;
 		unsigned long _lastGameCycle;
-		std::vector<int> *_row;
+		GoalMatrix *_row;
 		int _rowSize;
 		int _currentGoal;
 		std::map<TPathKey, GoalEx*> _goals;
@@ -38,8 +39,8 @@ namespace IStrategizer
 		GoalEx*     GetGoal(TPathKey p_pathId, std::list<NodeType>& p_path);
 	public:
 		void    Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot);
-		void    Compute(unsigned long p_gameCycle, std::vector<int>& p_row);
-		int     GetRowSize();
+		void    Compute(unsigned p_gameCycle, GoalMatrix& p_row);
+		size_t     GetRowSize() const { return (size_t)_rowSize; }
 		GoalEx* GetGoal(int p_goalIdx);
 	};
 }

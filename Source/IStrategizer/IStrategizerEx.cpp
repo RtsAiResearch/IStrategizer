@@ -1,7 +1,7 @@
 #include "IStrategizerEx.h"
 #include "MessagePump.h"
 #include "OnlineCaseBasedPlannerEx.h"
-#include "LearningFromHumanDemonstrationEx.h"
+#include "LearningFromHumanDemonstration.h"
 #include "GoalFactory.h"
 #include "CaseLearningHelper.h"
 #include "IMSystemManager.h"
@@ -28,10 +28,9 @@
 
 using namespace IStrategizer;
 
-IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_phase, RtsGame* p_rtsGame) 
+IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame) 
 	: _self(PLAYER_Self),
 	_enemy(PLAYER_Enemy),
-	_phase(p_phase),
 	_param(p_param),
 	_caseLearning(nullptr),
 	_planner(nullptr),
@@ -47,7 +46,7 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_pha
 	params[PARAM_PlayerId] = _self;
 	params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
 
-	switch(_phase)
+	switch(p_param.Phase)
 	{
 	case PHASE_Online:
 		_planner = new OnlineCaseBasedPlannerEx();
@@ -56,7 +55,7 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_pha
 		break;
 
 	case PHASE_Offline:
-		_caseLearning = new LearningFromHumanDemonstrationEx(_self, _enemy);
+		_caseLearning = new LearningFromHumanDemonstration(_self, _enemy);
 		g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
 		break;
 	}
@@ -81,9 +80,9 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
 	case MSG_GameStart:
 		_clock.Reset();
 	case MSG_GameEnd:
-		if (_phase == PHASE_Offline)
+		if (_param.Phase == PHASE_Offline)
 		{
-			OfflineLearning();
+			StartOfflineLearning();
 		}
 		break;
 	}
@@ -103,7 +102,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 		g_MessagePump.Update(_clock);
 		g_IMSysMgr.Update(_clock);
 
-		if (_phase == PHASE_Online)
+		if (_param.Phase == PHASE_Online)
 			_planner->Update(_clock);
 	}
 	catch (IStrategizer::Exception &e)
@@ -116,9 +115,9 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 	}
 }
 //--------------------------------------------------------------------------------
-void IStrategizerEx::OfflineLearning()
+void IStrategizerEx::StartOfflineLearning()
 {
-	// CaseBaseEx* m_learntCases = _caseLearning->CaseBaseAcquisition();
+	_caseLearning->Learn();
 }
 //----------------------------------------------------------------------------------------------
 IStrategizerEx::~IStrategizerEx()

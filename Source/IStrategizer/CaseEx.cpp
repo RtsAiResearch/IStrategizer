@@ -17,8 +17,3 @@ void CaseEx::InitializeAddressesAux()
         &_trialCount,
         &_successCount);
 }
-//----------------------------------------------------------------------------------------------
-CaseEx* CaseEx::From(CookedPlan* p_cookedPlan)
-{
-    return new CaseEx(p_cookedPlan->pPlan, p_cookedPlan->Goal, p_cookedPlan->gameState, 1, 1);
-}

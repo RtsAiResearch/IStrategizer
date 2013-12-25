@@ -10,6 +10,8 @@ using namespace std;
 
 namespace IStrategizer
 {
+	const std::string g_CaseBasePath = "IStrategizerEx.cb";
+
     class RetainerEx : public AbstractRetainer
     {
     private:

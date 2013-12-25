@@ -56,7 +56,12 @@ void ClientMain::InitIStrategizer()
 		param.OccupanceIMUpdateInterval = 250;
 		param.GrndCtrlIMUpdateInterval = 1000;
 
-		m_pIStrategizer = new IStrategizerEx(param, PHASE_Online, m_pGameModel);
+		if (Broodwar->isReplay())
+			param.Phase = PHASE_Offline;
+		else
+			param.Phase = PHASE_Online;
+
+		m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
 		assert(m_pIStrategizer);
 	}
 	catch (IStrategizer::Exception& e)
@@ -374,4 +379,17 @@ void ClientMain::InitResourceManager()
 				(*i)->rightClick(closestMineral);
 		}
 	}
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::OnGameFrame()
+{
+	if (Broodwar->isReplay())
+	{
+		CollectGameTraces();
+	}
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::CollectGameTraces()
+{
+	throw std::logic_error("The method or operation is not implemented.");
 }

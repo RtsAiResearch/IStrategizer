@@ -60,8 +60,6 @@ namespace IStrategizer
 		void			TrialCount(int val) { _trialCount = val; }
 		void			SuccessCount(int val) { _successCount = val; }
 
-		static CaseEx*  From(CookedPlan* p_cookedPlan);
-
 	protected:
 		void            InitializeAddressesAux();
 	};

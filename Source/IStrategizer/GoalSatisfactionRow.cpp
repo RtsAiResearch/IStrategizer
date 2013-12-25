@@ -17,11 +17,6 @@
 #include <cmath>
 
 //----------------------------------------------------------------------------------------------
-int GoalSatisfactionRow::GetRowSize()
-{
-    return _rowSize;
-}
-//----------------------------------------------------------------------------------------------
 void GoalSatisfactionRow::Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot)
 {
     Level m_level;
@@ -190,7 +185,7 @@ void GoalSatisfactionRow::GeneratePossibleParamsAux(int p_abstractGoalIdx, unsig
     }
 }
 //----------------------------------------------------------------------------------------------
-void GoalSatisfactionRow::Compute(unsigned long p_gameCycle, vector<int>& p_row)
+void GoalSatisfactionRow::Compute(unsigned p_gameCycle, GoalMatrix& p_row)
 {
     _row            = &p_row;
     _currentGoal    = -1;

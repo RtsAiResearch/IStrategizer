@@ -9,9 +9,9 @@
 namespace IStrategizer
 {
 	class MessagePump;
-	class TraceEx;
+	class GameTrace;
 	class CaseBaseEx;
-	class LearningFromHumanDemonstrationEx;
+	class LearningFromHumanDemonstration;
 	class GameAPI;
 	class OnlineCaseBasedPlannerEx;
 	class RtsGame;
@@ -22,24 +22,24 @@ namespace IStrategizer
 		unsigned OccupanceIMUpdateInterval;
 		int BuildingDataIMCellSize;
 		int GrndCtrlIMCellSize;
+		PhaseType Phase;
 	};
 
 	class IStrategizerEx : public MessagePumpObserver
 	{
 	private:
 		OnlineCaseBasedPlannerEx*			_planner;
-		LearningFromHumanDemonstrationEx*	_caseLearning;
+		LearningFromHumanDemonstration*	_caseLearning;
 		PlayerType							_self;
 		PlayerType							_enemy;
-		PhaseType							_phase;
 		IStrategizerParam					_param;
 		bool								_isFirstUpdate;
 		WorldClock							_clock;
 
 	public:
-		IStrategizerEx(const IStrategizerParam &p_param, PhaseType p_phaseType, RtsGame* p_rtsGame);
+		IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame);
 		void	Update(unsigned p_gameCycle);
-		void	OfflineLearning();
+		void	StartOfflineLearning();
 		const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
 		void	NotifyMessegeSent(Message* p_message);
 		const WorldClock& Clock() const { return _clock; }

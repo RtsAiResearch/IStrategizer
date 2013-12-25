@@ -61,8 +61,6 @@ void BwapiClient::BwapiMainThread()
 
         // Enable some cheat flags
         Broodwar->enableFlag(Flag::UserInput);
-        Broodwar->sendText("operation cwal");
-        Broodwar->sendText("show me the money");
         // Uncomment to enable complete map information
         Broodwar->enableFlag(Flag::CompleteMapInformation);
 
@@ -140,6 +138,9 @@ void BwapiClient::HandleGameEvents()
     {
         switch(e->getType())
         {
+		case EventType::MatchFrame:
+			OnGameFrame();
+			break;
         case EventType::MatchStart:
             OnMatchStart();
             break;

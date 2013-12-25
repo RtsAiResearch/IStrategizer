@@ -1,5 +1,4 @@
-#include "LearningFromHumanDemonstrationEx.h"
-#include "TraceEx.h"
+#include "LearningFromHumanDemonstration.h"
 #include "CaseBaseEx.h"
 #include "ActionFactory.h"
 #include "CaseLearningHelper.h"
@@ -25,17 +24,16 @@
 using namespace std;
 using namespace IStrategizer;
 
-LearningFromHumanDemonstrationEx::LearningFromHumanDemonstrationEx(PlayerType p_player, PlayerType p_enemy)
+LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy)
 {
     _helper     = new CaseLearningHelper(p_player, p_enemy);
-    _retainer   = new RetainerEx("CaseBase0.cb");
-	_retainer->ReadCaseBase();
+    _retainer   = new RetainerEx(g_CaseBasePath);
 }
 //------------------------------------------------------------------------------------------------
-CaseBaseEx* LearningFromHumanDemonstrationEx::CaseBaseAcquisition()
+void LearningFromHumanDemonstration::Learn()
 {
+    vector<CookedPlan*>		m_cookedPlans;
  //   vector<CookedCase*>		m_cookedCases;
- //   vector<CookedPlan*>		m_cookedPlans;
 	//vector<PlanStepEx*>		m_steps;
 
  //   vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
@@ -85,14 +83,12 @@ CaseBaseEx* LearningFromHumanDemonstrationEx::CaseBaseAcquisition()
 	//	HierarchicalComposition(m_cookedPlans[i], m_cookedPlans, i);
 	//}
 
- //   LearnCookedCases(m_cookedPlans);
-	//
-    return nullptr;
+    RetainLearntCases(m_cookedPlans);
 }
 //------------------------------------------------------------------------------------------------
-vector<RawCaseEx*> LearningFromHumanDemonstrationEx::LearnRawCases(vector<TraceEx*>& p_traces)
+vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrace*>& p_traces)
 {
-    unsigned            m_rowSize = _helper->GoalSatisfactionRow().GetRowSize();
+    unsigned            m_rowSize = _helper->GetGoalSatisfactionRow().GetRowSize();
     vector<RawCaseEx*>	m_learntRawCases = vector<RawCaseEx*>();
     vector<RawCaseEx*>	m_currentCases = vector<RawCaseEx*>(m_rowSize, nullptr);
     RawPlanEx			m_tempRPlan;
@@ -107,16 +103,16 @@ vector<RawCaseEx*> LearningFromHumanDemonstrationEx::LearnRawCases(vector<TraceE
                 m_tempRPlan = RawPlanEx(nullptr, SequentialPlan());
                 m_currentCases[g] = new RawCaseEx(m_tempRPlan, p_traces[i]->GameState());
                 //m_currentCases[g] = new RawCaseEx(m_tempRPlan, nullptr);
-                AddAction(m_currentCases[g], p_traces[i]->AbstractActionId(), p_traces[i]->AbstractParametersId(), i);
+                AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
             }
             else if(!p_traces[i]->GoalSatisfaction()[g] && m_currentCases[g])
             {
-                AddAction(m_currentCases[g], p_traces[i]->AbstractActionId(), p_traces[i]->AbstractParametersId(), i);
+                AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
             }
             else if (p_traces[i]->GoalSatisfaction()[g] && m_currentCases[g])
             {
-                m_currentCases[g]->rawPlan.Goal = _helper->GoalSatisfactionRow().GetGoal(g);
-                AddAction(m_currentCases[g], p_traces[i]->AbstractActionId(), p_traces[i]->AbstractParametersId(), i);
+                m_currentCases[g]->rawPlan.Goal = _helper->GetGoalSatisfactionRow().GetGoal(g);
+                AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
                 m_learntRawCases.push_back(m_currentCases[g]);
                 m_currentCases[g] = nullptr;
             }
@@ -126,16 +122,16 @@ vector<RawCaseEx*> LearningFromHumanDemonstrationEx::LearnRawCases(vector<TraceE
     return m_learntRawCases;
 }
 //------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::AddAction(RawCaseEx* p_case, int p_actionId, PlanStepParameters& p_params, int p_traceId)
+void LearningFromHumanDemonstration::AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId)
 {
-	Action* action = g_ActionFactory.GetAction((ActionType)p_actionId, p_params);
+	Action* action = g_ActionFactory.GetAction(p_action, p_params);
 	action->Data(p_traceId);
 	action->InitializeConditions();
 
     p_case->rawPlan.sPlan.push_back(action);
 }
 //------------------------------------------------------------------------------------------------
-CookedCase* LearningFromHumanDemonstrationEx::DependencyGraphGeneration(RawCaseEx* p_rawCase)
+CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx* p_rawCase)
 {
 	SequentialPlan			m_planSteps = vector<PlanStepEx*>(p_rawCase->rawPlan.sPlan.size());
     unsigned				m_stepsCount = m_planSteps.size();
@@ -171,7 +167,7 @@ CookedCase* LearningFromHumanDemonstrationEx::DependencyGraphGeneration(RawCaseE
     return new CookedCase(p_rawCase, m_graph);
 }
 //--------------------------------------------------------------------------------------------------------------
-bool LearningFromHumanDemonstrationEx::Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, vector<Expression*>& p_matchedConditions)
+bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, vector<Expression*>& p_matchedConditions)
 {
 	if (p_candidateNode && p_dependentNode)
 	{
@@ -200,7 +196,7 @@ bool LearningFromHumanDemonstrationEx::Depends(CompositeExpression* p_candidateN
 	}
 }
 //------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::UnnecessaryStepsElimination(CookedCase* p_case)
+void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_case)
 {
  //   SequentialPlan							steps = vector<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan.size());
  //   SequentialPlan							fSteps;
@@ -251,7 +247,7 @@ void LearningFromHumanDemonstrationEx::UnnecessaryStepsElimination(CookedCase* p
 	//p_case->dGraph = new PlanGraph(fSteps);
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::NecessaryStepsExtraction(PlanGraph* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)
+void LearningFromHumanDemonstration::NecessaryStepsExtraction(PlanGraph* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)
 {
     vector< pair<int, PlanStepEx*> >	rSteps;
     unsigned							i;
@@ -275,7 +271,7 @@ void LearningFromHumanDemonstrationEx::NecessaryStepsExtraction(PlanGraph* p_gra
     }
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::HierarchicalComposition(CookedPlan* p_plan, const vector<CookedPlan*>& p_plans, unsigned p_index)
+void LearningFromHumanDemonstration::HierarchicalComposition(CookedPlan* p_plan, const vector<CookedPlan*>& p_plans, unsigned p_index)
 {
 	int				m_maxSubgraphIndex = INT_MAX;
 	int				m_maxMatchedCount = 0;
@@ -302,19 +298,23 @@ void LearningFromHumanDemonstrationEx::HierarchicalComposition(CookedPlan* p_pla
 	}
 }
 //----------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstrationEx::LearnCookedCases( vector<CookedPlan*>& p_cookedPlans )
+void LearningFromHumanDemonstration::RetainLearntCases( vector<CookedPlan*>& p_cookedPlans )
 {
-    CaseEx*     m_learntCase    = nullptr;
-    for(int i = 0, size = p_cookedPlans.size(); i < size; ++i)
+    CaseEx* pLearntCase = nullptr;
+
+	_retainer->ReadCaseBase();
+
+    for(size_t i = 0, size = p_cookedPlans.size(); i < size; ++i)
     {
-        m_learntCase = CaseEx::From(p_cookedPlans[i]);
-        _retainer->Retain(m_learntCase);
+		CookedPlan* currCookedPlan = p_cookedPlans[i];
+        pLearntCase = new CaseEx(currCookedPlan->pPlan, currCookedPlan->Goal, currCookedPlan->gameState, 1, 1);
+        _retainer->Retain(pLearntCase);
     }
 
     _retainer->Flush();
 }
 //--------------------------------------------------------------------------------------------------------------
-LearningFromHumanDemonstrationEx::~LearningFromHumanDemonstrationEx()
+LearningFromHumanDemonstration::~LearningFromHumanDemonstration()
 {
     Toolbox::MemoryClean(_helper);
     Toolbox::MemoryClean(_retainer);

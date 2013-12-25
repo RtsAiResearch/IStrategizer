@@ -16,7 +16,7 @@ MessagePump::MessagePump()
 	AddMessage(MSG_GameEnd);
 
 	// Obsolete Messages
-	AddMessage(MSG_Log);
+	AddMessage(MSG_GameActionLog);
 	AddMessage(MSG_GameExit);
 	AddMessage(MSG_EntityAttacked);
 	AddMessage(MSG_EntityKilled);

@@ -119,11 +119,6 @@ void SerializationEssentials::Init()
     g_ObjectFactory.AddPrototype(new Not);
     g_ObjectFactory.AddPrototype(new Or);
 
-    g_ObjectFactory.AddPrototype(new RawPlanEx);
-    g_ObjectFactory.AddPrototype(new RawCaseEx);
-    g_ObjectFactory.AddPrototype(new CookedPlan);
-    g_ObjectFactory.AddPrototype(new CookedCase);
-
     g_ObjectFactory.AddPrototype(new PlanGraph);
     g_ObjectFactory.AddPrototype(new Diagraph<NodeValue, EdgeAnnotation>, "Diagraph(PlanStepEx*,vector(Expression*))");
     g_ObjectFactory.AddPrototype(new GraphNode<NodeValue, EdgeAnnotation>, "GraphNode(PlanStepEx*,vector(Expression*))");

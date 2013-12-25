@@ -207,12 +207,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\GoalSatisfactionRow.cpp">
       <Filter>Source Files\CaseBaseLearner</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstrationEx.cpp">
-      <Filter>Source Files\CaseBaseLearner</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TraceEx.cpp">
-      <Filter>Source Files\CaseBaseLearner</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CaseEx.cpp">
       <Filter>Source Files\CaseBase</Filter>
     </ClCompile>
@@ -368,6 +362,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp">
       <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstration.cpp">
+      <Filter>Source Files\CaseBaseLearner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp">
+      <Filter>Source Files\CaseBaseLearner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -723,14 +723,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstrationEx.h">
-      <Filter>Header Files\CaseBaseLearner</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\..\Include\IStrategizer\TraceEx.h">
-      <Filter>Header Files\CaseBaseLearner</Filter>
-    </CustomBuildStep>
     <CustomBuildStep Include="..\..\Include\IStrategizer\EngineData.h">
       <Filter>Header Files\EngineData</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstration.h">
+      <Filter>Header Files\CaseBaseLearner</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\Include\IStrategizer\GameTrace.h">
+      <Filter>Header Files\CaseBaseLearner</Filter>
     </CustomBuildStep>
   </ItemGroup>
 </Project>
