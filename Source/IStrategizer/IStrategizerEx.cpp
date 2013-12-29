@@ -68,9 +68,9 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsG
 	g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
 	g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
 
-	DynamicComponent::RealTime(false);
-	DynamicComponent::GlobalInvalidation(true);
-	DynamicComponent::GlobalInvalidationInterval(2);
+	DynamicComponent::RealTime(true);
+	// DynamicComponent::GlobalInvalidation(true);
+	// DynamicComponent::GlobalInvalidationInterval(2);
 }
 //---------------------------------------------------------------------------------------------
 void IStrategizerEx::NotifyMessegeSent(Message* p_message)

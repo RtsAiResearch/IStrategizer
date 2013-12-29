@@ -65,7 +65,11 @@ void ClientMain::InitIStrategizer()
 
 		if (Broodwar->isReplay())
 		{
-			m_pTraceCollector = new GameTraceCollector();
+      Playerset players = Broodwar->getPlayers();
+      size_t numPlayers = players.size();
+      TID playerToObserveID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
+
+			m_pTraceCollector = new GameTraceCollector(playerToObserveID);
 			param.Phase = PHASE_Offline;
 			m_isLearning = true;
 		}
@@ -337,20 +341,20 @@ void ClientMain::OnClientUpdate()
 {
 	static bool enemyPlayerCollected = false;
 
-	if (!enemyPlayerCollected)
-	{
-		// This to solve the bug that the game does not send  messages about creating enemy units at game start
-		TID enemyPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy);
-		const Unitset &enemyUnits = Broodwar->getPlayer(enemyPlayerID)->getUnits();
+	//if (!enemyPlayerCollected)
+	//{
+	//	// This to solve the bug that the game does not send  messages about creating enemy units at game start
+	//	TID enemyPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy);
+	//	const Unitset &enemyUnits = Broodwar->getPlayer(enemyPlayerID)->getUnits();
 
-		for (Unitset::iterator itr = enemyUnits.begin();
-			itr != enemyUnits.end(); ++itr)
-		{
-			OnUnitCreate(*itr);
-		}
+	//	for (Unitset::iterator itr = enemyUnits.begin();
+	//		itr != enemyUnits.end(); ++itr)
+	//	{
+	//		OnUnitCreate(*itr);
+	//	}
 
-		enemyPlayerCollected = !enemyUnits.empty();
-	}
+	//	enemyPlayerCollected = !enemyUnits.empty();
+	//}
 
 	try
 	{

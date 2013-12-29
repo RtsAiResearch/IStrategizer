@@ -136,7 +136,12 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
 	if (pCreateMsg->Data()->OwnerId == m_id)
 	{
 		entityId = pCreateMsg->Data()->EntityId;
-		assert(!m_entities.Contains(entityId));
+
+    if (m_entities.Contains(entityId))
+    {
+      LogError("Entity %d already exist in Player %s units", entityId, Enums[m_id]);
+      return;
+    }
 
 		pEntity = FetchEntity(entityId);
 		assert(pEntity);

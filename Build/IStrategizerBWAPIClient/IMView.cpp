@@ -22,7 +22,8 @@ void IMView::SetIM(const InfluenceMap *p_pIM)
 {
 	m_pIM = p_pIM;
 	m_transformationCached = false;
-	m_pfnIMDrawer = IMDrawingStrategy::GetStrategy(p_pIM->TypeId());
+  if (p_pIM)
+	  m_pfnIMDrawer = IMDrawingStrategy::GetStrategy(p_pIM->TypeId());
 }
 //////////////////////////////////////////////////////////////////////////
 QSize IMView::minimumSizeHint() const

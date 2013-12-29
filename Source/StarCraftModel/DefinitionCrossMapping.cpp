@@ -112,6 +112,9 @@ void DefinitionCrossMapping::InitPlayers()
 	{
 		pPlayer = (*i);
 
+    // FIXME: PLAYER_Self is not valid if there are more than 1 human player
+    // for example in replays or network game
+    // Player types should be removed from the engine and only Player IDs should be used
 		if(pPlayer->getType().getID() == PlayerTypes::Player.getID())
 			m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Self));
 		else if(pPlayer->getType().getID() == PlayerTypes::Computer.getID())
