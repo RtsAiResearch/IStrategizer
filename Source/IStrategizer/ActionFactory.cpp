@@ -18,9 +18,6 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
         m_action = new ResearchAction(p_paramaters);
 		
 		break;
-	case ACTIONEX_Build:
-        m_action = new BuildAction(p_paramaters);
-        break;
 
 	case ACTIONEX_BuildEx:
 		m_action = new BuildActionEx(p_paramaters);
@@ -57,9 +54,6 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
 	case ACTIONEX_Research:
 		m_action = new ResearchAction();
 
-		break;
-	case ACTIONEX_Build:
-		m_action = new BuildAction();
 		break;
 
 	case ACTIONEX_BuildEx:

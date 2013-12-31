@@ -124,7 +124,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\Action.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\AttackEntityAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\AttackGroundAction.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\BuildAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\BuildActionEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ResearchAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp" />
@@ -209,7 +208,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\Action.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AttackEntityAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AttackGroundAction.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\BuildAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\BuildActionEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ResearchAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\TrainAction.h" />
