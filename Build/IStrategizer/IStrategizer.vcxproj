@@ -93,7 +93,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerEx.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\BuildingDescription.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CellFeature.cpp" />
@@ -173,7 +172,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\SerializationEssentials.h" />
     <ClInclude Include="..\..\Include\IStrategizer\DataMessage.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Message.h" />
