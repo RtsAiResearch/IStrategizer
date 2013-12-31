@@ -7,6 +7,8 @@
 
 namespace IStrategizer
 {
+  class GameTrace;
+
 	class GameTraceCollector
 	{
 	public:
@@ -109,14 +111,24 @@ namespace IStrategizer
     //************************************
     BWAPI::Unit ReasonTrainerUnitForTrainee(const BWAPI::Unit trainee);
 
+    //************************************
+    // IStrategizer::GameTraceCollector::SendGameTrace
+    // Description:	Send collected game trace to whoever is interested in collecting
+    // game traces (i.e observing GameActionLog message)
+    // Parameter: 	GameTrace* pTrace: the collected game trace
+    // Returns:   	void
+    //************************************
+    void SendGameTrace(GameTrace* pTrace);
+
     std::map<BWAPI::Unit, BWAPI::Order> m_unitOrder;
 		std::map<BWAPI::Unit, BWAPI::Unit> m_unitOrderTarget;
 		std::map<BWAPI::Unit, BWAPI::Position> m_unitOrderTargetPosition;
     std::map<BWAPI::Unit, std::set<BWAPI::Unit> > m_trainerToTraineesMap;
     std::set<int> m_trainedUnits;
-
     std::set<int> m_playerIssuedOrderIDs;
+
     TID m_playerToObserveID;
+    PlayerType m_playerToObserve;
     bool m_isFirstUpdate;
 	};
 }

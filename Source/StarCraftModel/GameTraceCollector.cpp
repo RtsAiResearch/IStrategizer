@@ -4,6 +4,7 @@
 #include "GameTrace.h"
 #include "Logger.h"
 #include <Windows.h>
+#include "DefinitionCrossMapping.h"
 
 using namespace BWAPI;
 using namespace IStrategizer;
@@ -13,6 +14,8 @@ void GameTraceCollector::OnGameFrame()
   if (m_isFirstUpdate)
   {
     InitPlayerIssuedOrderTable();
+    m_playerToObserve = g_Database.PlayerMapping.GetByFirst(m_playerToObserveID);
+
     m_isFirstUpdate = false;
   }
 
@@ -39,15 +42,6 @@ void GameTraceCollector::OnGameFrame()
       CollectGameTraceForTrainedUnit(unit, trainer);
     }
 	}
-}
-//////////////////////////////////////////////////////////////////////////
-void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
-{
-	Order order = unit->getOrder();
-
-	LogInfo("(P%d,%s) %s[%d]: %s",
-    unit->getPlayer()->getID(), unit->getPlayer()->getName().c_str(),
-    unit->getType().getName().c_str(), unit->getID(), order.c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 bool GameTraceCollector::IsAutoGatheringResources(const Unit unit)
@@ -129,13 +123,6 @@ bool GameTraceCollector::IsUnitBeingTrained(const Unit unit)
   return isBeingTrained;
 }
 //////////////////////////////////////////////////////////////////////////
-void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit trainee, const BWAPI::Unit trainer)
-{
-  LogInfo("(P%d,%s) %s[%d]: %s",
-    trainer->getPlayer()->getID(), trainer->getPlayer()->getName().c_str(),
-    trainer->getType().c_str(), trainer->getID(), "Train");
-}
-//////////////////////////////////////////////////////////////////////////
 Unit GameTraceCollector::ReasonTrainerUnitForTrainee(const Unit trainee)
 {
   Player playerToObserve = Broodwar->getPlayer(m_playerToObserveID);
@@ -197,3 +184,63 @@ Unit GameTraceCollector::ReasonTrainerUnitForTrainee(const Unit trainee)
 
   return suspectedTrainer;
 }
+//////////////////////////////////////////////////////////////////////////
+void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
+{
+  Order order = unit->getOrder();
+
+  // Train order has a special handling
+  assert(unit->getOrder() != Orders::Train);
+
+  ActionType action;
+  
+  LogInfo("(P%d,%s) %s[%d]: %s",
+    unit->getPlayer()->getID(), unit->getPlayer()->getName().c_str(),
+    unit->getType().getName().c_str(), unit->getID(), order.c_str());
+
+  // We send traces only for actions recognized by the engine
+  if (!g_Database.ActionMapping.TryGetByFirst(order.getID(), action))
+  {
+    LogWarning("Order %s will not be collected, it is not supported order", order.c_str());
+    return;
+  }
+
+  GameTrace *pTrace = nullptr;
+  PlanStepParameters actionParams;
+  GameStateEx gameState;
+
+  pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
+
+  SendGameTrace(pTrace);
+}
+//////////////////////////////////////////////////////////////////////////
+void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit trainee, const BWAPI::Unit trainer)
+{
+  ActionType action;
+
+  LogInfo("(P%d,%s) %s[%d]: %s",
+    trainer->getPlayer()->getID(), trainer->getPlayer()->getName().c_str(),
+    trainer->getType().c_str(), trainer->getID(), "Train");
+
+  assert(g_Database.ActionMapping.ContainsFirst(Orders::Train.getID()));
+  action = g_Database.ActionMapping.GetByFirst(Orders::Train.getID());
+
+  GameTrace *pTrace = nullptr;
+  PlanStepParameters actionParams;
+  GameStateEx gameState;
+
+  pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
+
+  SendGameTrace(pTrace);
+}
+//////////////////////////////////////////////////////////////////////////
+void GameTraceCollector::SendGameTrace(GameTrace* pTrace)
+{
+  DataMessage<GameTrace> *pTraceMsg = nullptr;
+
+  assert(pTrace != nullptr);
+  pTraceMsg = new DataMessage<GameTrace>(Broodwar->getFrameCount(), MSG_GameActionLog, pTrace);
+
+  g_MessagePump.Send(pTraceMsg, true);
+}
+

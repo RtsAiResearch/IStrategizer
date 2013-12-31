@@ -26,7 +26,7 @@ using namespace IStrategizer;
 
 LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy)
 {
-    _helper     = new CaseLearningHelper(p_player, p_enemy);
+    _helper     = new CaseLearningHelper();
     _retainer   = new RetainerEx(g_CaseBasePath);
 }
 //------------------------------------------------------------------------------------------------
@@ -98,18 +98,18 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrac
     {
         for (g = 0; g < m_rowSize; ++g)
         {
-            if (!p_traces[i]->GoalSatisfaction()[g] && !m_currentCases[g])
+            if (!_helper->TraceSatisfiedGoals(p_traces[i])[g] && !m_currentCases[g])
             {
                 m_tempRPlan = RawPlanEx(nullptr, SequentialPlan());
                 m_currentCases[g] = new RawCaseEx(m_tempRPlan, p_traces[i]->GameState());
                 //m_currentCases[g] = new RawCaseEx(m_tempRPlan, nullptr);
                 AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
             }
-            else if(!p_traces[i]->GoalSatisfaction()[g] && m_currentCases[g])
+            else if(!_helper->TraceSatisfiedGoals(p_traces[i])[g] && m_currentCases[g])
             {
                 AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
             }
-            else if (p_traces[i]->GoalSatisfaction()[g] && m_currentCases[g])
+            else if (!_helper->TraceSatisfiedGoals(p_traces[i])[g] && m_currentCases[g])
             {
                 m_currentCases[g]->rawPlan.Goal = _helper->GetGoalSatisfactionRow().GetGoal(g);
                 AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);

@@ -24,6 +24,7 @@ private:
 	void InitEntityIdents();
 	void InitUpgradeIdents();
 	void InitTechIdents();
+  void InitActions();
 	bool m_initialized;
 
 public:
@@ -34,7 +35,6 @@ public:
 	void Init();
 
 	inline static DefinitionCrossMapping& Instance() { static DefinitionCrossMapping m_instance; return m_instance; }
-	void InitActions();
 	CrossMap<TID, IStrategizer::EntityClassType>	EntityMapping;
 	CrossMap<TID, IStrategizer::ResearchType>		UpgradeMapping;
 	CrossMap<TID, IStrategizer::ResearchType>		TechMapping;

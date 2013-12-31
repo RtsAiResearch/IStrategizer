@@ -15,7 +15,8 @@ namespace IStrategizer
 	private:
 		T* _data;
 	public:
-		const T* Data();
+    const T* Data() const;
+		T* Data();
 		DataMessage(unsigned long p_gameCycle, MessageType p_messageTypeID, T* p_data);
 		~DataMessage();
 	};
@@ -27,11 +28,11 @@ namespace IStrategizer
 	}
 	//----------------------------------------------------------------------------------------------
 	template<class T>
-	const T* DataMessage<T>::Data()
-	{
-		return _data;
-	}
-	//----------------------------------------------------------------------------------------------
+	const T* DataMessage<T>::Data() const { return _data; }
+  //----------------------------------------------------------------------------------------------
+  template<class T>
+  T* DataMessage<T>::Data() { return _data; }
+  //----------------------------------------------------------------------------------------------
 	template<class T>
 	DataMessage<T>::~DataMessage()
 	{

@@ -15,6 +15,7 @@ namespace IStrategizer
 
 	const int TIME_STAMP_SIZE_EX = 1;
 
+
 	typedef	std::vector<PlanStepEx*> SequentialPlan;
 
 	class RawPlanEx

@@ -20,6 +20,10 @@ namespace IStrategizer
 {
 	typedef unsigned long long TPathKey;
 
+  // N X 1 matrix of booleans, where N = number supported goals, 
+  // where GoalMatrix[i] indicates whether the goal was satisfied or not
+  typedef std::vector<bool> GoalMatrix;
+
 	class GoalSatisfactionRow
 	{
 		vector<CombinatoricsAndOrGraph<GoalSatisfactionRow>> _goalParamGraph;

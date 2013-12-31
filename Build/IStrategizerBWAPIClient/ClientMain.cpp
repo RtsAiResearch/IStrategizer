@@ -66,7 +66,6 @@ void ClientMain::InitIStrategizer()
 		if (Broodwar->isReplay())
 		{
       Playerset players = Broodwar->getPlayers();
-      size_t numPlayers = players.size();
       TID playerToObserveID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
 
 			m_pTraceCollector = new GameTraceCollector(playerToObserveID);

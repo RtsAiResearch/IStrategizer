@@ -29,6 +29,7 @@ void DefinitionCrossMapping::Init()
 	InitEntityIdents();
 	InitUpgradeIdents();
 	InitTechIdents();
+  InitActions();
 
 	m_initialized = true;
 }
@@ -254,4 +255,14 @@ void DefinitionCrossMapping::ResearchTypes(vector<IStrategizer::ResearchType>& p
 //----------------------------------------------------------------------------------------------
 void DefinitionCrossMapping::InitActions()
 {
+  vector< pair<TID, ActionType> > actions;
+
+  actions.push_back(make_pair(Orders::AttackMove.getID(), ACTIONEX_AttackGround));
+  actions.push_back(make_pair(Orders::AttackUnit.getID(), ACTIONEX_AttackEntity));
+  actions.push_back(make_pair(Orders::ResearchTech.getID(), ACTIONEX_Research));
+  actions.push_back(make_pair(Orders::Upgrade.getID(), ACTIONEX_Research));
+  actions.push_back(make_pair(Orders::PlaceBuilding.getID(), ACTIONEX_BuildEx));
+  actions.push_back(make_pair(Orders::Train.getID(), ACTIONEX_Train));
+
+  ActionMapping = CrossMap<TID, IStrategizer::ActionType>(actions);
 }

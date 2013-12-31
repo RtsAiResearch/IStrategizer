@@ -5,6 +5,7 @@
 #include "MessagePumpObserver.h"
 #include "GameTrace.h"
 #include "GoalSatisfactionRow.h"
+#include <map>
 
 namespace IStrategizer
 {
@@ -14,20 +15,22 @@ namespace IStrategizer
 	class CaseLearningHelper : public MessagePumpObserver
 	{
 	private:
-		GameTrace::List			_observedTraces;
-		PlayerType				_humanPlayer;
-		PlayerType				_staticAIBot;
-		GoalSatisfactionRow     _goalSatisfactionRow;
-		GoalMatrix	    _row;
+		GameTrace::List			    m_observedTraces;
+    std::map<GameTrace*, GoalMatrix> m_traceSatisfiedGoalsMap;
+		GoalSatisfactionRow     m_goalSatisfactionRow;
+		GoalMatrix	            m_row;
+    GoalMatrix				      m_satisfiedGoals;
+
 		GameStateEx*			ComputeGameState();
-		GoalMatrix		ComputeGoalSatisfactionRow(unsigned long p_gameCycle);
+		GoalMatrix		    ComputeGoalSatisfactionRow(unsigned p_gameCycle);
 
 	public:
-		CaseLearningHelper(PlayerType p_humanPlayer, PlayerType p_staticAIBot);
+		CaseLearningHelper();
 		void				    NotifyMessegeSent(Message* p_message);
-		const GameTrace::List	ObservedTraces() const { return _observedTraces; }
-		const GoalSatisfactionRow& GetGoalSatisfactionRow() const { return _goalSatisfactionRow; }
-		GoalSatisfactionRow& GetGoalSatisfactionRow() { return _goalSatisfactionRow; }
+		const GameTrace::List	ObservedTraces() const { return m_observedTraces; }
+		const GoalSatisfactionRow& GetGoalSatisfactionRow() const { return m_goalSatisfactionRow; }
+		GoalSatisfactionRow& GetGoalSatisfactionRow() { return m_goalSatisfactionRow; }
+    const GoalMatrix& TraceSatisfiedGoals(GameTrace* p_pTrace) const { return m_traceSatisfiedGoalsMap.at(p_pTrace); }
 	};
 }
 
