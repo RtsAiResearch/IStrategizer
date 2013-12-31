@@ -366,6 +366,9 @@
     <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp">
       <Filter>Source Files\CaseBaseLearner</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h">
@@ -706,6 +709,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
+      <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
