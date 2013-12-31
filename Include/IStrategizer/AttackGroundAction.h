@@ -32,11 +32,11 @@ namespace IStrategizer
 		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
 
 	private:
-		////> type=int
 		TID			_attackerId;
-		
 		Vector2		_position;
 		GameEntity*	_pGameAttacker;
+		int			_numberOfEnemyBuildings;
+		int			_numberOfEnemyUnits;
 	};
 }
 

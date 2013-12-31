@@ -32,6 +32,7 @@ namespace IStrategizer
 		TID AdaptBuildingForTraining(EntityClassType p_traineeType);
 		TID AdaptBuildingForResearch(ResearchType p_researchType);
 		TID AdaptAttacker(EntityClassType p_attackerType);
+		TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters);
 		Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
 
 	private:

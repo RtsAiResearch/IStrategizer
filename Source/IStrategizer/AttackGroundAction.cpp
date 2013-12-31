@@ -13,6 +13,7 @@
 #include "GameTechTree.h"
 #include "GameType.h"
 #include "GameEntity.h"
+#include "WorldMap.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -44,7 +45,11 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 {
 	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
 	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	CellFeature* pEnemy = g_Game->Map()->GetCellFeature(_position);
 	
+	_numberOfEnemyBuildings = pEnemy->m_enemyBuildingDescription.m_numberOfBuildings;
+	_numberOfEnemyUnits = pEnemy->m_enemyForceDescription.m_numberOfUnits;
+
 	// Adapt attacker
 	_attackerId = pAdapter->AdaptAttacker(attackerType);
 	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
@@ -63,9 +68,8 @@ void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::PreconditionsSatisfied()
 {
-	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
 	bool success = false;
-
+	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
 	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
 
 	if (!success)
@@ -74,18 +78,24 @@ bool AttackGroundAction::PreconditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
-	return true;
+	bool success = false;
+	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
+	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
+
+	if (!success)
+		return false;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied()
 {
-	Vector2 position = _pGameAttacker->GetPosition();
-	return false;
+	CellFeature* pEnemy = g_Game->Map()->GetCellFeature(_position);
+	int numberOfEnemyBuildings = pEnemy->m_enemyBuildingDescription.m_numberOfBuildings;
+	int numberOfEnemyUnits = pEnemy->m_enemyForceDescription.m_numberOfUnits;
+
+	return numberOfEnemyBuildings < _numberOfEnemyBuildings || numberOfEnemyUnits < _numberOfEnemyUnits;
 }
 //----------------------------------------------------------------------------------------------
 void  AttackGroundAction::InitializeAddressesAux()
 {
 	Action::InitializeAddressesAux();
-	/*AddMemberAddress(1,
-		&_targetCell);*/
 }

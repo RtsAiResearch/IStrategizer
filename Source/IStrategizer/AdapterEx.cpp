@@ -371,6 +371,41 @@ TID AdapterEx::AdaptAttacker(EntityClassType p_attackerType)
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////
+TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
+{
+	GamePlayer	*pPlayer;
+	GameEntity	*pEntity;
+	vector<TID>	entityIds;
+	TID			adaptedTargetId = 0;
+	double		bestDistance = INT_MAX;
+	CellFeature	*pTargetCellFeature = new CellFeature(p_parameters);
+
+	pPlayer = g_Game->Enemy();
+	assert(pPlayer);
+
+	pPlayer->Entities(entityIds);
+
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+	{
+		pEntity = pPlayer->GetEntity(entityIds[i]);
+		assert(pEntity);
+
+		if (p_targetType == pEntity->Type())
+		{
+			CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeature(pEntity->GetPosition());
+			double dist = pTargetCellFeature->GetDistance(pCandidateCellFearure);
+
+			if (dist <= bestDistance)
+			{
+				bestDistance = dist;
+				adaptedTargetId = pEntity->Id();
+			}
+		}
+	}
+
+	return 0;
+}
+//////////////////////////////////////////////////////////////////////////
 Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
 {
 	g_Game->Map()->UpdateAux();
