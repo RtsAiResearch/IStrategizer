@@ -28,6 +28,7 @@ void BuildingDescription::AddEntity(GameEntity *p_entity)
 
 	if (pType->Attr(ECATTR_IsBuilding))
 	{
+		++m_numberOfBuildings;
 		if (pType->Attr(ECATTR_IsCritical))
 			++m_numberOfCriticalBuildings;
 	}

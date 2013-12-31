@@ -32,6 +32,7 @@ namespace IStrategizer
 		TID AdaptBuildingForTraining(EntityClassType p_traineeType);
 		TID AdaptBuildingForResearch(ResearchType p_researchType);
 		TID AdaptAttacker(EntityClassType p_attackerType);
+		Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
 
 	private:
 		Vector2 GetBotColonyCenter();

@@ -16,7 +16,7 @@ namespace StarCraftModel
     class StarCraftMap : public WorldMap
     {
     public:
-		StarCraftMap() : WorldMap(8,8) {}
+		StarCraftMap() : WorldMap(128, 128, Size().X, Size().Y) { }
 		Vector2	Size() const;
 		bool	IsBuildable(Vector2 p_position, Vector2 p_dimension) const ;
     };

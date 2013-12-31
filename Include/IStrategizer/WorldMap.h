@@ -17,17 +17,20 @@ namespace IStrategizer
     {
 	private:
 		void			Initialize();
+		Vector2			FromGridToWorld(const Vector2 &p_gridPosition) const;
 
 	protected:
 		CellFeature**	m_cellFeatureMatrix;
-		unsigned		m_cellFeatureWidth;
-		unsigned		m_cellFeatureHeight;
-		unsigned		m_cellFeatureMatrixWidth;
-		unsigned		m_cellFeatureMatrixHeight;
+		int				m_cellSide;
+		int				m_numCells;
+		int				m_worldWidth;
+		int				m_worldHeight;
+		int				m_gridWidth;
+		int				m_gridHeight;
 		bool			m_initialized;
 
     public:
-		WorldMap(unsigned p_cellFeatureWidth,unsigned p_cellFeatureHeight);
+		WorldMap(int p_cellWidth, int p_cellHeight, int p_worldWidth, int p_worldHeight);
 		~WorldMap();
 
         virtual Vector2         Size() const = 0;

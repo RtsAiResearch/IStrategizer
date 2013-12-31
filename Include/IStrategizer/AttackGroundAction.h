@@ -7,6 +7,8 @@
 #include "And.h"
 #endif
 
+#include "Vector2.h"
+
 namespace IStrategizer
 {
 	class CellFeature;
@@ -35,10 +37,10 @@ namespace IStrategizer
 
 	private:
 		////> type=int
-		TID			 _attackerId;
+		TID			_attackerId;
 		
-		////> type=CellFeature*
-		CellFeature	*_targetCell;
+		Vector2		_position;
+		GameEntity*	_pGameAttacker;
 	};
 }
 

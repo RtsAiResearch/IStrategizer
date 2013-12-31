@@ -32,6 +32,7 @@ namespace StarCraftModel
     bool AttackEntity(IStrategizer::PlayerType p_opponentIndex, int p_targetEntityObjectId);
     bool Train(EntityClassType p_entityClassId);
 	bool IsTraining(TID p_traineeId);
+	IStrategizer::Vector2 GetPosition();
 	std::string ToString() const;
 
   protected:

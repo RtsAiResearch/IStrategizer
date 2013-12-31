@@ -8,6 +8,10 @@
 #include "SharedResource.h"
 #endif
 
+#ifndef VECTOR2_H
+#include "Vector2.h"
+#endif
+
 class Action;
 
 namespace IStrategizer
@@ -31,6 +35,7 @@ namespace IStrategizer
 		virtual bool AttackEntity(PlayerType p_opponentIndex, int p_targetEntityObjectId) = 0;
 		virtual bool Train(EntityClassType p_entityClassId) = 0;
 		virtual bool IsTraining(TID p_traineeId) = 0;
+		virtual Vector2 GetPosition() = 0;
 		bool Acquire() { return true; }
 		bool Release() { return true; }
 

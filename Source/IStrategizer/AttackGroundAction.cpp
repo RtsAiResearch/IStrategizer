@@ -37,30 +37,23 @@ AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)
 }
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackGround, p_parameters)
-{
-	_targetCell = new CellFeature(p_parameters);
+{	
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 {
-	EntityClassType		attackerType = (EntityClassType)_params[PARAM_EntityClassId];
-	GameEntity			*pGameAttacker;
-	AbstractAdapter		*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-
+	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
+	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	
+	// Adapt attacker
 	_attackerId = pAdapter->AdaptAttacker(attackerType);
+	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+	assert(_pGameAttacker);
+	
+	// Adapt attack position
+	_position = pAdapter->AdaptPosition(Parameters());
 
-	pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
-	assert(pGameAttacker);
-
-	return true;
-
-	//return pGameAttacker->AttackGround(7aga)
-
-	////Vector2 targetPosition = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptPosition(_targetCell);
-	//Vector2 targetPosition = Vector2::Null();
-	//EntityClassExist* m_cond = (EntityClassExist*)_aliveCondition->operator [](0);
-
-	//return g_Assist.ExecuteAttackGround(m_cond->Parameter(PARAM_EntityObjectId), targetPosition);
+	return _pGameAttacker->AttackGround(_position.X, _position.Y);
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
@@ -86,7 +79,8 @@ bool AttackGroundAction::AliveConditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied()
 {
-	throw NotImplementedException(XcptHere);
+	Vector2 position = _pGameAttacker->GetPosition();
+	return false;
 }
 //----------------------------------------------------------------------------------------------
 void  AttackGroundAction::InitializeAddressesAux()
