@@ -27,7 +27,7 @@ StarCraftEntity::StarCraftEntity(Unit p_unit) : GameEntity(p_unit->getID()), m_u
 	m_type = g_Database.EntityMapping.GetByFirst(m_unit->getType().getID());
 }
 //----------------------------------------------------------------------------------------------
-int	StarCraftEntity::Attr(EntityObjectAttribute p_attrId)
+int	StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
 {
 	// Positions are measured in pixels and are the highest resolution
 	// Walk Tiles - each walk tile is an 8x8 square of pixels. These are called walk tiles because walkability data is available at this resolution.
@@ -73,7 +73,7 @@ int	StarCraftEntity::Attr(EntityObjectAttribute p_attrId)
 	return 0;
 }
 //----------------------------------------------------------------------------------------------
-ObjectStateType StarCraftEntity::FetchState()
+ObjectStateType StarCraftEntity::FetchState() const
 {
 	bool isIdle = m_unit->isIdle();
 	bool isCompleted = m_unit->isCompleted();
@@ -174,7 +174,7 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId)
+bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
 {
 	Unit traineeObj = Broodwar->getUnit(p_traineeId);
 
