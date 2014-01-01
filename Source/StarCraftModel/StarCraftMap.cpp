@@ -5,6 +5,7 @@
 #include "BWAPI.h"
 
 using namespace StarCraftModel;
+using namespace IStrategizer;
 using namespace BWAPI;
 
 Vector2 StarCraftMap::Size() const

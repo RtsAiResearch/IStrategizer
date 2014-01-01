@@ -45,19 +45,19 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 {
 	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
 	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-	CellFeature* pEnemy = g_Game->Map()->GetCellFeature(_position);
+
+    // Adapt attack position
+    _position = pAdapter->AdaptPosition(Parameters());
+	CellFeature* pAttackCell = g_Game->Map()->GetCellFeature(_position);
 	
-	_numberOfEnemyBuildings = pEnemy->m_enemyBuildingDescription.m_numberOfBuildings;
-	_numberOfEnemyUnits = pEnemy->m_enemyForceDescription.m_numberOfUnits;
+	_numberOfEnemyBuildings = pAttackCell->m_enemyBuildingDescription.m_numberOfBuildings;
+	_numberOfEnemyUnits = pAttackCell->m_enemyForceDescription.m_numberOfUnits;
 
 	// Adapt attacker
 	_attackerId = pAdapter->AdaptAttacker(attackerType);
 	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
 	assert(_pGameAttacker);
 	
-	// Adapt attack position
-	_position = pAdapter->AdaptPosition(Parameters());
-
 	return _pGameAttacker->AttackGround(_position.X, _position.Y);
 }
 //----------------------------------------------------------------------------------------------
@@ -70,20 +70,24 @@ bool AttackGroundAction::PreconditionsSatisfied()
 {
 	bool success = false;
 	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
+	success = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
 
 	if (!success)
 		return false;
+    else
+        return true;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
 	bool success = false;
 	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
+	success = g_Assist.DoesEntityObjectExist(_attackerId);
 
 	if (!success)
 		return false;
+    else
+        return true;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied()

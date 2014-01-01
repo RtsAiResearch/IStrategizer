@@ -21,16 +21,16 @@ namespace IStrategizer
 
 	protected:
 		CellFeature**	m_cellFeatureMatrix;
-		int				m_cellSide;
-		int				m_numCells;
-		int				m_worldWidth;
-		int				m_worldHeight;
-		int				m_gridWidth;
-		int				m_gridHeight;
+		unsigned        m_cellSide;
+		unsigned        m_numCells;
+		unsigned        m_worldWidth;
+		unsigned        m_worldHeight;
+		unsigned        m_gridWidth;
+		unsigned		m_gridHeight;
 		bool			m_initialized;
 
     public:
-		WorldMap(int p_cellWidth, int p_cellHeight, int p_worldWidth, int p_worldHeight);
+		WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight);
 		~WorldMap();
 
         virtual Vector2         Size() const = 0;
@@ -38,7 +38,7 @@ namespace IStrategizer
 		Vector2					CellSize() const;
 		void					UpdateAux();
 		CellFeature*			GetCellFeature(Vector2 p_position) const;
-		Vector2					GetNearestCell(CellFeature* p_cell, double p_threshold) const;
+		Vector2					GetNearestCell(CellFeature* p_cell) const;
 		bool					IsBuildable(Vector2 p_position, Vector2 p_dimension) const ;
 
     };

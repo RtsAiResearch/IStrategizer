@@ -5,20 +5,17 @@
 #include "WorldMap.h"
 #endif
 
-namespace BWAPI
-{
-	class Game;
-}
-
 namespace StarCraftModel
 {
-    using namespace IStrategizer;
-    class StarCraftMap : public WorldMap
+    class StarCraftMap : public IStrategizer::WorldMap
     {
     public:
-		StarCraftMap() : WorldMap(128, 128, Size().X, Size().Y) { }
-		Vector2	Size() const;
-		bool	IsBuildable(Vector2 p_position, Vector2 p_dimension) const ;
+		StarCraftMap(unsigned resolution) 
+            : WorldMap(Size().X / resolution, Size().Y / resolution, Size().X, Size().Y) 
+        { }
+
+		IStrategizer::Vector2	Size() const;
+		bool	IsBuildable(IStrategizer::Vector2 p_position, IStrategizer::Vector2 p_dimension) const ;
     };
 }
 

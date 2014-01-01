@@ -146,7 +146,7 @@ bool StarCraftEntity::AttackGround(int p_x, int p_y)
 	return attacker->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::AttackEntity(IStrategizer::PlayerType p_opponentIndex, int p_targetEntityObjectId)
+bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 {
 	Unit	attacker = m_unit;
 	Unit	target;
@@ -205,7 +205,7 @@ string StarCraftModel::StarCraftEntity::ToString() const
 	return description;
 }
 //----------------------------------------------------------------------------------------------
-IStrategizer::Vector2 StarCraftEntity::GetPosition()
+IStrategizer::Vector2 StarCraftEntity::GetPosition() const
 {
 	return Vector2(m_unit->getPosition().x, m_unit->getPosition().y);
 }

@@ -59,12 +59,13 @@ void ResourceDescription::Clear()
 	m_numberOfSupply = 0;
 }
 //----------------------------------------------------------------------------------------------
-double ResourceDescription::GetDistance(ResourceDescription *p_other)
+float ResourceDescription::GetDistance(ResourceDescription *p_other)
 {
-	double dist = 0.0;
-	dist += m_numberOfPrimary - p_other->m_numberOfPrimary;
-	dist += m_numberOfSecondary - p_other->m_numberOfSecondary;
-	dist += m_numberOfSupply - p_other->m_numberOfSupply;
+	float dist = 0.0;
+
+	dist += pow((float)(m_numberOfPrimary - p_other->m_numberOfPrimary), 2);
+	dist += pow((float)(m_numberOfSecondary - p_other->m_numberOfSecondary), 2);
+	dist += pow((float)(m_numberOfSupply - p_other->m_numberOfSupply), 2);
 
 	return dist;
 }

@@ -31,7 +31,7 @@ namespace IStrategizer
 		void	AddEntity(GameEntity *p_entity);
 		void	RemoveEntity(GameEntity *p_entity);
 		void	Clear();
-		double	GetDistance(ResourceDescription *p_other);
+		float	GetDistance(ResourceDescription *p_other);
 
 	protected:
 		void	InitializeAddressesAux();

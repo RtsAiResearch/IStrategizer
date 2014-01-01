@@ -27,14 +27,15 @@ namespace StarCraftModel
     StarCraftEntity(Unit p_unit);
     int	Attr(EntityObjectAttribute p_attrId) const;
     std::string ToString() const;
-
+    Vector2 GetPosition() const;
     bool IsTraining(TID p_traineeId) const;
+
     bool Research(ResearchType p_researchId);
     bool Build(EntityClassType p_buildingClassId, int p_x, int p_y);
     bool AttackGround(int p_x, int p_y);
-    bool AttackEntity(IStrategizer::PlayerType p_opponentIndex, int p_targetEntityObjectId);
+    bool AttackEntity(TID p_targetEntityObjectId);
     bool Train(EntityClassType p_entityClassId);
-	std::string ToString() const;	IStrategizer::Vector2 GetPosition();
+
   protected:
     ObjectStateType FetchState() const;
 

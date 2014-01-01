@@ -6,10 +6,11 @@
 #include "GameEntity.h"
 #include "CellFeature.h"
 #include "MetaData.h"
+#include <limits>
 
 using namespace IStrategizer;
 
-WorldMap::WorldMap(int p_cellWidth, int p_cellHeight, int p_worldWidth, int p_worldHeight)
+WorldMap::WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight)
 {
 	m_cellSide = p_cellWidth;
     m_cellSide = p_cellHeight;
@@ -35,7 +36,7 @@ void WorldMap::Initialize()
 void WorldMap::UpdateAux()
 {
 	vector<PlayerType>	players;
-	vector<vector<TID>>	entites;
+	vector<TID>	        currPlayerEntites;
 	GameEntity			*currentEntity;
 	unsigned			cellX, cellY;
 
@@ -53,17 +54,23 @@ void WorldMap::UpdateAux()
 	}
 
 	g_Game->Players(players);
-	entites.resize(players.size());
 
-	for (unsigned i = 0 ; i < players.size(); i++)
+	for (size_t i = 0 ; i < players.size(); i++)
 	{
-		g_Game->GetPlayer(players[i])->Entities(entites[i]); 
+        // Neutral units are ignored
+        if (players[i] == PLAYER_Neutral)
+            continue;
+
+        currPlayerEntites.clear();
+		g_Game->GetPlayer(players[i])->Entities(currPlayerEntites); 
 		
-		for (unsigned j = 0 ; j < entites[i].size(); j++)
+		for (size_t j = 0 ; j < currPlayerEntites.size(); j++)
 		{
-			currentEntity = g_Game->GetPlayer(players[i])->GetEntity(entites[i][j]);
+			currentEntity = g_Game->GetPlayer(players[i])->GetEntity(currPlayerEntites[j]);
+
 			cellX = currentEntity->Attr(EOATTR_PosX) / m_cellSide;
 			cellY = currentEntity->Attr(EOATTR_PosY) / m_cellSide;
+
 			m_cellFeatureMatrix[cellY][cellX].AddEntity(currentEntity, players[i] == PLAYER_Self);
 		}
 	}
@@ -85,28 +92,26 @@ CellFeature* WorldMap::GetCellFeature(Vector2 p_position) const
 	return &m_cellFeatureMatrix[p_position.X][p_position.Y];
 }
 //----------------------------------------------------------------------------------------------
-Vector2	WorldMap::GetNearestCell(CellFeature* p_cell, double p_threshold) const
+Vector2	WorldMap::GetNearestCell(CellFeature* p_cell) const
 {
-	Vector2 bestGridCellPosition(-1,-1);
-	Vector2 bestWorldCellPosition(-1,-1);
-	double  bestDistance = INT_MAX;
-	double  otherDistance;
+	Vector2 bestGridCellPosition = Vector2::Null();
+	Vector2 bestWorldCellPosition = Vector2::Null();
+	float  bestDistance = numeric_limits<double>::max();
+	float  currDistance = 0.0;
+
 	for (unsigned i = 0 ; i < m_gridHeight ; i++)
 	{
 		for (unsigned j = 0 ; j < m_gridWidth ; j++)
 		{
-			otherDistance = m_cellFeatureMatrix[i][j].GetDistance(p_cell);
-			if(bestDistance > otherDistance)
+			currDistance = m_cellFeatureMatrix[i][j].GetDistance(p_cell);
+
+			if(currDistance < bestDistance)
 			{
-				bestDistance = otherDistance;
+				bestDistance = currDistance;
 				bestGridCellPosition.X = j;
 				bestGridCellPosition.Y = i;
 			}
 		}
-	}
-	if (bestDistance > p_threshold)
-	{
-		return Vector2(-1,-1);
 	}
 
 	bestWorldCellPosition = FromGridToWorld(bestGridCellPosition);
@@ -129,8 +134,9 @@ WorldMap::~WorldMap()
 Vector2 WorldMap::FromGridToWorld(const Vector2 &p_gridPosition) const
 {
 	Vector2 worldPosition;
-	worldPosition.X = (int)((float)p_gridPosition.X / m_cellSide);
-	worldPosition.Y = (int)((float)p_gridPosition.Y / m_cellSide);
+
+	worldPosition.X = p_gridPosition.X * m_cellSide;
+	worldPosition.Y = p_gridPosition.Y * m_cellSide;
 
 	return worldPosition;
 }

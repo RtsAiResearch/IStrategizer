@@ -57,7 +57,7 @@ bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
 	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
 	assert(_pGameAttacker);
 
-	return _pGameAttacker->AttackEntity(g_Game->Enemy()->Id(), _targetId);
+	return _pGameAttacker->AttackEntity(_targetId);
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
@@ -68,37 +68,46 @@ void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 bool AttackEntityAction::PreconditionsSatisfied()
 {
 	bool success = false;
+
 	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
+	success = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
 
 	if (!success)
 		return false;
 
 	EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
-	g_Assist.EntityClassExist(MakePair(target, 1), success, PlayerType::PLAYER_Enemy);
+	success = g_Assist.DoesEntityClassExist(MakePair(target, 1), PLAYER_Enemy);
 
 	if (!success)
 		return false;
+    else
+        return true;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::AliveConditionsSatisfied()
 {
 	bool success = false;
+
 	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
+	success = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
 
 	if (!success)
 		return false;
+    else
+        return true;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied()
 {
 	bool success = false;
+
 	EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
-	g_Assist.EntityClassExist(MakePair(target, 1), success, PlayerType::PLAYER_Enemy);
+	success = g_Assist.DoesEntityClassExist(MakePair(target, 1), PLAYER_Enemy);
 
 	if (!success)
 		return true;
+    else
+        return false;
 }
 //----------------------------------------------------------------------------------------------
 void  AttackEntityAction::InitializeAddressesAux()

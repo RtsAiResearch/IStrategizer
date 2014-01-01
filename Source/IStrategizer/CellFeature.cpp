@@ -107,20 +107,20 @@ void CellFeature::Clear()
 	m_resourceDescription.Clear();
 }
 //----------------------------------------------------------------------------------------------
-double CellFeature::GetDistance(CellFeature *p_other)
+float CellFeature::GetDistance(CellFeature *p_other)
 {
-	double res = 0.0;
-	double alliedBuildingDistance	= m_alliedBuildingDescription.GetDistance(&(p_other->m_alliedBuildingDescription));
-	double enemyBuildingDistance	= m_enemyBuildingDescription.GetDistance(&(p_other->m_enemyBuildingDescription));
-	double alliedForceDistance		= m_alliedForceDescription.GetDistance(&(p_other->m_alliedForceDescription));
-	double enemyForceDistance		= m_enemyForceDescription.GetDistance(&(p_other->m_enemyForceDescription));
-	double resourceDistance			= m_resourceDescription.GetDistance(&(p_other->m_resourceDescription));
+	float res = 0.0;
+	float alliedBuildingDistance	= m_alliedBuildingDescription.GetDistance(&(p_other->m_alliedBuildingDescription));
+	float enemyBuildingDistance	= m_enemyBuildingDescription.GetDistance(&(p_other->m_enemyBuildingDescription));
+	float alliedForceDistance		= m_alliedForceDescription.GetDistance(&(p_other->m_alliedForceDescription));
+	float enemyForceDistance		= m_enemyForceDescription.GetDistance(&(p_other->m_enemyForceDescription));
+	float resourceDistance			= m_resourceDescription.GetDistance(&(p_other->m_resourceDescription));
 	
-	res += alliedBuildingDistance*alliedBuildingDistance;
-	res += enemyBuildingDistance*enemyBuildingDistance;
-	res += alliedForceDistance*alliedForceDistance;
-	res += enemyForceDistance*enemyForceDistance;
-	res += resourceDistance*resourceDistance;
+	res += alliedBuildingDistance;
+	res += enemyBuildingDistance;
+	res += alliedForceDistance;
+	res += enemyForceDistance;
+	res += resourceDistance;
 
 	return sqrt(res);
 }

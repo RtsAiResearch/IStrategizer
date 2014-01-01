@@ -33,7 +33,7 @@ bool ResearchAction::PreconditionsSatisfied()
 	bool			success = false;
 
 	researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
-	g_Assist.EntityClassExist(make_pair(researcherType, 1), success);
+	success = g_Assist.DoesEntityClassExist(make_pair(researcherType, 1));
 
 	if (!success)
 		return false;
@@ -47,7 +47,7 @@ bool ResearchAction::AliveConditionsSatisfied()
 {
 	bool success = false;
 
-	success = g_Assist.IsEntityObjectExist(_researcherId);
+	success = g_Assist.DoesEntityObjectExist(_researcherId);
 
 	return success;
 }

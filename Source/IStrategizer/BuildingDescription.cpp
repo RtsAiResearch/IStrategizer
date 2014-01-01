@@ -60,10 +60,12 @@ void BuildingDescription::Clear()
 	m_numberOfCriticalBuildings = 0;
 }
 //----------------------------------------------------------------------------------------------
-double BuildingDescription::GetDistance(BuildingDescription *p_other)
+float BuildingDescription::GetDistance(BuildingDescription *p_other)
 {
-	double dist = 0.0;
-	dist += abs(p_other->m_numberOfBuildings - m_numberOfBuildings);
-	dist += abs(p_other->m_numberOfCriticalBuildings - m_numberOfCriticalBuildings);
+	float dist = 0.0;
+
+	dist += pow((float)(p_other->m_numberOfBuildings - m_numberOfBuildings), 2);
+	dist += pow((float)(p_other->m_numberOfCriticalBuildings - m_numberOfCriticalBuildings), 2);
+
 	return dist;
 }

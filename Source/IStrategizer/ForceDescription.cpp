@@ -36,12 +36,13 @@ void ForceDescription::Clear()
 	m_totalDamage = 0;
 }
 
-double ForceDescription::GetDistance(ForceDescription *p_other)
+float ForceDescription::GetDistance(ForceDescription *p_other)
 {
-	double dist = 0.0;
-	dist += abs(m_numberOfUnits - p_other->m_numberOfUnits);
-	dist += abs(m_totalHP - p_other->m_totalHP);
-	dist += abs(m_totalDamage - p_other->m_totalDamage);
+	float dist = 0.0;
+
+	dist += pow((float)(m_numberOfUnits - p_other->m_numberOfUnits), 2);
+	dist += pow((float)(m_totalHP - p_other->m_totalHP), 2);
+	dist += pow((float)(m_totalDamage - p_other->m_totalDamage), 2);
 
 	return dist;
 }

@@ -409,5 +409,5 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
 {
 	g_Game->Map()->UpdateAux();
-	return g_Game->Map()->GetNearestCell(new CellFeature(p_parameters), 100);
+	return g_Game->Map()->GetNearestCell(new CellFeature(p_parameters));
 }

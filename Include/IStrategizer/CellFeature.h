@@ -38,7 +38,7 @@ namespace IStrategizer
 		void	RemoveEntity(GameEntity *p_entity, bool p_isAllied);
 		void	Clear();
 		void	To(PlanStepParameters& p_parameters);
-		double	GetDistance(CellFeature *p_other);
+		float	GetDistance(CellFeature *p_other);
 
 	protected:
 		void	InitializeAddressesAux();

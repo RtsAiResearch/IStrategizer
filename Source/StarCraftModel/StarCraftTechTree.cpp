@@ -14,6 +14,7 @@
 #include <string>
 #include <map>
 #include "BWAPI.h"
+#include <Windows.h>
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
@@ -162,6 +163,7 @@ void StarCraftTechTree::GetRequirements(int p_typeOrResearchId, vector<ResearchT
 //----------------------------------------------------------------------------------------------
 void StarCraftTechTree::GetDependents(int p_typeOrResearchId, vector<ResearchType>& p_researches, vector<EntityClassType>& p_entityTypes)
 {
+    UNREFERENCED_PARAMETER(p_entityTypes);
 	assert(0);
     /*if(m_dependentsCache.Contains(p_typeOrResearchId))
     {

@@ -208,7 +208,7 @@ int EngineAssist::ExecuteAttackEntity(TID p_attackerObjectId, PlayerType p_oppon
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_attackerObjectId);
 	assert(m_entity->IsLocked());
-	int ret = m_entity->AttackEntity(p_opponentIndex, p_targetEntityObjectId);
+	int ret = m_entity->AttackEntity(p_targetEntityObjectId);
 
     return ret;
 }
@@ -474,18 +474,19 @@ int EngineAssist::GetFilterCount(PlayerType p_playerType, FilterType p_filterInd
     return ERR_Success;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::EntityClassExist(pair<EntityClassType, unsigned> p_entityType, bool &p_exist, PlayerType p_playerType)
+bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entityType, PlayerType p_playerType)
 {
 	GamePlayer*	pPlayer;
 	GameEntity*	pEntity;
 	vector<TID>	entities;
 	unsigned	matches;
+    bool        exist;
 
 	pPlayer = g_Game->GetPlayer(p_playerType);
 	assert(pPlayer);
 	pPlayer->Entities(entities);
 
-	p_exist = false;
+	exist = false;
 	matches = 0;
 
 	for(int i = 0, size = entities.size(); i < size; ++i)
@@ -497,24 +498,25 @@ int EngineAssist::EntityClassExist(pair<EntityClassType, unsigned> p_entityType,
 			++matches;
 	}
 
-	p_exist = (matches >= p_entityType.second);
+	exist = (matches >= p_entityType.second);
 
-	return ERR_Success;
+	return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::EntityClassExist(const map<EntityClassType, unsigned> &p_entityTypes, bool &p_exist, PlayerType p_playerType)
+bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_entityTypes, PlayerType p_playerType)
 {
-	GamePlayer*			pPlayer;
-	GameEntity*			pEntity;
-	GameType*			pType;
+	GamePlayer*	pPlayer;
+	GameEntity*	pEntity;
+	GameType*	pType;
 	vector<TID>	entities;
-	unsigned			matches;
+	unsigned	matches;
+    bool        exist = false;
 
 	pPlayer = g_Game->GetPlayer(p_playerType);
 	assert(pPlayer);
 	pPlayer->Entities(entities);
 
-	p_exist = true;
+	exist = true;
 
 	for (map<EntityClassType, unsigned>::const_iterator itr = p_entityTypes.begin();
 		itr != p_entityTypes.end(); ++itr)
@@ -544,15 +546,15 @@ int EngineAssist::EntityClassExist(const map<EntityClassType, unsigned> &p_entit
 
 		if (matches < itr->second)
 		{
-			p_exist = false;
+			exist = false;
 			break;
 		}
 	}
 
-	return ERR_Success;
+	return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-bool EngineAssist::IsEntityObjectExist(TID p_entityObject, PlayerType p_playerType)
+bool EngineAssist::DoesEntityObjectExist(TID p_entityObject, PlayerType p_playerType)
 {
 	GamePlayer	*pPlayer;
 	GameEntity	*pEntity;
@@ -567,7 +569,7 @@ bool EngineAssist::IsEntityObjectExist(TID p_entityObject, PlayerType p_playerTy
 	return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-bool EngineAssist::IsEntityObjectExist(const vector<TID> &p_entityObjects, PlayerType p_playerType)
+bool EngineAssist::DoesEntityObjectExist(const vector<TID> &p_entityObjects, PlayerType p_playerType)
 {
 	GamePlayer	*pPlayer;
 	GameEntity	*pEntity;
@@ -647,7 +649,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
 	// 2. Additional required entities exist
 	if (p_satisfied)
 	{
-		ret = g_Assist.EntityClassExist(reqEntities, p_satisfied);
+		p_satisfied = g_Assist.DoesEntityClassExist(reqEntities);
 	}
 
 	// 3. Source building exist
@@ -656,7 +658,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
 		sourceEntity = pTechTree->SourceEntity(p_entityOrResearchType);
 		assert(sourceEntity != ECLASS_END);
 
-		ret = g_Assist.EntityClassExist(make_pair(sourceEntity, 1), p_satisfied);
+		p_satisfied = g_Assist.DoesEntityClassExist(make_pair(sourceEntity, 1));
 	}
 
 	// 4. Required resources exist

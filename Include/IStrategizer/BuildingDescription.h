@@ -22,7 +22,7 @@ namespace IStrategizer
 		void	AddEntity(GameEntity *p_entity);
 		void	RemoveEntity(GameEntity *p_entity);
 		void	Clear();
-		double	GetDistance(BuildingDescription *p_other);
+		float	GetDistance(BuildingDescription *p_other);
 	
 	protected:
 		void        InitializeAddressesAux();
