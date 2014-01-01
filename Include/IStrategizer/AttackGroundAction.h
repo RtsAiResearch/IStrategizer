@@ -7,6 +7,8 @@
 #include "And.h"
 #endif
 
+#include "Vector2.h"
+
 namespace IStrategizer
 {
 	class CellFeature;
@@ -28,17 +30,13 @@ namespace IStrategizer
 		bool		ExecuteAux(const WorldClock& p_clock );
 		void		InitializeAddressesAux() ;
 		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
-		void		InitializePreConditions();
-		void		InitializeAliveConditions();
-		void		InitializeSuccessConditions();
-		void		InitializePostConditions();
 
 	private:
-		////> type=int
-		TID			 _attackerId;
-		
-		////> type=CellFeature*
-		CellFeature	*_targetCell;
+		TID			_attackerId;
+		Vector2		_position;
+		GameEntity*	_pGameAttacker;
+		int			_numberOfEnemyBuildings;
+		int			_numberOfEnemyUnits;
 	};
 }
 

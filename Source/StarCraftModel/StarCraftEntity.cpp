@@ -17,6 +17,7 @@
 using namespace StarCraftModel;
 using namespace IStrategizer;
 using namespace BWAPI;
+using namespace std;
 
 #define TilePositionFromUnitPosition(UnitPos)	(UnitPos / 32)
 #define UnitPositionFromTilePosition(TilePos)	(TilePos * 32)
@@ -190,7 +191,7 @@ bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
 		traineeObj->getPosition().y);
 }
 //----------------------------------------------------------------------------------------------
-std::string StarCraftModel::StarCraftEntity::ToString() const
+string StarCraftModel::StarCraftEntity::ToString() const
 {
 	std::string asSharedResource = SharedResource::ToString();
 
@@ -202,4 +203,9 @@ std::string StarCraftModel::StarCraftEntity::ToString() const
 	description += ")";
 
 	return description;
+}
+//----------------------------------------------------------------------------------------------
+IStrategizer::Vector2 StarCraftEntity::GetPosition()
+{
+	return Vector2(m_unit->getPosition().x, m_unit->getPosition().y);
 }

@@ -17,11 +17,14 @@
 #include "OccupanceDataIM.h"
 
 using namespace IStrategizer;
+using namespace Serialization;
 using namespace std;
 
-typedef pair<TID, ObjectStateType> WorkerEntry;
+typedef pair<TID, ObjectStateType> UnitEntry;
 
 const unsigned AdapterEx::WorkerStatesSize = 2;
+
+const unsigned AdapterEx::AttackerStatesSize = 2;
 
 // Minimum number of build cells to be between colony buildings
 const int AdapterEx::DefaultBuildingSpacing = 32;
@@ -31,6 +34,12 @@ const int AdapterEx::DefaultBuildingSpacing = 32;
 // We consider a builder worker as unavailable
 const ObjectStateType AdapterEx::WorkerStatesRank[] = {
 	OBJSTATE_Idle, OBJSTATE_Gathering
+};
+
+// Ranked valid states for an attacker from the best to the worst state
+// It is always better to use an idle attackers and leave an attacker which is attacking already
+const ObjectStateType AdapterEx::AttackerStatesRank[] = {
+	OBJSTATE_Idle, OBJSTATE_Attacking
 };
 
 AdapterEx::AdapterEx()
@@ -160,7 +169,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 	ObjectStateType		curWorkerState;
 	TID					adaptedWorkerId = 0;
 	ObjectStateType		candidateWorkerState;
-	vector<WorkerEntry> validWorkers;
+	vector<UnitEntry> validWorkers;
 
 	candidateWorkerState = OBJSTATE_Idle;
 
@@ -185,7 +194,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 			if (curWorkerState == candidateWorkerState)
 				adaptedWorkerId = pEntity->Id();
 			else if (IsValidWorkerState(curWorkerState))
-				validWorkers.push_back(make_pair(pEntity->Id(), curWorkerState));
+				validWorkers.push_back(MakePair(pEntity->Id(), curWorkerState));
 		}
 	}
 
@@ -210,6 +219,26 @@ bool AdapterEx::IsValidWorkerState(ObjectStateType p_workerState)
 	return find(pStart, pEnd, p_workerState) != pEnd;
 }
 //////////////////////////////////////////////////////////////////////////
+bool AdapterEx::IsValidAttackerState(ObjectStateType p_attackerState)
+{
+	const ObjectStateType* pStart = AttackerStatesRank;
+	const ObjectStateType* pEnd = AttackerStatesRank + AttackerStatesSize;
+
+	return find(pStart, pEnd, p_attackerState) != pEnd;
+}
+//////////////////////////////////////////////////////////////////////////
+unsigned AdapterEx::GetAttackerStateIndex(ObjectStateType p_attackerState)
+{
+	const ObjectStateType* pStart = AttackerStatesRank;
+	const ObjectStateType* pEnd = AttackerStatesRank + AttackerStatesSize;
+	const ObjectStateType* pWhere = nullptr;
+
+	pWhere = find(pStart, pEnd, p_attackerState);
+	assert(pWhere);
+
+	return pWhere - pStart;
+}
+//////////////////////////////////////////////////////////////////////////
 unsigned AdapterEx::GetWorkerStateIndex(ObjectStateType p_workerState)
 {
 	const ObjectStateType* pStart = WorkerStatesRank;
@@ -222,7 +251,7 @@ unsigned AdapterEx::GetWorkerStateIndex(ObjectStateType p_workerState)
 	return pWhere - pStart;
 }
 //////////////////////////////////////////////////////////////////////////
-bool AdapterEx::WorkerStatesComparer(WorkerEntry &p_leftWorker, WorkerEntry &p_rightWorker)
+bool AdapterEx::WorkerStatesComparer(UnitEntry &p_leftWorker, UnitEntry &p_rightWorker)
 {
 	/*
 	To sort the states from the best to the worst, we need sort them descending
@@ -231,6 +260,17 @@ bool AdapterEx::WorkerStatesComparer(WorkerEntry &p_leftWorker, WorkerEntry &p_r
 	better is translated here as the state with the least index in the ranked states
 	*/
 	return GetWorkerStateIndex(p_leftWorker.second) < GetWorkerStateIndex(p_rightWorker.second);
+}
+//////////////////////////////////////////////////////////////////////////
+bool AdapterEx::AttackerStatesComparer(UnitEntry &p_leftAttacker, UnitEntry &p_rightAttacker)
+{
+	/*
+	To sort the states from the best to the worst, we need sort them descending
+	Return leftAttacker.second > rightAttacker.second
+	Which means that the leftAttacker state is better then the right attacker state
+	better is translated here as the state with the least index in the ranked states
+	*/
+	return GetAttackerStateIndex(p_leftAttacker.second) < GetAttackerStateIndex(p_rightAttacker.second);
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
@@ -273,4 +313,101 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 	}
 
 	return id;
+}
+//////////////////////////////////////////////////////////////////////////
+TID AdapterEx::AdaptAttacker(EntityClassType p_attackerType)
+{
+	/*
+	Attacker Adaptation Algorithm:
+	IF player has attackers THEN
+			return the attacker with the best state
+	ELSE
+		adaptation failed and return nullptr attacker Id
+	*/
+	GamePlayer			*pPlayer;
+	GameEntity			*pEntity;
+	vector<TID>			entityIds;
+	ObjectStateType		curAttackerState;
+	TID					adaptedAttackerId = 0;
+	ObjectStateType		candidateAttackerState;
+	vector<UnitEntry>	validAttackers;
+
+	candidateAttackerState = OBJSTATE_Idle;
+
+	if (!IsValidAttackerState(candidateAttackerState))
+		return TID();
+
+	pPlayer = g_Game->Self();
+	assert(pPlayer);
+
+	pPlayer->Entities(entityIds);
+
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+	{
+		pEntity = pPlayer->GetEntity(entityIds[i]);
+		assert(pEntity);
+
+		if (p_attackerType == pEntity->Type() && !pEntity->IsLocked())
+		{
+			curAttackerState = (ObjectStateType)pEntity->Attr(EOATTR_State);
+
+			if (curAttackerState == candidateAttackerState)
+				adaptedAttackerId = pEntity->Id();
+			else if (IsValidAttackerState(curAttackerState))
+				validAttackers.push_back(MakePair(pEntity->Id(), curAttackerState));
+		}
+	}
+
+	if (adaptedAttackerId != 0)
+		return adaptedAttackerId;
+	else if (!validAttackers.empty())
+	{
+		sort(validAttackers.begin(), validAttackers.end(), AttackerStatesComparer);
+		adaptedAttackerId = validAttackers[0].first;
+
+		return adaptedAttackerId;
+	}
+
+	return 0;
+}
+//////////////////////////////////////////////////////////////////////////
+TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
+{
+	GamePlayer	*pPlayer;
+	GameEntity	*pEntity;
+	vector<TID>	entityIds;
+	TID			adaptedTargetId = 0;
+	double		bestDistance = INT_MAX;
+	CellFeature	*pTargetCellFeature = new CellFeature(p_parameters);
+
+	pPlayer = g_Game->Enemy();
+	assert(pPlayer);
+
+	pPlayer->Entities(entityIds);
+
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+	{
+		pEntity = pPlayer->GetEntity(entityIds[i]);
+		assert(pEntity);
+
+		if (p_targetType == pEntity->Type())
+		{
+			CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeature(pEntity->GetPosition());
+			double dist = pTargetCellFeature->GetDistance(pCandidateCellFearure);
+
+			if (dist <= bestDistance)
+			{
+				bestDistance = dist;
+				adaptedTargetId = pEntity->Id();
+			}
+		}
+	}
+
+	return 0;
+}
+//////////////////////////////////////////////////////////////////////////
+Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
+{
+	g_Game->Map()->UpdateAux();
+	return g_Game->Map()->GetNearestCell(new CellFeature(p_parameters), 100);
 }

@@ -8,7 +8,6 @@
 #include "MapArea.h"
 #endif
 
-
 namespace IStrategizer
 {
 	class Vector2;
@@ -21,6 +20,9 @@ namespace IStrategizer
 		virtual	TID AdaptWorkerForBuild() = 0;
 		virtual TID AdaptBuildingForTraining(EntityClassType p_traineeType) = 0;
 		virtual TID AdaptBuildingForResearch(ResearchType p_researchType) = 0;
+		virtual TID AdaptAttacker(EntityClassType p_attackerType) = 0;
+		virtual TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters) = 0;
+		virtual Vector2 AdaptPosition(const PlanStepParameters& p_parameters) = 0;
 	};
 }
 

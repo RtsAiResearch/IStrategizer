@@ -13,8 +13,10 @@
 #include "GameTechTree.h"
 #include "GameType.h"
 #include "GameEntity.h"
+#include "WorldMap.h"
 
 using namespace IStrategizer;
+using namespace Serialization;
 
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)
@@ -36,43 +38,39 @@ AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)
 }
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackGround, p_parameters)
-{
-	_targetCell = new CellFeature(p_parameters);
+{	
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 {
-	EntityClassType		attackerType = (EntityClassType)_params[PARAM_EntityClassId];
-	GameEntity			*pGameAttacker;
-	AbstractAdapter		*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
+	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	CellFeature* pEnemy = g_Game->Map()->GetCellFeature(_position);
+	
+	_numberOfEnemyBuildings = pEnemy->m_enemyBuildingDescription.m_numberOfBuildings;
+	_numberOfEnemyUnits = pEnemy->m_enemyForceDescription.m_numberOfUnits;
 
-	_attackerId = pAdapter->AdaptBuildingForTraining(attackerType);
+	// Adapt attacker
+	_attackerId = pAdapter->AdaptAttacker(attackerType);
+	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+	assert(_pGameAttacker);
+	
+	// Adapt attack position
+	_position = pAdapter->AdaptPosition(Parameters());
 
-	pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
-	assert(pGameAttacker);
-
-	return true;
-
-	//return pGameAttacker->AttackGround(7aga)
-
-	////Vector2 targetPosition = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptPosition(_targetCell);
-	//Vector2 targetPosition = Vector2::Null();
-	//EntityClassExist* m_cond = (EntityClassExist*)_aliveCondition->operator [](0);
-
-	//return g_Assist.ExecuteAttackGround(m_cond->Parameter(PARAM_EntityObjectId), targetPosition);
+	return _pGameAttacker->AttackGround(_position.X, _position.Y);
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 {
-	throw NotImplementedException(XcptHere);
+	
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::PreconditionsSatisfied()
 {
-	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
 	bool success = false;
-
-	g_Assist.EntityClassExist(make_pair(attacker, 1), success);
+	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
+	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
 
 	if (!success)
 		return false;
@@ -80,55 +78,24 @@ bool AttackGroundAction::PreconditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
-	throw NotImplementedException(XcptHere);
+	bool success = false;
+	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
+	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
+
+	if (!success)
+		return false;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied()
 {
-	throw NotImplementedException(XcptHere);
+	CellFeature* pEnemy = g_Game->Map()->GetCellFeature(_position);
+	int numberOfEnemyBuildings = pEnemy->m_enemyBuildingDescription.m_numberOfBuildings;
+	int numberOfEnemyUnits = pEnemy->m_enemyForceDescription.m_numberOfUnits;
+
+	return numberOfEnemyBuildings < _numberOfEnemyBuildings || numberOfEnemyUnits < _numberOfEnemyUnits;
 }
 //----------------------------------------------------------------------------------------------
 void  AttackGroundAction::InitializeAddressesAux()
 {
 	Action::InitializeAddressesAux();
-	/*AddMemberAddress(1,
-		&_targetCell);*/
-}
-//----------------------------------------------------------------------------------------------
-void AttackGroundAction::InitializeSuccessConditions()
-{
-	//EntityClassExist* m_cond = (EntityClassExist*)_preCondition->operator [](0);
-	//int	m_unitObjectId = m_cond->GetEntityIdByIndex(0);
-
-	//_successCondition = new And();
-	//_successCondition->AddExpression(new EntityObjectExist(PLAYER_Self, m_unitObjectId));
-	//// FIXME: Target concrete position is not supported
-	//_successCondition->AddExpression(new CheckEntityObjectAttribute(PLAYER_Self, m_unitObjectId, EOATTR_PosX, RELOP_Equal, 0 /*Target Concrete Location*/));
-	//_successCondition->AddExpression(new CheckEntityObjectAttribute(PLAYER_Self, m_unitObjectId, EOATTR_PosY, RELOP_Equal, 0 /*Target Concrete Location*/));
-}
-//----------------------------------------------------------------------------------------------
-void AttackGroundAction::InitializeAliveConditions()
-{
-	/*EntityClassExist* m_cond = (EntityClassExist*)_preCondition->operator [](0);
-	int	m_unitObjectId = m_cond->GetEntityIdByIndex(0);
-
-	_aliveCondition = new And();
-	_aliveCondition->AddExpression(new EntityObjectExist(PLAYER_Self, m_unitObjectId));*/
-}
-//----------------------------------------------------------------------------------------------
-void AttackGroundAction::InitializePreConditions()
-{
-    /*vector<Expression*> m_terms;
-
-	m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1, true, true));
-    _preCondition = new And(m_terms);*/
-}
-//----------------------------------------------------------------------------------------------
-void AttackGroundAction::InitializePostConditions()
-{
-    vector<Expression*> m_terms;
-
-	//FIXME : LFHD use this condition
-	//m_terms.push_back(new CheckPositionFilterCount((PlayerType)_params[PARAM_TargetPlayerId], FILTER_AnyUnit, RELOP_Equal, 0, PositionFeatureVector::Null()));
-	_postCondition = new And(m_terms);
 }

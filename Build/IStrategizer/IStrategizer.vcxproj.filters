@@ -225,9 +225,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\AttackGroundAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\BuildAction.cpp">
-      <Filter>Source Files\CaseBase\Action</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\BuildActionEx.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
@@ -477,9 +474,6 @@
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\AttackGroundAction.h">
-      <Filter>Header Files\CaseBase\Action</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\BuildAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\BuildActionEx.h">

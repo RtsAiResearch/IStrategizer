@@ -39,9 +39,6 @@
 #ifndef ATTACKGROUNDACTION_H
 #include "AttackGroundAction.h"
 #endif
-#ifndef BUILDACTION_H
-#include "BuildAction.h"
-#endif
 #ifndef BUILDACTIONEX_H
 #include "BuildActionEx.h"
 #endif
@@ -101,7 +98,6 @@ void SerializationEssentials::Init()
 
     g_ObjectFactory.AddPrototype(new AttackEntityAction);
     g_ObjectFactory.AddPrototype(new AttackGroundAction);
-    g_ObjectFactory.AddPrototype(new BuildAction);
     g_ObjectFactory.AddPrototype(new ResearchAction);
     g_ObjectFactory.AddPrototype(new TrainAction);
 	g_ObjectFactory.AddPrototype(new BuildActionEx);

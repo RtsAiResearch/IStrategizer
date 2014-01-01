@@ -1,112 +1,107 @@
 #include "AttackEntityAction.h"
-#include "EntityClassExist.h"
-#include "EntityObjectExist.h"
-#include "CheckEntityObjectAttribute.h"
-#include "CheckPositionFilterCount.h"
-#include "Misc.h"
-#include "And.h"
 
-#ifndef RTSGAME_H
+#include <cassert>
+#include "Vector2.h"
+#include "OnlineCaseBasedPlannerEx.h"
+#include "AbstractAdapter.h"
+#include "CellFeature.h"
+#include "CaseBasedReasonerEx.h"
+#include "DataMessage.h"
+#include "EngineAssist.h"
 #include "RtsGame.h"
-#endif
-#ifndef GAMEPLAYER_H
 #include "GamePlayer.h"
-#endif
-#ifndef GAMEENTITY_H
+#include "GameTechTree.h"
+#include "GameType.h"
 #include "GameEntity.h"
-#endif
-#ifndef OR_H
-#include "Or.h"
-#endif
-#ifndef NOT_H
-#include "Not.h"
-#endif
 
 using namespace IStrategizer;
+using namespace Serialization;
 
 AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 {
-	_params[PARAM_EntityClassId]		= ECLASS_START;
-	_params[PARAM_TargetEntityClassId]	= ECLASS_START;
+	_params[PARAM_EntityClassId] = ECLASS_START;
+	_params[PARAM_TargetEntityClassId] = ECLASS_START;
+	_params[PARAM_NumberOfPrimaryResources] = 0;
+	_params[PARAM_NumberOfSecondaryResources] = 0;
+	_params[PARAM_NumberOfSupplyResources] = 0;
+	_params[PARAM_EnemyUnitsCount] = 0;
+	_params[PARAM_EnemyUnitsTotalHP] = 0;
+	_params[PARAM_EnemyUnitsTotalDamage] = 0;
+	_params[PARAM_AlliedUnitsCount] = 0;
+	_params[PARAM_AlliedUnitsTotalHP] = 0;
+	_params[PARAM_AlliedUnitsTotalDamage] = 0;
+	_params[PARAM_EnemyBuildingsCount] = 0;
+	_params[PARAM_EnemyCriticalBuildingsCount] = 0;
+	_params[PARAM_AlliedBuildingsCount] = 0;
+	_params[PARAM_AlliedCriticalBuildingsCount] = 0;
 }
 //----------------------------------------------------------------------------------------------
 AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackEntity, p_parameters)
 {
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::InitializePreConditions()
+void AttackEntityAction::Copy(IClonable* p_dest)
 {
-	map< EntityObjectAttribute, int > m_targetAttributes;
-	//FixMe : preConditions now don't check that enemy is available in "certain position"
-
-	vector<Expression*> m_terms;
-	int					aIndex;
-
-	m_terms.resize(2);
-	m_terms[aIndex = 0] = new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1, true, true);
-	m_terms[++aIndex]   = new EntityClassExist(PLAYER_Enemy, (EntityClassType)_params[PARAM_TargetEntityClassId], 1, true);
-	_preCondition = new And(m_terms);
-}
-//----------------------------------------------------------------------------------------------
-void AttackEntityAction::InitializeAliveConditions()
-{
-	TID m_targetObjectId = ((EntityClassExist*)_preCondition->At(1))->EntityObjectIds()[0];
-	int m_targetObjectHealth;
-
-	g_Assist.GetEntityObjectAttribute(PLAYER_Enemy, m_targetObjectId, EOATTR_Health, m_targetObjectHealth);
-
-	_aliveCondition->AddExpression(new EntityObjectExist(PLAYER_Self, ((EntityClassExist*)_preCondition->At(0))->EntityObjectIds()[0]));
-	_aliveCondition->AddExpression(new EntityObjectExist(PLAYER_Enemy, m_targetObjectId));
-}
-//----------------------------------------------------------------------------------------------
-void AttackEntityAction::InitializeSuccessConditions()
-{
-	TID m_targetObjectId = ((EntityClassExist*)_preCondition->At(1))->EntityObjectIds()[0];
-	int m_targetObjectHealth;
-
-	g_Assist.GetEntityObjectAttribute(PLAYER_Enemy, m_targetObjectId, EOATTR_Health, m_targetObjectHealth);
-
-	_successCondition->AddExpression(new EntityObjectExist(PLAYER_Self, ((EntityClassExist*)_preCondition->At(0))->EntityObjectIds()[0]));
-	Or* m_or = new Or();
-	m_or->AddExpression(new Not(new EntityObjectExist(PLAYER_Enemy, m_targetObjectId)));
-	m_or->AddExpression(new CheckEntityObjectAttribute(PLAYER_Enemy, m_targetObjectId, 
-		EOATTR_Health, RELOP_LessThan, m_targetObjectHealth));
-	_successCondition->AddExpression(m_or);
-}
-//----------------------------------------------------------------------------------------------
-void AttackEntityAction::InitializePostConditions()
-{
-	vector<Expression*> m_terms;
-	
-	//FIXME : LFHD use this condition
-	//m_terms.push_back(new CheckPositionFilterCount(PLAYER_Enemy, FILTER_AnyUnit, RELOP_Equal, 0, PositionFeatureVector::Null()));
-	_postCondition = new And(m_terms);
+	Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
 {
-	throw NotImplementedException(XcptHere);
-	/*return g_Assist.ExecuteAttackEntity(((ConditionEx*)_aliveCondition->At(0))->Parameter(PARAM_EntityObjectId), 
-		PLAYER_Enemy, ((ConditionEx*)_aliveCondition->At(1))->Parameter(PARAM_EntityObjectId));*/
+	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
+	EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
+	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	
+	// Adapt attacker
+	_attackerId = pAdapter->AdaptAttacker(attackerType);
+	_targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
+	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+	assert(_pGameAttacker);
+
+	return _pGameAttacker->AttackEntity(g_Game->Enemy()->Id(), _targetId);
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::Update(const WorldClock& p_clock)
+void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 {
-	Action::Update(p_clock);
-	if(PlanStepEx::State() == ESTATE_Succeeded)
-	{
-		EntityClassExist* m_cond = (EntityClassExist*)_preCondition->operator [](0);
-		GameEntity* m_entity = g_Game->GetPlayer(PLAYER_Self)->GetEntity(m_cond->GetEntityIdByIndex(0));
-		assert(m_entity->IsLocked());
-		m_entity->Unlock(this);
-	}
+	
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::Copy(IClonable* p_dest)
+bool AttackEntityAction::PreconditionsSatisfied()
 {
-	Action::Copy(p_dest);
+	bool success = false;
+	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
+	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
 
-	// AttackEntityAction* m_dest = static_cast<AttackEntityAction*>(p_dest);
+	if (!success)
+		return false;
 
-    //_targetEntityPosDescription.Copy(&m_dest->_targetEntityPosDescription);
+	EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
+	g_Assist.EntityClassExist(MakePair(target, 1), success, PlayerType::PLAYER_Enemy);
+
+	if (!success)
+		return false;
+}
+//----------------------------------------------------------------------------------------------
+bool AttackEntityAction::AliveConditionsSatisfied()
+{
+	bool success = false;
+	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
+	g_Assist.EntityClassExist(MakePair(attacker, 1), success);
+
+	if (!success)
+		return false;
+}
+//----------------------------------------------------------------------------------------------
+bool AttackEntityAction::SuccessConditionsSatisfied()
+{
+	bool success = false;
+	EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
+	g_Assist.EntityClassExist(MakePair(target, 1), success, PlayerType::PLAYER_Enemy);
+
+	if (!success)
+		return true;
+}
+//----------------------------------------------------------------------------------------------
+void  AttackEntityAction::InitializeAddressesAux()
+{
+	Action::InitializeAddressesAux();
 }

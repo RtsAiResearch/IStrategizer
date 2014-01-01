@@ -1,4 +1,5 @@
 #include "IStrategizerEx.h"
+
 #include "MessagePump.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "LearningFromHumanDemonstration.h"

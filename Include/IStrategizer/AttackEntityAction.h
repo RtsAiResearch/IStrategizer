@@ -24,14 +24,20 @@ namespace IStrategizer
 		AttackEntityAction();
 		AttackEntityAction(const PlanStepParameters& p_parameters);
 		void        Copy(IClonable* p_dest);
-		void		Update(const WorldClock& p_clock);
+		bool		PreconditionsSatisfied();
+		bool		AliveConditionsSatisfied();
+		bool		SuccessConditionsSatisfied();
 
 	protected:
-		bool		ExecuteAux(const WorldClock& p_clock);
-		void		InitializePreConditions();
-		void		InitializeAliveConditions();
-		void		InitializeSuccessConditions();
-		void		InitializePostConditions();
+		bool		ExecuteAux(const WorldClock& p_clock );
+		void		InitializeAddressesAux() ;
+		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
+
+	private:
+		TID			_attackerId;
+		TID			_targetId;
+		Vector2		_position;
+		GameEntity*	_pGameAttacker;
 	};
 }
 
