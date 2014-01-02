@@ -18,6 +18,7 @@ namespace IStrategizer
 	private:
 		void			Initialize();
 		Vector2			FromGridToWorld(const Vector2 &p_gridPosition) const;
+		Vector2			FromWorldToGrid(const Vector2 &p_worldPosition) const;
 
 	protected:
 		CellFeature**	m_cellFeatureMatrix;
@@ -37,7 +38,7 @@ namespace IStrategizer
 		Vector2					CellMatrixSize() const;
 		Vector2					CellSize() const;
 		void					UpdateAux();
-		CellFeature*			GetCellFeature(Vector2 p_position) const;
+		CellFeature*			GetCellFeatureFromWorldPosition(Vector2 p_position) const;
 		Vector2					GetNearestCell(CellFeature* p_cell) const;
 		bool					IsBuildable(Vector2 p_position, Vector2 p_dimension) const ;
 

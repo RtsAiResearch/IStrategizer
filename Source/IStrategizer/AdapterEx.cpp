@@ -378,7 +378,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 	vector<TID>	entityIds;
 	TID			adaptedTargetId = 0;
 	double		bestDistance = INT_MAX;
-	CellFeature	*pTargetCellFeature = new CellFeature(p_parameters);
+	CellFeature	*pTarGetCellFeatureFromWorldPosition = new CellFeature(p_parameters);
 
 	pPlayer = g_Game->Enemy();
 	assert(pPlayer);
@@ -392,8 +392,8 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 
 		if (p_targetType == pEntity->Type())
 		{
-			CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeature(pEntity->GetPosition());
-			double dist = pTargetCellFeature->GetDistance(pCandidateCellFearure);
+			CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+			double dist = pTarGetCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
 
 			if (dist <= bestDistance)
 			{

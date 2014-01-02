@@ -21,19 +21,7 @@ AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 {
 	_params[PARAM_EntityClassId] = ECLASS_START;
 	_params[PARAM_TargetEntityClassId] = ECLASS_START;
-	_params[PARAM_NumberOfPrimaryResources] = 0;
-	_params[PARAM_NumberOfSecondaryResources] = 0;
-	_params[PARAM_NumberOfSupplyResources] = 0;
-	_params[PARAM_EnemyUnitsCount] = 0;
-	_params[PARAM_EnemyUnitsTotalHP] = 0;
-	_params[PARAM_EnemyUnitsTotalDamage] = 0;
-	_params[PARAM_AlliedUnitsCount] = 0;
-	_params[PARAM_AlliedUnitsTotalHP] = 0;
-	_params[PARAM_AlliedUnitsTotalDamage] = 0;
-	_params[PARAM_EnemyBuildingsCount] = 0;
-	_params[PARAM_EnemyCriticalBuildingsCount] = 0;
-	_params[PARAM_AlliedBuildingsCount] = 0;
-	_params[PARAM_AlliedCriticalBuildingsCount] = 0;
+	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackEntity, p_parameters)
@@ -87,9 +75,8 @@ bool AttackEntityAction::PreconditionsSatisfied()
 bool AttackEntityAction::AliveConditionsSatisfied()
 {
 	bool success = false;
-
 	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	success = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
+	success = g_Assist.DoesEntityObjectExist(_attackerId);
 
 	if (!success)
 		return false;

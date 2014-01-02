@@ -87,16 +87,17 @@ Vector2 WorldMap::CellSize() const
 	return Vector2(m_cellSide, m_cellSide);
 }
 //----------------------------------------------------------------------------------------------
-CellFeature* WorldMap::GetCellFeature(Vector2 p_position) const
+CellFeature* WorldMap::GetCellFeatureFromWorldPosition(Vector2 p_worldPosition) const
 {
-	return &m_cellFeatureMatrix[p_position.X][p_position.Y];
+	Vector2 gridPosition = FromWorldToGrid(p_worldPosition);
+	return &m_cellFeatureMatrix[gridPosition.X][gridPosition.Y];
 }
 //----------------------------------------------------------------------------------------------
 Vector2	WorldMap::GetNearestCell(CellFeature* p_cell) const
 {
 	Vector2 bestGridCellPosition = Vector2::Null();
 	Vector2 bestWorldCellPosition = Vector2::Null();
-	float  bestDistance = numeric_limits<double>::max();
+	float  bestDistance = numeric_limits<float>::max();
 	float  currDistance = 0.0;
 
 	for (unsigned i = 0 ; i < m_gridHeight ; i++)
@@ -139,4 +140,14 @@ Vector2 WorldMap::FromGridToWorld(const Vector2 &p_gridPosition) const
 	worldPosition.Y = p_gridPosition.Y * m_cellSide;
 
 	return worldPosition;
+}
+//----------------------------------------------------------------------------------------------
+Vector2 WorldMap::FromWorldToGrid(const Vector2 &p_worldPosition) const
+{
+	Vector2 gridPosition;
+
+	gridPosition.X = p_worldPosition.X / m_cellSide;
+	gridPosition.Y = p_worldPosition.Y / m_cellSide;
+
+	return gridPosition;
 }
