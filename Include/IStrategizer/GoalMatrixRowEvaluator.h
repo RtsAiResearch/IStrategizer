@@ -22,14 +22,14 @@ namespace IStrategizer
 
   // N X 1 matrix of booleans, where N = number supported goals, 
   // where GoalMatrix[i] indicates whether the goal was satisfied or not
-  typedef std::vector<bool> GoalMatrix;
+  typedef std::vector<bool> GoalMatrixRow;
 
-	class GoalSatisfactionRow
+	class GoalMatrixRowEvaluator
 	{
-		vector<CombinatoricsAndOrGraph<GoalSatisfactionRow>> _goalParamGraph;
+		vector<CombinatoricsAndOrGraph<GoalMatrixRowEvaluator>> _goalParamGraph;
 		std::map<ParameterType, int> _parameterStart;
 		unsigned long _lastGameCycle;
-		GoalMatrix *_row;
+		GoalMatrixRow *_row;
 		int _rowSize;
 		int _currentGoal;
 		std::map<TPathKey, GoalEx*> _goals;
@@ -43,7 +43,7 @@ namespace IStrategizer
 		GoalEx*     GetGoal(TPathKey p_pathId, std::list<NodeType>& p_path);
 	public:
 		void    Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot);
-		void    Compute(unsigned p_gameCycle, GoalMatrix& p_row);
+		void    Compute(unsigned p_gameCycle, GoalMatrixRow& p_row);
 		size_t     GetRowSize() const { return (size_t)_rowSize; }
 		GoalEx* GetGoal(int p_goalIdx);
 	};
