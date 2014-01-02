@@ -62,7 +62,7 @@
       <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4480;4273;4290;4100%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4480;4290;4100%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SmallerTypeCheck>true</SmallerTypeCheck>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -114,7 +114,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CombinatoricsAndOrGraph.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\GoalSatisfactionRow.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\GoalMatrixRowEvaluator.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstration.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CaseEx.cpp" />
@@ -182,7 +182,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\Delegate.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ErrorCode.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MathHelper.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\Misc.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Persist.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Predicate.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h" />
@@ -233,7 +232,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WinWargusGoalEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\GoalSatisfactionRow.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h" />
     <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstration.h" />
     <CustomBuildStep Include="..\..\Include\IStrategizer\GameTrace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineComponent.h" />

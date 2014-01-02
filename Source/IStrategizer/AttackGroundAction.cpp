@@ -68,8 +68,7 @@ bool AttackGroundAction::PreconditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
-	bool success = false;
-	success = g_Assist.DoesEntityObjectExist(_attackerId);
+	bool success = false;	success = g_Assist.DoesEntityObjectExist(_attackerId);
 
 	if (!success)
 		return false;

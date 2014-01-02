@@ -66,8 +66,8 @@ void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanTreeNodeEx *p_pGoalNode, Cas
 {
 	PlanGraph					*pSubPlanGraph = p_pCase->GetPlanGraph();
 	vector<int>					subPlanGraphRoots = pSubPlanGraph->GetRoots();
-	PlanTreeNodeEx::List	preExpansionGoalChildren(p_pGoalNode->BelongingSubPlanChildren().begin(), p_pGoalNode->BelongingSubPlanChildren().end());
-	PlanTreeNodeEx::List	subPlanTreeNodes;
+	PlanTreeNodeEx::List	    preExpansionGoalChildren(p_pGoalNode->BelongingSubPlanChildren().begin(), p_pGoalNode->BelongingSubPlanChildren().end());
+	PlanTreeNodeEx::List	    subPlanTreeNodes;
 	vector<int>					planGraphRootIndicies(subPlanGraphRoots.begin(), subPlanGraphRoots.end());
 	queue<int>					Q;
 	vector<bool>				visited;
