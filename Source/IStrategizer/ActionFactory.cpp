@@ -4,6 +4,7 @@
 #include "AttackGroundAction.h"
 #include "AttackEntityAction.h"
 #include "MoveEntityAction.h"
+#include "GatherResourceAction.h"
 #include "ActionFactory.h"
 #include "CellFeature.h"
 #include "MoveAction.h"
@@ -40,8 +41,12 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
         return new AttackEntityAction(p_paramaters);
          break;
 
-    default:
-        throw exception("Action not supported");
+	case ACTIONEX_GatherResource:
+		throw exception("Action not implemented");
+		//Todo: Implement gather action
+
+	default:
+		throw exception("Action not supported");
     }
 
     if(p_initConditions)
@@ -80,9 +85,13 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
         m_action = new AttackEntityAction();
         break;
 
-    default:
-        throw exception("Action not supported");
-    }
+	case ACTIONEX_GatherResource:
+		m_action = new GatherResourceAction();
+		break;
+
+	default:
+		throw exception("Action not supported");
+	}
 
     if(p_initConditions)
         m_action->InitializeConditions();
