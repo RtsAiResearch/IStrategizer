@@ -81,7 +81,7 @@ bool AttackGroundAction::PreconditionsSatisfied()
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
 	bool success = false;
-	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
+
 	success = g_Assist.DoesEntityObjectExist(_attackerId);
 
 	if (!success)

@@ -3,20 +3,18 @@
 
 #include <hash_map>
 #include <vector>
+#include <sstream>
 #include "IStrategizerException.h"
 
 namespace IStrategizer
 {
-	using namespace std;
-	using namespace stdext;
-
 	template<class T1, class T2>
 	class CrossMap
 	{
 	private:
-		hash_map<T1, int>		_firstMap;
-		hash_map<T2, int>		_secondMap;
-		vector< pair<T1, T2> >	_data;
+		std::hash_map<T1, int>		_firstMap;
+		std::hash_map<T2, int>		_secondMap;
+		std::vector< std::pair<T1, T2> >	_data;
 
 	public:
 		class KeyNotFoundException : public Exception
@@ -30,7 +28,7 @@ namespace IStrategizer
 		};
 
 		CrossMap() {};
-		CrossMap(const vector< pair<T1, T2> >& p_data) : _data(p_data)
+		CrossMap(const std::vector< std::pair<T1, T2> >& p_data) : _data(p_data)
 		{
 			for (int i = 0; i < (int)p_data.size(); ++i)
 			{
@@ -45,7 +43,7 @@ namespace IStrategizer
 			_data.clear();
 		}
 		//----------------------------------------------------------------------------------------------
-		void FirstValues(vector<T1>& p_values, bool p_append = false)
+		void FirstValues(std::vector<T1>& p_values, bool p_append = false)
 		{
 			if (p_append)
 			{
@@ -65,7 +63,7 @@ namespace IStrategizer
 			}
 		}
 		//----------------------------------------------------------------------------------------------
-		void SecondValues(vector<T2>& p_values, bool p_append = false)
+		void SecondValues(std::vector<T2>& p_values, bool p_append = false)
 		{
 			if (p_append)
 			{
@@ -89,12 +87,12 @@ namespace IStrategizer
 		{
 			if (!ContainsFirst(p_key))
             {
-                std::string xcptWhat;
-                xcptWhat += "Key ";
-                xcptWhat += p_key;
-                xcptWhat += " not found";
+                std::stringstream xcptStream;
+                xcptStream << "First Key '";
+                xcptStream << p_key;
+                xcptStream << "' not found";
 
-                throw KeyNotFoundException(XcptHere, xcptWhat.c_str());
+                throw KeyNotFoundException(XcptHere, xcptStream.str().c_str());
             }
 
 			return _data[_firstMap[p_key]].second; 
@@ -104,12 +102,12 @@ namespace IStrategizer
 		{
 			if (!ContainsSecond(p_key))
             {
-                std::string xcptWhat;
-                xcptWhat += "Key ";
-                xcptWhat += p_key;
-                xcptWhat += " not found";
+                std::stringstream xcptStream;
+                xcptStream << "Second Key '";
+                xcptStream << p_key;
+                xcptStream << "' not found";
 
-				throw KeyNotFoundException(XcptHere, xcptWhat.c_str());
+				throw KeyNotFoundException(XcptHere, xcptStream.str().c_str());
             }
 
 			return _data[_secondMap[p_key]].first; 
@@ -120,7 +118,7 @@ namespace IStrategizer
 			int index;
 			if(_firstMap.find(p_first) == _firstMap.end())
 			{
-				_data.push_back(make_pair(p_first, p_newSecond));
+				_data.push_back(make_std::pair(p_first, p_newSecond));
 				index = _data.size() - 1;
 				_secondMap[p_newSecond] = index;
 				_firstMap[p_first] = index;
@@ -143,7 +141,7 @@ namespace IStrategizer
 			int index;
 			if(_secondMap.find(p_second) == _secondMap.end())
 			{
-				_data.push_back(make_pair(p_newFirst, p_second));
+				_data.push_back(make_std::pair(p_newFirst, p_second));
 				index = _data.size() - 1;
 				_secondMap[p_second] = index;
 				_firstMap[p_newFirst] = index;
@@ -174,7 +172,7 @@ namespace IStrategizer
 		//----------------------------------------------------------------------------------------------
 		bool TryGetByFirst(const T1& p_key1, T2& p_key2)
 		{ 
-			hash_map<T1, int>::const_iterator itr = _firstMap.find(p_key1);
+			std::hash_map<T1, int>::const_iterator itr = _firstMap.find(p_key1);
 
 			if (itr != _firstMap.end())
 			{
@@ -189,7 +187,7 @@ namespace IStrategizer
 		//----------------------------------------------------------------------------------------------
 		bool TryGetBySecond(const T2& p_key2, T1& p_key1)
 		{ 
-			hash_map<T2, int>::const_iterator itr = _secondMap.find(p_key2);
+			std::hash_map<T2, int>::const_iterator itr = _secondMap.find(p_key2);
 
 			if (itr != _secondMap.end())
 			{

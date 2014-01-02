@@ -218,6 +218,8 @@ void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit traine
 {
     ActionType action;
 
+    UNREFERENCED_PARAMETER(trainee);
+
     LogInfo("(P%d,%s) %s[%d]: %s",
         trainer->getPlayer()->getID(), trainer->getPlayer()->getName().c_str(),
         trainer->getType().c_str(), trainer->getID(), "Train");
