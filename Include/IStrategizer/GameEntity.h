@@ -37,6 +37,8 @@ namespace IStrategizer
 		virtual bool Train(EntityClassType p_entityClassId) = 0;
 		virtual bool IsTraining(TID p_traineeId) = 0;
 		virtual Vector2 GetPosition() = 0;
+		virtual double GetVelocityX() = 0;
+		virtual double GetVelocityY() = 0;
 		bool Acquire() { return true; }
 		bool Release() { return true; }
 

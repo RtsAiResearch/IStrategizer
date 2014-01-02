@@ -34,6 +34,8 @@ namespace StarCraftModel
     bool Train(EntityClassType p_entityClassId);
 	bool IsTraining(TID p_traineeId);
 	IStrategizer::Vector2 GetPosition();
+	double GetVelocityX();
+	double GetVelocityY();
 	std::string ToString() const;
 
   protected:

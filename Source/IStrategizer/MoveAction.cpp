@@ -1,6 +1,7 @@
 #include "MoveAction.h"
 
 #include <cassert>
+#include <limits>
 #include "Vector2.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "AbstractAdapter.h"
@@ -19,6 +20,20 @@ using namespace IStrategizer;
 MoveAction::MoveAction() :
 Action(ACTIONEX_Move)
 {
+	_params[PARAM_EntityClassId] = ECLASS_START;
+	_params[PARAM_NumberOfPrimaryResources] = 0;
+	_params[PARAM_NumberOfSecondaryResources] = 0;
+	_params[PARAM_NumberOfSupplyResources] = 0;
+	_params[PARAM_EnemyUnitsCount] = 0;
+	_params[PARAM_EnemyUnitsTotalHP] = 0;
+	_params[PARAM_EnemyUnitsTotalDamage] = 0;
+	_params[PARAM_AlliedUnitsCount] = 0;
+	_params[PARAM_AlliedUnitsTotalHP] = 0;
+	_params[PARAM_AlliedUnitsTotalDamage] = 0;
+	_params[PARAM_EnemyBuildingsCount] = 0;
+	_params[PARAM_EnemyCriticalBuildingsCount] = 0;
+	_params[PARAM_AlliedBuildingsCount] = 0;
+	_params[PARAM_AlliedCriticalBuildingsCount] = 0;
 }
 //////////////////////////////////////////////////////////////////////////
 MoveAction::MoveAction(const PlanStepParameters& p_parameters) :
@@ -53,7 +68,18 @@ bool MoveAction::PreconditionsSatisfied()
 //////////////////////////////////////////////////////////////////////////
 bool MoveAction::AliveConditionsSatisfied()
 {
-	return g_Assist.IsEntityObjectExist(_entityId);
+	bool success = g_Assist.IsEntityObjectExist(_entityId);
+
+	if(success)
+	{
+		GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
+		assert(entity);
+
+        success = entity->GetVelocityX() > numeric_limits<double>::epsilon()
+            || entity->GetVelocityY() > numeric_limits<double>::epsilon();
+	}
+
+	return success;
 }
 //////////////////////////////////////////////////////////////////////////
 bool MoveAction::SuccessConditionsSatisfied()
@@ -64,8 +90,15 @@ bool MoveAction::SuccessConditionsSatisfied()
 	{
 		GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
 		assert(entity);
+        Vector2 currentPosition = entity->GetPosition();
 
-		success = entity->GetPosition() == _position;
+        double euclideanDistance = sqrt((double)
+            (currentPosition.Y - _position.Y) * (currentPosition.Y - _position.Y)
+            + (currentPosition.X - _position.X) * (currentPosition.X - _position.X));
+		
+        success = euclideanDistance < numeric_limits<double>::epsilon()
+            && entity->GetVelocityX() < numeric_limits<double>::epsilon()
+            && entity->GetVelocityY() < numeric_limits<double>::epsilon();
 	}
 
 	return success;

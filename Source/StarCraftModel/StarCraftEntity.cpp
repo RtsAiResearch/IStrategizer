@@ -217,3 +217,13 @@ IStrategizer::Vector2 StarCraftEntity::GetPosition()
 {
 	return Vector2(m_unit->getPosition().x, m_unit->getPosition().y);
 }
+//----------------------------------------------------------------------------------------------
+double StarCraftEntity::GetVelocityX()
+{
+	return m_unit->getVelocityX();
+}
+//----------------------------------------------------------------------------------------------
+double StarCraftEntity::GetVelocityY()
+{
+	return m_unit->getVelocityY();
+}

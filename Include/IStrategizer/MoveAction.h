@@ -9,8 +9,6 @@
 
 namespace IStrategizer
 {
-	class CellFeature;
-
 	///> class=MoveAction
 	///> parent=Action
 	class MoveAction : public Action
@@ -32,7 +30,7 @@ namespace IStrategizer
 
 	private:
 		TID			_entityId;
-		Vector2		_position;
+		Vector2     _position;
 	};
 }
 
