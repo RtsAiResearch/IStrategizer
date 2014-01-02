@@ -28,6 +28,8 @@ namespace StarCraftModel
     int	Attr(EntityObjectAttribute p_attrId) const;
     std::string ToString() const;
     Vector2 GetPosition() const;
+    double GetVelocityX() const;
+    double GetVelocityY() const;
     bool IsTraining(TID p_traineeId) const;
 
     bool Research(ResearchType p_researchId);
@@ -35,6 +37,7 @@ namespace StarCraftModel
     bool AttackGround(int p_x, int p_y);
     bool AttackEntity(TID p_targetEntityObjectId);
     bool Train(EntityClassType p_entityClassId);
+    bool Move(int p_x, int p_y);
 
   protected:
     ObjectStateType FetchState() const;

@@ -690,3 +690,16 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
 
 	return ret;
 }
+//------------------------------------------------------------------------------------------------------------------------------------------------
+bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance)
+{
+    GameEntity* entity = g_Game->Self()->GetEntity(p_entityId);
+    assert(entity);
+    Vector2 currentPosition = entity->GetPosition();
+
+    double euclideanDistance = sqrt((double)
+        (currentPosition.Y - p_point.Y) * (currentPosition.Y - p_point.Y)
+        + (currentPosition.X - p_point.X) * (currentPosition.X - p_point.X));
+
+    return euclideanDistance <= p_maxDistance;
+}

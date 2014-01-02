@@ -53,6 +53,7 @@ namespace IStrategizer
 		CheckReturn bool DoesEntityObjectExist(IN const vector<TID> &p_entityObjects, IN PlayerType p_playerType = PLAYER_Self);
 		CheckReturn int	ResearchesDone(IN const vector<ResearchType> &p_researchTypes, OUT bool &p_done, IN PlayerType p_playerType = PLAYER_Self);
 		CheckReturn int PrerequisitesSatisfied(IN int p_entityOrResearchType, OUT bool &p_satisfied, IN PlayerType p_playerType = PLAYER_Self);
+		CheckReturn bool IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance);
 
 #define g_Assist EngineAssist::Instance()
 	};

@@ -29,6 +29,8 @@ namespace IStrategizer
         EntityClassType Type() const { return m_type; }
 		virtual std::string ToString() const = 0;
         virtual Vector2 GetPosition() const = 0;
+        virtual double GetVelocityX() const = 0;
+        virtual double GetVelocityY() const = 0;
         virtual bool IsTraining(TID p_traineeId) const = 0;
 
         virtual int Attr(EntityObjectAttribute p_attrId) const = 0;
@@ -37,6 +39,7 @@ namespace IStrategizer
 		virtual bool AttackGround(int p_x, int p_y) = 0;
 		virtual bool AttackEntity(TID p_targetEntityObjectId) = 0;
 		virtual bool Train(EntityClassType p_entityClassId) = 0;
+		virtual bool Move(int p_x, int p_y) = 0;
 		bool Acquire() { return true; }
 		bool Release() { return true; }
 
