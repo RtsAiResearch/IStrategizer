@@ -184,6 +184,8 @@ namespace IStrategizer
 		PARAM_EnemyCriticalBuildingsCount,
 		PARAM_AlliedBuildingsCount,
 		PARAM_AlliedCriticalBuildingsCount,
+		PARAM_DistanceToEnemyBase,
+		PARAM_DistanceToBase,
 		PARAM_REALVALEND,
 		PARAM_END = PARAM_REALVALEND
 	};
@@ -225,6 +227,8 @@ namespace IStrategizer
 	Enums[PARAM_EnemyCriticalBuildingsCount] = "Enemy Critical Buildings Count"; \
 	Enums[PARAM_AlliedBuildingsCount] = "Allied Buildings Count"; \
 	Enums[PARAM_AlliedCriticalBuildingsCount] = "Allied Critical Buildings Count"; \
+	Enums[PARAM_DistanceToEnemyBase] = "Distance To Enemy Base"; \
+	Enums[PARAM_DistanceToBase] = "Distance To Base"; \
 	//---------------------------------------------------------------------------
 #define Prefix_ExecutionStateType ESTATE
 	enum ExecutionStateType
@@ -269,6 +273,7 @@ namespace IStrategizer
 		OBJSTATE_Gathering,
 		OBJSTATE_Training,
 		OBJSTATE_Attacking,
+		OBJSTATE_UnderAttack,
 		OBJSTATE_END
 	};
 #define Define_ObjectStateType \
@@ -278,7 +283,8 @@ namespace IStrategizer
 	Enums[OBJSTATE_Constructing] = "Constructing"; \
 	Enums[OBJSTATE_Gathering] = "Gathering"; \
 	Enums[OBJSTATE_Training] = "Training"; \
-	Enums[OBJSTATE_Attacking] = "Attacking";
+	Enums[OBJSTATE_Attacking] = "Attacking"; \
+	Enums[OBJSTATE_UnderAttack] = "Under Attack";
 	//---------------------------------------------------------------------------
 #define Prefix_StrategyType STRTYPE
 	enum StrategyType

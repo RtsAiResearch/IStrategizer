@@ -200,9 +200,13 @@ bool BuildActionEx::ExecuteAux(const WorldClock& p_clock)
 		assert(pAdapter);
 		_buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
 
+<<<<<<< HEAD
+	bOk = pGameBuilder->Build(buildingType, _buildArea.Pos());
+=======
 		// Issue build order
 		pGameBuilder = g_Game->Self()->GetEntity(_builderId);
 		assert(pGameBuilder);
+>>>>>>> 20dad3704a9a602ddb72e66e4c938e3fb152c89b
 
 		bOk = pGameBuilder->Build(buildingType, _buildArea.Pos().X, _buildArea.Pos().Y);
 

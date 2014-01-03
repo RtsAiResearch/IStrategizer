@@ -118,7 +118,7 @@ namespace IStrategizer
 			int index;
 			if(_firstMap.find(p_first) == _firstMap.end())
 			{
-				_data.push_back(make_std::pair(p_first, p_newSecond));
+				_data.push_back(std::make_pair(p_first, p_newSecond));
 				index = _data.size() - 1;
 				_secondMap[p_newSecond] = index;
 				_firstMap[p_first] = index;
