@@ -46,7 +46,7 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
 	assert(_pGameAttacker);
 	
-	return _pGameAttacker->AttackGround(_position.X, _position.Y);
+	return _pGameAttacker->AttackGround(_position);
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)

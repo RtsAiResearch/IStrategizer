@@ -203,7 +203,7 @@ bool BuildActionEx::ExecuteAux(const WorldClock& p_clock)
 	pGameBuilder = g_Game->Self()->GetEntity(_builderId);
 	assert(pGameBuilder);
 
-	bOk = pGameBuilder->Build(buildingType, _buildArea.Pos().X, _buildArea.Pos().Y);
+	bOk = pGameBuilder->Build(buildingType, _buildArea.Pos());
 
 	if (bOk)
 	{

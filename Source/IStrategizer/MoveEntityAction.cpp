@@ -1,4 +1,4 @@
-#include "MoveAction.h"
+#include "MoveEntityAction.h"
 
 #include <cassert>
 #include <limits>
@@ -17,31 +17,18 @@
 
 using namespace IStrategizer;
 
-MoveAction::MoveAction() :
-Action(ACTIONEX_Move)
+MoveEntityAction::MoveEntityAction() :
+Action(ACTIONEX_MoveEntity)
 {
-	_params[PARAM_EntityClassId] = ECLASS_START;
-	_params[PARAM_NumberOfPrimaryResources] = 0;
-	_params[PARAM_NumberOfSecondaryResources] = 0;
-	_params[PARAM_NumberOfSupplyResources] = 0;
-	_params[PARAM_EnemyUnitsCount] = 0;
-	_params[PARAM_EnemyUnitsTotalHP] = 0;
-	_params[PARAM_EnemyUnitsTotalDamage] = 0;
-	_params[PARAM_AlliedUnitsCount] = 0;
-	_params[PARAM_AlliedUnitsTotalHP] = 0;
-	_params[PARAM_AlliedUnitsTotalDamage] = 0;
-	_params[PARAM_EnemyBuildingsCount] = 0;
-	_params[PARAM_EnemyCriticalBuildingsCount] = 0;
-	_params[PARAM_AlliedBuildingsCount] = 0;
-	_params[PARAM_AlliedCriticalBuildingsCount] = 0;
+    CellFeature::Null().To(_params);
 }
 //////////////////////////////////////////////////////////////////////////
-MoveAction::MoveAction(const PlanStepParameters& p_parameters) :
-Action(ACTIONEX_Move, p_parameters)
+MoveEntityAction::MoveEntityAction(const PlanStepParameters& p_parameters) :
+Action(ACTIONEX_MoveEntity, p_parameters)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveAction::OnSucccess(const WorldClock& p_clock)
+void MoveEntityAction::OnSucccess(const WorldClock& p_clock)
 {
 	GameEntity *pEntity = g_Game->Self()->GetEntity(_entityId);
 
@@ -49,7 +36,7 @@ void MoveAction::OnSucccess(const WorldClock& p_clock)
 		pEntity->Unlock(this);
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveAction::OnFailure(const WorldClock& p_clock)
+void MoveEntityAction::OnFailure(const WorldClock& p_clock)
 {
 	GameEntity *pEntity = g_Game->Self()->GetEntity(_entityId);
 
@@ -57,16 +44,16 @@ void MoveAction::OnFailure(const WorldClock& p_clock)
 		pEntity->Unlock(this);
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
+void MoveEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveAction::PreconditionsSatisfied()
+bool MoveEntityAction::PreconditionsSatisfied()
 {
 	return g_Assist.DoesEntityObjectExist(_entityId);
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveAction::AliveConditionsSatisfied()
+bool MoveEntityAction::AliveConditionsSatisfied()
 {
 	bool success = g_Assist.DoesEntityObjectExist(_entityId);
 
@@ -82,7 +69,7 @@ bool MoveAction::AliveConditionsSatisfied()
 	return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveAction::SuccessConditionsSatisfied()
+bool MoveEntityAction::SuccessConditionsSatisfied()
 {
 	bool success = g_Assist.DoesEntityObjectExist(_entityId);
 
@@ -99,7 +86,7 @@ bool MoveAction::SuccessConditionsSatisfied()
 	return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveAction::ExecuteAux(const WorldClock& p_clock)
+bool MoveEntityAction::ExecuteAux(const WorldClock& p_clock)
 {
 	AbstractAdapter	*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
@@ -109,7 +96,7 @@ bool MoveAction::ExecuteAux(const WorldClock& p_clock)
 	GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
 	assert(entity);
 
-	bool success = entity->Move(_position.X, _position.Y);
+	bool success = entity->Move(_position);
 
 	if(success)
 	{

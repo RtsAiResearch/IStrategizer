@@ -1,6 +1,6 @@
 ///> [Serializable]
-#ifndef MOVEACTION_H
-#define MOVEACTION_H
+#ifndef MOVEENTITYACTION_H
+#define MOVEENTITYACTION_H
 
 #include "Action.h"
 #ifndef VECTOR2_H
@@ -11,15 +11,15 @@
 
 namespace IStrategizer
 {
-	///> class=MoveAction
+	///> class=MoveEntityAction
 	///> parent=Action
-	class MoveAction : public Action
+	class MoveEntityAction : public Action
 	{
-		OBJECT_SERIALIZABLE(MoveAction);
+		OBJECT_SERIALIZABLE(MoveEntityAction);
 
 	public:
-		MoveAction();
-		MoveAction(const PlanStepParameters& p_parameters);
+		MoveEntityAction();
+		MoveEntityAction(const PlanStepParameters& p_parameters);
 		bool		PreconditionsSatisfied();
 		bool		AliveConditionsSatisfied();
 		bool		SuccessConditionsSatisfied();
@@ -36,4 +36,4 @@ namespace IStrategizer
 	};
 }
 
-#endif	// MOVEACTION_H
+#endif	// MOVEENTITYACTION_H

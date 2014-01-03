@@ -174,7 +174,7 @@ int EngineAssist::ExecuteResearch(ResearchType p_researchId, TID p_sourceBuildin
 int EngineAssist::ExecuteBuild(EntityClassType p_buildingClassId, TID p_workerObjectId, const Vector2& p_pos, TID& p_buildingObjectId)
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_workerObjectId);
-	int ret = m_entity->Build(p_buildingClassId, p_pos.X, p_pos.Y);
+	int ret = m_entity->Build(p_buildingClassId, p_pos);
 
 	// FIXME: not possible in every game to get the building id ahead of time
 	assert(0);
@@ -198,7 +198,7 @@ int EngineAssist::ExecuteTrain(TID p_trainerObjectId, EntityClassType p_entityCl
 int EngineAssist::ExecuteAttackGround(TID p_entityObjectId, const Vector2& p_pos)
 {
 	GameEntity* m_entity = g_Game->Self()->GetEntity(p_entityObjectId);
-	int ret = m_entity->AttackGround(p_pos.X,p_pos.Y);
+	int ret = m_entity->AttackGround(p_pos);
 	m_entity->Unlock(nullptr);
 
 	return ret;
