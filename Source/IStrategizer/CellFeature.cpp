@@ -135,6 +135,7 @@ void CellFeature::CalculateDistanceToBases(Vector2 cellWorldPosition)
 	g_Game->Self()->GetBases(bases);
 	CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromBase);
 }
+//----------------------------------------------------------------------------------------------
 void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, double& distance)
 {
 	assert(bases.size() > 0);
