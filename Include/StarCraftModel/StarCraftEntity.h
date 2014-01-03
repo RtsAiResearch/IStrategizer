@@ -9,36 +9,37 @@
 
 namespace IStrategizer
 {
-  enum ObjectStateType;
-  enum EntityClassType;
-  enum PlayerType;
+    enum ObjectStateType;
+    enum EntityClassType;
+    enum PlayerType;
 }
 
 namespace StarCraftModel
 {
-  class StarCraftEntity : public IStrategizer::GameEntity
-  {
+    class StarCraftEntity : public IStrategizer::GameEntity
+    {
 
-  public:
-    StarCraftEntity(BWAPI::Unit p_unit);
-    int	Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
-    std::string ToString() const;
-    IStrategizer::Vector2 GetPosition() const;
-    bool IsTraining(IStrategizer::TID p_traineeId) const;
+    public:
+        StarCraftEntity(BWAPI::Unit p_unit);
+        int	Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
+        std::string ToString() const;
+        IStrategizer::Vector2 GetPosition() const;
+        bool IsTraining(IStrategizer::TID p_traineeId) const;
 
-    bool Research(IStrategizer::ResearchType p_researchId);
-    bool Build(IStrategizer::EntityClassType p_buildingClassId, int p_x, int p_y);
-    bool AttackGround(int p_x, int p_y);
-    bool AttackEntity(IStrategizer::TID p_targetEntityObjectId);
-    bool Train(IStrategizer::EntityClassType p_entityClassId);
+        bool Research(IStrategizer::ResearchType p_researchId);
+        bool Build(IStrategizer::EntityClassType p_buildingClassId, IStrategizer::Vector2 p_position);
+        bool AttackGround(IStrategizer::Vector2 p_position);
+        bool AttackEntity(IStrategizer::TID p_targetEntityObjectId);
+        bool Train(IStrategizer::EntityClassType p_entityClassId);
+        bool Move(IStrategizer::Vector2 p_position);
 
-  protected:
-    IStrategizer::ObjectStateType FetchState() const;
+    protected:
+        IStrategizer::ObjectStateType FetchState() const;
 
-  private:
-    BWAPI::Unit	m_unit;
-    IStrategizer::PlayerType m_ownerId;
-  };
+    private:
+        BWAPI::Unit	m_unit;
+        IStrategizer::PlayerType m_ownerId;
+    };
 }
 
 #endif // STARCRAFTENTITY_H
