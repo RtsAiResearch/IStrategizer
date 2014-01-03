@@ -360,7 +360,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\GoalMatrixRowEvaluator.cpp">
       <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
+    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
   </ItemGroup>
@@ -692,6 +692,10 @@
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
+      <Filter>Header Files\CaseBase\Action</Filter>
+=======
     <ClInclude Include="..\..\Include\IStrategizer\SerializationEssentials.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
@@ -700,9 +704,7 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h">
       <Filter>Header Files\Engine Components\CaseBaseLearner</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
-      <Filter>Header Files\CaseBase\Action</Filter>
+>>>>>>> e10d483a249fce003da490d0ffeb821b9b390e0f
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

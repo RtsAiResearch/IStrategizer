@@ -19,6 +19,7 @@ namespace IStrategizer
 		EOATTR_OwnerId,
 		EOATTR_PosCenterX,
 		EOATTR_PosCenterY,
+        EOATTR_IsMoving,
 		EOATTR_END
 	};
 #define Define_EntityObjectAttribute \
@@ -28,7 +29,8 @@ namespace IStrategizer
 	Enums[EOATTR_PosY] = "Y Position"; \
 	Enums[EOATTR_OwnerId] = "Owner"; \
 	Enums[EOATTR_PosCenterX] = "Center X Position"; \
-	Enums[EOATTR_PosCenterY] = "Center Y Position";
+	Enums[EOATTR_PosCenterY] = "Center Y Position"; \
+    Enums[EOATTR_IsMoving] = "Is Moving";
 	//---------------------------------------------------------------------------
 #define Prefix_EntityClassAttribute ECATTR
 	enum EntityClassAttribute

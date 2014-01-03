@@ -67,6 +67,9 @@ int	StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
 	case EOATTR_PosCenterY:
 		return m_unit->getPosition().y;
 
+    case EOATTR_IsMoving:
+        return m_unit->isMoving();
+
 	default:
 		assert(0);
 	}
@@ -129,9 +132,9 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
 	return bOk;
 }
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::Build(EntityClassType p_buildingClassId, int p_x, int p_y) 
+bool StarCraftEntity::Build(EntityClassType p_buildingClassId, IStrategizer::Vector2 p_position) 
 {
-	TilePosition	  pos(TilePositionFromUnitPosition(p_x), TilePositionFromUnitPosition(p_y));
+    TilePosition	  pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
 	BWAPI::UnitType	type;
 	TID             gameTypeId;
 	string	        typeName;
@@ -144,12 +147,10 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, int p_x, int p_y)
 	return m_unit->build(type, pos);
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::AttackGround(int p_x, int p_y)
+bool StarCraftEntity::AttackGround(IStrategizer::Vector2 p_position)
 {
-	Unit		attacker = m_unit;
-	Position	pos(p_x, p_y);
-
-	return attacker->attack(pos);
+    Position	pos(p_position.X, p_position.Y);
+	return m_unit->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
@@ -215,3 +216,9 @@ IStrategizer::Vector2 StarCraftEntity::GetPosition() const
 {
 	return Vector2(m_unit->getPosition().x, m_unit->getPosition().y);
 }
+//----------------------------------------------------------------------------------------------
+bool StarCraftEntity::Move(IStrategizer::Vector2 p_position)
+{
+    Position	pos(p_position.X, p_position.Y);
+	return m_unit->move(pos);
+};
