@@ -35,7 +35,7 @@ CellFeature::CellFeature(const PlanStepParameters& p_parameters)
 	m_resourceDescription.m_numberOfSupply = p_parameters.at(PARAM_NumberOfSupplyResources);
 }
 //----------------------------------------------------------------------------------------------
-void CellFeature::To(PlanStepParameters& p_parameters)
+void CellFeature::To(PlanStepParameters& p_parameters) const
 {
 	p_parameters[PARAM_AlliedBuildingsCount] = m_alliedBuildingDescription.m_numberOfBuildings;
 	p_parameters[PARAM_AlliedCriticalBuildingsCount] = m_alliedBuildingDescription.m_numberOfCriticalBuildings;

@@ -16,8 +16,7 @@ namespace IStrategizer
 	public:
 		WinWargusGoalEx();
 		WinWargusGoalEx(const PlanStepParameters& p_parameters);
-		void InitializeSuccessConditions();
-		void InitializePostConditions();
+		bool SuccessConditionsSatisfied();
 	};
 }
 

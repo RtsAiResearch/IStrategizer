@@ -5,7 +5,7 @@
 #include "IStrategizerException.h"
 
 #ifndef GOALSATISFACTIONROW_H
-#include "GoalSatisfactionRow.h"
+#include "GoalMatrixRowEvaluator.h"
 #endif
 #ifndef RTSGAME_H
 #include "RtsGame.h"
@@ -20,16 +20,16 @@ using namespace std;
 
 CaseLearningHelper::CaseLearningHelper()
 {
-  m_goalSatisfactionRow.Initialize(PLAYER_Self, PLAYER_Enemy);
-  m_row.resize(m_goalSatisfactionRow.GetRowSize());
+  m_goalMatrixRowEvaluator.Initialize(PLAYER_Self, PLAYER_Enemy);
+  m_row.resize(m_goalMatrixRowEvaluator.GetRowSize());
 
   g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
   g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------
-GoalMatrix CaseLearningHelper::ComputeGoalSatisfactionRow(unsigned p_gameCycle)
+GoalMatrixRow CaseLearningHelper::ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle)
 {
-  m_goalSatisfactionRow.Compute(p_gameCycle, m_row);
+  m_goalMatrixRowEvaluator.Compute(p_gameCycle, m_row);
   return m_row;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     break;
 
     /*case MSG_GameEnd:
-    m_observedTraces[m_observedTraces.size() - 1]->GoalSatisfaction(ComputeGoalSatisfactionRow(m_observedTraces[m_observedTraces.size() - 1]->GameCycle()));
+    m_observedTraces[m_observedTraces.size() - 1]->GoalSatisfaction(ComputeGoalMatrixRowSatisfaction(m_observedTraces[m_observedTraces.size() - 1]->GameCycle()));
     break;*/
   }
 }

@@ -24,6 +24,7 @@ BuildActionEx::BuildActionEx() :
 Action(ACTIONEX_BuildEx, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
 {
 	_params[PARAM_BuildingClassId]	= ECLASS_START;
+	CellFeature::Null().To(_params);
 }
 //////////////////////////////////////////////////////////////////////////
 BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :

@@ -194,10 +194,10 @@ bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
 string StarCraftModel::StarCraftEntity::ToString() const
 {
 	std::string asSharedResource = SharedResource::ToString();
-
+    
 	std::string description = m_unit->getType().getName();
 	description += "(";
-	description += m_unit->getID();
+	description += to_string((long long)m_unit->getID());
 	description += ",";
 	description += asSharedResource;
 	description += ")";

@@ -37,8 +37,10 @@ namespace IStrategizer
 		void	AddEntity(GameEntity *p_entity,bool p_isAllied);
 		void	RemoveEntity(GameEntity *p_entity, bool p_isAllied);
 		void	Clear();
-		void	To(PlanStepParameters& p_parameters);
+		void	To(PlanStepParameters& p_parameters) const;
 		float	GetDistance(CellFeature *p_other);
+
+		static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
 
 	protected:
 		void	InitializeAddressesAux();

@@ -22,19 +22,7 @@ using namespace Serialization;
 AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)
 {
 	_params[PARAM_EntityClassId] = ECLASS_START;
-	_params[PARAM_NumberOfPrimaryResources] = 0;
-	_params[PARAM_NumberOfSecondaryResources] = 0;
-	_params[PARAM_NumberOfSupplyResources] = 0;
-	_params[PARAM_EnemyUnitsCount] = 0;
-	_params[PARAM_EnemyUnitsTotalHP] = 0;
-	_params[PARAM_EnemyUnitsTotalDamage] = 0;
-	_params[PARAM_AlliedUnitsCount] = 0;
-	_params[PARAM_AlliedUnitsTotalHP] = 0;
-	_params[PARAM_AlliedUnitsTotalDamage] = 0;
-	_params[PARAM_EnemyBuildingsCount] = 0;
-	_params[PARAM_EnemyCriticalBuildingsCount] = 0;
-	_params[PARAM_AlliedBuildingsCount] = 0;
-	_params[PARAM_AlliedCriticalBuildingsCount] = 0;
+	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackGround, p_parameters)
@@ -48,7 +36,7 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 
     // Adapt attack position
     _position = pAdapter->AdaptPosition(Parameters());
-	CellFeature* pAttackCell = g_Game->Map()->GetCellFeature(_position);
+	CellFeature* pAttackCell = g_Game->Map()->GetCellFeatureFromWorldPosition(_position);
 	
 	_numberOfEnemyBuildings = pAttackCell->m_enemyBuildingDescription.m_numberOfBuildings;
 	_numberOfEnemyUnits = pAttackCell->m_enemyForceDescription.m_numberOfUnits;
@@ -80,9 +68,7 @@ bool AttackGroundAction::PreconditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
-	bool success = false;
-	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	success = g_Assist.DoesEntityObjectExist(_attackerId);
+	bool success = false;	success = g_Assist.DoesEntityObjectExist(_attackerId);
 
 	if (!success)
 		return false;
@@ -92,7 +78,7 @@ bool AttackGroundAction::AliveConditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied()
 {
-	CellFeature* pEnemy = g_Game->Map()->GetCellFeature(_position);
+	CellFeature* pEnemy = g_Game->Map()->GetCellFeatureFromWorldPosition(_position);
 	int numberOfEnemyBuildings = pEnemy->m_enemyBuildingDescription.m_numberOfBuildings;
 	int numberOfEnemyUnits = pEnemy->m_enemyForceDescription.m_numberOfUnits;
 

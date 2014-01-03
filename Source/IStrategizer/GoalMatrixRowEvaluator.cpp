@@ -1,5 +1,5 @@
 #ifndef GOALSATISFACTIONROW_H
-	#include "GoalSatisfactionRow.h"
+	#include "GoalMatrixRowEvaluator.h"
 #endif
 
 #ifndef METADATA_H
@@ -19,7 +19,7 @@
 using namespace IStrategizer;
 
 //----------------------------------------------------------------------------------------------
-void GoalSatisfactionRow::Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot)
+void GoalMatrixRowEvaluator::Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot)
 {
     Level m_level;
     int m_goalIdx;
@@ -48,7 +48,7 @@ void GoalSatisfactionRow::Initialize(PlayerType p_humanPlayer, PlayerType p_stat
 
     _goalParamGraph[m_goalIdx].Levels().push_back(m_level);
 
-    _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalSatisfactionRow>(this, &GoalSatisfactionRow::EvaluatePath);
+    _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalMatrixRowEvaluator>(this, &GoalMatrixRowEvaluator::EvaluatePath);
     _rowSize += COUNT(StrategyType);
     _parameterStart[PARAM_StrategyTypeId] = STRTYPE_START;
 
@@ -62,7 +62,7 @@ void GoalSatisfactionRow::Initialize(PlayerType p_humanPlayer, PlayerType p_stat
     }
     m_level.push_back(m_group);
     _goalParamGraph[m_goalIdx].Levels().push_back(m_level);
-    _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalSatisfactionRow>(this, &GoalSatisfactionRow::EvaluatePath);
+    _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalMatrixRowEvaluator>(this, &GoalMatrixRowEvaluator::EvaluatePath);
     _rowSize += COUNT(ForceSizeType);
     _parameterStart[PARAM_ForceSizeId] = FORCESIZE_START;
 
@@ -83,7 +83,7 @@ void GoalSatisfactionRow::Initialize(PlayerType p_humanPlayer, PlayerType p_stat
 		m_level.push_back(m_group);
     }
     _goalParamGraph[m_goalIdx].Levels().push_back(m_level);
-    _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalSatisfactionRow>(this, &GoalSatisfactionRow::EvaluatePath);
+    _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalMatrixRowEvaluator>(this, &GoalMatrixRowEvaluator::EvaluatePath);
     _rowSize += COUNT(BaseType);
     _parameterStart[PARAM_BaseTypeId] = BASETYPE_START;
 
@@ -130,12 +130,12 @@ void GoalSatisfactionRow::Initialize(PlayerType p_humanPlayer, PlayerType p_stat
     _goalParamGraph[m_goalIdx].Levels().push_back(m_level);
     _parameterStart[PARAM_TargetPlayerId] = PLAYER_START;
     
-    _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalSatisfactionRow>(this, &GoalSatisfactionRow::EvaluatePath);
+    _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalMatrixRowEvaluator>(this, &GoalMatrixRowEvaluator::EvaluatePath);
 
     GeneratePossibleParams();
 }
 //----------------------------------------------------------------------------------------------
-void GoalSatisfactionRow::GeneratePossibleParams()
+void GoalMatrixRowEvaluator::GeneratePossibleParams()
 {
     // Perform a DFS traversal
     int m_lastParamGoalIdx = -1;
@@ -145,7 +145,7 @@ void GoalSatisfactionRow::GeneratePossibleParams()
     }
 }
 //----------------------------------------------------------------------------------------------
-void GoalSatisfactionRow::GeneratePossibleParamsAux(int p_abstractGoalIdx, unsigned p_level, TPathKey p_path, int& p_lastParamGoalIdx)
+void GoalMatrixRowEvaluator::GeneratePossibleParamsAux(int p_abstractGoalIdx, unsigned p_level, TPathKey p_path, int& p_lastParamGoalIdx)
 {
     // Base Case: reached a leaf, and we have a complete path
     if(p_level == (unsigned)_goalParamGraph[p_abstractGoalIdx].Levels().size())
@@ -187,13 +187,13 @@ void GoalSatisfactionRow::GeneratePossibleParamsAux(int p_abstractGoalIdx, unsig
     }
 }
 //----------------------------------------------------------------------------------------------
-void GoalSatisfactionRow::Compute(unsigned p_gameCycle, GoalMatrix& p_row)
+void GoalMatrixRowEvaluator::Compute(unsigned p_gameCycle, GoalMatrixRow& p_row)
 {
     _row            = &p_row;
     _currentGoal    = -1;
     _lastGameCycle  = p_gameCycle;
 
-    for(vector<CombinatoricsAndOrGraph<GoalSatisfactionRow>>::iterator goalItr = _goalParamGraph.begin();
+    for(vector<CombinatoricsAndOrGraph<GoalMatrixRowEvaluator>>::iterator goalItr = _goalParamGraph.begin();
         goalItr != _goalParamGraph.end();
         goalItr++)
     {
@@ -202,7 +202,7 @@ void GoalSatisfactionRow::Compute(unsigned p_gameCycle, GoalMatrix& p_row)
     }
 }
 //----------------------------------------------------------------------------------------------
-bool GoalSatisfactionRow::EvaluatePath()
+bool GoalMatrixRowEvaluator::EvaluatePath()
 {
     list<NodeType>& m_path = _goalParamGraph[_currentGoal].Path();
     PlanStepParameters m_params;
@@ -229,7 +229,7 @@ bool GoalSatisfactionRow::EvaluatePath()
     return m_res;
 }
 //----------------------------------------------------------------------------------------------
-TPathKey GoalSatisfactionRow::Hash(int p_goalIdx, list<NodeType>& p_parameters)
+TPathKey GoalMatrixRowEvaluator::Hash(int p_goalIdx, list<NodeType>& p_parameters)
 {
     assert(!p_parameters.empty());
 
@@ -259,7 +259,7 @@ TPathKey GoalSatisfactionRow::Hash(int p_goalIdx, list<NodeType>& p_parameters)
     return m_key;
 }
 //----------------------------------------------------------------------------------------------
-GoalEx* GoalSatisfactionRow::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
+GoalEx* GoalMatrixRowEvaluator::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
 {
     if(_goals.find(p_pathId) == _goals.end())
     {
@@ -281,7 +281,7 @@ GoalEx* GoalSatisfactionRow::GetGoal(TPathKey p_pathId, list<NodeType>& p_path)
     return _goals[p_pathId];
 }
 //----------------------------------------------------------------------------------------------
-GoalEx* GoalSatisfactionRow::GetGoal(int p_goalIdx)
+GoalEx* GoalMatrixRowEvaluator::GetGoal(int p_goalIdx)
 {
     GoalEx* m_goal = nullptr;
     for(map<TPathKey, int>::iterator itr = _keyToIdxMapping.begin();

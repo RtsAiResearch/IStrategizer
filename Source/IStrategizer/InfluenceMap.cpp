@@ -317,7 +317,10 @@ void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLen
 	targetMoveSteps = 1;
 	currentMoveSteps = 0;
 
-	while (true)
+    while (!(searchExhausted[DOWN] ||
+        searchExhausted[LEFT] ||
+        searchExhausted[UP] ||
+        searchExhausted[RIGHT]))
 	{
 		switch (currentStepType)
 		{

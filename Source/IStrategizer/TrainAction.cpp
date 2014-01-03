@@ -27,6 +27,7 @@ TrainAction::TrainAction()
 	_trainerId(TID())
 {
 	_params[PARAM_EntityClassId] = ECLASS_START;
+	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 TrainAction::TrainAction(const PlanStepParameters& p_parameters)
