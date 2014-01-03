@@ -34,9 +34,6 @@ namespace IStrategizer
 	private:
 		TID			_attackerId;
 		Vector2		_position;
-		GameEntity*	_pGameAttacker;
-		int			_numberOfEnemyBuildings;
-		int			_numberOfEnemyUnits;
 	};
 }
 

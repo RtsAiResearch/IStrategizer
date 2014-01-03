@@ -37,7 +37,6 @@ namespace IStrategizer
 		TID			_attackerId;
 		TID			_targetId;
 		Vector2		_position;
-		GameEntity*	_pGameAttacker;
 	};
 }
 

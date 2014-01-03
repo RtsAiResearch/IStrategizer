@@ -84,6 +84,8 @@ ObjectStateType StarCraftEntity::FetchState() const
 	bool isGatheringGas = m_unit->isGatheringGas();
 	bool isGatheringMinerals = m_unit->isGatheringMinerals();
 	bool isTraining = m_unit->isTraining();
+	bool isAttacking = m_unit->isAttacking();
+	bool isUnderAttack = m_unit->isUnderAttack();
 
 	if (isIdle && isCompleted)
 		return OBJSTATE_Idle;
@@ -98,6 +100,10 @@ ObjectStateType StarCraftEntity::FetchState() const
 		return OBJSTATE_Moving;
 	else if (isTraining)
 		return OBJSTATE_Training;
+	else if (isAttacking)
+		return OBJSTATE_Attacking;
+	else if (isUnderAttack)
+		return OBJSTATE_UnderAttack;
 	else
 		return OBJSTATE_END;
 }
@@ -202,10 +208,10 @@ bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
 string StarCraftModel::StarCraftEntity::ToString() const
 {
 	std::string asSharedResource = SharedResource::ToString();
-
+    
 	std::string description = m_unit->getType().getName();
 	description += "(";
-	description += m_unit->getID();
+	description += to_string((long long)m_unit->getID());
 	description += ",";
 	description += asSharedResource;
 	description += ")";

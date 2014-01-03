@@ -26,27 +26,12 @@
     <Filter Include="Source Files\Engine Components\Online Case-based Planner\Planner">
       <UniqueIdentifier>{0b6e8a7a-3ee1-476a-9013-4d63360c1067}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine Components\Online Case-based Planner\Planner\PlanTree">
-      <UniqueIdentifier>{ae92e453-81b9-43f1-9a1e-6b014141ad3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Factories">
-      <UniqueIdentifier>{65eeddaa-5826-4300-bacd-52d8ea0225ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\MessgeSystem">
-      <UniqueIdentifier>{df6e7167-2c12-48c8-9778-275113689989}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\InfluenceMaps">
-      <UniqueIdentifier>{ca1a3ae1-3da2-47af-b539-4a88cf28cb53}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\EngineData">
       <UniqueIdentifier>{a009d412-3a4c-4e4b-ae8e-171508e9c9c1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Header Files\MessageSystem">
-      <UniqueIdentifier>{7f1d3544-3bec-4e24-932c-5aaf9d8e42c3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Utilities">
       <UniqueIdentifier>{62161c21-2837-4fa6-823e-fc64d99fbc27}</UniqueIdentifier>
@@ -72,14 +57,8 @@
     <Filter Include="Header Files\Engine Components\Online Case-based Planner\Planner">
       <UniqueIdentifier>{ea3536d1-ef9e-417f-9e02-c5c0e5c10c59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine Components\Online Case-based Planner\Planner\PlanTree">
-      <UniqueIdentifier>{bd85ad22-2b2f-4aab-9901-6589265373e5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine Components\Online Case-based Planner\Reasoner">
       <UniqueIdentifier>{d2ae6a02-b739-40a9-a787-3c978acd5920}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Factories">
-      <UniqueIdentifier>{d614dd30-013d-4694-925d-b0978e2c2eba}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\EngineData">
       <UniqueIdentifier>{53fcfcfe-9fab-4cad-ae27-bf1edd2575b4}</UniqueIdentifier>
@@ -89,9 +68,6 @@
     </Filter>
     <Filter Include="Header Files\World Model">
       <UniqueIdentifier>{62a17142-b9ac-4be5-a867-7b9bacbd1a08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\InfluenceMaps">
-      <UniqueIdentifier>{358fadc2-ad82-4e9d-ad7e-7142ce81dd01}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -115,9 +91,6 @@
     <Filter Include="Source Files\CaseBase\GoalEx">
       <UniqueIdentifier>{76cad8cb-caa0-4485-a932-789108dc80b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\CaseBaseLearner">
-      <UniqueIdentifier>{efc630d3-d9f2-4c85-961d-66b6c487e412}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\CaseBase">
       <UniqueIdentifier>{25be6052-63ff-456e-8c3b-02ca644a477c}</UniqueIdentifier>
     </Filter>
@@ -133,8 +106,29 @@
     <Filter Include="Header Files\CaseBase\Goal">
       <UniqueIdentifier>{97f35e05-90b8-4377-a29b-6c153b4e4b53}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\CaseBaseLearner">
+    <Filter Include="Header Files\Engine Components\CaseBaseLearner">
       <UniqueIdentifier>{cec210e0-0a00-40e4-9f42-29bed104c84f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine Components\MessageSystem">
+      <UniqueIdentifier>{7f1d3544-3bec-4e24-932c-5aaf9d8e42c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CaseBase\Factories">
+      <UniqueIdentifier>{d614dd30-013d-4694-925d-b0978e2c2eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine Components\InfluenceMaps">
+      <UniqueIdentifier>{358fadc2-ad82-4e9d-ad7e-7142ce81dd01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine Components\CaseBaseLearner">
+      <UniqueIdentifier>{efc630d3-d9f2-4c85-961d-66b6c487e412}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CaseBase\Factories">
+      <UniqueIdentifier>{65eeddaa-5826-4300-bacd-52d8ea0225ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine Components\InfluenceMaps">
+      <UniqueIdentifier>{ca1a3ae1-3da2-47af-b539-4a88cf28cb53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine Components\MessgeSystem">
+      <UniqueIdentifier>{df6e7167-2c12-48c8-9778-275113689989}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -142,9 +136,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerEx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\BuildingDescription.cpp">
@@ -202,10 +193,7 @@
       <Filter>Source Files\Utilities\Data Structures</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp">
-      <Filter>Source Files\CaseBaseLearner</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\GoalSatisfactionRow.cpp">
-      <Filter>Source Files\CaseBaseLearner</Filter>
+      <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CaseEx.cpp">
       <Filter>Source Files\CaseBase</Filter>
@@ -318,38 +306,35 @@
     <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecutionEx.cpp">
       <Filter>Source Files\Engine Components\Online Case-based Planner\Planner</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\PlanTreeNodeEx.cpp">
-      <Filter>Source Files\Engine Components\Online Case-based Planner\Planner\PlanTree</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ActionFactory.cpp">
-      <Filter>Source Files\Factories</Filter>
+      <Filter>Source Files\CaseBase\Factories</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\GoalFactory.cpp">
-      <Filter>Source Files\Factories</Filter>
+      <Filter>Source Files\CaseBase\Factories</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\Message.cpp">
-      <Filter>Source Files\MessgeSystem</Filter>
+      <Filter>Source Files\Engine Components\MessgeSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\MessagePump.cpp">
-      <Filter>Source Files\MessgeSystem</Filter>
+      <Filter>Source Files\Engine Components\MessgeSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\MessagePumpObserver.cpp">
-      <Filter>Source Files\MessgeSystem</Filter>
+      <Filter>Source Files\Engine Components\MessgeSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\MessagePumpSubject.cpp">
-      <Filter>Source Files\MessgeSystem</Filter>
+      <Filter>Source Files\Engine Components\MessgeSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\GroundControlIM.cpp">
-      <Filter>Source Files\InfluenceMaps</Filter>
+      <Filter>Source Files\Engine Components\InfluenceMaps</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\IMSystemManager.cpp">
-      <Filter>Source Files\InfluenceMaps</Filter>
+      <Filter>Source Files\Engine Components\InfluenceMaps</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\InfluenceMap.cpp">
-      <Filter>Source Files\InfluenceMaps</Filter>
+      <Filter>Source Files\Engine Components\InfluenceMaps</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\OccupanceDataIM.cpp">
-      <Filter>Source Files\InfluenceMaps</Filter>
+      <Filter>Source Files\Engine Components\InfluenceMaps</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerException.cpp">
       <Filter>Source Files\EngineData</Filter>
@@ -361,10 +346,19 @@
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstration.cpp">
-      <Filter>Source Files\CaseBaseLearner</Filter>
+      <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp">
-      <Filter>Source Files\CaseBaseLearner</Filter>
+      <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\PlanTreeNodeEx.cpp">
+      <Filter>Source Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\GoalMatrixRowEvaluator.cpp">
+      <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
     <ClCompile Include="MoveAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
@@ -377,23 +371,20 @@
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\SerializationEssentials.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DataMessage.h">
-      <Filter>Header Files\MessageSystem</Filter>
+      <Filter>Header Files\Engine Components\MessageSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Message.h">
-      <Filter>Header Files\MessageSystem</Filter>
+      <Filter>Header Files\Engine Components\MessageSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MessagePump.h">
-      <Filter>Header Files\MessageSystem</Filter>
+      <Filter>Header Files\Engine Components\MessageSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MessagePumpObserver.h">
-      <Filter>Header Files\MessageSystem</Filter>
+      <Filter>Header Files\Engine Components\MessageSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MessagePumpSubject.h">
-      <Filter>Header Files\MessageSystem</Filter>
+      <Filter>Header Files\Engine Components\MessageSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Colony.h">
       <Filter>Header Files\Utilities</Filter>
@@ -408,9 +399,6 @@
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MathHelper.h">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\Misc.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Persist.h">
@@ -558,10 +546,7 @@
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h">
-      <Filter>Header Files\CaseBaseLearner</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GoalSatisfactionRow.h">
-      <Filter>Header Files\CaseBaseLearner</Filter>
+      <Filter>Header Files\Engine Components\CaseBaseLearner</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\EngineComponent.h">
       <Filter>Header Files\Engine Components</Filter>
@@ -571,9 +556,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecutionEx.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\PlanTreeNodeEx.h">
-      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner\PlanTree</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\AbstractAdapter.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
@@ -603,10 +585,10 @@
       <Filter>Header Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\ActionFactory.h">
-      <Filter>Header Files\Factories</Filter>
+      <Filter>Header Files\CaseBase\Factories</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GoalFactory.h">
-      <Filter>Header Files\Factories</Filter>
+      <Filter>Header Files\CaseBase\Factories</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerException.h">
       <Filter>Header Files\EngineData</Filter>
@@ -696,19 +678,28 @@
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GroundControlIM.h">
-      <Filter>Header Files\InfluenceMaps</Filter>
+      <Filter>Header Files\Engine Components\InfluenceMaps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\IMSystemManager.h">
-      <Filter>Header Files\InfluenceMaps</Filter>
+      <Filter>Header Files\Engine Components\InfluenceMaps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\InfluenceMap.h">
-      <Filter>Header Files\InfluenceMaps</Filter>
+      <Filter>Header Files\Engine Components\InfluenceMaps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\OccupanceDataIM.h">
-      <Filter>Header Files\InfluenceMaps</Filter>
+      <Filter>Header Files\Engine Components\InfluenceMaps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\SerializationEssentials.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\PlanTreeNodeEx.h">
+      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h">
+      <Filter>Header Files\Engine Components\CaseBaseLearner</Filter>
     </ClInclude>
     <ClInclude Include="MoveAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
@@ -727,10 +718,10 @@
       <Filter>Header Files\EngineData</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstration.h">
-      <Filter>Header Files\CaseBaseLearner</Filter>
+      <Filter>Header Files\Engine Components\CaseBaseLearner</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\..\Include\IStrategizer\GameTrace.h">
-      <Filter>Header Files\CaseBaseLearner</Filter>
+      <Filter>Header Files\Engine Components\CaseBaseLearner</Filter>
     </CustomBuildStep>
   </ItemGroup>
 </Project>

@@ -21,19 +21,7 @@ AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 {
 	_params[PARAM_EntityClassId] = ECLASS_START;
 	_params[PARAM_TargetEntityClassId] = ECLASS_START;
-	_params[PARAM_NumberOfPrimaryResources] = 0;
-	_params[PARAM_NumberOfSecondaryResources] = 0;
-	_params[PARAM_NumberOfSupplyResources] = 0;
-	_params[PARAM_EnemyUnitsCount] = 0;
-	_params[PARAM_EnemyUnitsTotalHP] = 0;
-	_params[PARAM_EnemyUnitsTotalDamage] = 0;
-	_params[PARAM_AlliedUnitsCount] = 0;
-	_params[PARAM_AlliedUnitsTotalHP] = 0;
-	_params[PARAM_AlliedUnitsTotalDamage] = 0;
-	_params[PARAM_EnemyBuildingsCount] = 0;
-	_params[PARAM_EnemyCriticalBuildingsCount] = 0;
-	_params[PARAM_AlliedBuildingsCount] = 0;
-	_params[PARAM_AlliedCriticalBuildingsCount] = 0;
+	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackEntity, p_parameters)
@@ -50,14 +38,27 @@ bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
 	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
 	EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
 	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	bool executed = false;
 	
 	// Adapt attacker
 	_attackerId = pAdapter->AdaptAttacker(attackerType);
-	_targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
-	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
-	assert(_pGameAttacker);
 
-	return _pGameAttacker->AttackEntity(_targetId);
+	if (_attackerId != INVALID_TID)
+	{
+		_targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
+
+		if (_targetId != INVALID_TID)
+		{
+			GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+			GameEntity* pGameTarget = g_Game->Enemy()->GetEntity(_targetId);
+			assert(pGameAttacker);
+			assert(pGameTarget);
+			pGameAttacker->Lock(this);
+			executed = pGameAttacker->AttackEntity(_targetId);
+		}
+	}
+
+	return executed;
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
@@ -67,47 +68,32 @@ void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::PreconditionsSatisfied()
 {
-	bool success = false;
-
 	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	success = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
-
-	if (!success)
-		return false;
+	bool attackerTypeExists = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
 
 	EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
-	success = g_Assist.DoesEntityClassExist(MakePair(target, 1), PLAYER_Enemy);
+	bool targetTypeExists = g_Assist.DoesEntityClassExist(MakePair(target, 1), PLAYER_Enemy);
 
-	if (!success)
-		return false;
-    else
-        return true;
+	return attackerTypeExists && targetTypeExists;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::AliveConditionsSatisfied()
 {
-	bool success = false;
-
-	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	success = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
-
-	if (!success)
-		return false;
-    else
-        return true;
+	return g_Assist.DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied()
 {
-	bool success = false;
+	assert(PlanStepEx::State() == ESTATE_Executing);
 
-	EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
-	success = g_Assist.DoesEntityClassExist(MakePair(target, 1), PLAYER_Enemy);
+	GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+	GameEntity* pGameTarget = g_Game->Enemy()->GetEntity(_targetId);
+	assert(pGameAttacker);
+	assert(pGameTarget);
 
-	if (!success)
-		return true;
-    else
-        return false;
+	ObjectStateType attackerState = (ObjectStateType)pGameAttacker->Attr(EOATTR_State);
+	ObjectStateType targetState = (ObjectStateType)pGameTarget->Attr(EOATTR_State);
+	return (attackerState == OBJSTATE_Attacking) || (targetState == OBJSTATE_UnderAttack);
 }
 //----------------------------------------------------------------------------------------------
 void  AttackEntityAction::InitializeAddressesAux()

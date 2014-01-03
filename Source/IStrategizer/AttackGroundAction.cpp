@@ -22,19 +22,7 @@ using namespace Serialization;
 AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)
 {
 	_params[PARAM_EntityClassId] = ECLASS_START;
-	_params[PARAM_NumberOfPrimaryResources] = 0;
-	_params[PARAM_NumberOfSecondaryResources] = 0;
-	_params[PARAM_NumberOfSupplyResources] = 0;
-	_params[PARAM_EnemyUnitsCount] = 0;
-	_params[PARAM_EnemyUnitsTotalHP] = 0;
-	_params[PARAM_EnemyUnitsTotalDamage] = 0;
-	_params[PARAM_AlliedUnitsCount] = 0;
-	_params[PARAM_AlliedUnitsTotalHP] = 0;
-	_params[PARAM_AlliedUnitsTotalDamage] = 0;
-	_params[PARAM_EnemyBuildingsCount] = 0;
-	_params[PARAM_EnemyCriticalBuildingsCount] = 0;
-	_params[PARAM_AlliedBuildingsCount] = 0;
-	_params[PARAM_AlliedCriticalBuildingsCount] = 0;
+	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackGround, p_parameters)
@@ -45,20 +33,23 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 {
 	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
 	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-
-    // Adapt attack position
-    _position = pAdapter->AdaptPosition(Parameters());
-	CellFeature* pAttackCell = g_Game->Map()->GetCellFeature(_position);
-	
-	_numberOfEnemyBuildings = pAttackCell->m_enemyBuildingDescription.m_numberOfBuildings;
-	_numberOfEnemyUnits = pAttackCell->m_enemyForceDescription.m_numberOfUnits;
+	bool executed = false;
 
 	// Adapt attacker
 	_attackerId = pAdapter->AdaptAttacker(attackerType);
-	_pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
-	assert(_pGameAttacker);
+
+	if (_attackerId != INVALID_TID)
+	{
+		GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+		assert(pGameAttacker);
+		pGameAttacker->Lock(this);
+
+		// Adapt attack position
+		_position = pAdapter->AdaptPosition(Parameters());
+		executed = pGameAttacker->AttackGround(_position.X, _position.Y);
+	}
 	
-	return _pGameAttacker->AttackGround(_position.X, _position.Y);
+	return executed;
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
@@ -68,35 +59,23 @@ void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::PreconditionsSatisfied()
 {
-	bool success = false;
 	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	success = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
-
-	if (!success)
-		return false;
-    else
-        return true;
+	return g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
-	bool success = false;
-	EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-	success = g_Assist.DoesEntityObjectExist(_attackerId);
-
-	if (!success)
-		return false;
-    else
-        return true;
+	return g_Assist.DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied()
 {
-	CellFeature* pEnemy = g_Game->Map()->GetCellFeature(_position);
-	int numberOfEnemyBuildings = pEnemy->m_enemyBuildingDescription.m_numberOfBuildings;
-	int numberOfEnemyUnits = pEnemy->m_enemyForceDescription.m_numberOfUnits;
+	assert(PlanStepEx::State() == ESTATE_Executing);
 
-	return numberOfEnemyBuildings < _numberOfEnemyBuildings || numberOfEnemyUnits < _numberOfEnemyUnits;
+	GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+	assert(pGameAttacker);
+	ObjectStateType attackerState = (ObjectStateType)pGameAttacker->Attr(EOATTR_State);
+	return (attackerState == OBJSTATE_Attacking) || (attackerState == OBJSTATE_UnderAttack);
 }
 //----------------------------------------------------------------------------------------------
 void  AttackGroundAction::InitializeAddressesAux()

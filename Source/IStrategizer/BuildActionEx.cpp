@@ -24,6 +24,7 @@ BuildActionEx::BuildActionEx() :
 Action(ACTIONEX_BuildEx, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
 {
 	_params[PARAM_BuildingClassId]	= ECLASS_START;
+	CellFeature::Null().To(_params);
 }
 //////////////////////////////////////////////////////////////////////////
 BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :
@@ -179,36 +180,38 @@ bool BuildActionEx::SuccessConditionsSatisfied()
 //////////////////////////////////////////////////////////////////////////
 bool BuildActionEx::ExecuteAux(const WorldClock& p_clock)
 {
-	EntityClassType		builderType;
 	EntityClassType		buildingType;
 	GameEntity			*pGameBuilder;
 	AbstractAdapter		*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-	bool				bOk;
-
-	builderType = g_Game->Self()->GetWorkerType();
-	buildingType = (EntityClassType)_params[PARAM_BuildingClassId];
-
-	// Initialize build state
-	_buildStarted = false;
-
-	// Adapt build position
-	assert(pAdapter);
-	_buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
+	bool				bOk = false;
 
 	// Adapt builder
 	_builderId = pAdapter->AdaptWorkerForBuild();
 
-	// Issue build order
-	pGameBuilder = g_Game->Self()->GetEntity(_builderId);
-	assert(pGameBuilder);
-
-	bOk = pGameBuilder->Build(buildingType, _buildArea.Pos().X, _buildArea.Pos().Y);
-
-	if (bOk)
+	if (_builderId != INVALID_TID)
 	{
-		_buildIssued = true;
-		pGameBuilder->Lock(this);
-		_buildArea.Lock(this);
+
+		buildingType = (EntityClassType)_params[PARAM_BuildingClassId];
+
+		// Initialize build state
+		_buildStarted = false;
+
+		// Adapt build position
+		assert(pAdapter);
+		_buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
+
+		// Issue build order
+		pGameBuilder = g_Game->Self()->GetEntity(_builderId);
+		assert(pGameBuilder);
+
+		bOk = pGameBuilder->Build(buildingType, _buildArea.Pos().X, _buildArea.Pos().Y);
+
+		if (bOk)
+		{
+			_buildIssued = true;
+			pGameBuilder->Lock(this);
+			_buildArea.Lock(this);
+		}
 	}
 
 	return bOk;

@@ -19,6 +19,7 @@ using namespace IStrategizer;
 ResearchAction::ResearchAction() : Action(ACTIONEX_Research)
 {
 	_params[PARAM_EntityClassId] = RESEARCH_START;
+	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)

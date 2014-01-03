@@ -8,13 +8,6 @@
 
 using namespace IStrategizer;
 
-void BuildingDescription::InitializeAddressesAux()
-{
-	AddMemberAddress(2,
-		&m_numberOfBuildings,
-		&m_numberOfCriticalBuildings);
-}
-//----------------------------------------------------------------------------------------------
 void BuildingDescription::AddEntity(GameEntity *p_entity)
 {
 	EntityClassType typeId;

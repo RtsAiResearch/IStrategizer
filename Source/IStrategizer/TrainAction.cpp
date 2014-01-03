@@ -27,6 +27,7 @@ TrainAction::TrainAction()
 	_trainerId(TID())
 {
 	_params[PARAM_EntityClassId] = ECLASS_START;
+	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 TrainAction::TrainAction(const PlanStepParameters& p_parameters)
@@ -164,13 +165,18 @@ bool TrainAction::ExecuteAux(const WorldClock& p_clock)
 	EntityClassType		traineeType = (EntityClassType)_params[PARAM_EntityClassId];
 	GameEntity			*pGameTrainer;
 	AbstractAdapter		*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	bool				executed = false;
 
 	// Adapt trainer
 	_trainerId = pAdapter->AdaptBuildingForTraining(traineeType);
 
-	// Issue train order
-	pGameTrainer = g_Game->Self()->GetEntity(_trainerId);
-	assert(pGameTrainer);
+	if (_trainerId != INVALID_TID)
+	{
+		// Issue train order
+		pGameTrainer = g_Game->Self()->GetEntity(_trainerId);
+		assert(pGameTrainer);
+		executed = pGameTrainer->Train(traineeType);
+	}
 
-	return pGameTrainer->Train(traineeType);
+	return executed;
 }

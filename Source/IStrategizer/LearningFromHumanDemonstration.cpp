@@ -88,38 +88,40 @@ void LearningFromHumanDemonstration::Learn()
 //------------------------------------------------------------------------------------------------
 vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrace*>& p_traces)
 {
-    unsigned            m_rowSize = _helper->GetGoalSatisfactionRow().GetRowSize();
-    vector<RawCaseEx*>	m_learntRawCases = vector<RawCaseEx*>();
-    vector<RawCaseEx*>	m_currentCases = vector<RawCaseEx*>(m_rowSize, nullptr);
-    RawPlanEx			m_tempRPlan;
-    unsigned			i, g;
+    size_t rowSize = _helper->GetGoalMatrixRowEvaluator().GetRowSize();
+    vector<RawCaseEx*> learntRawCases;
+    vector<RawCaseEx*> currentCases = vector<RawCaseEx*>(rowSize, nullptr);
+    RawPlanEx tempRPlan;
+    size_t i, g;
 
     for (i = 0; i < p_traces.size(); ++i)
     {
-        for (g = 0; g < m_rowSize; ++g)
+        for (g = 0; g < rowSize; ++g)
         {
-            if (!_helper->TraceSatisfiedGoals(p_traces[i])[g] && !m_currentCases[g])
+            const GoalMatrixRow& currGoalMatrixRow = _helper->GetGoalMatrixRow(p_traces[i]);
+            
+            if (!currGoalMatrixRow[g] && !currentCases[g])
             {
-                m_tempRPlan = RawPlanEx(nullptr, SequentialPlan());
-                m_currentCases[g] = new RawCaseEx(m_tempRPlan, p_traces[i]->GameState());
+                tempRPlan = RawPlanEx(nullptr, SequentialPlan());
+                currentCases[g] = new RawCaseEx(tempRPlan, p_traces[i]->GameState());
                 //m_currentCases[g] = new RawCaseEx(m_tempRPlan, nullptr);
-                AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
             }
-            else if(!_helper->TraceSatisfiedGoals(p_traces[i])[g] && m_currentCases[g])
+            else if(!currGoalMatrixRow[g] && currentCases[g])
             {
-                AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
             }
-            else if (!_helper->TraceSatisfiedGoals(p_traces[i])[g] && m_currentCases[g])
+            else if (!currGoalMatrixRow[g] && currentCases[g])
             {
-                m_currentCases[g]->rawPlan.Goal = _helper->GetGoalSatisfactionRow().GetGoal(g);
-                AddAction(m_currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
-                m_learntRawCases.push_back(m_currentCases[g]);
-                m_currentCases[g] = nullptr;
+                currentCases[g]->rawPlan.Goal = _helper->GetGoalMatrixRowEvaluator().GetGoal(g);
+                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                learntRawCases.push_back(currentCases[g]);
+                currentCases[g] = nullptr;
             }
         }
     }
 
-    return m_learntRawCases;
+    return learntRawCases;
 }
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId)

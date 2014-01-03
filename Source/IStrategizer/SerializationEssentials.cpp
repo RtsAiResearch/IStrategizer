@@ -122,10 +122,6 @@ void SerializationEssentials::Init()
     
     g_ObjectFactory.AddPrototype(new CaseBaseEx);
 
-	g_ObjectFactory.AddPrototype(new CellFeature);
-	g_ObjectFactory.AddPrototype(new ForceDescription);
-	g_ObjectFactory.AddPrototype(new BuildingDescription);
-
     g_ObjectFormatter.FinalizeTypeTable(g_ObjectSerializer.TypeTable(), g_ObjectFactory.GetObjectTable());
 	
 	initialized = true;
