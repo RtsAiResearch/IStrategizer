@@ -6,14 +6,6 @@
 
 using namespace IStrategizer;
 
-void ForceDescription::InitializeAddressesAux()
-{
-	AddMemberAddress(3,
-		&m_numberOfUnits,
-		&m_totalHP,
-		&m_totalDamage);
-}
-
 void ForceDescription::AddEntity(GameEntity *p_entity)
 {
 	m_numberOfUnits++;

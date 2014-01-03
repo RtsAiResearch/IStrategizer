@@ -1,4 +1,3 @@
-///> [Serializable]
 #ifndef CELLFEATURE_H
 #define CELLFEATURE_H
 
@@ -6,30 +5,24 @@
 #include "BuildingDescription.h"
 #include "ResourceDescription.h"
 #include "MetaData.h"
-#include "UserObject.h"
 #include "EngineData.h"
+#include "Vector2.h"
 #include  <map>
 
 namespace IStrategizer
 {
 	class GameEntity;
 
-	///> class=CellFeature
-	class CellFeature : public Serialization::UserObject
+	class CellFeature
     {
-		OBJECT_SERIALIZABLE(CellFeature);
-
 	public:
-		///> type=ResourceDescription
 		ResourceDescription		m_resourceDescription;
-		///> type=ForceDescription
 		ForceDescription		m_alliedForceDescription;
-		///> type=ForceDescription
 		ForceDescription		m_enemyForceDescription;
-		///> type=BuildingDescription
 		BuildingDescription		m_alliedBuildingDescription;
-		///> type=BuildingDescription
 		BuildingDescription		m_enemyBuildingDescription;
+		double					m_distanceFromEnemyBase;
+		double					m_distanceFromBase;
 
 	public:
 				CellFeature() { Clear(); }
@@ -38,12 +31,12 @@ namespace IStrategizer
 		void	RemoveEntity(GameEntity *p_entity, bool p_isAllied);
 		void	Clear();
 		void	To(PlanStepParameters& p_parameters) const;
+		void	CalculateDistanceToBases(Vector2 cellWorldPosition);
+		void	CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, double& distance);
+		float	GetBaseDistance(double firstBase, double secondBase) const;
 		float	GetDistance(CellFeature *p_other);
 
 		static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
-
-	protected:
-		void	InitializeAddressesAux();
     };
 }
 
