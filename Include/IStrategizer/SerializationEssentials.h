@@ -3,11 +3,11 @@
 
 namespace IStrategizer
 {
-	class SerializationEssentials
-	{
-	public:
-		static void Init();
-	};
+    class SerializationEssentials
+    {
+    public:
+        static void Init();
+    };
 }
 #endif // SERIALIZATIONESSENTIALS_H
 

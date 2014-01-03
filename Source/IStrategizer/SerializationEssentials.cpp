@@ -6,10 +6,10 @@
 #include "ObjectFactory.h"
 #endif
 #ifndef OBJECTFORMATTER_H
-	#include "ObjectFormatter.h"
+#include "ObjectFormatter.h"
 #endif
 #ifndef OBJECTSERIALIZER_H
-	#include "ObjectSerializer.h"
+#include "ObjectSerializer.h"
 #endif
 
 #ifndef CASEBASEEX_H
@@ -77,17 +77,17 @@
 #endif
 
 #ifndef PLANGRAPH_H
-	#include "PlanGraph.h"
+#include "PlanGraph.h"
 #endif
 
 using namespace IStrategizer;
 
 void SerializationEssentials::Init()
 {
-	static bool initialized = false;
+    static bool initialized = false;
 
-	if (initialized)
-		return;
+    if (initialized)
+        return;
 
     g_ObjectFactory.AddPrototype(new CaseEx);
     g_ObjectFactory.AddPrototype(new GameStateEx);
@@ -103,7 +103,7 @@ void SerializationEssentials::Init()
     g_ObjectFactory.AddPrototype(new AttackGroundAction);
     g_ObjectFactory.AddPrototype(new ResearchAction);
     g_ObjectFactory.AddPrototype(new TrainAction);
-	g_ObjectFactory.AddPrototype(new BuildActionEx);
+    g_ObjectFactory.AddPrototype(new BuildActionEx);
     g_ObjectFactory.AddPrototype(new MoveEntityAction);
 
     g_ObjectFactory.AddPrototype(new ResourceExist);
@@ -123,10 +123,10 @@ void SerializationEssentials::Init()
     g_ObjectFactory.AddPrototype(new Diagraph<NodeValue, EdgeAnnotation>, "Diagraph(PlanStepEx*,vector(Expression*))");
     g_ObjectFactory.AddPrototype(new GraphNode<NodeValue, EdgeAnnotation>, "GraphNode(PlanStepEx*,vector(Expression*))");
     g_ObjectFactory.AddPrototype(new GraphEdge<EdgeAnnotation>, "GraphEdge(vector(Expression*))");
-    
+
     g_ObjectFactory.AddPrototype(new CaseBaseEx);
 
     g_ObjectFormatter.FinalizeTypeTable(g_ObjectSerializer.TypeTable(), g_ObjectFactory.GetObjectTable());
-	
-	initialized = true;
+
+    initialized = true;
 }

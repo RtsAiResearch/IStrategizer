@@ -88,6 +88,8 @@ bool MoveEntityAction::ExecuteAux(const WorldClock& p_clock)
     AbstractAdapter	*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
     _entityId = pAdapter->AdaptWorkerForBuild();
+    assert(_entityId != INVALID_TID);
+
     _position = pAdapter->AdaptPosition(Parameters());
 
     GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
