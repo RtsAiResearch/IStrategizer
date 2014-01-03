@@ -24,8 +24,6 @@ namespace StarCraftModel
     int	Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
     std::string ToString() const;
     IStrategizer::Vector2 GetPosition() const;
-    double GetVelocityX() const;
-    double GetVelocityY() const;
     bool IsTraining(IStrategizer::TID p_traineeId) const;
 
     bool Research(IStrategizer::ResearchType p_researchId);

@@ -46,7 +46,7 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 
 		// Adapt attack position
 		_position = pAdapter->AdaptPosition(Parameters());
-		executed = pGameAttacker->AttackGround(_position.X, _position.Y);
+		executed = pGameAttacker->AttackGround(_position);
 	}
 	
 	return executed;

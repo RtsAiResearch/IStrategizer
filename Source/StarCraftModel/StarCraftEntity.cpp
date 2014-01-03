@@ -67,6 +67,9 @@ int	StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
 	case EOATTR_PosCenterY:
 		return m_unit->getPosition().y;
 
+    case EOATTR_IsMoving:
+        return m_unit->isMoving();
+
 	default:
 		assert(0);
 	}
@@ -212,16 +215,6 @@ string StarCraftModel::StarCraftEntity::ToString() const
 IStrategizer::Vector2 StarCraftEntity::GetPosition() const
 {
 	return Vector2(m_unit->getPosition().x, m_unit->getPosition().y);
-}
-//----------------------------------------------------------------------------------------------
-double StarCraftEntity::GetVelocityX() const
-{
-    return m_unit->getVelocityX();
-}
-//----------------------------------------------------------------------------------------------
-double StarCraftEntity::GetVelocityY() const
-{
-    return m_unit->getVelocityY();
 }
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Move(IStrategizer::Vector2 p_position)

@@ -30,18 +30,18 @@ Action(ACTIONEX_MoveEntity, p_parameters)
 //////////////////////////////////////////////////////////////////////////
 void MoveEntityAction::OnSucccess(const WorldClock& p_clock)
 {
-	GameEntity *pEntity = g_Game->Self()->GetEntity(_entityId);
+    GameEntity *pEntity = g_Game->Self()->GetEntity(_entityId);
 
-	if (pEntity)
-		pEntity->Unlock(this);
+    if (pEntity)
+        pEntity->Unlock(this);
 }
 //////////////////////////////////////////////////////////////////////////
 void MoveEntityAction::OnFailure(const WorldClock& p_clock)
 {
-	GameEntity *pEntity = g_Game->Self()->GetEntity(_entityId);
+    GameEntity *pEntity = g_Game->Self()->GetEntity(_entityId);
 
-	if (pEntity)
-		pEntity->Unlock(this);
+    if (pEntity)
+        pEntity->Unlock(this);
 }
 //////////////////////////////////////////////////////////////////////////
 void MoveEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
@@ -50,58 +50,55 @@ void MoveEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 //////////////////////////////////////////////////////////////////////////
 bool MoveEntityAction::PreconditionsSatisfied()
 {
-	return g_Assist.DoesEntityObjectExist(_entityId);
+    return g_Assist.DoesEntityObjectExist(_entityId);
 }
 //////////////////////////////////////////////////////////////////////////
 bool MoveEntityAction::AliveConditionsSatisfied()
 {
-	bool success = g_Assist.DoesEntityObjectExist(_entityId);
+    bool success = g_Assist.DoesEntityObjectExist(_entityId);
 
-	if(success)
-	{
-		GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
-		assert(entity);
+    if(success)
+    {
+        GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
+        assert(entity);
+        success = entity->Attr(EOATTR_IsMoving) > 0;
+    }
 
-        success = entity->GetVelocityX() > numeric_limits<double>::epsilon()
-            || entity->GetVelocityY() > numeric_limits<double>::epsilon();
-	}
-
-	return success;
+    return success;
 }
 //////////////////////////////////////////////////////////////////////////
 bool MoveEntityAction::SuccessConditionsSatisfied()
 {
-	bool success = g_Assist.DoesEntityObjectExist(_entityId);
+    bool success = g_Assist.DoesEntityObjectExist(_entityId);
 
-	if(success)
-	{
-		GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
-		assert(entity);
+    if(success)
+    {
+        GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
+        assert(entity);
 
         success = g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE)
-            && entity->GetVelocityX() < numeric_limits<double>::epsilon()
-            && entity->GetVelocityY() < numeric_limits<double>::epsilon();
-	}
+            && entity->Attr(EOATTR_IsMoving) == false;
+    }
 
-	return success;
+    return success;
 }
 //////////////////////////////////////////////////////////////////////////
 bool MoveEntityAction::ExecuteAux(const WorldClock& p_clock)
 {
-	AbstractAdapter	*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+    AbstractAdapter	*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
-	_entityId = pAdapter->AdaptWorkerForBuild();
-	_position = pAdapter->AdaptPosition(Parameters());
+    _entityId = pAdapter->AdaptWorkerForBuild();
+    _position = pAdapter->AdaptPosition(Parameters());
 
-	GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
-	assert(entity);
+    GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
+    assert(entity);
 
-	bool success = entity->Move(_position);
+    bool success = entity->Move(_position);
 
-	if(success)
-	{
-		entity->Lock(this);
-	}
+    if(success)
+    {
+        entity->Lock(this);
+    }
 
-	return success;
+    return success;
 }
