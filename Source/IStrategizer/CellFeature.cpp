@@ -1,23 +1,14 @@
 #include "CellFeature.h"
 
 #include "GameEntity.h"
-#include <cmath>
+#include "GamePlayer.h"
 #include "GameType.h"
 #include "RtsGame.h"
 #include "MetaData.h"
+#include <cmath>
 
 using namespace IStrategizer;
 
-void CellFeature::InitializeAddressesAux()
-{
-	AddMemberAddress(5,
-		&m_resourceDescription,
-		&m_alliedForceDescription,
-		&m_enemyForceDescription,
-		&m_alliedBuildingDescription,
-		&m_enemyBuildingDescription);
-}
-//----------------------------------------------------------------------------------------------
 CellFeature::CellFeature(const PlanStepParameters& p_parameters)
 {
 	m_alliedBuildingDescription.m_numberOfBuildings = p_parameters.at(PARAM_AlliedBuildingsCount);
@@ -33,6 +24,8 @@ CellFeature::CellFeature(const PlanStepParameters& p_parameters)
 	m_resourceDescription.m_numberOfPrimary = p_parameters.at(PARAM_NumberOfPrimaryResources);
 	m_resourceDescription.m_numberOfSecondary = p_parameters.at(PARAM_NumberOfSecondaryResources);
 	m_resourceDescription.m_numberOfSupply = p_parameters.at(PARAM_NumberOfSupplyResources);
+	m_distanceFromBase = p_parameters.at(PARAM_DistanceToBase);
+	m_distanceFromEnemyBase = p_parameters.at(PARAM_DistanceToEnemyBase);
 }
 //----------------------------------------------------------------------------------------------
 void CellFeature::To(PlanStepParameters& p_parameters) const
@@ -50,6 +43,8 @@ void CellFeature::To(PlanStepParameters& p_parameters) const
 	p_parameters[PARAM_NumberOfPrimaryResources] = m_resourceDescription.m_numberOfPrimary;
 	p_parameters[PARAM_NumberOfSecondaryResources] = m_resourceDescription.m_numberOfSecondary;
 	p_parameters[PARAM_NumberOfSupplyResources] = m_resourceDescription.m_numberOfSupply;
+	p_parameters[PARAM_DistanceToBase] = m_distanceFromBase;
+	p_parameters[PARAM_DistanceToEnemyBase] = m_distanceFromEnemyBase;
 }
 //----------------------------------------------------------------------------------------------
 void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
@@ -105,22 +100,57 @@ void CellFeature::Clear()
 	m_alliedForceDescription.Clear();
 	m_enemyForceDescription.Clear();
 	m_resourceDescription.Clear();
+	m_distanceFromBase = 0;
+	m_distanceFromEnemyBase = 0;
 }
 //----------------------------------------------------------------------------------------------
 float CellFeature::GetDistance(CellFeature *p_other)
 {
 	float res = 0.0;
-	float alliedBuildingDistance	= m_alliedBuildingDescription.GetDistance(&(p_other->m_alliedBuildingDescription));
-	float enemyBuildingDistance	= m_enemyBuildingDescription.GetDistance(&(p_other->m_enemyBuildingDescription));
-	float alliedForceDistance		= m_alliedForceDescription.GetDistance(&(p_other->m_alliedForceDescription));
-	float enemyForceDistance		= m_enemyForceDescription.GetDistance(&(p_other->m_enemyForceDescription));
-	float resourceDistance			= m_resourceDescription.GetDistance(&(p_other->m_resourceDescription));
+	float alliedBuildingDistance = m_alliedBuildingDescription.GetDistance(&(p_other->m_alliedBuildingDescription));
+	float enemyBuildingDistance = m_enemyBuildingDescription.GetDistance(&(p_other->m_enemyBuildingDescription));
+	float alliedForceDistance = m_alliedForceDescription.GetDistance(&(p_other->m_alliedForceDescription));
+	float enemyForceDistance = m_enemyForceDescription.GetDistance(&(p_other->m_enemyForceDescription));
+	float resourceDistance = m_resourceDescription.GetDistance(&(p_other->m_resourceDescription));
+	float distanceFromBase = GetBaseDistance(this->m_distanceFromBase, p_other->m_distanceFromBase);
+	float distanceFromEnemyBase = GetBaseDistance(this->m_distanceFromEnemyBase, p_other->m_distanceFromEnemyBase);
 	
 	res += alliedBuildingDistance;
 	res += enemyBuildingDistance;
 	res += alliedForceDistance;
 	res += enemyForceDistance;
 	res += resourceDistance;
+	res += distanceFromBase;
+	res += distanceFromEnemyBase;
 
 	return sqrt(res);
+}
+//----------------------------------------------------------------------------------------------
+void CellFeature::CalculateDistanceToBases(Vector2 cellWorldPosition)
+{
+	vector<TID> bases;
+
+	g_Game->Enemy()->GetBases(bases);
+	CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromEnemyBase);
+	g_Game->Self()->GetBases(bases);
+	CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromBase);
+}
+//----------------------------------------------------------------------------------------------
+void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, double& distance)
+{
+	assert(bases.size() > 0);
+	TID baseId = bases[0];
+	GameEntity* pBase = g_Game->Self()->GetEntity(baseId);
+
+	if (pBase == nullptr)
+		pBase = g_Game->Enemy()->GetEntity(baseId);
+
+	assert(pBase);
+
+	distance = cellWorldPosition.Distance(pBase->GetPosition());
+}
+//----------------------------------------------------------------------------------------------
+float CellFeature::GetBaseDistance(double firstBase, double secondBase) const
+{
+	return pow((float)(firstBase - secondBase), 2);
 }

@@ -38,17 +38,27 @@ bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
 	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
 	EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
 	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	bool executed = false;
 	
 	// Adapt attacker
 	_attackerId = pAdapter->AdaptAttacker(attackerType);
-	_targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
-	GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
-	GameEntity* pGameTarget = g_Game->Enemy()->GetEntity(_targetId);
-	assert(pGameAttacker);
-	assert(pGameTarget);
-	pGameAttacker->Lock(this);
 
-	return pGameAttacker->AttackEntity(_targetId);
+	if (_attackerId != INVALID_TID)
+	{
+		_targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
+
+		if (_targetId != INVALID_TID)
+		{
+			GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+			GameEntity* pGameTarget = g_Game->Enemy()->GetEntity(_targetId);
+			assert(pGameAttacker);
+			assert(pGameTarget);
+			pGameAttacker->Lock(this);
+			executed = pGameAttacker->AttackEntity(_targetId);
+		}
+	}
+
+	return executed;
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)

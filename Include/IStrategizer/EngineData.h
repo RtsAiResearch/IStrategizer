@@ -63,6 +63,7 @@ namespace IStrategizer
 	typedef Serialization::SMap<ParameterType, int>	PlanStepParameters;
 #define	GOALS_WITH_PARAMS_COUNT	27
 #define	FARM_FOOD_SUPPLY		4
+#define INVALID_TID				-1
 	/********************************************************************* Header Annotations ************************************************************************/
 #ifndef IN
 #define IN			__in

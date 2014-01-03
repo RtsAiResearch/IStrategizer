@@ -1,6 +1,8 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
+#include <cmath>
+
 namespace IStrategizer
 {
 	class Vector2
@@ -20,6 +22,11 @@ namespace IStrategizer
 		bool operator !=(const Vector2& p_right)
 		{
 			return this->X != p_right.X || this->Y == p_right.Y;
+		}
+
+		double Distance (const Vector2& p_other)
+		{
+			return sqrt((pow((double)(p_other.X - this->X), 2) + pow((double)(p_other.Y - this->Y), 2)));
 		}
 
 		bool IsNull()					{ return X == -1 && Y == -1; }

@@ -33,17 +33,23 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 {
 	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
 	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-
-    // Adapt attack position
-    _position = pAdapter->AdaptPosition(Parameters());
+	bool executed = false;
 
 	// Adapt attacker
 	_attackerId = pAdapter->AdaptAttacker(attackerType);
-	GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
-	assert(pGameAttacker);
-	pGameAttacker->Lock(this);
+
+	if (_attackerId != INVALID_TID)
+	{
+		GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
+		assert(pGameAttacker);
+		pGameAttacker->Lock(this);
+
+		// Adapt attack position
+		_position = pAdapter->AdaptPosition(Parameters());
+		executed = pGameAttacker->AttackGround(_position.X, _position.Y);
+	}
 	
-	return pGameAttacker->AttackGround(_position.X, _position.Y);
+	return executed;
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
