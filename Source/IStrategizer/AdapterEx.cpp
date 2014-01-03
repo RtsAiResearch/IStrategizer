@@ -24,7 +24,7 @@ typedef pair<TID, ObjectStateType> UnitEntry;
 
 const unsigned AdapterEx::WorkerStatesSize = 2;
 
-const unsigned AdapterEx::AttackerStatesSize = 2;
+const unsigned AdapterEx::AttackerStatesSize = 1;
 
 // Minimum number of build cells to be between colony buildings
 const int AdapterEx::DefaultBuildingSpacing = 32;
