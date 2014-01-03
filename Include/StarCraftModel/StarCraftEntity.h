@@ -16,6 +16,7 @@ namespace IStrategizer
 
 namespace StarCraftModel
 {
+
   class StarCraftEntity : public IStrategizer::GameEntity
   {
 
@@ -31,7 +32,7 @@ namespace StarCraftModel
     bool AttackGround(int p_x, int p_y);
     bool AttackEntity(IStrategizer::TID p_targetEntityObjectId);
     bool Train(IStrategizer::EntityClassType p_entityClassId);
-	bool Move(int p_x,int p_y);
+	bool Move(IStrategizer::Vector2 p_position);
 
   protected:
     IStrategizer::ObjectStateType FetchState() const;

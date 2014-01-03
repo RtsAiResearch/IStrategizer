@@ -360,7 +360,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\GoalMatrixRowEvaluator.cpp">
       <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
-    <ClCompile Include="MoveAction.cpp">
+    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
   </ItemGroup>
@@ -701,7 +701,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h">
       <Filter>Header Files\Engine Components\CaseBaseLearner</Filter>
     </ClInclude>
-    <ClInclude Include="MoveAction.h">
+    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
   </ItemGroup>

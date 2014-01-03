@@ -6,6 +6,7 @@
 #include "AttackEntityAction.h"
 #include "ActionFactory.h"
 #include "CellFeature.h"
+#include "MoveAction.h"
 
 using namespace IStrategizer;
 
@@ -29,6 +30,10 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
 
 	case ACTIONEX_AttackGround:
         m_action = new AttackGroundAction(p_paramaters);
+		break;
+
+	case ACTIONEX_MoveAction:
+		m_action = new MoveAction(p_paramaters);
 		break;
 
 	case ACTIONEX_AttackEntity:
@@ -66,6 +71,10 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
 
 	case ACTIONEX_AttackGround:
 		m_action = new AttackGroundAction();
+		break;
+
+	case ACTIONEX_MoveAction:
+		m_action = new MoveAction();
 		break;
 
 	case ACTIONEX_AttackEntity:

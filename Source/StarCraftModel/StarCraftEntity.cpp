@@ -152,10 +152,10 @@ bool StarCraftEntity::AttackGround(int p_x, int p_y)
 	return attacker->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftModel::StarCraftEntity::Move( int p_x,int p_y )
+bool StarCraftModel::StarCraftEntity::Move(Vector2 p_position)
 {
 	Unit        unitToMove = m_unit;
-	Position    pos(p_x, p_y);
+	Position    pos(p_position.X, p_position.Y);
 
 	return unitToMove->move(pos);
 }

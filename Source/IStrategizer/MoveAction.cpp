@@ -6,30 +6,20 @@
 #include "CaseBasedReasonerEx.h"
 #include "RtsGame.h"
 #include "GamePlayer.h"
+#include <math.h>
 
 using namespace IStrategizer;
 using namespace Serialization;
+const int       maxEpslonDistance = 200 ;
 
 MoveAction::MoveAction():Action(ACTIONEX_MoveAction)
 {
 	_params[PARAM_EntityClassId] = ECLASS_START;
 	_params[PARAM_ObjectStateType] = 0;
-	_params[PARAM_NumberOfPrimaryResources] = 0;
-	_params[PARAM_NumberOfSecondaryResources] = 0;
-	_params[PARAM_NumberOfSupplyResources] = 0;
-	_params[PARAM_EnemyUnitsCount] = 0;
-	_params[PARAM_EnemyUnitsTotalHP] = 0;
-	_params[PARAM_EnemyUnitsTotalDamage] = 0;
-	_params[PARAM_AlliedUnitsCount] = 0;
-	_params[PARAM_AlliedUnitsTotalHP] = 0;
-	_params[PARAM_AlliedUnitsTotalDamage] = 0;
-	_params[PARAM_EnemyBuildingsCount] = 0;
-	_params[PARAM_EnemyCriticalBuildingsCount] = 0;
-	_params[PARAM_AlliedBuildingsCount] = 0;
-	_params[PARAM_AlliedCriticalBuildingsCount] = 0;
+	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
-MoveAction::MoveAction(const PlanStepParameters& p_parameters):Action(ACTIONEX_MoveAction,p_parameters)
+MoveAction::MoveAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_MoveAction,p_parameters)
 {
 
 }
@@ -46,33 +36,18 @@ void MoveAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 //----------------------------------------------------------------------------------------------
 bool MoveAction::AliveConditionsSatisfied()
 {
-	bool success = false;
-
-	EntityClassType entity = (EntityClassType)_params[PARAM_EntityClassId];
-	success = g_Assist.DoesEntityClassExist(MakePair(entity, 1));
-
-	if (!success)
-		return false;
-	else
-		return true;
+	return g_Assist.DoesEntityObjectExist(_EntityId);
 }
 //----------------------------------------------------------------------------------------------
 bool MoveAction::PreconditionsSatisfied()
 {
-	bool success = false;
-
 	EntityClassType entity = (EntityClassType)_params[PARAM_EntityClassId];
-	success = g_Assist.DoesEntityClassExist(MakePair(entity, 1));
-
-	if (!success)
-		return false;
-	else
-		return true;
+	return g_Assist.DoesEntityClassExist(MakePair(entity, 1));
 }
 //----------------------------------------------------------------------------------------------
 bool MoveAction::SuccessConditionsSatisfied()
 {
-	if (_pEntity->GetPosition() == _position)
+	if (IsEntityCloseToPosition(_EntityId,_position,maxEpslonDistance))
 		return true;
 	return false;
 }
@@ -87,12 +62,27 @@ bool MoveAction::ExecuteAux( const WorldClock& p_clock )
 	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 	EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
 
-	//Adapt position
-	 _position = pAdapter->AdaptPosition(Parameters());
 	//Adapt Entity
-	 _EntityId = pAdapter->AdaptEntityToMove(entityType);
-	 _pEntity  = g_Game->Self()->GetEntity(_EntityId);
-	 assert(_pEntity);
+	_EntityId = pAdapter->AdaptEntityToMove(entityType);
+	bool executed = false;
 
-	return _pEntity->Move(_position.X,_position.Y);
+	if(_EntityId != INVALID_TID)
+	{
+		//Adapt position
+		_position = pAdapter->AdaptPosition(Parameters());
+		_pEntity  = g_Game->Self()->GetEntity(_EntityId);
+		assert(_pEntity);
+		executed = _pEntity->Move(_position);
+	}
+	return executed;
+}
+
+bool IStrategizer::MoveAction::IsEntityCloseToPosition( const TID p_EntityId,const Vector2 p_position,int p_epslon )
+{
+	GameEntity* entity = g_Game->Self()->GetEntity(p_EntityId);
+	Vector2    entityPosition = entity->GetPosition();
+
+	double distance = sqrt((double) ((p_position.X - entityPosition.X) * (p_position.X - entityPosition.X) + (p_position.Y - entityPosition.Y) * (p_position.Y - entityPosition.Y))); 
+
+	return distance <= p_epslon;
 }

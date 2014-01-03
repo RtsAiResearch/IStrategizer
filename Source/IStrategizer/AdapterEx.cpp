@@ -46,7 +46,7 @@ const ObjectStateType AdapterEx::AttackerStatesRank[] = {
 
 //Ranked valid states for entity to move to position from the best to the worst state
 const ObjectStateType AdapterEx::EntityToMoveStatesRank[] = {
-	OBJSTATE_Idle ,OBJSTATE_Attacking,OBJSTATE_Gathering,OBJSTATE_Moving
+	OBJSTATE_Idle ,OBJSTATE_Attacking, OBJSTATE_Gathering, OBJSTATE_Moving
 };
 
 AdapterEx::AdapterEx()
