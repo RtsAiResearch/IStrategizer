@@ -39,7 +39,7 @@ const ObjectStateType AdapterEx::WorkerStatesRank[] = {
 // Ranked valid states for an attacker from the best to the worst state
 // It is always better to use an idle attackers and leave an attacker which is attacking already
 const ObjectStateType AdapterEx::AttackerStatesRank[] = {
-	OBJSTATE_Idle, OBJSTATE_Attacking
+	OBJSTATE_Idle
 };
 
 AdapterEx::AdapterEx()
@@ -167,7 +167,7 @@ TID AdapterEx::AdaptWorkerForBuild()
 	vector<TID>			entityIds;
 	EntityClassType		workerTypeId;
 	ObjectStateType		curWorkerState;
-	TID					adaptedWorkerId = 0;
+	TID					adaptedWorkerId = INVALID_TID;
 	ObjectStateType		candidateWorkerState;
 	vector<UnitEntry> validWorkers;
 
@@ -198,17 +198,13 @@ TID AdapterEx::AdaptWorkerForBuild()
 		}
 	}
 
-	if (adaptedWorkerId != 0)
-		return adaptedWorkerId;
-	else if (!validWorkers.empty())
+	if (adaptedWorkerId == INVALID_TID && !validWorkers.empty())
 	{
 		sort(validWorkers.begin(), validWorkers.end(), WorkerStatesComparer);
 		adaptedWorkerId = validWorkers[0].first;
-
-		return adaptedWorkerId;
 	}
 
-	return 0;
+	return adaptedWorkerId;
 }
 //////////////////////////////////////////////////////////////////////////
 bool AdapterEx::IsValidWorkerState(ObjectStateType p_workerState)
@@ -287,7 +283,7 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 	GameEntity			*pEntity;
 	vector<TID>			entityIds;
 	EntityClassType		trainerType;
-	TID					id = TID();
+	TID					id = INVALID_TID;
 
 	trainerType = g_Game->Self()->TechTree()->SourceEntity(p_traineeType);
 	pPlayer = g_Game->Self();
@@ -328,7 +324,7 @@ TID AdapterEx::AdaptAttacker(EntityClassType p_attackerType)
 	GameEntity			*pEntity;
 	vector<TID>			entityIds;
 	ObjectStateType		curAttackerState;
-	TID					adaptedAttackerId = 0;
+	TID					adaptedAttackerId = INVALID_TID;
 	ObjectStateType		candidateAttackerState;
 	vector<UnitEntry>	validAttackers;
 
@@ -358,17 +354,13 @@ TID AdapterEx::AdaptAttacker(EntityClassType p_attackerType)
 		}
 	}
 
-	if (adaptedAttackerId != 0)
-		return adaptedAttackerId;
-	else if (!validAttackers.empty())
+	if (adaptedAttackerId == INVALID_TID && !validAttackers.empty())
 	{
 		sort(validAttackers.begin(), validAttackers.end(), AttackerStatesComparer);
 		adaptedAttackerId = validAttackers[0].first;
-
-		return adaptedAttackerId;
 	}
 
-	return 0;
+	return adaptedAttackerId;
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
@@ -376,8 +368,8 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 	GamePlayer	*pPlayer;
 	GameEntity	*pEntity;
 	vector<TID>	entityIds;
-	TID			adaptedTargetId = 0;
-	double		bestDistance = INT_MAX;
+	TID			adaptedTargetId = INVALID_TID;
+	double		bestDistance = numeric_limits<double>::max();
 	CellFeature	*pTarGetCellFeatureFromWorldPosition = new CellFeature(p_parameters);
 
 	pPlayer = g_Game->Enemy();
@@ -403,7 +395,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 		}
 	}
 
-	return 0;
+	return adaptedTargetId;
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
