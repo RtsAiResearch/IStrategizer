@@ -33,6 +33,7 @@ namespace StarCraftModel
     bool Research(ResearchType p_researchId);
     bool Build(EntityClassType p_buildingClassId, int p_x, int p_y);
     bool AttackGround(int p_x, int p_y);
+	bool Move(int p_x,int p_y);
     bool AttackEntity(TID p_targetEntityObjectId);
     bool Train(EntityClassType p_entityClassId);
 

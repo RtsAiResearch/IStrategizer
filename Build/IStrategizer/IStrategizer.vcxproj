@@ -167,6 +167,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\OccupanceDataIM.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerException.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\MetaData.cpp" />
+    <ClCompile Include="MoveAction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h" />
@@ -234,6 +235,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\WinWargusGoalEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GoalSatisfactionRow.h" />
+    <ClInclude Include="MoveAction.h" />
     <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstration.h" />
     <CustomBuildStep Include="..\..\Include\IStrategizer\GameTrace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineComponent.h" />

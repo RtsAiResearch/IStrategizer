@@ -146,6 +146,14 @@ bool StarCraftEntity::AttackGround(int p_x, int p_y)
 	return attacker->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
+bool StarCraftModel::StarCraftEntity::Move( int p_x,int p_y )
+{
+	Unit        unitToMove = m_unit;
+	Position    pos(p_x, p_y);
+
+	return unitToMove->move(pos);
+}
+//----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 {
 	Unit	attacker = m_unit;
