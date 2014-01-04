@@ -6,9 +6,7 @@ Purpose: Common header file containing handy macros and definitions
          See Appendix A.
 ******************************************************************************/
 
-
 #pragma once   // Include this header file once per compilation unit
-
 
 //////////////////////// Windows Version Build Option /////////////////////////
 
@@ -17,13 +15,11 @@ Purpose: Common header file containing handy macros and definitions
 //#define _WIN32_WINNT _WIN32_WINNT_LONGHORN 
 //#define WINVER       _WIN32_WINNT_LONGHORN 
 
-
 //////////////////////////// Unicode Build Option /////////////////////////////
-
 
 // Always compiler using Unicode.
 #ifndef UNICODE
-	#define UNICODE
+    #define UNICODE
 #endif
 
 // When using Unicode Windows functions, use Unicode C-Runtime functions too.
@@ -32,7 +28,6 @@ Purpose: Common header file containing handy macros and definitions
       #define _UNICODE
    #endif
 #endif
-
 
 ///////////////////////// Include Windows Definitions /////////////////////////
 
@@ -43,18 +38,14 @@ Purpose: Common header file containing handy macros and definitions
 #include <CommCtrl.h>
 #include <process.h>       // For _beginthreadex
 
-
 ///////////// Verify that the proper header files are being used //////////////
-
 
 #ifndef FILE_SKIP_COMPLETION_PORT_ON_SUCCESS
 #pragma message("You are not using the latest Platform SDK header/library ")
 #pragma message("files. This may prevent the project from building correctly.")
 #endif
 
-
 ////////////// Allow code to compile cleanly at warning level 4 ///////////////
-
 
 /* nonstandard extension 'single line comment' was used */
 #pragma warning(disable:4001)
@@ -97,7 +88,6 @@ Purpose: Common header file containing handy macros and definitions
 
 ///////////////////////// Pragma message helper macro /////////////////////////
 
-
 /* 
 When the compiler sees a line like this:
    #pragma chMSG(Fix this later)
@@ -113,32 +103,25 @@ You can easily jump directly to this line and examine the surrounding code.
 #define chSTR(x)  chSTR2(x)
 #define chMSG(desc) message(__FILE__ "(" chSTR(__LINE__) "):" #desc)
 
-
 ////////////////////////////// chINRANGE Macro ////////////////////////////////
-
 
 // This macro returns TRUE if a number is between two others
 #define chINRANGE(low, Num, High) (((low) <= (Num)) && ((Num) <= (High)))
 
 
-
 ///////////////////////////// chSIZEOFSTRING Macro ////////////////////////////
-
 
 // This macro evaluates to the number of bytes needed by a string.
 #define chSIZEOFSTRING(psz)   ((lstrlen(psz) + 1) * sizeof(TCHAR))
 
 
-
 /////////////////// chROUNDDOWN & chROUNDUP inline functions //////////////////
-
 
 // This inline function rounds a value down to the nearest multiple
 template <class TV, class TM>
 inline TV chROUNDDOWN(TV Value, TM Multiple) {
    return((Value / Multiple) * Multiple);
 }
-
 
 // This inline function rounds a value down to the nearest multiple
 template <class TV, class TM>
@@ -148,9 +131,7 @@ inline TV chROUNDUP(TV Value, TM Multiple) {
 }
 
 
-
 ///////////////////////////// chBEGINTHREADEX Macro ///////////////////////////
-
 
 // This macro function calls the C runtime's _beginthreadex function. 
 // The C runtime library doesn't want to have any reliance on Windows' data 
@@ -169,17 +150,13 @@ typedef unsigned (__stdcall *PTHREAD_START) (void *);
          (unsigned)      (dwCreateFlags),               \
          (unsigned *)    (pdwThreadId)))
 
-
 ////////////////// DebugBreak Improvement for x86 platforms ///////////////////
-
 
 #ifdef _X86_
    #define DebugBreak()    _asm { int 3 }
 #endif
 
-
 /////////////////////////// Software Exception Macro //////////////////////////
-
 
 // Useful macro for creating your own software exception codes
 #define MAKESOFTWAREEXCEPTION(Severity, Facility, Exception) \
@@ -190,9 +167,7 @@ typedef unsigned (__stdcall *PTHREAD_START) (void *);
    /* Facility code    */  (Facility  << 16) |     \
    /* Exception code   */  (Exception <<  0)))
 
-
 /////////////////////////// Quick MessageBox Macro ////////////////////////////
-
 
 inline void chMB(PCSTR szMsg) {
    char szTitle[MAX_PATH];
@@ -200,15 +175,12 @@ inline void chMB(PCSTR szMsg) {
    MessageBoxA(GetActiveWindow(), szMsg, szTitle, MB_OK);
 }
 
-
 //////////////////////////// Assert/Verify Macros /////////////////////////////
-
 
 inline void chFAIL(PSTR szMsg) {
    chMB(szMsg);
    DebugBreak();
 }
-
 
 // Put up an assertion failure message box.
 inline void chASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
@@ -217,14 +189,12 @@ inline void chASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
    chFAIL(sz);
 }
 
-
 // Put up a message box if an assertion fails in a debug build.
 #ifdef _DEBUG
    #define chASSERT(x) if (!(x)) chASSERTFAIL(__FILE__, __LINE__, #x)
 #else
    #define chASSERT(x)
 #endif
-
 
 // Assert in debug builds, but don't remove the code in retail builds.
 #ifdef _DEBUG
@@ -233,9 +203,7 @@ inline void chASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
    #define chVERIFY(x) (x)
 #endif
 
-
 /////////////////////////// chHANDLE_DLGMSG Macro /////////////////////////////
-
 
 // The normal HANDLE_MSG macro in WindowsX.h does not work properly for dialog
 // boxes because DlgProc returns a BOOL instead of an LRESULT (like
@@ -244,9 +212,7 @@ inline void chASSERTFAIL(LPCSTR file, int line, PCSTR expr) {
    case (message): return (SetDlgMsgResult(hWnd, uMsg,     \
       HANDLE_##message((hWnd), (wParam), (lParam), (fn))))
 
-
 //////////////////////// Dialog Box Icon Setting Macro ////////////////////////
-
 
 // Sets the dialog box icons
 inline void chSETDLGICONS(HWND hWnd, int idi) {
@@ -257,10 +223,8 @@ inline void chSETDLGICONS(HWND hWnd, int idi) {
       LoadIcon((HINSTANCE) GetWindowLongPtr(hWnd, GWLP_HINSTANCE), 
       MAKEINTRESOURCE(idi)));
 }
-    
 
 /////////////////////////// Common Linker Settings ////////////////////////////
-
 
 #pragma comment(linker, "/nodefaultlib:oldnames.lib")
 
@@ -279,6 +243,5 @@ inline void chSETDLGICONS(HWND hWnd, int idi) {
 #define SAFE_CLOSE(X) { if (X) { CloseHandle(X); X = nullptr; } }
 #define SAFE_DELETE(X) { if (X) { delete X; X = nullptr;} }
 #define SAFE_ARRAY_DELETE { if (X) { delete[] X; X = nullptr; } }
-
 
 ///////////////////////////////// End of File /////////////////////////////////

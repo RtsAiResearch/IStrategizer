@@ -97,7 +97,6 @@ namespace BWAPI
       return this->pVal[n];
     };
 
-
     // @TODO: remove
     T *operator &() const
     {
@@ -106,6 +105,5 @@ namespace BWAPI
   protected:
     pointer pVal;
   };
-
 
 }

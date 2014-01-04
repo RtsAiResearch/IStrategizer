@@ -20,62 +20,61 @@
 
 namespace IStrategizer
 {
-	class PlanStepEx;
-	class GameStateEx;
-	class PlanGraph;
-	class ConditionEx;
-	class GoalEx;
+    class PlanStepEx;
+    class GameStateEx;
+    class PlanGraph;
+    class ConditionEx;
+    class GoalEx;
 
-	/**************************************************************** Engine Custom Definitions****************************************************************/
-	typedef string		TAction;
-	typedef string		TEntity;
-	typedef string		TUpgrade;
-	//typedef CostType	TCost;
-	typedef int			TPlayer;
-	typedef int			TID;
+    /**************************************************************** Engine Custom Definitions****************************************************************/
+    typedef string TAction;
+    typedef string TEntity;
+    typedef string TUpgrade;
+    //typedef CostType TCost;
+    typedef int TPlayer;
+    typedef int TID;
 
-	/**************************************************************** Conditions Definitions****************************************************************/
+    /**************************************************************** Conditions Definitions****************************************************************/
 #define ExactSimilarity 100
 
-	/**************************************************************** Game State Definitions ****************************************************************/
+    /**************************************************************** Game State Definitions ****************************************************************/
 
-	///> alias=ShallowFeaturesEx(vector(float))
-	typedef Serialization::SVector<float>		ShallowFeaturesEx;
-	///> alias=DeepFeaturesEx(vector(float))
-	typedef Serialization::SVector<float>		DeepFeaturesEx;
+    ///> alias=ShallowFeaturesEx(vector(float))
+    typedef Serialization::SVector<float> ShallowFeaturesEx;
+    ///> alias=DeepFeaturesEx(vector(float))
+    typedef Serialization::SVector<float> DeepFeaturesEx;
 
-	/*********************************************************** Learning From Human Demonstration Definitions ***********************************************************/
+    /*********************************************************** Learning From Human Demonstration Definitions ***********************************************************/
 
-	
 
-#define MAX_PLAYER_ENTITIES						90
-#define INPUT_ACTION							"input"
-#define MOVE_ACTION								"move"
+#define MAX_PLAYER_ENTITIES 90
+#define INPUT_ACTION "input"
+#define MOVE_ACTION "move"
 
-	/********************************************************************* Static Paths **************************************************************************/
+    /********************************************************************* Static Paths **************************************************************************/
 
-#define CASEBASE_PATH_EX			"Casebase.txt"
-#define LOG_PATH_EX					"wc2\\logs\\CaseLearningLog.log"
+#define CASEBASE_PATH_EX "Casebase.txt"
+#define LOG_PATH_EX "wc2\\logs\\CaseLearningLog.log"
 
-	/********************************************************************* Misc **************************************************************************/
+    /********************************************************************* Misc **************************************************************************/
 
-	///> alias=PlanStepParameters(map(pair(int,int)))
-	typedef Serialization::SMap<ParameterType, int>	PlanStepParameters;
-#define	GOALS_WITH_PARAMS_COUNT	27
-#define	FARM_FOOD_SUPPLY		4
-#define INVALID_TID				-1
-	/********************************************************************* Header Annotations ************************************************************************/
+    ///> alias=PlanStepParameters(map(pair(int,int)))
+    typedef Serialization::SMap<ParameterType, int> PlanStepParameters;
+#define GOALS_WITH_PARAMS_COUNT 27
+#define FARM_FOOD_SUPPLY 4
+#define INVALID_TID -1
+    /********************************************************************* Header Annotations ************************************************************************/
 #ifndef IN
-#define IN			__in
+#define IN __in
 #endif
 
 #ifndef OUT
-#define OUT			__out
+#define OUT __out
 #endif
 
 #ifndef CheckReturn
-#define CheckReturn	__checkReturn
+#define CheckReturn __checkReturn
 #endif
 }
 
-#endif	// ENGINEDATA_H*******************************
+#endif // ENGINEDATA_H*******************************

@@ -8,11 +8,11 @@ class CaseBasedReasonerEx;
 
 class PlanExpanderEx
 {
-	CaseBasedReasonerEx* _caseBasedReasoner;
+    CaseBasedReasonerEx* _caseBasedReasoner;
 public:
-	PlanExpanderEx();
-	PlanExpanderEx(CaseBasedReasonerEx* p_caseBasedReasoner);
-	vector<ActionEx*> GetReadyActions();
+    PlanExpanderEx();
+    PlanExpanderEx(CaseBasedReasonerEx* p_caseBasedReasoner);
+    vector<ActionEx*> GetReadyActions();
 };
 
 #endif

@@ -17,5 +17,4 @@ namespace IStrategizer
     };
 }
 
-
 #endif // DYNAMICMAP_H

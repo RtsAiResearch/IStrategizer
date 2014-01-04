@@ -33,5 +33,4 @@ namespace IStrategizer
     };
 }
 
-
 #endif // DYNAMICSET_H

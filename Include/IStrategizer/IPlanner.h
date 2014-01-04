@@ -4,7 +4,7 @@
 class IPlanner
 {
 public:
-	virtual void Update(unsigned long p_gameCycle) = 0;
+    virtual void Update(unsigned long p_gameCycle) = 0;
 };
 
-#endif	// IPLANNER_H
+#endif // IPLANNER_H

@@ -1,5 +1,5 @@
 #ifndef COLONY_H
-	#include "Colony.h"
+    #include "Colony.h"
 #endif
 
 using namespace IStrategizer;

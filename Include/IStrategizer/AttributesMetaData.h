@@ -35,8 +35,8 @@ namespace IStrategizer
 #define Prefix_EntityClassAttribute ECATTR
     enum EntityClassAttribute
     {
-        ECATTR_MaxHp	= 0x30100,
-        ECATTR_START	= 0x30100,
+        ECATTR_MaxHp = 0x30100,
+        ECATTR_START = 0x30100,
         ECATTR_CanAttack,
         ECATTR_CanBuild,
         ECATTR_IsBuilding,

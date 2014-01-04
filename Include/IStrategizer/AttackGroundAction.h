@@ -11,30 +11,30 @@
 
 namespace IStrategizer
 {
-	class CellFeature;
-	
-	///> class=AttackGroundAction
-	///> parent=Action
-	class AttackGroundAction : public Action
-	{
-	public:
-		OBJECT_SERIALIZABLE(AttackGroundAction);
+    class CellFeature;
+    
+    ///> class=AttackGroundAction
+    ///> parent=Action
+    class AttackGroundAction : public Action
+    {
+    public:
+        OBJECT_SERIALIZABLE(AttackGroundAction);
 
-		AttackGroundAction();
-		AttackGroundAction(const PlanStepParameters& p_parameters);
-		bool		PreconditionsSatisfied();
-		bool		AliveConditionsSatisfied();
-		bool		SuccessConditionsSatisfied();
+        AttackGroundAction();
+        AttackGroundAction(const PlanStepParameters& p_parameters);
+        bool PreconditionsSatisfied();
+        bool AliveConditionsSatisfied();
+        bool SuccessConditionsSatisfied();
 
-	protected:
-		bool		ExecuteAux(const WorldClock& p_clock );
-		void		InitializeAddressesAux() ;
-		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
+    protected:
+        bool ExecuteAux(const WorldClock& p_clock );
+        void InitializeAddressesAux() ;
+        void HandleMessage(Message* p_pMsg, bool& p_consumed);
 
-	private:
-		TID			_attackerId;
-		Vector2		_position;
-	};
+    private:
+        TID _attackerId;
+        Vector2 _position;
+    };
 }
 
-#endif	// ATTACKGROUNDACTION_H
+#endif // ATTACKGROUNDACTION_H

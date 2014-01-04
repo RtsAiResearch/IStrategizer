@@ -7,25 +7,25 @@
 
 namespace IStrategizer
 {
-	///> class=AttackEnemyGoal
-	///> parent=GoalEx
-	class AttackEnemyGoal : public GoalEx
-	{
-		OBJECT_SERIALIZABLE(AttackEnemyGoal);
+    ///> class=AttackEnemyGoal
+    ///> parent=GoalEx
+    class AttackEnemyGoal : public GoalEx
+    {
+        OBJECT_SERIALIZABLE(AttackEnemyGoal);
 
-	private:
-		ForceDescriptionEx _forceDescription;
-		Colony             _cachedColony;
+    private:
+        ForceDescriptionEx _forceDescription;
+        Colony             _cachedColony;
 
-	public:
-					AttackEnemyGoal();
-					AttackEnemyGoal(const PlanStepParameters& p_parameters);
-		void		InitSuccessConditions();
-		void        Copy(IClonable* p_dest);
+    public:
+                    AttackEnemyGoal();
+                    AttackEnemyGoal(const PlanStepParameters& p_parameters);
+        void InitSuccessConditions();
+        void        Copy(IClonable* p_dest);
 
-	protected:
-		void InitializeSuccessConditions();
-		void InitializePostConditions();
-	};
+    protected:
+        void InitializeSuccessConditions();
+        void InitializePostConditions();
+    };
 }
-#endif	// ATTACKENEMYGOAL_H
+#endif // ATTACKENEMYGOAL_H

@@ -127,9 +127,9 @@ void GamePlayer::NotifyMessegeSent(Message* p_pMessage)
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityCreate(Message* p_pMessage)
 {
-    GameEntity				*pEntity = nullptr;
-    TID						entityId;
-    EntityCreateMessage		*pCreateMsg = nullptr;
+    GameEntity *pEntity = nullptr;
+    TID entityId;
+    EntityCreateMessage *pCreateMsg = nullptr;
 
     pCreateMsg = (EntityCreateMessage*)p_pMessage;
 
@@ -158,9 +158,9 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityDestroy(Message* p_pMessage)
 {
-    EntityDestroyMessage	*pDestroyMsg = nullptr;
-    GameEntity				*pEntity = nullptr;
-    TID						entityId;
+    EntityDestroyMessage *pDestroyMsg = nullptr;
+    GameEntity *pEntity = nullptr;
+    TID entityId;
 
     pDestroyMsg = (EntityDestroyMessage*)p_pMessage;
 
@@ -183,9 +183,9 @@ void GamePlayer::OnEntityDestroy(Message* p_pMessage)
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityRenegade(Message* p_pMessage)
 {
-    EntityRenegadeMessage	*pRenMsg = nullptr;
-    GameEntity				*pEntity = nullptr;
-    TID						entityId;
+    EntityRenegadeMessage *pRenMsg = nullptr;
+    GameEntity *pEntity = nullptr;
+    TID entityId;
 
     pRenMsg = (EntityRenegadeMessage*)p_pMessage;
 

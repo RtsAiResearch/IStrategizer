@@ -73,12 +73,12 @@ bool CompositeExpression::Equals(const Expression* p_rhs) const
 bool CompositeExpression::PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_matchSide, vector<pair<Expression*,Expression*>>& p_matchedLeafs) const
 {
     bool m_equals = false;
-	for(size_t lhsIdx = 0; lhsIdx < _expressions.size(); ++lhsIdx)
-	{
-		m_equals |= _expressions[lhsIdx]->PartiallyEqualsAux(p_rhs, p_matchSide, p_matchedLeafs);
-	}
+    for(size_t lhsIdx = 0; lhsIdx < _expressions.size(); ++lhsIdx)
+    {
+        m_equals |= _expressions[lhsIdx]->PartiallyEqualsAux(p_rhs, p_matchSide, p_matchedLeafs);
+    }
 
-	return m_equals;
+    return m_equals;
 }
 //----------------------------------------------------------------------------------------------
 Expression* CompositeExpression::operator[](int p_index)
@@ -105,13 +105,13 @@ Expression* CompositeExpression::At(int p_index)
 //----------------------------------------------------------------------------------------------
 void CompositeExpression::Clear()
 {
-	for(int i = 0, size = _expressions.size(); i < size; ++i)
-	{
-		delete _expressions[i];
-		_expressions[i] = nullptr;
-	}
+    for(int i = 0, size = _expressions.size(); i < size; ++i)
+    {
+        delete _expressions[i];
+        _expressions[i] = nullptr;
+    }
 
-	_expressions.Clear();
+    _expressions.Clear();
 }
 //----------------------------------------------------------------------------------------------
 Expression* CompositeExpression::GetTermAux(int p_currentIdex, int p_targetIndex)
@@ -151,15 +151,15 @@ Expression* CompositeExpression::GetTermAux(int p_currentIdex, int p_targetIndex
 //----------------------------------------------------------------------------------------------
 void CompositeExpression::Copy(IClonable* p_dest)
 {
-	Expression::Copy(p_dest);
+    Expression::Copy(p_dest);
 
     CompositeExpression* m_dest = static_cast<CompositeExpression*>(p_dest);
 
-	m_dest->_expressions.resize(_expressions.size());
-	for (size_t i = 0; i < _expressions.size(); ++i)
-	{
+    m_dest->_expressions.resize(_expressions.size());
+    for (size_t i = 0; i < _expressions.size(); ++i)
+    {
         m_dest->_expressions[i] = _expressions[i] ? static_cast<Expression*>(_expressions[i]->Clone()) : nullptr;
-	}
-	
-	_shortCircuit = m_dest->_shortCircuit;
+    }
+    
+    _shortCircuit = m_dest->_shortCircuit;
 }
