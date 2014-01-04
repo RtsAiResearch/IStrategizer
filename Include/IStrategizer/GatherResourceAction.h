@@ -14,16 +14,23 @@ namespace IStrategizer
 
 	public:
 		GatherResourceAction();
-		GatherResourceAction(const PlanStepParameters& p_parameters, CellFeature *p_cellFeature);
-		void        Copy(IClonable* p_dest);
-		void		Update(const WorldClock& p_clock);
+		GatherResourceAction(const PlanStepParameters& p_parameters);
+		bool		PreconditionsSatisfied();
+		bool		AliveConditionsSatisfied();
+		bool		SuccessConditionsSatisfied();
 
 	protected:
+		void		OnSucccess(const WorldClock& p_clock);
+		void		OnFailure(const WorldClock& p_clock);
 		bool		ExecuteAux(const WorldClock& p_clock);
-		void		InitializePreConditions();
-		void		InitializeAliveConditions();
-		void		InitializeSuccessConditions();
-		void		InitializePostConditions();
+		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
+
+	private:
+		TID			_gathererId;
+		TID			_resourceId;
+		int			_resourceAmount;
+		bool		_gatherIssued;
+		bool		_gatherStarted;
 	};
 }
 

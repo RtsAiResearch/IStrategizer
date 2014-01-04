@@ -43,7 +43,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
 
 	case ACTIONEX_GatherResource:
 		throw exception("Action not implemented");
-		//Todo: Implement gather action
+		//Todo [AMR]: Implement gather action
 
 	default:
 		throw exception("Action not supported");
