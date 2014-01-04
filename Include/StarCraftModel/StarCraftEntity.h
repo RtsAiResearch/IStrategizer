@@ -37,7 +37,6 @@ namespace StarCraftModel
 
     private:
         BWAPI::Unit	m_unit;
-        IStrategizer::PlayerType m_ownerId;
     };
 }
 

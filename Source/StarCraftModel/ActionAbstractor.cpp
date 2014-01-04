@@ -25,20 +25,24 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
 {
     assert(unit);
     g_Game->Map()->UpdateAux();
+    IStrategizer::Vector2 position;
 
-    // Adapt the cell features
-    if (trainer == nullptr)
+    Order order = unit->getOrder();
+        
+    if (order == Orders::PlaceBuilding || order == Orders::AttackMove ||
+        order == Orders::AttackUnit || order == Orders::Move)
     {
-        IStrategizer::Vector2 position(unit->getPosition().x, unit->getPosition().y);
-        g_Game->Map()->GetCellFeatureFromWorldPosition(position)->To(actionParameters);
+        position.X = unit->getOrderTargetPosition().x;
+        position.Y = unit->getOrderTargetPosition().y;
+    } else if (order == Orders::Upgrade || order == Orders::ResearchTech ||
+        trainer != nullptr)
+    {
+        position.X = unit->getPosition().x;
+        position.Y = unit->getPosition().y;
     }
-    else
-    {
-        assert(trainer);
+    
 
-        IStrategizer::Vector2 position(trainer->getPosition().x, trainer->getPosition().y);
-        g_Game->Map()->GetCellFeatureFromWorldPosition(position)->To(actionParameters);
-    }
+    g_Game->Map()->GetCellFeatureFromWorldPosition(position)->To(actionParameters);
     
     if (actionParameters.count(PARAM_EntityClassId) > 0)
     {
@@ -54,7 +58,13 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
     
     if (actionParameters.count(PARAM_TargetEntityClassId) > 0)
     {
-        actionParameters[PARAM_TargetEntityClassId] = g_Database.EntityMapping.GetByFirst(unit->getTarget()->getType().getID());
+        Unit pTarget = unit->getOrderTarget();
+
+        if (pTarget != nullptr)
+        {
+            TID targetId = unit->getOrderTarget()->getType().getID();
+            actionParameters[PARAM_TargetEntityClassId] = g_Database.EntityMapping.GetByFirst(targetId);
+        }
     }
 
     if (actionParameters.count(PARAM_ObjectStateType) > 0)
@@ -65,11 +75,11 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
 
     if (actionParameters.count(PARAM_ResearchId) > 0)
     {
-        if (unit->getOrder() == Orders::Upgrade)
+        if (order == Orders::Upgrade)
         {
             actionParameters[PARAM_ResearchId] = g_Database.UpgradeMapping.GetByFirst(unit->getUpgrade());
         }
-        else if (unit->getOrder() == Orders::ResearchTech)
+        else if (order == Orders::ResearchTech)
         {
             // To Do: handle research tech.
         }

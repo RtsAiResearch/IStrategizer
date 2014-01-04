@@ -80,7 +80,9 @@ GameEntity* GamePlayer::GetEntity(TID p_id)
     {
         pEntity = FetchEntity(p_id);
         assert(pEntity);
-        m_entities[p_id] = pEntity;
+
+        if (pEntity->getOwner() == m_id)
+            m_entities[p_id] = pEntity;
     }
 
     return pEntity;
@@ -145,7 +147,7 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
 
         pEntity = FetchEntity(entityId);
         assert(pEntity);
-
+        
         m_entities[entityId] = pEntity;
 
         LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
