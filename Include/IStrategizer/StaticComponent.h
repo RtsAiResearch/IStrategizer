@@ -15,5 +15,4 @@ namespace IStrategizer
     };
 }
 
-
 #endif // STATICCOMPONENT_H

@@ -3,8 +3,8 @@
 
 namespace IStrategizer
 {
-	class CaseBaseEx;
-	class CaseEx;
+    class CaseBaseEx;
+    class CaseEx;
 
     class AbstractReviser
     {
@@ -13,4 +13,4 @@ namespace IStrategizer
     };
 }
 
-#endif	// ABSTRACTREVISER_H
+#endif // ABSTRACTREVISER_H

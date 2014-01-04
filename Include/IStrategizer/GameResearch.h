@@ -7,7 +7,7 @@
 
 namespace IStrategizer
 {
-	enum ResearchType;
+    enum ResearchType;
     class WorldResources;
     class GameDependency;
 
@@ -18,7 +18,7 @@ namespace IStrategizer
         WorldResources* m_requiredResources;
 
     public:
-		GameResearch() : m_requiredResources(nullptr) {}
+        GameResearch() : m_requiredResources(nullptr) {}
         int             Id() const { return m_id; }
         WorldResources* RequiredResources() const { return m_requiredResources; }
     };

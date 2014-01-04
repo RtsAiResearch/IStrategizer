@@ -9,64 +9,64 @@ using namespace IStrategizer;
 //-------------------------------------------------------------------------------------------------------------------------
 GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_parameters, bool p_initConditions)
 {
-	GoalEx* goal;
+    GoalEx* goal;
 
-	switch(p_goalType)
-	{
-	case GOALEX_BuildBase:
-		goal = new BuildBaseGoal(p_parameters);
-		break;
+    switch(p_goalType)
+    {
+    case GOALEX_BuildBase:
+        goal = new BuildBaseGoal(p_parameters);
+        break;
 
-	case GOALEX_WinGame:
-		goal = new WinWargusGoalEx(p_parameters);
-		break;
+    case GOALEX_WinGame:
+        goal = new WinWargusGoalEx(p_parameters);
+        break;
 
-	case GOALEX_TrainForce:
-		goal = new TrainForceGoal(p_parameters);
-		break;
+    case GOALEX_TrainForce:
+        goal = new TrainForceGoal(p_parameters);
+        break;
 
-	case GOALEX_AttackEnemy:
-		goal = new AttackEnemyGoal(p_parameters);
-		break;
+    case GOALEX_AttackEnemy:
+        goal = new AttackEnemyGoal(p_parameters);
+        break;
 
-	default:
-		throw exception("Not supported goal");
-	}
+    default:
+        throw exception("Not supported goal");
+    }
 
-	if(p_initConditions)
-		goal->InitializeConditions();
+    if(p_initConditions)
+        goal->InitializeConditions();
 
-	return goal;
+    return goal;
 }
 //----------------------------------------------------------------------------------------------
 GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
 {
-	GoalEx* goal;
+    GoalEx* goal;
 
-	switch(p_goalType)
-	{
-	case GOALEX_BuildBase:
-		goal = new BuildBaseGoal();
-		break;
+    switch(p_goalType)
+    {
+    case GOALEX_BuildBase:
+        goal = new BuildBaseGoal();
+        break;
 
-	case GOALEX_WinGame:
-		goal = new WinWargusGoalEx();
-		break;
+    case GOALEX_WinGame:
+        goal = new WinWargusGoalEx();
+        break;
 
-	case GOALEX_TrainForce:
-		goal = new TrainForceGoal();
-		break;
+    case GOALEX_TrainForce:
+        goal = new TrainForceGoal();
+        break;
 
-	case GOALEX_AttackEnemy:
-		goal = new AttackEnemyGoal();
-		break;
+    case GOALEX_AttackEnemy:
+        goal = new AttackEnemyGoal();
+        break;
 
-	default:
-		throw exception("Not supported goal");
-	}
+    default:
+        throw exception("Not supported goal");
+    }
 
-	if(p_initConditions)
-		goal->InitializeConditions();
+    if(p_initConditions)
+        goal->InitializeConditions();
 
-	return goal;
+    return goal;
 }

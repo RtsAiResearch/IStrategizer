@@ -7,17 +7,17 @@
 
 namespace IStrategizer
 {
-	///> class=WinWargusGoalEx
-	///> parent=GoalEx
-	class WinWargusGoalEx : public GoalEx
-	{
-		OBJECT_SERIALIZABLE(WinWargusGoalEx);
+    ///> class=WinWargusGoalEx
+    ///> parent=GoalEx
+    class WinWargusGoalEx : public GoalEx
+    {
+        OBJECT_SERIALIZABLE(WinWargusGoalEx);
 
-	public:
-		WinWargusGoalEx();
-		WinWargusGoalEx(const PlanStepParameters& p_parameters);
-		bool SuccessConditionsSatisfied();
-	};
+    public:
+        WinWargusGoalEx();
+        WinWargusGoalEx(const PlanStepParameters& p_parameters);
+        bool SuccessConditionsSatisfied();
+    };
 }
 
-#endif	// WINWARGUSGOALEX_H
+#endif // WINWARGUSGOALEX_H

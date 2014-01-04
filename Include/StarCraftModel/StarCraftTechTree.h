@@ -34,8 +34,8 @@ namespace StarCraftModel
 
   public:
     StarCraftTechTree(Player p_player) : m_player(p_player) {}
-    bool			ResearchAvailable(ResearchType p_researchId) const;
-    bool			ResearchDone(ResearchType p_researchId) const ;
+    bool ResearchAvailable(ResearchType p_researchId) const;
+    bool ResearchDone(ResearchType p_researchId) const ;
     EntityClassType TireBaseBuilding(BaseType p_tireId) const;
     EntityClassType SourceEntity(int p_typeOrResearchId) const;
     void            GetRequirements(int p_typeOrResearchId, vector<ResearchType>& p_researches, map<EntityClassType, unsigned>& p_buildings);

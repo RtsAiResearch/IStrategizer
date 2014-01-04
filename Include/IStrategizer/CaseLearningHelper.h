@@ -1,5 +1,5 @@
 #ifndef CASELEARNINGHELPER_H
-#define	CASELEARNINGHELPER_H
+#define CASELEARNINGHELPER_H
 
 #include "EngineData.h"
 #include "MessagePumpObserver.h"
@@ -21,17 +21,17 @@ namespace IStrategizer
         GoalMatrixRow m_row;
         GoalMatrixRow m_satisfiedGoals;
 
-        GameStateEx*			ComputeGameState();
-        GoalMatrixRow		    ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle);
+        GameStateEx* ComputeGameState();
+        GoalMatrixRow     ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle);
 
     public:
         CaseLearningHelper();
-        void				    NotifyMessegeSent(Message* p_message);
-        const GameTrace::List	ObservedTraces() const { return m_observedTraces; }
+        void     NotifyMessegeSent(Message* p_message);
+        const GameTrace::List ObservedTraces() const { return m_observedTraces; }
         const GoalMatrixRowEvaluator& GetGoalMatrixRowEvaluator() const { return m_goalMatrixRowEvaluator; }
         GoalMatrixRowEvaluator& GetGoalMatrixRowEvaluator() { return m_goalMatrixRowEvaluator; }
         const GoalMatrixRow& GetGoalMatrixRow(GameTrace* p_pTrace) const { return m_goalMatrix.at(p_pTrace); }
     };
 }
 
-#endif	// CASELEARNINGHELPER_H
+#endif // CASELEARNINGHELPER_H

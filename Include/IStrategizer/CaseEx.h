@@ -26,43 +26,43 @@
 
 namespace IStrategizer
 {
-	class GoalEx;
-	class PlanGraph;
-	class GameStateEx;
-	class CookedPlan;
+    class GoalEx;
+    class PlanGraph;
+    class GameStateEx;
+    class CookedPlan;
 
-	///> class=CaseEx
-	class CaseEx : public Serialization::UserObject
-	{
-		OBJECT_SERIALIZABLE(CaseEx);
+    ///> class=CaseEx
+    class CaseEx : public Serialization::UserObject
+    {
+        OBJECT_SERIALIZABLE(CaseEx);
 
-	private:
-		///> type=PlanGraph*
-		PlanGraph*				_planGraph;
-		///> type=GoalEx*
-		GoalEx*					_goal;
-		///> type=GameStateEx*
-		GameStateEx*			_gameState;
-		///> type=int
-		int						_trialCount;
-		///> type=int
-		int						_successCount;
+    private:
+        ///> type=PlanGraph*
+        PlanGraph* _planGraph;
+        ///> type=GoalEx*
+        GoalEx* _goal;
+        ///> type=GameStateEx*
+        GameStateEx* _gameState;
+        ///> type=int
+        int _trialCount;
+        ///> type=int
+        int _successCount;
 
-	public:
-		CaseEx() : _planGraph(nullptr), _goal(nullptr), _gameState(nullptr), _trialCount(1), _successCount(1) {};
-		CaseEx(PlanGraph* p_planGraph, GoalEx* p_goal, GameStateEx* p_gameState, int p_trialCount, int p_successCount);
-		//----------------------------------------------------------------------------------------------------------------------------------------------------
-		PlanGraph*      GetPlanGraph() const { return _planGraph; }
-		GoalEx*         Goal() const { return _goal; }
-		GameStateEx*    GameState() const { return _gameState; }
-		int				TrialCount() const { return _trialCount; }
-		int				SuccessCount() const { return _successCount; }
-		void			TrialCount(int val) { _trialCount = val; }
-		void			SuccessCount(int val) { _successCount = val; }
+    public:
+        CaseEx() : _planGraph(nullptr), _goal(nullptr), _gameState(nullptr), _trialCount(1), _successCount(1) {};
+        CaseEx(PlanGraph* p_planGraph, GoalEx* p_goal, GameStateEx* p_gameState, int p_trialCount, int p_successCount);
+        //----------------------------------------------------------------------------------------------------------------------------------------------------
+        PlanGraph*      GetPlanGraph() const { return _planGraph; }
+        GoalEx*         Goal() const { return _goal; }
+        GameStateEx*    GameState() const { return _gameState; }
+        int TrialCount() const { return _trialCount; }
+        int SuccessCount() const { return _successCount; }
+        void TrialCount(int val) { _trialCount = val; }
+        void SuccessCount(int val) { _successCount = val; }
 
-	protected:
-		void            InitializeAddressesAux();
-	};
+    protected:
+        void            InitializeAddressesAux();
+    };
 }
 
-#endif	// CASEEX_H
+#endif // CASEEX_H

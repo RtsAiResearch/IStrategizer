@@ -10,19 +10,19 @@
 
 namespace IStrategizer
 {
-	class EngineComponent : public MessagePumpObserver
-	{
-	public:
-		EngineComponent(const char* p_name);
-		~EngineComponent();
-		void NotifyMessegeSent(Message* p_message);
-		const char* Name() const { return m_pName; }
+    class EngineComponent : public MessagePumpObserver
+    {
+    public:
+        EngineComponent(const char* p_name);
+        ~EngineComponent();
+        void NotifyMessegeSent(Message* p_message);
+        const char* Name() const { return m_pName; }
 
-	protected:
-		virtual void ExecuteCommand(const char* p_cmd) { LogError("Command '%s' not supported", p_cmd); }
+    protected:
+        virtual void ExecuteCommand(const char* p_cmd) { LogError("Command '%s' not supported", p_cmd); }
 
-	private:
-		const char* m_pName;
-	};
+    private:
+        const char* m_pName;
+    };
 }
 #endif // ENGINECOMPONENT_H

@@ -1,7 +1,7 @@
 #include "CaseEx.h"
 
 #ifndef ENGINEDATA_H
-	#include "EngineData.h"
+    #include "EngineData.h"
 #endif
 
 using namespace IStrategizer;

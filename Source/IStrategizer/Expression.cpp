@@ -1,5 +1,5 @@
 #ifndef EXPRESSION_H
-	#include "Expression.h"
+    #include "Expression.h"
 #endif
 
 using namespace IStrategizer;
@@ -24,7 +24,7 @@ void Expression::Copy(IClonable* p_dest)
 {
     Expression* m_dest = static_cast<Expression*>(p_dest);
 
-	m_dest->_expressionType   = _expressionType;
-	m_dest->_isEvaluated      = _isEvaluated;
-	m_dest->_isSatisfied      = _isSatisfied;
+    m_dest->_expressionType   = _expressionType;
+    m_dest->_isEvaluated      = _isEvaluated;
+    m_dest->_isSatisfied      = _isSatisfied;
 }

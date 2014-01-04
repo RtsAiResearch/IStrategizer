@@ -16,18 +16,18 @@
 
 namespace IStrategizer
 {
-	///> class=CaseBaseEx
-	class CaseBaseEx : public Serialization::UserObject
-	{
-		OBJECT_SERIALIZABLE(CaseBaseEx);
+    ///> class=CaseBaseEx
+    class CaseBaseEx : public Serialization::UserObject
+    {
+        OBJECT_SERIALIZABLE(CaseBaseEx);
 
-	public:
-		///> type=vector(CaseEx*)
-		Serialization::SVector<CaseEx*> CaseContainer;
+    public:
+        ///> type=vector(CaseEx*)
+        Serialization::SVector<CaseEx*> CaseContainer;
 
-	protected:
-		void InitializeAddressesAux() { AddMemberAddress(1, &CaseContainer); }
-	};
+    protected:
+        void InitializeAddressesAux() { AddMemberAddress(1, &CaseContainer); }
+    };
 }
 
-#endif	// CASEBASEEX_H
+#endif // CASEBASEEX_H

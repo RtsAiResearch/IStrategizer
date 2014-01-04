@@ -8,38 +8,38 @@ using namespace IStrategizer;
 
 void WorldClock::Reset()
 {
-	// Reset cycles
-	m_lastEngineCycle = 0;
-	m_lastGameCycle = 0;
+    // Reset cycles
+    m_lastEngineCycle = 0;
+    m_lastGameCycle = 0;
 
-	// Reset clock timer
-	FILETIME ftTimerStart;
-	ULARGE_INTEGER uliTimerStart;
+    // Reset clock timer
+    FILETIME ftTimerStart;
+    ULARGE_INTEGER uliTimerStart;
 
-	GetSystemTimeAsFileTime(&ftTimerStart);
+    GetSystemTimeAsFileTime(&ftTimerStart);
 
-	uliTimerStart.LowPart = ftTimerStart.dwLowDateTime;
-	uliTimerStart.HighPart = ftTimerStart.dwHighDateTime;
+    uliTimerStart.LowPart = ftTimerStart.dwLowDateTime;
+    uliTimerStart.HighPart = ftTimerStart.dwHighDateTime;
 
-	m_timerStart = uliTimerStart.QuadPart;
+    m_timerStart = uliTimerStart.QuadPart;
 }
 //////////////////////////////////////////////////////////////////////////
 void WorldClock::CalculateElapsedMilliseconds()
 {
-	FILETIME ftTimerNow;
-	ULARGE_INTEGER uliTimerNow;
+    FILETIME ftTimerNow;
+    ULARGE_INTEGER uliTimerNow;
 
-	GetSystemTimeAsFileTime(&ftTimerNow);
+    GetSystemTimeAsFileTime(&ftTimerNow);
 
-	uliTimerNow.LowPart = ftTimerNow.dwLowDateTime;
-	uliTimerNow.HighPart = ftTimerNow.dwHighDateTime;
+    uliTimerNow.LowPart = ftTimerNow.dwLowDateTime;
+    uliTimerNow.HighPart = ftTimerNow.dwHighDateTime;
 
-	m_elapsedMilliseconds = (unsigned)MillisecondFrom100Nano(uliTimerNow.QuadPart - m_timerStart);
+    m_elapsedMilliseconds = (unsigned)MillisecondFrom100Nano(uliTimerNow.QuadPart - m_timerStart);
 }
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::WorldClock::Update(unsigned p_gameCycle)
 {
-	GameTick(p_gameCycle);
-	EngineTick();
-	CalculateElapsedMilliseconds();
+    GameTick(p_gameCycle);
+    EngineTick();
+    CalculateElapsedMilliseconds();
 }

@@ -1,17 +1,17 @@
 #ifndef GOALSATISFACTIONROW_H
-	#include "GoalMatrixRowEvaluator.h"
+    #include "GoalMatrixRowEvaluator.h"
 #endif
 
 #ifndef METADATA_H
-	#include "MetaData.h"
+    #include "MetaData.h"
 #endif
 
 #ifndef ENGINEDATA_H
-	#include "EngineData.h"
+    #include "EngineData.h"
 #endif
 
 #ifndef GOALFACTORY_H
-	#include "GoalFactory.h"
+    #include "GoalFactory.h"
 #endif
 
 #include <cmath>
@@ -78,21 +78,21 @@ void GoalMatrixRowEvaluator::Initialize(PlayerType p_humanPlayer, PlayerType p_s
     m_level.clear();
     for(int paramIdx = START(BaseType); paramIdx < END(BaseType); ++paramIdx)
     {
-		m_group.clear();
+        m_group.clear();
         m_group.push_back(make_pair(PARAM_BaseTypeId, paramIdx));
-		m_level.push_back(m_group);
+        m_level.push_back(m_group);
     }
     _goalParamGraph[m_goalIdx].Levels().push_back(m_level);
     _goalParamGraph[m_goalIdx].EvaluatePath = new Predicate<GoalMatrixRowEvaluator>(this, &GoalMatrixRowEvaluator::EvaluatePath);
     _rowSize += COUNT(BaseType);
     _parameterStart[PARAM_BaseTypeId] = BASETYPE_START;
 
-	m_level.clear();
-	m_group.clear();
-	m_group.push_back(make_pair(PARAM_PlayerId, p_humanPlayer));
-	m_level.push_back(m_group);
-	_goalParamGraph[m_goalIdx].Levels().push_back(m_level);
-	_parameterStart[PARAM_PlayerId] = PLAYER_START;
+    m_level.clear();
+    m_group.clear();
+    m_group.push_back(make_pair(PARAM_PlayerId, p_humanPlayer));
+    m_level.push_back(m_group);
+    _goalParamGraph[m_goalIdx].Levels().push_back(m_level);
+    _parameterStart[PARAM_PlayerId] = PLAYER_START;
 
     // Goal: AttackEnemy
     m_goalIdx = INDEX(GOALEX_AttackEnemy, GoalType);
@@ -215,11 +215,10 @@ bool GoalMatrixRowEvaluator::EvaluatePath()
     }
     
     TPathKey m_pathId = Hash(_currentGoal, m_path);
-    
 
-	assert(0);
-	// FIXME: Lines blow were commented to fix compilation error
-	// GoalEx* m_goal = GetGoal(m_pathId, m_path);
+    assert(0);
+    // FIXME: Lines blow were commented to fix compilation error
+    // GoalEx* m_goal = GetGoal(m_pathId, m_path);
     //m_goal->Update(_lastGameCycle);
     
     int m_goalIdx = _keyToIdxMapping[m_pathId];
@@ -276,7 +275,6 @@ GoalEx* GoalMatrixRowEvaluator::GetGoal(TPathKey p_pathId, list<NodeType>& p_pat
         assert(m_goal != nullptr);
         _goals[p_pathId] = m_goal;
     }
-
 
     return _goals[p_pathId];
 }

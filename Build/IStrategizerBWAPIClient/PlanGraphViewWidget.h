@@ -6,14 +6,14 @@
 
 class PlanGraphViewWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	PlanGraphViewWidget(QWidget *parent = 0);
-	~PlanGraphViewWidget();
+    PlanGraphViewWidget(QWidget *parent = 0);
+    ~PlanGraphViewWidget();
 
 private:
-	Ui::PlanGraphViewWidget ui;
+    Ui::PlanGraphViewWidget ui;
 };
 
 #endif // PLANGRAPHVIEWWIDGET_H

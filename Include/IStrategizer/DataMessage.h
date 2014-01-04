@@ -9,80 +9,80 @@
 
 namespace IStrategizer
 {
-	template<class T>
-	class DataMessage : public Message
-	{
-	private:
-		T* _data;
-	public:
+    template<class T>
+    class DataMessage : public Message
+    {
+    private:
+        T* _data;
+    public:
     const T* Data() const;
-		T* Data();
-		DataMessage(unsigned long p_gameCycle, MessageType p_messageTypeID, T* p_data);
-		~DataMessage();
-	};
-	//----------------------------------------------------------------------------------------------
-	template<class T>
-	DataMessage<T>::DataMessage(unsigned long p_gameCycle, MessageType p_messageTypeID, T* p_data) : Message(p_gameCycle, p_messageTypeID)
-	{
-		_data = p_data;
-	}
-	//----------------------------------------------------------------------------------------------
-	template<class T>
-	const T* DataMessage<T>::Data() const { return _data; }
+        T* Data();
+        DataMessage(unsigned long p_gameCycle, MessageType p_messageTypeID, T* p_data);
+        ~DataMessage();
+    };
+    //----------------------------------------------------------------------------------------------
+    template<class T>
+    DataMessage<T>::DataMessage(unsigned long p_gameCycle, MessageType p_messageTypeID, T* p_data) : Message(p_gameCycle, p_messageTypeID)
+    {
+        _data = p_data;
+    }
+    //----------------------------------------------------------------------------------------------
+    template<class T>
+    const T* DataMessage<T>::Data() const { return _data; }
   //----------------------------------------------------------------------------------------------
   template<class T>
   T* DataMessage<T>::Data() { return _data; }
   //----------------------------------------------------------------------------------------------
-	template<class T>
-	DataMessage<T>::~DataMessage()
-	{
-		delete _data;
-	}
-	//----------------------------------------------------------------------------------------------
-	typedef DataMessage<std::string> TextMessage;
-	//----------------------------------------------------------------------------------------------
-	struct EntityMessageData
-	{
-		TID	EntityId;
-		PlayerType OwnerId;
-		int	X;
-		int	Y;
-	};
-	typedef DataMessage<EntityMessageData> EntityCreateMessage;
-	typedef DataMessage<EntityMessageData> EntityDestroyMessage;
-	typedef DataMessage<EntityMessageData> EntityRenegadeMessage;
-	//----------------------------------------------------------------------------------------------
-	struct GameEndMessageData
-	{
-		bool IsWinner;
-	};
-	typedef DataMessage<GameEndMessageData> GameEndMessage;
-	//----------------------------------------------------------------------------------------------
-	struct EntityTrainedMessageData
-	{
-		TID TrainerId;
-		TID EntityId;
-		EntityClassType EntityType;
-		EntityClassType TrainerType;
+    template<class T>
+    DataMessage<T>::~DataMessage()
+    {
+        delete _data;
+    }
+    //----------------------------------------------------------------------------------------------
+    typedef DataMessage<std::string> TextMessage;
+    //----------------------------------------------------------------------------------------------
+    struct EntityMessageData
+    {
+        TID EntityId;
+        PlayerType OwnerId;
+        int X;
+        int Y;
+    };
+    typedef DataMessage<EntityMessageData> EntityCreateMessage;
+    typedef DataMessage<EntityMessageData> EntityDestroyMessage;
+    typedef DataMessage<EntityMessageData> EntityRenegadeMessage;
+    //----------------------------------------------------------------------------------------------
+    struct GameEndMessageData
+    {
+        bool IsWinner;
+    };
+    typedef DataMessage<GameEndMessageData> GameEndMessage;
+    //----------------------------------------------------------------------------------------------
+    struct EntityTrainedMessageData
+    {
+        TID TrainerId;
+        TID EntityId;
+        EntityClassType EntityType;
+        EntityClassType TrainerType;
 
-		EntityTrainedMessageData(TID p_trainerId, TID p_entityId, EntityClassType p_trainerType, EntityClassType p_entityType) :
-		TrainerId(p_trainerId), EntityId(p_entityId), EntityType(p_trainerType), TrainerType(p_entityType) {}
+        EntityTrainedMessageData(TID p_trainerId, TID p_entityId, EntityClassType p_trainerType, EntityClassType p_entityType) :
+        TrainerId(p_trainerId), EntityId(p_entityId), EntityType(p_trainerType), TrainerType(p_entityType) {}
 
-		EntityTrainedMessageData() :
-		TrainerId(0), EntityId(0), EntityType(ECLASS_END), TrainerType(ECLASS_END) {}
-	};
-	//----------------------------------------------------------------------------------------------
-	struct BuildingBuiltMessageData
-	{
-		TID BuilderId;
-		TID BuildingId;
+        EntityTrainedMessageData() :
+        TrainerId(0), EntityId(0), EntityType(ECLASS_END), TrainerType(ECLASS_END) {}
+    };
+    //----------------------------------------------------------------------------------------------
+    struct BuildingBuiltMessageData
+    {
+        TID BuilderId;
+        TID BuildingId;
 
-		BuildingBuiltMessageData(TID p_builderId, TID p_buildingId) :
-		BuilderId(p_builderId), BuildingId(p_buildingId) {}
+        BuildingBuiltMessageData(TID p_builderId, TID p_buildingId) :
+        BuilderId(p_builderId), BuildingId(p_buildingId) {}
 
-		BuildingBuiltMessageData() :
-		BuilderId(0), BuildingId(0) {}
-	};
+        BuildingBuiltMessageData() :
+        BuilderId(0), BuildingId(0) {}
+    };
 }
 
 #endif // DATAMESSAGE_H

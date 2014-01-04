@@ -8,20 +8,20 @@ using namespace IStrategizer;
 
 MessagePump::MessagePump()
 {
-	AddMessage(MSG_Input);
-	AddMessage(MSG_EntityCreate);
-	AddMessage(MSG_EntityDestroy);
-	AddMessage(MSG_EntityRenegade);
-	AddMessage(MSG_GameStart);
-	AddMessage(MSG_GameEnd);
+    AddMessage(MSG_Input);
+    AddMessage(MSG_EntityCreate);
+    AddMessage(MSG_EntityDestroy);
+    AddMessage(MSG_EntityRenegade);
+    AddMessage(MSG_GameStart);
+    AddMessage(MSG_GameEnd);
 
-	// Obsolete Messages
-	AddMessage(MSG_GameActionLog);
-	AddMessage(MSG_GameExit);
-	AddMessage(MSG_EntityAttacked);
-	AddMessage(MSG_EntityKilled);
-	AddMessage(MSG_EntityTrained);
-	AddMessage(MSG_BuildingBuilt);
+    // Obsolete Messages
+    AddMessage(MSG_GameActionLog);
+    AddMessage(MSG_GameExit);
+    AddMessage(MSG_EntityAttacked);
+    AddMessage(MSG_EntityKilled);
+    AddMessage(MSG_EntityTrained);
+    AddMessage(MSG_BuildingBuilt);
 }
 //----------------------------------------------------------------------------------------------
 MessagePump& MessagePump::Instance()

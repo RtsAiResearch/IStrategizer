@@ -3,17 +3,17 @@
 
 namespace IStrategizer
 {
-	enum ErrorType
-	{
-		ERR_Success,
-		ERR_InvalidParameterValue,
-		ERR_nullptrReferenceValue,
-		ERR_InvalidId,
-		ERR_EntityDoesNotExist,
-		ERR_PreconditionsNotSatisfied,
-		ERR_PreparationFailed,
-		ERR_ActionIsNotPrepared
-	};
+    enum ErrorType
+    {
+        ERR_Success,
+        ERR_InvalidParameterValue,
+        ERR_nullptrReferenceValue,
+        ERR_InvalidId,
+        ERR_EntityDoesNotExist,
+        ERR_PreconditionsNotSatisfied,
+        ERR_PreparationFailed,
+        ERR_ActionIsNotPrepared
+    };
 }
 
 /*
@@ -48,4 +48,4 @@ _lastErrorCode = p_errorCode;
 }
 //---------------------------------------------------------------------------------
 */
-#endif	// ERRORCODE_H
+#endif // ERRORCODE_H

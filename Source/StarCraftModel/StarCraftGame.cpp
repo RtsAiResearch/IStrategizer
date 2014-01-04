@@ -53,9 +53,9 @@ void StarCraftGame::InitializeMap()
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::EnumeratePlayers()
 {
-    vector<GamePlayer*>		oldPlayers;
-    vector<TID>				gamePlayerIds;
-    IStrategizer::PlayerType	typeId;
+    vector<GamePlayer*> oldPlayers;
+    vector<TID> gamePlayerIds;
+    IStrategizer::PlayerType typeId;
 
     m_players.Values(oldPlayers);
 
@@ -73,7 +73,7 @@ void StarCraftGame::EnumeratePlayers()
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::EnumerateEntityTypes()
 {
-    vector<IStrategizer::GameType*>		oldEntityTypes;
+    vector<IStrategizer::GameType*> oldEntityTypes;
     vector<EntityClassType> newEntityTypes;
 
     m_entityTypes.Values(oldEntityTypes);
@@ -90,8 +90,8 @@ void StarCraftGame::EnumerateEntityTypes()
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::EnumerateResearches()
 {
-    vector<GameResearch*>	oldResearchTypes;
-    vector<ResearchType>	newResearchTypes;
+    vector<GameResearch*> oldResearchTypes;
+    vector<ResearchType> newResearchTypes;
 
     m_researches.Values(oldResearchTypes);
     Toolbox::MemoryClean(oldResearchTypes);
@@ -115,10 +115,10 @@ GamePlayer* StarCraftGame::FetchPlayer(IStrategizer::PlayerType p_id)
 //----------------------------------------------------------------------------------------------
 IStrategizer::GameType* StarCraftGame::FetchEntityType(EntityClassType p_id)
 {
-    TID						unitId;
-    string					typeIdent; 
-    BWAPI::UnitType			unitType;
-    IStrategizer::GameType*	entityType;
+    TID unitId;
+    string typeIdent; 
+    BWAPI::UnitType unitType;
+    IStrategizer::GameType* entityType;
 
     unitId = g_Database.EntityMapping.GetBySecond(p_id);
     typeIdent = g_Database.EntityIdentMapping.GetByFirst(unitId);
@@ -132,11 +132,11 @@ IStrategizer::GameType* StarCraftGame::FetchEntityType(EntityClassType p_id)
 //----------------------------------------------------------------------------------------------
 GameResearch* StarCraftGame::FetchResearch(ResearchType p_id)
 {
-    TID					researchId;
-    string				typeIdent;
-    BWAPI::UpgradeType	upgrade;
-    TechType			tech;
-    GameResearch*		research;
+    TID researchId;
+    string typeIdent;
+    BWAPI::UpgradeType upgrade;
+    TechType tech;
+    GameResearch* research;
 
     if(p_id >= ((int)(START(ResearchType) +  TechIdOffset)))
     {
@@ -166,7 +166,7 @@ void StarCraftGame::ExecuteCommand(const char *p_cmd)
         "export-game-ids"
     };
 
-    unsigned	cmdLen;
+    unsigned cmdLen;
     const char* cmdParam;
 
     if (!strncmp(p_cmd, commands[0], strlen(commands[0])))

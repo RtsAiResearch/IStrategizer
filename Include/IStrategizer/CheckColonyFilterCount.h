@@ -17,11 +17,11 @@ private:
     Colony  _colony;
 public:
                 CheckColonyFilterCount() {}
-				CheckColonyFilterCount(PlayerType p_player, int p_filterTypeId, int p_operatorId, int p_value, const Colony& p_colony);
-    int			CurrentCount() const { return _currentCount; }
-    bool		Evaluate();
+                CheckColonyFilterCount(PlayerType p_player, int p_filterTypeId, int p_operatorId, int p_value, const Colony& p_colony);
+    int CurrentCount() const { return _currentCount; }
+    bool Evaluate();
     void        Copy(IClonable* p_dest);
-	bool		Consume(int p_amount) { return true; }
+    bool Consume(int p_amount) { return true; }
     //----------------------------------------------------------------------------------------------
     // Serialization
     string      TypeName()  { return "CheckColonyFilterCount"; }
