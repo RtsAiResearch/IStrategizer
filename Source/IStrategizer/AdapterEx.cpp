@@ -26,6 +26,8 @@ const unsigned AdapterEx::WorkerStatesSize = 2;
 
 const unsigned AdapterEx::AttackerStatesSize = 1;
 
+const unsigned AdapterEx::EntityToMoveStatesSize = 4;
+
 // Minimum number of build cells to be between colony buildings
 const int AdapterEx::DefaultBuildingSpacing = 32;
 
@@ -40,6 +42,11 @@ const ObjectStateType AdapterEx::WorkerStatesRank[] = {
 // It is always better to use an idle attackers and leave an attacker which is attacking already
 const ObjectStateType AdapterEx::AttackerStatesRank[] = {
 	OBJSTATE_Idle
+};
+
+//Ranked valid states for entity to move to position from the best to the worst state
+const ObjectStateType AdapterEx::EntityToMoveStatesRank[] = {
+	OBJSTATE_Idle ,OBJSTATE_Attacking, OBJSTATE_Gathering, OBJSTATE_Moving
 };
 
 AdapterEx::AdapterEx()
@@ -223,6 +230,14 @@ bool AdapterEx::IsValidAttackerState(ObjectStateType p_attackerState)
 	return find(pStart, pEnd, p_attackerState) != pEnd;
 }
 //////////////////////////////////////////////////////////////////////////
+bool IStrategizer::AdapterEx::IsValidEntityToMoveState( ObjectStateType p_entityState )
+{
+	const ObjectStateType* pStart = EntityToMoveStatesRank;
+	const ObjectStateType* pEnd = EntityToMoveStatesRank + EntityToMoveStatesSize;
+
+	return find(pStart, pEnd, p_entityState) != pEnd;
+}
+//////////////////////////////////////////////////////////////////////////
 unsigned AdapterEx::GetAttackerStateIndex(ObjectStateType p_attackerState)
 {
 	const ObjectStateType* pStart = AttackerStatesRank;
@@ -402,4 +417,70 @@ Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
 {
 	g_Game->Map()->UpdateAux();
 	return g_Game->Map()->GetNearestCell(new CellFeature(p_parameters));
+}
+//////////////////////////////////////////////////////////////////////////
+TID AdapterEx::AdaptEntityToMove( EntityClassType p_EntityType )
+{
+	GamePlayer			*pPlayer;
+	GameEntity			*pEntity;
+	vector<TID>			entityIds;
+	ObjectStateType		curEntityState;
+	TID					adaptedEntityId = 0;
+	ObjectStateType     candidateEntityState;
+	vector<UnitEntry>	validEntities;
+
+	candidateEntityState = OBJSTATE_Idle;
+
+	if (!IsValidEntityToMoveState(candidateEntityState))
+ 		return TID();
+
+	pPlayer = g_Game->Self();
+	assert(pPlayer);
+
+	pPlayer->Entities(entityIds);
+
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+	{
+		pEntity = pPlayer->GetEntity(entityIds[i]);
+		assert(pEntity);
+
+		if (p_EntityType == pEntity->Type() && !pEntity->IsLocked())
+		{
+			curEntityState = (ObjectStateType)pEntity->Attr(EOATTR_State);
+
+			if (curEntityState == candidateEntityState)
+				adaptedEntityId = pEntity->Id();
+			else if (IsValidEntityToMoveState(curEntityState))
+				validEntities.push_back(MakePair(pEntity->Id(), curEntityState));
+		}
+	}
+
+	if (adaptedEntityId != 0)
+		return adaptedEntityId;
+	else if (!validEntities.empty())
+	{
+		sort(validEntities.begin(), validEntities.end(), EntityToMoveStatesComparer);
+		adaptedEntityId = validEntities[0].first;
+
+		return adaptedEntityId;
+	}
+
+	return 0;
+}
+//////////////////////////////////////////////////////////////////////////
+unsigned AdapterEx::GetEntityToMoveStateIndex( ObjectStateType p_entityState )
+{
+	const ObjectStateType* pStart = EntityToMoveStatesRank;
+	const ObjectStateType* pEnd = EntityToMoveStatesRank + EntityToMoveStatesSize;
+	const ObjectStateType* pWhere = nullptr;
+
+	pWhere = find(pStart, pEnd, p_entityState);
+	assert(pWhere);
+
+	return pWhere - pStart;
+}
+//////////////////////////////////////////////////////////////////////////
+bool AdapterEx::EntityToMoveStatesComparer( pair<TID, ObjectStateType> &p_leftEntity, pair<TID, ObjectStateType> &p_rightEntity )
+{
+	return GetEntityToMoveStateIndex(p_leftEntity.second) < GetEntityToMoveStateIndex(p_rightEntity.second);
 }

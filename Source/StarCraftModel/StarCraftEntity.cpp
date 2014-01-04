@@ -143,6 +143,7 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
 
     type = UnitType::getType(typeName);
+    type = BWAPI::UnitType::getType(typeName);
 
     return m_unit->build(type, pos);
 };
@@ -176,7 +177,7 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
     unitTypeId = g_Database.EntityMapping.GetBySecond(p_entityClassId);
     typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
 
-    type = UnitType::getType(typeName);
+    type = BWAPI::UnitType::getType(typeName);
 
     return building->train(type);
 

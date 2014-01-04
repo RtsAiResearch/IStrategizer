@@ -7,7 +7,6 @@
 #include "Vector2.h"
 #endif
 
-#define ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE 64
 
 namespace IStrategizer
 {

@@ -16,9 +16,8 @@ namespace IStrategizer
 
 namespace StarCraftModel
 {
-    class StarCraftEntity : public IStrategizer::GameEntity
+    class StarCraftEntity: public IStrategizer::GameEntity
     {
-
     public:
         StarCraftEntity(BWAPI::Unit p_unit);
         int	Attr(IStrategizer::EntityObjectAttribute p_attrId) const;

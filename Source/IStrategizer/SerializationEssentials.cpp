@@ -36,6 +36,9 @@
 #ifndef ATTACKENTITYACTION_H
 #include "AttackEntityAction.h"
 #endif
+#ifndef MOVEACTION_H
+#include "MoveAction.h"
+#endif
 #ifndef ATTACKGROUNDACTION_H
 #include "AttackGroundAction.h"
 #endif
@@ -101,10 +104,12 @@ void SerializationEssentials::Init()
 
     g_ObjectFactory.AddPrototype(new AttackEntityAction);
     g_ObjectFactory.AddPrototype(new AttackGroundAction);
+    g_ObjectFactory.AddPrototype(new MoveAction);
     g_ObjectFactory.AddPrototype(new ResearchAction);
     g_ObjectFactory.AddPrototype(new TrainAction);
     g_ObjectFactory.AddPrototype(new BuildActionEx);
     g_ObjectFactory.AddPrototype(new MoveEntityAction);
+    g_ObjectFactory.AddPrototype(new BuildActionEx);
 
     g_ObjectFactory.AddPrototype(new ResourceExist);
     g_ObjectFactory.AddPrototype(new ResearchDone);

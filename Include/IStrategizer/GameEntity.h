@@ -35,9 +35,9 @@ namespace IStrategizer
 		virtual bool Research(ResearchType p_researchId) = 0;
 		virtual bool Build(EntityClassType p_buildingClassId, Vector2 p_position) = 0;
 		virtual bool AttackGround(Vector2 p_position) = 0;
+		virtual bool Move(Vector2 p_position) = 0;
 		virtual bool AttackEntity(TID p_targetEntityObjectId) = 0;
 		virtual bool Train(EntityClassType p_entityClassId) = 0;
-		virtual bool Move(Vector2 p_position) = 0;
 		bool Acquire() { return true; }
 		bool Release() { return true; }
 
