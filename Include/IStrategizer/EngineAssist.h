@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <map>
+#define ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE 64
+
 //#ifndef GAMEENGINECROSSMAPPING_H
 //#include "GameEngineCrossMapping.h"
 //#endif

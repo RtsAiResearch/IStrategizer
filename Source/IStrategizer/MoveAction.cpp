@@ -10,9 +10,8 @@
 
 using namespace IStrategizer;
 using namespace Serialization;
-const int       maxEpslonDistance = 200 ;
 
-MoveAction::MoveAction():Action(ACTIONEX_MoveAction)
+MoveAction::MoveAction() : Action(ACTIONEX_MoveAction)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     _params[PARAM_ObjectStateType] = 0;
@@ -48,7 +47,7 @@ bool MoveAction::PreconditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool MoveAction::SuccessConditionsSatisfied()
 {
-    return IsEntityCloseToPosition(_entityId,_position,maxEpslonDistance);
+    return g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
 }
 //----------------------------------------------------------------------------------------------
 void MoveAction::InitializeAddressesAux()
@@ -75,14 +74,4 @@ bool MoveAction::ExecuteAux( const WorldClock& p_clock )
         executed = _pEntity->Move(_position);
     }
     return executed;
-}
-
-bool MoveAction::IsEntityCloseToPosition( const TID p_EntityId,const Vector2 p_position,int p_epslon )
-{
-    GameEntity* entity = g_Game->Self()->GetEntity(p_EntityId);
-    Vector2    entityPosition = entity->GetPosition();
-
-    double distance = sqrt((double) ((p_position.X - entityPosition.X) * (p_position.X - entityPosition.X) + (p_position.Y - entityPosition.Y) * (p_position.Y - entityPosition.Y))); 
-
-    return distance <= p_epslon;
 }

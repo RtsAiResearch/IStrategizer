@@ -26,7 +26,6 @@
 		bool		ExecuteAux(const WorldClock& p_clock );
 		void		InitializeAddressesAux() ;
 		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
-		bool		IsEntityCloseToPosition(const TID  p_EntityId, const Vector2 p_position, int p_Epslon);
 
 	private:
 		TID			_entityId;
