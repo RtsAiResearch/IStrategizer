@@ -4,6 +4,7 @@
 #include "TrainAction.h"
 #include "AttackGroundAction.h"
 #include "AttackEntityAction.h"
+#include "MoveEntityAction.h"
 #include "ActionFactory.h"
 #include "CellFeature.h"
 #include "MoveAction.h"
@@ -38,7 +39,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
 
     case ACTIONEX_AttackEntity:
         return new AttackEntityAction(p_paramaters);
-        break;
+		 break;
 
     default:
         throw exception("Action not supported");
@@ -58,7 +59,6 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
     {
     case ACTIONEX_Research:
         m_action = new ResearchAction();
-
         break;
 
     case ACTIONEX_BuildEx:

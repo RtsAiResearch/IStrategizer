@@ -36,7 +36,8 @@ void MoveAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 //----------------------------------------------------------------------------------------------
 bool MoveAction::AliveConditionsSatisfied()
 {
-    return g_Assist.DoesEntityObjectExist(_entityId);
+
+    return (g_Assist.DoesEntityObjectExist(_entityId) && _pEntity->Attr(EOATTR_IsMoving) > 0);
 }
 //----------------------------------------------------------------------------------------------
 bool MoveAction::PreconditionsSatisfied()

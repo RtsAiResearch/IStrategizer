@@ -51,6 +51,9 @@
 #ifndef TRAINACTION_H
 #include "TrainAction.h"
 #endif
+#ifndef MOVEENTITYACTION_H
+#include "MoveEntityAction.h"
+#endif
 #ifndef RESOURCEEXIST_H
 #include "ResourceExist.h"
 #endif
@@ -104,6 +107,8 @@ void SerializationEssentials::Init()
     g_ObjectFactory.AddPrototype(new MoveAction);
     g_ObjectFactory.AddPrototype(new ResearchAction);
     g_ObjectFactory.AddPrototype(new TrainAction);
+    g_ObjectFactory.AddPrototype(new BuildActionEx);
+    g_ObjectFactory.AddPrototype(new MoveEntityAction);
     g_ObjectFactory.AddPrototype(new BuildActionEx);
 
     g_ObjectFactory.AddPrototype(new ResourceExist);

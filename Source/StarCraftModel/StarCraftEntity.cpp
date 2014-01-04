@@ -67,6 +67,9 @@ int	StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
     case EOATTR_PosCenterY:
         return m_unit->getPosition().y;
 
+    case EOATTR_IsMoving:
+        return m_unit->isMoving();
+
     default:
         assert(0);
     }
@@ -129,36 +132,27 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
     return bOk;
 }
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::Build(EntityClassType p_buildingClassId, int p_x, int p_y) 
+bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position) 
 {
-    TilePosition	  pos(TilePositionFromUnitPosition(p_x), TilePositionFromUnitPosition(p_y));
-    BWAPI::UnitType	type;
+    TilePosition	  pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
+    UnitType	type;
     TID             gameTypeId;
     string	        typeName;
 
     gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
     typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
 
+    type = UnitType::getType(typeName);
     type = BWAPI::UnitType::getType(typeName);
 
     return m_unit->build(type, pos);
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::AttackGround(int p_x, int p_y)
+bool StarCraftEntity::AttackGround(Vector2 p_position)
 {
-    Unit		attacker = m_unit;
-    Position	pos(p_x, p_y);
-
-    return attacker->attack(pos);
+    Position	pos(p_position.X, p_position.Y);
+    return m_unit->attack(pos);
 };
-//----------------------------------------------------------------------------------------------
-bool StarCraftModel::StarCraftEntity::Move(Vector2 p_position)
-{
-    Unit        unitToMove = m_unit;
-    Position    pos(p_position.X, p_position.Y);
-
-    return unitToMove->move(pos);
-}
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 {
@@ -175,10 +169,10 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 {
-    Unit			building = m_unit;
-    TID				unitTypeId;
-    string			typeName;
-    BWAPI::UnitType	type;
+    Unit            building = m_unit;
+    TID	            unitTypeId;
+    string          typeName;
+    UnitType        type;
 
     unitTypeId = g_Database.EntityMapping.GetBySecond(p_entityClassId);
     typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
@@ -219,7 +213,13 @@ string StarCraftModel::StarCraftEntity::ToString() const
     return description;
 }
 //----------------------------------------------------------------------------------------------
-IStrategizer::Vector2 StarCraftEntity::GetPosition() const
+Vector2 StarCraftEntity::GetPosition() const
 {
     return Vector2(m_unit->getPosition().x, m_unit->getPosition().y);
 }
+//----------------------------------------------------------------------------------------------
+bool StarCraftEntity::Move(Vector2 p_position)
+{
+    Position	pos(p_position.X, p_position.Y);
+    return m_unit->move(pos);
+};
