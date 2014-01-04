@@ -23,7 +23,8 @@ namespace IStrategizer
 		void       Update(const WorldClock& p_clock);
 		void       Init(GoalEx *p_initialGoal);
 		const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
-		const OnlinePlanExpansionExecutionEx* ExpansionExecution() const { return _onlineExpansionExecution; }
+        const OnlinePlanExpansionExecutionEx* ExpansionExecution() const { return _onlineExpansionExecution; }
+		OnlinePlanExpansionExecutionEx* ExpansionExecution() { return _onlineExpansionExecution; }
 		virtual    ~OnlineCaseBasedPlannerEx();
 	};
 }

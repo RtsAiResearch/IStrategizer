@@ -154,7 +154,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\RetrieverEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Reviser.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecutionEx.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\PlanTreeNodeEx.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\PlanGraphNode.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ActionFactory.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GoalFactory.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Message.cpp" />
@@ -238,7 +238,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\EngineComponent.h" />
     <ClInclude Include="..\..\Include\IStrategizer\OnlineCaseBasedPlannerEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecutionEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\PlanTreeNodeEx.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\PlanGraphNode.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractAdapter.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractRetainer.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractRetriever.h" />

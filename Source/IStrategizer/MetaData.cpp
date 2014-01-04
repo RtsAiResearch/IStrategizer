@@ -1,4 +1,5 @@
 #include "MetaData.h"
+#include "SerializationEssentials.h"
 
 namespace IStrategizer
 {
@@ -11,6 +12,7 @@ namespace IStrategizer
 		if (initialized)
 			return;
 
+        SerializationEssentials::Init();
 		InitAbstractionMetaData();
 		InitTypesMetaData();
 		InitAttributesMetaData();
