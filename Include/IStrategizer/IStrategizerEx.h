@@ -40,7 +40,8 @@ namespace IStrategizer
 		IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame);
 		void	Update(unsigned p_gameCycle);
 		void	StartOfflineLearning();
-		const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
+        const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
+		OnlineCaseBasedPlannerEx* Planner() { return _planner; }
 		void	NotifyMessegeSent(Message* p_message);
 		const WorldClock& Clock() const { return _clock; }
 		~IStrategizerEx();

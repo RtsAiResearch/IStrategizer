@@ -13,7 +13,8 @@ MessagePump::MessagePump()
 	AddMessage(MSG_EntityDestroy);
 	AddMessage(MSG_EntityRenegade);
 	AddMessage(MSG_GameStart);
-	AddMessage(MSG_GameEnd);
+    AddMessage(MSG_GameEnd);
+	AddMessage(MSG_PlanStructureChange);
 
 	// Obsolete Messages
 	AddMessage(MSG_GameActionLog);

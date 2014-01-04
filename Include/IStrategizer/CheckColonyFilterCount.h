@@ -11,6 +11,8 @@ using namespace IStrategizer;
 ///> parent=ConditionEx
 class CheckColonyFilterCount : public ConditionEx
 {
+    OBJECT_SERIALIZABLE(CheckColonyFilterCount);
+
 private:
     int     _currentCount;
     ///> type=Colony
@@ -22,14 +24,8 @@ public:
     bool		Evaluate();
     void        Copy(IClonable* p_dest);
 	bool		Consume(int p_amount) { return true; }
-    //----------------------------------------------------------------------------------------------
-    // Serialization
-    string      TypeName()  { return "CheckColonyFilterCount"; }
-    int         TypeSize()  { return sizeof(CheckColonyFilterCount); }
-    UserObject* Prototype() { return new CheckColonyFilterCount; }
 protected:
     void InitializeAddressesAux();
-    //----------------------------------------------------------------------------------------------
 };
 
 #endif // CHECKCOLONYFILTERCOUNT_H_H    

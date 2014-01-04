@@ -122,10 +122,8 @@ std::string PlanStepEx::ToString() const
 	const char* stepName = Enums[_stepTypeId];
 	unsigned	paramIdx = 0;
 
-	stepDescription = '(';
 	stepDescription += stepName;
-	stepDescription += ')';
-	stepDescription += '<';
+	stepDescription += '(';
 
 	for (PlanStepParameters::const_iterator itr = _params.begin();
 		itr != _params.end(); ++itr)
@@ -158,7 +156,7 @@ std::string PlanStepEx::ToString() const
 		++paramIdx;
 	}
 
-	stepDescription += '>';
+	stepDescription += ')';
 
 	return stepDescription;
 }

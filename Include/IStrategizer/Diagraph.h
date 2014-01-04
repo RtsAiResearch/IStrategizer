@@ -28,7 +28,7 @@ namespace IStrategizer
 
 	private:
 		void MatchPath(Diagraph<TValue, TAnnotation> p_candidate, std::vector<int>& p_primaryMatched, 
-			std::vector<int>& p_candidateMatched, std::vector<int>& p_currentMatched, bool& p_match)
+			std::vector<int>& p_candidateMatched, std::vector<int>& p_currentMatched, bool& p_match) const
 		{
 			if (p_candidateMatched.empty())
 			{
@@ -82,12 +82,15 @@ namespace IStrategizer
 			}
 		}
 		//---------------------------------------------------------------------------
-		inline GraphNode<TValue, TAnnotation>* operator[] (int p_index) const { return _adjacencyMatrix[p_index]; }
+        inline GraphNode<TValue, TAnnotation>* operator[] (int p_index) const { return _adjacencyMatrix[p_index]; }
+        //---------------------------------------------------------------------------
+		inline GraphNode<TValue, TAnnotation>* At (int p_index) const { return _adjacencyMatrix[p_index]; }
+        //---------------------------------------------------------------------------
 		inline int			IsConnected(int p_node1, int p_node2) const { return _adjacencyMatrix[p_node1]->IsConnected(p_node2); }
 		//---------------------------------------------------------------------------
-		inline unsigned		Size() const { return _adjacencyMatrix.size(); }
+		inline size_t		Size() const { return _adjacencyMatrix.size(); }
 		//---------------------------------------------------------------------------
-		std::vector<int> GetInDegree()
+		std::vector<int> GetInDegree() const
 		{
 			std::vector<int> m_inDegree = std::vector<int>(_adjacencyMatrix.size(), 0);
 
@@ -122,7 +125,7 @@ namespace IStrategizer
 			return false;
 		}
 		//---------------------------------------------------------------------------
-		std::vector<int>	GetRoots()
+		std::vector<int>	GetRoots() const
 		{
 			std::vector<int> roots;
 
@@ -137,7 +140,7 @@ namespace IStrategizer
 			return roots;
 		}
 		//----------------------------------------------------------------------------------------------
-		std::vector<int> GetLeaves()
+		std::vector<int> GetLeaves() const
 		{
 			std::vector<int> leaves;
 			for(unsigned i = 0; i < _adjacencyMatrix.size(); i++)
@@ -169,7 +172,7 @@ namespace IStrategizer
 		//---------------------------------------------------------------------------
 		TAnnotation GetConnectionAnnotation(int p_node1, int p_node2) { return _adjacencyMatrix[p_node1]->GetAnnotation(p_node2); }
 		//---------------------------------------------------------------------------
-		std::vector<TAnnotation> TotalInAnnotations(int p_node)
+		std::vector<TAnnotation> TotalInAnnotations(int p_node) const
 		{
 			std::vector<TAnnotation> m_totalInAnnotations;
 
@@ -184,7 +187,7 @@ namespace IStrategizer
 			return m_totalInAnnotations;
 		}
 		//---------------------------------------------------------------------------
-		std::vector<TAnnotation> TotalOutAnnotations(int p_node)
+		std::vector<TAnnotation> TotalOutAnnotations(int p_node) const
 		{
 			std::vector<TAnnotation> m_totalOutAnnotations;
 
@@ -209,7 +212,7 @@ namespace IStrategizer
 			_adjacencyMatrix.erase(_adjacencyMatrix.begin() + p_node);
 		}
 		//---------------------------------------------------------------------------
-		bool IsSubGraph(Diagraph<TValue, TAnnotation> p_candidate, std::vector<int>& p_matchedIndexes, int& p_matchedCount)
+		bool IsSubGraph(Diagraph<TValue, TAnnotation> p_candidate, std::vector<int>& p_matchedIndexes, int& p_matchedCount) const
 		{
 			std::vector<int> m_roots = p_candidate.GetRoots();
 			std::vector<int>	m_matching;
@@ -259,7 +262,7 @@ namespace IStrategizer
 			return (p_matchedCount > 0);
 		}
 		//---------------------------------------------------------------------------
-		std::vector<int> GetParents(int p_nodeIndex, std::vector<int> p_execluded = std::vector<int>())
+		std::vector<int> GetParents(int p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const
 		{
 			std::vector<int> m_parents;
 
@@ -275,7 +278,7 @@ namespace IStrategizer
 			return m_parents;
 		}
 		//---------------------------------------------------------------------------
-		std::vector<int> GetChildren(int p_nodeIndex, std::vector<int> p_execluded = std::vector<int>())
+		std::vector<int> GetChildren(int p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const
 		{
 			std::vector<int> m_children;
 

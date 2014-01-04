@@ -17,6 +17,8 @@ namespace IStrategizer
 	///> class=Colony
 	class Colony : public Serialization::UserObject, public IClonable
 	{
+        OBJECT_SERIALIZABLE(Colony);
+
 	public:
 		///> type=int
 		int Top;
@@ -36,16 +38,10 @@ namespace IStrategizer
 
 		IClonable*  Clone();
 		void        Copy(IClonable* p_dest);
-		//----------------------------------------------------------------------------------------------
-		// Serialization
-	public:
-		string  	TypeName() 	{ return "Colony"; }
-		int     	TypeSize()  { return sizeof(Colony); }
-		UserObject* Prototype() { return new Colony; }	
+		
 
 	protected:
 		void InitializeAddressesAux() { AddMemberAddress(4, &Top, &Left, &Width, &Height); }
-		//----------------------------------------------------------------------------------------------
 	};
 }
 

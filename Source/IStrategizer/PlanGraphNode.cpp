@@ -1,5 +1,5 @@
 #ifndef PLANTREENODEEX_H
-#include "PlanTreeNodeEx.h"
+#include "PlanGraphNode.h"
 #endif
 #ifndef PLANSTEPEX_H
 #include "PlanStepEx.h"
@@ -20,99 +20,103 @@
 
 using namespace IStrategizer;
 
+PlanGraphNode::NodeID PlanGraphNode::s_lastNodeID = 0;
+
 //////////////////////////////////////////////////////////////////////////
-void* PlanTreeNodeEx::operator new (size_t p_size)
+void* PlanGraphNode::operator new (size_t p_size)
 {
 	void* pNode = HeapAlloc(GetProcessHeap(), 0, p_size);
 	return pNode;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::operator delete (void *p_pNode)
+void PlanGraphNode::operator delete (void *p_pNode)
 {
 	HeapFree(GetProcessHeap(), 0, p_pNode);
 }
 //////////////////////////////////////////////////////////////////////////
-PlanTreeNodeEx::PlanTreeNodeEx(PlanStepEx* p_pPlanStep, PlanTreeNodeEx* p_pSubPlanGoal) :
+PlanGraphNode::PlanGraphNode(PlanStepEx* p_pPlanStep, PlanGraphNode* p_pSubPlanGoal) :
 _pPlanStep(p_pPlanStep), _pSubPlanGoal(p_pSubPlanGoal), _isOpen(true)
 {
+    _id = ++s_lastNodeID;
+
 	if (p_pPlanStep)
 	{
 		if(BELONG(GoalType, p_pPlanStep->StepTypeId()))
 		{
-			_type = PTNTYPE_Goal;
+			_type = PGNTYPE_Goal;
 		}
 		else if(BELONG(ActionType, p_pPlanStep->StepTypeId()))
 		{
-			_type = PTNTYPE_Action;
+			_type = PGNTYPE_Action;
 		}
 	}
 	else
 	{
-		_type = PTNTYPE_nullptr;
+		_type = PGNTYPE_NULL;
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-PlanTreeNodeEx& PlanTreeNodeEx::Null()
+PlanGraphNode& PlanGraphNode::Null()
 {
-	static PlanTreeNodeEx sentinelNode(nullptr, nullptr);
+	static PlanGraphNode sentinelNode(nullptr, nullptr);
 	return sentinelNode;
 }
 //////////////////////////////////////////////////////////////////////////
-PlanTreeNodeEx* PlanTreeNodeEx::CreatePlanRoot(PlanStepEx *p_pPlanStep)
+PlanGraphNode* PlanGraphNode::CreatePlanRoot(PlanStepEx *p_pPlanStep)
 {
-	PlanTreeNodeEx *pPlanRoot = nullptr;
+	PlanGraphNode *pPlanRoot = nullptr;
 
 	// Initialize plan root
-	pPlanRoot = new PlanTreeNodeEx(p_pPlanStep, &PlanTreeNodeEx::Null());
+	pPlanRoot = new PlanGraphNode(p_pPlanStep, &PlanGraphNode::Null());
 	pPlanRoot->SetChildrenAsBelongingSubPlanChildren();
-	pPlanRoot->AddParent(&PlanTreeNodeEx::Null());
-	pPlanRoot->NotifyParentSuccess(&PlanTreeNodeEx::Null());
+	pPlanRoot->AddParent(&PlanGraphNode::Null());
+	pPlanRoot->NotifyParentSuccess(&PlanGraphNode::Null());
 
 	return pPlanRoot;
 }
 //////////////////////////////////////////////////////////////////////////
-GoalEx* PlanTreeNodeEx::GetGoal()
+GoalEx* PlanGraphNode::GetGoal()
 {
 	assert(BELONG(GoalType, _pPlanStep->StepTypeId()));
 	return static_cast<GoalEx*> (_pPlanStep);
 }
 //////////////////////////////////////////////////////////////////////////
-Action* PlanTreeNodeEx::GetAction()
+Action* PlanGraphNode::GetAction()
 {
 	assert(BELONG(ActionType, _pPlanStep->StepTypeId()));
 	return static_cast<Action*> (_pPlanStep);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::NotifyParentSuccess(PlanTreeNodeEx *p_pSuccededParent)
+void PlanGraphNode::NotifyParentSuccess(PlanGraphNode *p_pSuccededParent)
 {
 	_readyParents.insert(p_pSuccededParent);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::Open() 
+void PlanGraphNode::Open() 
 {
 	assert(_isOpen == false);
 	_isOpen = true;
 	LogInfo("'%s' is opened", _pPlanStep->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::Close()
+void PlanGraphNode::Close()
 {
 	assert(_isOpen == true);
 	_isOpen = false; 
 	LogInfo("'%s' is closed", _pPlanStep->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::AddChild(PlanTreeNodeEx *p_pChild)
+void PlanGraphNode::AddChild(PlanGraphNode *p_pChild)
 {
 	_children.push_back(p_pChild);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::AddParent(PlanTreeNodeEx *p_pParent)
+void PlanGraphNode::AddParent(PlanGraphNode *p_pParent)
 {
 	_parents.push_back(p_pParent);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::CrossUnlinkChildren()
+void PlanGraphNode::CrossUnlinkChildren()
 {
 	List tempChildren(_children);
 
@@ -125,7 +129,7 @@ void PlanTreeNodeEx::CrossUnlinkChildren()
 	_children.clear();
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::DeleteChild(PlanTreeNodeEx* p_pChild)
+void PlanGraphNode::DeleteChild(PlanGraphNode* p_pChild)
 {
 	List::iterator itrWhere = find(_children.begin(), _children.end(), p_pChild);
 	assert(itrWhere != _children.end());
@@ -133,7 +137,7 @@ void PlanTreeNodeEx::DeleteChild(PlanTreeNodeEx* p_pChild)
 	_children.erase(itrWhere);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::DeleteParent(PlanTreeNodeEx* p_pParent)
+void PlanGraphNode::DeleteParent(PlanGraphNode* p_pParent)
 {
 	List::iterator itrWhere = find(_parents.begin(), _parents.end(), p_pParent);
 	assert(itrWhere != _parents.end());
@@ -144,19 +148,19 @@ void PlanTreeNodeEx::DeleteParent(PlanTreeNodeEx* p_pParent)
 		_readyParents.erase(p_pParent);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::CrossLinkChild(PlanTreeNodeEx* p_pChild)
+void PlanGraphNode::CrossLinkChild(PlanGraphNode* p_pChild)
 {
 	AddChild(p_pChild);
 	p_pChild->AddParent(this);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::CrossUnlinkChild(PlanTreeNodeEx* p_pChild)
+void PlanGraphNode::CrossUnlinkChild(PlanGraphNode* p_pChild)
 {
 	DeleteChild(p_pChild);
 	p_pChild->DeleteParent(this);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanTreeNodeEx::SetChildrenAsBelongingSubPlanChildren()
+void PlanGraphNode::SetChildrenAsBelongingSubPlanChildren()
 {
 	_belongingSubPlanChildren.clear();
 	_belongingSubPlanChildren.insert(_belongingSubPlanChildren.begin(), _children.begin(), _children.end());
