@@ -64,4 +64,3 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
   }
 }
 
-

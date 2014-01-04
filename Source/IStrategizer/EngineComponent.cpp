@@ -14,7 +14,7 @@
 using namespace IStrategizer;
 
 EngineComponent::EngineComponent(const char* p_pName)
-	: m_pName(p_pName)
+    : m_pName(p_pName)
 {
     LogInfo("%s is initializing ...", m_pName);
     g_MessagePump.RegisterForMessage(MSG_Input, this);

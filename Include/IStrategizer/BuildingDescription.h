@@ -3,21 +3,21 @@
 
 namespace IStrategizer
 {
-	class GameEntity;
+    class GameEntity;
 
-	class BuildingDescription
+    class BuildingDescription
     {
-	public:
-		int		m_numberOfBuildings;
-		int		m_numberOfCriticalBuildings;
+    public:
+        int m_numberOfBuildings;
+        int m_numberOfCriticalBuildings;
 
-		void	AddEntity(GameEntity *p_entity);
-		void	RemoveEntity(GameEntity *p_entity);
-		void	Clear();
-		float	GetDistance(BuildingDescription *p_other);
-	
-	protected:
-		void        InitializeAddressesAux();
+        void AddEntity(GameEntity *p_entity);
+        void RemoveEntity(GameEntity *p_entity);
+        void Clear();
+        float GetDistance(BuildingDescription *p_other);
+    
+    protected:
+        void        InitializeAddressesAux();
     };
 }
 

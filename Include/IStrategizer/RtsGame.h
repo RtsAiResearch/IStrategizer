@@ -18,16 +18,16 @@ namespace IStrategizer
 {
     template<class TKey, class TValue>
     class MapEx;
-	enum PlayerType;
-	enum EntityClassType;
-	enum ResearchType;
+    enum PlayerType;
+    enum EntityClassType;
+    enum ResearchType;
     class GamePlayer;
     class GameType;
     class GameEntity;
     class GameResearch;
     class WorldMap;
 
-	class RtsGame : public EngineComponent
+    class RtsGame : public EngineComponent
     {
     protected:
         MapEx<PlayerType, GamePlayer*>      m_players;
@@ -51,15 +51,15 @@ namespace IStrategizer
                         RtsGame() : EngineComponent("game"), m_pMap(nullptr), m_initialized(false) {}
         virtual         ~RtsGame();
         virtual void    Init();
-		virtual	void	Finalize();
+        virtual void Finalize();
         void            Players(std::vector<PlayerType>& p_playerIds);
         void            EntityTypes(std::vector<EntityClassType>& p_entityTypeIds);
         void            Researches(std::vector<ResearchType>& p_researchTypeIds);
         GamePlayer*     GetPlayer(PlayerType p_id);
         GameType*       GetEntityType(EntityClassType p_id);
         GameResearch*   GetResearch(ResearchType p_id);
-		GamePlayer*		Self();
-		GamePlayer*		Enemy();
+        GamePlayer* Self();
+        GamePlayer* Enemy();
         virtual void    DisplayMessage(const char* p_msg) = 0;
         WorldMap*       Map();
     };

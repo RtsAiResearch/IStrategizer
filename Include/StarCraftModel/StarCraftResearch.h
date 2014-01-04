@@ -10,20 +10,20 @@
 namespace StarCraftModel
 {
     using namespace IStrategizer;
-	using namespace BWAPI;
+    using namespace BWAPI;
     class StarCraftResearch : public GameResearch
     {
-	public:
-		StarCraftResearch(UpgradeType p_research) : m_upgrade(p_research), m_isTech(false) {}
-		StarCraftResearch(TechType p_research) : m_tech(p_research), m_isTech(true) {}
+    public:
+        StarCraftResearch(UpgradeType p_research) : m_upgrade(p_research), m_isTech(false) {}
+        StarCraftResearch(TechType p_research) : m_tech(p_research), m_isTech(true) {}
 
-	protected:
-		void    InitializeAux();
+    protected:
+        void    InitializeAux();
 
-	private:
-		bool		m_isTech;
+    private:
+        bool m_isTech;
         UpgradeType m_upgrade;
-		TechType	m_tech;
+        TechType m_tech;
     };
 }
 

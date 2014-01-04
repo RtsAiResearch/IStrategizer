@@ -5,5 +5,5 @@ using namespace IStrategizer;
 
 MessagePumpObserver::~MessagePumpObserver()
 {
-	g_MessagePump.UnregisterForAllMessages(this);
+    g_MessagePump.UnregisterForAllMessages(this);
 }

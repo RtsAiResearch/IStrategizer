@@ -10,12 +10,12 @@ namespace IStrategizer
     class DynamicComponent
     {
     protected:
-        unsigned		m_lastUpdate;
-        unsigned		m_invalidationInterval;
+        unsigned m_lastUpdate;
+        unsigned m_invalidationInterval;
 
-        static bool		m_realTime;
-        static unsigned	m_globalInvalidationInterval;
-        static bool		m_globalInvalidation;
+        static bool m_realTime;
+        static unsigned m_globalInvalidationInterval;
+        static bool m_globalInvalidation;
 
     public:
                     DynamicComponent() : m_invalidationInterval(0), m_lastUpdate(0) {}

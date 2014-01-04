@@ -3,11 +3,11 @@
 
 namespace IStrategizer
 {
-	class IComparable
-	{
-	public:
-		virtual int Compare(IComparable* p_rhs) = 0;
-	};
+    class IComparable
+    {
+    public:
+        virtual int Compare(IComparable* p_rhs) = 0;
+    };
 }
 
-#endif	// ICOMPARABLE_H
+#endif // ICOMPARABLE_H

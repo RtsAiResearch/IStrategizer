@@ -6,18 +6,18 @@
 
 namespace IStrategizer
 {
-	class GoalEx;
+    class GoalEx;
 
-	class GoalFactory
-	{
-	private:
-		GoalFactory() {};
+    class GoalFactory
+    {
+    private:
+        GoalFactory() {};
 
-	public:
-		static GoalFactory& Instance() { static GoalFactory m_instance; return m_instance; }
-		GoalEx* GetGoal(GoalType p_goalType, PlanStepParameters& p_paramaters, bool p_initConditions = true);
-		GoalEx* GetGoal(GoalType p_goalType, bool p_initConditions = true);
-	};
+    public:
+        static GoalFactory& Instance() { static GoalFactory m_instance; return m_instance; }
+        GoalEx* GetGoal(GoalType p_goalType, PlanStepParameters& p_paramaters, bool p_initConditions = true);
+        GoalEx* GetGoal(GoalType p_goalType, bool p_initConditions = true);
+    };
 #define g_GoalFactory IStrategizer::GoalFactory::Instance()
 }
 

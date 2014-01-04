@@ -5,7 +5,7 @@
 #include "ConditionEx.h"
 
 #ifndef SSET_H
-	#include "SSet.h"
+    #include "SSet.h"
 #endif
 
 namespace IStrategizer
@@ -14,7 +14,7 @@ namespace IStrategizer
 ///> parent=ConditionEx
 class CheckEntityObjectSimilarity : public ConditionEx
 {
-	OBJECT_SERIALIZABLE(CheckEntityObjectSimilarity);
+    OBJECT_SERIALIZABLE(CheckEntityObjectSimilarity);
 
 private:
     ///> type=set(int)
@@ -27,16 +27,16 @@ private:
     int                         _similarityThreshold;
 public:
                 CheckEntityObjectSimilarity() {}
-				CheckEntityObjectSimilarity(PlayerType p_player, int p_entityObjectId, const std::map<EntityObjectAttribute, int>& p_similarityFeatures, int p_similarityThreshold = ExactSimilarity);
-    bool		Evaluate();
-    int			QuerySimilarityFeatures();
-    void	    Copy(IClonable* p_dest);
-	bool		Consume(int p_amount) { return true; }
+                CheckEntityObjectSimilarity(PlayerType p_player, int p_entityObjectId, const std::map<EntityObjectAttribute, int>& p_similarityFeatures, int p_similarityThreshold = ExactSimilarity);
+    bool Evaluate();
+    int QuerySimilarityFeatures();
+    void     Copy(IClonable* p_dest);
+    bool Consume(int p_amount) { return true; }
 
 protected:
-	void InitializeAddressesAux();
-	//----------------------------------------------------------------------------------------------
+    void InitializeAddressesAux();
+    //----------------------------------------------------------------------------------------------
 };
 }
 
-#endif	// CHECKENTITYOBJECTSIMILARITY_H
+#endif // CHECKENTITYOBJECTSIMILARITY_H
