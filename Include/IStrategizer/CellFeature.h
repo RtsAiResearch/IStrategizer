@@ -21,8 +21,8 @@ namespace IStrategizer
 		ForceDescription		m_enemyForceDescription;
 		BuildingDescription		m_alliedBuildingDescription;
 		BuildingDescription		m_enemyBuildingDescription;
-		double					m_distanceFromEnemyBase;
-		double					m_distanceFromBase;
+		int					    m_distanceFromEnemyBase;
+		int					    m_distanceFromBase;
 
 				CellFeature() { Clear(); }
 				CellFeature(const PlanStepParameters& p_parameters);
@@ -36,8 +36,8 @@ namespace IStrategizer
 		static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
 
 	private:
-		void	CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, double& distance);
-		float	GetBaseDistance(double firstBase, double secondBase) const;
+		void	CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, int& distance);
+		float	GetBaseDistance(int firstBase, int secondBase) const;
     };
 }
 

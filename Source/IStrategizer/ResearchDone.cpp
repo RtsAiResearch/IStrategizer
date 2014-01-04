@@ -4,7 +4,7 @@ using namespace IStrategizer;
 
 bool ResearchDone::Evaluate()
 {
-	int returnValue = g_Assist.ResearchDone((PlayerType)_conditionParameters[PARAM_PlayerId], (ResearchType)_conditionParameters[PARAM_UpgradeId]);
+	int returnValue = g_Assist.ResearchDone((PlayerType)_conditionParameters[PARAM_PlayerId], (ResearchType)_conditionParameters[PARAM_ResearchId]);
 
 	ConditionEx::Evaluate();
 

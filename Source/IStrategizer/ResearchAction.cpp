@@ -18,7 +18,7 @@ using namespace IStrategizer;
 
 ResearchAction::ResearchAction() : Action(ACTIONEX_Research)
 {
-	_params[PARAM_EntityClassId] = RESEARCH_START;
+	_params[PARAM_ResearchId] = RESEARCH_START;
 	CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)
 bool ResearchAction::PreconditionsSatisfied()
 {
 	EntityClassType	researcherType;
-	ResearchType	researchType = (ResearchType)_params[PARAM_EntityClassId];
+	ResearchType	researchType = (ResearchType)_params[PARAM_ResearchId];
 	bool			success = false;
 
 	researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
@@ -55,12 +55,12 @@ bool ResearchAction::AliveConditionsSatisfied()
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::SuccessConditionsSatisfied()
 {
-	return g_Game->Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_EntityClassId]);
+	return g_Game->Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
 }
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::ExecuteAux(const WorldClock& p_clock)
 {
-	ResearchType	researchType = (ResearchType)_params[PARAM_EntityClassId];
+	ResearchType	researchType = (ResearchType)_params[PARAM_ResearchId];
 	GameEntity		*pGameResearcher;
 	AbstractAdapter	*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 

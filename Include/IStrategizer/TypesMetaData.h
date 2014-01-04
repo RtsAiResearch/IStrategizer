@@ -108,22 +108,21 @@ namespace IStrategizer
 		ACTIONEX_Train = 0x20800,
 		ACTIONEX_START = 0x20800,
 		ACTIONEX_Build,
-		ACTIONEX_BuildEx,
 		ACTIONEX_Research,
 		ACTIONEX_AttackGround,
 		ACTIONEX_AttackEntity,
         ACTIONEX_MoveEntity,
-		ACTIONEX_MoveAction,
+		ACTIONEX_Move,
 		ACTIONEX_END
 	};
 #define Define_ActionType \
 	Enums[ACTIONEX_Train] = "Train"; \
-	Enums[ACTIONEX_Build] = "Build v1"; \
-	Enums[ACTIONEX_BuildEx] = "Build v2"; \
+	Enums[ACTIONEX_Build] = "Build"; \
 	Enums[ACTIONEX_Research] = "Research"; \
 	Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
+	Enums[ACTIONEX_AttackEntity] = "Attack Entity"; \
     Enums[ACTIONEX_MoveEntity] = "Move Entity Action";\
-	Enums[ACTIONEX_MoveAction] = "Move Action";
+	Enums[ACTIONEX_Move] = "Move Action";
 	//---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
 	enum ConditionType
@@ -153,10 +152,9 @@ namespace IStrategizer
 		PARAM_AttributeId,
 		PARAM_OperatorId,
 		PARAM_Value,
-		PARAM_UpgradeId,
+		PARAM_ResearchId,
 		PARAM_ResourceId,
 		PARAM_FilterTypeId,
-		PARAM_BuildingClassId,
 		PARAM_WorkerClassId,
 		PARAM_WorkerStateId,
 		PARAM_TargetEntityClassId,
@@ -198,10 +196,9 @@ namespace IStrategizer
 	Enums[PARAM_AttributeId] = "Attribute"; \
 	Enums[PARAM_OperatorId] = "Operator"; \
 	Enums[PARAM_Value] = "Value"; \
-	Enums[PARAM_UpgradeId] = "Upgrade"; \
+	Enums[PARAM_ResearchId] = "Research"; \
 	Enums[PARAM_ResourceId] = "Resource"; \
 	Enums[PARAM_FilterTypeId] = "Filter Type"; \
-	Enums[PARAM_BuildingClassId] = "Building Class"; \
 	Enums[PARAM_WorkerClassId] = "Worker Class"; \
 	Enums[PARAM_WorkerStateId] = "Worker State"; \
 	Enums[PARAM_TargetEntityClassId] = "Target Entity Class"; \
@@ -272,7 +269,7 @@ namespace IStrategizer
 		OBJSTATE_START				= 0x20d00,
 		OBJSTATE_Idle,
 		OBJSTATE_Moving,
-		OBJSTATE_Constructing,
+		OBJSTATE_Constructing,  
 		OBJSTATE_Gathering,
 		OBJSTATE_Training,
 		OBJSTATE_Attacking,

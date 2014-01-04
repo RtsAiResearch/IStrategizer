@@ -50,6 +50,7 @@ void WorldMap::UpdateAux()
 		for (unsigned j = 0; j < m_gridWidth; j++)
 		{
 			m_cellFeatureMatrix[i][j].Clear();
+            m_cellFeatureMatrix[i][j].CalculateDistanceToBases(FromGridToWorld(Vector2(i, j)));
 		}
 	}
 

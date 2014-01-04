@@ -21,14 +21,14 @@ const unsigned MaxExecTrialTime = 120000;
 const unsigned MaxExecTime = 120000;
 
 BuildActionEx::BuildActionEx() :
-Action(ACTIONEX_BuildEx, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
+Action(ACTIONEX_Build, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
 {
-	_params[PARAM_BuildingClassId]	= ECLASS_START;
+	_params[PARAM_EntityClassId] = ECLASS_START;
 	CellFeature::Null().To(_params);
 }
 //////////////////////////////////////////////////////////////////////////
 BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :
-Action(ACTIONEX_BuildEx, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false),  _buildIssued(false)
+Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false),  _buildIssued(false)
 {
 }
 //////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ void BuildActionEx::HandleMessage(Message* p_pMsg, bool& p_consumed)
 
 		if (msgBuildPosition.X == _buildArea.Pos().X &&
 			msgBuildPosition.Y == _buildArea.Pos().Y &&
-			pGameBuilding->Type() == _params[PARAM_BuildingClassId])
+			pGameBuilding->Type() == _params[PARAM_EntityClassId])
 		{
 			_buildingId = pGameBuilding->Id();
 			_buildStarted = true;
@@ -104,7 +104,7 @@ bool BuildActionEx::PreconditionsSatisfied()
 	if (!success)
 		return false;
 
-	buildingType = (EntityClassType)_params[PARAM_BuildingClassId];
+	buildingType = (EntityClassType)_params[PARAM_EntityClassId];
 	ret = g_Assist.PrerequisitesSatisfied(buildingType, success);
 
 	assert(ret == ERR_Success);
@@ -191,7 +191,7 @@ bool BuildActionEx::ExecuteAux(const WorldClock& p_clock)
 	if (_builderId != INVALID_TID)
 	{
 
-		buildingType = (EntityClassType)_params[PARAM_BuildingClassId];
+		buildingType = (EntityClassType)_params[PARAM_EntityClassId];
 
 		// Initialize build state
 		_buildStarted = false;

@@ -24,9 +24,9 @@ namespace IStrategizer
 			return this->X != p_right.X || this->Y == p_right.Y;
 		}
 
-		double Distance (const Vector2& p_other)
+		int Distance (const Vector2& p_other)
 		{
-			return sqrt((pow((double)(p_other.X - this->X), 2) + pow((double)(p_other.Y - this->Y), 2)));
+			return (int)sqrt((pow((double)(p_other.X - this->X), 2) + pow((double)(p_other.Y - this->Y), 2)));
 		}
 
 		bool IsNull()					{ return X == -1 && Y == -1; }

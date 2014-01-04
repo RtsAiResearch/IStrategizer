@@ -136,7 +136,7 @@ void CellFeature::CalculateDistanceToBases(Vector2 cellWorldPosition)
 	CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromBase);
 }
 //----------------------------------------------------------------------------------------------
-void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, double& distance)
+void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, int& distance)
 {
 	assert(bases.size() > 0);
 	TID baseId = bases[0];
@@ -150,7 +150,7 @@ void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<
 	distance = cellWorldPosition.Distance(pBase->GetPosition());
 }
 //----------------------------------------------------------------------------------------------
-float CellFeature::GetBaseDistance(double firstBase, double secondBase) const
+float CellFeature::GetBaseDistance(int firstBase, int secondBase) const
 {
 	return pow((float)(firstBase - secondBase), 2);
 }
