@@ -29,7 +29,7 @@
 		bool		IsEntityCloseToPosition(const TID  p_EntityId, const Vector2 p_position, int p_Epslon);
 
 	private:
-		TID			_EntityId;
+		TID			_entityId;
 		Vector2     _position;
 		GameEntity*  _pEntity;
 	};
