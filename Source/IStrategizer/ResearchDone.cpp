@@ -4,12 +4,12 @@ using namespace IStrategizer;
 
 bool ResearchDone::Evaluate()
 {
-	int returnValue = g_Assist.ResearchDone((PlayerType)_conditionParameters[PARAM_PlayerId], (ResearchType)_conditionParameters[PARAM_ResearchId]);
+    int returnValue = g_Assist.ResearchDone((PlayerType)_conditionParameters[PARAM_PlayerId], (ResearchType)_conditionParameters[PARAM_ResearchId]);
 
-	ConditionEx::Evaluate();
+    ConditionEx::Evaluate();
 
-	_isEvaluated = (returnValue == ERR_Success) || (returnValue == ERR_EntityDoesNotExist);
-	_isSatisfied = (returnValue == ERR_Success);
+    _isEvaluated = (returnValue == ERR_Success) || (returnValue == ERR_EntityDoesNotExist);
+    _isSatisfied = (returnValue == ERR_Success);
 
-	return _isEvaluated && _isSatisfied;
+    return _isEvaluated && _isSatisfied;
 }

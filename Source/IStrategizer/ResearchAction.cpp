@@ -18,8 +18,8 @@ using namespace IStrategizer;
 
 ResearchAction::ResearchAction() : Action(ACTIONEX_Research)
 {
-	_params[PARAM_ResearchId] = RESEARCH_START;
-	CellFeature::Null().To(_params);
+    _params[PARAM_ResearchId] = RESEARCH_START;
+    CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)
@@ -29,47 +29,47 @@ ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::PreconditionsSatisfied()
 {
-	EntityClassType	researcherType;
-	ResearchType	researchType = (ResearchType)_params[PARAM_ResearchId];
-	bool			success = false;
+    EntityClassType    researcherType;
+    ResearchType    researchType = (ResearchType)_params[PARAM_ResearchId];
+    bool            success = false;
 
-	researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
-	success = g_Assist.DoesEntityClassExist(make_pair(researcherType, 1));
+    researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
+    success = g_Assist.DoesEntityClassExist(make_pair(researcherType, 1));
 
-	if (!success)
-		return false;
+    if (!success)
+        return false;
 
-	g_Assist.PrerequisitesSatisfied(researchType, success);
+    g_Assist.PrerequisitesSatisfied(researchType, success);
 
-	return success;
+    return success;
 }
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::AliveConditionsSatisfied()
 {
-	bool success = false;
+    bool success = false;
 
-	success = g_Assist.DoesEntityObjectExist(_researcherId);
+    success = g_Assist.DoesEntityObjectExist(_researcherId);
 
-	return success;
+    return success;
 }
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::SuccessConditionsSatisfied()
 {
-	return g_Game->Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
+    return g_Game->Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
 }
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::ExecuteAux(const WorldClock& p_clock)
 {
-	ResearchType	researchType = (ResearchType)_params[PARAM_ResearchId];
-	GameEntity		*pGameResearcher;
-	AbstractAdapter	*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+    ResearchType    researchType = (ResearchType)_params[PARAM_ResearchId];
+    GameEntity        *pGameResearcher;
+    AbstractAdapter    *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
-	// Adapt researcher
-	_researcherId = pAdapter->AdaptBuildingForResearch(researchType);
+    // Adapt researcher
+    _researcherId = pAdapter->AdaptBuildingForResearch(researchType);
 
-	// Issue research order
-	pGameResearcher = g_Game->Self()->GetEntity(_researcherId);
-	assert(pGameResearcher);
+    // Issue research order
+    pGameResearcher = g_Game->Self()->GetEntity(_researcherId);
+    assert(pGameResearcher);
 
-	return pGameResearcher->Research(researchType);
+    return pGameResearcher->Research(researchType);
 }

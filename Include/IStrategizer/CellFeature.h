@@ -11,33 +11,33 @@
 
 namespace IStrategizer
 {
-	class GameEntity;
+    class GameEntity;
 
-	class CellFeature
+    class CellFeature
     {
-	public:
-		ResourceDescription		m_resourceDescription;
-		ForceDescription		m_alliedForceDescription;
-		ForceDescription		m_enemyForceDescription;
-		BuildingDescription		m_alliedBuildingDescription;
-		BuildingDescription		m_enemyBuildingDescription;
-		int					    m_distanceFromEnemyBase;
-		int					    m_distanceFromBase;
+    public:
+        ResourceDescription        m_resourceDescription;
+        ForceDescription        m_alliedForceDescription;
+        ForceDescription        m_enemyForceDescription;
+        BuildingDescription        m_alliedBuildingDescription;
+        BuildingDescription        m_enemyBuildingDescription;
+        int                        m_distanceFromEnemyBase;
+        int                        m_distanceFromBase;
 
-				CellFeature() { Clear(); }
-				CellFeature(const PlanStepParameters& p_parameters);
-		void	AddEntity(GameEntity *p_entity,bool p_isAllied);
-		void	RemoveEntity(GameEntity *p_entity, bool p_isAllied);
-		void	Clear();
-		void	To(PlanStepParameters& p_parameters) const;
-		void	CalculateDistanceToBases(Vector2 cellWorldPosition);
-		float	GetDistance(CellFeature *p_other);
+                CellFeature() { Clear(); }
+                CellFeature(const PlanStepParameters& p_parameters);
+        void    AddEntity(GameEntity *p_entity,bool p_isAllied);
+        void    RemoveEntity(GameEntity *p_entity, bool p_isAllied);
+        void    Clear();
+        void    To(PlanStepParameters& p_parameters) const;
+        void    CalculateDistanceToBases(Vector2 cellWorldPosition);
+        float    GetDistance(CellFeature *p_other);
 
-		static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
+        static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
 
-	private:
-		void	CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, int& distance);
-		float	GetBaseDistance(int firstBase, int secondBase) const;
+    private:
+        void    CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, int& distance);
+        float    GetBaseDistance(int firstBase, int secondBase) const;
     };
 }
 

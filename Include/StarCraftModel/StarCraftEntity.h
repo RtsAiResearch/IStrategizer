@@ -20,7 +20,7 @@ namespace StarCraftModel
     {
     public:
         StarCraftEntity(BWAPI::Unit p_unit);
-        int	Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
+        int    Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
         std::string ToString() const;
         IStrategizer::Vector2 GetPosition() const;
         bool IsTraining(IStrategizer::TID p_traineeId) const;
@@ -36,7 +36,7 @@ namespace StarCraftModel
         IStrategizer::ObjectStateType FetchState() const;
 
     private:
-        BWAPI::Unit	m_unit;
+        BWAPI::Unit    m_unit;
     };
 }
 

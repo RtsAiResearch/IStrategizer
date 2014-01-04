@@ -73,7 +73,7 @@ void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
 //----------------------------------------------------------------------------------------------
 void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)
 {
-	_onlineExpansionExecution->Update(p_clock);
+    _onlineExpansionExecution->Update(p_clock);
 }
 //----------------------------------------------------------------------------------------------
 OnlineCaseBasedPlannerEx::~OnlineCaseBasedPlannerEx()
