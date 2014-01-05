@@ -80,7 +80,7 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
         }
         else if (order == Orders::ResearchTech)
         {
-            // To Do: handle research tech.
+            actionParameters[PARAM_ResearchId] = g_Database.UpgradeMapping.GetByFirst(unit->getTech());
         }
     }
     
