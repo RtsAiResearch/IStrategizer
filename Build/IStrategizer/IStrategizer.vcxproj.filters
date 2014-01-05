@@ -222,31 +222,10 @@
     <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CheckColonyFilterCount.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CheckEntityClassAttribute.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CheckEntityObjectAttribute.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CheckEntityObjectSimilarity.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CheckPositionFilterCount.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ConditionEx.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassExist.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\EntityObjectExist.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\EventTriggered.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ResearchDone.cpp">
@@ -479,31 +458,10 @@
     <ClInclude Include="..\..\Include\IStrategizer\TrainAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CheckColonyFilterCount.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CheckEntityClassAttribute.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CheckEntityObjectAttribute.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CheckEntityObjectSimilarity.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CheckPositionFilterCount.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\ConditionEx.h">
       <Filter>Header Files\CaseBase\Condition</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassExist.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\EntityObjectExist.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\EventTriggered.h">
       <Filter>Header Files\CaseBase\Condition</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\False.h">

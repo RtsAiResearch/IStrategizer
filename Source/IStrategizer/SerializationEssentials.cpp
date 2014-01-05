@@ -60,15 +60,6 @@
 #ifndef RESEARCHDONE_H
 #include "ResearchDone.h"
 #endif
-#ifndef ENTITYOBJECTEXIST_H
-#include "EntityObjectExist.h"
-#endif
-#ifndef CHECKENTITYOBJECTSIMILARITY_H
-#include "CheckEntityObjectSimilarity.h"
-#endif
-#ifndef CHECKCOLONYFILTERCOUNT_H
-#include "CheckColonyFilterCount.h"
-#endif
 #ifndef NOT_H
 #include "Not.h"
 #endif
@@ -113,13 +104,7 @@ void SerializationEssentials::Init()
 
     g_ObjectFactory.AddPrototype(new ResourceExist);
     g_ObjectFactory.AddPrototype(new ResearchDone);
-    g_ObjectFactory.AddPrototype(new EntityObjectExist);
     g_ObjectFactory.AddPrototype(new EntityClassExist);
-    g_ObjectFactory.AddPrototype(new CheckPositionFilterCount);
-    g_ObjectFactory.AddPrototype(new CheckEntityObjectSimilarity);
-    g_ObjectFactory.AddPrototype(new CheckEntityObjectAttribute);
-    g_ObjectFactory.AddPrototype(new CheckEntityClassAttribute);
-    g_ObjectFactory.AddPrototype(new CheckColonyFilterCount);
     g_ObjectFactory.AddPrototype(new And);
     g_ObjectFactory.AddPrototype(new Not);
     g_ObjectFactory.AddPrototype(new Or);

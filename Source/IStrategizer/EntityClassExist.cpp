@@ -1,5 +1,4 @@
 #include "EntityClassExist.h"
-#include "CheckEntityObjectSimilarity.h"
 #ifndef GAMEPLAYER_H
 #include "GamePlayer.h"
 #endif

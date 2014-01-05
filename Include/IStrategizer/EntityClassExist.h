@@ -3,7 +3,6 @@
 #define ENTITYCLASSEXIST_H
 
 #include "ConditionEx.h"
-#include "CheckEntityObjectAttribute.h"
 
 namespace IStrategizer
 {

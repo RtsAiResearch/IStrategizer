@@ -3,7 +3,6 @@
 #define WINWARGUSGOALEX_H
 
 #include "GoalEx.h"
-#include "CheckEntityClassAttribute.h"
 
 namespace IStrategizer
 {

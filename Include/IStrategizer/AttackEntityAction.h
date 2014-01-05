@@ -5,9 +5,6 @@
 #include "Action.h"
 #include "CellFeature.h"
 
-#ifndef CHECKPOSITIONFILTERCOUNT_H
-#include "CheckPositionFilterCount.h"
-#endif
 #ifndef AND_H
 #include "And.h"
 #endif

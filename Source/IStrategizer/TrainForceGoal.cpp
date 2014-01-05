@@ -1,5 +1,4 @@
 #include "TrainForceGoal.h"
-#include "CheckPositionFilterCount.h"
 #include "EntityClassExist.h"
 #include "And.h"
 

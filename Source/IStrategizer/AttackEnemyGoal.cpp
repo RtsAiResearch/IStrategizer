@@ -1,28 +1,25 @@
+#include "AttackEnemyGoal.h"
+
 #include "Not.h"
 #include "And.h"
-#include "AttackEnemyGoal.h"
 #include "EntityClassExist.h"
-#include "EntityObjectExist.h"
-#include "CheckEntityObjectAttribute.h"
-#include "CheckPositionFilterCount.h"
-#include "CheckColonyFilterCount.h"
-#include "CheckEntityClassAttribute.h"
-#include "Colony.h"
 #include <cstdlib>
 #include <ctime>
 #include <cassert>
 
+using namespace IStrategizer;
+
 AttackEnemyGoal::AttackEnemyGoal() : GoalEx(GOALEX_AttackEnemy)
 {
-    _forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
+    /*_forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
     _params[PARAM_ForceSizeId] = FORCESIZE_START;
-    _params[PARAM_AttackTypeId] = ATTACK_START;
+    _params[PARAM_AttackTypeId] = ATTACK_START;*/
 }
 //----------------------------------------------------------------------------------------------
 AttackEnemyGoal::AttackEnemyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_AttackEnemy, p_parameters)
 {
      // FIXME: There should be a commander that specify force description in details
-    _forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
+    //_forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
 }
 //----------------------------------------------------------------------------------------------
 void AttackEnemyGoal::InitializePostConditions()
