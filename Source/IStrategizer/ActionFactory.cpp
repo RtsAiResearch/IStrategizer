@@ -1,5 +1,4 @@
 #include "ResearchAction.h"
-#include "BuildAction.h"
 #include "BuildActionEx.h"
 #include "TrainAction.h"
 #include "AttackGroundAction.h"
@@ -11,7 +10,7 @@
 
 using namespace IStrategizer;
 
-Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions){
+Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions) {
     Action* m_action = nullptr;
 
     switch(p_actionType)

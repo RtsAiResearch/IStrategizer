@@ -45,49 +45,42 @@ namespace IStrategizer
         ///> type=PlanStepParameters
         PlanStepParameters _params;
         int _stepTypeId;
-        unsigned                _data;
+        unsigned _data;
         StepLevelType _stepLevelType;
-        CompositeExpression* _successCondition;
         CompositeExpression* _postCondition;
         unsigned _stateStartTime[COUNT(ExecutionStateType)];
         unsigned _stateTimeout[COUNT(ExecutionStateType)];
         bool _firstUpdate;
 
-        virtual void State(ExecutionStateType p_state, const WorldClock& p_clock);
-        bool IsCurrentStateTimeout(const WorldClock& p_clock);
-
         PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
         PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
-    public:
+        void InitializeAddressesAux();
+        bool IsCurrentStateTimeout(const WorldClock& p_clock);
+        virtual void State(ExecutionStateType p_state, const WorldClock& p_clock);
+        virtual void InitializePostConditions() = 0;
 
-        virtual ~PlanStepEx() {}
-        int StepTypeId() const { return _stepTypeId; }
-        PlanStepParameters& Parameters() { return _params; }
-        const PlanStepParameters& Parameters() const { return _params; }
+    public:
         void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()) ; }
-        int Parameter(int p_parameterName) { return _params[(ParameterType)p_parameterName]; }
-        ExecutionStateType State() const { return _state; }
-        StepLevelType LevelType() const { return _stepLevelType; }
-        unsigned Data() const { return _data; }
+        void Copy(IClonable* p_dest);
         void Data(const unsigned p_data) { _data = p_data; }
-        bool Equals(PlanStepEx* p_planStep);
+        void Update(const WorldClock& p_clock);
+        int StepTypeId() const { return _stepTypeId; }
+        int Parameter(int p_parameterName) { return _params[(ParameterType)p_parameterName]; }
         int Compare(IComparable* p_rhs) { return !Equals((PlanStepEx*)p_rhs); }
-        IClonable*                  Clone();
-        void                        Copy(IClonable* p_dest);
+        bool Equals(PlanStepEx* p_planStep);
+        const PlanStepParameters& Parameters() const { return _params; }
+        unsigned Data() const { return _data; }
         virtual void HandleMessage(Message* p_msg, bool& p_consumed) {}
         virtual void InitializeConditions();
-        virtual bool SuccessConditionsSatisfied() { return _successCondition->Evaluate(); }
-        void Update(const WorldClock& p_clock);
+        virtual bool SuccessConditionsSatisfied() = 0;
         virtual void UpdateAux(const WorldClock& p_clock) = 0;
         virtual void Reset(const WorldClock& p_clock) = 0;
         virtual std::string ToString() const;
-        //---------------------------------------------------------------------------------------------------------------------------------------------------- 
-        // Serialization
-    protected:
-        void                        InitializeAddressesAux();
-        //---------------------------------------------------------------------------------------------------------------------------------------------------- 
-        virtual void InitializeSuccessConditions() {}
-        virtual void InitializePostConditions() {}
+        virtual ~PlanStepEx() {}
+        PlanStepParameters& Parameters() { return _params; }
+        ExecutionStateType State() const { return _state; }
+        StepLevelType LevelType() const { return _stepLevelType; }
+        IClonable* Clone();
     };
 }
 

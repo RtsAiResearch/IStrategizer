@@ -75,3 +75,13 @@ bool MoveAction::ExecuteAux( const WorldClock& p_clock )
     }
     return executed;
 }
+//----------------------------------------------------------------------------------------------
+void MoveAction::InitializePostConditions()
+{
+
+}
+//----------------------------------------------------------------------------------------------
+void MoveAction::InitializePreConditions()
+{
+
+}

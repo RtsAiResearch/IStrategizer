@@ -10,19 +10,16 @@ namespace IStrategizer
     ///> class=BuildBaseGoal
     ///> parent=GoalEx
     class BuildBaseGoal : public GoalEx
-    { 
+    {
+        OBJECT_SERIALIZABLE(BuildBaseGoal);
+
     public:
-                    BuildBaseGoal();
-                    BuildBaseGoal(const PlanStepParameters& p_parameters);
-        //----------------------------------------------------------------------------------------------
-        // Serialization
-        string      TypeName()  { return "BuildBaseGoal"; }
-        int         TypeSize()  { return sizeof(BuildBaseGoal); }
-        UserObject* Prototype() { return new BuildBaseGoal; }
-        //----------------------------------------------------------------------------------------------
+        BuildBaseGoal();
+        BuildBaseGoal(const PlanStepParameters& p_parameters);
+        
     protected:
-        void InitializeSuccessConditions();
         void InitializePostConditions();
+        bool SuccessConditionsSatisfied();
     };
 }
 #endif // BUILDBASEGOAL_H

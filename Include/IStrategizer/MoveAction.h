@@ -17,7 +17,7 @@
 
         MoveAction();
         MoveAction(const PlanStepParameters& p_parameters);
-        void        Copy(IClonable* p_dest);
+        void Copy(IClonable* p_dest);
         bool PreconditionsSatisfied();
         bool AliveConditionsSatisfied();
         bool SuccessConditionsSatisfied();
@@ -26,11 +26,13 @@
         bool ExecuteAux(const WorldClock& p_clock );
         void InitializeAddressesAux() ;
         void HandleMessage(Message* p_pMsg, bool& p_consumed);
+        void InitializePostConditions();
+        void InitializePreConditions();
 
     private:
         TID _entityId;
-        Vector2     _position;
-        GameEntity*  _pEntity;
+        Vector2 _position;
+        GameEntity* _pEntity;
     };
 }
 

@@ -9,19 +9,18 @@ using namespace IStrategizer;
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeAddressesAux()
 {
-    AddMemberAddress(1,
-        &_params);
+    AddMemberAddress(1, &_params);
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) :
-_stepTypeId(p_stepTypeId), _state(p_state), _successCondition(nullptr), _postCondition(nullptr), _firstUpdate(true)
+_stepTypeId(p_stepTypeId), _state(p_state), _postCondition(nullptr), _firstUpdate(true)
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters) : 
-_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _successCondition(nullptr), _postCondition(nullptr), _firstUpdate(true)
+_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _postCondition(nullptr), _firstUpdate(true)
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
@@ -42,7 +41,6 @@ bool PlanStepEx::Equals(PlanStepEx* p_planStep)
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeConditions()
 {
-    InitializeSuccessConditions();
     InitializePostConditions();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -58,13 +56,12 @@ void PlanStepEx::Copy(IClonable* p_dest)
 {
     PlanStepEx* m_dest = static_cast<PlanStepEx*>(p_dest);
 
-    m_dest->_stepTypeId         = _stepTypeId;
-    m_dest->_state              = _state;
+    m_dest->_stepTypeId = _stepTypeId;
+    m_dest->_state = _state;
     m_dest->_params = _params;
-    m_dest->_successCondition   = _successCondition ? static_cast<CompositeExpression*>(_successCondition->Clone()) : nullptr;
-    m_dest->_postCondition      = _postCondition ?    static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
-    m_dest->_stepLevelType      = _stepLevelType;
-    m_dest->_data               = _data;
+    m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
+    m_dest->_stepLevelType = _stepLevelType;
+    m_dest->_data = _data;
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::State(ExecutionStateType p_state, const WorldClock& p_clock)

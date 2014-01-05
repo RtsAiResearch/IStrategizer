@@ -100,15 +100,85 @@ LFHD Todo:
 9- Implement actions post conditions
 
 ==================================================================================================================
-Conditions
------------
-EntityClassExist
-EntityObjectExist
-ResourceExist
-ResearchDone
-CheckEntityObjectAttribute
-EntityCloseToPoint
-
-Buid
+Build
 builderID
 DoesEntityObjectExist(builderID) && EntityObjAttr(builderID, IsConstructing)
+
+Minimum Conditions Set
+-----------
+EntityClassExist
+ResourceExist
+ResearchDone
+EntityDestroyed
+EntityAvailable
+NearPlayer
+
+Pre Conditions
+--------------
+AttackEntityAction(AttackerEntityClassId, TargetEntityClassId)
+	EntityClassExist(AttackerEntityClassId)
+	EntityClassExist(TargetEntityClassId)
+	
+AttackGroundAction(AttackerEntityClassId)
+	EntityClassExist(AttackerEntityClassId)
+	
+BuildAction(EntityClassId)
+	EntityClassExist(WorkerEntityClassId)
+	[OneOrMore] EntityClassExist(PriorBuildingEntityClassId)
+	ResourceExist(PrimaryResourceId, Amount)
+	ResourceExist(SupplyResourceId, Amount)
+	[Optional] ResourceExist(SecondaryResourceId, Amount)
+	[Optional] ResearchDone(ResearchId)
+	
+MoveAction(EntityClassId)
+	EntityClassExist(EntityClassId)
+	
+ResearchAction(ResearchId)
+	EntityClassExist(ResearcherEntityClassId)
+	[OneOrMore] EntityClassExist(PriorBuildingsEntityClassId)
+	ResourceExist(PrimaryResourceId, Amount)
+	[Optional] ResearchDone(PriorResearchId)
+	[Optional] ResourceExist(SecondaryResourceId, Amount)
+	
+TrainAction(EntityClassId)
+	[OneOrMore] EntityClassExist(TrainerEntityClassId)
+	ResourceExist(PrimaryResourceId, Amount)
+	ResourceExist(SupplyResourceId, Amount)
+	[Optional] ResourceExist(SecondaryResourceId, Amount)
+	[Optional] ResearchDone(ResearchId)
+
+Post Conditions
+---------------
+WinGame(EnemyId)
+	EntityDestroyed(AnyEntityClassId, EnemyId, AllUnits)
+	
+CollectResource(ResourceId, Amount)
+	ResourceExists(ResourceId, Amount)
+	
+TrainArmy(ForceSize)
+	EntityClassExist(ForceSize)
+
+DeployArmy(ForceSize)
+	NearPlayer(EnemyId, ForceSize)
+	
+DestroyEntity(EntityClassId)
+	EntityDestroyed(EntityClassId)
+
+AttackEntityAction(AttackerEntityClassId, TargetEntityClassId)
+	EntityDestroyed(AttackerEntityClassId, TargetEntityClassId)
+	
+AttackGroundAction(AttackerEntityClassId)
+	EntityDestroyed(AttackerEntityClassId, AnyEntityClassId)
+	
+BuildAction(EntityClassId)
+	EntityClassExist(EntityClassId)
+	
+MoveAction(EntityClassId)
+	NearPlayer(EnemyId, EntityClassId, 1)
+	NearPlayer(SelfId, EntityClassId, 1)
+	
+ResearchAction(ResearchId)
+	ResearchDone(ResearchId)
+	
+TrainAction(EntityClassId)
+	EntityClassExist(EntityClassId)

@@ -96,7 +96,17 @@ bool AttackEntityAction::SuccessConditionsSatisfied()
     return (attackerState == OBJSTATE_Attacking) || (targetState == OBJSTATE_UnderAttack);
 }
 //----------------------------------------------------------------------------------------------
-void  AttackEntityAction::InitializeAddressesAux()
+void AttackEntityAction::InitializeAddressesAux()
 {
     Action::InitializeAddressesAux();
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::InitializePostConditions()
+{
+
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::InitializePreConditions()
+{
+
 }

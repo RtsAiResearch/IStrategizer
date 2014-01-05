@@ -30,6 +30,8 @@ namespace IStrategizer
         bool ExecuteAux(const WorldClock& p_clock );
         void InitializeAddressesAux() ;
         void HandleMessage(Message* p_pMsg, bool& p_consumed);
+        void InitializePostConditions();
+        void InitializePreConditions();
 
     private:
         TID _attackerId;

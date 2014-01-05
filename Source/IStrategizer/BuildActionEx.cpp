@@ -216,3 +216,13 @@ bool BuildActionEx::ExecuteAux(const WorldClock& p_clock)
 
     return bOk;
 }
+//----------------------------------------------------------------------------------------------
+void BuildActionEx::InitializePostConditions()
+{
+
+}
+//----------------------------------------------------------------------------------------------
+void BuildActionEx::InitializePreConditions()
+{
+
+}

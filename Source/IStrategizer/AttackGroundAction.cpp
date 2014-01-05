@@ -82,3 +82,13 @@ void  AttackGroundAction::InitializeAddressesAux()
 {
     Action::InitializeAddressesAux();
 }
+//----------------------------------------------------------------------------------------------
+void AttackGroundAction::InitializePostConditions()
+{
+
+}
+//----------------------------------------------------------------------------------------------
+void AttackGroundAction::InitializePreConditions()
+{
+
+}

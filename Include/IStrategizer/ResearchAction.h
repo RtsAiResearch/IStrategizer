@@ -29,6 +29,8 @@ namespace IStrategizer
 
     protected:
         bool ExecuteAux(const WorldClock& p_clock );
+        void InitializePostConditions();
+        void InitializePreConditions();
 
     private:
         TID _researcherId;

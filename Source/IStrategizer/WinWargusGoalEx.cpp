@@ -18,8 +18,10 @@ WinWargusGoalEx::WinWargusGoalEx(const PlanStepParameters& p_parameters): GoalEx
 //----------------------------------------------------------------------------------------------
 bool WinWargusGoalEx::SuccessConditionsSatisfied()
 {
-    vector<TID> entityIds;
-    g_Game->Enemy()->Entities(entityIds);
+    return false;
+}
+//----------------------------------------------------------------------------------------------
+void WinWargusGoalEx::InitializePostConditions()
+{
 
-    return entityIds.size() == 0;
 }

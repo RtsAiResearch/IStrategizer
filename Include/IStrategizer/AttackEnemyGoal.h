@@ -15,17 +15,16 @@ namespace IStrategizer
 
     private:
         ForceDescriptionEx _forceDescription;
-        Colony             _cachedColony;
+        Colony _cachedColony;
 
     public:
-                    AttackEnemyGoal();
-                    AttackEnemyGoal(const PlanStepParameters& p_parameters);
-        void InitSuccessConditions();
-        void        Copy(IClonable* p_dest);
+        AttackEnemyGoal();
+        AttackEnemyGoal(const PlanStepParameters& p_parameters);
+        void Copy(IClonable* p_dest);
 
     protected:
-        void InitializeSuccessConditions();
         void InitializePostConditions();
+        bool SuccessConditionsSatisfied();
     };
 }
 #endif // ATTACKENEMYGOAL_H

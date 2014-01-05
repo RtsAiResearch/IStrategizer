@@ -180,3 +180,13 @@ bool TrainAction::ExecuteAux(const WorldClock& p_clock)
 
     return executed;
 }
+//----------------------------------------------------------------------------------------------
+void TrainAction::InitializePostConditions()
+{
+
+}
+//----------------------------------------------------------------------------------------------
+void TrainAction::InitializePreConditions()
+{
+
+}

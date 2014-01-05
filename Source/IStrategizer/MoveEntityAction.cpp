@@ -104,3 +104,13 @@ bool MoveEntityAction::ExecuteAux(const WorldClock& p_clock)
 
     return success;
 }
+//////////////////////////////////////////////////////////////////////////
+void MoveEntityAction::InitializePostConditions()
+{
+
+}
+//////////////////////////////////////////////////////////////////////////
+void MoveEntityAction::InitializePreConditions()
+{
+
+}

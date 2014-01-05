@@ -35,6 +35,8 @@ namespace IStrategizer
         void OnFailure(const WorldClock& p_clock);
         bool ExecuteAux(const WorldClock& p_clock);
         void HandleMessage(Message* p_pMsg, bool& p_consumed);
+        void InitializePostConditions();
+        void InitializePreConditions();
 
     private:
         TID _buildingId;

@@ -73,3 +73,13 @@ bool ResearchAction::ExecuteAux(const WorldClock& p_clock)
 
     return pGameResearcher->Research(researchType);
 }
+//----------------------------------------------------------------------------------------------
+void ResearchAction::InitializePostConditions()
+{
+
+}
+//----------------------------------------------------------------------------------------------
+void ResearchAction::InitializePreConditions()
+{
+
+}

@@ -9,7 +9,7 @@
 using namespace IStrategizer;
 
 Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
-: PlanStepEx(p_actionType, ESTATE_END), _preCondition(nullptr), _aliveCondition(nullptr)
+: PlanStepEx(p_actionType, ESTATE_END), _preCondition(nullptr)
 {
     _stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
     _stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
@@ -17,7 +17,7 @@ Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxEx
 }
 //////////////////////////////////////////////////////////////////////////
 Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, unsigned p_maxPrepTime,  unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
-: PlanStepEx(p_actionType, ESTATE_END, p_parameters), _preCondition(nullptr), _aliveCondition(nullptr)
+: PlanStepEx(p_actionType, ESTATE_END, p_parameters), _preCondition(nullptr)
 {
     _stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
     _stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
@@ -41,33 +41,8 @@ void Action::State(ExecutionStateType p_state, const WorldClock& p_clock)
 //////////////////////////////////////////////////////////////////////////
 void Action::InitializeConditions()
 {
+    PlanStepEx::InitializeConditions();
     InitializePreConditions();
-    InitializePostConditions();
-}
-//////////////////////////////////////////////////////////////////////////
-int Action::PrepareForExecution(const WorldClock& p_clock)
-{
-    assert(0);
-    //assert(State() == ESTATE_NotPrepared);
-
-    //if(_prepTime == 0)
-    //{
-    // _prepTime = p_cyles;
-    //}
-    //else if(p_cyles - _prepTime > _maxPrepTime)
-    //{
-    // _prepTime = 0;
-    // State(ESTATE_Failed);
-    //}
-
-    //if(PreconditionsSatisfied())
-    //{
-    // // Reset the prep start time in case the action failed while execution and we try to prepare it again
-    // _prepTime = 0;
-    // State(ESTATE_Pending);
-    //}
-
-    return ERR_Success;
 }
 //////////////////////////////////////////////////////////////////////////
 bool Action::Execute(const WorldClock& p_clock)
@@ -123,5 +98,5 @@ void Action::Copy(IClonable* p_dest)
     Action* m_dest = static_cast<Action*>(p_dest);
 
     m_dest->_preCondition = _preCondition ? static_cast<CompositeExpression*>(_preCondition->Clone()) : nullptr;
-    m_dest->_aliveCondition = _aliveCondition ? static_cast<CompositeExpression*>(_aliveCondition->Clone()) : nullptr;
+    m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
 }

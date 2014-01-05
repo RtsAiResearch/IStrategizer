@@ -25,41 +25,6 @@ AttackEnemyGoal::AttackEnemyGoal(const PlanStepParameters& p_parameters): GoalEx
     _forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
 }
 //----------------------------------------------------------------------------------------------
-void AttackEnemyGoal::InitializeSuccessConditions()
-{
-    int                 m_index;
-    vector<Colony>      m_currentColonies;
-    vector<Expression*> m_terms;
-
-    //m_ret = g_EngineAPI.GetPlayerColonies(PLAYER_Enemy, m_currentColonies);
-    //assert(m_ret == ERR_Success);
-    //_cachedColony = m_currentColonies[0];
-
-    switch(_params[PARAM_AttackTypeId])
-    {
-    case ATTACK_Defeat:
-        m_terms.resize(1);
-        m_terms[m_index = 0] = new CheckColonyFilterCount(PLAYER_Enemy, FILTER_AnyEntity, RELOP_Equal, 0, _cachedColony);
-        break;
-
-        // FIXME: it is assumed that the defender will not move until the attacker reach him
-        // The defender should be changed if the chosen one went out of the colony
-        //     case ATTACK_Attrition:
-        //         vector<int> m_colonyObjectIds;
-        //         m_ret = g_EngineAPI.GetPlayerColonyObjectsId(PLAYER_Enemy, _cachedColony, m_colonyObjectIds);
-        //         assert(m_ret == ERR_Success);
-        //         
-        //         srand(time(nullptr));
-        //         int m_randomIdx = rand() % m_colonyObjectIds.size();
-        //         int m_chosenTargetEntityObject = m_colonyObjectIds[m_randomIdx];
-        // 
-        //         m_terms[m_index = 0] = new Not(new EntityObjectExist(PLAYER_Enemy, m_chosenTargetEntityObject));
-        //         break;
-    }
-
-    _successCondition = new And(m_terms);
-}
-//----------------------------------------------------------------------------------------------
 void AttackEnemyGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
@@ -82,4 +47,9 @@ void AttackEnemyGoal::Copy(IClonable* p_dest)
 
     m_dest->_forceDescription   = _forceDescription;
     _cachedColony.Copy(&m_dest->_cachedColony);
+}
+//----------------------------------------------------------------------------------------------
+bool AttackEnemyGoal::SuccessConditionsSatisfied()
+{
+    return false;
 }
