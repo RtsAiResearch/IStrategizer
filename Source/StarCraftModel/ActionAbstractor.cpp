@@ -24,7 +24,6 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameter(ActionType actionTyp
 PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameters actionParameters, const Unit unit, const Unit trainer) const
 {
     assert(unit);
-    g_Game->Map()->UpdateAux();
     IStrategizer::Vector2 position;
 
     Order order = unit->getOrder();
@@ -41,7 +40,7 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
         position.Y = unit->getPosition().y;
     }
     
-
+    g_Game->Map()->UpdateAux();
     g_Game->Map()->GetCellFeatureFromWorldPosition(position)->To(actionParameters);
     
     if (actionParameters.count(PARAM_EntityClassId) > 0)

@@ -48,7 +48,7 @@ StarCraftGame::StarCraftGame()
 void StarCraftGame::InitializeMap()
 {
     // Set the world map grid cell size to be a square of size 4 build tiles
-    m_pMap = new StarCraftMap(TILE_SIZE * 4);
+    m_pMap = new StarCraftMap(TILE_SIZE * 8);
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::EnumeratePlayers()

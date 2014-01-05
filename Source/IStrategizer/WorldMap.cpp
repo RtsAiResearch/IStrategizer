@@ -50,6 +50,7 @@ void WorldMap::UpdateAux()
         for (unsigned j = 0; j < m_gridWidth; j++)
         {
             m_cellFeatureMatrix[i][j].Clear();
+            m_cellFeatureMatrix[i][j].CalculateDistanceToBases(FromGridToWorld(Vector2(j ,i)));
         }
     }
 
@@ -90,7 +91,7 @@ Vector2 WorldMap::CellSize() const
 CellFeature* WorldMap::GetCellFeatureFromWorldPosition(Vector2 p_worldPosition) const
 {
     Vector2 gridPosition = FromWorldToGrid(p_worldPosition);
-    return &m_cellFeatureMatrix[gridPosition.X][gridPosition.Y];
+    return &m_cellFeatureMatrix[gridPosition.Y][gridPosition.X];
 }
 //----------------------------------------------------------------------------------------------
 Vector2 WorldMap::GetNearestCell(CellFeature* p_cell) const
