@@ -112,8 +112,8 @@ float CellFeature::GetDistance(CellFeature *p_other)
     float alliedForceDistance = m_alliedForceDescription.GetDistance(&(p_other->m_alliedForceDescription));
     float enemyForceDistance = m_enemyForceDescription.GetDistance(&(p_other->m_enemyForceDescription));
     float resourceDistance = m_resourceDescription.GetDistance(&(p_other->m_resourceDescription));
-    float distanceFromBase = GetBaseDistance(this->m_distanceFromBase, p_other->m_distanceFromBase);
-    float distanceFromEnemyBase = GetBaseDistance(this->m_distanceFromEnemyBase, p_other->m_distanceFromEnemyBase);
+    float distanceFromBase = GetBaseDistanceSimilarity(this->m_distanceFromBase, p_other->m_distanceFromBase);
+    float distanceFromEnemyBase = GetBaseDistanceSimilarity(this->m_distanceFromEnemyBase, p_other->m_distanceFromEnemyBase);
     
     res += alliedBuildingDistance;
     res += enemyBuildingDistance;
@@ -150,7 +150,11 @@ void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<
     distance = cellWorldPosition.Distance(pBase->GetPosition());
 }
 //----------------------------------------------------------------------------------------------
-float CellFeature::GetBaseDistance(int firstBase, int secondBase) const
+float CellFeature::GetBaseDistanceSimilarity(int firstBase, int secondBase) const
 {
-    return pow((float)(firstBase - secondBase), 2);
+    float dist = 0.0;
+    if (firstBase != PARAM_DONT_CARE && secondBase != PARAM_DONT_CARE)
+        dist = pow((float)(firstBase - secondBase), 2);
+
+    return dist;
 }
