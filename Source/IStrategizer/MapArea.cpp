@@ -5,30 +5,30 @@ using namespace IStrategizer;
 
 MapArea& MapArea::Null()
 {
-	static MapArea nullptrArea(Vector2::Null(), -1, -1);
+    static MapArea nullptrArea(Vector2::Null(), -1, -1);
 
-	return nullptrArea;
+    return nullptrArea;
 }
 //////////////////////////////////////////////////////////////////////////
 bool MapArea::IsNull()
 {
-	return m_pos.IsNull() &&
-		m_width == -1 &&
-		m_height == -1;
+    return m_pos.IsNull() &&
+        m_width == -1 &&
+        m_height == -1;
 }
 //////////////////////////////////////////////////////////////////////////
 bool MapArea::Acquire()
 {
-	OccupanceDataIM *pIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-	assert(pIM);
+    OccupanceDataIM *pIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
+    assert(pIM);
 
-	return pIM->ReserveArea(m_pos, m_width, m_height);
+    return pIM->ReserveArea(m_pos, m_width, m_height);
 }
 //////////////////////////////////////////////////////////////////////////
 bool MapArea::Release()
 {
-	OccupanceDataIM *pIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-	assert(pIM);
+    OccupanceDataIM *pIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
+    assert(pIM);
 
-	return pIM->FreeArea(m_pos, m_width, m_height);
+    return pIM->FreeArea(m_pos, m_width, m_height);
 }

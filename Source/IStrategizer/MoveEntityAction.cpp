@@ -86,7 +86,7 @@ bool MoveEntityAction::SuccessConditionsSatisfied()
 //////////////////////////////////////////////////////////////////////////
 bool MoveEntityAction::ExecuteAux(const WorldClock& p_clock)
 {
-    AbstractAdapter	*pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+    AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
     _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
     assert(_entityId != INVALID_TID);

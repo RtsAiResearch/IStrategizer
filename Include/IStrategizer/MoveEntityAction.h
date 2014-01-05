@@ -7,7 +7,6 @@
 #include "Vector2.h"
 #endif
 
-
 namespace IStrategizer
 {
     ///> class=MoveEntityAction
@@ -35,4 +34,4 @@ namespace IStrategizer
     };
 }
 
-#endif	// MOVEENTITYACTION_H
+#endif // MOVEENTITYACTION_H

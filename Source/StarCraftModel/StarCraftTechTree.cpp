@@ -25,140 +25,140 @@ using namespace std;
 //----------------------------------------------------------------------------------------------
 bool StarCraftTechTree::ResearchAvailable(ResearchType p_researchId) const
 {
-	TID	researchId;
-	TName		researchIdent;
-	TechType	bwapiTech;
-	UpgradeType bwapiUpgrade;
+    TID researchId;
+    TName researchIdent;
+    TechType bwapiTech;
+    UpgradeType bwapiUpgrade;
 
-	if (p_researchId == RESEARCH_END)
-		return false;
+    if (p_researchId == RESEARCH_END)
+        return false;
 
-	// Is Tech
-	if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
-	{
-		researchId = g_Database.TechMapping.GetBySecond(p_researchId);
-		researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
-		bwapiTech = TechType::getType(researchIdent);
+    // Is Tech
+    if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
+    {
+        researchId = g_Database.TechMapping.GetBySecond(p_researchId);
+        researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
+        bwapiTech = TechType::getType(researchIdent);
 
-		return m_player->isResearchAvailable(bwapiTech);
-	}
-	// Is Upgrade
-	else
-	{
-		researchId = g_Database.UpgradeMapping.GetBySecond(p_researchId);
-		researchIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
-		bwapiUpgrade = UpgradeType::getType(researchIdent);
+        return m_player->isResearchAvailable(bwapiTech);
+    }
+    // Is Upgrade
+    else
+    {
+        researchId = g_Database.UpgradeMapping.GetBySecond(p_researchId);
+        researchIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
+        bwapiUpgrade = UpgradeType::getType(researchIdent);
 
-		return (m_player->getMaxUpgradeLevel(bwapiUpgrade) > 0);
-	}
+        return (m_player->getMaxUpgradeLevel(bwapiUpgrade) > 0);
+    }
 }   
 //----------------------------------------------------------------------------------------------
 bool StarCraftTechTree::ResearchDone(ResearchType p_researchId) const
 {
-	TID	researchId;
-	TName		researchIdent;
-	TechType	tech;
-	UpgradeType upgrade;
+    TID researchId;
+    TName researchIdent;
+    TechType tech;
+    UpgradeType upgrade;
 
-	if (p_researchId == RESEARCH_END)
-		return false;
+    if (p_researchId == RESEARCH_END)
+        return false;
 
-	// Is Tech
-	if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
-	{
-		researchId = g_Database.TechMapping.GetBySecond(p_researchId);
-		researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
-		tech = TechType::getType(researchIdent);
+    // Is Tech
+    if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
+    {
+        researchId = g_Database.TechMapping.GetBySecond(p_researchId);
+        researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
+        tech = TechType::getType(researchIdent);
 
-		return m_player->hasResearched(tech);
-	}
-	// Is Upgrade
-	else
-	{
-		researchId = g_Database.UpgradeMapping.GetBySecond(p_researchId);
-		researchIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
-		upgrade = UpgradeType::getType(researchIdent);
+        return m_player->hasResearched(tech);
+    }
+    // Is Upgrade
+    else
+    {
+        researchId = g_Database.UpgradeMapping.GetBySecond(p_researchId);
+        researchIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
+        upgrade = UpgradeType::getType(researchIdent);
 
-		// FIXME: we restrict upgrade levels to be 1 level only
-		return m_player->getUpgradeLevel(upgrade) > 0;
-	}
+        // FIXME: we restrict upgrade levels to be 1 level only
+        return m_player->getUpgradeLevel(upgrade) > 0;
+    }
 }   
 //----------------------------------------------------------------------------------------------
 void StarCraftTechTree::GetRequirements(int p_typeOrResearchId, vector<ResearchType>& p_researches, map<EntityClassType, unsigned>& p_buildings)
 {
-	TName			ident;
-	TID		id;
-	UpgradeType		bwapiUpgrade;
-	TechType		bwapiTech;
-	BWAPI::UnitType bwapiUnitType;
-	BWAPI::UnitType	bwapiSourceType;
-	BWAPI::UnitType bwapiRequiredType;
-	BWAPI::UnitType	bwapiRequiredUnit;
-	TechType		bwapiRequiredTech;
-	EntityClassType requiredEntity;
-	ResearchType	requiredResearch;
-	
-	if (BELONG(ResearchType, p_typeOrResearchId))
-	{
-		// Is Tech
-		if ((int)p_typeOrResearchId >= ((int)(RESEARCH_START +  TechIdOffset)))
-		{
-			/*id = g_Database.TechMapping.GetBySecond((ResearchType)p_typeOrResearchId);
-			ident = g_Database.TechIdentMapping.GetByFirst(id);
-			bwapiTech = TechType::getType(ident);
+    TName ident;
+    TID id;
+    UpgradeType bwapiUpgrade;
+    TechType bwapiTech;
+    BWAPI::UnitType bwapiUnitType;
+    BWAPI::UnitType bwapiSourceType;
+    BWAPI::UnitType bwapiRequiredType;
+    BWAPI::UnitType bwapiRequiredUnit;
+    TechType bwapiRequiredTech;
+    EntityClassType requiredEntity;
+    ResearchType requiredResearch;
+    
+    if (BELONG(ResearchType, p_typeOrResearchId))
+    {
+        // Is Tech
+        if ((int)p_typeOrResearchId >= ((int)(RESEARCH_START +  TechIdOffset)))
+        {
+            /*id = g_Database.TechMapping.GetBySecond((ResearchType)p_typeOrResearchId);
+            ident = g_Database.TechIdentMapping.GetByFirst(id);
+            bwapiTech = TechType::getType(ident);
 
-			bwapiSourceType = bwapiTech.whatResearches();
-			requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
-			p_buildings.push_back(requiredEntity);*/
-		}
-		// Is Upgrade
-		else
-		{
-			id = g_Database.UpgradeMapping.GetBySecond((ResearchType)p_typeOrResearchId);
-			ident = g_Database.UpgradeIdentMapping.GetByFirst(id);
-			bwapiUpgrade = UpgradeType::getType(ident);
+            bwapiSourceType = bwapiTech.whatResearches();
+            requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
+            p_buildings.push_back(requiredEntity);*/
+        }
+        // Is Upgrade
+        else
+        {
+            id = g_Database.UpgradeMapping.GetBySecond((ResearchType)p_typeOrResearchId);
+            ident = g_Database.UpgradeIdentMapping.GetByFirst(id);
+            bwapiUpgrade = UpgradeType::getType(ident);
 
-			/*bwapiSourceType = bwapiUpgrade.whatUpgrades();
-			requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
-			p_buildings.push_back(requiredEntity);*/
+            /*bwapiSourceType = bwapiUpgrade.whatUpgrades();
+            requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
+            p_buildings.push_back(requiredEntity);*/
 
-			bwapiRequiredType = bwapiUpgrade.whatsRequired();
+            bwapiRequiredType = bwapiUpgrade.whatsRequired();
 
-			if (bwapiRequiredType.getID() != UnitTypes::None.getID())
-			{
-				requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiRequiredType.getID());
-				p_buildings[requiredEntity] = 1;
-			}
-		}
-	}
-	else if(BELONG(EntityClassType, p_typeOrResearchId))
-	{
-		id = g_Database.EntityMapping.GetBySecond((EntityClassType)p_typeOrResearchId);
-		ident = g_Database.EntityIdentMapping.GetByFirst(id);
-		bwapiUnitType = UnitType::getType(ident);
+            if (bwapiRequiredType.getID() != UnitTypes::None.getID())
+            {
+                requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiRequiredType.getID());
+                p_buildings[requiredEntity] = 1;
+            }
+        }
+    }
+    else if(BELONG(EntityClassType, p_typeOrResearchId))
+    {
+        id = g_Database.EntityMapping.GetBySecond((EntityClassType)p_typeOrResearchId);
+        ident = g_Database.EntityIdentMapping.GetByFirst(id);
+        bwapiUnitType = UnitType::getType(ident);
 
-		/*bwapiSourceType = bwapiUnitType.whatBuilds().first;
-		requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
-		p_buildings.push_back(requiredEntity);*/
+        /*bwapiSourceType = bwapiUnitType.whatBuilds().first;
+        requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiSourceType.getID());
+        p_buildings.push_back(requiredEntity);*/
 
-		bwapiRequiredTech = bwapiUnitType.requiredTech();
+        bwapiRequiredTech = bwapiUnitType.requiredTech();
 
-		if (bwapiRequiredTech.getID() != TechTypes::None.getID())
-		{
-			requiredResearch = g_Database.TechMapping.GetByFirst(bwapiRequiredTech.getID());
-			p_researches.push_back(requiredResearch);
-		}
+        if (bwapiRequiredTech.getID() != TechTypes::None.getID())
+        {
+            requiredResearch = g_Database.TechMapping.GetByFirst(bwapiRequiredTech.getID());
+            p_researches.push_back(requiredResearch);
+        }
 
-		const map<BWAPI::UnitType, int> &bwapiUnits = bwapiUnitType.requiredUnits();
+        const map<BWAPI::UnitType, int> &bwapiUnits = bwapiUnitType.requiredUnits();
 
-		for (map<BWAPI::UnitType, int>::const_iterator itr =  bwapiUnits.begin();
-			itr != bwapiUnits.end(); ++itr)
-		{
-			bwapiRequiredUnit = itr->first;
-			requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiRequiredUnit.getID());
-			p_buildings[requiredEntity] = itr->second;;
-		}
-	}
+        for (map<BWAPI::UnitType, int>::const_iterator itr =  bwapiUnits.begin();
+            itr != bwapiUnits.end(); ++itr)
+        {
+            bwapiRequiredUnit = itr->first;
+            requiredEntity = g_Database.EntityMapping.GetByFirst(bwapiRequiredUnit.getID());
+            p_buildings[requiredEntity] = itr->second;;
+        }
+    }
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftTechTree::GetDependents(int p_typeOrResearchId, vector<ResearchType>& p_researches, vector<EntityClassType>& p_entityTypes)
@@ -166,7 +166,7 @@ void StarCraftTechTree::GetDependents(int p_typeOrResearchId, vector<ResearchTyp
     UNREFERENCED_PARAMETER(p_typeOrResearchId);
     UNREFERENCED_PARAMETER(p_researches);
     UNREFERENCED_PARAMETER(p_entityTypes);
-	assert(0);
+    assert(0);
     /*if(m_dependentsCache.Contains(p_typeOrResearchId))
     {
         Dependency& dependents = m_dependentsCache[p_typeOrResearchId];
@@ -207,54 +207,54 @@ void StarCraftTechTree::GetDependents(int p_typeOrResearchId, vector<ResearchTyp
 //----------------------------------------------------------------------------------------------
 EntityClassType StarCraftTechTree::TireBaseBuilding(BaseType p_tireId) const
 {
-	BWAPI::UnitType baseType;
-	
-	if (p_tireId == BASETYPE_END)
-		return ECLASS_END;
+    BWAPI::UnitType baseType;
+    
+    if (p_tireId == BASETYPE_END)
+        return ECLASS_END;
 
-	baseType = m_player->getRace().getCenter();
+    baseType = m_player->getRace().getCenter();
 
-	return g_Database.EntityMapping.GetByFirst(baseType.getID());
+    return g_Database.EntityMapping.GetByFirst(baseType.getID());
 }
 //----------------------------------------------------------------------------------------------
 EntityClassType StarCraftTechTree::SourceEntity(int p_typeOrResearchId) const
 {
-    TName			ident;
-	TID				id;
-	UpgradeType		upgrade;
-	TechType		tech;
-	BWAPI::UnitType unitType;
-	BWAPI::UnitType	sourceType;
+    TName ident;
+    TID id;
+    UpgradeType upgrade;
+    TechType tech;
+    BWAPI::UnitType unitType;
+    BWAPI::UnitType sourceType;
 
     if (BELONG(ResearchType, p_typeOrResearchId))
     {
-		// Is Tech
-		if ((int)p_typeOrResearchId >= ((int)(RESEARCH_START +  TechIdOffset)))
-		{
-			id = g_Database.TechMapping.GetBySecond((ResearchType)p_typeOrResearchId);
-			ident = g_Database.TechIdentMapping.GetByFirst(id);
-			tech = TechType::getType(ident);
-			sourceType = tech.whatResearches();
+        // Is Tech
+        if ((int)p_typeOrResearchId >= ((int)(RESEARCH_START +  TechIdOffset)))
+        {
+            id = g_Database.TechMapping.GetBySecond((ResearchType)p_typeOrResearchId);
+            ident = g_Database.TechIdentMapping.GetByFirst(id);
+            tech = TechType::getType(ident);
+            sourceType = tech.whatResearches();
 
-			return g_Database.EntityMapping.GetByFirst(sourceType.getID());
-		}
-		// Is Upgrade
-		else
-		{
-			id = g_Database.UpgradeMapping.GetBySecond((ResearchType)p_typeOrResearchId);
-			ident = g_Database.UpgradeIdentMapping.GetByFirst(id);
-			upgrade = UpgradeType::getType(ident);
-			sourceType = upgrade.whatUpgrades();
+            return g_Database.EntityMapping.GetByFirst(sourceType.getID());
+        }
+        // Is Upgrade
+        else
+        {
+            id = g_Database.UpgradeMapping.GetBySecond((ResearchType)p_typeOrResearchId);
+            ident = g_Database.UpgradeIdentMapping.GetByFirst(id);
+            upgrade = UpgradeType::getType(ident);
+            sourceType = upgrade.whatUpgrades();
 
-			return g_Database.EntityMapping.GetByFirst(sourceType.getID());
-		}
+            return g_Database.EntityMapping.GetByFirst(sourceType.getID());
+        }
     }
     else if(BELONG(EntityClassType, p_typeOrResearchId))
     {
         id = g_Database.EntityMapping.GetBySecond((EntityClassType)p_typeOrResearchId);
-		ident = g_Database.EntityIdentMapping.GetByFirst(id);
-		unitType = UnitType::getType(ident);
-		sourceType = unitType.whatBuilds().first;
+        ident = g_Database.EntityIdentMapping.GetByFirst(id);
+        unitType = UnitType::getType(ident);
+        sourceType = unitType.whatBuilds().first;
 
         return g_Database.EntityMapping.GetByFirst(sourceType.getID());
     }

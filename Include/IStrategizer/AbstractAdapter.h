@@ -10,8 +10,8 @@
 
 namespace IStrategizer
 {
-	class Vector2;
-	class CellFeature;
+    class Vector2;
+    class CellFeature;
 
 	class AbstractAdapter
 	{
@@ -29,4 +29,4 @@ namespace IStrategizer
 	};
 }
 
-#endif	// ABSTRACTADAPTER_H
+#endif // ABSTRACTADAPTER_H

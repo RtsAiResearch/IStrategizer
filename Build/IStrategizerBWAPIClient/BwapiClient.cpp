@@ -138,9 +138,9 @@ void BwapiClient::HandleGameEvents()
     {
         switch(e->getType())
         {
-		case EventType::MatchFrame:
-			OnGameFrame();
-			break;
+        case EventType::MatchFrame:
+            OnGameFrame();
+            break;
         case EventType::MatchStart:
             OnMatchStart();
             break;

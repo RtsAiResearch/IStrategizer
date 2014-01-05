@@ -44,13 +44,13 @@ RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pR
 //----------------------------------------------------------------------------------------------
 void RetrieverEx::BuildCaseCluster() 
 {
-	for(vector<CaseEx*>::iterator itr = m_pRetainer->CaseBase()->CaseContainer.begin();
-		itr != m_pRetainer->CaseBase()->CaseContainer.end();
-		++itr)
-	{
-		vector<CaseEx*>& cluster = _caseCluster[(GoalType)(*itr)->Goal()->StepTypeId()];
-		cluster.push_back(*itr);
-	}
+    for(vector<CaseEx*>::iterator itr = m_pRetainer->CaseBase()->CaseContainer.begin();
+        itr != m_pRetainer->CaseBase()->CaseContainer.end();
+        ++itr)
+    {
+        vector<CaseEx*>& cluster = _caseCluster[(GoalType)(*itr)->Goal()->StepTypeId()];
+        cluster.push_back(*itr);
+    }
 }
 //----------------------------------------------------------------------------------------------
 float RetrieverEx::GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2)
@@ -96,22 +96,22 @@ float RetrieverEx::GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2)
 //----------------------------------------------------------------------------------------------
 float RetrieverEx::StateSimilarity(const GameStateEx *p_gs1, const GameStateEx *p_gs2)
 {
-	// STATE-SIMILARITY(gs1, gs2)
-	// distance = 0
-	// for i: 0 to d
-	//	//	distance += ((gs1[i] - gs2[i]) /  (1 + max(gs1[i], gs2[i]))) ^ 2
-	// 
-	// return 1 / (sqrt(distance) + 1.0)
+    // STATE-SIMILARITY(gs1, gs2)
+    // distance = 0
+    // for i: 0 to d
+    // // distance += ((gs1[i] - gs2[i]) /  (1 + max(gs1[i], gs2[i]))) ^ 2
+    // 
+    // return 1 / (sqrt(distance) + 1.0)
     float distance = 0;
-	float diff;
-	float maxDiff;
+    float diff;
+    float maxDiff;
     ShallowFeaturesEx& v1 = const_cast<GameStateEx*>(p_gs1)->ShallowFeatures();
     ShallowFeaturesEx& v2 = const_cast<GameStateEx*>(p_gs2)->ShallowFeatures();
 
     for(int i = 0, size = v1.size(); i < size; ++i)
     {
-		diff = v1[i] - v2[i];
-		maxDiff = 1.0f + max(v1[i], v2[i]);
+        diff = v1[i] - v2[i];
+        maxDiff = 1.0f + max(v1[i], v2[i]);
         distance += pow(diff / maxDiff, 2);
     }
 
@@ -130,51 +130,51 @@ float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, con
 CaseEx* RetrieverEx::Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameState)
 {
     SVector<CaseEx*>& cases = m_pRetainer->CaseBase()->CaseContainer;
-	multimap<float, CaseEx*, greater<float> >	caseRelevanceTable;
-	float caseRelevance;
+    multimap<float, CaseEx*, greater<float> > caseRelevanceTable;
+    float caseRelevance;
 
-	LogInfo("Retrieving case for goal={%s} and current game-state", p_goal->ToString().c_str());
+    LogInfo("Retrieving case for goal={%s} and current game-state", p_goal->ToString().c_str());
 
-	if (cases.empty())
-	{
-		LogError("Case-base is empty, retrieval failed");
-		return nullptr;
-	}
+    if (cases.empty())
+    {
+        LogError("Case-base is empty, retrieval failed");
+        return nullptr;
+    }
 
-	// Calculate the relevance between each case in the case-base and
-	// the current situation using the goal and game-state params
+    // Calculate the relevance between each case in the case-base and
+    // the current situation using the goal and game-state params
     for(size_t i = 0, size = cases.size(); i < size; ++i)
     {
         caseRelevance = CaseRelevance(cases[i], p_goal, p_gameState);
-		caseRelevanceTable.insert(make_pair(caseRelevance, cases[i]));
+        caseRelevanceTable.insert(make_pair(caseRelevance, cases[i]));
     }
 
-	int					i = 0;
-	float				outcome;
-	float				currCasePerformance;
-	CaseEx*				currCase;
-	CaseEx*				bestCase = nullptr;
-	float				bestCasePerformance = 0.0f;
+    int i = 0;
+    float outcome;
+    float currCasePerformance;
+    CaseEx* currCase;
+    CaseEx* bestCase = nullptr;
+    float bestCasePerformance = 0.0f;
 
-	for(multimap<float, CaseEx*, greater<float> >::iterator itr = caseRelevanceTable.begin();
-		itr != caseRelevanceTable.end() && i < 5;
-		++itr, ++i)
-	{
-		currCase = itr->second;
-		outcome = (float)currCase->SuccessCount() / (float)currCase->TrialCount();
-		assert(outcome != 0);
-		currCasePerformance = itr->first * outcome;
+    for(multimap<float, CaseEx*, greater<float> >::iterator itr = caseRelevanceTable.begin();
+        itr != caseRelevanceTable.end() && i < 5;
+        ++itr, ++i)
+    {
+        currCase = itr->second;
+        outcome = (float)currCase->SuccessCount() / (float)currCase->TrialCount();
+        assert(outcome != 0);
+        currCasePerformance = itr->first * outcome;
 
-		if (currCasePerformance > bestCasePerformance)
-		{
-			bestCasePerformance = currCasePerformance;
-			bestCase = currCase;
-		}
-	}
+        if (currCasePerformance > bestCasePerformance)
+        {
+            bestCasePerformance = currCasePerformance;
+            bestCase = currCase;
+        }
+    }
 
-	LogInfo("Retrieved case '%s' with max performance=%f",
-		bestCase->Goal()->ToString().c_str(),
-		bestCasePerformance);
+    LogInfo("Retrieved case '%s' with max performance=%f",
+        bestCase->Goal()->ToString().c_str(),
+        bestCasePerformance);
 
     return bestCase;
 }

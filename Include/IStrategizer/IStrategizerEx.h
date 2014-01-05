@@ -8,43 +8,43 @@
 
 namespace IStrategizer
 {
-	class MessagePump;
-	class GameTrace;
-	class CaseBaseEx;
-	class LearningFromHumanDemonstration;
-	class GameAPI;
-	class OnlineCaseBasedPlannerEx;
-	class RtsGame;
+    class MessagePump;
+    class GameTrace;
+    class CaseBaseEx;
+    class LearningFromHumanDemonstration;
+    class GameAPI;
+    class OnlineCaseBasedPlannerEx;
+    class RtsGame;
 
-	struct IStrategizerParam
-	{
-		unsigned GrndCtrlIMUpdateInterval;
-		unsigned OccupanceIMUpdateInterval;
-		int BuildingDataIMCellSize;
-		int GrndCtrlIMCellSize;
-		PhaseType Phase;
-	};
+    struct IStrategizerParam
+    {
+        unsigned GrndCtrlIMUpdateInterval;
+        unsigned OccupanceIMUpdateInterval;
+        int BuildingDataIMCellSize;
+        int GrndCtrlIMCellSize;
+        PhaseType Phase;
+    };
 
-	class IStrategizerEx : public MessagePumpObserver
-	{
-	private:
-		OnlineCaseBasedPlannerEx*			_planner;
-		LearningFromHumanDemonstration*		_caseLearning;
-		PlayerType							_self;
-		PlayerType							_enemy;
-		IStrategizerParam					_param;
-		bool								_isFirstUpdate;
-		WorldClock							_clock;
+    class IStrategizerEx : public MessagePumpObserver
+    {
+    private:
+        OnlineCaseBasedPlannerEx* _planner;
+        LearningFromHumanDemonstration* _caseLearning;
+        PlayerType _self;
+        PlayerType _enemy;
+        IStrategizerParam _param;
+        bool _isFirstUpdate;
+        WorldClock _clock;
 
-	public:
-		IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame);
-		void	Update(unsigned p_gameCycle);
-		void	StartOfflineLearning();
-		const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
-		void	NotifyMessegeSent(Message* p_message);
-		const WorldClock& Clock() const { return _clock; }
-		~IStrategizerEx();
-	};
+    public:
+        IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame);
+        void Update(unsigned p_gameCycle);
+        void StartOfflineLearning();
+        const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
+        void NotifyMessegeSent(Message* p_message);
+        const WorldClock& Clock() const { return _clock; }
+        ~IStrategizerEx();
+    };
 }
 
-#endif	// ISTRATEGIZEREX_H
+#endif // ISTRATEGIZEREX_H

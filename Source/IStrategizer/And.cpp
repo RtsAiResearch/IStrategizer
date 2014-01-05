@@ -5,7 +5,7 @@ using namespace IStrategizer;
 
 bool And::Evaluate()
 {
-	if(_shortCircuit)
+    if(_shortCircuit)
     {
         for(vector<Expression*>::iterator itr = _expressions.begin();
             itr != _expressions.end();

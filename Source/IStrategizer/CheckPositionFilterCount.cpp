@@ -8,7 +8,7 @@ CheckPositionFilterCount::CheckPositionFilterCount(PlayerType p_player, int p_fi
     _conditionParameters[PARAM_FilterTypeId] = p_filterTypeId;
     _conditionParameters[PARAM_OperatorId] = p_operatorId;
     _conditionParameters[PARAM_Value] = p_value;
-	_cellIndex = p_cellIndex;
+    _cellIndex = p_cellIndex;
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -18,9 +18,9 @@ bool CheckPositionFilterCount::Evaluate()
 
     ConditionEx::Evaluate();
 
-	//FIXME : Vector2:Null() is wrong , original was PositionFeatureVector::From(_conditionParameters)
+    //FIXME : Vector2:Null() is wrong , original was PositionFeatureVector::From(_conditionParameters)
     m_returnValue = g_Assist.GetFilterCount(_playerType, (FilterType)_conditionParameters[PARAM_FilterTypeId], 
-		Vector2::Null(), _currentCount);
+        Vector2::Null(), _currentCount);
 
     if (m_returnValue == ERR_Success)
     {
@@ -43,7 +43,7 @@ void CheckPositionFilterCount::Copy(IClonable* p_dest)
 {
     ConditionEx::Copy(p_dest);
 
-	CheckPositionFilterCount* m_dest = static_cast<CheckPositionFilterCount*>(p_dest);
+    CheckPositionFilterCount* m_dest = static_cast<CheckPositionFilterCount*>(p_dest);
 
-	m_dest->_currentCount = _currentCount;
+    m_dest->_currentCount = _currentCount;
 }

@@ -14,30 +14,30 @@
 
 namespace IStrategizer
 {
-	///> class=AttackEntityAction
-	///> parent=Action
-	class AttackEntityAction : public Action
-	{
-		OBJECT_SERIALIZABLE(AttackEntityAction);
+    ///> class=AttackEntityAction
+    ///> parent=Action
+    class AttackEntityAction : public Action
+    {
+        OBJECT_SERIALIZABLE(AttackEntityAction);
 
-	public:
-		AttackEntityAction();
-		AttackEntityAction(const PlanStepParameters& p_parameters);
-		void        Copy(IClonable* p_dest);
-		bool		PreconditionsSatisfied();
-		bool		AliveConditionsSatisfied();
-		bool		SuccessConditionsSatisfied();
+    public:
+        AttackEntityAction();
+        AttackEntityAction(const PlanStepParameters& p_parameters);
+        void        Copy(IClonable* p_dest);
+        bool PreconditionsSatisfied();
+        bool AliveConditionsSatisfied();
+        bool SuccessConditionsSatisfied();
 
-	protected:
-		bool		ExecuteAux(const WorldClock& p_clock );
-		void		InitializeAddressesAux() ;
-		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
+    protected:
+        bool ExecuteAux(const WorldClock& p_clock );
+        void InitializeAddressesAux() ;
+        void HandleMessage(Message* p_pMsg, bool& p_consumed);
 
-	private:
-		TID			_attackerId;
-		TID			_targetId;
-		Vector2		_position;
-	};
+    private:
+        TID _attackerId;
+        TID _targetId;
+        Vector2 _position;
+    };
 }
 
-#endif	// ATTACKENTITYACTION_H
+#endif // ATTACKENTITYACTION_H

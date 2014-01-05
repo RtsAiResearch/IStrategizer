@@ -39,7 +39,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
 
     case ACTIONEX_AttackEntity:
         return new AttackEntityAction(p_paramaters);
-		 break;
+         break;
 
     default:
         throw exception("Action not supported");

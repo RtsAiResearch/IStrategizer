@@ -19,8 +19,8 @@ using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
-#define TilePositionFromUnitPosition(UnitPos)	(UnitPos / 32)
-#define UnitPositionFromTilePosition(TilePos)	(TilePos * 32)
+#define TilePositionFromUnitPosition(UnitPos) (UnitPos / 32)
+#define UnitPositionFromTilePosition(TilePos) (TilePos * 32)
 
 StarCraftEntity::StarCraftEntity(Unit p_unit) : GameEntity(p_unit->getID()), m_unit(p_unit)
 {
@@ -28,7 +28,7 @@ StarCraftEntity::StarCraftEntity(Unit p_unit) : GameEntity(p_unit->getID()), m_u
     m_type = g_Database.EntityMapping.GetByFirst(m_unit->getType().getID());
 }
 //----------------------------------------------------------------------------------------------
-int	StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
+int StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
 {
     // Positions are measured in pixels and are the highest resolution
     // Walk Tiles - each walk tile is an 8x8 square of pixels. These are called walk tiles because walkability data is available at this resolution.
@@ -113,7 +113,7 @@ ObjectStateType StarCraftEntity::FetchState() const
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Research(ResearchType p_researchId)
 {
-    bool	bOk;
+    bool bOk;
 
     // Is tech
     if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
@@ -134,10 +134,10 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position) 
 {
-    TilePosition	  pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
-    UnitType	type;
+    TilePosition   pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
+    UnitType type;
     TID             gameTypeId;
-    string	        typeName;
+    string         typeName;
 
     gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
     typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
@@ -150,14 +150,14 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackGround(Vector2 p_position)
 {
-    Position	pos(p_position.X, p_position.Y);
+    Position pos(p_position.X, p_position.Y);
     return m_unit->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 {
-    Unit	attacker = m_unit;
-    Unit	target;
+    Unit attacker = m_unit;
+    Unit target;
 
     target = Broodwar->getUnit(p_targetEntityObjectId);
 
@@ -170,7 +170,7 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 {
     Unit            building = m_unit;
-    TID	            unitTypeId;
+    TID             unitTypeId;
     string          typeName;
     UnitType        type;
 
@@ -220,6 +220,6 @@ Vector2 StarCraftEntity::GetPosition() const
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Move(Vector2 p_position)
 {
-    Position	pos(p_position.X, p_position.Y);
+    Position pos(p_position.X, p_position.Y);
     return m_unit->move(pos);
 };

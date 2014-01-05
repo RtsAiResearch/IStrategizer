@@ -26,7 +26,7 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
     sprintf_s(buffer2, LogBufferMax, "[%s@%02d:%02d:%02d.%03d@%s] %s\n",
         logTypeName[(unsigned)p_type],
         sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
-		p_pFun,
+        p_pFun,
         buffer1);
 
     printf_s(buffer2);

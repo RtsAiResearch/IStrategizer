@@ -65,4 +65,4 @@ namespace IStrategizer
     };
 }
 
-#endif	// ADAPTEREX_H
+#endif // ADAPTEREX_H
