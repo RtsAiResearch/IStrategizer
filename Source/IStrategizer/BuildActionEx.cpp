@@ -13,6 +13,7 @@
 #include "GameTechTree.h"
 #include "GameType.h"
 #include "GameEntity.h"
+#include "AdapterEx.h"
 
 using namespace IStrategizer;
 
@@ -185,8 +186,8 @@ bool BuildActionEx::ExecuteAux(const WorldClock& p_clock)
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     bool bOk = false;
 
-    // Adapt builder
-    _builderId = pAdapter->AdaptWorkerForBuild();
+	// Adapt builder
+	_builderId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
 
     if (_builderId != INVALID_TID)
     {
