@@ -7,6 +7,7 @@
 #include "RtsGame.h"
 #include "GamePlayer.h"
 #include <math.h>
+#include "AdapterEx.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -36,7 +37,16 @@ void MoveAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 bool MoveAction::AliveConditionsSatisfied()
 {
 
-    return (g_Assist.DoesEntityObjectExist(_entityId) && _pEntity->Attr(EOATTR_IsMoving) > 0);
+    bool success = g_Assist.DoesEntityObjectExist(_entityId);
+
+    if(success)
+    {
+        GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
+        assert(entity);
+        success = entity->Attr(EOATTR_IsMoving) > 0;
+    }
+
+    return success;
 }
 //----------------------------------------------------------------------------------------------
 bool MoveAction::PreconditionsSatisfied()
@@ -61,7 +71,7 @@ bool MoveAction::ExecuteAux( const WorldClock& p_clock )
     EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
 
     //Adapt Entity
-    _entityId = pAdapter->AdaptEntityToMove(entityType);
+    _entityId = pAdapter->GetEntityObjectId(entityType, AdapterEx::EntityToMoveStatesRankVector);
     bool executed = false;
 
     if(_entityId != INVALID_TID)

@@ -13,6 +13,7 @@
 #include "GameTechTree.h"
 #include "GameType.h"
 #include "GameEntity.h"
+#include "AdapterEx.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -41,7 +42,7 @@ bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
 	bool executed = false;
 	
 	// Adapt attacker
-	_attackerId = pAdapter->AdaptAttacker(attackerType);
+	_attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
 
 	if (_attackerId != INVALID_TID)
 	{

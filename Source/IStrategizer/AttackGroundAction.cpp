@@ -14,6 +14,7 @@
 #include "GameType.h"
 #include "GameEntity.h"
 #include "WorldMap.h"
+#include "AdapterEx.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -36,7 +37,7 @@ bool AttackGroundAction::ExecuteAux(const WorldClock& p_clock)
 	bool executed = false;
 
 	// Adapt attacker
-	_attackerId = pAdapter->AdaptAttacker(attackerType);
+	_attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
 
 	if (_attackerId != INVALID_TID)
 	{

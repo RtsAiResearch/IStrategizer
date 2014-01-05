@@ -13,57 +13,56 @@
 
 namespace IStrategizer
 {
-	class CellFeature;
-	class WorldMap;
+    class CellFeature;
+    class WorldMap;
 
-	struct SpiralSearchData
-	{
-		int BuildingWidth;
-		int BuildingHeight;
-		Vector2 CandidateBuildPos;
-	};
+    struct SpiralSearchData
+    {
+        int BuildingWidth;
+        int BuildingHeight;
+        Vector2 CandidateBuildPos;
+    };
 
-	class AdapterEx : public AbstractAdapter
-	{
-	public:
-		AdapterEx();
-		MapArea AdaptPositionForBuilding(EntityClassType p_buildingType);
-		TID AdaptWorkerForBuild();
-		TID AdaptBuildingForTraining(EntityClassType p_traineeType);
-		TID AdaptBuildingForResearch(ResearchType p_researchType);
-		TID AdaptAttacker(EntityClassType p_attackerType);
-		TID AdaptEntityToMove(EntityClassType p_EntityType);
-		TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters);
-		Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
+    class AdapterEx : public AbstractAdapter
+    {
+    public:
+        AdapterEx();
+        MapArea AdaptPositionForBuilding(EntityClassType p_buildingType);
+        TID AdaptBuildingForTraining(EntityClassType p_traineeType);
+        TID AdaptBuildingForResearch(ResearchType p_researchType);
+        TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters);
+        TID GetEntityObjectId(EntityClassType p_entityType,const vector<ObjectStateType>& p_rankedStates);
+        TID GetEntityObjectId(EntityClassType p_entityType);
+        Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
 
-	private:
-		Vector2 GetBotColonyCenter();
+        static vector<ObjectStateType> WorkerStatesRankVector;
+        static vector<ObjectStateType> AttackerStatesRankVector;
+        static vector<ObjectStateType> EntityToMoveStatesRankVector;
+            
+    private:
+        Vector2 GetBotColonyCenter();
+        static void initializePredefinedRankedStates();
+        static bool EntityToMoveStatesComparer(pair<TID, ObjectStateType> &p_leftAttacker, pair<TID, ObjectStateType> &p_rightAttacker);
 
-		static bool IsValidWorkerState(ObjectStateType p_workerState);
-		static unsigned GetWorkerStateIndex(ObjectStateType p_workerState);
-		static bool WorkerStatesComparer(pair<TID, ObjectStateType> &p_leftWorker, pair<TID, ObjectStateType> &p_rightWorker);
+        static bool IsValidEntityState(ObjectStateType p_entityState,const vector<ObjectStateType>& p_rankedStates);
+        static int GetEntityStateIndex(ObjectStateType p_entityState,const vector<ObjectStateType>& p_rankedStates);
 
-		static bool IsValidAttackerState(ObjectStateType p_attackerState);
-		static unsigned GetAttackerStateIndex(ObjectStateType p_attackerState);
-		static bool AttackerStatesComparer(pair<TID, ObjectStateType> &p_leftAttacker, pair<TID, ObjectStateType> &p_rightAttacker);
+        static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_pCell, void *p_pParam);
 
-		static bool IsValidEntityToMoveState(ObjectStateType p_entityState);
-		static unsigned GetEntityToMoveStateIndex(ObjectStateType p_entityState);
-		static bool EntityToMoveStatesComparer(pair<TID, ObjectStateType> &p_leftAttacker, pair<TID, ObjectStateType> &p_rightAttacker);
+        const static unsigned			WorkerStatesSize;
+        const static ObjectStateType	WorkerStatesRank[];
+        const static unsigned			AttackerStatesSize;
+        const static ObjectStateType	AttackerStatesRank[];
+        const static unsigned			EntityToMoveStatesSize;
+        const static ObjectStateType	EntityToMoveStatesRank[];
+        const static int				DefaultBuildingSpacing;
+        static bool                     IsRankedStatesInitialized;
 
-		static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_pCell, void *p_pParam);
 
-		const static unsigned			WorkerStatesSize;
-		const static ObjectStateType	WorkerStatesRank[];
-		const static unsigned			AttackerStatesSize;
-		const static ObjectStateType	AttackerStatesRank[];
-		const static unsigned			EntityToMoveStatesSize;
-		const static ObjectStateType	EntityToMoveStatesRank[];
-		const static int				DefaultBuildingSpacing;
-
-		Vector2 m_botColonyCenter;
-		int		m_buildingSpacing;
-	};
+        Vector2 m_botColonyCenter;
+        int		m_buildingSpacing;
+      
+    };
 }
 
 #endif	// ADAPTEREX_H
