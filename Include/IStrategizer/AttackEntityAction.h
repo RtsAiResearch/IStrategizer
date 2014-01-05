@@ -5,10 +5,6 @@
 #include "Action.h"
 #include "CellFeature.h"
 
-#ifndef AND_H
-#include "And.h"
-#endif
-
 namespace IStrategizer
 {
     ///> class=AttackEntityAction
@@ -27,7 +23,7 @@ namespace IStrategizer
 
     protected:
         bool ExecuteAux(const WorldClock& p_clock );
-        void InitializeAddressesAux() ;
+        void InitializeAddressesAux();
         void HandleMessage(Message* p_pMsg, bool& p_consumed);
         void InitializePostConditions();
         void InitializePreConditions();

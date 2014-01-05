@@ -10,16 +10,12 @@ namespace IStrategizer
     ///> parent=CompositeExpression
     class Or : public CompositeExpression
     {
+        OBJECT_SERIALIZABLE(Or);
+
     public:
         Or() {}
         Or(const std::vector<Expression*>& p_expressions) : CompositeExpression(p_expressions) {}
-        bool        Evaluate();
-        //----------------------------------------------------------------------------------------------
-        // Serialization
-        string      TypeName()  { return "Or"; }
-        int         TypeSize()  { return sizeof(Or); }
-        Serialization::UserObject* Prototype() { return new Or; }
-        //----------------------------------------------------------------------------------------------
+        bool Evaluate(RtsGame* pRtsGame);
     };
 }
 

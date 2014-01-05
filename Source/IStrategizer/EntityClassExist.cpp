@@ -44,14 +44,14 @@ void EntityClassExist::InitializeAddressesAux()
         &_used);
 }
 //---------------------------------------------------------------------------------------------------
-bool EntityClassExist::Evaluate()
+bool EntityClassExist::Evaluate(RtsGame* pRtsGame)
 {
     int m_entityObjectId;
     vector<TID> m_execluded;
     GameEntity* m_entity;
     GamePlayer* m_player;
 
-    ConditionEx::Evaluate();
+    ConditionEx::Evaluate(pRtsGame);
     vector<int> m_entityIds;
     m_player = g_Game->GetPlayer((PlayerType)_conditionParameters[PARAM_PlayerId]);
     m_player->Entities(m_entityIds);

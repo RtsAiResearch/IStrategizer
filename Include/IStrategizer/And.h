@@ -12,10 +12,14 @@ namespace IStrategizer
     {
         OBJECT_SERIALIZABLE(And);
 
+    protected:
+        void And::InitializeAddressesAux();
+
     public:
         And() {}
         And(const std::vector<Expression*>& p_expressions) : CompositeExpression(p_expressions) {}
-        bool     Evaluate();
+        bool Evaluate(RtsGame* pRtsGame);
+
     };
 }
 

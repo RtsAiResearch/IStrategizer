@@ -19,29 +19,25 @@ namespace IStrategizer
         ///> type=int
         ConditionType _conditionType;
         ///> type=PlanStepParameters
-        PlanStepParameters     _conditionParameters;
+        PlanStepParameters _conditionParameters;
         ///> type=int
         PlayerType _playerType;
 
-        inline ConditionEx(){}
+        inline ConditionEx() {}
+        void InitializeAddressesAux();
 
     public:
         inline ConditionEx(PlayerType p_player, ConditionType p_conditionType) : Expression(EXPRESSION_Leaf), _conditionType(p_conditionType), _playerType(p_player) { _conditionParameters[PARAM_PlayerId] = p_player; }
+        inline void Parameter(int p_paramId, int p_newValue) { _conditionParameters[(ParameterType)p_paramId] = p_newValue; }
         inline int Type() const { return _conditionType; } 
         inline int Parameter(int p_paramId) { return _conditionParameters[(ParameterType)p_paramId]; }
-        inline void Parameter(int p_paramId, int p_newValue) { _conditionParameters[(ParameterType)p_paramId] = p_newValue; }
-        bool PartiallyEqualsAux(const Expression* p_rhs,  MatchSide p_anchor, std::vector<std::pair<Expression*,Expression*>>& p_matchedLeafs) const;
-        bool Evaluate() { _isEvaluated = _isSatisfied = true; return _isEvaluated && _isSatisfied; }
-        bool                 Equals(const Expression* p_rhs) const;
-        inline PlanStepParameters   Parameters() const { return _conditionParameters; }
-        virtual bool Consume(int p_amount) = 0;
-        void                        Copy(IClonable* p_dest);
         inline bool ContainsParameter(ParameterType p_parameter) { return (_conditionParameters.find(p_parameter) == _conditionParameters.end()); }
-        //---------------------------------------------------------------------------------------------------------------------------------------------------- 
-        // Serialization
-    protected:
-        void            InitializeAddressesAux();
-        //---------------------------------------------------------------------------------------------------------------------------------------------------- 
+        inline PlanStepParameters   Parameters() const { return _conditionParameters; }
+        void Copy(IClonable* p_dest);
+        bool PartiallyEqualsAux(const Expression* p_rhs,  MatchSide p_anchor, std::vector<std::pair<Expression*,Expression*>>& p_matchedLeafs) const;
+        bool Evaluate(RtsGame* pRtsGame) { _isEvaluated = _isSatisfied = true; return _isEvaluated && _isSatisfied; }
+        bool Equals(const Expression* p_rhs) const;
+        virtual bool Consume(int p_amount) = 0;
     };
 }
 

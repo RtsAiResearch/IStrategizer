@@ -12,15 +12,12 @@ namespace IStrategizer
     ///> parent=ConditionEx
     class False : public ConditionEx
     {
+        OBJECT_SERIALIZABLE(False);
+
     public:
         False() : ConditionEx(PLAYER_Self, CONDEX_False) {}
-        bool Evaluate() { return false; }
+        bool Evaluate(RtsGame* pRtsGame) { return false; }
         bool Consume(int p_amount) { return true; }
-        //----------------------------------------------------------------------------------------------
-        // Serialization
-        string              TypeName()  { return "False"; }
-        int                 TypeSize()  { return sizeof(False); }
-        UserObject*         Prototype() { return new False; }
     };
 }
 #endif // FALSE_H
