@@ -1,29 +1,29 @@
-#include "WinWargusGoalEx.h"
+#include "DeployArmyGoal.h"
 
 #include "RtsGame.h"
 #include "TypesMetaData.h"
 #include "GamePlayer.h"
+#include "EntityClassExist.h"
+#include "And.h"
 #include <cassert>
 
 using namespace IStrategizer;
 
-WinWargusGoalEx::WinWargusGoalEx() : GoalEx(GOALEX_WinGame)
+DeployArmyGoal::DeployArmyGoal() : GoalEx(GOALEX_DeployArmy)
 {
-    _params[PARAM_StrategyTypeId] = STRTYPE_START;
-    InitializeConditions();
+    _params[PARAM_DeployType] = DEPTYPE_START;
 }
 //----------------------------------------------------------------------------------------------
-WinWargusGoalEx::WinWargusGoalEx(const PlanStepParameters& p_parameters): GoalEx(GOALEX_WinGame, p_parameters)
+DeployArmyGoal::DeployArmyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_DeployArmy, p_parameters)
 {
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
-bool WinWargusGoalEx::SuccessConditionsSatisfied(RtsGame* pRtsGame)
+bool DeployArmyGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
     return false;
 }
 //----------------------------------------------------------------------------------------------
-void WinWargusGoalEx::InitializePostConditions()
+void DeployArmyGoal::InitializePostConditions()
 {
-
+    
 }

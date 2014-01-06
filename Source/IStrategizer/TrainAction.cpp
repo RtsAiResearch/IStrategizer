@@ -29,7 +29,6 @@ TrainAction::TrainAction()
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 TrainAction::TrainAction(const PlanStepParameters& p_parameters)
@@ -38,7 +37,6 @@ TrainAction::TrainAction(const PlanStepParameters& p_parameters)
     _traineeId(TID()),
     _trainerId(TID())
 {
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 void TrainAction::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consumed)

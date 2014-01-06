@@ -89,18 +89,20 @@ namespace IStrategizer
 #define Prefix_GoalType GOALEX
     enum GoalType
     {
-        GOALEX_WinGame    = 0x20700,                
+        GOALEX_WinGame  = 0x20700,                
         GOALEX_START    = 0x20700,
-        GOALEX_BuildBase,
+        GOALEX_CollectResource,
         GOALEX_TrainForce,
-        GOALEX_AttackEnemy,
+        GOALEX_DestroyEntityType,
+        GOALEX_DeployArmy,
         GOALEX_END
     };
 #define Define_GoalType \
     Enums[GOALEX_WinGame] = "Win Game"; \
-    Enums[GOALEX_BuildBase] = "Build Base"; \
+    Enums[GOALEX_CollectResource] = "Collect Resource"; \
     Enums[GOALEX_TrainForce] = "Train Force"; \
-    Enums[GOALEX_AttackEnemy] = "Attack Enemy";
+    Enums[GOALEX_DestroyEntityType] = "Destroy Entity Type"; \
+    Enums[GOALEX_DeployArmy] = "Deploy Army";
     //---------------------------------------------------------------------------
 #define Prefix_ActionType ACTIONEX
     enum ActionType
@@ -188,6 +190,7 @@ namespace IStrategizer
         PARAM_DistanceToBase,
         PARAM_ObjectStateType,
         PARAM_Distance,
+        PARAM_DeployType,
         PARAM_REALVALEND,
         PARAM_END = PARAM_REALVALEND
     };
@@ -427,7 +430,7 @@ namespace IStrategizer
 #define Prefix_MessageType MSG
     enum MessageType
     {
-        MSG_GameActionLog                = 0x21900,
+        MSG_GameActionLog    = 0x21900,
         MSG_START            = 0x21900, 
         MSG_Input,
         MSG_GameExit,
@@ -455,6 +458,21 @@ namespace IStrategizer
         UTYPE_AirToBoth,
         UTYPE_END
     };
+
+    //---------------------------------------------------------------------------
+#define Prefix_DeployType DEPTYPE
+    enum DeployType
+    {
+        DEPTYPE_Defend    = 0x21b00,
+        DEPTYPE_START     = 0x21b00,
+        DEPTYPE_Retreat,
+        DEPTYPE_Attack,
+        DEPTYPE_END
+    };
+#define Define_DeployType \
+    Enums[DEPTYPE_Defend] = "Defend"; \
+    Enums[DEPTYPE_Retreat] = "Retreat"; \
+    Enums[DEPTYPE_Attack] = "Attack";
 }
 
 #endif // TYPESMETADATA_H

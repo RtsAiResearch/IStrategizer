@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerEx.cpp" />
@@ -137,11 +138,11 @@
     <ClCompile Include="..\..\Source\IStrategizer\CompositeExpression.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Expression.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Or.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\AttackEnemyGoal.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\BuildBaseGoal.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GoalEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\WinWargusGoalEx.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\WinGameGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EngineComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\OnlineCaseBasedPlannerEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\AdapterEx.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\MetaData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerEx.h" />
@@ -218,11 +220,11 @@
     <ClInclude Include="..\..\Include\IStrategizer\Expression.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Not.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Or.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\AttackEnemyGoal.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\BuildBaseGoal.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\DestroyEntityTypeGoal.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\CollectResourceGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GoalEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\WinWargusGoalEx.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\WinGameGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h" />
     <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstration.h" />

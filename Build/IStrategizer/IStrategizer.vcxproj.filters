@@ -246,19 +246,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\Or.cpp">
       <Filter>Source Files\CaseBase\Condition\Expression</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\AttackEnemyGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\BuildBaseGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\GoalEx.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\WinWargusGoalEx.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\EngineComponent.cpp">
@@ -347,6 +335,21 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\WinGameGoal.cpp">
+      <Filter>Source Files\CaseBase\GoalEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp">
+      <Filter>Source Files\CaseBase\GoalEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
+      <Filter>Source Files\CaseBase\GoalEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp">
+      <Filter>Source Files\CaseBase\GoalEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp">
+      <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -494,19 +497,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\Or.h">
       <Filter>Header Files\CaseBase\Condition\Expression</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\AttackEnemyGoal.h">
-      <Filter>Header Files\CaseBase\Goal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\BuildBaseGoal.h">
-      <Filter>Header Files\CaseBase\Goal</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GoalEx.h">
-      <Filter>Header Files\CaseBase\Goal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h">
-      <Filter>Header Files\CaseBase\Goal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\WinWargusGoalEx.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h">
@@ -673,6 +664,21 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h">
       <Filter>Header Files\CaseBase\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\WinGameGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\CollectResourceGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\DestroyEntityTypeGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

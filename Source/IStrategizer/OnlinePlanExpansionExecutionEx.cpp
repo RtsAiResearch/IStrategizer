@@ -4,8 +4,8 @@
 #ifndef CASEBASEDREASONEREX_H
 #include "CaseBasedReasonerEx.h"
 #endif
-#ifndef WINWARGUSGOALEX_H
-#include "WinWargusGoalEx.h"
+#ifndef WINGAMEGOAL_H
+#include "WinGameGoal.h"
 #endif
 #ifndef PLANTREENODEEX_H
 #include "PlanTreeNodeEx.h"

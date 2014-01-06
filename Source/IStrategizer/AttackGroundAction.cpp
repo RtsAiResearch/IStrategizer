@@ -25,12 +25,10 @@ AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackGround, p_parameters)
 {
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
@@ -83,7 +81,7 @@ void  AttackGroundAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePostConditions()
 {
-    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1));
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1, true));
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePreConditions()

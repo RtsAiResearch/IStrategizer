@@ -25,13 +25,10 @@ AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
     _params[PARAM_EntityClassId] = ECLASS_START;
     _params[PARAM_TargetEntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
-
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackEntity, p_parameters)
 {
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::Copy(IClonable* p_dest)

@@ -1,4 +1,4 @@
-#include "AttackEnemyGoal.h"
+#include "DestroyEntityTypeGoal.h"
 
 #include "Not.h"
 #include "And.h"
@@ -9,22 +9,20 @@
 
 using namespace IStrategizer;
 
-AttackEnemyGoal::AttackEnemyGoal() : GoalEx(GOALEX_AttackEnemy)
+DestroyEntityTypeGoal::DestroyEntityTypeGoal() : GoalEx(GOALEX_DestroyEntityType)
 {
     /*_forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
     _params[PARAM_ForceSizeId] = FORCESIZE_START;
     _params[PARAM_AttackTypeId] = ATTACK_START;*/
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
-AttackEnemyGoal::AttackEnemyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_AttackEnemy, p_parameters)
+DestroyEntityTypeGoal::DestroyEntityTypeGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_DestroyEntityType, p_parameters)
 {
      // FIXME: There should be a commander that specify force description in details
     //_forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
-void AttackEnemyGoal::InitializePostConditions()
+void DestroyEntityTypeGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
 
@@ -38,17 +36,17 @@ void AttackEnemyGoal::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void AttackEnemyGoal::Copy(IClonable* p_dest)
+void DestroyEntityTypeGoal::Copy(IClonable* p_dest)
 {
     GoalEx::Copy(p_dest);
 
-    AttackEnemyGoal* m_dest = static_cast<AttackEnemyGoal*>(p_dest);
+    DestroyEntityTypeGoal* m_dest = static_cast<DestroyEntityTypeGoal*>(p_dest);
 
     m_dest->_forceDescription   = _forceDescription;
     _cachedColony.Copy(&m_dest->_cachedColony);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEnemyGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
+bool DestroyEntityTypeGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
     return false;
 }

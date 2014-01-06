@@ -19,17 +19,20 @@
 #ifndef GAMESTATEEX_H
 #include "GameStateEx.h"
 #endif
-#ifndef ATTACKENEMYGOAL_H
-#include "AttackEnemyGoal.h"
+#ifndef DESTROYENTITYTYPEGOAL_H
+#include "DestroyEntityTypeGoal.h"
 #endif
-#ifndef BUILDBASEGOAL_H
-#include "BuildBaseGoal.h"
+#ifndef COLLECTRESOURCEGOAL_H
+#include "CollectResourceGoal.h"
 #endif
-#ifndef WINWARGUSGOALEX_H
-#include "WinWargusGoalEx.h"
+#ifndef WINGAMEGOAL_H
+#include "WinGameGoal.h"
 #endif
 #ifndef TRAINFORCEGOAL_H
 #include "TrainForceGoal.h"
+#endif
+#ifndef DEPLOYARMYGOAL_H
+#include "DeployArmyGoal.h"
 #endif
 #ifndef ATTACKENTITYACTION_H
 #include "AttackEntityAction.h"
@@ -88,10 +91,11 @@ void SerializationEssentials::Init()
 
     g_ObjectFactory.AddPrototype(new Colony);
 
-    g_ObjectFactory.AddPrototype(new AttackEnemyGoal);
-    g_ObjectFactory.AddPrototype(new BuildBaseGoal);
-    g_ObjectFactory.AddPrototype(new WinWargusGoalEx);
+    g_ObjectFactory.AddPrototype(new CollectResourceGoal);
     g_ObjectFactory.AddPrototype(new TrainForceGoal);
+    g_ObjectFactory.AddPrototype(new DeployArmyGoal);
+    g_ObjectFactory.AddPrototype(new DestroyEntityTypeGoal);
+    g_ObjectFactory.AddPrototype(new WinGameGoal);
 
     g_ObjectFactory.AddPrototype(new AttackEntityAction);
     g_ObjectFactory.AddPrototype(new AttackGroundAction);

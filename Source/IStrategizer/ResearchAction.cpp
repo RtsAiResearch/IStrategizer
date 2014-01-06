@@ -22,13 +22,12 @@ ResearchAction::ResearchAction() : Action(ACTIONEX_Research)
 {
     _params[PARAM_ResearchId] = RESEARCH_START;
     CellFeature::Null().To(_params);
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)
 : Action(ACTIONEX_Research, p_parameters)
 {
-    InitializeConditions();
+    
 }
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::AliveConditionsSatisfied(RtsGame* pRtsGame)

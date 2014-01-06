@@ -20,12 +20,10 @@ MoveAction::MoveAction() : Action(ACTIONEX_Move)
     _params[PARAM_EntityClassId] = ECLASS_START;
     _params[PARAM_ObjectStateType] = OBJSTATE_START;
     CellFeature::Null().To(_params);
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 MoveAction::MoveAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_Move,p_parameters)
 {
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 void MoveAction::Copy(IClonable* p_dest)

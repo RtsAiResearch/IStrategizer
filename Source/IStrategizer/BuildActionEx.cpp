@@ -26,13 +26,11 @@ Action(ACTIONEX_Build, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarte
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
-    InitializeConditions();
 }
 //////////////////////////////////////////////////////////////////////////
 BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :
 Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false),  _buildIssued(false)
 {
-    InitializeConditions();
 }
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::OnSucccess(RtsGame* pRtsGame, const WorldClock& p_clock)

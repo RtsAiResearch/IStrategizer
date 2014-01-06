@@ -1,25 +1,25 @@
 ///> [Serializable]
-#ifndef ATTACKENEMYGOAL_H
-#define ATTACKENEMYGOAL_H
+#ifndef DESTROYENTITYTYPEGOAL_H
+#define DESTROYENTITYTYPEGOAL_H
 
 #include "GoalEx.h"
 #include "Colony.h"
 
 namespace IStrategizer
 {
-    ///> class=AttackEnemyGoal
+    ///> class=DestroyEntityTypeGoal
     ///> parent=GoalEx
-    class AttackEnemyGoal : public GoalEx
+    class DestroyEntityTypeGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(AttackEnemyGoal);
+        OBJECT_SERIALIZABLE(DestroyEntityTypeGoal);
 
     private:
         ForceDescriptionEx _forceDescription;
         Colony _cachedColony;
 
     public:
-        AttackEnemyGoal();
-        AttackEnemyGoal(const PlanStepParameters& p_parameters);
+        DestroyEntityTypeGoal();
+        DestroyEntityTypeGoal(const PlanStepParameters& p_parameters);
         void Copy(IClonable* p_dest);
 
     protected:
@@ -27,4 +27,4 @@ namespace IStrategizer
         bool SuccessConditionsSatisfied(RtsGame* pRtsGame);
     };
 }
-#endif // ATTACKENEMYGOAL_H
+#endif // DESTROYENTITYTYPEGOAL_H

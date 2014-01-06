@@ -40,6 +40,15 @@ EntityClassExist::EntityClassExist(PlayerType p_player, int p_amount, bool p_one
     _oneUse = p_oneUse;
     _used = false;
 }
+//---------------------------------------------------------------------------------------------------
+EntityClassExist::EntityClassExist(PlayerType p_player) : ConditionEx(p_player, CONDEX_EntityClassExist)
+{
+    _conditionParameters[PARAM_EntityClassId] = ANY_ID;
+    _conditionParameters[PARAM_Amount] = MAX_POPULATION;
+
+    _oneUse = false;
+    _used = false;
+}
 //----------------------------------------------------------------------------------------------
 void EntityClassExist::InitializeAddressesAux()
 {

@@ -1,25 +1,20 @@
-#include "BuildBaseGoal.h"
+#include "CollectResourceGoal.h"
 #include "And.h"
 #include "False.h"
 
 using namespace IStrategizer;
 
-BuildBaseGoal::BuildBaseGoal() : GoalEx(GOALEX_BuildBase)
+CollectResourceGoal::CollectResourceGoal() : GoalEx(GOALEX_CollectResource)
 {
-    _params[PARAM_BaseTypeId] = BASETYPE_START;
-    vector<Expression*> m_terms;
-    m_terms.push_back(new False);
-    InitializeConditions();
+    _params[PARAM_ResourceId] = RESOURCE_START;
+    _params[PARAM_Amount] = 0;
 }
 //----------------------------------------------------------------------------------------------
-BuildBaseGoal::BuildBaseGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_BuildBase, p_parameters)
+CollectResourceGoal::CollectResourceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_CollectResource, p_parameters)
 {
-    vector<Expression*> m_terms;
-    m_terms.push_back(new False);
-    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
-void BuildBaseGoal::InitializePostConditions()
+void CollectResourceGoal::InitializePostConditions()
 {
     //map<EntityClassType, int> m_baseTypeRequiredBuildings;
     //EntityClassType m_baseBuildingClassId;
@@ -40,7 +35,7 @@ void BuildBaseGoal::InitializePostConditions()
     _postCondition = new And(m_termsPost);
 }
 //----------------------------------------------------------------------------------------------
-bool BuildBaseGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
+bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
     return false;
 }
