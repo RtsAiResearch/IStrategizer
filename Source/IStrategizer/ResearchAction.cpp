@@ -14,6 +14,7 @@
 #include "GameType.h"
 #include "GameEntity.h"
 #include "EntityClassExist.h"
+#include "ResearchDone.h"
 
 using namespace IStrategizer;
 
@@ -62,7 +63,9 @@ bool ResearchAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
 //----------------------------------------------------------------------------------------------
 void ResearchAction::InitializePostConditions()
 {
-
+    vector<Expression*> m_terms;
+    m_terms.push_back(new ResearchDone(PLAYER_Self, (ResearchType)_params[PARAM_ResearchId]));
+    _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
 void ResearchAction::InitializePreConditions()

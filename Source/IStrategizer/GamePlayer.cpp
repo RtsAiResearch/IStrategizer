@@ -104,6 +104,16 @@ void GamePlayer::GetBases(vector<TID> &p_basesIds)
     }
 }
 //////////////////////////////////////////////////////////////////////////
+void GamePlayer::Entities(EntityClassType p_typeId, vector<TID> &p_entityIds)
+{
+    p_entityIds.clear();
+    for(EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
+    {
+        if (itr->second->Type() == p_typeId)
+            p_entityIds.push_back(itr->first);
+    }
+}
+//////////////////////////////////////////////////////////////////////////
 const GameStateEx* GamePlayer::State()
 {
     return m_pState;

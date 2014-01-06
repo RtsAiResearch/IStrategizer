@@ -92,6 +92,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp" />
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h" />

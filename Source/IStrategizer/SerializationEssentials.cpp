@@ -58,6 +58,9 @@
 #ifndef RESEARCHDONE_H
 #include "ResearchDone.h"
 #endif
+#ifndef ENTITYCLASSNEARAREA_H
+#include "EntityClassNearArea.h"
+#endif
 #ifndef NOT_H
 #include "Not.h"
 #endif
@@ -101,6 +104,7 @@ void SerializationEssentials::Init()
     g_ObjectFactory.AddPrototype(new ResourceExist);
     g_ObjectFactory.AddPrototype(new ResearchDone);
     g_ObjectFactory.AddPrototype(new EntityClassExist);
+    g_ObjectFactory.AddPrototype(new EntityClassNearArea);
     g_ObjectFactory.AddPrototype(new And);
     g_ObjectFactory.AddPrototype(new Not);
     g_ObjectFactory.AddPrototype(new Or);

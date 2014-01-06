@@ -345,6 +345,9 @@
     <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp">
+      <Filter>Source Files\CaseBase\Condition</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h">
@@ -667,6 +670,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h">
+      <Filter>Header Files\CaseBase\Condition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

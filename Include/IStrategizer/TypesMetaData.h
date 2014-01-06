@@ -127,7 +127,7 @@ namespace IStrategizer
 #define Prefix_ConditionType CONDEX
     enum ConditionType
     {
-        CONDEX_EntityClassExist        = 0x20900,
+        CONDEX_EntityClassExist     = 0x20900,
         CONDEX_START                = 0x20900,
         CONDEX_EntityObjectExist,
         CONDEX_CheckEntityClassAttribute,
@@ -139,6 +139,7 @@ namespace IStrategizer
         CONDEX_CheckPositionFilterCount,
         CONDEX_False,
         CONDEX_True,
+        CONDEX_EntityClassNearArea,
         CONDEX_END
     };
     //---------------------------------------------------------------------------
@@ -186,6 +187,7 @@ namespace IStrategizer
         PARAM_DistanceToEnemyBase,
         PARAM_DistanceToBase,
         PARAM_ObjectStateType,
+        PARAM_Distance,
         PARAM_REALVALEND,
         PARAM_END = PARAM_REALVALEND
     };

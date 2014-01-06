@@ -39,6 +39,7 @@ namespace IStrategizer
         PlayerResources* Resources();
         GameTechTree* TechTree() const;
         void Entities(std::vector<TID>& p_entityIds);
+        void Entities(EntityClassType p_typeId, vector<TID> &p_entityIds);
         GameEntity* GetEntity(TID p_id);
         virtual EntityClassType GetWorkerType() = 0;
         virtual EntityClassType GetBaseType() = 0;

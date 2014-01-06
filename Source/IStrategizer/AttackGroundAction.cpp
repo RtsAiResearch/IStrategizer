@@ -15,6 +15,7 @@
 #include "GameEntity.h"
 #include "WorldMap.h"
 #include "EntityClassExist.h"
+#include "Not.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -82,7 +83,7 @@ void  AttackGroundAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePostConditions()
 {
-
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1));
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePreConditions()

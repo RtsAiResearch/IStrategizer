@@ -64,6 +64,7 @@ namespace IStrategizer
 #define FARM_FOOD_SUPPLY 4
 #define INVALID_TID -1
 #define PARAM_DONT_CARE -1
+#define ANY_ID -2
     /********************************************************************* Header Annotations ************************************************************************/
 #ifndef IN
 #define IN __in

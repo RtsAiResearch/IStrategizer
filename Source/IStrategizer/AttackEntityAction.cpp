@@ -15,6 +15,7 @@
 #include "GameEntity.h"
 #include "EntityClassExist.h"
 #include "And.h"
+#include "Not.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -97,7 +98,8 @@ void AttackEntityAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePostConditions()
 {
-
+    EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, target, 1, true));
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePreConditions()

@@ -31,6 +31,15 @@ EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitCl
     _oneUse = p_oneUse;
     _used = false;
 }
+//---------------------------------------------------------------------------------------------------
+EntityClassExist::EntityClassExist(PlayerType p_player, int p_amount, bool p_oneUse) : ConditionEx(p_player, CONDEX_EntityClassExist)
+{
+    _conditionParameters[PARAM_EntityClassId] = ANY_ID;
+    _conditionParameters[PARAM_Amount] = p_amount;
+
+    _oneUse = p_oneUse;
+    _used = false;
+}
 //----------------------------------------------------------------------------------------------
 void EntityClassExist::InitializeAddressesAux()
 {
@@ -43,12 +52,18 @@ void EntityClassExist::InitializeAddressesAux()
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Evaluate(RtsGame* pRtsGame)
 {
-    EntityClassType entityClassId = (EntityClassType)_conditionParameters[PARAM_EntityClassId];
-    int amount = _conditionParameters[PARAM_Amount];
-    PlayerType playerId = (PlayerType)_conditionParameters[PARAM_PlayerId];
+    bool result = true;
+    if (_conditionParameters[PARAM_EntityClassId] != ANY_ID)
+    {
+        EntityClassType entityClassId = (EntityClassType)_conditionParameters[PARAM_EntityClassId];
+        int amount = _conditionParameters[PARAM_Amount];
+        PlayerType playerId = (PlayerType)_conditionParameters[PARAM_PlayerId];
 
-    ConditionEx::Evaluate(pRtsGame);
-    return g_Assist.DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
+        ConditionEx::Evaluate(pRtsGame);
+        result = g_Assist.DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
+    }
+
+    return result;
 }
 //---------------------------------------------------------------------------------------------------
 void EntityClassExist::Copy(IClonable* p_dest)

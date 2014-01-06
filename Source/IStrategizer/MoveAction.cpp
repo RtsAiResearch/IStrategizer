@@ -9,6 +9,7 @@
 #include "GamePlayer.h"
 #include "And.h"
 #include "EntityClassExist.h"
+#include "EntityClassNearArea.h"
 #include <math.h>
 
 using namespace IStrategizer;
@@ -76,7 +77,10 @@ bool MoveAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
 //----------------------------------------------------------------------------------------------
 void MoveAction::InitializePostConditions()
 {
-
+    vector<Expression*> m_terms;
+    EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
+    m_terms.push_back(new EntityClassNearArea(PLAYER_Self, entityType, new CellFeature(_params), 0));
+    _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
 void MoveAction::InitializePreConditions()
