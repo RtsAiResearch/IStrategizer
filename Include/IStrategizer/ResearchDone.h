@@ -11,10 +11,11 @@ namespace IStrategizer
     class ResearchDone : public ConditionEx
     {
         OBJECT_SERIALIZABLE(ResearchDone);
+
     public:
         ResearchDone() {}
-        ResearchDone(PlayerType p_player, ResearchType p_researchId) : ConditionEx(p_player, CONDEX_ResearchDone) { _conditionParameters[PARAM_UpgradeId] = p_researchId; }
-        bool Evaluate();
+        ResearchDone(PlayerType p_player, ResearchType p_researchId) : ConditionEx(p_player, CONDEX_ResearchDone) { _conditionParameters[PARAM_ResearchId] = p_researchId; }
+        bool Evaluate(RtsGame* pRtsGame);
         bool Consume(int p_amount) { return true; }
     };
 }

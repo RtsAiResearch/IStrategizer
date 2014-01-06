@@ -1,4 +1,5 @@
 #include "MoveAction.h"
+
 #include "EngineAssist.h"
 #include "GameEntity.h"
 #include "AbstractAdapter.h"
@@ -6,22 +7,24 @@
 #include "CaseBasedReasonerEx.h"
 #include "RtsGame.h"
 #include "GamePlayer.h"
+#include "And.h"
+#include "EntityClassExist.h"
+#include "EntityClassNearArea.h"
 #include <math.h>
 #include "AdapterEx.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
 
-MoveAction::MoveAction() : Action(ACTIONEX_MoveAction)
+MoveAction::MoveAction() : Action(ACTIONEX_Move)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
-    _params[PARAM_ObjectStateType] = 0;
+    _params[PARAM_ObjectStateType] = OBJSTATE_START;
     CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
-MoveAction::MoveAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_MoveAction,p_parameters)
+MoveAction::MoveAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_Move,p_parameters)
 {
-
 }
 //----------------------------------------------------------------------------------------------
 void MoveAction::Copy(IClonable* p_dest)
@@ -29,12 +32,12 @@ void MoveAction::Copy(IClonable* p_dest)
     Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
-void MoveAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
+void MoveAction::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consumed)
 {
 
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::AliveConditionsSatisfied()
+bool MoveAction::AliveConditionsSatisfied(RtsGame* pRtsGame)
 {
 
     bool success = g_Assist.DoesEntityObjectExist(_entityId);
@@ -49,13 +52,7 @@ bool MoveAction::AliveConditionsSatisfied()
     return success;
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::PreconditionsSatisfied()
-{
-    EntityClassType entity = (EntityClassType)_params[PARAM_EntityClassId];
-    return g_Assist.DoesEntityClassExist(MakePair(entity, 1));
-}
-//----------------------------------------------------------------------------------------------
-bool MoveAction::SuccessConditionsSatisfied()
+bool MoveAction::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
     return g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
 }
@@ -65,7 +62,7 @@ void MoveAction::InitializeAddressesAux()
     Action::InitializeAddressesAux();
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::ExecuteAux( const WorldClock& p_clock )
+bool MoveAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
@@ -78,10 +75,27 @@ bool MoveAction::ExecuteAux( const WorldClock& p_clock )
     {
         //Adapt position
         _position = pAdapter->AdaptPosition(Parameters());
-        _pEntity  = g_Game->Self()->GetEntity(_entityId);
+        _pEntity  = pRtsGame->Self()->GetEntity(_entityId);
         _pEntity->Lock(this);
         assert(_pEntity);
         executed = _pEntity->Move(_position);
     }
     return executed;
+}
+//----------------------------------------------------------------------------------------------
+void MoveAction::InitializePostConditions()
+{
+    vector<Expression*> m_terms;
+    EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
+    m_terms.push_back(new EntityClassNearArea(PLAYER_Self, entityType, new CellFeature(_params), 0));
+    _postCondition = new And(m_terms);
+}
+//----------------------------------------------------------------------------------------------
+void MoveAction::InitializePreConditions()
+{
+    EntityClassType entity = (EntityClassType)_params[PARAM_EntityClassId];
+    vector<Expression*> m_terms;
+
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, entity, 1, true));
+    _preCondition = new And(m_terms);
 }

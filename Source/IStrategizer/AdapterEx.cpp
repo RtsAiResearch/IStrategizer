@@ -172,12 +172,12 @@ TID AdapterEx::GetEntityObjectId( EntityClassType p_entityType,const RankedState
     ELSE
     adaptation failed and return nullptr entity Id
     */
-    GamePlayer			*pPlayer;
-    GameEntity			*pEntity;
-    vector<TID>			entityIds;
-    EntityClassType		entityTypeId;
-    ObjectStateType		curEntityState;
-    TID					adaptedEntityId = INVALID_TID;
+    GamePlayer	   *pPlayer;
+    GameEntity     *pEntity;
+    vector<TID>	   entityIds;
+    EntityClassType	    entityTypeId;
+    ObjectStateType	    curEntityState;
+    TID	    adaptedEntityId = INVALID_TID;
     vector<UnitEntry> validEntities;
     if(!IsRankedStatesInitialized)
     initializePredefinedRankedStates();

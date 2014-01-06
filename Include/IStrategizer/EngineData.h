@@ -63,6 +63,9 @@ namespace IStrategizer
 #define GOALS_WITH_PARAMS_COUNT 27
 #define FARM_FOOD_SUPPLY 4
 #define INVALID_TID -1
+#define PARAM_DONT_CARE -1
+#define ANY_ID -2
+#define MAX_POPULATION -3
     /********************************************************************* Header Annotations ************************************************************************/
 #ifndef IN
 #define IN __in

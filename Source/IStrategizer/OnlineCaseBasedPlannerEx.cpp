@@ -44,7 +44,6 @@
 #include "Vector2.h"
 #include "AttackGroundAction.h"
 #include "CellFeature.h"
-#include "BuildAction.h"
 
 using namespace IStrategizer;
 
@@ -73,40 +72,6 @@ void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
 //----------------------------------------------------------------------------------------------
 void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)
 {
-    //static unsigned long lastGameCycle = INT_MAX;
-    //if(p_gameCycle < lastGameCycle)
-    //{
-    // PlanStepParameters aParams;
-
-    // aParams[PARAM_PlayerId] = PLAYER_Self;
-    // aParams[PARAM_WorkerClassId] = ECLASS_Peon;
-    // aParams[PARAM_BuildingClassId] = ECLASS_PigFarm;
-    // 
-    // WorldModel::CellFeature vv;
-    // vv.Clear();
-    // vv.m_alliedForceDescription.m_numberOfUnits = 1;
-    // vv.m_alliedForceDescription.m_totalHP = 30;
-    // BuildAction b(aParams,&vv);
-    // b.InitializeConditions();
-    // g_RtsGame->Map()->Update();
-    // b.PrepareForExecution();
-
-    // b.Execute();
-
-    // aParams[PARAM_PlayerId] = PLAYER_Self;
-    // aParams[PARAM_EntityClassId] = ECLASS_Peon;
-    // WorldModel::CellFeature v;
-    // v.m_enemyForceDescription.m_numberOfUnits = 1;
-    // v.m_enemyForceDescription.m_totalHP = 30;
-    // AttackGroundAction a(aParams, &v);
-    // a.InitializeConditions();
-    // g_RtsGame->Map()->Update();
-    // a.PrepareForExecution();
-    // a.Execute();
-
-    // lastGameCycle = p_gameCycle;
-    //}
-
     _onlineExpansionExecution->Update(p_clock);
 }
 //----------------------------------------------------------------------------------------------

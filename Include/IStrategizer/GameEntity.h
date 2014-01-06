@@ -40,10 +40,12 @@ namespace IStrategizer
         virtual bool Train(EntityClassType p_entityClassId) = 0;
         bool Acquire() { return true; }
         bool Release() { return true; }
+        IStrategizer::PlayerType getOwner() { return m_ownerId; }
 
     protected:
         TID             m_id;
         EntityClassType m_type;
+        IStrategizer::PlayerType m_ownerId;
     };
 }
 

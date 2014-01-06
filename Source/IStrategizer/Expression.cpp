@@ -1,6 +1,4 @@
-#ifndef EXPRESSION_H
-    #include "Expression.h"
-#endif
+#include "Expression.h"
 
 using namespace IStrategizer;
 

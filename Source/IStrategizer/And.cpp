@@ -3,7 +3,12 @@
 using namespace std;
 using namespace IStrategizer;
 
-bool And::Evaluate()
+void And::InitializeAddressesAux()
+{
+    CompositeExpression::InitializeAddressesAux();
+}
+//----------------------------------------------------------------------------------------------
+bool And::Evaluate(RtsGame* pRtsGame)
 {
     if(_shortCircuit)
     {
@@ -11,9 +16,9 @@ bool And::Evaluate()
             itr != _expressions.end();
             itr++)
         {
-            (*itr)->Evaluate();
-            _isEvaluated    = (*itr)->IsEvaluated();
-            _isSatisfied    = (*itr)->IsSatisfied();
+            (*itr)->Evaluate(pRtsGame);
+            _isEvaluated = (*itr)->IsEvaluated();
+            _isSatisfied = (*itr)->IsSatisfied();
 
             //short circuit
             if(!_isEvaluated || !_isSatisfied)
@@ -23,14 +28,14 @@ bool And::Evaluate()
         }
     }
     else
-    {   
-        _isEvaluated    = true;
-        _isSatisfied    = true;
+    {
+        _isEvaluated = true;
+        _isSatisfied = true;
         for(vector<Expression*>::iterator itr = _expressions.begin();
             itr != _expressions.end();
             itr++)
         {
-            (*itr)->Evaluate();
+            (*itr)->Evaluate(pRtsGame);
             _isEvaluated    &= (*itr)->IsEvaluated();
             _isSatisfied    &= (*itr)->IsSatisfied();
         }

@@ -1,6 +1,7 @@
-#include "WinWargusGoalEx.h"
-#include "AttackEnemyGoal.h"
-#include "BuildBaseGoal.h"
+#include "WinGameGoal.h"
+#include "DeployArmyGoal.h"
+#include "DestroyEntityTypeGoal.h"
+#include "CollectResourceGoal.h"
 #include "TrainForceGoal.h"
 #include "GoalFactory.h"
 
@@ -13,20 +14,24 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_paramete
 
     switch(p_goalType)
     {
-    case GOALEX_BuildBase:
-        goal = new BuildBaseGoal(p_parameters);
+    case GOALEX_CollectResource:
+        goal = new CollectResourceGoal(p_parameters);
         break;
 
     case GOALEX_WinGame:
-        goal = new WinWargusGoalEx(p_parameters);
+        goal = new WinGameGoal(p_parameters);
         break;
 
     case GOALEX_TrainForce:
         goal = new TrainForceGoal(p_parameters);
         break;
 
-    case GOALEX_AttackEnemy:
-        goal = new AttackEnemyGoal(p_parameters);
+    case GOALEX_DeployArmy:
+        goal = new DeployArmyGoal(p_parameters);
+        break;
+
+    case GOALEX_DestroyEntityType:
+        goal = new DestroyEntityTypeGoal(p_parameters);
         break;
 
     default:
@@ -45,20 +50,24 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
 
     switch(p_goalType)
     {
-    case GOALEX_BuildBase:
-        goal = new BuildBaseGoal();
+    case GOALEX_CollectResource:
+        goal = new CollectResourceGoal();
         break;
 
     case GOALEX_WinGame:
-        goal = new WinWargusGoalEx();
+        goal = new WinGameGoal();
         break;
 
     case GOALEX_TrainForce:
         goal = new TrainForceGoal();
         break;
 
-    case GOALEX_AttackEnemy:
-        goal = new AttackEnemyGoal();
+    case GOALEX_DeployArmy:
+        goal = new DeployArmyGoal();
+        break;
+
+    case GOALEX_DestroyEntityType:
+        goal = new DestroyEntityTypeGoal();
         break;
 
     default:

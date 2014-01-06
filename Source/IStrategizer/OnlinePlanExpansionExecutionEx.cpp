@@ -4,8 +4,8 @@
 #ifndef CASEBASEDREASONEREX_H
 #include "CaseBasedReasonerEx.h"
 #endif
-#ifndef WINWARGUSGOALEX_H
-#include "WinWargusGoalEx.h"
+#ifndef WINGAMEGOAL_H
+#include "WinGameGoal.h"
 #endif
 #ifndef PLANTREENODEEX_H
 #include "PlanTreeNodeEx.h"
@@ -280,7 +280,7 @@ void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateGoalNode(PlanTreeNodeEx
                 pCurrentPlanStep->State() == ESTATE_Succeeded ||
                 pCurrentPlanStep->State() == ESTATE_END);
 
-            pCurrentPlanStep->Update(p_clock);
+            pCurrentPlanStep->Update(g_Game, p_clock);
             ConsiderReadyChildrenForUpdate(p_pCurrentNode, p_updateQ);
         }
     }
@@ -313,7 +313,7 @@ void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateActionNode(PlanTreeNode
                 pCurrentPlanStep->State() == ESTATE_Executing ||
                 pCurrentPlanStep->State() == ESTATE_END);
 
-            pCurrentPlanStep->Update(p_clock);
+            pCurrentPlanStep->Update(g_Game, p_clock);
         }
     }
     else
@@ -341,7 +341,7 @@ void OnlinePlanExpansionExecutionEx::NotifyMessegeSent(Message* p_message)
         pCurrentPlanStep = Q.front();
         Q.pop();
 
-        pCurrentPlanStep->PlanStep()->HandleMessage(p_message, dummy);
+        pCurrentPlanStep->PlanStep()->HandleMessage(g_Game, p_message, dummy);
         // Obsolete parameter: No one should use the message consuming anymore
         assert(dummy == false);
 

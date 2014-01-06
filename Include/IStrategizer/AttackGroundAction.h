@@ -22,14 +22,15 @@ namespace IStrategizer
 
         AttackGroundAction();
         AttackGroundAction(const PlanStepParameters& p_parameters);
-        bool PreconditionsSatisfied();
-        bool AliveConditionsSatisfied();
-        bool SuccessConditionsSatisfied();
+        bool AliveConditionsSatisfied(RtsGame* pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame* pRtsGame);
 
     protected:
-        bool ExecuteAux(const WorldClock& p_clock );
+        bool ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock);
         void InitializeAddressesAux() ;
-        void HandleMessage(Message* p_pMsg, bool& p_consumed);
+        void HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consumed);
+        void InitializePostConditions();
+        void InitializePreConditions();
 
     private:
         TID _attackerId;

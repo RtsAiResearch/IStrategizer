@@ -1,5 +1,4 @@
 #include "ResearchAction.h"
-#include "BuildAction.h"
 #include "BuildActionEx.h"
 #include "TrainAction.h"
 #include "AttackGroundAction.h"
@@ -11,7 +10,7 @@
 
 using namespace IStrategizer;
 
-Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions){
+Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions) {
     Action* m_action = nullptr;
 
     switch(p_actionType)
@@ -21,7 +20,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
 
         break;
 
-    case ACTIONEX_BuildEx:
+    case ACTIONEX_Build:
         m_action = new BuildActionEx(p_paramaters);
         break;
 
@@ -33,7 +32,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
         m_action = new AttackGroundAction(p_paramaters);
         break;
 
-    case ACTIONEX_MoveAction:
+    case ACTIONEX_Move:
         m_action = new MoveAction(p_paramaters);
         break;
 
@@ -61,7 +60,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
         m_action = new ResearchAction();
         break;
 
-    case ACTIONEX_BuildEx:
+    case ACTIONEX_Build:
         m_action = new BuildActionEx();
         break;
 
@@ -73,7 +72,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
         m_action = new AttackGroundAction();
         break;
 
-    case ACTIONEX_MoveAction:
+    case ACTIONEX_Move:
         m_action = new MoveAction();
         break;
 

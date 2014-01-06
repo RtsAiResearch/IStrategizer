@@ -6,19 +6,17 @@
 #include "ConditionEx.h"
 #endif
 
-///> class=True
-///> parent=ConditionEx
-class True : public ConditionEx
+namespace IStrategizer
 {
-public:
-    True() : ConditionEx(PLAYER_Self, CONDEX_False) {}
-    bool Evaluate() { return true; }
-    bool Consume(int p_amount) { return true; }
-    //----------------------------------------------------------------------------------------------
-    // Serialization
-    string              TypeName()  { return "True"; }
-    int                 TypeSize()  { return sizeof(True); }
-    UserObject*         Prototype() { return new True; }
-};
+    ///> class=True
+    ///> parent=ConditionEx
+    class True : public ConditionEx
+    {
+        public:
+            True() : ConditionEx(PLAYER_Self, CONDEX_False) {}
+            bool Evaluate(RtsGame* pRtsGame) { return true; }
+            bool Consume(int p_amount) { return true; }
+    };
+}
 
 #endif // TRUE_H

@@ -191,9 +191,8 @@ void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
 
     // Train order has a special handling
     assert(unit->getOrder() != Orders::Train);
-
     ActionType action;
-
+    
     LogInfo("(P%d,%s) %s[%d]: %s",
         unit->getPlayer()->getID(), unit->getPlayer()->getName().c_str(),
         unit->getType().getName().c_str(), unit->getID(), order.c_str());
@@ -204,9 +203,9 @@ void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
         LogWarning("Order %s will not be collected, it is not supported order", order.c_str());
         return;
     }
-
+    
     GameTrace *pTrace = nullptr;
-    PlanStepParameters actionParams;
+    PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(action, unit);
     GameStateEx gameState;
 
     pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
@@ -228,7 +227,7 @@ void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit traine
     action = g_Database.ActionMapping.GetByFirst(Orders::Train.getID());
 
     GameTrace *pTrace = nullptr;
-    PlanStepParameters actionParams;
+    PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(trainee, trainer);
     GameStateEx gameState;
 
     pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
@@ -245,4 +244,3 @@ void GameTraceCollector::SendGameTrace(GameTrace* pTrace)
 
     g_MessagePump.Send(pTraceMsg, true);
 }
-

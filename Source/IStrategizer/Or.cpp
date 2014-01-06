@@ -2,7 +2,7 @@
 
 using namespace IStrategizer;
 
-bool Or::Evaluate()
+bool Or::Evaluate(RtsGame* pRtsGame)
 {
     if(_shortCircuit)
     {
@@ -10,9 +10,9 @@ bool Or::Evaluate()
             itr != _expressions.end();
             itr++)
         {
-            (*itr)->Evaluate();
-            _isEvaluated    = (*itr)->IsEvaluated();
-            _isSatisfied    = (*itr)->IsSatisfied();
+            (*itr)->Evaluate(pRtsGame);
+            _isEvaluated = (*itr)->IsEvaluated();
+            _isSatisfied = (*itr)->IsSatisfied();
            
             //short circuit
             if(_isEvaluated && _isSatisfied)
@@ -23,13 +23,13 @@ bool Or::Evaluate()
     }
     else
     {   
-        _isEvaluated    = true;
-        _isSatisfied    = false;
+        _isEvaluated = true;
+        _isSatisfied = false;
         for(vector<Expression*>::iterator itr = _expressions.begin();
             itr != _expressions.end();
             itr++)
         {
-            (*itr)->Evaluate();
+            (*itr)->Evaluate(pRtsGame);
             _isEvaluated    &= (*itr)->IsEvaluated();
             _isSatisfied    |= (*itr)->IsSatisfied();
         }

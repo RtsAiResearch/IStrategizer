@@ -29,6 +29,18 @@
 #ifndef ABSTRACTADAPTER_H
 #include "AbstractAdapter.h"
 #endif
+#ifndef RESEARCHDONE_H
+#include "ResearchDone.h"
+#endif
+#ifndef ENTITYCLASSEXIST_H
+#include "EntityClassExist.h"
+#endif
+#ifndef RESOURCEEXIST_H
+#include "ResourceExist.h"
+#endif
+#ifndef AND_H
+#include "And.h"
+#endif
 
 #include "MathHelper.h"
 #include "Vector2.h"
@@ -480,11 +492,12 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
     GameEntity* pEntity;
     vector<TID> entities;
     unsigned matches;
-    bool        exist;
+    bool exist;
+    ObjectStateType state;
 
     pPlayer = g_Game->GetPlayer(p_playerType);
     assert(pPlayer);
-    pPlayer->Entities(entities);
+    pPlayer->Entities(p_entityType.first, entities);
 
     exist = false;
     matches = 0;
@@ -493,8 +506,11 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
     {
         pEntity = pPlayer->GetEntity(entities[i]);
         assert(pEntity);
+        
+        state = (ObjectStateType)pEntity->Attr(EOATTR_State);
 
-        if (pEntity->Type() == p_entityType.first)
+        if (pEntity->Type() == p_entityType.first && 
+            !pEntity->IsLocked() && state != OBJSTATE_BeingConstructed)
             ++matches;
     }
 
@@ -619,76 +635,12 @@ int EngineAssist::ResearchesDone(const vector<ResearchType> &p_researchTypes, bo
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_satisfied, PlayerType p_playerType)
 {
-    GamePlayer *pPlayer = nullptr;
-    GameTechTree *pTechTree = nullptr;
-    GameType *pEntityType = nullptr;
-    GameResearch *pResearchType = nullptr;
-    WorldResources *pReqResources = nullptr;
-    PlayerResources *pPlayerResources = nullptr;
-    EntityClassType sourceEntity;
-    vector<ResearchType> reqResearches;
-    map<EntityClassType, unsigned> reqEntities;
-    int ret = ERR_Success;
+    vector<Expression*> prerequisitesConditions;
+    GetPrerequisites(p_entityOrResearchType, p_playerType, prerequisitesConditions);
+    Expression* prerequisitesExpression = new And(prerequisitesConditions);
+    p_satisfied = prerequisitesExpression->Evaluate(g_Game);
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
-    assert(pPlayer);
-
-    pTechTree = pPlayer->TechTree();
-    assert(pTechTree);
-    
-    pTechTree->GetRequirements(p_entityOrResearchType, reqResearches, reqEntities);
-
-    p_satisfied = true;
-
-    // 1. Required researches done
-    for (size_t i = 0, size = reqResearches.size(); i < size && p_satisfied; ++i)
-    {
-        p_satisfied = pTechTree->ResearchDone(reqResearches[i]);
-    }
-
-    // 2. Additional required entities exist
-    if (p_satisfied)
-    {
-        p_satisfied = g_Assist.DoesEntityClassExist(reqEntities);
-    }
-
-    // 3. Source building exist
-    if (p_satisfied)
-    {
-        sourceEntity = pTechTree->SourceEntity(p_entityOrResearchType);
-        assert(sourceEntity != ECLASS_END);
-
-        p_satisfied = g_Assist.DoesEntityClassExist(make_pair(sourceEntity, 1));
-    }
-
-    // 4. Required resources exist
-    if (p_satisfied)
-    {
-        if (BELONG(ResearchType, p_entityOrResearchType))
-        {
-            pResearchType = g_Game->GetResearch((ResearchType)p_entityOrResearchType);
-            assert(pResearchType);
-            
-            pReqResources = pResearchType->RequiredResources();
-            assert(pReqResources);
-        }
-        else if (BELONG(EntityClassType, p_entityOrResearchType))
-        {
-            pEntityType = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType);
-            assert(pEntityType);
-
-            pReqResources = pEntityType->RequiredResources();
-            assert(pReqResources);
-        }
-        else assert(0);
-
-        pPlayerResources = pPlayer->Resources();
-        assert(pPlayerResources);
-
-        p_satisfied = pPlayerResources->HasEnough(pReqResources);
-    }
-
-    return ret;
+    return p_satisfied;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance)
@@ -702,4 +654,65 @@ bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector
         + (currentPosition.X - p_point.X) * (currentPosition.X - p_point.X));
 
     return euclideanDistance <= p_maxDistance;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------
+void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_playerType, vector<Expression*>& p_prerequisites)
+{
+    GamePlayer *pPlayer = nullptr;
+    GameTechTree *pTechTree = nullptr;
+    GameType *pEntityType = nullptr;
+    GameResearch *pResearchType = nullptr;
+    WorldResources *pReqResources = nullptr;
+    EntityClassType sourceEntity;
+    vector<ResearchType> reqResearches;
+    map<EntityClassType, unsigned> reqEntities;
+
+    pPlayer = g_Game->GetPlayer(p_playerType);
+    assert(pPlayer);
+
+    pTechTree = pPlayer->TechTree();
+    assert(pTechTree);
+    
+    pTechTree->GetRequirements(p_entityOrResearchType, reqResearches, reqEntities);
+
+    // 1. Required researches done
+    for (size_t i = 0, size = reqResearches.size(); i < size; ++i)
+    {
+        p_prerequisites.push_back(new IStrategizer::ResearchDone(p_playerType, reqResearches[i]));
+    }
+
+    // 2. Additional required entities exist
+    for (map<EntityClassType, unsigned>::const_iterator i = reqEntities.begin(); i != reqEntities.end(); ++i)
+    {
+        p_prerequisites.push_back(new EntityClassExist(p_playerType, (*i).first, 1, true));
+    }
+
+    // 3. Source building exist
+    sourceEntity = pTechTree->SourceEntity(p_entityOrResearchType);
+    assert(sourceEntity != ECLASS_END);
+        
+    p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1, true));
+
+    // 4. Required resources exist
+    if (BELONG(ResearchType, p_entityOrResearchType))
+    {
+        pResearchType = g_Game->GetResearch((ResearchType)p_entityOrResearchType);
+        assert(pResearchType);
+            
+        pReqResources = pResearchType->RequiredResources();
+        assert(pReqResources);
+    }
+    else if (BELONG(EntityClassType, p_entityOrResearchType))
+    {
+        pEntityType = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType);
+        assert(pEntityType);
+
+        pReqResources = pEntityType->RequiredResources();
+        assert(pReqResources);
+    }
+    else assert(0);
+    
+    p_prerequisites.push_back(new ResourceExist(p_playerType, RESOURCE_Primary, pReqResources->Primary()));
+    p_prerequisites.push_back(new ResourceExist(p_playerType, RESOURCE_Secondary, pReqResources->Secondary()));
+    p_prerequisites.push_back(new ResourceExist(p_playerType, RESOURCE_Supply, pReqResources->Supply()));
 }

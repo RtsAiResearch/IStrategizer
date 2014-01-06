@@ -91,10 +91,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerEx.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\BuildingDescription.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CellFeature.cpp" />
@@ -128,26 +130,19 @@
     <ClCompile Include="..\..\Source\IStrategizer\BuildActionEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ResearchAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\CheckColonyFilterCount.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\CheckEntityClassAttribute.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\CheckEntityObjectAttribute.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\CheckEntityObjectSimilarity.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\CheckPositionFilterCount.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ConditionEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassExist.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\EntityObjectExist.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\EventTriggered.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ResearchDone.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ResourceExist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\And.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CompositeExpression.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Expression.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Or.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\AttackEnemyGoal.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\BuildBaseGoal.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GoalEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\WinWargusGoalEx.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\WinGameGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EngineComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\OnlineCaseBasedPlannerEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\AdapterEx.cpp" />
@@ -171,7 +166,9 @@
     <ClCompile Include="..\..\Source\IStrategizer\MetaData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h" />
@@ -212,15 +209,8 @@
     <ClInclude Include="..\..\Include\IStrategizer\BuildActionEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ResearchAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\TrainAction.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\CheckColonyFilterCount.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\CheckEntityClassAttribute.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\CheckEntityObjectAttribute.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\CheckEntityObjectSimilarity.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\CheckPositionFilterCount.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ConditionEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassExist.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\EntityObjectExist.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\EventTriggered.h" />
     <ClInclude Include="..\..\Include\IStrategizer\False.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ResearchDone.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ResourceExist.h" />
@@ -230,11 +220,11 @@
     <ClInclude Include="..\..\Include\IStrategizer\Expression.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Not.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Or.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\AttackEnemyGoal.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\BuildBaseGoal.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\DestroyEntityTypeGoal.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\CollectResourceGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GoalEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\WinWargusGoalEx.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\WinGameGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h" />
     <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstration.h" />

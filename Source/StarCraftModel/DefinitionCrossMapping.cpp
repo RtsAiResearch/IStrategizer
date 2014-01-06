@@ -261,8 +261,9 @@ void DefinitionCrossMapping::InitActions()
   actions.push_back(make_pair(Orders::AttackUnit.getID(), ACTIONEX_AttackEntity));
   actions.push_back(make_pair(Orders::ResearchTech.getID(), ACTIONEX_Research));
   actions.push_back(make_pair(Orders::Upgrade.getID(), ACTIONEX_Research));
-  actions.push_back(make_pair(Orders::PlaceBuilding.getID(), ACTIONEX_BuildEx));
+  actions.push_back(make_pair(Orders::PlaceBuilding.getID(), ACTIONEX_Build));
   actions.push_back(make_pair(Orders::Train.getID(), ACTIONEX_Train));
+  actions.push_back(make_pair(Orders::Move.getID(), ACTIONEX_Move));
 
   ActionMapping = CrossMap<TID, IStrategizer::ActionType>(actions);
 }

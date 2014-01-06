@@ -18,19 +18,20 @@ namespace IStrategizer
     public:
         MoveEntityAction();
         MoveEntityAction(const PlanStepParameters& p_parameters);
-        bool        PreconditionsSatisfied();
-        bool        AliveConditionsSatisfied();
-        bool        SuccessConditionsSatisfied();
+        bool AliveConditionsSatisfied(RtsGame* pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame* pRtsGame);
 
     protected:
-        void        OnSucccess(const WorldClock& p_clock);
-        void        OnFailure(const WorldClock& p_clock);
-        bool        ExecuteAux(const WorldClock& p_clock);
-        void        HandleMessage(Message* p_pMsg, bool& p_consumed);
+        void OnSucccess(RtsGame* pRtsGame, const WorldClock& p_clock);
+        void OnFailure(RtsGame* pRtsGame, const WorldClock& p_clock);
+        void HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consumed);
+        void InitializePostConditions();
+        void InitializePreConditions();
+        bool ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock);
 
     private:
-        TID         _entityId;
-        Vector2     _position;
+        TID _entityId;
+        Vector2 _position;
     };
 }
 

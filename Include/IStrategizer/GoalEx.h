@@ -15,13 +15,13 @@ namespace IStrategizer
     ///> parent=PlanStepEx
     class GoalEx : public PlanStepEx
     {
-    private:
     protected:
         inline GoalEx(GoalType p_goalType) : PlanStepEx((int)p_goalType, ESTATE_END) {}
         inline GoalEx(GoalType p_goalType, const PlanStepParameters& p_parameters) : PlanStepEx(p_goalType, ESTATE_END, p_parameters) {}
+
     public:
-        void UpdateAux(const WorldClock& p_clock);
-        void Reset(const WorldClock& p_clock);
+        void UpdateAux(RtsGame* pRtsGame, const WorldClock& p_clock);
+        void Reset(RtsGame* pRtsGame, const WorldClock& p_clock);
     };
 }
 

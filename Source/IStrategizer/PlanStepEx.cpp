@@ -9,19 +9,18 @@ using namespace IStrategizer;
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeAddressesAux()
 {
-    AddMemberAddress(1,
-        &_params);
+    AddMemberAddress(1, &_params);
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) :
-_stepTypeId(p_stepTypeId), _state(p_state), _successCondition(nullptr), _postCondition(nullptr), _firstUpdate(true)
+_stepTypeId(p_stepTypeId), _state(p_state), _postCondition(nullptr), _firstUpdate(true)
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters) : 
-_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _successCondition(nullptr), _postCondition(nullptr), _firstUpdate(true)
+_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _postCondition(nullptr), _firstUpdate(true)
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
@@ -42,7 +41,6 @@ bool PlanStepEx::Equals(PlanStepEx* p_planStep)
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeConditions()
 {
-    InitializeSuccessConditions();
     InitializePostConditions();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -58,16 +56,15 @@ void PlanStepEx::Copy(IClonable* p_dest)
 {
     PlanStepEx* m_dest = static_cast<PlanStepEx*>(p_dest);
 
-    m_dest->_stepTypeId         = _stepTypeId;
-    m_dest->_state              = _state;
+    m_dest->_stepTypeId = _stepTypeId;
+    m_dest->_state = _state;
     m_dest->_params = _params;
-    m_dest->_successCondition   = _successCondition ? static_cast<CompositeExpression*>(_successCondition->Clone()) : nullptr;
-    m_dest->_postCondition      = _postCondition ?    static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
-    m_dest->_stepLevelType      = _stepLevelType;
-    m_dest->_data               = _data;
+    m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
+    m_dest->_stepLevelType = _stepLevelType;
+    m_dest->_data = _data;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::State(ExecutionStateType p_state, const WorldClock& p_clock)
+void PlanStepEx::State(ExecutionStateType p_state, RtsGame* pRtsGame, const WorldClock& p_clock)
 {
     string stepName = ToString();
     const char* oldStateName = Enums[_state];
@@ -91,11 +88,11 @@ bool PlanStepEx::IsCurrentStateTimeout(const WorldClock& p_clock)
         return ((p_clock.ElapsedMilliseconds() - startTime) > timeout);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::Update(const WorldClock& p_clock)
+void PlanStepEx::Update(RtsGame* pRtsGame, const WorldClock& p_clock)
 {
     if (_firstUpdate)
     {
-        Reset(p_clock);
+        Reset(pRtsGame, p_clock);
         _firstUpdate = false;
     }
 
@@ -105,11 +102,11 @@ void PlanStepEx::Update(const WorldClock& p_clock)
             "State %s timed-out after %dms",
             Enums[(int)State()],
             _stateTimeout[INDEX(State(), ExecutionStateType)]);
-        State(ESTATE_Failed, p_clock);
+        State(ESTATE_Failed, pRtsGame, p_clock);
     }
     else
     {
-        UpdateAux(p_clock);
+        UpdateAux(pRtsGame, p_clock);
     }
 }
 //////////////////////////////////////////////////////////////////////////
