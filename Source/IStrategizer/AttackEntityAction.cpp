@@ -23,9 +23,9 @@ using namespace Serialization;
 
 AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
 {
-	_params[PARAM_EntityClassId] = ECLASS_START;
-	_params[PARAM_TargetEntityClassId] = ECLASS_START;
-	CellFeature::Null().To(_params);
+    _params[PARAM_EntityClassId] = ECLASS_START;
+    _params[PARAM_TargetEntityClassId] = ECLASS_START;
+    CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
 AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackEntity, p_parameters)
@@ -34,22 +34,22 @@ AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) :
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::Copy(IClonable* p_dest)
 {
-	Action::Copy(p_dest);
+    Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
 {
-	EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
-	EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
-	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-	bool executed = false;
-	
-	// Adapt attacker
-	_attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
+    EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
+    EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
+    AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+    bool executed = false;
+    
+    // Adapt attacker
+    _attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
 
-	if (_attackerId != INVALID_TID)
-	{
-		_targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
+    if (_attackerId != INVALID_TID)
+    {
+        _targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
 
         if (_targetId != INVALID_TID)
         {
@@ -62,31 +62,31 @@ bool AttackEntityAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock
         }
     }
 
-	return executed;
+    return executed;
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consumed)
 {
-	
+    
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::AliveConditionsSatisfied(RtsGame* pRtsGame)
 {
-	return g_Assist.DoesEntityObjectExist(_attackerId);
+    return g_Assist.DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
-	assert(PlanStepEx::State() == ESTATE_Executing);
+    assert(PlanStepEx::State() == ESTATE_Executing);
 
     GameEntity* pGameAttacker = pRtsGame->Self()->GetEntity(_attackerId);
     GameEntity* pGameTarget = pRtsGame->Enemy()->GetEntity(_targetId);
     assert(pGameAttacker);
     assert(pGameTarget);
 
-	ObjectStateType attackerState = (ObjectStateType)pGameAttacker->Attr(EOATTR_State);
-	ObjectStateType targetState = (ObjectStateType)pGameTarget->Attr(EOATTR_State);
-	return (attackerState == OBJSTATE_Attacking) || (targetState == OBJSTATE_UnderAttack);
+    ObjectStateType attackerState = (ObjectStateType)pGameAttacker->Attr(EOATTR_State);
+    ObjectStateType targetState = (ObjectStateType)pGameTarget->Attr(EOATTR_State);
+    return (attackerState == OBJSTATE_Attacking) || (targetState == OBJSTATE_UnderAttack);
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializeAddressesAux()

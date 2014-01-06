@@ -47,8 +47,8 @@ Vector2 AdapterEx::GetBotColonyCenter()
     // We didn't calculate player colony center yet ?
     if (m_botColonyCenter == Vector2::Null())
     {
-        GameEntity		*pPlayerBase = nullptr;
-        vector<TID>		playerBases;
+        GameEntity        *pPlayerBase = nullptr;
+        vector<TID>        playerBases;
 
         g_Game->Self()->GetBases(playerBases);
 
@@ -59,7 +59,7 @@ Vector2 AdapterEx::GetBotColonyCenter()
         // No base! This is weird but for the case, we will select the first unit position as the player coloney center
         else
         {
-            vector<TID>	playerEntities;
+            vector<TID>    playerEntities;
 
             g_Game->Self()->Entities(playerEntities);
             // This can't happen, If the player has no entities, then he must be losing
@@ -93,11 +93,11 @@ void IStrategizer::AdapterEx::initializePredefinedRankedStates()
 //////////////////////////////////////////////////////////////////////////
 bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_worldY, const TCell* p_pCell, void *p_pParam)
 {
-    OccupanceDataIM		*pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-    SpiralSearchData	*pSearchData = (SpiralSearchData*)p_pParam;
-    Vector2				worldPos(p_worldX, p_worldY);
-    bool				canBuildThere;
-    bool				stopSearch;
+    OccupanceDataIM        *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
+    SpiralSearchData    *pSearchData = (SpiralSearchData*)p_pParam;
+    Vector2                worldPos(p_worldX, p_worldY);
+    bool                canBuildThere;
+    bool                stopSearch;
 
     // If an area is not occupied then we can build there
     assert(pBuildingIM && pSearchData);
@@ -124,12 +124,12 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     2. The direction of growth should be taken into consideration, and the base main buildings should be well covered
     3. Critical buildings should be built in the back
     */
-    Vector2				mapeSize = g_Game->Map()->Size();
-    OccupanceDataIM		*pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-    GameType			*pGameType;
-    unsigned			searchRadius;
-    Vector2				colonyCenter;
-    SpiralSearchData	searchData;
+    Vector2                mapeSize = g_Game->Map()->Size();
+    OccupanceDataIM        *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
+    GameType            *pGameType;
+    unsigned            searchRadius;
+    Vector2                colonyCenter;
+    SpiralSearchData    searchData;
 
     pGameType = g_Game->GetEntityType(p_buildingType);
     assert(pGameType);
@@ -172,12 +172,12 @@ TID AdapterEx::GetEntityObjectId( EntityClassType p_entityType,const RankedState
     ELSE
     adaptation failed and return nullptr entity Id
     */
-    GamePlayer	   *pPlayer;
+    GamePlayer       *pPlayer;
     GameEntity     *pEntity;
-    vector<TID>	   entityIds;
-    EntityClassType	    entityTypeId;
-    ObjectStateType	    curEntityState;
-    TID	    adaptedEntityId = INVALID_TID;
+    vector<TID>       entityIds;
+    EntityClassType        entityTypeId;
+    ObjectStateType        curEntityState;
+    TID        adaptedEntityId = INVALID_TID;
     vector<UnitEntry> validEntities;
     if(!IsRankedStatesInitialized)
     initializePredefinedRankedStates();
@@ -214,11 +214,11 @@ TID AdapterEx::GetEntityObjectId( EntityClassType p_entityType,const RankedState
 //////////////////////////////////////////////////////////////////////////
 IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId( EntityClassType p_entityType )
 {
-    GamePlayer			*pPlayer;
-    GameEntity			*pEntity;
-    vector<TID>			entityIds;
-    EntityClassType		entityTypeId;
-    TID					adaptedEntityId = INVALID_TID;
+    GamePlayer            *pPlayer;
+    GameEntity            *pEntity;
+    vector<TID>            entityIds;
+    EntityClassType        entityTypeId;
+    TID                    adaptedEntityId = INVALID_TID;
 
     pPlayer = g_Game->Self();
     assert(pPlayer);
@@ -247,11 +247,11 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 {
     // Gets first building to train entity from type p_traineeType
     // If no empty building is found, last non-idle building will be returned
-    GamePlayer			*pPlayer;
-    GameEntity			*pEntity;
-    vector<TID>			entityIds;
-    EntityClassType		trainerType;
-    TID					id = INVALID_TID;
+    GamePlayer            *pPlayer;
+    GameEntity            *pEntity;
+    vector<TID>            entityIds;
+    EntityClassType        trainerType;
+    TID                    id = INVALID_TID;
 
     trainerType = g_Game->Self()->TechTree()->SourceEntity(p_traineeType);
     pPlayer = g_Game->Self();
@@ -281,12 +281,12 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
 {
-    GamePlayer	*pPlayer;
-    GameEntity	*pEntity;
-    vector<TID>	entityIds;
-    TID			adaptedTargetId = INVALID_TID;
-    double		bestDistance = numeric_limits<double>::max();
-    CellFeature	*pTarGetCellFeatureFromWorldPosition = new CellFeature(p_parameters);
+    GamePlayer    *pPlayer;
+    GameEntity    *pEntity;
+    vector<TID>    entityIds;
+    TID            adaptedTargetId = INVALID_TID;
+    double        bestDistance = numeric_limits<double>::max();
+    CellFeature    *pTarGetCellFeatureFromWorldPosition = new CellFeature(p_parameters);
 
     pPlayer = g_Game->Enemy();
     assert(pPlayer);
