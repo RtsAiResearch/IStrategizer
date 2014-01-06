@@ -24,7 +24,7 @@ namespace IStrategizer
 
     protected:
         void InitializePostConditions();
-        bool SuccessConditionsSatisfied();
+        bool SuccessConditionsSatisfied(RtsGame* pRtsGame);
     };
 }
 #endif // ATTACKENEMYGOAL_H

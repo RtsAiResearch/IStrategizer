@@ -1,4 +1,5 @@
 #include "MoveAction.h"
+
 #include "EngineAssist.h"
 #include "GameEntity.h"
 #include "AbstractAdapter.h"
@@ -6,6 +7,8 @@
 #include "CaseBasedReasonerEx.h"
 #include "RtsGame.h"
 #include "GamePlayer.h"
+#include "And.h"
+#include "EntityClassExist.h"
 #include <math.h>
 
 using namespace IStrategizer;
@@ -16,11 +19,12 @@ MoveAction::MoveAction() : Action(ACTIONEX_Move)
     _params[PARAM_EntityClassId] = ECLASS_START;
     _params[PARAM_ObjectStateType] = OBJSTATE_START;
     CellFeature::Null().To(_params);
+    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 MoveAction::MoveAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_Move,p_parameters)
 {
-
+    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 void MoveAction::Copy(IClonable* p_dest)
@@ -28,24 +32,18 @@ void MoveAction::Copy(IClonable* p_dest)
     Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
-void MoveAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
+void MoveAction::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consumed)
 {
 
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::AliveConditionsSatisfied()
+bool MoveAction::AliveConditionsSatisfied(RtsGame* pRtsGame)
 {
 
     return (g_Assist.DoesEntityObjectExist(_entityId) && _pEntity->Attr(EOATTR_IsMoving) > 0);
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::PreconditionsSatisfied()
-{
-    EntityClassType entity = (EntityClassType)_params[PARAM_EntityClassId];
-    return g_Assist.DoesEntityClassExist(MakePair(entity, 1));
-}
-//----------------------------------------------------------------------------------------------
-bool MoveAction::SuccessConditionsSatisfied()
+bool MoveAction::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
     return g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
 }
@@ -55,7 +53,7 @@ void MoveAction::InitializeAddressesAux()
     Action::InitializeAddressesAux();
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::ExecuteAux( const WorldClock& p_clock )
+bool MoveAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
@@ -68,7 +66,7 @@ bool MoveAction::ExecuteAux( const WorldClock& p_clock )
     {
         //Adapt position
         _position = pAdapter->AdaptPosition(Parameters());
-        _pEntity  = g_Game->Self()->GetEntity(_entityId);
+        _pEntity  = pRtsGame->Self()->GetEntity(_entityId);
         _pEntity->Lock(this);
         assert(_pEntity);
         executed = _pEntity->Move(_position);
@@ -83,5 +81,9 @@ void MoveAction::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 void MoveAction::InitializePreConditions()
 {
+    EntityClassType entity = (EntityClassType)_params[PARAM_EntityClassId];
+    vector<Expression*> m_terms;
 
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, entity, 1, true));
+    _preCondition = new And(m_terms);
 }

@@ -1,15 +1,13 @@
 #ifndef ENGINEASSIST_H
 #define ENGINEASSIST_H
 
-#include <vector>
-#include <map>
-#define ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE 64
-
-//#ifndef GAMEENGINECROSSMAPPING_H
-//#include "GameEngineCrossMapping.h"
-//#endif
 #include "Misc.h"
 #include "EngineData.h"
+#include "Expression.h"
+#include <vector>
+#include <map>
+
+#define ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE 64
 
 namespace IStrategizer
 {
@@ -56,6 +54,7 @@ namespace IStrategizer
         CheckReturn int ResearchesDone(IN const vector<ResearchType> &p_researchTypes, OUT bool &p_done, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn int PrerequisitesSatisfied(IN int p_entityOrResearchType, OUT bool &p_satisfied, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance);
+        CheckReturn void GetPrerequisites(int p_entityOrResearchType, PlayerType p_playerType, vector<Expression*>& p_prerequisites);
 
 #define g_Assist EngineAssist::Instance()
     };

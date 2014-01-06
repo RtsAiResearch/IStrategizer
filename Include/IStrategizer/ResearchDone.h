@@ -11,6 +11,7 @@ namespace IStrategizer
     class ResearchDone : public ConditionEx
     {
         OBJECT_SERIALIZABLE(ResearchDone);
+
     public:
         ResearchDone() {}
         ResearchDone(PlayerType p_player, ResearchType p_researchId) : ConditionEx(p_player, CONDEX_ResearchDone) { _conditionParameters[PARAM_ResearchId] = p_researchId; }
@@ -19,4 +20,4 @@ namespace IStrategizer
     };
 }
 
-#endif    // RESEARCHDONE_H
+#endif // RESEARCHDONE_H

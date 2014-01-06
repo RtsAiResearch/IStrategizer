@@ -14,12 +14,14 @@ AttackEnemyGoal::AttackEnemyGoal() : GoalEx(GOALEX_AttackEnemy)
     /*_forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
     _params[PARAM_ForceSizeId] = FORCESIZE_START;
     _params[PARAM_AttackTypeId] = ATTACK_START;*/
+    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 AttackEnemyGoal::AttackEnemyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_AttackEnemy, p_parameters)
 {
      // FIXME: There should be a commander that specify force description in details
     //_forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
+    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 void AttackEnemyGoal::InitializePostConditions()
@@ -46,7 +48,7 @@ void AttackEnemyGoal::Copy(IClonable* p_dest)
     _cachedColony.Copy(&m_dest->_cachedColony);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEnemyGoal::SuccessConditionsSatisfied()
+bool AttackEnemyGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
     return false;
 }

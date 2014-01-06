@@ -19,7 +19,7 @@ namespace IStrategizer
         
     protected:
         void InitializePostConditions();
-        bool SuccessConditionsSatisfied();
+        bool SuccessConditionsSatisfied(RtsGame* pRtsGame);
     };
 }
 #endif // BUILDBASEGOAL_H

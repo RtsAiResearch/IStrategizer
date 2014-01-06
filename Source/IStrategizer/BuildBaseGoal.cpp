@@ -9,12 +9,14 @@ BuildBaseGoal::BuildBaseGoal() : GoalEx(GOALEX_BuildBase)
     _params[PARAM_BaseTypeId] = BASETYPE_START;
     vector<Expression*> m_terms;
     m_terms.push_back(new False);
+    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 BuildBaseGoal::BuildBaseGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_BuildBase, p_parameters)
 {
     vector<Expression*> m_terms;
     m_terms.push_back(new False);
+    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 void BuildBaseGoal::InitializePostConditions()
@@ -38,7 +40,7 @@ void BuildBaseGoal::InitializePostConditions()
     _postCondition = new And(m_termsPost);
 }
 //----------------------------------------------------------------------------------------------
-bool BuildBaseGoal::SuccessConditionsSatisfied()
+bool BuildBaseGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
     return false;
 }

@@ -7,11 +7,12 @@ using namespace IStrategizer;
 TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce)
 {
     _params[PARAM_ForceSizeId] = FORCESIZE_START;
+    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 TrainForceGoal::TrainForceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainForce, p_parameters)
 {
-
+    InitializeConditions();
 }
 //----------------------------------------------------------------------------------------------
 void TrainForceGoal::InitializePostConditions()
@@ -27,7 +28,7 @@ void TrainForceGoal::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-bool TrainForceGoal::SuccessConditionsSatisfied()
+bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
     return false;
 }
