@@ -38,6 +38,9 @@
 #ifndef RESOURCEEXIST_H
 #include "ResourceExist.h"
 #endif
+#ifndef AND_H
+#include "And.h"
+#endif
 
 #include "MathHelper.h"
 #include "Vector2.h"
@@ -632,76 +635,12 @@ int EngineAssist::ResearchesDone(const vector<ResearchType> &p_researchTypes, bo
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_satisfied, PlayerType p_playerType)
 {
-    GamePlayer *pPlayer = nullptr;
-    GameTechTree *pTechTree = nullptr;
-    GameType *pEntityType = nullptr;
-    GameResearch *pResearchType = nullptr;
-    WorldResources *pReqResources = nullptr;
-    PlayerResources *pPlayerResources = nullptr;
-    EntityClassType sourceEntity;
-    vector<ResearchType> reqResearches;
-    map<EntityClassType, unsigned> reqEntities;
-    int ret = ERR_Success;
+    vector<Expression*> prerequisitesConditions;
+    GetPrerequisites(p_entityOrResearchType, p_playerType, prerequisitesConditions);
+    Expression* prerequisitesExpression = new And(prerequisitesConditions);
+    p_satisfied = prerequisitesExpression->Evaluate(g_Game);
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
-    assert(pPlayer);
-
-    pTechTree = pPlayer->TechTree();
-    assert(pTechTree);
-    
-    pTechTree->GetRequirements(p_entityOrResearchType, reqResearches, reqEntities);
-
-    p_satisfied = true;
-
-    // 1. Required researches done
-    for (size_t i = 0, size = reqResearches.size(); i < size && p_satisfied; ++i)
-    {
-        p_satisfied = pTechTree->ResearchDone(reqResearches[i]);
-    }
-
-    // 2. Additional required entities exist
-    if (p_satisfied)
-    {
-        p_satisfied = g_Assist.DoesEntityClassExist(reqEntities);
-    }
-
-    // 3. Source building exist
-    if (p_satisfied)
-    {
-        sourceEntity = pTechTree->SourceEntity(p_entityOrResearchType);
-        assert(sourceEntity != ECLASS_END);
-
-        p_satisfied = g_Assist.DoesEntityClassExist(make_pair(sourceEntity, 1));
-    }
-
-    // 4. Required resources exist
-    if (p_satisfied)
-    {
-        if (BELONG(ResearchType, p_entityOrResearchType))
-        {
-            pResearchType = g_Game->GetResearch((ResearchType)p_entityOrResearchType);
-            assert(pResearchType);
-            
-            pReqResources = pResearchType->RequiredResources();
-            assert(pReqResources);
-        }
-        else if (BELONG(EntityClassType, p_entityOrResearchType))
-        {
-            pEntityType = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType);
-            assert(pEntityType);
-
-            pReqResources = pEntityType->RequiredResources();
-            assert(pReqResources);
-        }
-        else assert(0);
-
-        pPlayerResources = pPlayer->Resources();
-        assert(pPlayerResources);
-
-        p_satisfied = pPlayerResources->HasEnough(pReqResources);
-    }
-
-    return ret;
+    return p_satisfied;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance)

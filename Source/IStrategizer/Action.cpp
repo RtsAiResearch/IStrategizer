@@ -25,7 +25,6 @@ Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxEx
     _stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
     _stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
     _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
-    vector<Expression*> m_terms;
 }
 //////////////////////////////////////////////////////////////////////////
 Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, unsigned p_maxPrepTime,  unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
