@@ -88,7 +88,10 @@ void Action::UpdateAux(RtsGame* pRtsGame, const WorldClock& p_clock)
         if (Execute(pRtsGame, p_clock))
             State(ESTATE_Executing, pRtsGame, p_clock);
         else
+        {
             LogInfo("Executing '%s' failed", ToString().c_str());
+            State(ESTATE_NotPrepared, pRtsGame, p_clock);
+        }
         break;
 
     case ESTATE_Executing:

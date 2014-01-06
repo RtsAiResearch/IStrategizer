@@ -61,7 +61,6 @@ void EntityClassExist::InitializeAddressesAux()
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Evaluate(RtsGame* pRtsGame)
 {
-    bool result = true;
     if (_conditionParameters[PARAM_EntityClassId] != ANY_ID)
     {
         EntityClassType entityClassId = (EntityClassType)_conditionParameters[PARAM_EntityClassId];
@@ -69,10 +68,10 @@ bool EntityClassExist::Evaluate(RtsGame* pRtsGame)
         PlayerType playerId = (PlayerType)_conditionParameters[PARAM_PlayerId];
 
         ConditionEx::Evaluate(pRtsGame);
-        result = g_Assist.DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
+        _isSatisfied = g_Assist.DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
     }
 
-    return result;
+    return _isEvaluated && _isSatisfied;
 }
 //---------------------------------------------------------------------------------------------------
 void EntityClassExist::Copy(IClonable* p_dest)

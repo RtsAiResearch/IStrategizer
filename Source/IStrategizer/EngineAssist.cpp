@@ -489,11 +489,12 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
     GameEntity* pEntity;
     vector<TID> entities;
     unsigned matches;
-    bool        exist;
+    bool exist;
+    ObjectStateType state;
 
     pPlayer = g_Game->GetPlayer(p_playerType);
     assert(pPlayer);
-    pPlayer->Entities(entities);
+    pPlayer->Entities(p_entityType.first, entities);
 
     exist = false;
     matches = 0;
@@ -502,8 +503,11 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
     {
         pEntity = pPlayer->GetEntity(entities[i]);
         assert(pEntity);
+        
+        state = (ObjectStateType)pEntity->Attr(EOATTR_State);
 
-        if (pEntity->Type() == p_entityType.first)
+        if (pEntity->Type() == p_entityType.first && 
+            !pEntity->IsLocked() && state != OBJSTATE_BeingConstructed)
             ++matches;
     }
 

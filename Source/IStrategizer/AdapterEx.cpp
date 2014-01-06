@@ -351,7 +351,7 @@ TID AdapterEx::AdaptAttacker(EntityClassType p_attackerType)
     pPlayer = g_Game->Self();
     assert(pPlayer);
 
-    pPlayer->Entities(entityIds);
+    pPlayer->Entities(p_attackerType, entityIds);
 
     for (size_t i = 0, size = entityIds.size(); i < size; ++i)
     {
