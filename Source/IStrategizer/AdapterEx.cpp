@@ -124,11 +124,11 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     2. The direction of growth should be taken into consideration, and the base main buildings should be well covered
     3. Critical buildings should be built in the back
     */
-    Vector2                mapeSize = g_Game->Map()->Size();
-    OccupanceDataIM        *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-    GameType            *pGameType;
-    unsigned            searchRadius;
-    Vector2                colonyCenter;
+    Vector2    mapeSize = g_Game->Map()->Size();
+    OccupanceDataIM    *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
+    GameType    *pGameType;
+    unsigned    searchRadius;
+    Vector2    colonyCenter;
     SpiralSearchData    searchData;
 
     pGameType = g_Game->GetEntityType(p_buildingType);
@@ -163,7 +163,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::GetEntityObjectId( EntityClassType p_entityType,const RankedStates& p_rankedStates )
+TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates& p_rankedStates )
 {
     /*
     Entity Object Adaptation Algorithm:
@@ -172,13 +172,13 @@ TID AdapterEx::GetEntityObjectId( EntityClassType p_entityType,const RankedState
     ELSE
     adaptation failed and return nullptr entity Id
     */
-    GamePlayer       *pPlayer;
+    GamePlayer     *pPlayer;
     GameEntity     *pEntity;
-    vector<TID>       entityIds;
-    EntityClassType        entityTypeId;
-    ObjectStateType        curEntityState;
-    TID        adaptedEntityId = INVALID_TID;
-    vector<UnitEntry> validEntities;
+    vector<TID>    entityIds;
+    EntityClassType     entityTypeId;
+    ObjectStateType     curEntityState;
+    TID      adaptedEntityId = INVALID_TID;
+    vector<UnitEntry>    validEntities;
     if(!IsRankedStatesInitialized)
     initializePredefinedRankedStates();
 
