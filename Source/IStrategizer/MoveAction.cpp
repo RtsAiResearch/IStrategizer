@@ -11,6 +11,7 @@
 #include "EntityClassExist.h"
 #include "EntityClassNearArea.h"
 #include <math.h>
+#include "AdapterEx.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -38,8 +39,12 @@ void MoveAction::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consum
 //----------------------------------------------------------------------------------------------
 bool MoveAction::AliveConditionsSatisfied(RtsGame* pRtsGame)
 {
-
-    return (g_Assist.DoesEntityObjectExist(_entityId) && _pEntity->Attr(EOATTR_IsMoving) > 0);
+    if (g_Assist.DoesEntityObjectExist(_entityId))
+    {
+        GameEntity* pEntity = pRtsGame->Self()->GetEntity(_entityId);
+        assert(pEntity);
+        return pEntity->Attr(EOATTR_IsMoving);
+    }
 }
 //----------------------------------------------------------------------------------------------
 bool MoveAction::SuccessConditionsSatisfied(RtsGame* pRtsGame)
@@ -58,7 +63,7 @@ bool MoveAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
     EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
 
     //Adapt Entity
-    _entityId = pAdapter->AdaptEntityToMove(entityType);
+    _entityId = pAdapter->GetEntityObjectId(entityType, AdapterEx::EntityToMoveStatesRankVector);
     bool executed = false;
 
     if(_entityId != INVALID_TID)
