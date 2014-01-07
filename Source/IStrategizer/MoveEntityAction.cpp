@@ -14,6 +14,7 @@
 #include "GameTechTree.h"
 #include "GameType.h"
 #include "GameEntity.h"
+#include "AdapterEx.h"
 
 using namespace IStrategizer;
 
@@ -82,7 +83,7 @@ bool MoveEntityAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
-    _entityId = pAdapter->AdaptWorkerForBuild();
+    _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
     assert(_entityId != INVALID_TID);
 
     _position = pAdapter->AdaptPosition(Parameters());
