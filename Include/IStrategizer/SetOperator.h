@@ -15,9 +15,9 @@ namespace IStrategizer
     template<class T>
     class SetOperator
     {
-        typename std::set<T>::iterator		m_indices[MaxSets];
-        int									m_setsCount;
-        std::set<T>**						m_sets;
+        typename std::set<T>::iterator m_indices[MaxSets];
+        int m_setsCount;
+        std::set<T>** m_sets;
 
     public:
         void Intersect(std::set<T>** p_sets, int p_setsCount, Collection<T>& p_result)

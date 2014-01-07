@@ -5,20 +5,20 @@
 
 namespace IStrategizer
 {
-	class GameEntity;
+    class GameEntity;
 
-	class ForceDescription
+    class ForceDescription
     {
-	public:
-		int	m_numberOfUnits;
-		int	m_totalHP;
-		int	m_totalDamage;
+    public:
+        int m_numberOfUnits;
+        int m_totalHP;
+        int m_totalDamage;
 
-	public:
-		void	AddEntity(GameEntity *p_entity);
-		void	RemoveEntity(GameEntity *p_entity);
-		void	Clear();
-		float	GetDistance(ForceDescription *p_other);
+    public:
+        void AddEntity(GameEntity *p_entity);
+        void RemoveEntity(GameEntity *p_entity);
+        void Clear();
+        float GetDistance(ForceDescription *p_other);
     };
 }
 

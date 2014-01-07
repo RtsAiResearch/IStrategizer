@@ -6,18 +6,18 @@
 
 namespace IStrategizer
 {
-	///> class=TrainForceGoal
-	///> parent=GoalEx
-	class TrainForceGoal : public GoalEx
-	{
+    ///> class=TrainForceGoal
+    ///> parent=GoalEx
+    class TrainForceGoal : public GoalEx
+    {
         OBJECT_SERIALIZABLE(TrainForceGoal);
 
-	public:
-					TrainForceGoal();
-					TrainForceGoal(const PlanStepParameters& p_parameters);
-	protected:
-		void InitializeSuccessConditions();
-		void InitializePostConditions();
-	};
+    public:
+                    TrainForceGoal();
+                    TrainForceGoal(const PlanStepParameters& p_parameters);
+    protected:
+        void InitializeSuccessConditions();
+        void InitializePostConditions();
+    };
 }
-#endif	// TRAINFORCEGOAL_H
+#endif    // TRAINFORCEGOAL_H

@@ -7,18 +7,18 @@
 
 namespace IStrategizer
 {
-	///> class=BuildBaseGoal
-	///> parent=GoalEx
-	class BuildBaseGoal : public GoalEx
-	{ 
+    ///> class=BuildBaseGoal
+    ///> parent=GoalEx
+    class BuildBaseGoal : public GoalEx
+    { 
         OBJECT_SERIALIZABLE(BuildBaseGoal);
 
-	public:
-					BuildBaseGoal();
-					BuildBaseGoal(const PlanStepParameters& p_parameters);
-	protected:
-		void InitializeSuccessConditions();
-		void InitializePostConditions();
-	};
+    public:
+                    BuildBaseGoal();
+                    BuildBaseGoal(const PlanStepParameters& p_parameters);
+    protected:
+        void InitializeSuccessConditions();
+        void InitializePostConditions();
+    };
 }
-#endif	// BUILDBASEGOAL_H
+#endif    // BUILDBASEGOAL_H

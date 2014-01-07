@@ -30,97 +30,97 @@
 using namespace IStrategizer;
 
 IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame) 
-	: _self(PLAYER_Self),
-	_enemy(PLAYER_Enemy),
-	_param(p_param),
-	_caseLearning(nullptr),
-	_planner(nullptr),
-	_isFirstUpdate(true)
+    : _self(PLAYER_Self),
+    _enemy(PLAYER_Enemy),
+    _param(p_param),
+    _caseLearning(nullptr),
+    _planner(nullptr),
+    _isFirstUpdate(true)
 {
     g_Game = p_rtsGame;
     g_Game->Init();
 
-	PlanStepParameters params;
-	params[PARAM_PlayerId] = _self;
-	params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
+    PlanStepParameters params;
+    params[PARAM_PlayerId] = _self;
+    params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
 
-	switch(p_param.Phase)
-	{
-	case PHASE_Online:
-		_planner = new OnlineCaseBasedPlannerEx();
+    switch(p_param.Phase)
+    {
+    case PHASE_Online:
+        _planner = new OnlineCaseBasedPlannerEx();
         _planner->Init(g_GoalFactory.GetGoal(GOALEX_WinGame, params));
-		g_OnlineCaseBasedPlanner = _planner;
-		break;
+        g_OnlineCaseBasedPlanner = _planner;
+        break;
 
-	case PHASE_Offline:
-		_caseLearning = new LearningFromHumanDemonstration(_self, _enemy);
-		g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
-		break;
-	}
+    case PHASE_Offline:
+        _caseLearning = new LearningFromHumanDemonstration(_self, _enemy);
+        g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
+        break;
+    }
 
-	IMSysManagerParam imSysMgrParam;
-	imSysMgrParam.BuildingDataIMCellSize = _param.BuildingDataIMCellSize;
-	imSysMgrParam.GroundControlIMCellSize = _param.GrndCtrlIMCellSize;
+    IMSysManagerParam imSysMgrParam;
+    imSysMgrParam.BuildingDataIMCellSize = _param.BuildingDataIMCellSize;
+    imSysMgrParam.GroundControlIMCellSize = _param.GrndCtrlIMCellSize;
 
-	g_IMSysMgr.Init(imSysMgrParam);
-	g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-	g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_IMSysMgr.Init(imSysMgrParam);
+    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
 
-	DynamicComponent::RealTime(true);
-	// DynamicComponent::GlobalInvalidation(true);
-	// DynamicComponent::GlobalInvalidationInterval(2);
+    DynamicComponent::RealTime(true);
+    // DynamicComponent::GlobalInvalidation(true);
+    // DynamicComponent::GlobalInvalidationInterval(2);
 }
 //---------------------------------------------------------------------------------------------
 void IStrategizerEx::NotifyMessegeSent(Message* p_message)
 {
-	switch(p_message->MessageTypeID())
-	{
-	case MSG_GameStart:
-		_clock.Reset();
-	case MSG_GameEnd:
-		if (_param.Phase == PHASE_Offline)
-		{
-			StartOfflineLearning();
-		}
-		break;
-	}
+    switch(p_message->MessageTypeID())
+    {
+    case MSG_GameStart:
+        _clock.Reset();
+    case MSG_GameEnd:
+        if (_param.Phase == PHASE_Offline)
+        {
+            StartOfflineLearning();
+        }
+        break;
+    }
 }
 //--------------------------------------------------------------------------------
 void IStrategizerEx::Update(unsigned p_gameCycle)
 {
-	try
-	{
-		if (_isFirstUpdate)
-		{
-			_clock.Reset();
-			_isFirstUpdate = false;
-		}
+    try
+    {
+        if (_isFirstUpdate)
+        {
+            _clock.Reset();
+            _isFirstUpdate = false;
+        }
 
-		_clock.Update(p_gameCycle);
-		g_MessagePump.Update(_clock);
-		g_IMSysMgr.Update(_clock);
+        _clock.Update(p_gameCycle);
+        g_MessagePump.Update(_clock);
+        g_IMSysMgr.Update(_clock);
 
-		if (_param.Phase == PHASE_Online)
-			_planner->Update(_clock);
-	}
-	catch (IStrategizer::Exception &e)
-	{
-		e.To(cout);
-	}
-	catch (std::exception &e)
-	{
-		cout << "IStrategizer encountered unhandled std exception: " << e.what() << endl;
-	}
+        if (_param.Phase == PHASE_Online)
+            _planner->Update(_clock);
+    }
+    catch (IStrategizer::Exception &e)
+    {
+        e.To(cout);
+    }
+    catch (std::exception &e)
+    {
+        cout << "IStrategizer encountered unhandled std exception: " << e.what() << endl;
+    }
 }
 //--------------------------------------------------------------------------------
 void IStrategizerEx::StartOfflineLearning()
 {
-	_caseLearning->Learn();
+    _caseLearning->Learn();
 }
 //----------------------------------------------------------------------------------------------
 IStrategizerEx::~IStrategizerEx()
 {
-	g_IMSysMgr.Finalize();
+    g_IMSysMgr.Finalize();
     Toolbox::MemoryClean(_planner);
     Toolbox::MemoryClean(_caseLearning);
 }

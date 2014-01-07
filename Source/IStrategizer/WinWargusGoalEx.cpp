@@ -9,7 +9,7 @@ using namespace IStrategizer;
 
 WinWargusGoalEx::WinWargusGoalEx() : GoalEx(GOALEX_WinGame)
 {
-	_params[PARAM_StrategyTypeId]	= STRTYPE_START;
+    _params[PARAM_StrategyTypeId] = STRTYPE_START;
 }
 //----------------------------------------------------------------------------------------------
 WinWargusGoalEx::WinWargusGoalEx(const PlanStepParameters& p_parameters): GoalEx(GOALEX_WinGame, p_parameters)
@@ -18,8 +18,8 @@ WinWargusGoalEx::WinWargusGoalEx(const PlanStepParameters& p_parameters): GoalEx
 //----------------------------------------------------------------------------------------------
 bool WinWargusGoalEx::SuccessConditionsSatisfied()
 {
-	vector<TID> entityIds;
-	g_Game->Enemy()->Entities(entityIds);
+    vector<TID> entityIds;
+    g_Game->Enemy()->Entities(entityIds);
 
-	return entityIds.size() == 0;
+    return entityIds.size() == 0;
 }

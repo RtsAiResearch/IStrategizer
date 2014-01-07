@@ -7,17 +7,17 @@
 
 namespace IStrategizer
 {
-	///> class=Not
-	///> parent=CompositeExpression
-	class Not : public CompositeExpression
-	{
+    ///> class=Not
+    ///> parent=CompositeExpression
+    class Not : public CompositeExpression
+    {
         OBJECT_SERIALIZABLE(Not);
 
-	public:
-		Not() {}
-		Not(Expression* p_expression) : CompositeExpression(p_expression) {}
-		bool	    Evaluate() { assert(_expressions.size() == 1); _isEvaluated = true; return _isSatisfied = !_expressions[0]->Evaluate(); }
-	};
+    public:
+        Not() {}
+        Not(Expression* p_expression) : CompositeExpression(p_expression) {}
+        bool        Evaluate() { assert(_expressions.size() == 1); _isEvaluated = true; return _isSatisfied = !_expressions[0]->Evaluate(); }
+    };
 }
 
 #endif // NOT_H

@@ -7,7 +7,6 @@
 #include "UnitImpl.h"
 #include "GameTable.h"
 
-
 namespace BWAPI
 {
   class Client

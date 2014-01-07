@@ -11,9 +11,9 @@ typedef void (*DrawIMCallback)(const IStrategizer::InfluenceMap *p_pIM, QPainter
 class IMDrawingStrategy
 {
 public:
-	static DrawIMCallback GetStrategy(IStrategizer::IMType p_type);
+    static DrawIMCallback GetStrategy(IStrategizer::IMType p_type);
 private:
-	static void DrawBuildingDataIM(const IStrategizer::InfluenceMap *p_pIM, QPainter &p_painter);
-	static void DrawGroundControlIM(const IStrategizer::InfluenceMap *p_pIM, QPainter &p_painter);
+    static void DrawBuildingDataIM(const IStrategizer::InfluenceMap *p_pIM, QPainter &p_painter);
+    static void DrawGroundControlIM(const IStrategizer::InfluenceMap *p_pIM, QPainter &p_painter);
 };
 #endif IMDRAWINGSTRATEGY_H

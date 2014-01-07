@@ -15,14 +15,14 @@ using namespace BWAPI;
 
 void StarCraftResearch::InitializeAux()
 {
-	if (m_isTech)
-	{
-		m_id                = g_Database.TechMapping.GetByFirst(m_tech.getID());
-		m_requiredResources = new WorldResources(0, m_tech.gasPrice(), m_tech.mineralPrice());
-	}
-	else
-	{
-		m_id                = g_Database.UpgradeMapping.GetByFirst(m_upgrade.getID());
-		m_requiredResources = new WorldResources(0, m_upgrade.gasPrice(), m_upgrade.mineralPrice());
-	}
+    if (m_isTech)
+    {
+        m_id                = g_Database.TechMapping.GetByFirst(m_tech.getID());
+        m_requiredResources = new WorldResources(0, m_tech.gasPrice(), m_tech.mineralPrice());
+    }
+    else
+    {
+        m_id                = g_Database.UpgradeMapping.GetByFirst(m_upgrade.getID());
+        m_requiredResources = new WorldResources(0, m_upgrade.gasPrice(), m_upgrade.mineralPrice());
+    }
 }

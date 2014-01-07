@@ -6,17 +6,17 @@
 
 namespace IStrategizer
 {
-	///> class=Or
-	///> parent=CompositeExpression
-	class Or : public CompositeExpression
-	{
+    ///> class=Or
+    ///> parent=CompositeExpression
+    class Or : public CompositeExpression
+    {
         OBJECT_SERIALIZABLE(Or);
 
-	public:
-		Or() {}
-		Or(const std::vector<Expression*>& p_expressions) : CompositeExpression(p_expressions) {}
-		bool        Evaluate();
-	};
+    public:
+        Or() {}
+        Or(const std::vector<Expression*>& p_expressions) : CompositeExpression(p_expressions) {}
+        bool        Evaluate();
+    };
 }
 
 #endif // OR_H

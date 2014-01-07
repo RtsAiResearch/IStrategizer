@@ -31,8 +31,8 @@ using namespace StarCraftModel;
 using namespace BWAPI;
 using namespace std;
 
-#define TilePositionFromUnitPosition(UnitPos)	(UnitPos / 32)
-#define UnitPositionFromTilePosition(TilePos)	(TilePos * 32)
+#define TilePositionFromUnitPosition(UnitPos)    (UnitPos / 32)
+#define UnitPositionFromTilePosition(TilePos)    (TilePos * 32)
 
 ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags),
@@ -95,8 +95,8 @@ void ClientMain::InitIStrategizer()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
 {
-    IMViewWidget	*pIMView = nullptr;
-    QGridLayout		*gridLayout;
+    IMViewWidget    *pIMView = nullptr;
+    QGridLayout        *gridLayout;
 
     // 1. Init Building Data IM
     pIMView = new IMViewWidget;
@@ -136,7 +136,7 @@ void ClientMain::InitPlannerView()
     m_pPlannerViewWdgt = new PlannerViewWidget;
     ui.plannerGridLayout->addWidget(m_pPlannerViewWdgt);*/
 
-    //QGridLayout		*gridLayout;
+    //QGridLayout        *gridLayout;
 
     //gridLayout = new QGridLayout;
     //ui.tbPlanner->setLayout(gridLayout);
@@ -218,8 +218,8 @@ void ClientMain::OnSendText(const string& p_text)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData	*pData = nullptr;
-    EntityCreateMessage	*pMsg = nullptr;
+    EntityMessageData    *pData = nullptr;
+    EntityCreateMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
     assert(pData);
@@ -247,8 +247,8 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData		*pData = nullptr;
-    EntityDestroyMessage	*pMsg = nullptr;
+    EntityMessageData        *pData = nullptr;
+    EntityDestroyMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
     assert(pData);
@@ -277,8 +277,8 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData		*pData = nullptr;
-    EntityRenegadeMessage	*pMsg = nullptr;
+    EntityMessageData        *pData = nullptr;
+    EntityRenegadeMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
     assert(pData);
@@ -316,8 +316,8 @@ void ClientMain::OnMatchStart()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchEnd(bool p_isWinner)
 {
-    GameEndMessageData	*pData = nullptr;
-    GameEndMessage		*pMsg = nullptr;
+    GameEndMessageData    *pData = nullptr;
+    GameEndMessage        *pMsg = nullptr;
 
     pData = new GameEndMessageData;
     assert(pData);

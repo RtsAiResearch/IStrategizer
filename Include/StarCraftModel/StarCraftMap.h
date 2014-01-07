@@ -10,12 +10,12 @@ namespace StarCraftModel
     class StarCraftMap : public IStrategizer::WorldMap
     {
     public:
-		StarCraftMap(unsigned resolution) 
+        StarCraftMap(unsigned resolution) 
             : WorldMap(Size().X / resolution, Size().Y / resolution, Size().X, Size().Y) 
         { }
 
-		IStrategizer::Vector2	Size() const;
-		bool	IsBuildable(IStrategizer::Vector2 p_position, IStrategizer::Vector2 p_dimension) const ;
+        IStrategizer::Vector2 Size() const;
+        bool IsBuildable(IStrategizer::Vector2 p_position, IStrategizer::Vector2 p_dimension) const ;
     };
 }
 

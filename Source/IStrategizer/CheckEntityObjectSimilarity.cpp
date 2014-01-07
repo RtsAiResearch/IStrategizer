@@ -44,7 +44,7 @@ bool CheckEntityObjectSimilarity::Evaluate()
 
     if (m_returnValue == ERR_Success)
     {
-		_isSatisfied = (MathHelper::EuclideanDistance(_obj1FeatureVector, _obj2FeatureVector) == ExactSimilarity - _similarityThreshold)? 1 : 0;
+        _isSatisfied = (MathHelper::EuclideanDistance(_obj1FeatureVector, _obj2FeatureVector) == ExactSimilarity - _similarityThreshold)? 1 : 0;
 
         _isEvaluated = true;
     }
@@ -76,10 +76,10 @@ void CheckEntityObjectSimilarity::Copy(IClonable* p_dest)
 {
     ConditionEx::Copy(p_dest);
 
-	CheckEntityObjectSimilarity* m_dest = static_cast<CheckEntityObjectSimilarity*>(p_dest);
+    CheckEntityObjectSimilarity* m_dest = static_cast<CheckEntityObjectSimilarity*>(p_dest);
 
-	m_dest->_featureNames         = _featureNames;
-	m_dest->_obj1FeatureVector    = _obj1FeatureVector;
-	m_dest->_obj2FeatureVector    = _obj2FeatureVector;
-	m_dest->_similarityThreshold  = _similarityThreshold;
+    m_dest->_featureNames         = _featureNames;
+    m_dest->_obj1FeatureVector    = _obj1FeatureVector;
+    m_dest->_obj2FeatureVector    = _obj2FeatureVector;
+    m_dest->_similarityThreshold  = _similarityThreshold;
 }

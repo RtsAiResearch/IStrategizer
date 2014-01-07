@@ -14,41 +14,41 @@ const TInfluence nullptrInfluence = 0;
 //////////////////////////////////////////////////////////////////////////
 void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 {
-	GameEntity *pGameObj = nullptr;
-	Vector2		currentPosition;
+    GameEntity *pGameObj = nullptr;
+    Vector2 currentPosition;
 
-	pGameObj = p_pCaller->GetObj(p_pObjEntry);
-	assert(pGameObj);
-	currentPosition.X = pGameObj->Attr(EOATTR_PosX);
-	currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
-	
-	// If not dirty, then skip
-	if (currentPosition == p_pObjEntry->LastPosition)
-		return;
+    pGameObj = p_pCaller->GetObj(p_pObjEntry);
+    assert(pGameObj);
+    currentPosition.X = pGameObj->Attr(EOATTR_PosX);
+    currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
+    
+    // If not dirty, then skip
+    if (currentPosition == p_pObjEntry->LastPosition)
+        return;
 
-	// Unstamp dirty object
-	if(p_pObjEntry->Stamped)
-		p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, NegativeInfluence);
+    // Unstamp dirty object
+    if(p_pObjEntry->Stamped)
+        p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, NegativeInfluence);
 }
 //////////////////////////////////////////////////////////////////////////
 void StampNonDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 {
-	GameEntity *pGameObj = nullptr;
-	Vector2 currentPosition;
+    GameEntity *pGameObj = nullptr;
+    Vector2 currentPosition;
 
-	pGameObj = p_pCaller->GetObj(p_pObjEntry);
-	assert(pGameObj);
-	currentPosition.X = pGameObj->Attr(EOATTR_PosX);
-	currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
+    pGameObj = p_pCaller->GetObj(p_pObjEntry);
+    assert(pGameObj);
+    currentPosition.X = pGameObj->Attr(EOATTR_PosX);
+    currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
 
-	// If not dirty, then skip
-	// Note that objects added for the first time will have an invalid position and is considered as dirty
-	if (currentPosition == p_pObjEntry->LastPosition)
-		return;
+    // If not dirty, then skip
+    // Note that objects added for the first time will have an invalid position and is considered as dirty
+    if (currentPosition == p_pObjEntry->LastPosition)
+        return;
 
-	p_pObjEntry->Stamped = true;
-	p_pObjEntry->LastPosition = currentPosition;
-	p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, PositiveInfluence);
+    p_pObjEntry->Stamped = true;
+    p_pObjEntry->LastPosition = currentPosition;
+    p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, PositiveInfluence);
 }
 //////////////////////////////////////////////////////////////////////////
 void OccupanceDataIM::Update(const WorldClock& p_clock)
@@ -56,118 +56,118 @@ void OccupanceDataIM::Update(const WorldClock& p_clock)
     if (m_registeredObjects.empty())
         return;
 
-	// Using the dirty rectangles techniques used in Graphics, we keep unchanged objects and
-	// unstamp dirty objects
-	ForEachObj(UnstampDirtyObj);
-	ForEachObj(StampNonDirtyObj);
+    // Using the dirty rectangles techniques used in Graphics, we keep unchanged objects and
+    // unstamp dirty objects
+    ForEachObj(UnstampDirtyObj);
+    ForEachObj(StampNonDirtyObj);
 }
 //////////////////////////////////////////////////////////////////////////
 void OccupanceDataIM::UnregisterGameObj(TID p_objId)
 {
-	if (m_registeredObjects.empty())
-		return;
+    if (m_registeredObjects.empty())
+        return;
 
-	RegObjectList::iterator objItr;
-	RegObjEntry *pObjEntry;
+    RegObjectList::iterator objItr;
+    RegObjEntry *pObjEntry;
 
-	for (objItr = m_registeredObjects.begin(); objItr != m_registeredObjects.end(); ++objItr)
-	{
-		pObjEntry = *objItr;
+    for (objItr = m_registeredObjects.begin(); objItr != m_registeredObjects.end(); ++objItr)
+    {
+        pObjEntry = *objItr;
 
-		if (pObjEntry->ObjId == p_objId)
-		{
-			if (pObjEntry->Stamped)
-				StampInfluenceShape(pObjEntry->LastPosition, pObjEntry->ObjWidth, pObjEntry->ObjHeight, NegativeInfluence);
+        if (pObjEntry->ObjId == p_objId)
+        {
+            if (pObjEntry->Stamped)
+                StampInfluenceShape(pObjEntry->LastPosition, pObjEntry->ObjWidth, pObjEntry->ObjHeight, NegativeInfluence);
 
-			m_registeredObjects.erase(objItr);
-			delete pObjEntry;
-			return;
-		}
-	}
+            m_registeredObjects.erase(objItr);
+            delete pObjEntry;
+            return;
+        }
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
 {
-	bool stopSearch = false;
+    bool stopSearch = false;
 
-	assert(p_pParam);
-	bool *pAllCellsFree = (bool*)p_pParam;
+    assert(p_pParam);
+    bool *pAllCellsFree = (bool*)p_pParam;
 
-	assert(p_pCell);
-	if (p_pCell->Inf != nullptrInfluence || p_pCell->Data != CELL_Free)
-	{
-		stopSearch = true;
-		*pAllCellsFree = false;
-	}
+    assert(p_pCell);
+    if (p_pCell->Inf != nullptrInfluence || p_pCell->Data != CELL_Free)
+    {
+        stopSearch = true;
+        *pAllCellsFree = false;
+    }
 
-	return stopSearch;
+    return stopSearch;
 }
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::IsAreaOccupied(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight)
 {
-	bool allCellsFree = true;
+    bool allCellsFree = true;
 
-	ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, OccupancePredicate, &allCellsFree);
+    ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, OccupancePredicate, &allCellsFree);
 
-	return !allCellsFree;
+    return !allCellsFree;
 }
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::ReservePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
 {
-	bool stopSearch = false;
+    bool stopSearch = false;
 
-	assert(p_pParam);
-	bool *pReserveOk = (bool*)p_pParam;
+    assert(p_pParam);
+    bool *pReserveOk = (bool*)p_pParam;
 
-	assert(p_pCell);
-	if (p_pCell->Data == CELL_Free)
-	{
-		p_pCell->Data = CELL_Reserved;
-	}
-	else
-	{
-		stopSearch = true;
-		*pReserveOk = false;
-	}
+    assert(p_pCell);
+    if (p_pCell->Data == CELL_Free)
+    {
+        p_pCell->Data = CELL_Reserved;
+    }
+    else
+    {
+        stopSearch = true;
+        *pReserveOk = false;
+    }
 
-	return stopSearch;
+    return stopSearch;
 }
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::ReserveArea(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight)
 {
-	bool reserveOk = true;
+    bool reserveOk = true;
 
-	ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, ReservePredicate, &reserveOk);
+    ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, ReservePredicate, &reserveOk);
 
-	return reserveOk;
+    return reserveOk;
 }
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::FreePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
 {
-	bool stopSearch = false;
+    bool stopSearch = false;
 
-	assert(p_pParam);
-	bool *pFreeOk = (bool*)p_pParam;
+    assert(p_pParam);
+    bool *pFreeOk = (bool*)p_pParam;
 
-	assert(p_pCell);
-	if (p_pCell->Data == CELL_Reserved)
-	{
-		p_pCell->Data = CELL_Free;
-	}
-	else
-	{
-		stopSearch = true;
-		*pFreeOk = false;
-	}
+    assert(p_pCell);
+    if (p_pCell->Data == CELL_Reserved)
+    {
+        p_pCell->Data = CELL_Free;
+    }
+    else
+    {
+        stopSearch = true;
+        *pFreeOk = false;
+    }
 
-	return stopSearch;
+    return stopSearch;
 }
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight)
 {
-	bool freeOk = true;
+    bool freeOk = true;
 
-	ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, FreePredicate, &freeOk);
+    ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, FreePredicate, &freeOk);
 
-	return freeOk;
+    return freeOk;
 }

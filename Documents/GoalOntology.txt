@@ -99,3 +99,16 @@ LFHD Todo:
 8. Implement conditions using Expressions
 9- Implement actions post conditions
 
+==================================================================================================================
+Conditions
+-----------
+EntityClassExist
+EntityObjectExist
+ResourceExist
+ResearchDone
+CheckEntityObjectAttribute
+EntityCloseToPoint
+
+Buid
+builderID
+DoesEntityObjectExist(builderID) && EntityObjAttr(builderID, IsConstructing)

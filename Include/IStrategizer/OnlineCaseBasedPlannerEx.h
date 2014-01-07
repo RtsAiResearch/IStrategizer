@@ -6,29 +6,29 @@
 
 namespace IStrategizer
 {
-	enum PlayerType;
-	class GoalEx;
+    enum PlayerType;
+    class GoalEx;
 
-	class OnlinePlanExpansionExecutionEx;
-	class CaseBasedReasonerEx;
+    class OnlinePlanExpansionExecutionEx;
+    class CaseBasedReasonerEx;
 
-	class OnlineCaseBasedPlannerEx
-	{
-	private:
-		CaseBasedReasonerEx*			_caseBasedReasoner;
-		OnlinePlanExpansionExecutionEx*	_onlineExpansionExecution;
+    class OnlineCaseBasedPlannerEx
+    {
+    private:
+        CaseBasedReasonerEx*            _caseBasedReasoner;
+        OnlinePlanExpansionExecutionEx*    _onlineExpansionExecution;
 
-	public:
-		OnlineCaseBasedPlannerEx();
-		void       Update(const WorldClock& p_clock);
-		void       Init(GoalEx *p_initialGoal);
-		const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
+    public:
+        OnlineCaseBasedPlannerEx();
+        void       Update(const WorldClock& p_clock);
+        void       Init(GoalEx *p_initialGoal);
+        const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
         const OnlinePlanExpansionExecutionEx* ExpansionExecution() const { return _onlineExpansionExecution; }
-		OnlinePlanExpansionExecutionEx* ExpansionExecution() { return _onlineExpansionExecution; }
-		virtual    ~OnlineCaseBasedPlannerEx();
-	};
+        OnlinePlanExpansionExecutionEx* ExpansionExecution() { return _onlineExpansionExecution; }
+        virtual    ~OnlineCaseBasedPlannerEx();
+    };
 }
 
 extern IStrategizer::OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner;
 
-#endif	// OnlineCaseBasedPlannerEx
+#endif    // OnlineCaseBasedPlannerEx

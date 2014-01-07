@@ -6,17 +6,17 @@
 
 namespace IStrategizer
 {
-	///> class=ResearchDone
-	///> parent=ConditionEx
-	class ResearchDone : public ConditionEx
-	{
-		OBJECT_SERIALIZABLE(ResearchDone);
-	public:
-		ResearchDone() {}
-		ResearchDone(PlayerType p_player, ResearchType p_researchId) : ConditionEx(p_player, CONDEX_ResearchDone) { _conditionParameters[PARAM_UpgradeId] = p_researchId; }
-		bool			Evaluate();
-		bool			Consume(int p_amount) { return true; }
-	};
+    ///> class=ResearchDone
+    ///> parent=ConditionEx
+    class ResearchDone : public ConditionEx
+    {
+        OBJECT_SERIALIZABLE(ResearchDone);
+    public:
+        ResearchDone() {}
+        ResearchDone(PlayerType p_player, ResearchType p_researchId) : ConditionEx(p_player, CONDEX_ResearchDone) { _conditionParameters[PARAM_UpgradeId] = p_researchId; }
+        bool Evaluate();
+        bool Consume(int p_amount) { return true; }
+    };
 }
 
-#endif	// RESEARCHDONE_H
+#endif // RESEARCHDONE_H
