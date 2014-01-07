@@ -20,6 +20,8 @@ using namespace IStrategizer;
 using namespace Serialization;
 using namespace std;
 
+#define INVALID_INDEX = -1;
+
 typedef vector<ObjectStateType> RankedStates;
 
 typedef pair<TID, ObjectStateType> UnitEntry;
@@ -163,7 +165,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates& p_rankedStates )
+TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates& p_rankedStates)
 {
     /*
     Entity Object Adaptation Algorithm:
@@ -212,7 +214,7 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     return adaptedEntityId;
 }
 //////////////////////////////////////////////////////////////////////////
-IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId( EntityClassType p_entityType )
+IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_entityType )
 {
     GamePlayer            *pPlayer;
     GameEntity            *pEntity;
@@ -320,16 +322,16 @@ Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
     return g_Game->Map()->GetNearestCell(new CellFeature(p_parameters));
 }
 //////////////////////////////////////////////////////////////////////////
-bool AdapterEx::IsValidEntityState( ObjectStateType p_entityState, const RankedStates &p_rankedStates)
+bool AdapterEx::IsValidEntityState(ObjectStateType p_entityState, const RankedStates &p_rankedStates)
 {
-    return GetEntityStateIndex(p_entityState,p_rankedStates) != -1;
+    return GetEntityStateIndex(p_entityState,p_rankedStates) != INVALID_INDEX;
 }
 //////////////////////////////////////////////////////////////////////////
-int AdapterEx::GetEntityStateIndex( ObjectStateType p_entityState, const RankedStates &p_rankedStates )
+int AdapterEx::GetEntityStateIndex(ObjectStateType p_entityState, const RankedStates &p_rankedStates)
 {
     int size = p_rankedStates.size();
     for (int i = 0; i < size; i++)
         if (p_rankedStates[i] == p_entityState)
             return i;
-    return -1;
+    return INVALID_INDEX;
 }
