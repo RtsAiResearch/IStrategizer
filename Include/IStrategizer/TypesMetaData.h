@@ -150,9 +150,8 @@ namespace IStrategizer
 #define Prefix_ParameterType PARAM
     enum ParameterType
     {
-        PARAM_EntityClassId    = 0x20a00,
-        PARAM_START            = 0x20a00,
-        PARAM_Amount,
+        PARAM_EntityClassId = 0x20a00,
+        PARAM_START = 0x20a00,
         PARAM_EntityObjectId,
         PARAM_AttributeId,
         PARAM_OperatorId,
@@ -193,6 +192,7 @@ namespace IStrategizer
         PARAM_ObjectStateType,
         PARAM_Distance,
         PARAM_DeployType,
+		PARAM_Amount,
         PARAM_REALVALEND,
         PARAM_END = PARAM_REALVALEND
     };
