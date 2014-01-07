@@ -1,5 +1,4 @@
 #include "EngineAssist.h"
-#include "Colony.h"
 #include "ErrorCode.h"
 
 #ifndef RTSGAME_H
@@ -294,34 +293,6 @@ int EngineAssist::GetRequiredBuildingsForBaseType(PlayerType p_playerIndex, Base
     return m_retVal;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::GetPlayerColonies(IN PlayerType p_playerType, OUT vector<Colony>& p_colonies)
-{
-    vector< pair<int, int> > m_points;
-
-    vector<TID> m_entitiesIds;
-    GameEntity* m_entity;
-    GamePlayer* m_player = g_Game->GetPlayer(p_playerType);
-    int m_posX, m_posY;
-
-    m_player->Entities(m_entitiesIds);
-
-    for(int i = 0, size = m_entitiesIds.size(); i < size; ++i)
-    {
-        m_entity = m_player->GetEntity(m_entitiesIds[i]);
-        assert(m_entity != nullptr);
-        m_posX = m_entity->Attr(EOATTR_PosX);
-        m_posY = m_entity->Attr(EOATTR_PosY);
-        m_points.push_back(make_pair(m_posX, m_posY));
-    }
-
-    Colony m_colony;
-    MathHelper::MinimumBoundingBox(m_points, m_colony.Top, m_colony.Left, m_colony.Width, m_colony.Height);
-
-    p_colonies.push_back(m_colony);
-
-    return ERR_Success;
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetPlayerAttribute(IN PlayerType p_playerType, IN PlayerAttribute p_attribute, OUT int& p_value)
 {
     assert(0);
@@ -336,30 +307,6 @@ int EngineAssist::GetPlayerAttribute(IN PlayerType p_playerType, IN PlayerAttrib
 
     }*/
     return ERR_InvalidParameterValue;
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::GetPlayerColonyObjectsId(PlayerType p_playerType, const Colony& p_colony, vector<TID>& p_objectIds)
-{
-    vector<TID> m_allEntityIds;
-    
-    GamePlayer* m_player =  g_Game->GetPlayer(p_playerType);
-    int m_posX, m_posY;
-
-    m_player->Entities(m_allEntityIds);
-
-    for(int i = 0, size = m_allEntityIds.size(); i < size; ++i)
-    {
-        GameEntity* m_currentEntity = m_player->GetEntity(m_allEntityIds[i]);
-        m_posX = m_currentEntity->Attr(EOATTR_PosX);
-        m_posY = m_currentEntity->Attr(EOATTR_PosY);
-
-        if(p_colony.Contains(m_posX, m_posY))
-        {
-            p_objectIds.push_back(m_currentEntity->Id());
-        }
-    }
-
-    return ERR_Success;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetEntityObjectFromEntityClass(PlayerType p_playerIndex, EntityClassType p_classId, const vector<TID>& p_execludedIds, TID& p_objectId)
@@ -441,46 +388,6 @@ int EngineAssist::GetFilterCount(PlayerType p_playerIndex, FilterType p_filterIn
                 break;
             }
         }
-    }
-
-    return ERR_Success;
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::GetFilterCount(PlayerType p_playerType, FilterType p_filterIndex, IN const Colony& p_colony, int& p_count)
-{
-    //assert(p_playerType != PLAYER_Any);
-    vector< pair<int, int> > m_buildingPoints;
-    vector< pair<int, int> > m_unitsPoints;
-    vector<TID> m_entities;
-    GamePlayer* m_player;
-    GameEntity* m_entity;
-    GameType*   m_entityType;
-    int         m_xPos, m_yPos;
-
-    m_player = g_Game->GetPlayer(p_playerType);
-    m_player->Entities(m_entities);
-    for(int i = 0, size = m_entities.size(); i < size; ++i)
-    {
-        m_entity = m_player->GetEntity(m_entities[i]);
-        m_xPos = m_entity->Attr(EOATTR_PosX);
-        m_yPos = m_entity->Attr(EOATTR_PosY);
-
-        m_entityType = g_Game->GetEntityType(m_entity->Type());
-        if(m_entityType->Attr(ECATTR_IsBuilding))
-            m_buildingPoints.push_back(make_pair(m_xPos, m_yPos));
-        else
-            m_unitsPoints.push_back(make_pair(m_xPos, m_yPos));
-    }
-
-    // Colony should be cached somewhere
-    Colony m_colony;
-    MathHelper::MinimumBoundingBox(m_buildingPoints, m_colony.Top, m_colony.Left, m_colony.Width, m_colony.Height);
-
-    p_count = m_buildingPoints.size();
-
-    for(unsigned i = 0; i < m_unitsPoints.size(); i++)
-    {
-        p_count += MathHelper::RectangleMembership(p_colony.Top, p_colony.Left, p_colony.Width, p_colony.Height, m_unitsPoints[i].first, m_unitsPoints[i].second);
     }
 
     return ERR_Success;

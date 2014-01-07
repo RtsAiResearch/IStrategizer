@@ -20,8 +20,6 @@ using namespace IStrategizer;
 using namespace Serialization;
 using namespace std;
 
-#define INVALID_INDEX = -1;
-
 typedef vector<ObjectStateType> RankedStates;
 
 typedef pair<TID, ObjectStateType> UnitEntry;

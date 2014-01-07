@@ -113,7 +113,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\WorldClock.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\Colony.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CombinatoricsAndOrGraph.cpp" />
@@ -178,7 +177,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\MessagePump.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MessagePumpObserver.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MessagePumpSubject.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\Colony.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Comparer.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Delegate.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ErrorCode.h" />

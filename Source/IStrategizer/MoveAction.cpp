@@ -39,12 +39,15 @@ void MoveAction::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consum
 //----------------------------------------------------------------------------------------------
 bool MoveAction::AliveConditionsSatisfied(RtsGame* pRtsGame)
 {
+    bool satisfied = false;
     if (g_Assist.DoesEntityObjectExist(_entityId))
     {
         GameEntity* pEntity = pRtsGame->Self()->GetEntity(_entityId);
         assert(pEntity);
-        return pEntity->Attr(EOATTR_IsMoving);
+        satisfied = (bool)pEntity->Attr(EOATTR_IsMoving);
     }
+
+    return satisfied;
 }
 //----------------------------------------------------------------------------------------------
 bool MoveAction::SuccessConditionsSatisfied(RtsGame* pRtsGame)

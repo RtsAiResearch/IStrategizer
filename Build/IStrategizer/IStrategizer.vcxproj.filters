@@ -183,9 +183,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\Colony.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
@@ -373,9 +370,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MessagePumpSubject.h">
       <Filter>Header Files\Engine Components\MessageSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\Colony.h">
-      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Comparer.h">
       <Filter>Header Files\Utilities</Filter>

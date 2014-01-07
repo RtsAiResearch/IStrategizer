@@ -11,6 +11,8 @@
 #include "InfluenceMap.h"
 #endif
 
+#define INVALID_INDEX (-1)
+
 namespace IStrategizer
 {
     class CellFeature;
