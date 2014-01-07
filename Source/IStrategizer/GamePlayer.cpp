@@ -76,14 +76,6 @@ GameEntity* GamePlayer::GetEntity(TID p_id)
         pEntity = m_entities[p_id];
         assert(pEntity);
     }
-    else
-    {
-        pEntity = FetchEntity(p_id);
-        assert(pEntity);
-
-        if (pEntity->getOwner() == m_id)
-            m_entities[p_id] = pEntity;
-    }
 
     return pEntity;
 }
