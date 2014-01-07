@@ -61,7 +61,7 @@ int CheckEntityObjectSimilarity::QuerySimilarityFeatures()
         itr++)
     {
         int m_attributeValue;
-        int m_returnValue = g_Assist.GetEntityObjectAttribute(_playerType, _conditionParameters[PARAM_EntityObjectId], *itr, m_attributeValue);
+        int m_returnValue = EngineAssist::Instance(g_Game).GetEntityObjectAttribute(_playerType, _conditionParameters[PARAM_EntityObjectId], *itr, m_attributeValue);
 
         if(m_returnValue != ERR_Success)
             return m_returnValue;
