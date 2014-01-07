@@ -112,6 +112,8 @@ namespace IStrategizer
         ACTIONEX_Research,
         ACTIONEX_AttackGround,
         ACTIONEX_AttackEntity,
+        ACTIONEX_MoveEntity,
+        ACTIONEX_MoveAction,
         ACTIONEX_END
     };
 #define Define_ActionType \
@@ -120,7 +122,9 @@ namespace IStrategizer
     Enums[ACTIONEX_BuildEx] = "Build v2"; \
     Enums[ACTIONEX_Research] = "Research"; \
     Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
-    Enums[ACTIONEX_AttackEntity] = "Attack Entity";
+    Enums[ACTIONEX_AttackEntity] = "Move Entity"; \
+    Enums[ACTIONEX_MoveAction] = "Move"; \
+    Enums[ACTIONEX_MoveEntity] = "Attack Entity";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
     enum ConditionType
@@ -169,6 +173,7 @@ namespace IStrategizer
         PARAM_WorkerObjectId,
         PARAM_BuildingObjectId,
         PARAM_NumberOfPrimaryResources,
+        PARAM_ObjectStateType,
         PARAM_REALVALSTART = PARAM_NumberOfPrimaryResources,
         PARAM_NumberOfSecondaryResources,
         PARAM_NumberOfSupplyResources,
@@ -227,6 +232,7 @@ namespace IStrategizer
     Enums[PARAM_AlliedCriticalBuildingsCount] = "Allied Critical Buildings Count"; \
     Enums[PARAM_DistanceToEnemyBase] = "Distance To Enemy Base"; \
     Enums[PARAM_DistanceToBase] = "Distance To Base"; \
+    Enums[PARAM_ObjectStateType] = "Object State Type"; \
     //---------------------------------------------------------------------------
 #define Prefix_ExecutionStateType ESTATE
     enum ExecutionStateType
