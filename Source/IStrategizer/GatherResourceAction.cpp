@@ -15,9 +15,8 @@
 IStrategizer::GatherResourceAction::GatherResourceAction():
 	Action(ACTIONEX_GatherResource), _gatherIssued(false), _gatherStarted(false)
 {
-	// Todo [AMR]: Add _params initialization after running case visualizer
-	// Add new node with gather goal and specify the values for it.
 	_params[PARAM_ResourceId] = RESOURCE_START;
+	_params[PARAM_EntityClassId] = ECLASS_START;
 	_params[PARAM_Amount] = 0;
 	CellFeature::Null().To(_params);
 }
@@ -30,10 +29,10 @@ IStrategizer::GatherResourceAction::GatherResourceAction(const PlanStepParameter
 
 bool IStrategizer::GatherResourceAction::PreconditionsSatisfied()
 {
-	bool success = false;
+	bool success = true;
 	// Todo [AMR]:
 	// ensure that a worker is available
-	// ensure that resource of resourceID is available with needed amount 
+	// ensure that resource of resourceID is available with needed amount
 
 	return success;
 }
@@ -46,9 +45,9 @@ bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied()
 	bool resourceBeingGathered = false;
 	bool success = false;
 
-	// 1. Gatherer is still alive 
+	// 1. Gatherer is still alive
 	gathererExist = g_Assist.DoesEntityObjectExist(_gathererId);
-	
+
 	if (gathererExist)
 	{
 		if(_gatherStarted)
@@ -62,7 +61,7 @@ bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied()
 			if(gathererBusy)
 			{
 				//Todo [AMR]: 3. There is still remaining resource to be gathered
-				
+
 
 			}
 		}
@@ -71,7 +70,7 @@ bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied()
 			success = true;
 		}
 	}
-	
+
 	return success;
 }
 
@@ -80,7 +79,7 @@ bool IStrategizer::GatherResourceAction::SuccessConditionsSatisfied()
 	// Todo [AMR]:
 	// Check that the worker has gathered needed amount of the resource
 
-	// Find a way to track the resource gathered by that worker since 
+	// Find a way to track the resource gathered by that worker since
 	// gathering is issued
 	bool success = false;
 	bool resourceBeingGathered = false;
@@ -118,8 +117,35 @@ void IStrategizer::GatherResourceAction::OnFailure( const WorldClock& p_clock )
 
 bool IStrategizer::GatherResourceAction::ExecuteAux( const WorldClock& p_clock )
 {
+	EntityClassType gathererType = (EntityClassType)_params[PARAM_EntityClassId];
+	EntityClassType resourceType = (EntityClassType)_params[PARAM_ResourceId];
+	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+
 	bool executionSuccess = false;
 
+	// Adapt gatherer
+	_gathererId = pAdapter->AdaptWorkerForGathering();
+
+	if(_gathererId != INVALID_TID)
+	{
+		EntityClassType resourceType = (EntityClassType)_params[PARAM_ResourceId];
+
+		// Initialize gather state
+		_gatherStarted = false;
+
+		// Adapt resource id
+		assert(pAdapter);
+		_resourceId = pAdapter->AdaptResourceEntityForGathering(resourceType, Parameters());
+		if(_resourceId != INVALID_TID)
+		{
+			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(_gathererId);
+			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(_resourceId);
+			assert(pGameGatherer);
+			assert(pGameResource);
+			pGameGatherer->Lock(this);
+			executionSuccess = pGameGatherer->GatherResourceEntity(_resourceId);
+		}
+	}
 
 	return executionSuccess;
 }
