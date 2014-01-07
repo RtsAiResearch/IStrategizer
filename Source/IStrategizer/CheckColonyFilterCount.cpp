@@ -24,7 +24,7 @@ bool CheckColonyFilterCount::Evaluate()
 
     ConditionEx::Evaluate();
 
-     m_returnValue = g_Assist.GetFilterCount(_playerType, (FilterType)_conditionParameters[PARAM_FilterTypeId], 
+     m_returnValue = EngineAssist::Instance(g_Game).GetFilterCount(_playerType, (FilterType)_conditionParameters[PARAM_FilterTypeId], 
             _colony, _currentCount);
 
     if (m_returnValue == ERR_Success)

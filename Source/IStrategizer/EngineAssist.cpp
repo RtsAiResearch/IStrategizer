@@ -39,18 +39,25 @@ using namespace IStrategizer;
 using namespace std;
 
 //------------------------------------------------------------------------------------------------------------------------------------------------
+EngineAssist& EngineAssist::Instance(RtsGame* p_rtsGameObject)
+{
+    static EngineAssist m_instance;
+    m_instance.rtsGameObject = p_rtsGameObject;
+    return m_instance;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetRequiredResources(PlayerType p_playerIndex, TID p_classId, Cost& p_requiredCost)
 {
     if (BELONG(EntityClassType, p_classId))
     {
-        const GameType* m_type = g_Game->GetEntityType((EntityClassType)p_classId);
+        const GameType* m_type = rtsGameObject->GetEntityType((EntityClassType)p_classId);
         p_requiredCost.Gold = m_type->RequiredResources()->Primary();
         p_requiredCost.Wood = m_type->RequiredResources()->Secondary();
         p_requiredCost.Food = m_type->RequiredResources()->Supply();
     }
     else if (BELONG(ResearchType, p_classId))
     {
-        const GameResearch* m_research = g_Game->GetResearch((ResearchType)p_classId);
+        const GameResearch* m_research = rtsGameObject->GetResearch((ResearchType)p_classId);
         p_requiredCost.Gold = m_research->RequiredResources()->Primary();
         p_requiredCost.Wood = m_research->RequiredResources()->Secondary();
         p_requiredCost.Food = m_research->RequiredResources()->Supply();
@@ -64,7 +71,7 @@ int EngineAssist::GetRequiredBuildings(PlayerType p_playerIndex, TID p_classId, 
     vector<ResearchType> requiredResearches;
     map<EntityClassType, unsigned> requiredBuildings;
 
-    g_Game->GetPlayer(p_playerIndex)->TechTree()->GetRequirements(p_classId, requiredResearches, requiredBuildings);
+    rtsGameObject->GetPlayer(p_playerIndex)->TechTree()->GetRequirements(p_classId, requiredResearches, requiredBuildings);
     
     for (map<EntityClassType, unsigned>::const_iterator i = requiredBuildings.begin(); i != requiredBuildings.end(); ++i)
     {
@@ -79,7 +86,7 @@ int EngineAssist::GetRequiredResearches(PlayerType p_playerIndex, TID p_classId,
     vector<ResearchType> requiredResearches;
     map<EntityClassType, unsigned> requiredBuildings;
 
-    g_Game->GetPlayer(p_playerIndex)->TechTree()->GetRequirements(p_classId, requiredResearches, requiredBuildings);
+    rtsGameObject->GetPlayer(p_playerIndex)->TechTree()->GetRequirements(p_classId, requiredResearches, requiredBuildings);
     
     for (vector<ResearchType>::const_iterator i = requiredResearches.begin(); i != requiredResearches.end(); ++i)
     {
@@ -89,60 +96,33 @@ int EngineAssist::GetRequiredResearches(PlayerType p_playerIndex, TID p_classId,
     return ERR_Success;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::GetEntityClassAttribute(PlayerType p_playerIndex, EntityClassType p_classId, EntityClassAttribute p_attributeId, int& p_value)
-{
-    assert(0);
-
-    //vector<TID> m_entitiyIds;
-    //GamePlayer* m_player;
-    //GameEntity* m_entity;
-    //// FIXME:Count Attr!
-    //switch(p_attributeId)
-    //{
-    //case ECATTR_Count:
-    //    m_player = g_Game->GetPlayer(p_playerIndex);
-    //    m_player->Entities(m_entitiyIds);
-    //    p_value = 0;
-    //    for(int i = 0, size = m_entitiyIds.size(); i < size; ++i)
-    //    {
-    //        m_entity = m_player->GetEntity(m_entitiyIds[i]);
-    //        if(m_entity->Type() == p_classId)
-    //            ++p_value;
-    //    }
-    //    break;
-    //default:
-    //    p_value = g_Game->GetEntityType(p_classId)->Attr(p_attributeId);
-    //}
-    return ERR_Success;
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetEntityObjectAttribute(IN PlayerType p_playerIndex, TID p_entityObjectId, EntityObjectAttribute p_attributeId, int& p_value)
 {
-    p_value = g_Game->GetPlayer(p_playerIndex)->GetEntity(p_entityObjectId)->Attr(p_attributeId);
+    p_value = rtsGameObject->GetPlayer(p_playerIndex)->GetEntity(p_entityObjectId)->Attr(p_attributeId);
     return ERR_Success;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetSourceBuilding(IN PlayerType p_playerIndex, TID p_entityClassId, EntityClassType& p_sourceBuildingId)
 {
-    p_sourceBuildingId =  g_Game->GetPlayer(p_playerIndex)->TechTree()->SourceEntity(p_entityClassId);
+    p_sourceBuildingId =  rtsGameObject->GetPlayer(p_playerIndex)->TechTree()->SourceEntity(p_entityClassId);
     return ERR_Success;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetObject(PlayerType p_playerIndex, TID p_entityObjectId)
 {
-    int m_exists = g_Game->GetPlayer(p_playerIndex)->GetEntity(p_entityObjectId) != nullptr;
+    int m_exists = rtsGameObject->GetPlayer(p_playerIndex)->GetEntity(p_entityObjectId) != nullptr;
     return ((m_exists) ? ERR_Success : ERR_EntityDoesNotExist);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::ResearchDone(PlayerType p_playerIndex, ResearchType p_researchId)
 {
-    int m_exists = g_Game->GetPlayer(p_playerIndex)->TechTree()->ResearchDone(p_researchId);
+    int m_exists = rtsGameObject->GetPlayer(p_playerIndex)->TechTree()->ResearchDone(p_researchId);
     return ((m_exists) ? ERR_Success : ERR_EntityDoesNotExist);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_resourceId, int& p_availableAmount)
 {
-    PlayerResources* m_resources = g_Game->GetPlayer(p_playerIndex)->Resources();
+    PlayerResources* m_resources = rtsGameObject->GetPlayer(p_playerIndex)->Resources();
 
     switch(p_resourceId)
     {
@@ -164,7 +144,7 @@ int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_res
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::ExecuteResearch(ResearchType p_researchId, TID p_sourceBuildingObjectId)
 {
-    GameEntity* m_entity = g_Game->Self()->GetEntity(p_sourceBuildingObjectId);
+    GameEntity* m_entity = rtsGameObject->Self()->GetEntity(p_sourceBuildingObjectId);
     int ret = m_entity->Research(p_researchId);
     m_entity->Unlock(nullptr);
 
@@ -173,7 +153,7 @@ int EngineAssist::ExecuteResearch(ResearchType p_researchId, TID p_sourceBuildin
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::ExecuteBuild(EntityClassType p_buildingClassId, TID p_workerObjectId, const Vector2& p_pos, TID& p_buildingObjectId)
 {
-    GameEntity* m_entity = g_Game->Self()->GetEntity(p_workerObjectId);
+    GameEntity* m_entity = rtsGameObject->Self()->GetEntity(p_workerObjectId);
     int ret = m_entity->Build(p_buildingClassId, p_pos);
 
     // FIXME: not possible in every game to get the building id ahead of time
@@ -185,10 +165,10 @@ int EngineAssist::ExecuteBuild(EntityClassType p_buildingClassId, TID p_workerOb
     return ret;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-//FIX ME: conflict between p_posDescription and p_trainerObjectId
+//FIXME: conflict between p_posDescription and p_trainerObjectId
 int EngineAssist::ExecuteTrain(TID p_trainerObjectId, EntityClassType p_entityClassId)
 {
-    GameEntity* m_entity = g_Game->Self()->GetEntity(p_trainerObjectId);
+    GameEntity* m_entity = rtsGameObject->Self()->GetEntity(p_trainerObjectId);
     int ret = m_entity->Train(p_entityClassId);
     m_entity->Unlock(nullptr);
 
@@ -197,7 +177,7 @@ int EngineAssist::ExecuteTrain(TID p_trainerObjectId, EntityClassType p_entityCl
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::ExecuteAttackGround(TID p_entityObjectId, const Vector2& p_pos)
 {
-    GameEntity* m_entity = g_Game->Self()->GetEntity(p_entityObjectId);
+    GameEntity* m_entity = rtsGameObject->Self()->GetEntity(p_entityObjectId);
     int ret = m_entity->AttackGround(p_pos);
     m_entity->Unlock(nullptr);
 
@@ -206,7 +186,7 @@ int EngineAssist::ExecuteAttackGround(TID p_entityObjectId, const Vector2& p_pos
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::ExecuteAttackEntity(TID p_attackerObjectId, PlayerType p_opponentIndex, TID p_targetEntityObjectId)
 {
-    GameEntity* m_entity = g_Game->Self()->GetEntity(p_attackerObjectId);
+    GameEntity* m_entity = rtsGameObject->Self()->GetEntity(p_attackerObjectId);
     assert(m_entity->IsLocked());
     int ret = m_entity->AttackEntity(p_targetEntityObjectId);
 
@@ -220,50 +200,10 @@ int EngineAssist::GetForceDescriptionEntities(PlayerType p_playerType, const For
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetCurrentPlayers(vector<PlayerType>& p_playerIds)
 {
-    g_Game->Players(p_playerIds);
+    rtsGameObject->Players(p_playerIds);
     return ERR_Success;
 }
 ////------------------------------------------------------------------------------------------------------------------------------------------------
-//int EngineAssist::ComputeShallowFeature(PlayerType p_playerType, ShallowFeatureType p_sFeatureId, double& p_value)
-//{
-//    int m_tempInt = INT_MAX;
-//
-//    switch(p_sFeatureId)
-//    {
-//    case SFEATURE_AlterOfStormsCount: GetEntityClassAttribute(p_playerType, ECLASS_AltarOfStorms, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_AxeThrowerCount: GetEntityClassAttribute(p_playerType, ECLASS_AxeThrower, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_CatapultCount: GetEntityClassAttribute(p_playerType, ECLASS_Catapult, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_DragonCount: GetEntityClassAttribute(p_playerType, ECLASS_Dragon, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_PeonCount: GetEntityClassAttribute(p_playerType, ECLASS_Peon, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_OgreCount: GetEntityClassAttribute(p_playerType, ECLASS_Ogre, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_DragonRoostCount: GetEntityClassAttribute(p_playerType, ECLASS_DragonRoost, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_GruntCount: GetEntityClassAttribute(p_playerType, ECLASS_Grunt, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_PigFarmCount: GetEntityClassAttribute(p_playerType, ECLASS_PigFarm, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_BarracksCount: GetEntityClassAttribute(p_playerType, ECLASS_OrcBarracks, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_BlackSmithCount: GetEntityClassAttribute(p_playerType, ECLASS_OrcBlacksmith, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_OrgeMoundCount: GetEntityClassAttribute(p_playerType, ECLASS_OgreMound, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_GreatHallCount: GetEntityClassAttribute(p_playerType, ECLASS_GreatHall, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_TrollLumberMillCount: GetEntityClassAttribute(p_playerType, ECLASS_TrollLumberMill, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_GuardTowerCount: GetEntityClassAttribute(p_playerType, ECLASS_OrcGuardTower, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_WatchTowerCount: GetEntityClassAttribute(p_playerType, ECLASS_OrcWatchTower, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_CanonTowerCount: GetEntityClassAttribute(p_playerType, ECLASS_OrcCannonTower, ECATTR_Count, m_tempInt); break;
-//    case SFEATURE_WoodAmount: GetResourceAmount(p_playerType, RESOURCE_Secondary, m_tempInt); break;
-//    case SFEATURE_FoodAmount: GetResourceAmount(p_playerType, RESOURCE_Supply, m_tempInt); break;
-//    case SFEATURE_GoldAmount: GetResourceAmount(p_playerType, RESOURCE_Primary, m_tempInt); break;
-// case SFEATURE_AttackingEntitiesCount: GetFilterCount(p_playerType, FILTER_AttackingUnit, Vector2::Null(), m_tempInt); break;
-//    case SFEATURE_AllEntitiesCount: GetPlayerAttribute(p_playerType, PATTRIBUTE_EntitiesCount, m_tempInt); break;
-//    }
-//
-//    if (m_tempInt != INT_MAX) { p_value = m_tempInt; }
-//
-//    return ERR_Success;
-//}
-////------------------------------------------------------------------------------------------------------------------------------------------------
-//int EngineAssist::ComputeDeepFeature(PlayerType p_playerType, DeepFeatureType p_dFeatureId, double& p_value)
-//{
-//    return ERR_Success;
-//}
-//------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetRequiredBuildingsForBaseType(PlayerType p_playerIndex, BaseType p_baseTypeId, map<EntityClassType, int>& p_requiredBuildings)
 {
     TEntity m_buildingGameId;
@@ -288,7 +228,7 @@ int EngineAssist::GetPlayerColonies(IN PlayerType p_playerType, OUT vector<Colon
 
     vector<TID> m_entitiesIds;
     GameEntity* m_entity;
-    GamePlayer* m_player = g_Game->GetPlayer(p_playerType);
+    GamePlayer* m_player = rtsGameObject->GetPlayer(p_playerType);
     int m_posX, m_posY;
 
     m_player->Entities(m_entitiesIds);
@@ -310,27 +250,11 @@ int EngineAssist::GetPlayerColonies(IN PlayerType p_playerType, OUT vector<Colon
     return ERR_Success;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-int EngineAssist::GetPlayerAttribute(IN PlayerType p_playerType, IN PlayerAttribute p_attribute, OUT int& p_value)
-{
-    assert(0);
-   /* vector<TID> m_entities;
-
-    switch(p_attribute)
-    {
-    case PATTRIBUTE_EntitiesCount:
-        g_Game->GetPlayer(p_playerType)->Entities(m_entities);
-        p_value = m_entities.size();
-        return ERR_Success;
-
-    }*/
-    return ERR_InvalidParameterValue;
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetPlayerColonyObjectsId(PlayerType p_playerType, const Colony& p_colony, vector<TID>& p_objectIds)
 {
     vector<TID> m_allEntityIds;
     
-    GamePlayer* m_player =  g_Game->GetPlayer(p_playerType);
+    GamePlayer* m_player =  rtsGameObject->GetPlayer(p_playerType);
     int m_posX, m_posY;
 
     m_player->Entities(m_allEntityIds);
@@ -353,7 +277,7 @@ int EngineAssist::GetPlayerColonyObjectsId(PlayerType p_playerType, const Colony
 int EngineAssist::GetEntityObjectFromEntityClass(PlayerType p_playerIndex, EntityClassType p_classId, const vector<TID>& p_execludedIds, TID& p_objectId)
 {
     vector<TID> m_entityIds;
-    GamePlayer* m_player = g_Game->GetPlayer(p_playerIndex);
+    GamePlayer* m_player = rtsGameObject->GetPlayer(p_playerIndex);
     GameEntity* m_entity = nullptr;
     m_player->Entities(m_entityIds);
 
@@ -375,14 +299,14 @@ int EngineAssist::GetEntityObjectFromEntityClass(PlayerType p_playerIndex, Entit
 //------------------------------------------------------------------------------------------------------------------------------------------------
 int EngineAssist::GetTireBaseBuildingId(PlayerType p_playerType, BaseType p_baseType, EntityClassType& p_entityClassId)
 {
-    p_entityClassId = g_Game->GetPlayer(p_playerType)->TechTree()->TireBaseBuilding(p_baseType);
+    p_entityClassId = rtsGameObject->GetPlayer(p_playerType)->TechTree()->TireBaseBuilding(p_baseType);
     return ERR_Success;
 }
 //----------------------------------------------------------------------------------------------
 int EngineAssist::GetEntities(IN PlayerType p_playerType, IN const vector<EntityClassType>& p_entityTypes, OUT vector<TID>& p_entityObjects)
 {
     vector<TID> m_entityIds;
-    GamePlayer* m_player = g_Game->GetPlayer(p_playerType);
+    GamePlayer* m_player = rtsGameObject->GetPlayer(p_playerType);
     GameEntity* m_currentEntity;
     m_player->Entities(m_entityIds);
 
@@ -410,12 +334,12 @@ int EngineAssist::GetFilterCount(PlayerType p_playerIndex, FilterType p_filterIn
     else
     {
         vector<TID> allEntities;
-        GamePlayer* m_player = g_Game->GetPlayer(p_playerIndex);
+        GamePlayer* m_player = rtsGameObject->GetPlayer(p_playerIndex);
         m_player->Entities(allEntities);
         p_count = 0;
         for(int i = 0, size = allEntities.size(); i < size; ++i)
         {
-            type = g_Game->GetEntityType(m_player->GetEntity(allEntities[i])->Type());
+            type = rtsGameObject->GetEntityType(m_player->GetEntity(allEntities[i])->Type());
             switch(p_filterIndex)
             {
             case FILTER_AnyBuilding:
@@ -445,7 +369,7 @@ int EngineAssist::GetFilterCount(PlayerType p_playerType, FilterType p_filterInd
     GameType*   m_entityType;
     int         m_xPos, m_yPos;
 
-    m_player = g_Game->GetPlayer(p_playerType);
+    m_player = rtsGameObject->GetPlayer(p_playerType);
     m_player->Entities(m_entities);
     for(int i = 0, size = m_entities.size(); i < size; ++i)
     {
@@ -453,14 +377,14 @@ int EngineAssist::GetFilterCount(PlayerType p_playerType, FilterType p_filterInd
         m_xPos = m_entity->Attr(EOATTR_PosX);
         m_yPos = m_entity->Attr(EOATTR_PosY);
 
-        m_entityType = g_Game->GetEntityType(m_entity->Type());
+        m_entityType = rtsGameObject->GetEntityType(m_entity->Type());
         if(m_entityType->Attr(ECATTR_IsBuilding))
             m_buildingPoints.push_back(make_pair(m_xPos, m_yPos));
         else
             m_unitsPoints.push_back(make_pair(m_xPos, m_yPos));
     }
 
-    // Colony should be cached somewhere
+    //FIXME: Colony should be cached somewhere
     Colony m_colony;
     MathHelper::MinimumBoundingBox(m_buildingPoints, m_colony.Top, m_colony.Left, m_colony.Width, m_colony.Height);
 
@@ -482,7 +406,7 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
     unsigned matches;
     bool        exist;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
+    pPlayer = rtsGameObject->GetPlayer(p_playerType);
     assert(pPlayer);
     pPlayer->Entities(entities);
 
@@ -512,7 +436,7 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
     unsigned matches;
     bool        exist = false;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
+    pPlayer = rtsGameObject->GetPlayer(p_playerType);
     assert(pPlayer);
     pPlayer->Entities(entities);
 
@@ -530,7 +454,7 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
 
             if (pEntity->Type() == itr->first)
             {
-                pType = g_Game->GetEntityType(itr->first);
+                pType = rtsGameObject->GetEntityType(itr->first);
                 assert(pType);
 
                 // Building are considered exist if and only if it is constructed
@@ -560,7 +484,7 @@ bool EngineAssist::DoesEntityObjectExist(TID p_entityObject, PlayerType p_player
     GameEntity *pEntity;
     bool exist;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
+    pPlayer = rtsGameObject->GetPlayer(p_playerType);
     assert(pPlayer);
 
     pEntity = pPlayer->GetEntity(p_entityObject);
@@ -575,7 +499,7 @@ bool EngineAssist::DoesEntityObjectExist(const vector<TID> &p_entityObjects, Pla
     GameEntity *pEntity;
     bool exist = true;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
+    pPlayer = rtsGameObject->GetPlayer(p_playerType);
     assert(pPlayer);
 
     for (size_t i = 0, size = p_entityObjects.size(); i < size; ++i)
@@ -597,7 +521,7 @@ int EngineAssist::ResearchesDone(const vector<ResearchType> &p_researchTypes, bo
     GamePlayer *pPlayer;
     GameTechTree *pTechTree;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
+    pPlayer = rtsGameObject->GetPlayer(p_playerType);
     assert(pPlayer);
 
     pTechTree = pPlayer->TechTree();
@@ -630,7 +554,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
     map<EntityClassType, unsigned> reqEntities;
     int ret = ERR_Success;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
+    pPlayer = rtsGameObject->GetPlayer(p_playerType);
     assert(pPlayer);
 
     pTechTree = pPlayer->TechTree();
@@ -649,7 +573,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
     // 2. Additional required entities exist
     if (p_satisfied)
     {
-        p_satisfied = g_Assist.DoesEntityClassExist(reqEntities);
+        p_satisfied = DoesEntityClassExist(reqEntities);
     }
 
     // 3. Source building exist
@@ -658,7 +582,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
         sourceEntity = pTechTree->SourceEntity(p_entityOrResearchType);
         assert(sourceEntity != ECLASS_END);
 
-        p_satisfied = g_Assist.DoesEntityClassExist(make_pair(sourceEntity, 1));
+        p_satisfied = DoesEntityClassExist(make_pair(sourceEntity, 1));
     }
 
     // 4. Required resources exist
@@ -666,7 +590,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
     {
         if (BELONG(ResearchType, p_entityOrResearchType))
         {
-            pResearchType = g_Game->GetResearch((ResearchType)p_entityOrResearchType);
+            pResearchType = rtsGameObject->GetResearch((ResearchType)p_entityOrResearchType);
             assert(pResearchType);
             
             pReqResources = pResearchType->RequiredResources();
@@ -674,7 +598,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
         }
         else if (BELONG(EntityClassType, p_entityOrResearchType))
         {
-            pEntityType = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType);
+            pEntityType = rtsGameObject->GetEntityType((EntityClassType)p_entityOrResearchType);
             assert(pEntityType);
 
             pReqResources = pEntityType->RequiredResources();
@@ -693,7 +617,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance)
 {
-    GameEntity* entity = g_Game->Self()->GetEntity(p_entityId);
+    GameEntity* entity = rtsGameObject->Self()->GetEntity(p_entityId);
     assert(entity);
     Vector2 currentPosition = entity->GetPosition();
 

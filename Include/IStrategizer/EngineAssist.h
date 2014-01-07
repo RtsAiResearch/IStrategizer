@@ -3,13 +3,12 @@
 
 #include <vector>
 #include <map>
-#define ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE 64
 
-//#ifndef GAMEENGINECROSSMAPPING_H
-//#include "GameEngineCrossMapping.h"
-//#endif
 #include "Misc.h"
 #include "EngineData.h"
+#include "RtsGame.h"
+
+#define ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE 64
 
 namespace IStrategizer
 {
@@ -19,14 +18,14 @@ namespace IStrategizer
     class EngineAssist
     {
     protected:
+        RtsGame* rtsGameObject;
         EngineAssist() {}
 
     public:
-        static EngineAssist& Instance() { static EngineAssist m_instance; return m_instance; }
+        static EngineAssist& Instance(RtsGame* p_rtsGameObject);
         CheckReturn int GetRequiredResources(IN PlayerType p_playerIndex, IN TID p_classId, OUT Cost& p_requiredCost);
         CheckReturn int GetRequiredBuildings(IN PlayerType p_playerIndex, IN TID p_classId, OUT vector<EntityClassType>& p_requiredBuildings);
         CheckReturn int GetRequiredResearches(IN PlayerType p_playerIndex, IN TID p_classId, OUT vector<ResearchType>& p_requiredResearches);
-        CheckReturn int GetEntityClassAttribute(IN PlayerType p_playerIndex, IN EntityClassType p_classId, IN EntityClassAttribute p_attributeId, OUT int& p_value);
         CheckReturn int GetEntityObjectAttribute(IN PlayerType p_playerIndex, IN TID p_entityObjectId, IN EntityObjectAttribute p_attributeId, OUT int& p_value);
         CheckReturn int GetEntityObjectFromEntityClass(IN PlayerType p_playerIndex, IN EntityClassType p_classId, IN const vector<TID>& p_execludedIds, OUT TID& p_objectId);
         CheckReturn int GetSourceBuilding(IN PlayerType p_playerIndex, IN TID p_entityClassId, OUT EntityClassType& p_sourceBuildingId);
@@ -43,7 +42,6 @@ namespace IStrategizer
         CheckReturn int GetRequiredBuildingsForBaseType(IN PlayerType p_playerIndex, IN BaseType p_baseTypeId, OUT map<EntityClassType, int>& p_requiredBuildings);
         CheckReturn int GetForceDescriptionEntities(IN PlayerType p_playerType, IN const ForceDescriptionEx& p_forceDescription, OUT map<EntityClassType, int>& p_entities);
         CheckReturn int GetCurrentPlayers(OUT vector<PlayerType>& p_playerIds);
-        CheckReturn int GetPlayerAttribute(IN PlayerType p_playerType, IN PlayerAttribute p_attribute, OUT int& p_value);
         CheckReturn int GetPlayerColonies(IN PlayerType p_playerType, OUT vector<Colony>& p_colonies);
         CheckReturn int GetTireBaseBuildingId(IN PlayerType p_playerType, IN BaseType p_baseType, OUT EntityClassType& p_entityClassId);
         CheckReturn int GetPlayerColonyObjectsId(IN PlayerType p_playerType, IN const Colony& p_colony, OUT vector<int>& p_objectIds);
@@ -56,8 +54,6 @@ namespace IStrategizer
         CheckReturn int ResearchesDone(IN const vector<ResearchType> &p_researchTypes, OUT bool &p_done, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn int PrerequisitesSatisfied(IN int p_entityOrResearchType, OUT bool &p_satisfied, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance);
-
-#define g_Assist EngineAssist::Instance()
     };
 }
 

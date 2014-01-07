@@ -69,17 +69,17 @@ void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 bool AttackEntityAction::PreconditionsSatisfied()
 {
     EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-    bool attackerTypeExists = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
+    bool attackerTypeExists = EngineAssist::Instance(g_Game).DoesEntityClassExist(MakePair(attacker, 1));
 
     EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    bool targetTypeExists = g_Assist.DoesEntityClassExist(MakePair(target, 1), PLAYER_Enemy);
+    bool targetTypeExists = EngineAssist::Instance(g_Game).DoesEntityClassExist(MakePair(target, 1), PLAYER_Enemy);
 
     return attackerTypeExists && targetTypeExists;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::AliveConditionsSatisfied()
 {
-    return g_Assist.DoesEntityObjectExist(_attackerId);
+    return EngineAssist::Instance(g_Game).DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied()

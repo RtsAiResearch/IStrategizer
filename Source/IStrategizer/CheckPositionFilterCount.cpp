@@ -19,7 +19,7 @@ bool CheckPositionFilterCount::Evaluate()
     ConditionEx::Evaluate();
 
     //FIXME : Vector2:Null() is wrong , original was PositionFeatureVector::From(_conditionParameters)
-    m_returnValue = g_Assist.GetFilterCount(_playerType, (FilterType)_conditionParameters[PARAM_FilterTypeId], 
+    m_returnValue = EngineAssist::Instance(g_Game).GetFilterCount(_playerType, (FilterType)_conditionParameters[PARAM_FilterTypeId], 
         Vector2::Null(), _currentCount);
 
     if (m_returnValue == ERR_Success)

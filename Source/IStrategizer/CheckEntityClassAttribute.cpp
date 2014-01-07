@@ -30,9 +30,14 @@ bool CheckEntityClassAttribute::Evaluate()
 //---------------------------------------------------------------------------------------------------
 void CheckEntityClassAttribute::CheckForSingleEntity(EntityClassType p_entityClassType)
 {
-    int m_returnValue = g_Assist.GetEntityClassAttribute((PlayerType)_conditionParameters[PARAM_PlayerId], p_entityClassType, 
+    //FIXME: there is no known implementation for EngineAssist::GetEntityClassAttribute
+    
+    /*
+    int m_returnValue = EngineAssist::Instance(g_Game).GetEntityClassAttribute((PlayerType)_conditionParameters[PARAM_PlayerId], p_entityClassType, 
         (EntityClassAttribute)_conditionParameters[PARAM_AttributeId], _currentValue);
+    */
 
+    int m_returnValue = ERR_Success;
     ConditionEx::Evaluate();
 
     if (m_returnValue == ERR_Success)

@@ -60,12 +60,12 @@ void AttackGroundAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
 bool AttackGroundAction::PreconditionsSatisfied()
 {
     EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-    return g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
+    return EngineAssist::Instance(g_Game).DoesEntityClassExist(MakePair(attacker, 1));
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied()
 {
-    return g_Assist.DoesEntityObjectExist(_attackerId);
+    return EngineAssist::Instance(g_Game).DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied()

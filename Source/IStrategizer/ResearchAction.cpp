@@ -34,12 +34,12 @@ bool ResearchAction::PreconditionsSatisfied()
     bool success = false;
 
     researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
-    success = g_Assist.DoesEntityClassExist(make_pair(researcherType, 1));
+    success = EngineAssist::Instance(g_Game).DoesEntityClassExist(make_pair(researcherType, 1));
 
     if (!success)
         return false;
 
-    g_Assist.PrerequisitesSatisfied(researchType, success);
+    EngineAssist::Instance(g_Game).PrerequisitesSatisfied(researchType, success);
 
     return success;
 }
@@ -48,7 +48,7 @@ bool ResearchAction::AliveConditionsSatisfied()
 {
     bool success = false;
 
-    success = g_Assist.DoesEntityObjectExist(_researcherId);
+    success = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_researcherId);
 
     return success;
 }

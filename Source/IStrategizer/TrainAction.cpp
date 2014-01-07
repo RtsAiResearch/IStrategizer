@@ -75,13 +75,13 @@ bool TrainAction::PreconditionsSatisfied()
 
     // Condition #1: make sure that the source building exists
     trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
-    success = g_Assist.DoesEntityClassExist(make_pair(trainerType, 1));
+    success = EngineAssist::Instance(g_Game).DoesEntityClassExist(make_pair(trainerType, 1));
 
     if (!success)
         return false;
 
     // Condition #2: assure that we have enough resources
-    g_Assist.PrerequisitesSatisfied(traineeType, success);
+    EngineAssist::Instance(g_Game).PrerequisitesSatisfied(traineeType, success);
 
     return success;
 }
@@ -95,7 +95,7 @@ bool TrainAction::AliveConditionsSatisfied()
     bool success = false;
 
     // 1. Trainer building exist
-    trainerExist = g_Assist.DoesEntityObjectExist(_trainerId);
+    trainerExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_trainerId);
 
     if (trainerExist)
     {
@@ -110,7 +110,7 @@ bool TrainAction::AliveConditionsSatisfied()
             if (trainerBusy)
             {
                 // 3. The trainee unit object exist, i.e not cancel
-                traineeExist = g_Assist.DoesEntityObjectExist(_traineeId);
+                traineeExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_traineeId);
 
                 if (traineeExist)
                 {
@@ -142,7 +142,7 @@ bool TrainAction::SuccessConditionsSatisfied()
     if (_trainStarted)
     {
         // 1. Trainee unit object exist
-        bool traineeExist = g_Assist.DoesEntityObjectExist(_traineeId);
+        bool traineeExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_traineeId);
 
         if (traineeExist)
         {

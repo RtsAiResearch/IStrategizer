@@ -28,7 +28,7 @@ bool CheckEntityObjectAttribute::Evaluate()
         _conditionParameters[PARAM_EntityObjectId] = *_entityObjectIdPtr;
     }
 
-    int m_returnValue = g_Assist.GetEntityObjectAttribute((PlayerType)_conditionParameters[PARAM_PlayerId], _conditionParameters[PARAM_EntityObjectId], 
+    int m_returnValue = EngineAssist::Instance(g_Game).GetEntityObjectAttribute((PlayerType)_conditionParameters[PARAM_PlayerId], _conditionParameters[PARAM_EntityObjectId], 
         (EntityObjectAttribute)_conditionParameters[PARAM_AttributeId], _currentValue);
 
     ConditionEx::Evaluate();
