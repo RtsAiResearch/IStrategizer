@@ -1,23 +1,41 @@
 #include "GatherResourceAction.h"
+#include <cassert>
+#include "Vector2.h"
+#include "OnlineCaseBasedPlannerEx.h"
+#include "AbstractAdapter.h"
+#include "CellFeature.h"
+#include "CaseBasedReasonerEx.h"
+#include "DataMessage.h"
+#include "EngineAssist.h"
+#include "RtsGame.h"
+#include "GamePlayer.h"
+#include "GameType.h"
+#include "GameEntity.h"
 
 IStrategizer::GatherResourceAction::GatherResourceAction():
-	Action(ACTIONEX_GatherResource)
+	Action(ACTIONEX_GatherResource), _gatherIssued(false), _gatherStarted(false)
 {
 	// Todo [AMR]: Add _params initialization after running case visualizer
 	// Add new node with gather goal and specify the values for it.
+	_params[PARAM_ResourceId] = RESOURCE_START;
+	_params[PARAM_Amount] = 0;
+	CellFeature::Null().To(_params);
 }
 
 IStrategizer::GatherResourceAction::GatherResourceAction(const PlanStepParameters& p_parameters):
-	Action(ACTIONEX_GatherResource, p_parameters)
+	Action(ACTIONEX_GatherResource, p_parameters), _gatherIssued(false), _gatherStarted(false)
 {
 
 }
 
 bool IStrategizer::GatherResourceAction::PreconditionsSatisfied()
 {
+	bool success = false;
+	// Todo [AMR]:
 	// ensure that a worker is available
-	EntityClassType
 	// ensure that resource of resourceID is available with needed amount 
+
+	return success;
 }
 
 bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied()
@@ -29,7 +47,7 @@ bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied()
 	bool success = false;
 
 	// 1. Gatherer is still alive 
-	gathererExist = g_Assist.IsEntityObjectExist(_gathererId);
+	gathererExist = g_Assist.DoesEntityObjectExist(_gathererId);
 	
 	if (gathererExist)
 	{
@@ -59,6 +77,7 @@ bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied()
 
 bool IStrategizer::GatherResourceAction::SuccessConditionsSatisfied()
 {
+	// Todo [AMR]:
 	// Check that the worker has gathered needed amount of the resource
 
 	// Find a way to track the resource gathered by that worker since 
@@ -71,6 +90,7 @@ bool IStrategizer::GatherResourceAction::SuccessConditionsSatisfied()
 		// 1. Resource unit object exist
 	}
 
+	return success;
 }
 
 void IStrategizer::GatherResourceAction::OnSucccess( const WorldClock& p_clock )
@@ -98,7 +118,10 @@ void IStrategizer::GatherResourceAction::OnFailure( const WorldClock& p_clock )
 
 bool IStrategizer::GatherResourceAction::ExecuteAux( const WorldClock& p_clock )
 {
+	bool executionSuccess = false;
 
+
+	return executionSuccess;
 }
 
 void IStrategizer::GatherResourceAction::HandleMessage( Message* p_pMsg, bool& p_consumed )
