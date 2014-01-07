@@ -19,33 +19,37 @@
 #include <QGridLayout>
 #include "WorldClock.h"
 #include <iostream>
-#include "PlannerViewWidget.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "OnlinePlanExpansionExecutionEx.h"
 #include "GameTraceCollector.h"
+#include "GraphScene.h"
+#include "PlanGraphView.h"
+#include "OlcbpPlanGraphAdapter.h"
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
 using namespace BWAPI;
 using namespace std;
 
-#define TilePositionFromUnitPosition(UnitPos) (UnitPos / 32)
-#define UnitPositionFromTilePosition(TilePos) (TilePos * 32)
+#define TilePositionFromUnitPosition(UnitPos)    (UnitPos / 32)
+#define UnitPositionFromTilePosition(TilePos)    (TilePos * 32)
 
 ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
-: QMainWindow(parent, flags),
-m_pIStrategizer(nullptr),
-m_pGameModel(nullptr),
-m_isLearning(false),
-m_pTraceCollector(nullptr)
+    : QMainWindow(parent, flags),
+    m_pIStrategizer(nullptr),
+    m_pGameModel(nullptr),
+    m_isLearning(false),
+    m_pTraceCollector(nullptr)
 {
     ui.setupUi(this);
+    IStrategizer::Init();
+    g_MessagePump.RegisterForMessage(MSG_PlanStructureChange, this);
 }
 //////////////////////////////////////////////////////////////////////////
 ClientMain::~ClientMain()
 {
     FinalizeIStrategizer();
-    
+
     delete m_pTraceCollector;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -65,8 +69,8 @@ void ClientMain::InitIStrategizer()
 
         if (Broodwar->isReplay())
         {
-      Playerset players = Broodwar->getPlayers();
-      TID playerToObserveID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
+            Playerset players = Broodwar->getPlayers();
+            TID playerToObserveID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
 
             m_pTraceCollector = new GameTraceCollector(playerToObserveID);
             param.Phase = PHASE_Offline;
@@ -85,13 +89,14 @@ void ClientMain::InitIStrategizer()
 
     m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
     m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
-    // m_pPlannerViewWdgt->Planner(m_pIStrategizer->Planner()->ExpansionExecution());
+    m_pPlanGraphView->View(new OlcbpPlanGraphAdapter(*m_pIStrategizer->Planner()->ExpansionExecution()));
+    //m_pPlannerViewWdgt->Init(m_pIStrategizer->Planner()->ExpansionExecution());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
 {
-    IMViewWidget *pIMView = nullptr;
-    QGridLayout *gridLayout;
+    IMViewWidget    *pIMView = nullptr;
+    QGridLayout        *gridLayout;
 
     // 1. Init Building Data IM
     pIMView = new IMViewWidget;
@@ -120,16 +125,36 @@ void ClientMain::InitIMView()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitPlannerView()
 {
+    InitIdLookup();
+
+    GraphScene *pGraphScene = new GraphScene(&m_idLookup);
+    m_pPlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
+    ui.plannerGridLayout->addWidget(m_pPlanGraphView);
+
+    /* ui.gridLayout->addWidget(m_pPlanGraphView);
+
     m_pPlannerViewWdgt = new PlannerViewWidget;
+    ui.plannerGridLayout->addWidget(m_pPlannerViewWdgt);*/
 
-    QGridLayout *gridLayout;
+    //QGridLayout        *gridLayout;
 
-    gridLayout = new QGridLayout;
-    ui.tbPlanner->setLayout(gridLayout);
-    ui.tbPlanner->layout()->setAlignment(Qt::AlignCenter);
-    ui.tbPlanner->layout()->addWidget(m_pPlannerViewWdgt);
-    ui.tbPlanner->layout()->setMargin(0);
-    ui.tbPlanner->layout()->setSpacing(0);
+    //gridLayout = new QGridLayout;
+    //ui.tbPlanner->setLayout(gridLayout);
+    //ui.tbPlanner->layout()->setAlignment(Qt::AlignCenter);
+    //ui.tbPlanner->layout()->addWidget(m_pPlannerViewWdgt);
+    //ui.tbPlanner->layout()->setMargin(0);
+    //ui.tbPlanner->layout()->setSpacing(0);
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::InitIdLookup()
+{
+    for (unsigned currID = 0; currID < ENUMS_SIZE; ++currID)
+    {
+        if (Enums[currID] != nullptr)
+        {
+            m_idLookup.SetByFirst(currID, string(Enums[currID]));
+        }
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeIStrategizer()
@@ -139,13 +164,10 @@ void ClientMain::FinalizeIStrategizer()
 
     delete m_pGameModel;
     m_pGameModel = nullptr;
-
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeViews()
 {
-    m_pPlannerViewWdgt->Planner(nullptr);
-
     for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->SetIM(nullptr);
 }
@@ -156,7 +178,7 @@ void ClientMain::showEvent(QShowEvent *pEvent)
     {
         InitClient();
         InitIMView();
-        //InitPlannerView();
+        InitPlannerView();
     }
 
     QMainWindow::showEvent(pEvent);
@@ -196,8 +218,8 @@ void ClientMain::OnSendText(const string& p_text)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData *pData = nullptr;
-    EntityCreateMessage *pMsg = nullptr;
+    EntityMessageData    *pData = nullptr;
+    EntityCreateMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
     assert(pData);
@@ -225,8 +247,8 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData *pData = nullptr;
-    EntityDestroyMessage *pMsg = nullptr;
+    EntityMessageData        *pData = nullptr;
+    EntityDestroyMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
     assert(pData);
@@ -255,8 +277,8 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData *pData = nullptr;
-    EntityRenegadeMessage *pMsg = nullptr;
+    EntityMessageData        *pData = nullptr;
+    EntityRenegadeMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
     assert(pData);
@@ -294,17 +316,17 @@ void ClientMain::OnMatchStart()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchEnd(bool p_isWinner)
 {
-    GameEndMessageData *pData = nullptr;
-    GameEndMessage *pMsg = nullptr;
+    GameEndMessageData    *pData = nullptr;
+    GameEndMessage        *pMsg = nullptr;
 
     pData = new GameEndMessageData;
     assert(pData);
-    
+
     pData->IsWinner = p_isWinner;
 
     pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSG_GameEnd, pData);
     assert(pMsg);
-    
+
     g_MessagePump.Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -374,7 +396,7 @@ void ClientMain::UpdateViews()
     for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->update();
 
-    // m_pPlannerViewWdgt->update();
+    // m_pPlanGraphView->update();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitResourceManager()
@@ -402,5 +424,15 @@ void ClientMain::OnGameFrame()
     {
         assert(m_pTraceCollector);
         m_pTraceCollector->OnGameFrame();
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::NotifyMessegeSent(Message* p_pMessage)
+{
+    assert(p_pMessage != nullptr);
+
+    if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange)
+    {
+        m_pPlanGraphView->OnPlanStructureChange();
     }
 }

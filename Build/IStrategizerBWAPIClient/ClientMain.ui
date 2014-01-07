@@ -177,6 +177,11 @@
      <attribute name="title">
       <string>Planner</string>
      </attribute>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="plannerGridLayout"/>
+      </item>
+     </layout>
     </widget>
     <widget class="QWidget" name="tbBuildingIM">
      <attribute name="title">
