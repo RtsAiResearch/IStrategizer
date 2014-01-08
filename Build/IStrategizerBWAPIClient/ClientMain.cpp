@@ -89,8 +89,11 @@ void ClientMain::InitIStrategizer()
 
     m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
     m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+
+    // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
+    // and the engine Enums[*] table is fully initialized
+    InitIdLookup();
     m_pPlanGraphView->View(new OlcbpPlanGraphAdapter(*m_pIStrategizer->Planner()->ExpansionExecution()));
-    //m_pPlannerViewWdgt->Init(m_pIStrategizer->Planner()->ExpansionExecution());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
@@ -125,25 +128,9 @@ void ClientMain::InitIMView()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitPlannerView()
 {
-    InitIdLookup();
-
     GraphScene *pGraphScene = new GraphScene(&m_idLookup);
     m_pPlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
     ui.plannerGridLayout->addWidget(m_pPlanGraphView);
-
-    /* ui.gridLayout->addWidget(m_pPlanGraphView);
-
-    m_pPlannerViewWdgt = new PlannerViewWidget;
-    ui.plannerGridLayout->addWidget(m_pPlannerViewWdgt);*/
-
-    //QGridLayout        *gridLayout;
-
-    //gridLayout = new QGridLayout;
-    //ui.tbPlanner->setLayout(gridLayout);
-    //ui.tbPlanner->layout()->setAlignment(Qt::AlignCenter);
-    //ui.tbPlanner->layout()->addWidget(m_pPlannerViewWdgt);
-    //ui.tbPlanner->layout()->setMargin(0);
-    //ui.tbPlanner->layout()->setSpacing(0);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()

@@ -2,6 +2,7 @@
 #include "BWAPI.h"
 #include <sstream>
 #include <fstream>
+#include "IdLookupReader.h"
 
 using namespace BWAPI;
 using namespace std;
