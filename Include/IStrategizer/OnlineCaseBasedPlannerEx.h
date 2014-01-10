@@ -15,8 +15,8 @@ namespace IStrategizer
     class OnlineCaseBasedPlannerEx
     {
     private:
-        CaseBasedReasonerEx* _caseBasedReasoner;
-        OnlinePlanExpansionExecutionEx* _onlineExpansionExecution;
+        CaseBasedReasonerEx*            _caseBasedReasoner;
+        OnlinePlanExpansionExecutionEx*    _onlineExpansionExecution;
 
     public:
         OnlineCaseBasedPlannerEx();
@@ -24,10 +24,11 @@ namespace IStrategizer
         void       Init(GoalEx *p_initialGoal);
         const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
         const OnlinePlanExpansionExecutionEx* ExpansionExecution() const { return _onlineExpansionExecution; }
+        OnlinePlanExpansionExecutionEx* ExpansionExecution() { return _onlineExpansionExecution; }
         virtual    ~OnlineCaseBasedPlannerEx();
     };
 }
 
 extern IStrategizer::OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner;
 
-#endif // OnlineCaseBasedPlannerEx
+#endif    // OnlineCaseBasedPlannerEx

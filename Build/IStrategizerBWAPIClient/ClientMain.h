@@ -3,21 +3,24 @@
 
 #include <QMainWindow>
 #include "ui_ClientMain.h"
+#include "CrossMap.h"
 #include "BwapiClient.h"
 #include <Windows.h>
 #include <vector>
+#include "MessagePumpObserver.h"
 
 namespace IStrategizer
 {
     class RtsGame;
     class IStrategizerEx;
     class GameTraceCollector;
+    class PlanGraphView;
 }
 
 class IMViewWidget;
 class PlannerViewWidget;
 
-class ClientMain : public QMainWindow, public BwapiClient
+class ClientMain : public QMainWindow, public BwapiClient, public IStrategizer::MessagePumpObserver
 {
     Q_OBJECT
 
@@ -48,15 +51,19 @@ private:
     void FinalizeIStrategizer();
     void InitPlannerView();
     void FinalizeViews();
-    Ui::ClientMainClass ui;
-    IStrategizer::IStrategizerEx *m_pIStrategizer;
-    IStrategizer::RtsGame *m_pGameModel;
-    IMViewWidget *m_pBldngDataIMWdgt;
-    IMViewWidget *m_pGrndCtrlIMWdgt;
-    std::vector<IMViewWidget*> m_IMViews;
-    PlannerViewWidget *m_pPlannerViewWdgt;
-    bool m_isLearning;
+    void InitIdLookup();
+    void NotifyMessegeSent(IStrategizer::Message* p_pMessage);
+
+    Ui::ClientMainClass                ui;
+    IStrategizer::IStrategizerEx    *m_pIStrategizer;
+    IStrategizer::RtsGame            *m_pGameModel;
+    IMViewWidget                    *m_pBldngDataIMWdgt;
+    IMViewWidget                    *m_pGrndCtrlIMWdgt;
+    std::vector<IMViewWidget*>        m_IMViews;
+    bool                            m_isLearning;
     IStrategizer::GameTraceCollector *m_pTraceCollector;
+    IStrategizer::CrossMap<unsigned, std::string>    m_idLookup;
+    IStrategizer::PlanGraphView *m_pPlanGraphView;
 };
 
 #endif // CLIENTMAIN_H

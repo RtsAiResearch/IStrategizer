@@ -24,7 +24,7 @@ private:
     void InitEntityIdents();
     void InitUpgradeIdents();
     void InitTechIdents();
-  void InitActions();
+    void InitActions();
     bool m_initialized;
 
 public:
