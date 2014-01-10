@@ -11,22 +11,22 @@ namespace IStrategizer
 #define Prefix_EntityClassType ECLASS
     enum EntityClassType
     {
-        ECLASS_START = 0x20000,
-        ECLASS_END = 0x20100,
+        ECLASS_START    = 0x20000,
+        ECLASS_END        = 0x20100,
     };
     //---------------------------------------------------------------------------
 #define Prefix_ResearchType RESEARCH
     enum ResearchType
     {
         RESEARCH_START  = 0x20100,
-        RESEARCH_END = 0x20200
+        RESEARCH_END    = 0x20200
     };
     //---------------------------------------------------------------------------
 #define Prefix_ResourceType RESOURCE
     enum ResourceType
     {
-        RESOURCE_Primary = 0x20200,
-        RESOURCE_START = 0x20200,
+        RESOURCE_Primary    = 0x20200,
+        RESOURCE_START        = 0x20200,
         RESOURCE_Secondary,
         RESOURCE_Supply,
         RESOURCE_END
@@ -39,8 +39,8 @@ namespace IStrategizer
 #define Prefix_PlayerType PLAYER
     enum PlayerType
     {
-        PLAYER_Self = 0x20300,
-        PLAYER_START = 0x20300,
+        PLAYER_Self        = 0x20300,
+        PLAYER_START    = 0x20300,
         PLAYER_Enemy,
         PLAYER_Neutral,
         PLAYER_END
@@ -53,8 +53,8 @@ namespace IStrategizer
 #define Prefix_AttackType ATTACK
     enum AttackType
     {
-        ATTACK_Defeat     = 0x20400,
-        ATTACK_START = 0x20400,
+        ATTACK_Defeat        = 0x20400,
+        ATTACK_START        = 0x20400,
         //ATTACK_Attrition,
         ATTACK_END
     };
@@ -78,8 +78,8 @@ namespace IStrategizer
 #define Prefix_FilterType FILTER
     enum FilterType
     {
-        FILTER_AttackingUnit = 0x20600,
-        FILTER_START = 0x20600,
+        FILTER_AttackingUnit    = 0x20600,
+        FILTER_START            = 0x20600,
         FILTER_AnyEntity,
         FILTER_AnyBuilding,
         FILTER_AnyUnit,
@@ -89,7 +89,7 @@ namespace IStrategizer
 #define Prefix_GoalType GOALEX
     enum GoalType
     {
-        GOALEX_WinGame = 0x20700, 
+        GOALEX_WinGame    = 0x20700,                
         GOALEX_START    = 0x20700,
         GOALEX_BuildBase,
         GOALEX_TrainForce,
@@ -122,14 +122,15 @@ namespace IStrategizer
     Enums[ACTIONEX_BuildEx] = "Build v2"; \
     Enums[ACTIONEX_Research] = "Research"; \
     Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
-    Enums[ACTIONEX_MoveEntity] = "Move Entity Action";\
-    Enums[ACTIONEX_MoveAction] = "Move Action";
+    Enums[ACTIONEX_AttackEntity] = "Move Entity"; \
+    Enums[ACTIONEX_MoveAction] = "Move"; \
+    Enums[ACTIONEX_MoveEntity] = "Attack Entity";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
     enum ConditionType
     {
-        CONDEX_EntityClassExist = 0x20900,
-        CONDEX_START = 0x20900,
+        CONDEX_EntityClassExist        = 0x20900,
+        CONDEX_START                = 0x20900,
         CONDEX_EntityObjectExist,
         CONDEX_CheckEntityClassAttribute,
         CONDEX_CheckEntityObjectAttribute,
@@ -146,8 +147,8 @@ namespace IStrategizer
 #define Prefix_ParameterType PARAM
     enum ParameterType
     {
-        PARAM_EntityClassId = 0x20a00,
-        PARAM_START = 0x20a00,
+        PARAM_EntityClassId    = 0x20a00,
+        PARAM_START            = 0x20a00,
         PARAM_Amount,
         PARAM_EntityObjectId,
         PARAM_AttributeId,
@@ -172,6 +173,7 @@ namespace IStrategizer
         PARAM_WorkerObjectId,
         PARAM_BuildingObjectId,
         PARAM_NumberOfPrimaryResources,
+        PARAM_ObjectStateType,
         PARAM_REALVALSTART = PARAM_NumberOfPrimaryResources,
         PARAM_NumberOfSecondaryResources,
         PARAM_NumberOfSupplyResources,
@@ -187,7 +189,6 @@ namespace IStrategizer
         PARAM_AlliedCriticalBuildingsCount,
         PARAM_DistanceToEnemyBase,
         PARAM_DistanceToBase,
-        PARAM_ObjectStateType,
         PARAM_REALVALEND,
         PARAM_END = PARAM_REALVALEND
     };
@@ -231,14 +232,14 @@ namespace IStrategizer
     Enums[PARAM_AlliedCriticalBuildingsCount] = "Allied Critical Buildings Count"; \
     Enums[PARAM_DistanceToEnemyBase] = "Distance To Enemy Base"; \
     Enums[PARAM_DistanceToBase] = "Distance To Base"; \
-    Enums[PARAM_ObjectStateType] = "Object State Type";\
+    Enums[PARAM_ObjectStateType] = "Object State Type"; \
     //---------------------------------------------------------------------------
 #define Prefix_ExecutionStateType ESTATE
     enum ExecutionStateType
     {
-        ESTATE_NotPrepared = 0x20b00,
-        ESTATE_START = 0x20b00,
-        ESTATE_Pending, 
+        ESTATE_NotPrepared    = 0x20b00,
+        ESTATE_START        = 0x20b00,
+        ESTATE_Pending,    
         ESTATE_Executing,
         ESTATE_Succeeded,
         ESTATE_Failed,
@@ -255,7 +256,7 @@ namespace IStrategizer
 #define Prefix_RelationalOperatorType RELOP
     enum RelationalOperatorType
     {
-        RELOP_LessThan = 0x20c00,
+        RELOP_LessThan    = 0x20c00,
         RELOP_START     = 0x20c00,
         RELOP_LessThanOrEqual,
         RELOP_GreaterThan,
@@ -268,8 +269,8 @@ namespace IStrategizer
 #define Prefix_ObjectStateType OBJSTATE
     enum ObjectStateType
     {
-        OBJSTATE_BeingConstructed = 0x20d00,
-        OBJSTATE_START = 0x20d00,
+        OBJSTATE_BeingConstructed    = 0x20d00,
+        OBJSTATE_START                = 0x20d00,
         OBJSTATE_Idle,
         OBJSTATE_Moving,
         OBJSTATE_Constructing,
@@ -292,8 +293,8 @@ namespace IStrategizer
 #define Prefix_StrategyType STRTYPE
     enum StrategyType
     {
-        STRTYPE_EarlyTierRush = 0x20e00,
-        STRTYPE_START = 0x20e00,
+        STRTYPE_EarlyTierRush    = 0x20e00,
+        STRTYPE_START            = 0x20e00,
         STRTYPE_END
     };
 #define Define_StrategyType \
@@ -302,8 +303,8 @@ namespace IStrategizer
 #define Prefix_BaseType BASETYPE
     enum BaseType
     {
-        BASETYPE_Tier1 = 0x20f00,
-        BASETYPE_START = 0x20f00,
+        BASETYPE_Tier1    = 0x20f00,
+        BASETYPE_START    = 0x20f00,
         BASETYPE_Tier2,
         BASETYPE_Tier3,
         BASETYPE_END
@@ -316,22 +317,22 @@ namespace IStrategizer
 #define Prefix_ShallowFeatureType DFEATURE
     enum ShallowFeatureType
     {
-        SFEATURE_START = 0x21000,
-        SFEATURE_END = 0x21100
+        SFEATURE_START    = 0x21000,
+        SFEATURE_END    = 0x21100
     };
     //---------------------------------------------------------------------------
 #define Prefix_DeepFeatureType DFEATURE
     enum DeepFeatureType
     {
-        DFEATURE_START = 0x21100,
-        DFEATURE_END = 0x21200
+        DFEATURE_START    = 0x21100,
+        DFEATURE_END    = 0x21200
     };
     //---------------------------------------------------------------------------
 #define Prefix_SituationType SITUATION
     enum SituationType
     {
-        SITUATION_Misc = 0x21200,
-        SITUATION_START = 0x21200,
+        SITUATION_Misc    = 0x21200,
+        SITUATION_START    = 0x21200,
         SITUATION_Beginning,
         SITUATION_Defense,
         SITUATION_Attack,
@@ -344,8 +345,8 @@ namespace IStrategizer
 #define Prefix_PercentageType PRCNT
     enum PercentageType
     {
-        PRCNT_0 = 0x21300,
-        PRCNT_START = 0x21300,
+        PRCNT_0        = 0x21300,
+        PRCNT_START    = 0x21300,
         PRCNT_10,
         PRCNT_20,
         PRCNT_30,
@@ -374,8 +375,8 @@ namespace IStrategizer
 #define Prefix_PhaseType PHASE
     enum PhaseType
     {
-        PHASE_Online = 0x21400,
-        PHASE_START = 0x21400,
+        PHASE_Online    = 0x21400,
+        PHASE_START        = 0x21400,
         PHASE_Offline,
         PHASE_END,
     };
@@ -383,8 +384,8 @@ namespace IStrategizer
 #define Prefix_TileFlagType TILE
     enum TileFlagType
     {
-        TILE_Wood = 0x21500,
-        TILE_START = 0x21500,
+        TILE_Wood    = 0x21500,
+        TILE_START    = 0x21500,
         TILE_Rock,
         TILE_Land,
         TILE_Water,
@@ -418,8 +419,8 @@ namespace IStrategizer
 #define Prefix_GoalStateType GSTATE
     enum GoalStateType
     {
-        GSTATE_OpenReady = 0x21800,
-        GSTATE_START = 0x21800,
+        GSTATE_OpenReady    = 0x21800,
+        GSTATE_START        = 0x21800,
         GSTATE_OpenWaiting,
         GSTATE_Closed,
         GSTATE_END,
@@ -428,8 +429,8 @@ namespace IStrategizer
 #define Prefix_MessageType MSG
     enum MessageType
     {
-        MSG_GameActionLog = 0x21900,
-        MSG_START = 0x21900, 
+        MSG_GameActionLog                = 0x21900,
+        MSG_START            = 0x21900, 
         MSG_Input,
         MSG_GameExit,
         MSG_GameStart,
@@ -441,14 +442,15 @@ namespace IStrategizer
         MSG_EntityCreate,
         MSG_EntityDestroy,
         MSG_EntityRenegade,
+        MSG_PlanStructureChange,
         MSG_END
     };
     //---------------------------------------------------------------------------
 #define Prefix_UnitAttackType UTYPE
     enum UnitAttackType
     {
-        UTYPE_LandToAir = 0x21a00,
-        UTYPE_START = 0x21a00,
+        UTYPE_LandToAir        = 0x21a00,
+        UTYPE_START            = 0x21a00,
         UTYPE_LandToLand,
         UTYPE_LandToBoth,
         UTYPE_AirToAir,

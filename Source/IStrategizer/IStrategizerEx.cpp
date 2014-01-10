@@ -40,9 +40,6 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsG
     g_Game = p_rtsGame;
     g_Game->Init();
 
-    SerializationEssentials::Init();
-    IStrategizer::Init();
-
     PlanStepParameters params;
     params[PARAM_PlayerId] = _self;
     params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
