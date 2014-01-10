@@ -149,7 +149,7 @@ namespace IStrategizer
             return leaves;
         }
         //---------------------------------------------------------------------------
-        int AddNode(TValue p_value, unsigned p_index)
+        size_t AddNode(TValue p_value, size_t p_index)
         {
             for (unsigned i = 0; i < _adjacencyMatrix.size(); ++i)
             {

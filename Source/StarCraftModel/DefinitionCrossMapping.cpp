@@ -2,7 +2,6 @@
 #include "BWAPI.h"
 #include <sstream>
 #include <fstream>
-#include "IdLookupReader.h"
 
 using namespace BWAPI;
 using namespace std;
@@ -16,7 +15,7 @@ void DefinitionCrossMapping::Init()
     if (m_initialized)
     {
         // Because we depend on player actual Id in the game, and this class is singleton
-        // The starcraft ame may change player ids from game run to another
+        // The starcraft game may change player ids from game run to another
         PlayerMapping.Clear();
         InitPlayers();
         return;
