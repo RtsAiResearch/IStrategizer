@@ -54,6 +54,7 @@
 #endif
 #ifndef MOVEACTION_H
 #include "MoveAction.h"
+#endif
 #ifndef GATHERRESOURCEACTION_H
 #include "GatherResourceAction.h"
 #endif
