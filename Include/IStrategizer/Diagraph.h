@@ -28,7 +28,7 @@ namespace IStrategizer
 
     private:
         void MatchPath(Diagraph<TValue, TAnnotation> p_candidate, std::vector<int>& p_primaryMatched, 
-            std::vector<int>& p_candidateMatched, std::vector<int>& p_currentMatched, bool& p_match)
+            std::vector<int>& p_candidateMatched, std::vector<int>& p_currentMatched, bool& p_match) const
         {
             if (p_candidateMatched.empty())
             {
@@ -64,9 +64,10 @@ namespace IStrategizer
             }
         }
 
+
     protected:
         ///> type=vector(GraphNode(TValue,TAnnotation)*)
-        Serialization::SVector< GraphNode<TValue, TAnnotation>* > _adjacencyMatrix;
+        Serialization::SVector< GraphNode<TValue, TAnnotation>* >    _adjacencyMatrix;
     protected:
         void InitializeAddressesAux() { AddMemberAddress(1, &_adjacencyMatrix); }
     public:
@@ -82,11 +83,14 @@ namespace IStrategizer
         }
         //---------------------------------------------------------------------------
         inline GraphNode<TValue, TAnnotation>* operator[] (int p_index) const { return _adjacencyMatrix[p_index]; }
-        inline int IsConnected(int p_node1, int p_node2) const { return _adjacencyMatrix[p_node1]->IsConnected(p_node2); }
         //---------------------------------------------------------------------------
-        inline unsigned Size() const { return _adjacencyMatrix.size(); }
+        inline GraphNode<TValue, TAnnotation>* At (int p_index) const { return _adjacencyMatrix[p_index]; }
         //---------------------------------------------------------------------------
-        std::vector<int> GetInDegree()
+        inline int            IsConnected(int p_node1, int p_node2) const { return _adjacencyMatrix[p_node1]->IsConnected(p_node2); }
+        //---------------------------------------------------------------------------
+        inline size_t        Size() const { return _adjacencyMatrix.size(); }
+        //---------------------------------------------------------------------------
+        std::vector<int> GetInDegree() const
         {
             std::vector<int> m_inDegree = std::vector<int>(_adjacencyMatrix.size(), 0);
 
@@ -121,7 +125,7 @@ namespace IStrategizer
             return false;
         }
         //---------------------------------------------------------------------------
-        std::vector<int> GetRoots()
+        std::vector<int>    GetRoots() const
         {
             std::vector<int> roots;
 
@@ -136,7 +140,7 @@ namespace IStrategizer
             return roots;
         }
         //----------------------------------------------------------------------------------------------
-        std::vector<int> GetLeaves()
+        std::vector<int> GetLeaves() const
         {
             std::vector<int> leaves;
             for(unsigned i = 0; i < _adjacencyMatrix.size(); i++)
@@ -145,7 +149,7 @@ namespace IStrategizer
             return leaves;
         }
         //---------------------------------------------------------------------------
-        int AddNode(TValue p_value, unsigned p_index)
+        size_t AddNode(TValue p_value, size_t p_index)
         {
             for (unsigned i = 0; i < _adjacencyMatrix.size(); ++i)
             {
@@ -168,7 +172,7 @@ namespace IStrategizer
         //---------------------------------------------------------------------------
         TAnnotation GetConnectionAnnotation(int p_node1, int p_node2) { return _adjacencyMatrix[p_node1]->GetAnnotation(p_node2); }
         //---------------------------------------------------------------------------
-        std::vector<TAnnotation> TotalInAnnotations(int p_node)
+        std::vector<TAnnotation> TotalInAnnotations(int p_node) const
         {
             std::vector<TAnnotation> m_totalInAnnotations;
 
@@ -183,7 +187,7 @@ namespace IStrategizer
             return m_totalInAnnotations;
         }
         //---------------------------------------------------------------------------
-        std::vector<TAnnotation> TotalOutAnnotations(int p_node)
+        std::vector<TAnnotation> TotalOutAnnotations(int p_node) const
         {
             std::vector<TAnnotation> m_totalOutAnnotations;
 
@@ -208,14 +212,14 @@ namespace IStrategizer
             _adjacencyMatrix.erase(_adjacencyMatrix.begin() + p_node);
         }
         //---------------------------------------------------------------------------
-        bool IsSubGraph(Diagraph<TValue, TAnnotation> p_candidate, std::vector<int>& p_matchedIndexes, int& p_matchedCount)
+        bool IsSubGraph(Diagraph<TValue, TAnnotation> p_candidate, std::vector<int>& p_matchedIndexes, int& p_matchedCount) const
         {
             std::vector<int> m_roots = p_candidate.GetRoots();
-            std::vector<int> m_matching;
-            std::vector<int> m_primaryMatched;
-            std::vector<int> m_candidateMatched;
-            std::vector<int> m_currentMatched;
-            bool m_match = false;
+            std::vector<int>    m_matching;
+            std::vector<int>    m_primaryMatched;
+            std::vector<int>    m_candidateMatched;
+            std::vector<int>    m_currentMatched;
+            bool        m_match = false;
 
             m_candidateMatched.reserve(p_candidate._adjacencyMatrix.size());
             p_matchedIndexes.reserve(p_candidate._adjacencyMatrix.size());
@@ -258,7 +262,7 @@ namespace IStrategizer
             return (p_matchedCount > 0);
         }
         //---------------------------------------------------------------------------
-        std::vector<int> GetParents(int p_nodeIndex, std::vector<int> p_execluded = std::vector<int>())
+        std::vector<int> GetParents(int p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const
         {
             std::vector<int> m_parents;
 
@@ -274,7 +278,7 @@ namespace IStrategizer
             return m_parents;
         }
         //---------------------------------------------------------------------------
-        std::vector<int> GetChildren(int p_nodeIndex, std::vector<int> p_execluded = std::vector<int>())
+        std::vector<int> GetChildren(int p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const
         {
             std::vector<int> m_children;
 
@@ -292,37 +296,37 @@ namespace IStrategizer
         //---------------------------------------------------------------------------
         //void SubGraphSubstitution(std::vector<int> p_subGraphIndexes, TValue p_substitute)
         //{
-        // map<int, TAnnotation> m_parents;
-        // map<int, TAnnotation> m_children;
-        // std::vector<TAnnotation> m_pAnnotations;
-        // std::vector<TAnnotation> m_cAnnotations;
-        // std::vector<int> m_temp;
-        // int i;
+        //    map<int, TAnnotation>    m_parents;
+        //    map<int, TAnnotation>    m_children;
+        //    std::vector<TAnnotation>        m_pAnnotations;
+        //    std::vector<TAnnotation>        m_cAnnotations;
+        //    std::vector<int>                m_temp;
+        //    int                        i;
 
-        // sort(p_subGraphIndexes.begin(), p_subGraphIndexes.end(), less<int>());
+        //    sort(p_subGraphIndexes.begin(), p_subGraphIndexes.end(), less<int>());
 
-        // for (i = 0; i < p_subGraphIndexes.size(); ++i)
-        // {
-        // m_temp.clear();
-        // m_temp = GetChildren(p_subGraphIndexes[i]);
-        // 
-        // for(int j = 0; j < m_temp.size(); ++j) m_children[j] += GetConnectionAnnotation(i, j);
+        //    for (i = 0; i < p_subGraphIndexes.size(); ++i)
+        //    {
+        //        m_temp.clear();
+        //        m_temp = GetChildren(p_subGraphIndexes[i]);
+        //        
+        //        for(int j = 0; j < m_temp.size(); ++j) m_children[j] += GetConnectionAnnotation(i, j);
 
-        // m_temp.clear();
-        // m_temp = GetParents(p_subGraphIndexes[i]);
+        //        m_temp.clear();
+        //        m_temp = GetParents(p_subGraphIndexes[i]);
 
-        // for(int j = 0; j < m_temp.size(); ++j) m_parents[j] += GetConnectionAnnotation(j, i);
-        // }
+        //        for(int j = 0; j < m_temp.size(); ++j) m_parents[j] += GetConnectionAnnotation(j, i);
+        //    }
 
-        // AddNode(p_substitute, Size());
+        //    AddNode(p_substitute, Size());
 
-        // for (i = 0; i < m_parents.size(); ++i) Connect(m_parents[i], Size() - 1, m_pAnnotations[i]);
-        // for (i = 0; i < m_children.size(); ++i) Connect(Size() - 1, m_children[i], m_cAnnotations[i]);
+        //    for (i = 0; i < m_parents.size(); ++i)    Connect(m_parents[i], Size() - 1, m_pAnnotations[i]);
+        //    for (i = 0; i < m_children.size(); ++i) Connect(Size() - 1, m_children[i], m_cAnnotations[i]);
 
-        // for (int i = 0; i < p_subGraphIndexes.size(); ++i)
-        // {
-        // RemoveNode( p_subGraphIndexes[i] - i );
-        // }
+        //    for (int i = 0; i < p_subGraphIndexes.size(); ++i)
+        //    {
+        //        RemoveNode( p_subGraphIndexes[i] - i );
+        //    }
         //}
         //---------------------------------------------------------------------------
         void UpdateDiagraph()
@@ -347,4 +351,4 @@ namespace IStrategizer
     };
 }
 
-#endif // DIAGRAPH_H
+#endif    // DIAGRAPH_H

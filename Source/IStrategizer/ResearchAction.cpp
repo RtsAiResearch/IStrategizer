@@ -35,7 +35,7 @@ bool ResearchAction::AliveConditionsSatisfied(RtsGame* pRtsGame)
     bool success = false;
 
     success = g_Assist.DoesEntityObjectExist(_researcherId);
-
+    
     return success;
 }
 //----------------------------------------------------------------------------------------------

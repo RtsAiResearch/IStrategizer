@@ -15,7 +15,7 @@ void DefinitionCrossMapping::Init()
     if (m_initialized)
     {
         // Because we depend on player actual Id in the game, and this class is singleton
-        // The starcraft ame may change player ids from game run to another
+        // The starcraft game may change player ids from game run to another
         PlayerMapping.Clear();
         InitPlayers();
         return;
@@ -29,7 +29,7 @@ void DefinitionCrossMapping::Init()
     InitEntityIdents();
     InitUpgradeIdents();
     InitTechIdents();
-  InitActions();
+    InitActions();
 
     m_initialized = true;
 }
@@ -108,14 +108,14 @@ void DefinitionCrossMapping::InitPlayers()
     BWAPI::Player pPlayer;
 
     for (Playerset::iterator i = players.begin();
-    i != players.end();
+        i != players.end();
         ++i)
     {
         pPlayer = (*i);
 
-    // FIXME: PLAYER_Self is not valid if there are more than 1 human player
-    // for example in replays or network game
-    // Player types should be removed from the engine and only Player IDs should be used
+        // FIXME: PLAYER_Self is not valid if there are more than 1 human player
+        // for example in replays or network game
+        // Player types should be removed from the engine and only Player IDs should be used
         if(pPlayer->getType().getID() == PlayerTypes::Player.getID())
             m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Self));
         else if(pPlayer->getType().getID() == PlayerTypes::Computer.getID())
@@ -173,40 +173,27 @@ bool DefinitionCrossMapping::ExportGameIds(string p_exportPath)
 {
     fstream pen;
     stringstream stream;
+    const char* name;
     pen.open(p_exportPath.c_str(), ios::out);
 
     if (!pen.is_open())
         return false;
 
-    vector<TID> ids;
-    EntityIdentMapping.FirstValues(ids);
-    for(unsigned i = 0; i < ids.size(); ++i)
+    // TODO: Looping can be smart than this by looping only on required types
+    // without looping on the while ENUMS_SIZE
+    for (unsigned id = 0; id < ENUMS_SIZE; ++id)
     {
-        stream << EntityIdentMapping.GetByFirst(ids[i]);
-        if(i == 0)
-            stream << ' ' << EntityMapping.GetByFirst(ids[i]);
-    }
+        if (BELONG(EntityClassType, id) ||
+            BELONG(ResearchType, id))
+        {
+            name = Enums[id];
 
-    stream << endl;
-
-    ids.clear();
-    UpgradeIdentMapping.FirstValues(ids);
-    for(unsigned i = 0; i < ids.size(); ++i)
-    {
-        stream << UpgradeIdentMapping.GetByFirst(ids[i]);
-        if(i == 0)
-            stream << ' ' << UpgradeMapping.GetByFirst(ids[i]);
-    }
-
-    stream << endl;
-
-    ids.clear();
-    TechIdentMapping.FirstValues(ids);
-    for(unsigned i = 0; i < ids.size(); ++i)
-    {
-        stream << TechIdentMapping.GetByFirst(ids[i]);
-        if(i == 0)
-            stream << ' ' << TechMapping.GetByFirst(ids[i]);
+            // Has a name defined
+            if (name != nullptr)
+            {
+                stream << id << ' ' << name << endl;
+            }
+        }
     }
 
     pen << stream.str();
@@ -255,15 +242,14 @@ void DefinitionCrossMapping::ResearchTypes(vector<IStrategizer::ResearchType>& p
 //----------------------------------------------------------------------------------------------
 void DefinitionCrossMapping::InitActions()
 {
-  vector< pair<TID, ActionType> > actions;
+    vector< pair<TID, ActionType> > actions;
 
-  actions.push_back(make_pair(Orders::AttackMove.getID(), ACTIONEX_AttackGround));
-  actions.push_back(make_pair(Orders::AttackUnit.getID(), ACTIONEX_AttackEntity));
-  actions.push_back(make_pair(Orders::ResearchTech.getID(), ACTIONEX_Research));
-  actions.push_back(make_pair(Orders::Upgrade.getID(), ACTIONEX_Research));
-  actions.push_back(make_pair(Orders::PlaceBuilding.getID(), ACTIONEX_Build));
-  actions.push_back(make_pair(Orders::Train.getID(), ACTIONEX_Train));
-  actions.push_back(make_pair(Orders::Move.getID(), ACTIONEX_Move));
+    actions.push_back(make_pair(Orders::AttackMove.getID(), ACTIONEX_AttackGround));
+    actions.push_back(make_pair(Orders::AttackUnit.getID(), ACTIONEX_AttackEntity));
+    actions.push_back(make_pair(Orders::ResearchTech.getID(), ACTIONEX_Research));
+    actions.push_back(make_pair(Orders::Upgrade.getID(), ACTIONEX_Research));
+    actions.push_back(make_pair(Orders::PlaceBuilding.getID(), ACTIONEX_Build));
+    actions.push_back(make_pair(Orders::Train.getID(), ACTIONEX_Train));
 
-  ActionMapping = CrossMap<TID, IStrategizer::ActionType>(actions);
+    ActionMapping = CrossMap<TID, IStrategizer::ActionType>(actions);
 }

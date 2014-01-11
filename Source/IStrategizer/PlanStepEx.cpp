@@ -58,7 +58,7 @@ void PlanStepEx::Copy(IClonable* p_dest)
 
     m_dest->_stepTypeId = _stepTypeId;
     m_dest->_state = _state;
-    m_dest->_params = _params;
+    m_dest->_params                = _params;
     m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
     m_dest->_stepLevelType = _stepLevelType;
     m_dest->_data = _data;
@@ -117,12 +117,9 @@ std::string PlanStepEx::ToString() const
     char paramRealVal[16];
 
     const char* stepName = Enums[_stepTypeId];
-    unsigned paramIdx = 0;
-
-    stepDescription = '(';
+    unsigned    paramIdx = 0;
     stepDescription += stepName;
-    stepDescription += ')';
-    stepDescription += '<';
+    stepDescription += '(';
 
     for (PlanStepParameters::const_iterator itr = _params.begin();
         itr != _params.end(); ++itr)
@@ -143,6 +140,7 @@ std::string PlanStepEx::ToString() const
         // Use the Enums lookup table to translate it to string
         else
         {
+            assert(Enums[itr->second] != nullptr);
             stepDescription += Enums[itr->second];
         }
 
@@ -155,7 +153,7 @@ std::string PlanStepEx::ToString() const
         ++paramIdx;
     }
 
-    stepDescription += '>';
+    stepDescription += ')';
 
     return stepDescription;
 }

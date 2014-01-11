@@ -89,7 +89,7 @@ namespace IStrategizer
 #define Prefix_GoalType GOALEX
     enum GoalType
     {
-        GOALEX_WinGame  = 0x20700,                
+        GOALEX_WinGame    = 0x20700,                                
         GOALEX_START    = 0x20700,
         GOALEX_CollectResource,
         GOALEX_TrainForce,
@@ -123,8 +123,8 @@ namespace IStrategizer
     Enums[ACTIONEX_Research] = "Research"; \
     Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
     Enums[ACTIONEX_AttackEntity] = "Attack Entity"; \
-    Enums[ACTIONEX_MoveEntity] = "Move Entity Action";\
-    Enums[ACTIONEX_Move] = "Move Action";
+    Enums[ACTIONEX_Move] = "Move"; \
+    Enums[ACTIONEX_MoveEntity] = "Move Entity";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
     enum ConditionType
@@ -154,10 +154,12 @@ namespace IStrategizer
         PARAM_EntityObjectId,
         PARAM_AttributeId,
         PARAM_OperatorId,
-        PARAM_Value,
         PARAM_ResearchId,
+        PARAM_Value,
+        PARAM_UpgradeId,
         PARAM_ResourceId,
         PARAM_FilterTypeId,
+        PARAM_BuildingClassId,
         PARAM_WorkerClassId,
         PARAM_WorkerStateId,
         PARAM_TargetEntityClassId,
@@ -173,6 +175,8 @@ namespace IStrategizer
         PARAM_WorkerObjectId,
         PARAM_BuildingObjectId,
         PARAM_NumberOfPrimaryResources,
+        PARAM_ObjectStateType,
+        PARAM_DeployType,
         PARAM_REALVALSTART = PARAM_NumberOfPrimaryResources,
         PARAM_NumberOfSecondaryResources,
         PARAM_NumberOfSupplyResources,
@@ -188,9 +192,7 @@ namespace IStrategizer
         PARAM_AlliedCriticalBuildingsCount,
         PARAM_DistanceToEnemyBase,
         PARAM_DistanceToBase,
-        PARAM_ObjectStateType,
         PARAM_Distance,
-        PARAM_DeployType,
         PARAM_REALVALEND,
         PARAM_END = PARAM_REALVALEND
     };
@@ -201,9 +203,10 @@ namespace IStrategizer
     Enums[PARAM_AttributeId] = "Attribute"; \
     Enums[PARAM_OperatorId] = "Operator"; \
     Enums[PARAM_Value] = "Value"; \
-    Enums[PARAM_ResearchId] = "Research"; \
+    Enums[PARAM_UpgradeId] = "Upgrade"; \
     Enums[PARAM_ResourceId] = "Resource"; \
     Enums[PARAM_FilterTypeId] = "Filter Type"; \
+    Enums[PARAM_BuildingClassId] = "Building Class"; \
     Enums[PARAM_WorkerClassId] = "Worker Class"; \
     Enums[PARAM_WorkerStateId] = "Worker State"; \
     Enums[PARAM_TargetEntityClassId] = "Target Entity Class"; \
@@ -233,7 +236,7 @@ namespace IStrategizer
     Enums[PARAM_AlliedCriticalBuildingsCount] = "Allied Critical Buildings Count"; \
     Enums[PARAM_DistanceToEnemyBase] = "Distance To Enemy Base"; \
     Enums[PARAM_DistanceToBase] = "Distance To Base"; \
-    Enums[PARAM_ObjectStateType] = "Object State Type";\
+    Enums[PARAM_ObjectStateType] = "Object State Type"; \
     //---------------------------------------------------------------------------
 #define Prefix_ExecutionStateType ESTATE
     enum ExecutionStateType
@@ -274,7 +277,7 @@ namespace IStrategizer
         OBJSTATE_START                = 0x20d00,
         OBJSTATE_Idle,
         OBJSTATE_Moving,
-        OBJSTATE_Constructing,  
+        OBJSTATE_Constructing,
         OBJSTATE_Gathering,
         OBJSTATE_Training,
         OBJSTATE_Attacking,
@@ -443,6 +446,7 @@ namespace IStrategizer
         MSG_EntityCreate,
         MSG_EntityDestroy,
         MSG_EntityRenegade,
+        MSG_PlanStructureChange,
         MSG_END
     };
     //---------------------------------------------------------------------------
