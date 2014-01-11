@@ -49,7 +49,7 @@ bool ResearchAction::AliveConditionsSatisfied()
     bool success = false;
 
     success = g_Assist.DoesEntityObjectExist(_researcherId);
-
+    
     return success;
 }
 //----------------------------------------------------------------------------------------------
