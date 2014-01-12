@@ -3,6 +3,12 @@
 #define GATHERRESOURCEACTION_H
 
 #include "Action.h"
+#ifndef AND_H
+#include "And.h"
+#endif
+#ifndef VECTOR2_H
+#include "Vector2.h"
+#endif
 
 namespace IStrategizer
 {
@@ -15,15 +21,16 @@ namespace IStrategizer
 	public:
 		GatherResourceAction();
 		GatherResourceAction(const PlanStepParameters& p_parameters);
-		bool		PreconditionsSatisfied();
-		bool		AliveConditionsSatisfied();
-		bool		SuccessConditionsSatisfied();
+		bool		AliveConditionsSatisfied(RtsGame* pRtsGame);
+		bool		SuccessConditionsSatisfied(RtsGame* pRtsGame);
 
 	protected:
-		void		OnSucccess(const WorldClock& p_clock);
-		void		OnFailure(const WorldClock& p_clock);
-		bool		ExecuteAux(const WorldClock& p_clock);
-		void		HandleMessage(Message* p_pMsg, bool& p_consumed);
+		bool		ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock);
+		void		InitializePreConditions();
+		void		InitializePostConditions();
+		void		OnSucccess(RtsGame* pRtsGame, const WorldClock& p_clock);
+		void		OnFailure(RtsGame* pRtsGame, const WorldClock& p_clock);
+		void		HandleMessage(RtsGame* pRtsGame, Message* p_msg, bool& p_consumed);
 
 	private:
 		TID			_gathererId;
@@ -31,6 +38,7 @@ namespace IStrategizer
 		int			_resourceAmount;
 		bool		_gatherIssued;
 		bool		_gatherStarted;
+		float		_gatheredAmount;
 	};
 }
 

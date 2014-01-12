@@ -11,88 +11,102 @@
 #include "GamePlayer.h"
 #include "GameType.h"
 #include "GameEntity.h"
-
+#include "AdapterEx.h"
+#include "EntityClassExist.h"
+#include "ResourceExist.h"
+    
 IStrategizer::GatherResourceAction::GatherResourceAction():
-	Action(ACTIONEX_GatherResource), _gatherIssued(false), _gatherStarted(false)
+	Action(ACTIONEX_GatherResource), _gatherIssued(false), _gatherStarted(false), _gatheredAmount(0)
 {
 	_params[PARAM_ResourceId] = RESOURCE_START;
 	_params[PARAM_EntityClassId] = ECLASS_START;
-	_params[PARAM_Amount] = 0;
+	_params[PARAM_Amount] = 10;
 	CellFeature::Null().To(_params);
 }
-
+//////////////////////////////////////////////////////////////////////////
 IStrategizer::GatherResourceAction::GatherResourceAction(const PlanStepParameters& p_parameters):
-	Action(ACTIONEX_GatherResource, p_parameters), _gatherIssued(false), _gatherStarted(false)
+	Action(ACTIONEX_GatherResource, p_parameters), _gatherIssued(false), _gatherStarted(false), _gatheredAmount(0)
 {
 
 }
-
-bool IStrategizer::GatherResourceAction::PreconditionsSatisfied()
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::GatherResourceAction::InitializePreConditions()
 {
-	bool success = true;
-	// Todo [AMR]:
-	// ensure that a worker is available
-	// ensure that resource of resourceID is available with needed amount
+	EntityClassType gathererType = g_Game->Self()->GetWorkerType();
+	vector<Expression*> m_terms;
 
-	return success;
+	m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1, true));
+	m_terms.push_back(new ResourceExist(PLAYER_Neutral, _resourceAmount, _params[PARAM_Amount]));
+	_preCondition = new And(m_terms);
 }
-
-bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied()
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::GatherResourceAction::InitializePostConditions()
 {
-	bool gathererExist = false;
-	bool resourceExist = false;
-	bool gathererBusy  = false;
-	bool resourceBeingGathered = false;
-	bool success = false;
+	vector<Expression*> m_terms;
+
+	m_terms.push_back(new ResourceExist(PLAYER_Self, _resourceId, _params[PARAM_Amount]));
+	_preCondition = new And(m_terms);
+}
+//////////////////////////////////////////////////////////////////////////
+bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied(RtsGame* pRtsGame)
+{
+	assert(PlanStepEx::State() == ESTATE_Executing);
+
+	bool b_gathererExist = false;
+	bool b_resourceExist = false;
+	bool b_alive = false;
 
 	// 1. Gatherer is still alive
-	gathererExist = g_Assist.DoesEntityObjectExist(_gathererId);
+	b_gathererExist = g_Assist.DoesEntityObjectExist(_gathererId);
 
-	if (gathererExist)
+	if (b_gathererExist)
 	{
-		if(_gatherStarted)
+		GameEntity* pGameGatherer = pRtsGame->Self()->GetEntity(_gathererId);
+		ObjectStateType gathererState = (ObjectStateType)pGameGatherer->Attr(EOATTR_State);
+
+		// 2. Gatherer is gathering resource
+		if(gathererState == OBJSTATE_Gathering)
 		{
-			// 2. Gatherer is busy or is gathering resource
-			GameEntity* pGatherer = g_Game->Self()->GetEntity(_gathererId);
-			assert(pGatherer);
-			ObjectStateType gathererState = (ObjectStateType)pGatherer->Attr(EOATTR_State);
-			gathererBusy = gathererState == OBJSTATE_Gathering;
+			// 3. There is still remaining resource to be gathered
+			b_resourceExist = g_Assist.DoesEntityObjectExist(_resourceId, PLAYER_Neutral);
 
-			if(gathererBusy)
-			{
-				//Todo [AMR]: 3. There is still remaining resource to be gathered
-
-
-			}
+			// If resource doesn't exist a new unit should have been gathered by handleMessage
+			// if no resource has been assigned, this means it failed to find suitable resource
+			b_alive = b_resourceExist;
 		}
 		else
 		{
-			success = true;
+			b_alive = true;
 		}
 	}
 
-	return success;
+	return b_alive;
 }
-
-bool IStrategizer::GatherResourceAction::SuccessConditionsSatisfied()
+//////////////////////////////////////////////////////////////////////////
+bool IStrategizer::GatherResourceAction::SuccessConditionsSatisfied(RtsGame* pRtsGame)
 {
-	// Todo [AMR]:
-	// Check that the worker has gathered needed amount of the resource
+	assert(PlanStepEx::State() == ESTATE_Executing);
 
-	// Find a way to track the resource gathered by that worker since
-	// gathering is issued
+	// Check that the worker has gathered needed amount of the resource
 	bool success = false;
-	bool resourceBeingGathered = false;
 
 	if(_gatherStarted)
 	{
-		// 1. Resource unit object exist
+		GameEntity* pGameGatherer = pRtsGame->Self()->GetEntity(_gathererId);
+
+		ObjectStateType gathererState = (ObjectStateType)pGameGatherer->Attr(EOATTR_State);
+		if (gathererState == OBJSTATE_Gathering)
+		{
+			_gatheredAmount += pRtsGame->GetResourceConsumbtionRatePerWorker((ResourceType)_params[PARAM_ResourceId]);
+		}
 	}
+
+	success = (_gatheredAmount >= _params[PARAM_Amount]);
 
 	return success;
 }
-
-void IStrategizer::GatherResourceAction::OnSucccess( const WorldClock& p_clock )
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::GatherResourceAction::OnSucccess(RtsGame* pRtsGame, const WorldClock& p_clock )
 {
 	if(_gatherIssued)
 	{
@@ -102,8 +116,8 @@ void IStrategizer::GatherResourceAction::OnSucccess( const WorldClock& p_clock )
 			pEntity->Unlock(this);
 	}
 }
-
-void IStrategizer::GatherResourceAction::OnFailure( const WorldClock& p_clock )
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::GatherResourceAction::OnFailure(RtsGame* pRtsGame, const WorldClock& p_clock )
 {
 	if(_gatherIssued)
 	{
@@ -113,44 +127,81 @@ void IStrategizer::GatherResourceAction::OnFailure( const WorldClock& p_clock )
 			pEntity->Unlock(this);
 	}
 }
-
-
-bool IStrategizer::GatherResourceAction::ExecuteAux( const WorldClock& p_clock )
+//////////////////////////////////////////////////////////////////////////
+bool IStrategizer::GatherResourceAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock )
 {
-	EntityClassType gathererType = (EntityClassType)_params[PARAM_EntityClassId];
-	EntityClassType resourceType = (EntityClassType)_params[PARAM_ResourceId];
-	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-
-	bool executionSuccess = false;
+	EntityClassType		gathererType = (EntityClassType)_params[PARAM_EntityClassId];
+	EntityClassType		resourceType;
+	AbstractAdapter*	pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	bool				bOK = false;
 
 	// Adapt gatherer
-	_gathererId = pAdapter->AdaptWorkerForGathering();
+	_gathererId = pAdapter->GetEntityObjectId(gathererType, AdapterEx::WorkerStatesRankVector);
 
 	if(_gathererId != INVALID_TID)
 	{
-		EntityClassType resourceType = (EntityClassType)_params[PARAM_ResourceId];
+		resourceType = (EntityClassType)_params[PARAM_ResourceId];
 
 		// Initialize gather state
 		_gatherStarted = false;
 
 		// Adapt resource id
 		assert(pAdapter);
-		_resourceId = pAdapter->AdaptResourceEntityForGathering(resourceType, Parameters());
+		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters());
 		if(_resourceId != INVALID_TID)
 		{
 			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(_gathererId);
 			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(_resourceId);
 			assert(pGameGatherer);
 			assert(pGameResource);
-			pGameGatherer->Lock(this);
-			executionSuccess = pGameGatherer->GatherResourceEntity(_resourceId);
+			bOK = pGameGatherer->GatherResourceEntity(_resourceId);
+
+			if (bOK)
+			{
+				_gatherIssued = true;
+				pGameGatherer->Lock(this);
+			}
 		}
 	}
 
-	return executionSuccess;
+	return bOK;
 }
-
-void IStrategizer::GatherResourceAction::HandleMessage( Message* p_pMsg, bool& p_consumed )
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::GatherResourceAction::HandleMessage( RtsGame* pRtsGame, Message* p_msg, bool& p_consumed )
 {
+	if(PlanStepEx::State() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_EntityDestroy)
+	{
+		EntityDestroyMessage*	pMsg = static_cast<EntityDestroyMessage*>(p_msg);
+		TID resourceId;
 
+		if (pMsg->Data()->OwnerId != PLAYER_Neutral)
+			return;
+
+		assert(pMsg && pMsg->Data());
+		resourceId = pMsg->Data()->EntityId;
+
+		if (resourceId != _resourceId)
+			return;
+
+		// Resource being gathered is destroyed, so adapt a new resource and gather it
+		AbstractAdapter*	pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();		
+		EntityClassType		resourceType = (EntityClassType)_params[PARAM_ResourceId];
+		assert(pAdapter);
+
+		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters());
+
+		if(_resourceId != INVALID_TID)
+		{
+			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(_gathererId);
+			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(_resourceId);
+			assert(pGameGatherer);
+			assert(pGameResource);
+
+			if (pGameGatherer->GatherResourceEntity(_resourceId))
+			{
+				_gatherIssued = true;
+				pGameGatherer->Lock(this);
+			}
+		}
+	}
 }
