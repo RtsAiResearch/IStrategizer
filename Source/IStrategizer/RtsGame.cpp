@@ -170,4 +170,16 @@ GamePlayer* RtsGame::Enemy()
 {
     return GetPlayer(PLAYER_Enemy);
 }
-
+//----------------------------------------------------------------------------------------------
+float IStrategizer::RtsGame::GetResourceConsumbtionRatePerWorker(ResourceType p_id)
+{
+	switch(p_id)
+	{
+	case RESOURCE_Primary:
+		return MineralsPerWorkerPerFrame;
+	case RESOURCE_Secondary:
+		return GasPerWorkerPerFrame;
+	default:
+		throw InvalidParameterException(XcptHere);
+	}
+}

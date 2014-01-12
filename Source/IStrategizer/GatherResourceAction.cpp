@@ -36,7 +36,7 @@ void IStrategizer::GatherResourceAction::InitializePreConditions()
 	vector<Expression*> m_terms;
 
 	m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1, true));
-	m_terms.push_back(new ResourceExist(PLAYER_Neutral, _resourceAmount, _params[PARAM_Amount]));
+	m_terms.push_back(new ResourceExist(PLAYER_Neutral, _params[PARAM_ResourceId], _params[PARAM_Amount]));
 	_preCondition = new And(m_terms);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ void IStrategizer::GatherResourceAction::InitializePostConditions()
 {
 	vector<Expression*> m_terms;
 
-	m_terms.push_back(new ResourceExist(PLAYER_Self, _resourceId, _params[PARAM_Amount]));
+	m_terms.push_back(new ResourceExist(PLAYER_Self, _params[PARAM_ResourceId], _params[PARAM_Amount]));
 	_preCondition = new And(m_terms);
 }
 //////////////////////////////////////////////////////////////////////////
