@@ -29,6 +29,13 @@ namespace IStrategizer
 
     class RtsGame : public EngineComponent
     {
+	private:
+		
+		// Been determined empirically by analyzing professional games. 
+		// Refer to paper "Build Order Optimization in StarCraft" page 3
+		static const float MineralsPerWorkerPerFrame; 
+		static const float GasPerWorkerPerFrame;
+
     protected:
         MapEx<PlayerType, GamePlayer*>      m_players;
         MapEx<EntityClassType, GameType*>   m_entityTypes;
@@ -62,6 +69,7 @@ namespace IStrategizer
         GamePlayer* Enemy();
         virtual void    DisplayMessage(const char* p_msg) = 0;
         WorldMap*       Map();
+		float			GetResourceConsumbtionRatePerWorker(ResourceType p_id);
     };
 }
 

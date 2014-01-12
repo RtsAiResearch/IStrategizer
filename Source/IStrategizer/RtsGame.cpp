@@ -34,6 +34,8 @@ using namespace IStrategizer;
 using namespace std;
 
 IStrategizer::RtsGame* g_Game = nullptr;
+const float RtsGame::MineralsPerWorkerPerFrame = 0.045f;
+const float RtsGame::GasPerWorkerPerFrame = 0.07f;
 
 RtsGame::~RtsGame()
 {
