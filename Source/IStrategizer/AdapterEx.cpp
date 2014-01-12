@@ -237,6 +237,41 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
     return adaptedEntityId;
 }
 //////////////////////////////////////////////////////////////////////////
+IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( EntityClassType p_resourceType, const PlanStepParameters& p_parameters )
+{
+	GamePlayer	*pPlayer;
+	GameEntity	*pEntity;
+	vector<TID>	entityIds;
+	TID			adaptedResourceId = INVALID_TID;
+	double		bestDistance = numeric_limits<double>::max();
+	CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
+
+	pPlayer = g_Game->GetPlayer(PLAYER_Neutral);
+	assert(pPlayer);
+
+	pPlayer->Entities(entityIds);
+
+	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+	{
+		pEntity = pPlayer->GetEntity(entityIds[i]);
+		assert(pEntity);
+
+		if (p_resourceType == pEntity->Type())
+		{
+			CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+			double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
+
+			if (dist <= bestDistance)
+			{
+				bestDistance = dist;
+				adaptedResourceId = pEntity->Id();
+			}
+		}
+	}
+
+	return adaptedResourceId;
+}
+//////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
 {
     // The entity search algorithm should be moved to GamePlayer class
