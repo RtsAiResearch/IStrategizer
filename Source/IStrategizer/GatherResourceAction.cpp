@@ -36,7 +36,7 @@ void IStrategizer::GatherResourceAction::InitializePreConditions()
 	vector<Expression*> m_terms;
 
 	m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1, true));
-	m_terms.push_back(new ResourceExist(PLAYER_Neutral, _params[PARAM_ResourceId], _params[PARAM_Amount]));
+	//m_terms.push_back(new ResourceExist(PLAYER_Neutral, _params[PARAM_ResourceId], _params[PARAM_Amount]));
 	_preCondition = new And(m_terms);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ void IStrategizer::GatherResourceAction::OnFailure(RtsGame* pRtsGame, const Worl
 bool IStrategizer::GatherResourceAction::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock )
 {
 	EntityClassType		gathererType = (EntityClassType)_params[PARAM_EntityClassId];
-	EntityClassType		resourceType;
+	ResourceType		resourceType;
 	AbstractAdapter*	pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 	bool				bOK = false;
 
@@ -140,7 +140,7 @@ bool IStrategizer::GatherResourceAction::ExecuteAux(RtsGame* pRtsGame, const Wor
 
 	if(_gathererId != INVALID_TID)
 	{
-		resourceType = (EntityClassType)_params[PARAM_ResourceId];
+		resourceType = (ResourceType)_params[PARAM_ResourceId];
 
 		// Initialize gather state
 		_gatherStarted = false;
@@ -185,7 +185,7 @@ void IStrategizer::GatherResourceAction::HandleMessage( RtsGame* pRtsGame, Messa
 
 		// Resource being gathered is destroyed, so adapt a new resource and gather it
 		AbstractAdapter*	pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();		
-		EntityClassType		resourceType = (EntityClassType)_params[PARAM_ResourceId];
+		ResourceType		resourceType = (ResourceType)_params[PARAM_ResourceId];
 		assert(pAdapter);
 
 		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters());
