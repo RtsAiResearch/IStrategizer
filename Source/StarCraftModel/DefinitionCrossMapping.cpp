@@ -29,7 +29,7 @@ void DefinitionCrossMapping::Init()
     InitEntityIdents();
     InitUpgradeIdents();
     InitTechIdents();
-  InitActions();
+	InitResources();
 
     m_initialized = true;
 }
@@ -266,4 +266,14 @@ void DefinitionCrossMapping::InitActions()
   actions.push_back(make_pair(Orders::Move.getID(), ACTIONEX_Move));
 
   ActionMapping = CrossMap<TID, IStrategizer::ActionType>(actions);
+}
+
+void DefinitionCrossMapping::InitResources()
+{
+	vector< pair<TID, IStrategizer::ResourceType> > resources;
+
+	resources.push_back(make_pair(UnitTypes::Resource_Mineral_Field, RESOURCE_Primary));
+	resources.push_back(make_pair(UnitTypes::Resource_Vespene_Geyser, RESOURCE_Secondary));
+
+	ResourceMapping = CrossMap<TID, IStrategizer::ResourceType>(resources);
 }
