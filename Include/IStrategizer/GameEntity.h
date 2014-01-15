@@ -40,7 +40,7 @@ namespace IStrategizer
         virtual bool Train(EntityClassType p_entityClassId) = 0;
         bool Acquire() { return true; }
         bool Release() { return true; }
-        IStrategizer::PlayerType GetPlayer() { return m_ownerId; }
+        IStrategizer::PlayerType GetPlayer() const { return m_ownerId; }
 
     protected:
         TID             m_id;
