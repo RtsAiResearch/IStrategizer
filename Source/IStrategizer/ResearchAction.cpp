@@ -18,7 +18,7 @@ using namespace IStrategizer;
 
 ResearchAction::ResearchAction() : Action(ACTIONEX_Research)
 {
-    _params[PARAM_EntityClassId] = RESEARCH_START;
+    _params[PARAM_ResearchId] = RESEARCH_START;
     CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
@@ -29,9 +29,9 @@ ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::PreconditionsSatisfied()
 {
-    EntityClassType researcherType;
-    ResearchType researchType = (ResearchType)_params[PARAM_EntityClassId];
-    bool success = false;
+    EntityClassType    researcherType;
+    ResearchType    researchType = (ResearchType)_params[PARAM_ResearchId];
+    bool            success = false;
 
     researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
     success = g_Assist.DoesEntityClassExist(make_pair(researcherType, 1));
@@ -49,20 +49,20 @@ bool ResearchAction::AliveConditionsSatisfied()
     bool success = false;
 
     success = g_Assist.DoesEntityObjectExist(_researcherId);
-
+    
     return success;
 }
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::SuccessConditionsSatisfied()
 {
-    return g_Game->Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_EntityClassId]);
+    return g_Game->Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
 }
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::ExecuteAux(const WorldClock& p_clock)
 {
-    ResearchType researchType = (ResearchType)_params[PARAM_EntityClassId];
-    GameEntity *pGameResearcher;
-    AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+    ResearchType    researchType = (ResearchType)_params[PARAM_ResearchId];
+    GameEntity        *pGameResearcher;
+    AbstractAdapter    *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
     // Adapt researcher
     _researcherId = pAdapter->AdaptBuildingForResearch(researchType);

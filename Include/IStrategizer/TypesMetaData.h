@@ -108,22 +108,20 @@ namespace IStrategizer
         ACTIONEX_Train = 0x20800,
         ACTIONEX_START = 0x20800,
         ACTIONEX_Build,
-        ACTIONEX_BuildEx,
         ACTIONEX_Research,
         ACTIONEX_AttackGround,
         ACTIONEX_AttackEntity,
         ACTIONEX_MoveEntity,
-        ACTIONEX_MoveAction,
+        ACTIONEX_Move,
         ACTIONEX_END
     };
 #define Define_ActionType \
     Enums[ACTIONEX_Train] = "Train"; \
-    Enums[ACTIONEX_Build] = "Build v1"; \
-    Enums[ACTIONEX_BuildEx] = "Build v2"; \
+    Enums[ACTIONEX_Build] = "Build"; \
     Enums[ACTIONEX_Research] = "Research"; \
     Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
     Enums[ACTIONEX_AttackEntity] = "Attack Entity"; \
-    Enums[ACTIONEX_MoveAction] = "Move"; \
+    Enums[ACTIONEX_Move] = "Move"; \
     Enums[ACTIONEX_MoveEntity] = "Move Entity";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
@@ -153,6 +151,7 @@ namespace IStrategizer
         PARAM_EntityObjectId,
         PARAM_AttributeId,
         PARAM_OperatorId,
+        PARAM_ResearchId,
         PARAM_Value,
         PARAM_UpgradeId,
         PARAM_ResourceId,

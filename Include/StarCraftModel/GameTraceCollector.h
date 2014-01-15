@@ -3,6 +3,7 @@
 
 #include "BWAPI.h"
 #include "EngineData.h"
+#include "ActionAbstractor.h"
 #include <set>
 
 namespace IStrategizer
@@ -129,6 +130,7 @@ namespace IStrategizer
         TID m_playerToObserveID;
         PlayerType m_playerToObserve;
         bool m_isFirstUpdate;
+        ActionAbstractor m_abstractor;
     };
 }
 #endif // __GAMETRACECOLLETOR_H_INC__

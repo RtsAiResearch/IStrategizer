@@ -11,14 +11,14 @@
 using namespace IStrategizer;
 using namespace Serialization;
 
-MoveAction::MoveAction() : Action(ACTIONEX_MoveAction)
+MoveAction::MoveAction() : Action(ACTIONEX_Move)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
-    _params[PARAM_ObjectStateType] = 0;
+    _params[PARAM_ObjectStateType] = OBJSTATE_START;
     CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
-MoveAction::MoveAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_MoveAction,p_parameters)
+MoveAction::MoveAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_Move,p_parameters)
 {
 
 }

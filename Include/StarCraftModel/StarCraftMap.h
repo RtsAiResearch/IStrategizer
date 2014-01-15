@@ -10,8 +10,8 @@ namespace StarCraftModel
     class StarCraftMap : public IStrategizer::WorldMap
     {
     public:
-        StarCraftMap(unsigned resolution) 
-            : WorldMap(Size().X / resolution, Size().Y / resolution, Size().X, Size().Y) 
+        StarCraftMap(unsigned cellSize) 
+            : WorldMap(cellSize, cellSize, Size().X, Size().Y) 
         { }
 
         IStrategizer::Vector2 Size() const;
