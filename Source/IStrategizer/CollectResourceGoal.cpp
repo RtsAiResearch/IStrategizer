@@ -35,7 +35,7 @@ void CollectResourceGoal::InitializePostConditions()
     _postCondition = new And(m_termsPost);
 }
 //----------------------------------------------------------------------------------------------
-bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
+bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
     return false;
 }

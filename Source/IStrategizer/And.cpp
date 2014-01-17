@@ -8,7 +8,7 @@ void And::InitializeAddressesAux()
     CompositeExpression::InitializeAddressesAux();
 }
 //----------------------------------------------------------------------------------------------
-bool And::Evaluate(RtsGame* pRtsGame)
+bool And::Evaluate(RtsGame& pRtsGame)
 {
     if(_shortCircuit)
     {

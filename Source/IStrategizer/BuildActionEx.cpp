@@ -34,35 +34,35 @@ Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnSucccess(RtsGame* pRtsGame, const WorldClock& p_clock)
+void BuildActionEx::OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     if (_buildIssued)
     {
         assert(!_buildArea.IsNull());
         _buildArea.Unlock(this);
 
-        GameEntity *pEntity = pRtsGame->Self()->GetEntity(_builderId);
+        GameEntity *pEntity = pRtsGame.Self()->GetEntity(_builderId);
 
         if (pEntity)
             pEntity->Unlock(this);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnFailure(RtsGame* pRtsGame, const WorldClock& p_clock)
+void BuildActionEx::OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     if (_buildIssued)
     {
         assert(!_buildArea.IsNull());
         _buildArea.Unlock(this);
 
-        GameEntity *pEntity = pRtsGame->Self()->GetEntity(_builderId);
+        GameEntity *pEntity = pRtsGame.Self()->GetEntity(_builderId);
 
         if (pEntity)
             pEntity->Unlock(this);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consumed)
+void BuildActionEx::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
 {
     if(PlanStepEx::State() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_EntityCreate) 
     {
@@ -77,7 +77,7 @@ void BuildActionEx::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_con
         assert(pMsg && pMsg->Data());
         buildingId = pMsg->Data()->EntityId;
 
-        pGameBuilding = pRtsGame->Self()->GetEntity(buildingId);
+        pGameBuilding = pRtsGame.Self()->GetEntity(buildingId);
         assert(pGameBuilding);
 
         msgBuildPosition.X = pMsg->Data()->X;
@@ -93,7 +93,7 @@ void BuildActionEx::HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_con
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::AliveConditionsSatisfied(RtsGame* pRtsGame)
+bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
 {
     bool        builderExist = false;
     bool        buildingExist = false;
@@ -107,7 +107,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame* pRtsGame)
 
     if (builderExist)
     {
-        pEntity = pRtsGame->Self()->GetEntity(_builderId);
+        pEntity = pRtsGame.Self()->GetEntity(_builderId);
 
         assert(pEntity);
         isBuilderConstructing = (pEntity->Attr(EOATTR_State) == OBJSTATE_Constructing);
@@ -141,7 +141,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame* pRtsGame)
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::SuccessConditionsSatisfied(RtsGame* pRtsGame)
+bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
     assert(PlanStepEx::State() == ESTATE_Executing);
 
@@ -150,7 +150,7 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame* pRtsGame)
         int            entityState;
         GameEntity    *pEntity;
 
-        pEntity = pRtsGame->Self()->GetEntity(_buildingId);    
+        pEntity = pRtsGame.Self()->GetEntity(_buildingId);    
         entityState = pEntity->Attr(EOATTR_State);
 
         return entityState != OBJSTATE_BeingConstructed;
@@ -159,7 +159,7 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame* pRtsGame)
     return false;
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
+bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     EntityClassType        buildingType;
     GameEntity            *pGameBuilder;
@@ -182,7 +182,7 @@ bool BuildActionEx::ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock)
         _buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
 
         // Issue build order
-        pGameBuilder = pRtsGame->Self()->GetEntity(_builderId);
+        pGameBuilder = pRtsGame.Self()->GetEntity(_builderId);
         assert(pGameBuilder);
 
         bOk = pGameBuilder->Build(buildingType, _buildArea.Pos());

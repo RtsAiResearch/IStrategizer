@@ -22,7 +22,7 @@ namespace IStrategizer
 
     protected:
         void InitializePostConditions();
-        bool SuccessConditionsSatisfied(RtsGame* pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
     };
 }
 #endif // DESTROYENTITYTYPEGOAL_H

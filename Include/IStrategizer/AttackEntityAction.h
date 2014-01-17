@@ -17,13 +17,13 @@ namespace IStrategizer
         AttackEntityAction();
         AttackEntityAction(const PlanStepParameters& p_parameters);
         void Copy(IClonable* p_dest);
-        bool AliveConditionsSatisfied(RtsGame* pRtsGame);
-        bool SuccessConditionsSatisfied(RtsGame* pRtsGame);
+        bool AliveConditionsSatisfied(RtsGame& pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
 
     protected:
-        bool ExecuteAux(RtsGame* pRtsGame, const WorldClock& p_clock);
+        bool ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock);
         void InitializeAddressesAux();
-        void HandleMessage(RtsGame *pRtsGame, Message* p_msg, bool& p_consumed);
+        void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
         void InitializePostConditions();
         void InitializePreConditions();
 

@@ -43,7 +43,7 @@ namespace IStrategizer
 
     private:
         Vector2 GetBotColonyCenter();
-        static void initializePredefinedRankedStates();
+        static void InitializePredefinedRankedStates();
         static bool EntityToMoveStatesComparer(pair<TID, ObjectStateType> &p_leftAttacker, pair<TID, ObjectStateType> &p_rightAttacker);
         static bool IsValidEntityState(ObjectStateType p_entityState, const vector<ObjectStateType>& p_rankedStates);
         static int GetEntityStateIndex(ObjectStateType p_entityState, const vector<ObjectStateType>& p_rankedStates);

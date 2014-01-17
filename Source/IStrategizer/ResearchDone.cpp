@@ -2,7 +2,7 @@
 
 using namespace IStrategizer;
 
-bool ResearchDone::Evaluate(RtsGame* pRtsGame)
+bool ResearchDone::Evaluate(RtsGame& pRtsGame)
 {
     int returnValue = g_Assist.ResearchDone((PlayerType)_conditionParameters[PARAM_PlayerId], (ResearchType)_conditionParameters[PARAM_ResearchId]);
 

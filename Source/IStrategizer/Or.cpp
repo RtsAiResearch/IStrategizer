@@ -2,7 +2,7 @@
 
 using namespace IStrategizer;
 
-bool Or::Evaluate(RtsGame* pRtsGame)
+bool Or::Evaluate(RtsGame& pRtsGame)
 {
     if(_shortCircuit)
     {

@@ -39,7 +39,7 @@ AdapterEx::AdapterEx()
 {
     m_buildingSpacing = DefaultBuildingSpacing;
     m_botColonyCenter = Vector2::Null();
-    initializePredefinedRankedStates();
+    InitializePredefinedRankedStates();
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 AdapterEx::GetBotColonyCenter()
@@ -75,7 +75,7 @@ Vector2 AdapterEx::GetBotColonyCenter()
     return m_botColonyCenter;
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::AdapterEx::initializePredefinedRankedStates()
+void IStrategizer::AdapterEx::InitializePredefinedRankedStates()
 {
     IsRankedStatesInitialized = true;
 
@@ -180,7 +180,7 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     TID      adaptedEntityId = INVALID_TID;
     vector<UnitEntry>    validEntities;
     if(!IsRankedStatesInitialized)
-    initializePredefinedRankedStates();
+    InitializePredefinedRankedStates();
 
     pPlayer = g_Game->Self();
     assert(pPlayer);

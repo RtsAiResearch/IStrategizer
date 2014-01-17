@@ -3,13 +3,13 @@
 
 using namespace IStrategizer;
 
-void GoalEx::Reset(RtsGame* pRtsGame, const WorldClock& p_clock)
+void GoalEx::Reset(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     if (State() != ESTATE_Pending)
         State(ESTATE_Pending, pRtsGame, p_clock);
 }
 //----------------------------------------------------------------------------------------------
-void GoalEx::UpdateAux(RtsGame* pRtsGame, const WorldClock& p_clock)
+void GoalEx::UpdateAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     ExecutionStateType state = State();
 

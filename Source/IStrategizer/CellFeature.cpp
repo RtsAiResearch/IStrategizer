@@ -153,7 +153,7 @@ void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<
 float CellFeature::GetBaseDistanceSimilarity(int firstBase, int secondBase) const
 {
     float dist = 0.0;
-    if (firstBase != PARAM_DONT_CARE && secondBase != PARAM_DONT_CARE)
+    if (firstBase != DONT_CARE && secondBase != DONT_CARE)
         dist = pow((float)(firstBase - secondBase), 2);
 
     return dist;

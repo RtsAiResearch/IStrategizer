@@ -35,7 +35,7 @@ Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, 
     _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::State(ExecutionStateType p_state, RtsGame* pRtsGame, const WorldClock& p_clock)
+void Action::State(ExecutionStateType p_state, RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     PlanStepEx::State(p_state, pRtsGame, p_clock);
 
@@ -56,7 +56,7 @@ void Action::InitializeConditions()
     InitializePreConditions();
 }
 //////////////////////////////////////////////////////////////////////////
-bool Action::Execute(RtsGame* pRtsGame, const WorldClock& p_clock)
+bool Action::Execute(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     bool bOk;
 
@@ -66,13 +66,13 @@ bool Action::Execute(RtsGame* pRtsGame, const WorldClock& p_clock)
     return bOk;
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::Reset(RtsGame* pRtsGame, const WorldClock& p_clock)
+void Action::Reset(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     if (PlanStepEx::State() != ESTATE_NotPrepared)
         State(ESTATE_NotPrepared, pRtsGame, p_clock);
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::UpdateAux(RtsGame* pRtsGame, const WorldClock& p_clock)
+void Action::UpdateAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     ExecutionStateType state = PlanStepEx::State();
     

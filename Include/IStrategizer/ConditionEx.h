@@ -35,7 +35,7 @@ namespace IStrategizer
         inline PlanStepParameters   Parameters() const { return _conditionParameters; }
         void Copy(IClonable* p_dest);
         bool PartiallyEqualsAux(const Expression* p_rhs,  MatchSide p_anchor, std::vector<std::pair<Expression*,Expression*>>& p_matchedLeafs) const;
-        bool Evaluate(RtsGame* pRtsGame) { _isEvaluated = _isSatisfied = true; return _isEvaluated && _isSatisfied; }
+        bool Evaluate(RtsGame& pRtsGame) { _isEvaluated = _isSatisfied = true; return _isEvaluated && _isSatisfied; }
         bool Equals(const Expression* p_rhs) const;
         virtual bool Consume(int p_amount) = 0;
     };

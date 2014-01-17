@@ -34,7 +34,7 @@ EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitCl
 //---------------------------------------------------------------------------------------------------
 EntityClassExist::EntityClassExist(PlayerType p_player, int p_amount, bool p_oneUse) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
-    _conditionParameters[PARAM_EntityClassId] = ANY_ID;
+    _conditionParameters[PARAM_EntityClassId] = DONT_CARE;
     _conditionParameters[PARAM_Amount] = p_amount;
 
     _oneUse = p_oneUse;
@@ -43,8 +43,8 @@ EntityClassExist::EntityClassExist(PlayerType p_player, int p_amount, bool p_one
 //---------------------------------------------------------------------------------------------------
 EntityClassExist::EntityClassExist(PlayerType p_player) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
-    _conditionParameters[PARAM_EntityClassId] = ANY_ID;
-    _conditionParameters[PARAM_Amount] = MAX_POPULATION;
+    _conditionParameters[PARAM_EntityClassId] = DONT_CARE;
+    _conditionParameters[PARAM_Amount] = DONT_CARE;
 
     _oneUse = false;
     _used = false;
@@ -59,9 +59,9 @@ void EntityClassExist::InitializeAddressesAux()
         &_used);
 }
 //---------------------------------------------------------------------------------------------------
-bool EntityClassExist::Evaluate(RtsGame* pRtsGame)
+bool EntityClassExist::Evaluate(RtsGame& pRtsGame)
 {
-    if (_conditionParameters[PARAM_EntityClassId] != ANY_ID)
+    if (_conditionParameters[PARAM_EntityClassId] != DONT_CARE)
     {
         EntityClassType entityClassId = (EntityClassType)_conditionParameters[PARAM_EntityClassId];
         int amount = _conditionParameters[PARAM_Amount];

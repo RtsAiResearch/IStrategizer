@@ -26,7 +26,7 @@ void TrainForceGoal::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame* pRtsGame)
+bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
     return false;
 }

@@ -545,7 +545,7 @@ int EngineAssist::PrerequisitesSatisfied(int p_entityOrResearchType, bool &p_sat
     vector<Expression*> prerequisitesConditions;
     GetPrerequisites(p_entityOrResearchType, p_playerType, prerequisitesConditions);
     Expression* prerequisitesExpression = new And(prerequisitesConditions);
-    p_satisfied = prerequisitesExpression->Evaluate(g_Game);
+    p_satisfied = prerequisitesExpression->Evaluate(*g_Game);
 
     return p_satisfied;
 }
