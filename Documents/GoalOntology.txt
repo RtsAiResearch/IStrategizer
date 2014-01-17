@@ -28,6 +28,60 @@ Engine Deduced Knowledge
 #Medium Army		[67, 132]
 #Large Army			[133, 200]	
 
+ForceSize { SmallArmy, MediumArmy, LargeArmy }
+
+DeployType { Defend, Attack, Retreat }
+Defend
+	AlliedBuildingsCount = > 0;
+	AlliedCriticalBuildingsCount = -1;
+	AlliedUnitsCount = -1;
+	AlliedUnitsTotalDamage = -1;
+	AlliedUnitsTotalHP = -1;
+	EnemyBuildingsCount = -1;
+	EnemyCriticalBuildingsCount = -1;
+	EnemyUnitsCount = > 0;
+	EnemyUnitsTotalDamage = -1;
+	EnemyUnitsTotalHP = -1;
+	NumberOfPrimaryResources = -1;
+	NumberOfSecondaryResources = -1;
+	NumberOfSupplyResources = -1;
+	DistanceToBase = -1;
+	DistanceToEnemyBase = -1;
+	
+Attack
+	AlliedBuildingsCount = 0;
+	AlliedCriticalBuildingsCount = 0;
+	AlliedUnitsCount = -1;
+	AlliedUnitsTotalDamage = -1;
+	AlliedUnitsTotalHP = -1;
+	EnemyBuildingsCount = -1;
+	EnemyCriticalBuildingsCount = -1;
+	EnemyUnitsCount = > 0;
+	EnemyUnitsTotalDamage = -1;
+	EnemyUnitsTotalHP = -1;
+	NumberOfPrimaryResources = -1;
+	NumberOfSecondaryResources = -1;
+	NumberOfSupplyResources = -1;
+	DistanceToBase = -1;
+	DistanceToEnemyBase = -1;
+	
+Retreat
+	AlliedBuildingsCount = > 0;
+	AlliedCriticalBuildingsCount = -1;
+	AlliedUnitsCount = -1;
+	AlliedUnitsTotalDamage = -1;
+	AlliedUnitsTotalHP = -1;
+	EnemyBuildingsCount = -1;
+	EnemyCriticalBuildingsCount = -1;
+	EnemyUnitsCount = > 0;
+	EnemyUnitsTotalDamage = -1;
+	EnemyUnitsTotalHP = -1;
+	NumberOfPrimaryResources = -1;
+	NumberOfSecondaryResources = -1;
+	NumberOfSupplyResources = -1;
+	DistanceToBase = -1;
+	DistanceToEnemyBase = -1;
+
 
 	TF[S]	TF[M] 	TF[L] 	TA[S] 	TA[M] 	TA[L]
 A1	X						X
@@ -50,12 +104,6 @@ Preparation Goals
 ==================
 Minimum Goal Set
 ----------------
-#Make Entity Available (EntityClassID)
-Entity Available
-
-#Make Research Available (ResearchTypeID)
-Research Available
-
 #Satisfy Require Resource (ResourceTypeID, Amount)
 Resource Available
 Amount: {Set of all required amounts by units, researches}
@@ -67,6 +115,12 @@ Proposed Preparation Goals
 ---------------------------
 #Train Attack Force (ForceSize)
 Number of attacking units <= ForceSize
+
+#Make Entity Available (EntityClassID)
+Entity Available
+
+#Make Research Available (ResearchTypeID)
+Research Available
 
 =======================================================================================================================
 Attack Goals
@@ -100,15 +154,84 @@ LFHD Todo:
 9- Implement actions post conditions
 
 ==================================================================================================================
-Conditions
------------
-EntityClassExist
-EntityObjectExist
-ResourceExist
-ResearchDone
-CheckEntityObjectAttribute
-EntityCloseToPoint
-
-Buid
+Build
 builderID
 DoesEntityObjectExist(builderID) && EntityObjAttr(builderID, IsConstructing)
+
+Minimum Conditions Set
+----------------------
+EntityClassExist
+ResourceExist
+ResearchDone
+EntityDestroyed = !EntityClassExist
+EntityClassNearArea(PlayerId, EntityClassType(*), CellFeature, HowFar)
+
+Pre Conditions
+--------------
+AttackEntityAction(AttackerEntityClassId, TargetEntityClassId)
+	EntityClassExist(AttackerEntityClassId)
+	EntityClassExist(TargetEntityClassId)
+	
+AttackGroundAction(AttackerEntityClassId)
+	EntityClassExist(AttackerEntityClassId)
+	
+BuildAction(EntityClassId)
+	EntityClassExist(WorkerEntityClassId)
+	[OneOrMore] EntityClassExist(PriorBuildingEntityClassId)
+	ResourceExist(PrimaryResourceId, Amount)
+	ResourceExist(SupplyResourceId, Amount)
+	[Optional] ResourceExist(SecondaryResourceId, Amount)
+	[Optional] ResearchDone(ResearchId)
+	
+MoveAction(EntityClassId)
+	EntityClassExist(EntityClassId)
+	
+ResearchAction(ResearchId)
+	EntityClassExist(ResearcherEntityClassId)
+	[OneOrMore] EntityClassExist(PriorBuildingsEntityClassId)
+	ResourceExist(PrimaryResourceId, Amount)
+	[Optional] ResearchDone(PriorResearchId)
+	[Optional] ResourceExist(SecondaryResourceId, Amount)
+	
+TrainAction(EntityClassId)
+	[OneOrMore] EntityClassExist(TrainerEntityClassId)
+	ResourceExist(PrimaryResourceId, Amount)
+	ResourceExist(SupplyResourceId, Amount)
+	[Optional] ResourceExist(SecondaryResourceId, Amount)
+	[Optional] ResearchDone(ResearchId)
+
+Post Conditions
+---------------
+WinGame(EnemyId)
+	EntityDestroyed(AnyEntityClassId, EnemyId, AllUnits)
+	
+CollectResource(ResourceId, Amount)
+	ResourceExists(ResourceId, Amount)
+	
+TrainArmy(ForceSize)
+	EntityClassExist(ForceSize)
+
+DeployArmy(ForceSize, DeployType)
+	Defend: EntityClassNearArea(Self, EntityClassType, CellFeature, 0)
+	Attack: EntityClassNearArea(Self, EntityClassType, CellFeature, 1)
+	
+DestroyEntity(EntityClassId)
+	EntityDestroyed(EntityClassId)
+
+AttackEntityAction(AttackerEntityClassId, TargetEntityClassId)
+	EntityDestroyed(AttackerEntityClassId, TargetEntityClassId)
+	
+AttackGroundAction(AttackerEntityClassId)
+	EntityDestroyed(AttackerEntityClassId, AnyEntityClassId)
+	
+BuildAction(EntityClassId)
+	EntityClassExist(EntityClassId)
+	
+MoveAction(EntityClassId)
+	EntityClassNearArea(Self, EntityClassType, CellFeature, 0)
+	
+ResearchAction(ResearchId)
+	ResearchDone(ResearchId)
+	
+TrainAction(EntityClassId)
+	EntityClassExist(EntityClassId)

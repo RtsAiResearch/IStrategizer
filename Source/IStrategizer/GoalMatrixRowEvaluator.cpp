@@ -29,7 +29,7 @@ void GoalMatrixRowEvaluator::Initialize(PlayerType p_humanPlayer, PlayerType p_s
 
     _goalParamGraph.resize(COUNT(GoalType));
 
-    // Goal: WinWargus 
+    // Goal: WinGame 
     m_goalIdx = INDEX(GOALEX_WinGame, GoalType);
     m_level.clear();
     for(int paramIdx = START(StrategyType); paramIdx < END(StrategyType); ++paramIdx)
@@ -74,7 +74,7 @@ void GoalMatrixRowEvaluator::Initialize(PlayerType p_humanPlayer, PlayerType p_s
     _parameterStart[PARAM_PlayerId] = PLAYER_START;
 
     // Goal: BuildBase
-    m_goalIdx = INDEX(GOALEX_BuildBase, GoalType);
+    m_goalIdx = INDEX(GOALEX_CollectResource, GoalType);
     m_level.clear();
     for(int paramIdx = START(BaseType); paramIdx < END(BaseType); ++paramIdx)
     {
@@ -95,7 +95,7 @@ void GoalMatrixRowEvaluator::Initialize(PlayerType p_humanPlayer, PlayerType p_s
     _parameterStart[PARAM_PlayerId] = PLAYER_START;
 
     // Goal: AttackEnemy
-    m_goalIdx = INDEX(GOALEX_AttackEnemy, GoalType);
+    m_goalIdx = INDEX(GOALEX_DestroyEntityType, GoalType);
     m_level.clear();
     for(int paramIdx = START(AttackType); paramIdx < END(AttackType); ++paramIdx)
     {

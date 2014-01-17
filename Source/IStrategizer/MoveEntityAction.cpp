@@ -14,6 +14,7 @@
 #include "GameTechTree.h"
 #include "GameType.h"
 #include "GameEntity.h"
+#include "AdapterEx.h"
 
 using namespace IStrategizer;
 
@@ -28,38 +29,33 @@ Action(ACTIONEX_MoveEntity, p_parameters)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveEntityAction::OnSucccess(const WorldClock& p_clock)
+void MoveEntityAction::OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
-    GameEntity *pEntity = g_Game->Self()->GetEntity(_entityId);
+    GameEntity *pEntity = pRtsGame.Self()->GetEntity(_entityId);
 
     if (pEntity)
         pEntity->Unlock(this);
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveEntityAction::OnFailure(const WorldClock& p_clock)
+void MoveEntityAction::OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
-    GameEntity *pEntity = g_Game->Self()->GetEntity(_entityId);
+    GameEntity *pEntity = pRtsGame.Self()->GetEntity(_entityId);
 
     if (pEntity)
         pEntity->Unlock(this);
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
+void MoveEntityAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveEntityAction::PreconditionsSatisfied()
-{
-    return g_Assist.DoesEntityObjectExist(_entityId);
-}
-//////////////////////////////////////////////////////////////////////////
-bool MoveEntityAction::AliveConditionsSatisfied()
+bool MoveEntityAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
 {
     bool success = g_Assist.DoesEntityObjectExist(_entityId);
 
     if(success)
     {
-        GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
+        GameEntity* entity = pRtsGame.Self()->GetEntity(_entityId);
         assert(entity);
         success = entity->Attr(EOATTR_IsMoving) > 0;
     }
@@ -67,13 +63,13 @@ bool MoveEntityAction::AliveConditionsSatisfied()
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveEntityAction::SuccessConditionsSatisfied()
+bool MoveEntityAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
     bool success = g_Assist.DoesEntityObjectExist(_entityId);
 
     if(success)
     {
-        GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
+        GameEntity* entity = pRtsGame.Self()->GetEntity(_entityId);
         assert(entity);
 
         success = g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE)
@@ -83,16 +79,16 @@ bool MoveEntityAction::SuccessConditionsSatisfied()
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveEntityAction::ExecuteAux(const WorldClock& p_clock)
+bool MoveEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
-    _entityId = pAdapter->AdaptWorkerForBuild();
+    _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
     assert(_entityId != INVALID_TID);
 
     _position = pAdapter->AdaptPosition(Parameters());
 
-    GameEntity* entity = g_Game->Self()->GetEntity(_entityId);
+    GameEntity* entity = pRtsGame.Self()->GetEntity(_entityId);
     assert(entity);
 
     bool success = entity->Move(_position);
@@ -103,4 +99,16 @@ bool MoveEntityAction::ExecuteAux(const WorldClock& p_clock)
     }
 
     return success;
+}
+//////////////////////////////////////////////////////////////////////////
+void MoveEntityAction::InitializePostConditions()
+{
+
+}
+//////////////////////////////////////////////////////////////////////////
+void MoveEntityAction::InitializePreConditions()
+{
+    /*
+    return g_Assist.DoesEntityObjectExist(_entityId);
+    */
 }
