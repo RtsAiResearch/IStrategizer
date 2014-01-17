@@ -44,7 +44,6 @@
 #include "Vector2.h"
 #include "AttackGroundAction.h"
 #include "CellFeature.h"
-#include "BuildAction.h"
 
 using namespace IStrategizer;
 

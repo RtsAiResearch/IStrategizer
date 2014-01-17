@@ -13,11 +13,12 @@ namespace IStrategizer
         OBJECT_SERIALIZABLE(TrainForceGoal);
 
     public:
-                    TrainForceGoal();
-                    TrainForceGoal(const PlanStepParameters& p_parameters);
+        TrainForceGoal();
+        TrainForceGoal(const PlanStepParameters& p_parameters);
+    
     protected:
-        void InitializeSuccessConditions();
         void InitializePostConditions();
+        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
     };
 }
-#endif    // TRAINFORCEGOAL_H
+#endif // TRAINFORCEGOAL_H

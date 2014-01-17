@@ -81,7 +81,7 @@ ObjectStateType StarCraftEntity::FetchState() const
 {
     bool isIdle = m_unit->isIdle();
     bool isCompleted = m_unit->isCompleted();
-    bool isBeingConstructed =m_unit->isBeingConstructed();
+    bool isBeingConstructed = m_unit->isBeingConstructed();
     bool isConstructing = m_unit->isConstructing();
     bool isMoving = m_unit->isMoving();
     bool isGatheringGas = m_unit->isGatheringGas();
@@ -92,8 +92,7 @@ ObjectStateType StarCraftEntity::FetchState() const
 
     if (isIdle && isCompleted)
         return OBJSTATE_Idle;
-    else if (isBeingConstructed ||
-        (isIdle && !isCompleted))
+    else if (isBeingConstructed || (isIdle && !isCompleted))
         return OBJSTATE_BeingConstructed;
     else if (isGatheringGas || isGatheringMinerals)
         return OBJSTATE_Gathering;
@@ -164,7 +163,7 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
     if (!target)
         throw ItemNotFoundException(XcptHere);
 
-    return attacker->attack(target);
+    return attacker->attack(target->getPosition());
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)

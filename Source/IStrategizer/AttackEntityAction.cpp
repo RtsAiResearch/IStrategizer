@@ -13,6 +13,10 @@
 #include "GameTechTree.h"
 #include "GameType.h"
 #include "GameEntity.h"
+#include "AdapterEx.h"
+#include "EntityClassExist.h"
+#include "And.h"
+#include "Not.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -33,7 +37,7 @@ void AttackEntityAction::Copy(IClonable* p_dest)
     Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
+bool AttackEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
@@ -41,7 +45,7 @@ bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
     bool executed = false;
     
     // Adapt attacker
-    _attackerId = pAdapter->AdaptAttacker(attackerType);
+    _attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
 
     if (_attackerId != INVALID_TID)
     {
@@ -49,8 +53,8 @@ bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
 
         if (_targetId != INVALID_TID)
         {
-            GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
-            GameEntity* pGameTarget = g_Game->Enemy()->GetEntity(_targetId);
+            GameEntity* pGameAttacker = pRtsGame.Self()->GetEntity(_attackerId);
+            GameEntity* pGameTarget = pRtsGame.Enemy()->GetEntity(_targetId);
             assert(pGameAttacker);
             assert(pGameTarget);
             pGameAttacker->Lock(this);
@@ -61,33 +65,22 @@ bool AttackEntityAction::ExecuteAux(const WorldClock& p_clock)
     return executed;
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::HandleMessage(Message* p_pMsg, bool& p_consumed)
+void AttackEntityAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
 {
     
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::PreconditionsSatisfied()
-{
-    EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-    bool attackerTypeExists = g_Assist.DoesEntityClassExist(MakePair(attacker, 1));
-
-    EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    bool targetTypeExists = g_Assist.DoesEntityClassExist(MakePair(target, 1), PLAYER_Enemy);
-
-    return attackerTypeExists && targetTypeExists;
-}
-//----------------------------------------------------------------------------------------------
-bool AttackEntityAction::AliveConditionsSatisfied()
+bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
 {
     return g_Assist.DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::SuccessConditionsSatisfied()
+bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
     assert(PlanStepEx::State() == ESTATE_Executing);
 
-    GameEntity* pGameAttacker = g_Game->Self()->GetEntity(_attackerId);
-    GameEntity* pGameTarget = g_Game->Enemy()->GetEntity(_targetId);
+    GameEntity* pGameAttacker = pRtsGame.Self()->GetEntity(_attackerId);
+    GameEntity* pGameTarget = pRtsGame.Enemy()->GetEntity(_targetId);
     assert(pGameAttacker);
     assert(pGameTarget);
 
@@ -96,7 +89,24 @@ bool AttackEntityAction::SuccessConditionsSatisfied()
     return (attackerState == OBJSTATE_Attacking) || (targetState == OBJSTATE_UnderAttack);
 }
 //----------------------------------------------------------------------------------------------
-void  AttackEntityAction::InitializeAddressesAux()
+void AttackEntityAction::InitializeAddressesAux()
 {
     Action::InitializeAddressesAux();
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::InitializePostConditions()
+{
+    EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, target, 1, true));
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::InitializePreConditions()
+{
+    vector<Expression*> m_terms;
+    EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
+    EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
+
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, attacker, 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Enemy, target, 1, false));
+    _preCondition = new And(m_terms);
 }
