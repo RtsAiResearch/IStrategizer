@@ -63,6 +63,7 @@ void TrainAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consu
             {
                 _trainStarted = true;
                 _traineeId = entityId;
+                g_Assist.ControlResource(_params[PARAM_EntityClassId], PLAYER_Self, false);
             }
         }
     }
@@ -179,4 +180,9 @@ void TrainAction::InitializePreConditions()
     m_terms.push_back(new EntityClassExist(PLAYER_Self, trainerType, 1, true));
     g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
+}
+//----------------------------------------------------------------------------------------------
+void TrainAction::PreExecution(RtsGame& pRtsGame)
+{
+    g_Assist.ControlResource(_params[PARAM_EntityClassId], PLAYER_Self, true);
 }

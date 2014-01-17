@@ -158,13 +158,13 @@ int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_res
     switch(p_resourceId)
     {
     case RESOURCE_Supply:
-        p_availableAmount = m_resources->Supply();
+        p_availableAmount = m_resources->AvailableSupply();
         break;
     case RESOURCE_Primary:
-        p_availableAmount = m_resources->Primary();
+        p_availableAmount = m_resources->AvailablePrimary();
         break;
     case RESOURCE_Secondary:
-        p_availableAmount = m_resources->Secondary();
+        p_availableAmount = m_resources->AvailableSecondary();
         break;
     default:
         return ERR_InvalidParameterValue;
@@ -622,4 +622,46 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
     p_prerequisites.push_back(new ResourceExist(p_playerType, RESOURCE_Primary, pReqResources->Primary()));
     p_prerequisites.push_back(new ResourceExist(p_playerType, RESOURCE_Secondary, pReqResources->Secondary()));
     p_prerequisites.push_back(new ResourceExist(p_playerType, RESOURCE_Supply, pReqResources->Supply()));
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------
+void EngineAssist::ControlResource(int p_entityOrResearchType, PlayerType p_playerType, bool lock)
+{
+    GamePlayer *pPlayer = nullptr;
+    GameType *pEntityType = nullptr;
+    GameResearch *pResearchType = nullptr;
+    WorldResources *pReqResources = nullptr;
+
+    pPlayer = g_Game->GetPlayer(p_playerType);
+    assert(pPlayer);
+        
+    if (BELONG(ResearchType, p_entityOrResearchType))
+    {
+        pResearchType = g_Game->GetResearch((ResearchType)p_entityOrResearchType);
+        assert(pResearchType);
+            
+        pReqResources = pResearchType->RequiredResources();
+        assert(pReqResources);
+    }
+    else if (BELONG(EntityClassType, p_entityOrResearchType))
+    {
+        pEntityType = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType);
+        assert(pEntityType);
+
+        pReqResources = pEntityType->RequiredResources();
+        assert(pReqResources);
+    }
+    else assert(0);
+    
+    if (lock)
+    {
+        pPlayer->Resources()->Lock(RESOURCE_Primary, pReqResources->Primary());
+        pPlayer->Resources()->Lock(RESOURCE_Secondary, pReqResources->Secondary());
+        pPlayer->Resources()->Lock(RESOURCE_Supply, pReqResources->Supply());
+    }
+    else
+    {
+        pPlayer->Resources()->Unlock(RESOURCE_Primary, pReqResources->Primary());
+        pPlayer->Resources()->Unlock(RESOURCE_Secondary, pReqResources->Secondary());
+        pPlayer->Resources()->Unlock(RESOURCE_Supply, pReqResources->Supply());
+    }
 }

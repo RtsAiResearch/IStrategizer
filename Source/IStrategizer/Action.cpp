@@ -49,6 +49,15 @@ void Action::State(ExecutionStateType p_state, RtsGame& pRtsGame, const WorldClo
         break;
     }
 }
+bool Action::PreconditionsSatisfied(RtsGame& pRtsGame)
+{
+    if (_preCondition == nullptr) { InitializeConditions(); }
+    bool satisfied = _preCondition->Evaluate(pRtsGame);
+
+    if (satisfied) { PreExecution(pRtsGame); }
+
+    return satisfied;
+}
 //////////////////////////////////////////////////////////////////////////
 void Action::InitializeConditions()
 {

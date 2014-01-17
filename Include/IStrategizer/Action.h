@@ -27,6 +27,7 @@ namespace IStrategizer
         virtual void InitializePreConditions() = 0;
         virtual void OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock) {};
         virtual void OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock) {};
+        virtual void PreExecution(RtsGame& pRtsGame) {};
 
     public:
         int Type() const { return PlanStepEx::_stepTypeId; }
@@ -35,7 +36,7 @@ namespace IStrategizer
         void Copy(IClonable* p_dest);
         virtual bool Execute(RtsGame& pRtsGame, const WorldClock& p_clock);
         virtual bool AliveConditionsSatisfied(RtsGame& pRtsGame) = 0;
-        bool PreconditionsSatisfied(RtsGame& pRtsGame) { if (_preCondition == nullptr) InitializeConditions(); return _preCondition->Evaluate(pRtsGame); }
+        bool PreconditionsSatisfied(RtsGame& pRtsGame);
     };
 }
 

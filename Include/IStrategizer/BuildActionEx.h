@@ -36,6 +36,7 @@ namespace IStrategizer
         void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
         void InitializePostConditions();
         void InitializePreConditions();
+        void PreExecution(RtsGame& pRtsGame);
 
     private:
         TID _buildingId;
