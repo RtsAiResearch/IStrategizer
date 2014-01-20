@@ -34,7 +34,7 @@ bool ResearchAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
 {
     bool success = false;
 
-    success = g_Assist.DoesEntityObjectExist(_researcherId);
+    success = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_researcherId);
     
     return success;
 }
@@ -74,6 +74,6 @@ void ResearchAction::InitializePreConditions()
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, researcherType, 1, true));
-    g_Assist.GetPrerequisites(researchType, PLAYER_Self, m_terms);
+    EngineAssist::Instance(g_Game).GetPrerequisites(researchType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

@@ -19,8 +19,8 @@ void CollectResourceGoal::InitializePostConditions()
     //map<EntityClassType, int> m_baseTypeRequiredBuildings;
     //EntityClassType m_baseBuildingClassId;
 
-    //g_Assist.GetRequiredBuildingsForBaseType(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseTypeRequiredBuildings);
-    //g_Assist.GetTireBaseBuildingId(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseBuildingClassId);
+    //EngineAssist::Instance(g_Game).GetRequiredBuildingsForBaseType(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseTypeRequiredBuildings);
+    //EngineAssist::Instance(g_Game).GetTireBaseBuildingId(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseBuildingClassId);
 
     //m_baseTypeRequiredBuildings[m_baseBuildingClassId] = 1;
 

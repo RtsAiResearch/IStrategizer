@@ -103,7 +103,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
 
     assert(PlanStepEx::State() == ESTATE_Executing);
 
-    builderExist = g_Assist.DoesEntityObjectExist(_builderId);
+    builderExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_builderId);
 
     if (builderExist)
     {
@@ -120,7 +120,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
         {
             if (_buildStarted)
             {
-                buildingExist = g_Assist.DoesEntityObjectExist(_buildingId);
+                buildingExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_buildingId);
 
                 if (buildingExist)
                 {
@@ -212,6 +212,6 @@ void BuildActionEx::InitializePreConditions()
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, 1, true));
-    g_Assist.GetPrerequisites(buildingType, PLAYER_Self, m_terms);
+    EngineAssist::Instance(g_Game).GetPrerequisites(buildingType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

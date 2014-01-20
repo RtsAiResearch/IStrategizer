@@ -68,7 +68,7 @@ bool EntityClassExist::Evaluate(RtsGame& pRtsGame)
         PlayerType playerId = (PlayerType)_conditionParameters[PARAM_PlayerId];
 
         ConditionEx::Evaluate(pRtsGame);
-        _isSatisfied = g_Assist.DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
+        _isSatisfied = EngineAssist::Instance(g_Game).DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
     }
 
     return _isEvaluated && _isSatisfied;

@@ -40,7 +40,7 @@ void MoveAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consum
 bool MoveAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
 {
     bool satisfied = false;
-    if (g_Assist.DoesEntityObjectExist(_entityId))
+    if (EngineAssist::Instance(g_Game).DoesEntityObjectExist(_entityId))
     {
         GameEntity* pEntity = pRtsGame.Self()->GetEntity(_entityId);
         assert(pEntity);
@@ -52,7 +52,7 @@ bool MoveAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
 //----------------------------------------------------------------------------------------------
 bool MoveAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
-    return g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
+    return EngineAssist::Instance(g_Game).IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
 }
 //----------------------------------------------------------------------------------------------
 void MoveAction::InitializeAddressesAux()

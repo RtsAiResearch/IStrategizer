@@ -72,7 +72,7 @@ void AttackEntityAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& 
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
 {
-    return g_Assist.DoesEntityObjectExist(_attackerId);
+    return EngineAssist::Instance(g_Game).DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)

@@ -77,7 +77,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
     bool success = false;
 
     // 1. Trainer building exist
-    trainerExist = g_Assist.DoesEntityObjectExist(_trainerId);
+    trainerExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_trainerId);
 
     if (trainerExist)
     {
@@ -92,7 +92,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
             if (trainerBusy)
             {
                 // 3. The trainee unit object exist, i.e not cancel
-                traineeExist = g_Assist.DoesEntityObjectExist(_traineeId);
+                traineeExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_traineeId);
 
                 if (traineeExist)
                 {
@@ -124,7 +124,7 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
     if (_trainStarted)
     {
         // 1. Trainee unit object exist
-        bool traineeExist = g_Assist.DoesEntityObjectExist(_traineeId);
+        bool traineeExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_traineeId);
 
         if (traineeExist)
         {
@@ -177,6 +177,6 @@ void TrainAction::InitializePreConditions()
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, trainerType, 1, true));
-    g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
+    EngineAssist::Instance(g_Game).GetPrerequisites(traineeType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }
