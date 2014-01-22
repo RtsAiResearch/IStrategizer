@@ -108,12 +108,10 @@ You can easily jump directly to this line and examine the surrounding code.
 // This macro returns TRUE if a number is between two others
 #define chINRANGE(low, Num, High) (((low) <= (Num)) && ((Num) <= (High)))
 
-
 ///////////////////////////// chSIZEOFSTRING Macro ////////////////////////////
 
 // This macro evaluates to the number of bytes needed by a string.
 #define chSIZEOFSTRING(psz)   ((lstrlen(psz) + 1) * sizeof(TCHAR))
-
 
 /////////////////// chROUNDDOWN & chROUNDUP inline functions //////////////////
 
@@ -129,7 +127,6 @@ inline TV chROUNDUP(TV Value, TM Multiple) {
    return(chROUNDDOWN(Value, Multiple) + 
       (((Value % Multiple) > 0) ? Multiple : 0));
 }
-
 
 ///////////////////////////// chBEGINTHREADEX Macro ///////////////////////////
 

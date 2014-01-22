@@ -38,7 +38,6 @@ namespace IStrategizer
         void ExpandGoal(RtsGame& p_RtsGame, PlanGraphNode* p_rootGoal, CaseEx* p_Case);
         void UpdatePlan(RtsGame& p_RtsGame, PlanGraphNode* p_rootPlanStep, const WorldClock& p_clock);
 
-
         void NotifyChildrenForParentSuccess(PlanGraphNode* p_Node);
         void MarkCaseAsTried(PlanGraphNode* p_Step, CaseEx* p_Case);
         bool IsCaseTried(PlanGraphNode* p_Step, CaseEx* p_Case);

@@ -64,7 +64,6 @@ namespace IStrategizer
             }
         }
 
-
     protected:
         ///> type=vector(GraphNode(TValue,TAnnotation)*)
         Serialization::SVector< GraphNode<TValue, TAnnotation>* >    _adjacencyMatrix;

@@ -36,5 +36,4 @@ public:
     // End of Inherited Members
 };
 
-
 #endif  // CASELEARNINGLOG_H
