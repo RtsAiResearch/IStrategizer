@@ -1,9 +1,10 @@
 #ifndef IMSYSTEMMANAGER_H
 #define IMSYSTEMMANAGER_H
 
+#include <vector>
 #include "EngineData.h"
 #include "WorldClock.h"
-#include <vector>
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -28,11 +29,11 @@ namespace IStrategizer
     class IMSystemManager
     {
     public:
-        void Update(const WorldClock& p_clock);
-        void RegisterGameObj(TID p_objId, PlayerType p_ownerId);
+        void Update(RtsGame& p_RtsGame, const WorldClock& p_clock);
+        void RegisterGameObj(RtsGame& p_RtsGame, TID p_objId, PlayerType p_ownerId);
         void UnregisterGameObj(TID p_objId);
         void RegisterIM(InfluenceMap *p_pMap, IMType p_mapTypeId);
-        void Init(const IMSysManagerParam& p_param);
+        void Init(RtsGame& p_RtsGame, const IMSysManagerParam& p_param);
         void Finalize();
         InfluenceMap* GetIM(IMType p_mapTypeId);
         static IMSystemManager& Instance() { static IMSystemManager inst; return inst; }

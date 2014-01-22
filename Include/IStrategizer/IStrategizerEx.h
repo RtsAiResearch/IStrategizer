@@ -5,6 +5,7 @@
 #include "MetaData.h"
 #include "MessagePumpObserver.h"
 #include "WorldClock.h"
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -28,21 +29,22 @@ namespace IStrategizer
     class IStrategizerEx : public MessagePumpObserver
     {
     private:
-        OnlineCaseBasedPlannerEx*            _planner;
-        LearningFromHumanDemonstration*        _caseLearning;
-        PlayerType                            _self;
-        PlayerType                            _enemy;
-        IStrategizerParam                    _param;
-        bool                                _isFirstUpdate;
-        WorldClock                            _clock;
+        OnlineCaseBasedPlannerEx* _planner;
+        LearningFromHumanDemonstration* _caseLearning;
+        PlayerType _self;
+        PlayerType _enemy;
+        IStrategizerParam _param;
+        bool _isFirstUpdate;
+        WorldClock _clock;
+        RtsGame& m_RtsGame;
 
     public:
-        IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame);
+        IStrategizerEx(const IStrategizerParam &p_param, RtsGame& p_RtsGame);
         void    Update(unsigned p_gameCycle);
         void    StartOfflineLearning();
         const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
         OnlineCaseBasedPlannerEx* Planner() { return _planner; }
-        void    NotifyMessegeSent(Message* p_message);
+        void    NotifyMessegeSent(RtsGame& p_RtsGame, Message* p_message);
         const WorldClock& Clock() const { return _clock; }
         ~IStrategizerEx();
     };

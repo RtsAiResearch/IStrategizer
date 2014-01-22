@@ -1,9 +1,9 @@
 #ifndef MESSAGEPUMP_H
 #define MESSAGEPUMP_H
 
+#include <queue>
 #include "MessagePumpSubject.h"
 #include "WorldClock.h"
-#include <queue>
 
 namespace IStrategizer
 {
@@ -15,17 +15,16 @@ namespace IStrategizer
     {
     private:
         MessageQueue _messageQueue;
+        RtsGame& _rtsGame;
     public:
-        static MessagePump& Instance();
+        static MessagePump& Instance(RtsGame& p_RtsGame);
         void Update(const WorldClock& p_clock);
         void Send(Message* p_message, bool p_immediate = false);
     protected:
-        MessagePump();
+        MessagePump(RtsGame& p_RtsGame);
         void DeliverMessage(Message* p_message);
         ~MessagePump();
     };
-
-#define g_MessagePump IStrategizer::MessagePump::Instance()
 }
 
 #endif // MESSAGEPUMP_H

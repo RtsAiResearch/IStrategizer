@@ -53,10 +53,10 @@ OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() : _caseBasedReasoner(nullpt
 {
 }
 //----------------------------------------------------------------------------------------------
-void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
+void OnlineCaseBasedPlannerEx::Init(RtsGame& p_RtsGame, GoalEx *p_initialGoal)
 {
-    AbstractRetainer*   m_retainer  = new RetainerEx(g_CaseBasePath);
-    AbstractRetriever*  m_retriever = new RetrieverEx(m_retainer);
+    AbstractRetainer*   m_retainer  = new RetainerEx(p_RtsGame, g_CaseBasePath);
+    AbstractRetriever*  m_retriever = new RetrieverEx(p_RtsGame, m_retainer);
     AbstractReviser*    m_revisor   = new Reviser();
     AbstractAdapter*    m_adapter   = new AdapterEx();
     _caseBasedReasoner = new CaseBasedReasonerEx(
@@ -67,12 +67,12 @@ void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
 
     _caseBasedReasoner->Initialize();
 
-    _onlineExpansionExecution = new OnlinePlanExpansionExecutionEx(p_initialGoal, _caseBasedReasoner);
+    _onlineExpansionExecution = new OnlinePlanExpansionExecutionEx(p_RtsGame, p_initialGoal, _caseBasedReasoner);
 }
 //----------------------------------------------------------------------------------------------
-void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)
+void OnlineCaseBasedPlannerEx::Update(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
-    _onlineExpansionExecution->Update(p_clock);
+    _onlineExpansionExecution->Update(p_RtsGame, p_clock);
 }
 //----------------------------------------------------------------------------------------------
 OnlineCaseBasedPlannerEx::~OnlineCaseBasedPlannerEx()

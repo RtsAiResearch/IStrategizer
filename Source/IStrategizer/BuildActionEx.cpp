@@ -34,35 +34,35 @@ Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock)
+void BuildActionEx::OnSucccess(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     if (_buildIssued)
     {
         assert(!_buildArea.IsNull());
         _buildArea.Unlock(this);
 
-        GameEntity *pEntity = pRtsGame.Self()->GetEntity(_builderId);
+        GameEntity *pEntity = p_RtsGame.Self()->GetEntity(_builderId);
 
         if (pEntity)
             pEntity->Unlock(this);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock)
+void BuildActionEx::OnFailure(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     if (_buildIssued)
     {
         assert(!_buildArea.IsNull());
         _buildArea.Unlock(this);
 
-        GameEntity *pEntity = pRtsGame.Self()->GetEntity(_builderId);
+        GameEntity *pEntity = p_RtsGame.Self()->GetEntity(_builderId);
 
         if (pEntity)
             pEntity->Unlock(this);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void BuildActionEx::HandleMessage(RtsGame& p_RtsGame, Message* p_msg, bool& p_consumed)
 {
     if(PlanStepEx::State() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_EntityCreate) 
     {
@@ -77,7 +77,7 @@ void BuildActionEx::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_con
         assert(pMsg && pMsg->Data());
         buildingId = pMsg->Data()->EntityId;
 
-        pGameBuilding = pRtsGame.Self()->GetEntity(buildingId);
+        pGameBuilding = p_RtsGame.Self()->GetEntity(buildingId);
         assert(pGameBuilding);
 
         msgBuildPosition.X = pMsg->Data()->X;
@@ -93,7 +93,7 @@ void BuildActionEx::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_con
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool BuildActionEx::AliveConditionsSatisfied(RtsGame& p_RtsGame)
 {
     bool        builderExist = false;
     bool        buildingExist = false;
@@ -103,11 +103,11 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
 
     assert(PlanStepEx::State() == ESTATE_Executing);
 
-    builderExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_builderId);
+    builderExist = EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_builderId);
 
     if (builderExist)
     {
-        pEntity = pRtsGame.Self()->GetEntity(_builderId);
+        pEntity = p_RtsGame.Self()->GetEntity(_builderId);
 
         assert(pEntity);
         isBuilderConstructing = (pEntity->Attr(EOATTR_State) == OBJSTATE_Constructing);
@@ -120,7 +120,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
         {
             if (_buildStarted)
             {
-                buildingExist = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_buildingId);
+                buildingExist = EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_buildingId);
 
                 if (buildingExist)
                 {
@@ -141,7 +141,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
     assert(PlanStepEx::State() == ESTATE_Executing);
 
@@ -150,7 +150,7 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& pRtsGame)
         int            entityState;
         GameEntity    *pEntity;
 
-        pEntity = pRtsGame.Self()->GetEntity(_buildingId);    
+        pEntity = p_RtsGame.Self()->GetEntity(_buildingId);    
         entityState = pEntity->Attr(EOATTR_State);
 
         return entityState != OBJSTATE_BeingConstructed;
@@ -159,7 +159,7 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& pRtsGame)
     return false;
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool BuildActionEx::ExecuteAux(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     EntityClassType        buildingType;
     GameEntity            *pGameBuilder;
@@ -167,7 +167,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
     bool                bOk = false;
 
     // Adapt builder
-    _builderId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
+    _builderId = pAdapter->GetEntityObjectId(p_RtsGame, p_RtsGame.Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
 
     if (_builderId != INVALID_TID)
     {
@@ -179,10 +179,10 @@ bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 
         // Adapt build position
         assert(pAdapter);
-        _buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
+        _buildArea = pAdapter->AdaptPositionForBuilding(p_RtsGame, buildingType);
 
         // Issue build order
-        pGameBuilder = pRtsGame.Self()->GetEntity(_builderId);
+        pGameBuilder = p_RtsGame.Self()->GetEntity(_builderId);
         assert(pGameBuilder);
 
         bOk = pGameBuilder->Build(buildingType, _buildArea.Pos());
@@ -205,13 +205,13 @@ void BuildActionEx::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void BuildActionEx::InitializePreConditions()
+void BuildActionEx::InitializePreConditions(RtsGame& p_RtsGame)
 {
-    EntityClassType builderType = g_Game->Self()->GetWorkerType();
+    EntityClassType builderType = p_RtsGame.Self()->GetWorkerType();
     EntityClassType buildingType = (EntityClassType)_params[PARAM_EntityClassId];
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, 1, true));
-    EngineAssist::Instance(g_Game).GetPrerequisites(buildingType, PLAYER_Self, m_terms);
+    EngineAssist::Instance(&p_RtsGame).GetPrerequisites(buildingType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

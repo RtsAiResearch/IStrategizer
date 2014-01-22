@@ -1,13 +1,19 @@
 #ifndef MESSAGEPUMPOBSERVER_H
 #define MESSAGEPUMPOBSERVER_H
 
+#include <vector>
+
+using namespace std;
+
 namespace IStrategizer
 {
     class Message;
+    class RtsGame;
+
     class MessagePumpObserver
     {
     public:
-        virtual void NotifyMessegeSent(Message* p_pMessage) = 0;
+        virtual void NotifyMessegeSent(RtsGame& p_RtsGame, Message* p_Message) = 0;
         virtual ~MessagePumpObserver();
     };
 }

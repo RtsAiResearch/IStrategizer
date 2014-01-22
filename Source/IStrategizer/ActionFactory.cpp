@@ -10,7 +10,22 @@
 
 using namespace IStrategizer;
 
-Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions) {
+//-------------------------------------------------------------------------------------------------------
+ActionFactory& ActionFactory::Instance(RtsGame& p_RtsGame)
+{
+    static ActionFactory m_instance;
+    m_instance.m_RtsGame = &p_RtsGame;
+    return m_instance;
+}
+//-------------------------------------------------------------------------------------------------------
+ActionFactory& ActionFactory::Instance()
+{
+    static ActionFactory m_instance;
+    m_instance.m_RtsGame = nullptr;
+    return m_instance;
+}
+//-------------------------------------------------------------------------------------------------------
+Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters) {
     Action* m_action = nullptr;
 
     switch(p_actionType)
@@ -44,13 +59,13 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
         throw exception("Action not supported");
     }
 
-    if(p_initConditions)
-        m_action->InitializeConditions();
+    if(m_RtsGame)
+        m_action->InitializeConditions(*m_RtsGame);
 
     return m_action;
 }
 //-------------------------------------------------------------------------------------------------------
-Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
+Action* ActionFactory::GetAction(ActionType p_actionType)
 {
     Action* m_action = nullptr;
 
@@ -84,8 +99,8 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
         throw exception("Action not supported");
     }
 
-    if(p_initConditions)
-        m_action->InitializeConditions();
+    if(m_RtsGame)
+        m_action->InitializeConditions(*m_RtsGame);
 
     return m_action;
 }

@@ -18,7 +18,7 @@ namespace IStrategizer
     public:
         EntityClassNearArea() {}
         EntityClassNearArea(PlayerType p_player, EntityClassType p_entityType, CellFeature* cellFeature, int howFar);
-        bool Evaluate(RtsGame& pRtsGame);
+        bool Evaluate(RtsGame& p_RtsGame);
         bool Consume(int p_amount) { return true; }
     };
 }

@@ -2,7 +2,7 @@
 
 #include "ActionFactory.h"
 #include "Action.h"
-#include "RtsGame.h"
+#include "StarCraftGame.h"
 #include "WorldMap.h"
 #include "DefinitionCrossMapping.h"
 #include "StarCraftEntity.h"
@@ -11,17 +11,17 @@ using namespace BWAPI;
 using namespace IStrategizer;
 using namespace StarCraftModel;
 
-PlanStepParameters ActionAbstractor::GetAbstractedParameter(const Unit trainee, const Unit trainer) const
+PlanStepParameters ActionAbstractor::GetAbstractedParameter(RtsGame& p_RtsGame, const Unit trainee, const Unit trainer) const
 {
-    return GetAbstractedParameterAux(g_ActionFactory.GetAction(ACTIONEX_Train)->Parameters(), trainee, trainer);
+    return GetAbstractedParameterAux(p_RtsGame, ActionFactory::Instance(p_RtsGame).GetAction(ACTIONEX_Train)->Parameters(), trainee, trainer);
 }
 //////////////////////////////////////////////////////////////////////////
-PlanStepParameters ActionAbstractor::GetAbstractedParameter(ActionType actionType, const Unit unit) const
+PlanStepParameters ActionAbstractor::GetAbstractedParameter(RtsGame& p_RtsGame, ActionType actionType, const Unit unit) const
 {
-    return GetAbstractedParameterAux(g_ActionFactory.GetAction(actionType)->Parameters(), unit, nullptr);
+    return GetAbstractedParameterAux(p_RtsGame, ActionFactory::Instance(p_RtsGame).GetAction(actionType)->Parameters(), unit, nullptr);
 }
 //////////////////////////////////////////////////////////////////////////
-PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameters actionParameters, const Unit unit, const Unit trainer) const
+PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(RtsGame& p_RtsGame, PlanStepParameters actionParameters, const Unit unit, const Unit trainer) const
 {
     assert(unit);
     IStrategizer::Vector2 position;
@@ -40,8 +40,8 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
         position.Y = unit->getPosition().y;
     }
     
-    g_Game->Map()->UpdateAux();
-    g_Game->Map()->GetCellFeatureFromWorldPosition(position)->To(actionParameters);
+    p_RtsGame.Map()->UpdateAux(p_RtsGame);
+    p_RtsGame.Map()->GetCellFeatureFromWorldPosition(position)->To(actionParameters);
     
     if (actionParameters.count(PARAM_EntityClassId) > 0)
     {

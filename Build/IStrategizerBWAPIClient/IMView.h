@@ -14,11 +14,11 @@ class IMView : public QWidget
     Q_OBJECT
 
 public:
-    IMView(QWidget *p_pParent = nullptr);
+    IMView(QWidget *p_Parent = nullptr);
     ~IMView();
     QSize minimumSizeHint() const;
     QSize sizeHint() const;
-    void SetIM(const IStrategizer::InfluenceMap *p_pIM);
+    void SetIM(const IStrategizer::InfluenceMap *p_IM);
 protected:
     void paintEvent(QPaintEvent *event);
     void FitGridToCanvas(QPainter &p_painter);

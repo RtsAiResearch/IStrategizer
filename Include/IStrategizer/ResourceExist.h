@@ -19,7 +19,7 @@ namespace IStrategizer
         ResourceExist() {}
         ResourceExist(PlayerType p_player, int p_resourceId, int p_amount);
         int AvailableAmount() const { return _availableAmount; }
-        bool Evaluate(RtsGame& pRtsGame);
+        bool Evaluate(RtsGame& p_RtsGame);
         void Copy(IClonable* p_dest);
         bool Consume(int p_amount);
     };

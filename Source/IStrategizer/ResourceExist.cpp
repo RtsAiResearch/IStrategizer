@@ -11,11 +11,11 @@ ResourceExist::ResourceExist(PlayerType p_player, int p_resourceId, int p_amount
     _conditionParameters[PARAM_Amount] = p_amount;
 }
 //---------------------------------------------------------------------------------------------------
-bool ResourceExist::Evaluate(RtsGame& pRtsGame)
+bool ResourceExist::Evaluate(RtsGame& p_RtsGame)
 {
-    EngineAssist::Instance(g_Game).GetResourceAmount((PlayerType)_conditionParameters[PARAM_PlayerId], (ResourceType)_conditionParameters[PARAM_ResourceId], _availableAmount);
+    EngineAssist::Instance(&p_RtsGame).GetResourceAmount((PlayerType)_conditionParameters[PARAM_PlayerId], (ResourceType)_conditionParameters[PARAM_ResourceId], _availableAmount);
     
-    ConditionEx::Evaluate(pRtsGame);
+    ConditionEx::Evaluate(p_RtsGame);
     _isSatisfied = _isEvaluated && (_availableAmount >= _conditionParameters[PARAM_Amount]);
 
     return _isEvaluated && _isSatisfied;

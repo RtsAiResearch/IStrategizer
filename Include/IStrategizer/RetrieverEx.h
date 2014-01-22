@@ -19,7 +19,7 @@ namespace IStrategizer
     class RetrieverEx : public AbstractRetriever
     {
     public:
-        RetrieverEx(AbstractRetainer *p_pRetainer);
+        RetrieverEx(RtsGame& p_RtsGame, AbstractRetainer *p_Retainer);
         CaseEx* Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameState);
 
     protected:

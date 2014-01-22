@@ -25,14 +25,14 @@ TInfluence GetInfluenceSign(PlayerType p_playerId)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDistance, TInfluence &p_initValue)
+void GetInfluence(RtsGame& p_RtsGame, GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDistance, TInfluence &p_initValue)
 {
     TInfluence infSign = GetInfluenceSign((PlayerType)p_pGameObj->Attr(EOATTR_OwnerId));
     EntityClassType typeId;
     GameType *pObjType = nullptr;
     
     typeId = p_pGameObj->Type();
-    pObjType = g_Game->GetEntityType(typeId);
+    pObjType = p_RtsGame.GetEntityType(typeId);
 
     p_effectiveDistance = max(pObjType->Attr(ECATTR_GroundRange), pObjType->Attr(ECATTR_AirRange));
     p_maxDistance = pObjType->Attr(ECATTR_LineOfSight);
@@ -43,7 +43,7 @@ void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDi
     p_initValue = (pObjType->Attr(ECATTR_Attack) + 10) * infSign;
 }
 //////////////////////////////////////////////////////////////////////////
-void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
+void StampObjField(RtsGame& p_RtsGame, InfluenceMap *p_Caller, RegObjEntry *p_ObjEntry)
 {
     GameEntity *pGameObj = nullptr;
     Vector2 currentPosition;
@@ -52,29 +52,29 @@ void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
     int maxDistance;
     TInfluence initValue;
 
-    pGameObj = p_pCaller->GetObj(p_pObjEntry);
+    pGameObj = p_Caller->GetObj(p_RtsGame, p_ObjEntry);
     assert(pGameObj);
     currentPosition.X = pGameObj->Attr(EOATTR_PosX);
     currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
 
     // Optimization: we skip neutral units because they don't have influence
-    if (p_pObjEntry->OwnerId == PLAYER_Neutral)
+    if (p_ObjEntry->OwnerId == PLAYER_Neutral)
         return;
 
-    p_pObjEntry->Stamped = true;
-    p_pObjEntry->LastPosition = currentPosition;
+    p_ObjEntry->Stamped = true;
+    p_ObjEntry->LastPosition = currentPosition;
 
     centerPosition.X = pGameObj->Attr(EOATTR_PosCenterX);
     centerPosition.Y = pGameObj->Attr(EOATTR_PosCenterY);
     
-    GetInfluence(pGameObj, effectiveDistance, maxDistance, initValue);
-    p_pCaller->StampInfluenceGradient(centerPosition, maxDistance, effectiveDistance, initValue);
+    GetInfluence(p_RtsGame, pGameObj, effectiveDistance, maxDistance, initValue);
+    p_Caller->StampInfluenceGradient(centerPosition, maxDistance, effectiveDistance, initValue);
 }
 //////////////////////////////////////////////////////////////////////////
-void GroundControlIM::Update(const WorldClock& p_clock)
+void GroundControlIM::Update(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     ClearMap();
     ResetStats();
-    ForEachObj(StampObjField);
+    ForEachObj(p_RtsGame, StampObjField);
 }
 //////////////////////////////////////////////////////////////////////////

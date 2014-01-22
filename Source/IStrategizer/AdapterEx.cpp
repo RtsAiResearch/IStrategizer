@@ -42,7 +42,7 @@ AdapterEx::AdapterEx()
     InitializePredefinedRankedStates();
 }
 //////////////////////////////////////////////////////////////////////////
-Vector2 AdapterEx::GetBotColonyCenter()
+Vector2 AdapterEx::GetBotColonyCenter(RtsGame& p_RtsGame)
 {
     // We didn't calculate player colony center yet ?
     if (m_botColonyCenter == Vector2::Null())
@@ -50,22 +50,22 @@ Vector2 AdapterEx::GetBotColonyCenter()
         GameEntity        *pPlayerBase = nullptr;
         vector<TID>        playerBases;
 
-        g_Game->Self()->GetBases(playerBases);
+        p_RtsGame.Self()->GetBases(playerBases);
 
         // Player has at least one base, then we use the first one
         // Note that player having many bases it not supported by the engine
         if (!playerBases.empty())
-            pPlayerBase = g_Game->Self()->GetEntity(playerBases[0]);
+            pPlayerBase = p_RtsGame.Self()->GetEntity(playerBases[0]);
         // No base! This is weird but for the case, we will select the first unit position as the player coloney center
         else
         {
             vector<TID>    playerEntities;
 
-            g_Game->Self()->Entities(playerEntities);
+            p_RtsGame.Self()->Entities(playerEntities);
             // This can't happen, If the player has no entities, then he must be losing
             assert(!playerEntities.empty());
 
-            pPlayerBase = g_Game->Self()->GetEntity(playerEntities[0]);
+            pPlayerBase = p_RtsGame.Self()->GetEntity(playerEntities[0]);
         }
 
         m_botColonyCenter.X = pPlayerBase->Attr(EOATTR_PosX);
@@ -75,7 +75,7 @@ Vector2 AdapterEx::GetBotColonyCenter()
     return m_botColonyCenter;
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::AdapterEx::InitializePredefinedRankedStates()
+void AdapterEx::InitializePredefinedRankedStates()
 {
     IsRankedStatesInitialized = true;
 
@@ -91,10 +91,10 @@ void IStrategizer::AdapterEx::InitializePredefinedRankedStates()
     EntityToMoveStatesRankVector.push_back(OBJSTATE_Moving);
 }
 //////////////////////////////////////////////////////////////////////////
-bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_worldY, const TCell* p_pCell, void *p_pParam)
+bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_worldY, const TCell* p_Cell, void *p_Param)
 {
     OccupanceDataIM        *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-    SpiralSearchData    *pSearchData = (SpiralSearchData*)p_pParam;
+    SpiralSearchData    *pSearchData = (SpiralSearchData*)p_Param;
     Vector2                worldPos(p_worldX, p_worldY);
     bool                canBuildThere;
     bool                stopSearch;
@@ -110,7 +110,7 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_world
     return stopSearch;
 }
 //////////////////////////////////////////////////////////////////////////
-MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
+MapArea AdapterEx::AdaptPositionForBuilding(RtsGame& p_RtsGame, EntityClassType p_buildingType)
 {
     /*
     Position Adaptation Algorithm Outline:
@@ -124,14 +124,14 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     2. The direction of growth should be taken into consideration, and the base main buildings should be well covered
     3. Critical buildings should be built in the back
     */
-    Vector2    mapeSize = g_Game->Map()->Size();
+    Vector2    mapeSize = p_RtsGame.Map()->Size();
     OccupanceDataIM    *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
     GameType    *pGameType;
     unsigned    searchRadius;
     Vector2    colonyCenter;
     SpiralSearchData    searchData;
 
-    pGameType = g_Game->GetEntityType(p_buildingType);
+    pGameType = p_RtsGame.GetEntityType(p_buildingType);
     assert(pGameType);
 
     // Append building width with padding of free space to achieve building spacing
@@ -143,7 +143,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     // Else if the map is a rectangle, we take the square part of it
     searchRadius = (int)((float)min(mapeSize.X, mapeSize.Y) / 2.0);
 
-    colonyCenter = GetBotColonyCenter();
+    colonyCenter = GetBotColonyCenter(p_RtsGame);
     pBuildingIM->SpiralMove(colonyCenter, searchRadius, BuildPositionSearchPredicate, &searchData);
 
     if (searchData.CandidateBuildPos == Vector2::Null())
@@ -163,7 +163,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates& p_rankedStates)
+TID AdapterEx::GetEntityObjectId(RtsGame& p_RtsGame, EntityClassType p_entityType,const RankedStates& p_rankedStates)
 {
     /*
     Entity Object Adaptation Algorithm:
@@ -182,7 +182,7 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     if(!IsRankedStatesInitialized)
     InitializePredefinedRankedStates();
 
-    pPlayer = g_Game->Self();
+    pPlayer = p_RtsGame.Self();
     assert(pPlayer);
 
     pPlayer->Entities(entityIds);
@@ -212,7 +212,7 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     return adaptedEntityId;
 }
 //////////////////////////////////////////////////////////////////////////
-IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_entityType )
+TID AdapterEx::GetEntityObjectId(RtsGame& p_RtsGame, EntityClassType p_entityType )
 {
     GamePlayer            *pPlayer;
     GameEntity            *pEntity;
@@ -220,7 +220,7 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
     EntityClassType        entityTypeId;
     TID                    adaptedEntityId = INVALID_TID;
 
-    pPlayer = g_Game->Self();
+    pPlayer = p_RtsGame.Self();
     assert(pPlayer);
 
     pPlayer->Entities(entityIds);
@@ -237,13 +237,13 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
     return adaptedEntityId;
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
+TID AdapterEx::AdaptBuildingForResearch(RtsGame& p_RtsGame, ResearchType p_researchType)
 {
     // The entity search algorithm should be moved to GamePlayer class
-    return AdaptBuildingForTraining((EntityClassType)p_researchType);
+    return AdaptBuildingForTraining(p_RtsGame, (EntityClassType)p_researchType);
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
+TID AdapterEx::AdaptBuildingForTraining(RtsGame& p_RtsGame, EntityClassType p_traineeType)
 {
     // Gets first building to train entity from type p_traineeType
     // If no empty building is found, last non-idle building will be returned
@@ -253,8 +253,8 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
     EntityClassType        trainerType;
     TID                    id = INVALID_TID;
 
-    trainerType = g_Game->Self()->TechTree()->SourceEntity(p_traineeType);
-    pPlayer = g_Game->Self();
+    trainerType = p_RtsGame.Self()->TechTree()->SourceEntity(p_traineeType);
+    pPlayer = p_RtsGame.Self();
     assert(pPlayer);
 
     pPlayer->Entities(entityIds);
@@ -279,7 +279,7 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
     return id;
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
+TID AdapterEx::AdaptTargetEntity(RtsGame& p_RtsGame, EntityClassType p_targetType, const PlanStepParameters& p_parameters)
 {
     GamePlayer    *pPlayer;
     GameEntity    *pEntity;
@@ -288,7 +288,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
     double        bestDistance = numeric_limits<double>::max();
     CellFeature    *pTarGetCellFeatureFromWorldPosition = new CellFeature(p_parameters);
 
-    pPlayer = g_Game->Enemy();
+    pPlayer = p_RtsGame.Enemy();
     assert(pPlayer);
 
     pPlayer->Entities(entityIds);
@@ -300,7 +300,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 
         if (p_targetType == pEntity->Type())
         {
-            CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+            CellFeature *pCandidateCellFearure = p_RtsGame.Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
             double dist = pTarGetCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
 
             if (dist <= bestDistance)
@@ -314,10 +314,10 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
     return adaptedTargetId;
 }
 //////////////////////////////////////////////////////////////////////////
-Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
+Vector2 AdapterEx::AdaptPosition(RtsGame& p_RtsGame, const PlanStepParameters& p_parameters)
 {
-    g_Game->Map()->UpdateAux();
-    return g_Game->Map()->GetNearestCell(new CellFeature(p_parameters));
+    p_RtsGame.Map()->UpdateAux(p_RtsGame);
+    return p_RtsGame.Map()->GetNearestCell(new CellFeature(p_parameters));
 }
 //////////////////////////////////////////////////////////////////////////
 bool AdapterEx::IsValidEntityState(ObjectStateType p_entityState, const RankedStates &p_rankedStates)

@@ -33,8 +33,6 @@ using namespace IStrategizer;
 #include <cassert>
 using namespace std;
 
-IStrategizer::RtsGame* g_Game = nullptr;
-
 RtsGame::~RtsGame()
 {
     Finalize();
@@ -103,7 +101,7 @@ void RtsGame::InitializePlayers()
         itr != m_players.end();
         ++itr)
     {
-        itr->second = FetchPlayer(itr->first);
+        itr->second = FetchPlayer(*this, itr->first);
     }
 }
 //----------------------------------------------------------------------------------------------

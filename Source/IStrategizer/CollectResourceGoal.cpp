@@ -19,8 +19,8 @@ void CollectResourceGoal::InitializePostConditions()
     //map<EntityClassType, int> m_baseTypeRequiredBuildings;
     //EntityClassType m_baseBuildingClassId;
 
-    //EngineAssist::Instance(g_Game).GetRequiredBuildingsForBaseType(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseTypeRequiredBuildings);
-    //EngineAssist::Instance(g_Game).GetTireBaseBuildingId(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseBuildingClassId);
+    //EngineAssist::Instance(&p_RtsGame).GetRequiredBuildingsForBaseType(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseTypeRequiredBuildings);
+    //EngineAssist::Instance(&p_RtsGame).GetTireBaseBuildingId(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseBuildingClassId);
 
     //m_baseTypeRequiredBuildings[m_baseBuildingClassId] = 1;
 
@@ -35,7 +35,7 @@ void CollectResourceGoal::InitializePostConditions()
     _postCondition = new And(m_termsPost);
 }
 //----------------------------------------------------------------------------------------------
-bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
     return false;
 }

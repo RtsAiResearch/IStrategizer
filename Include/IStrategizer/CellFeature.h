@@ -1,13 +1,14 @@
 #ifndef CELLFEATURE_H
 #define CELLFEATURE_H
 
+#include  <map>
 #include "ForceDescription.h"
 #include "BuildingDescription.h"
 #include "ResourceDescription.h"
 #include "MetaData.h"
 #include "EngineData.h"
 #include "Vector2.h"
-#include  <map>
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -26,17 +27,17 @@ namespace IStrategizer
 
         CellFeature() { Clear(); }
         CellFeature(const PlanStepParameters& p_parameters);
-        void AddEntity(GameEntity *p_entity,bool p_isAllied);
-        void RemoveEntity(GameEntity *p_entity, bool p_isAllied);
+        void AddEntity(RtsGame& p_RtsGame, GameEntity *p_entity,bool p_isAllied);
+        void RemoveEntity(RtsGame& p_RtsGame, GameEntity *p_entity, bool p_isAllied);
         void Clear();
         void To(PlanStepParameters& p_parameters) const;
-        void CalculateDistanceToBases(Vector2 cellWorldPosition);
+        void CalculateDistanceToBases(RtsGame& p_RtsGame, Vector2 cellWorldPosition);
         float GetDistance(CellFeature *p_other);
 
         static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
 
     private:
-        void CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, int& distance);
+        void CalculateDistanceToBasesAux(RtsGame& p_RtsGame, Vector2 cellWorldPosition, vector<TID> bases, int& distance);
         float GetBaseDistanceSimilarity(int firstBase, int secondBase) const;
     };
 }

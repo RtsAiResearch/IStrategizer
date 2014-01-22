@@ -8,7 +8,7 @@
 
 using namespace IStrategizer;
 
-void BuildingDescription::AddEntity(GameEntity *p_entity)
+void BuildingDescription::AddEntity(RtsGame& p_RtsGame, GameEntity *p_entity)
 {
     EntityClassType typeId;
     GameType *pType;
@@ -16,7 +16,7 @@ void BuildingDescription::AddEntity(GameEntity *p_entity)
     assert(p_entity);
 
     typeId = p_entity->Type();
-    pType = g_Game->GetEntityType(typeId);
+    pType = p_RtsGame.GetEntityType(typeId);
     assert(pType);
 
     if (pType->Attr(ECATTR_IsBuilding))
@@ -27,7 +27,7 @@ void BuildingDescription::AddEntity(GameEntity *p_entity)
     }
 }
 //----------------------------------------------------------------------------------------------
-void BuildingDescription::RemoveEntity(GameEntity *p_entity)
+void BuildingDescription::RemoveEntity(RtsGame& p_RtsGame, GameEntity *p_entity)
 {
     EntityClassType typeId;
     GameType *pType;
@@ -35,7 +35,7 @@ void BuildingDescription::RemoveEntity(GameEntity *p_entity)
     assert(p_entity);
 
     typeId = p_entity->Type();
-    pType = g_Game->GetEntityType(typeId);
+    pType = p_RtsGame.GetEntityType(typeId);
     assert(pType);
 
     if (pType->Attr(ECATTR_IsBuilding))

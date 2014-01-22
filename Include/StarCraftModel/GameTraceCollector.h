@@ -1,10 +1,11 @@
 #ifndef __GAMETRACECOLLETOR_H_INC__
 #define __GAMETRACECOLLETOR_H_INC__
 
+#include <set>
 #include "BWAPI.h"
 #include "EngineData.h"
 #include "ActionAbstractor.h"
-#include <set>
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -25,16 +26,17 @@ namespace IStrategizer
         // Description: Handles each game frame to collect game traces
         // Returns:    void
         //************************************
-        void OnGameFrame();
+        void OnGameFrame(RtsGame& p_RtsGame);
     private:
 
         //************************************
         // IStrategizer::GameTraceCollector::CollectGameTraceForUnitOrder
         // Description: Collect a game trace based on the provided unit order
+        // Parameter:  RtsGame& p_RtsGame: The game instance to act upon
         // Parameter:  BWAPI::Unit unit: A unit with new order
         // Returns:    void
         //************************************
-        void CollectGameTraceForUnitOrder(const BWAPI::Unit unit);
+        void CollectGameTraceForUnitOrder(RtsGame& p_RtsGame, const BWAPI::Unit unit);
 
         //************************************
         // IStrategizer::GameTraceCollector::IsAutoGatheringResources
@@ -95,11 +97,12 @@ namespace IStrategizer
         //************************************
         // IStrategizer::GameTraceCollector::CollectGameTraceForTrainedUnit
         // Description: 
+        // Parameter:  RtsGame& p_RtsGame: The game instance to act upon
         // Parameter:  const BWAPI::Unit trainee:
         // Parameter:  const BWAPI::Unit trainer:
         // Returns:    void
         //************************************
-        void CollectGameTraceForTrainedUnit(const BWAPI::Unit trainee, const BWAPI::Unit trainer);
+        void CollectGameTraceForTrainedUnit(RtsGame& p_RtsGame, const BWAPI::Unit trainee, const BWAPI::Unit trainer);
 
         //************************************
         // IStrategizer::GameTraceCollector::ReasonTrainerUnitForTrainee
@@ -114,11 +117,12 @@ namespace IStrategizer
         //************************************
         // IStrategizer::GameTraceCollector::SendGameTrace
         // Description: Send collected game trace to whoever is interested in collecting
+        // Parameter:  RtsGame& p_RtsGame: The game instance to act upon
         // game traces (i.e observing GameActionLog message)
         // Parameter:  GameTrace* pTrace: the collected game trace
         // Returns:    void
         //************************************
-        void SendGameTrace(GameTrace* pTrace);
+        void SendGameTrace(RtsGame& p_RtsGame, GameTrace* pTrace);
 
         std::map<BWAPI::Unit, BWAPI::Order> m_unitOrder;
         std::map<BWAPI::Unit, BWAPI::Unit> m_unitOrderTarget;

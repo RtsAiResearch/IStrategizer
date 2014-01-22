@@ -20,11 +20,11 @@ namespace IStrategizer
         MessageObserversTable _messageObserversTable;
 
     public:
-        void RegisterForMessage(MessageType p_messageTypeID, MessagePumpObserver* p_observer);
-        void UnRegisterForMessage(MessageType p_messageTypeID, MessagePumpObserver* p_observer);
-        void UnregisterForAllMessages(MessagePumpObserver* p_observer);
-        void AddMessage(MessageType p_messageTypeID);
-        void OnMessageSent(Message* p_message);
+        void RegisterForMessage(RtsGame& p_RtsGame, MessageType p_messageTypeID, MessagePumpObserver* p_observer);
+        void UnRegisterForMessage(RtsGame& p_RtsGame, MessageType p_messageTypeID, MessagePumpObserver* p_observer);
+        void UnregisterForAllMessages(RtsGame& p_RtsGame, MessagePumpObserver* p_observer);
+        void AddMessage(RtsGame& p_RtsGame, MessageType p_messageTypeID);
+        void OnMessageSent(RtsGame& p_RtsGame, Message* p_message);
         virtual ~MessagePumpSubject();
     };
 }

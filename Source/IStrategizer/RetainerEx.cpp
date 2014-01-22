@@ -18,7 +18,7 @@
 using namespace std;
 using namespace IStrategizer;
 
-RetainerEx::RetainerEx(string p_caseBasePath) : AbstractRetainer("Retainer"), _caseBasePath(p_caseBasePath), _caseBaseLoaded(false)
+RetainerEx::RetainerEx(RtsGame& p_RtsGame, string p_caseBasePath) : AbstractRetainer(p_RtsGame, "Retainer"), _caseBasePath(p_caseBasePath), _caseBaseLoaded(false)
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -74,18 +74,18 @@ void RetainerEx::Retain(const CaseEx* p_case)
     _caseBase->CaseContainer.push_back(const_cast<CaseEx*>(p_case));
 }
 //----------------------------------------------------------------------------------------------
-void RetainerEx::ExecuteCommand(const char* p_cmd)
+void RetainerEx::ExecuteCommand(RtsGame& p_RtsGame, const char* p_cmd)
 {
     if(!strcmp(p_cmd, "flush"))
     {
         Flush();
-        g_Game->DisplayMessage("flushing case-base has be performed successfully");
+        p_RtsGame.DisplayMessage("flushing case-base has be performed successfully");
     }
     else if(!strcmp(p_cmd, "info"))
     {
         char buffer[128];
         sprintf_s(buffer, "retriever has %d cases", _caseBase->CaseContainer.size());
-        g_Game->DisplayMessage(buffer);
+        p_RtsGame.DisplayMessage(buffer);
     }
 }
 //-------------------------------------------------------------------------------------------------------------------------------

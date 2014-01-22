@@ -3,6 +3,7 @@
 
 #include <string>
 #include "WorldClock.h"
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -20,8 +21,8 @@ namespace IStrategizer
 
     public:
         OnlineCaseBasedPlannerEx();
-        void       Update(const WorldClock& p_clock);
-        void       Init(GoalEx *p_initialGoal);
+        void       Update(RtsGame& p_RtsGame, const WorldClock& p_clock);
+        void       Init(RtsGame& p_RtsGame, GoalEx *p_initialGoal);
         const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
         const OnlinePlanExpansionExecutionEx* ExpansionExecution() const { return _onlineExpansionExecution; }
         OnlinePlanExpansionExecutionEx* ExpansionExecution() { return _onlineExpansionExecution; }

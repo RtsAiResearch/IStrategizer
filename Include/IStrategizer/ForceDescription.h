@@ -2,6 +2,7 @@
 #define FORCEDESCRIPTION_H
 
 #include "MetaData.h"
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -15,8 +16,8 @@ namespace IStrategizer
         int m_totalDamage;
 
     public:
-        void AddEntity(GameEntity *p_entity);
-        void RemoveEntity(GameEntity *p_entity);
+        void AddEntity(RtsGame& p_RtsGame, GameEntity *p_entity);
+        void RemoveEntity(RtsGame& p_RtsGame, GameEntity *p_entity);
         void Clear();
         float GetDistance(ForceDescription *p_other);
     };

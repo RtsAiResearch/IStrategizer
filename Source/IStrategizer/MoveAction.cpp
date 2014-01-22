@@ -32,27 +32,27 @@ void MoveAction::Copy(IClonable* p_dest)
     Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
-void MoveAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void MoveAction::HandleMessage(RtsGame& p_RtsGame, Message* p_msg, bool& p_consumed)
 {
 
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool MoveAction::AliveConditionsSatisfied(RtsGame& p_RtsGame)
 {
     bool satisfied = false;
-    if (EngineAssist::Instance(g_Game).DoesEntityObjectExist(_entityId))
+    if (EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_entityId))
     {
-        GameEntity* pEntity = pRtsGame.Self()->GetEntity(_entityId);
+        GameEntity* pEntity = p_RtsGame.Self()->GetEntity(_entityId);
         assert(pEntity);
-        satisfied = (bool)pEntity->Attr(EOATTR_IsMoving);
+        satisfied = pEntity->Attr(EOATTR_IsMoving) > 0;
     }
 
     return satisfied;
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool MoveAction::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
-    return EngineAssist::Instance(g_Game).IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
+    return EngineAssist::Instance(&p_RtsGame).IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
 }
 //----------------------------------------------------------------------------------------------
 void MoveAction::InitializeAddressesAux()
@@ -60,20 +60,20 @@ void MoveAction::InitializeAddressesAux()
     Action::InitializeAddressesAux();
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool MoveAction::ExecuteAux(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
 
     //Adapt Entity
-    _entityId = pAdapter->GetEntityObjectId(entityType, AdapterEx::EntityToMoveStatesRankVector);
+    _entityId = pAdapter->GetEntityObjectId(p_RtsGame, entityType, AdapterEx::EntityToMoveStatesRankVector);
     bool executed = false;
 
     if(_entityId != INVALID_TID)
     {
         //Adapt position
-        _position = pAdapter->AdaptPosition(Parameters());
-        _pEntity  = pRtsGame.Self()->GetEntity(_entityId);
+        _position = pAdapter->AdaptPosition(p_RtsGame, Parameters());
+        _pEntity  = p_RtsGame.Self()->GetEntity(_entityId);
         _pEntity->Lock(this);
         assert(_pEntity);
         executed = _pEntity->Move(_position);
@@ -89,7 +89,7 @@ void MoveAction::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void MoveAction::InitializePreConditions()
+void MoveAction::InitializePreConditions(RtsGame& p_RtsGame)
 {
     EntityClassType entity = (EntityClassType)_params[PARAM_EntityClassId];
     vector<Expression*> m_terms;

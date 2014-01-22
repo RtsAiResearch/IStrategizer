@@ -15,16 +15,16 @@ EntityClassNearArea::EntityClassNearArea(PlayerType p_player, EntityClassType p_
     cellFeature->To(_conditionParameters);
 }
 //---------------------------------------------------------------------------
-bool EntityClassNearArea::Evaluate(RtsGame& pRtsGame)
+bool EntityClassNearArea::Evaluate(RtsGame& p_RtsGame)
 {
     vector<TID> entityIds;
-    pRtsGame.Self()->Entities((EntityClassType)_conditionParameters[PARAM_EntityClassId], entityIds);
+    p_RtsGame.Self()->Entities((EntityClassType)_conditionParameters[PARAM_EntityClassId], entityIds);
     Vector2 position = Vector2::Null();
     
-    ConditionEx::Evaluate(pRtsGame);
+    ConditionEx::Evaluate(p_RtsGame);
     for (size_t i = 0; i < entityIds.size(); ++i)
     {
-        position = pRtsGame.Map()->GetNearestCell(new CellFeature(_conditionParameters));
+        position = p_RtsGame.Map()->GetNearestCell(new CellFeature(_conditionParameters));
 
         if (!position.IsNull())
         {

@@ -1,26 +1,16 @@
-#ifndef STARCRAFTPLAYER_H
 #include "StarCraftPlayer.h"
-#endif
-#ifndef STARCRAFTENTITY_H
 #include "StarCraftEntity.h"
-#endif
-#ifndef DEFINITIONCROSSMAPPING_H
 #include "DefinitionCrossMapping.h"
-#endif
-#ifndef WARGUSPLAYERRESOURCES_H
 #include "StarCraftPlayerResources.h"
-#endif
-#ifndef TOOLBOX_H
 #include "Toolbox.h"
-#endif
-#ifndef STARCRAFTTECHTREE_H
 #include "StarCraftTechTree.h"
-#endif
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
 
-StarCraftPlayer::StarCraftPlayer(Player p_pPlayer)  : m_pPlayer(p_pPlayer)
+StarCraftPlayer::StarCraftPlayer(RtsGame& p_RtsGame, Player p_pPlayer)
+    : GamePlayer(p_RtsGame),
+    m_pPlayer(p_pPlayer)
 {
     m_id = g_Database.PlayerMapping.GetByFirst( p_pPlayer->getID());
     m_pResources = new StarCraftPlayerResources(m_pPlayer);

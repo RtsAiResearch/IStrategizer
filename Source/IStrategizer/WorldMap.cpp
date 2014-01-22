@@ -33,7 +33,7 @@ void WorldMap::Initialize()
     m_initialized = true;
 }
 //----------------------------------------------------------------------------------------------
-void WorldMap::UpdateAux()
+void WorldMap::UpdateAux(RtsGame& p_RtsGame)
 {
     vector<PlayerType> players;
     vector<TID>         currPlayerEntites;
@@ -50,11 +50,11 @@ void WorldMap::UpdateAux()
         for (unsigned j = 0; j < m_gridWidth; j++)
         {
             m_cellFeatureMatrix[i][j].Clear();
-            m_cellFeatureMatrix[i][j].CalculateDistanceToBases(FromGridToWorld(Vector2(j ,i)));
+            m_cellFeatureMatrix[i][j].CalculateDistanceToBases(p_RtsGame, FromGridToWorld(Vector2(j ,i)));
         }
     }
 
-    g_Game->Players(players);
+    p_RtsGame.Players(players);
 
     for (size_t i = 0 ; i < players.size(); i++)
     {
@@ -63,16 +63,16 @@ void WorldMap::UpdateAux()
             continue;
 
         currPlayerEntites.clear();
-        g_Game->GetPlayer(players[i])->Entities(currPlayerEntites); 
+        p_RtsGame.GetPlayer(players[i])->Entities(currPlayerEntites); 
         
         for (size_t j = 0 ; j < currPlayerEntites.size(); j++)
         {
-            currentEntity = g_Game->GetPlayer(players[i])->GetEntity(currPlayerEntites[j]);
+            currentEntity = p_RtsGame.GetPlayer(players[i])->GetEntity(currPlayerEntites[j]);
 
             cellX = currentEntity->Attr(EOATTR_PosX) / m_cellSide;
             cellY = currentEntity->Attr(EOATTR_PosY) / m_cellSide;
 
-            m_cellFeatureMatrix[cellY][cellX].AddEntity(currentEntity, players[i] == PLAYER_Self);
+            m_cellFeatureMatrix[cellY][cellX].AddEntity(p_RtsGame, currentEntity, players[i] == PLAYER_Self);
         }
     }
 

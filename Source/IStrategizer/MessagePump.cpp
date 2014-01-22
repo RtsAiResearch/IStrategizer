@@ -6,28 +6,29 @@
 #endif
 using namespace IStrategizer;
 
-MessagePump::MessagePump()
+MessagePump::MessagePump(RtsGame& p_RtsGame)
+    : _rtsGame(p_RtsGame)
 {
-    AddMessage(MSG_Input);
-    AddMessage(MSG_EntityCreate);
-    AddMessage(MSG_EntityDestroy);
-    AddMessage(MSG_EntityRenegade);
-    AddMessage(MSG_GameStart);
-    AddMessage(MSG_GameEnd);
-    AddMessage(MSG_PlanStructureChange);
-
+    AddMessage(_rtsGame, MSG_Input);
+    AddMessage(_rtsGame, MSG_EntityCreate);
+    AddMessage(_rtsGame, MSG_EntityDestroy);
+    AddMessage(_rtsGame, MSG_EntityRenegade);
+    AddMessage(_rtsGame, MSp_RtsGameStart);
+    AddMessage(_rtsGame, MSp_RtsGameEnd);
+    AddMessage(_rtsGame, MSG_PlanStructureChange);
+                
     // Obsolete Messages
-    AddMessage(MSG_GameActionLog);
-    AddMessage(MSG_GameExit);
-    AddMessage(MSG_EntityAttacked);
-    AddMessage(MSG_EntityKilled);
-    AddMessage(MSG_EntityTrained);
-    AddMessage(MSG_BuildingBuilt);
+    AddMessage(_rtsGame, MSp_RtsGameActionLog);
+    AddMessage(_rtsGame, MSp_RtsGameExit);
+    AddMessage(_rtsGame, MSG_EntityAttacked);
+    AddMessage(_rtsGame, MSG_EntityKilled);
+    AddMessage(_rtsGame, MSG_EntityTrained);
+    AddMessage(_rtsGame, MSG_BuildingBuilt);
 }
 //----------------------------------------------------------------------------------------------
-MessagePump& MessagePump::Instance()
+MessagePump& MessagePump::Instance(RtsGame& p_RtsGame)
 {
-    static MessagePump m_instance;
+    static MessagePump m_instance (p_RtsGame);
     return m_instance;
 }
 //----------------------------------------------------------------------------------------------
@@ -47,7 +48,7 @@ void MessagePump::DeliverMessage(Message* p_message)
 {
     p_message->Delivered(true);
 
-    OnMessageSent(p_message);
+    OnMessageSent(_rtsGame, p_message);
 
     delete p_message;
 }

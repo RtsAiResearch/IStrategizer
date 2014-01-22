@@ -59,7 +59,7 @@ void EntityClassExist::InitializeAddressesAux()
         &_used);
 }
 //---------------------------------------------------------------------------------------------------
-bool EntityClassExist::Evaluate(RtsGame& pRtsGame)
+bool EntityClassExist::Evaluate(RtsGame& p_RtsGame)
 {
     if (_conditionParameters[PARAM_EntityClassId] != DONT_CARE)
     {
@@ -67,8 +67,8 @@ bool EntityClassExist::Evaluate(RtsGame& pRtsGame)
         int amount = _conditionParameters[PARAM_Amount];
         PlayerType playerId = (PlayerType)_conditionParameters[PARAM_PlayerId];
 
-        ConditionEx::Evaluate(pRtsGame);
-        _isSatisfied = EngineAssist::Instance(g_Game).DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
+        ConditionEx::Evaluate(p_RtsGame);
+        _isSatisfied = EngineAssist::Instance(&p_RtsGame).DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
     }
 
     return _isEvaluated && _isSatisfied;

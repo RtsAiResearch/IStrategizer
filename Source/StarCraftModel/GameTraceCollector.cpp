@@ -9,7 +9,7 @@
 using namespace BWAPI;
 using namespace IStrategizer;
 
-void GameTraceCollector::OnGameFrame()
+void GameTraceCollector::OnGameFrame(RtsGame& p_RtsGame)
 {
     if (m_isFirstUpdate)
     {
@@ -30,7 +30,7 @@ void GameTraceCollector::OnGameFrame()
             m_unitOrderTarget[unit] = unit->getOrderTarget();
             m_unitOrderTargetPosition[unit] = unit->getOrderTargetPosition();
 
-            CollectGameTraceForUnitOrder(unit);
+            CollectGameTraceForUnitOrder(p_RtsGame, unit);
         }
         // The unit is being trained and we didn't record its training yet
         // then it seems that a train order has been issues to some unit
@@ -39,7 +39,7 @@ void GameTraceCollector::OnGameFrame()
             m_trainedUnits.count(unit->getID()) == 0)
         {
             Unit trainer = ReasonTrainerUnitForTrainee(unit);
-            CollectGameTraceForTrainedUnit(unit, trainer);
+            CollectGameTraceForTrainedUnit(p_RtsGame, unit, trainer);
         }
     }
 }
@@ -185,7 +185,7 @@ Unit GameTraceCollector::ReasonTrainerUnitForTrainee(const Unit trainee)
     return suspectedTrainer;
 }
 //////////////////////////////////////////////////////////////////////////
-void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
+void GameTraceCollector::CollectGameTraceForUnitOrder(RtsGame& p_RtsGame, const Unit unit)
 {
     Order order = unit->getOrder();
 
@@ -205,15 +205,15 @@ void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
     }
     
     GameTrace *pTrace = nullptr;
-    PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(action, unit);
+    PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(p_RtsGame, action, unit);
     GameStateEx gameState;
 
     pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
 
-    SendGameTrace(pTrace);
+    SendGameTrace(p_RtsGame, pTrace);
 }
 //////////////////////////////////////////////////////////////////////////
-void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit trainee, const BWAPI::Unit trainer)
+void GameTraceCollector::CollectGameTraceForTrainedUnit(RtsGame& p_RtsGame, const BWAPI::Unit trainee, const BWAPI::Unit trainer)
 {
     ActionType action;
 
@@ -227,20 +227,20 @@ void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit traine
     action = g_Database.ActionMapping.GetByFirst(Orders::Train.getID());
 
     GameTrace *pTrace = nullptr;
-    PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(trainee, trainer);
+    PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(p_RtsGame, trainee, trainer);
     GameStateEx gameState;
 
     pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
 
-    SendGameTrace(pTrace);
+    SendGameTrace(p_RtsGame, pTrace);
 }
 //////////////////////////////////////////////////////////////////////////
-void GameTraceCollector::SendGameTrace(GameTrace* pTrace)
+void GameTraceCollector::SendGameTrace(RtsGame& p_RtsGame, GameTrace* pTrace)
 {
     DataMessage<GameTrace> *pTraceMsg = nullptr;
 
     assert(pTrace != nullptr);
-    pTraceMsg = new DataMessage<GameTrace>(Broodwar->getFrameCount(), MSG_GameActionLog, pTrace);
+    pTraceMsg = new DataMessage<GameTrace>(Broodwar->getFrameCount(), MSp_RtsGameActionLog, pTrace);
 
-    g_MessagePump.Send(pTraceMsg, true);
+    MessagePump::Instance(p_RtsGame).Send(pTraceMsg, true);
 }

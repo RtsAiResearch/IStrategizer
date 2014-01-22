@@ -15,7 +15,7 @@ namespace StarCraftModel
         void            EnumeratePlayers();
         void EnumerateEntityTypes();
         void EnumerateResearches();
-        GamePlayer*     FetchPlayer(PlayerType p_id);
+        GamePlayer*     FetchPlayer(RtsGame& p_RtsGame, PlayerType p_id);
         GameType*       FetchEntityType(EntityClassType p_id);
         GameResearch*   FetchResearch(ResearchType p_id);
         void            InitializeMap();

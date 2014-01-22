@@ -1,11 +1,10 @@
 #ifndef RETAINEREX_H
 #define RETAINEREX_H
 
-#ifndef ABSTRACTRETAINER_H
-#include "AbstractRetainer.h"
-#endif
-
 #include <string>
+#include "AbstractRetainer.h"
+#include "RtsGame.h"
+
 using namespace std;
 
 namespace IStrategizer
@@ -19,9 +18,9 @@ namespace IStrategizer
         bool        _caseBaseLoaded;
 
     protected:
-        void                ExecuteCommand(const char* p_cmd);
+        void                ExecuteCommand(RtsGame& p_RtsGame, const char* p_cmd);
     public:
-                            RetainerEx(string p_caseBasePath);
+                            RetainerEx(RtsGame& p_RtsGame, string p_caseBasePath);
         void             ReadCaseBase();
         void             Flush();
         void                Retain(const CaseEx* p_case);

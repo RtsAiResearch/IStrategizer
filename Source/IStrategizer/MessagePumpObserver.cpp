@@ -5,5 +5,5 @@ using namespace IStrategizer;
 
 MessagePumpObserver::~MessagePumpObserver()
 {
-    g_MessagePump.UnregisterForAllMessages(this);
+    //MessagePump::Instance(p_RtsGame).UnregisterForAllMessages(p_RtsGame, this);
 }

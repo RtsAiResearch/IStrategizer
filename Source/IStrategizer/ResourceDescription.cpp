@@ -16,10 +16,10 @@ void ResourceDescription::InitializeAddressesAux()
         &m_numberOfSupply);
 }
 //----------------------------------------------------------------------------------------------
-void ResourceDescription::AddEntity(GameEntity *p_entity)
+void ResourceDescription::AddEntity(RtsGame& p_RtsGame, GameEntity *p_entity)
 {
     EntityClassType typeId = p_entity->Type();
-    GameType* pType = g_Game->GetEntityType(typeId);
+    GameType* pType = p_RtsGame.GetEntityType(typeId);
 
     if (!pType)
         return;
@@ -34,10 +34,10 @@ void ResourceDescription::AddEntity(GameEntity *p_entity)
     }
 }
 //----------------------------------------------------------------------------------------------
-void ResourceDescription::RemoveEntity(GameEntity *p_entity)
+void ResourceDescription::RemoveEntity(RtsGame& p_RtsGame, GameEntity *p_entity)
 {
     EntityClassType typeId = p_entity->Type();
-    GameType* pType = g_Game->GetEntityType(typeId);
+    GameType* pType = p_RtsGame.GetEntityType(typeId);
 
     if (!pType)
         return;

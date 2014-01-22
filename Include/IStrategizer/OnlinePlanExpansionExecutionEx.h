@@ -6,12 +6,11 @@
 
 #include <map>
 #include "PlanGraphNode.h"
-using namespace std;
-
-#ifndef ENGINECOMPONENT_H
 #include "EngineComponent.h"
-#endif
 #include "WorldClock.h"
+#include "RtsGame.h"
+
+using namespace std;
 
 namespace IStrategizer
 {
@@ -28,25 +27,25 @@ namespace IStrategizer
     public:
         typedef std::set<CaseEx*> CaseSet;
 
-        OnlinePlanExpansionExecutionEx(GoalEx* p_initialGoal, CaseBasedReasonerEx* p_casedBasedReasoner);
-        void Update(const WorldClock& p_clock);
-        void NotifyMessegeSent(Message* p_message);
+        OnlinePlanExpansionExecutionEx(RtsGame& p_RtsGame, GoalEx* p_initialGoal, CaseBasedReasonerEx* p_casedBasedReasoner);
+        void Update(RtsGame& p_RtsGame, const WorldClock& p_clock);
+        void NotifyMessegeSent(RtsGame& p_RtsGame, Message* p_message);
         const PlanGraphNode* PlanRoot() const { return _planRoot; }
         PlanGraphNode* PlanRoot() { return _planRoot; }
         OlcbpPlanGraph& Plan() { return _planGraph; }
 
     private:
-        void ExpandGoal(PlanGraphNode* p_rootGoal, CaseEx* p_pCase);
-        void UpdatePlan(PlanGraphNode* p_rootPlanStep, const WorldClock& p_clock);
+        void ExpandGoal(RtsGame& p_RtsGame, PlanGraphNode* p_rootGoal, CaseEx* p_Case);
+        void UpdatePlan(RtsGame& p_RtsGame, PlanGraphNode* p_rootPlanStep, const WorldClock& p_clock);
 
 
-        void NotifyChildrenForParentSuccess(PlanGraphNode* p_pNode);
-        void MarkCaseAsTried(PlanGraphNode* p_pStep, CaseEx* p_pCase);
-        bool IsCaseTried(PlanGraphNode* p_pStep, CaseEx* p_pCase);
-        bool DestroyGoalPlanIfExist(PlanGraphNode* p_pPlanGoalNode);
-        void ConsiderReadyChildrenForUpdate(PlanGraphNode* p_pNode, PlanGraphNode::Queue &p_updateQueue);
-        void UpdateActionNode(PlanGraphNode* pCurrentNode, const WorldClock& p_clock, PlanGraphNode::Queue& p_updateQ);
-        void UpdateGoalNode(PlanGraphNode* p_pCurrentNode, const WorldClock& p_clock, PlanGraphNode::Queue& p_updateQ);
+        void NotifyChildrenForParentSuccess(PlanGraphNode* p_Node);
+        void MarkCaseAsTried(PlanGraphNode* p_Step, CaseEx* p_Case);
+        bool IsCaseTried(PlanGraphNode* p_Step, CaseEx* p_Case);
+        bool DestroyGoalPlanIfExist(PlanGraphNode* p_PlanGoalNode);
+        void ConsiderReadyChildrenForUpdate(PlanGraphNode* p_Node, PlanGraphNode::Queue &p_updateQueue);
+        void UpdateActionNode(RtsGame& p_RtsGame, PlanGraphNode* pCurrentNode, const WorldClock& p_clock, PlanGraphNode::Queue& p_updateQ);
+        void UpdateGoalNode(RtsGame& p_RtsGame, PlanGraphNode* p_CurrentNode, const WorldClock& p_clock, PlanGraphNode::Queue& p_updateQ);
 
         PlanGraphNode*                        _planRoot;
         CaseBasedReasonerEx*                _caseBasedReasoner;

@@ -15,7 +15,7 @@ namespace IStrategizer
     public:
         Or() {}
         Or(const std::vector<Expression*>& p_expressions) : CompositeExpression(p_expressions) {}
-        bool Evaluate(RtsGame& pRtsGame);
+        bool Evaluate(RtsGame& p_RtsGame);
     };
 }
 

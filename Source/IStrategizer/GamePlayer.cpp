@@ -1,22 +1,10 @@
-#ifndef GAMEPLAYER_H
-#include "GamePlayer.h"
-#endif
 #include <cassert>
-#ifndef GAMEENTITY_H
+#include "GamePlayer.h"
 #include "GameEntity.h"
-#endif
-#ifndef PLAYERRESOURCES_H
 #include "PlayerResources.h"
-#endif
-#ifndef ENGINEASSIST_H
 #include "EngineAssist.h"
-#endif
-#ifndef GAMESTATEEX_H
 #include "GameStateEx.h"
-#endif
-#ifndef TOOLBOX_H
 #include "Toolbox.h"
-#endif
 #include "GameTechTree.h"
 #include "IMSystemManager.h"
 #include "DataMessage.h"
@@ -26,11 +14,11 @@
 
 using namespace IStrategizer;
 
-GamePlayer::GamePlayer() : m_pState(new GameStateEx()), m_pResources(nullptr), m_pTechTree(nullptr)
+GamePlayer::GamePlayer(RtsGame& p_RtsGame) : m_pState(new GameStateEx()), m_pResources(nullptr), m_pTechTree(nullptr)
 {
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+    MessagePump::Instance(p_RtsGame).RegisterForMessage(p_RtsGame, MSG_EntityCreate, this);
+    MessagePump::Instance(p_RtsGame).RegisterForMessage(p_RtsGame, MSG_EntityDestroy, this);
+    MessagePump::Instance(p_RtsGame).RegisterForMessage(p_RtsGame, MSG_EntityRenegade, this);
 }
 //////////////////////////////////////////////////////////////////////////
 GamePlayer::~GamePlayer()
@@ -111,31 +99,31 @@ const GameStateEx* GamePlayer::State()
     return m_pState;
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::NotifyMessegeSent(Message* p_pMessage)
+void GamePlayer::NotifyMessegeSent(RtsGame& p_RtsGame, Message* p_Message)
 {
-    switch (p_pMessage->MessageTypeID())
+    switch (p_Message->MessageTypeID())
     {
     case MSG_EntityRenegade:
-        OnEntityRenegade(p_pMessage);
+        OnEntityRenegade(p_RtsGame, p_Message);
         break;
 
     case MSG_EntityCreate:
-        OnEntityCreate(p_pMessage);
+        OnEntityCreate(p_RtsGame, p_Message);
         break;
 
     case MSG_EntityDestroy:
-        OnEntityDestroy(p_pMessage);
+        OnEntityDestroy(p_RtsGame, p_Message);
         break;
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityCreate(Message* p_pMessage)
+void GamePlayer::OnEntityCreate(RtsGame& p_RtsGame, Message* p_Message)
 {
     GameEntity *pEntity = nullptr;
     TID entityId;
     EntityCreateMessage *pCreateMsg = nullptr;
 
-    pCreateMsg = (EntityCreateMessage*)p_pMessage;
+    pCreateMsg = (EntityCreateMessage*)p_Message;
 
     if (pCreateMsg->Data()->OwnerId == m_id)
     {
@@ -155,18 +143,18 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
         LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
             Enums[m_id], Enums[pEntity->Type()], pEntity->Id(), pEntity->Attr(EOATTR_PosX), pEntity->Attr(EOATTR_PosY));
 
-        g_IMSysMgr.RegisterGameObj(entityId, pCreateMsg->Data()->OwnerId);
+        g_IMSysMgr.RegisterGameObj(p_RtsGame, entityId, pCreateMsg->Data()->OwnerId);
     }
 
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityDestroy(Message* p_pMessage)
+void GamePlayer::OnEntityDestroy(RtsGame& p_RtsGame, Message* p_Message)
 {
     EntityDestroyMessage *pDestroyMsg = nullptr;
     GameEntity *pEntity = nullptr;
     TID entityId;
 
-    pDestroyMsg = (EntityDestroyMessage*)p_pMessage;
+    pDestroyMsg = (EntityDestroyMessage*)p_Message;
 
     if (pDestroyMsg->Data()->OwnerId == m_id)
     {
@@ -185,13 +173,13 @@ void GamePlayer::OnEntityDestroy(Message* p_pMessage)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityRenegade(Message* p_pMessage)
+void GamePlayer::OnEntityRenegade(RtsGame& p_RtsGame, Message* p_Message)
 {
     EntityRenegadeMessage *pRenMsg = nullptr;
     GameEntity *pEntity = nullptr;
     TID entityId;
 
-    pRenMsg = (EntityRenegadeMessage*)p_pMessage;
+    pRenMsg = (EntityRenegadeMessage*)p_Message;
 
     entityId = pRenMsg->Data()->EntityId;
 
@@ -208,7 +196,7 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
         LogInfo("[%s] Unit '%s':%d renegaded TO me",
             Enums[m_id], Enums[pEntity->Type()], pEntity->Id());
 
-        g_IMSysMgr.RegisterGameObj(entityId, pRenMsg->Data()->OwnerId);
+        g_IMSysMgr.RegisterGameObj(p_RtsGame, entityId, pRenMsg->Data()->OwnerId);
     }
     // Used to be my unit, but it is not anymore
     else if (pRenMsg->Data()->OwnerId != m_id && m_entities.Contains(entityId))

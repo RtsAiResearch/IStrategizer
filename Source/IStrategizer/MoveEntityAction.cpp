@@ -29,33 +29,33 @@ Action(ACTIONEX_MoveEntity, p_parameters)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveEntityAction::OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock)
+void MoveEntityAction::OnSucccess(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
-    GameEntity *pEntity = pRtsGame.Self()->GetEntity(_entityId);
+    GameEntity *pEntity = p_RtsGame.Self()->GetEntity(_entityId);
 
     if (pEntity)
         pEntity->Unlock(this);
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveEntityAction::OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock)
+void MoveEntityAction::OnFailure(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
-    GameEntity *pEntity = pRtsGame.Self()->GetEntity(_entityId);
+    GameEntity *pEntity = p_RtsGame.Self()->GetEntity(_entityId);
 
     if (pEntity)
         pEntity->Unlock(this);
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveEntityAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void MoveEntityAction::HandleMessage(RtsGame& p_RtsGame, Message* p_msg, bool& p_consumed)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveEntityAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool MoveEntityAction::AliveConditionsSatisfied(RtsGame& p_RtsGame)
 {
-    bool success = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_entityId);
+    bool success = EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_entityId);
 
     if(success)
     {
-        GameEntity* entity = pRtsGame.Self()->GetEntity(_entityId);
+        GameEntity* entity = p_RtsGame.Self()->GetEntity(_entityId);
         assert(entity);
         success = entity->Attr(EOATTR_IsMoving) > 0;
     }
@@ -63,32 +63,32 @@ bool MoveEntityAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveEntityAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool MoveEntityAction::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
-    bool success = EngineAssist::Instance(g_Game).DoesEntityObjectExist(_entityId);
+    bool success = EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_entityId);
 
     if(success)
     {
-        GameEntity* entity = pRtsGame.Self()->GetEntity(_entityId);
+        GameEntity* entity = p_RtsGame.Self()->GetEntity(_entityId);
         assert(entity);
 
-        success = EngineAssist::Instance(g_Game).IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE)
+        success = EngineAssist::Instance(&p_RtsGame).IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE)
             && entity->Attr(EOATTR_IsMoving) == false;
     }
 
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool MoveEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool MoveEntityAction::ExecuteAux(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
-    _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
+    _entityId = pAdapter->GetEntityObjectId(p_RtsGame, p_RtsGame.Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
     assert(_entityId != INVALID_TID);
 
-    _position = pAdapter->AdaptPosition(Parameters());
+    _position = pAdapter->AdaptPosition(p_RtsGame, Parameters());
 
-    GameEntity* entity = pRtsGame.Self()->GetEntity(_entityId);
+    GameEntity* entity = p_RtsGame.Self()->GetEntity(_entityId);
     assert(entity);
 
     bool success = entity->Move(_position);
@@ -106,9 +106,9 @@ void MoveEntityAction::InitializePostConditions()
 
 }
 //////////////////////////////////////////////////////////////////////////
-void MoveEntityAction::InitializePreConditions()
+void MoveEntityAction::InitializePreConditions(RtsGame& p_RtsGame)
 {
     /*
-    return EngineAssist::Instance(g_Game).DoesEntityObjectExist(_entityId);
+    return EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_entityId);
     */
 }

@@ -18,7 +18,7 @@ DeployArmyGoal::DeployArmyGoal(const PlanStepParameters& p_parameters): GoalEx(G
 {
 }
 //----------------------------------------------------------------------------------------------
-bool DeployArmyGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool DeployArmyGoal::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
     return false;
 }

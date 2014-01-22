@@ -19,10 +19,10 @@ IMViewWidget::~IMViewWidget()
     m_pIMView = nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-void IMViewWidget::SetIM(const InfluenceMap *p_pIM)
+void IMViewWidget::SetIM(const InfluenceMap *p_IM)
 {
-    m_pIMView->SetIM(p_pIM);
-    m_pIM = p_pIM;
+    m_pIMView->SetIM(p_IM);
+    m_pIM = p_IM;
 }
 //////////////////////////////////////////////////////////////////////////
 void IMViewWidget::update()

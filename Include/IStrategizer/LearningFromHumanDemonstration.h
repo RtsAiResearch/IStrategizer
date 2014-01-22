@@ -45,7 +45,7 @@ namespace IStrategizer
         PlanGraph* pPlan;
 
         CookedPlan(){}
-        CookedPlan(GoalEx* p_goal, PlanGraph* p_pPlan, GameStateEx* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
+        CookedPlan(GoalEx* p_goal, PlanGraph* p_Plan, GameStateEx* p_gameState): Goal(p_goal), pPlan(p_Plan), gameState(p_gameState) {}
     };
 
     class CookedCase
@@ -64,20 +64,20 @@ namespace IStrategizer
         CaseLearningHelper* _helper;
         RetainerEx*  _retainer;
 
-        vector<RawCaseEx*> LearnRawCases(std::vector<GameTrace*>& p_traces);
-        void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
+        vector<RawCaseEx*> LearnRawCases(RtsGame& p_RtsGame, std::vector<GameTrace*>& p_traces);
+        void AddAction(RtsGame& p_RtsGame, RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
         CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
         bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, std::vector<Expression*>& p_matchedConditions);
         void NecessaryStepsExtraction(PlanGraph* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps);
         void UnnecessaryStepsElimination(CookedCase* p_case);
         CookedPlan* PlanParallelization(PlanGraph* p_graph, RawPlanEx* p_steps);
         void HierarchicalComposition(CookedPlan* p_plan, const std::vector<CookedPlan*>& p_plans, unsigned p_index);
-        void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans );
+        void RetainLearntCases(RtsGame& p_RtsGame, std::vector<CookedPlan*>& p_cookedPlans );
 
     public:
-        LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy);
+        LearningFromHumanDemonstration(RtsGame& p_RtsGame, PlayerType p_player, PlayerType p_enemy);
         virtual     ~LearningFromHumanDemonstration();
-        void Learn();
+        void Learn(RtsGame& p_RtsGame);
     };
 }
 
