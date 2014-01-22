@@ -38,7 +38,7 @@ using namespace Serialization;
 // case to be retrieved
 const size_t KNeighbours = 4;
 
-RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pRetainer, "Retriever")
+RetrieverEx::RetrieverEx(RtsGame& p_RtsGame, AbstractRetainer *p_Retainer) : AbstractRetriever(p_RtsGame, p_Retainer, "Retriever")
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -187,6 +187,6 @@ void RetrieverEx::ExecuteCommand(const char* p_cmd)
     //    m_parameters[PARAM_PlayerId] = PLAYER_Self;
     //    m_parameters[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
 
-    //    CaseEx* myCase = Retrieve(g_GoalFactory.GetGoal(GOALEX_WinGame, m_parameters), g_Game->Self()->State());
+    //    CaseEx* myCase = Retrieve(GoalFactory::Instance().GetGoal(GOALEX_WinGame, m_parameters), p_RtsGame.Self()->State());
     //}
 }

@@ -1,6 +1,5 @@
-#include "AttackEntityAction.h"
-
 #include <cassert>
+#include "AttackEntityAction.h"
 #include "Vector2.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "AbstractAdapter.h"
@@ -37,7 +36,7 @@ void AttackEntityAction::Copy(IClonable* p_dest)
     Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool AttackEntityAction::ExecuteAux(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
@@ -45,16 +44,16 @@ bool AttackEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock
     bool executed = false;
     
     // Adapt attacker
-    _attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
+    _attackerId = pAdapter->GetEntityObjectId(p_RtsGame, attackerType,AdapterEx::AttackerStatesRankVector);
 
     if (_attackerId != INVALID_TID)
     {
-        _targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
+        _targetId = pAdapter->AdaptTargetEntity(p_RtsGame, targetType, Parameters());
 
         if (_targetId != INVALID_TID)
         {
-            GameEntity* pGameAttacker = pRtsGame.Self()->GetEntity(_attackerId);
-            GameEntity* pGameTarget = pRtsGame.Enemy()->GetEntity(_targetId);
+            GameEntity* pGameAttacker = p_RtsGame.Self()->GetEntity(_attackerId);
+            GameEntity* pGameTarget = p_RtsGame.Enemy()->GetEntity(_targetId);
             assert(pGameAttacker);
             assert(pGameTarget);
             pGameAttacker->Lock(this);
@@ -65,22 +64,22 @@ bool AttackEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock
     return executed;
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void AttackEntityAction::HandleMessage(RtsGame& p_RtsGame, Message* p_msg, bool& p_consumed)
 {
     
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& p_RtsGame)
 {
-    return g_Assist.DoesEntityObjectExist(_attackerId);
+    return EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
     assert(PlanStepEx::State() == ESTATE_Executing);
 
-    GameEntity* pGameAttacker = pRtsGame.Self()->GetEntity(_attackerId);
-    GameEntity* pGameTarget = pRtsGame.Enemy()->GetEntity(_targetId);
+    GameEntity* pGameAttacker = p_RtsGame.Self()->GetEntity(_attackerId);
+    GameEntity* pGameTarget = p_RtsGame.Enemy()->GetEntity(_targetId);
     assert(pGameAttacker);
     assert(pGameTarget);
 
@@ -100,7 +99,7 @@ void AttackEntityAction::InitializePostConditions()
     _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, target, 1, true));
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::InitializePreConditions()
+void AttackEntityAction::InitializePreConditions(RtsGame& p_RtsGame)
 {
     vector<Expression*> m_terms;
     EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];

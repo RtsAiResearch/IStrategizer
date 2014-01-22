@@ -20,7 +20,7 @@ namespace StarCraftModel
     class StarCraftPlayer : public GamePlayer
     {
     public:
-        StarCraftPlayer(Player p_pPlayer);
+        StarCraftPlayer(RtsGame& p_RtsGame, Player p_pPlayer);
         const GameStateEx* State();
         EntityClassType GetWorkerType() { return m_workerTypeId; }
         EntityClassType GetBaseType() { return m_baseTypeId; }

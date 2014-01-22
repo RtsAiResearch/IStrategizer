@@ -47,49 +47,49 @@ void CellFeature::To(PlanStepParameters& p_parameters) const
     p_parameters[PARAM_DistanceToEnemyBase] = m_distanceFromEnemyBase;
 }
 //----------------------------------------------------------------------------------------------
-void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
+void CellFeature::AddEntity(RtsGame& p_RtsGame, GameEntity *p_entity, bool p_isAllied)
 {
-    if(g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_IsBuilding))
+    if(p_RtsGame.GetEntityType(p_entity->Type())->Attr(ECATTR_IsBuilding))
     {
         if(p_isAllied)
-            m_alliedBuildingDescription.AddEntity(p_entity);
+            m_alliedBuildingDescription.AddEntity(p_RtsGame, p_entity);
         else
-            m_enemyBuildingDescription.AddEntity(p_entity);
+            m_enemyBuildingDescription.AddEntity(p_RtsGame, p_entity);
             
     }
-    else if(g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_CanAttack))
+    else if(p_RtsGame.GetEntityType(p_entity->Type())->Attr(ECATTR_CanAttack))
     {
         if(p_isAllied)
-            m_alliedForceDescription.AddEntity(p_entity);
+            m_alliedForceDescription.AddEntity(p_RtsGame, p_entity);
         else
-            m_enemyForceDescription.AddEntity(p_entity);
+            m_enemyForceDescription.AddEntity(p_RtsGame, p_entity);
     }
     else
     {
-        m_resourceDescription.AddEntity(p_entity);
+        m_resourceDescription.AddEntity(p_RtsGame, p_entity);
     }
 }
 //----------------------------------------------------------------------------------------------
-void CellFeature::RemoveEntity(GameEntity *p_entity, bool p_isAllied)
+void CellFeature::RemoveEntity(RtsGame& p_RtsGame, GameEntity *p_entity, bool p_isAllied)
 {
-    if(g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_IsBuilding))
+    if(p_RtsGame.GetEntityType(p_entity->Type())->Attr(ECATTR_IsBuilding))
     {
         if(p_isAllied)
-            m_alliedBuildingDescription.RemoveEntity(p_entity);
+            m_alliedBuildingDescription.RemoveEntity(p_RtsGame, p_entity);
         else
-            m_enemyBuildingDescription.RemoveEntity(p_entity);
+            m_enemyBuildingDescription.RemoveEntity(p_RtsGame, p_entity);
 
     }
-    else if(g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_CanAttack))
+    else if(p_RtsGame.GetEntityType(p_entity->Type())->Attr(ECATTR_CanAttack))
     {
         if(p_isAllied)
-            m_alliedForceDescription.RemoveEntity(p_entity);
+            m_alliedForceDescription.RemoveEntity(p_RtsGame, p_entity);
         else
-            m_enemyForceDescription.RemoveEntity(p_entity);
+            m_enemyForceDescription.RemoveEntity(p_RtsGame, p_entity);
     }
     else
     {
-        m_resourceDescription.RemoveEntity(p_entity);
+        m_resourceDescription.RemoveEntity(p_RtsGame, p_entity);
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -126,24 +126,24 @@ float CellFeature::GetDistance(CellFeature *p_other)
     return sqrt(res);
 }
 //----------------------------------------------------------------------------------------------
-void CellFeature::CalculateDistanceToBases(Vector2 cellWorldPosition)
+void CellFeature::CalculateDistanceToBases(RtsGame& p_RtsGame, Vector2 cellWorldPosition)
 {
     vector<TID> bases;
 
-    g_Game->Enemy()->GetBases(bases);
-    CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromEnemyBase);
-    g_Game->Self()->GetBases(bases);
-    CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromBase);
+    p_RtsGame.Enemy()->GetBases(bases);
+    CalculateDistanceToBasesAux(p_RtsGame, cellWorldPosition, bases, m_distanceFromEnemyBase);
+    p_RtsGame.Self()->GetBases(bases);
+    CalculateDistanceToBasesAux(p_RtsGame, cellWorldPosition, bases, m_distanceFromBase);
 }
 //----------------------------------------------------------------------------------------------
-void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, int& distance)
+void CellFeature::CalculateDistanceToBasesAux(RtsGame& p_RtsGame, Vector2 cellWorldPosition, vector<TID> bases, int& distance)
 {
     assert(bases.size() > 0);
     TID baseId = bases[0];
-    GameEntity* pBase = g_Game->Self()->GetEntity(baseId);
+    GameEntity* pBase = p_RtsGame.Self()->GetEntity(baseId);
 
     if (pBase == nullptr)
-        pBase = g_Game->Enemy()->GetEntity(baseId);
+        pBase = p_RtsGame.Enemy()->GetEntity(baseId);
 
     assert(pBase);
 

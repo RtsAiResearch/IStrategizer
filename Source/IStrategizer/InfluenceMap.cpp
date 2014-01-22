@@ -48,7 +48,7 @@ void InfluenceMap::Reset()
     m_registeredObjects.clear();
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
+void InfluenceMap::RegisterGameObj(RtsGame& p_RtsGame, TID p_objId, PlayerType p_ownerId)
 {
     RegObjEntry *pNewObj = new RegObjEntry;
     GameEntity *pGameObj = nullptr;
@@ -58,11 +58,11 @@ void InfluenceMap::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
     pNewObj->OwnerId = p_ownerId;
     pNewObj->Stamped = false;
 
-    pGameObj = g_Game->GetPlayer(p_ownerId)->GetEntity(p_objId);
+    pGameObj = p_RtsGame.GetPlayer(p_ownerId)->GetEntity(p_objId);
     assert(pGameObj);
     pNewObj->LastPosition = Vector2::Null();
 
-    pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->Type());
+    pObjType = p_RtsGame.GetEntityType((EntityClassType)pGameObj->Type());
     assert(pObjType);
     pNewObj->ObjWidth = pObjType->Attr(ECATTR_Width);
     pNewObj->ObjHeight = pObjType->Attr(ECATTR_Height);
@@ -259,27 +259,27 @@ TInfluence InfluenceMap::SumInfluenceShape(Vector2& p_startPosition, int p_width
     return sum;
 }
 //////////////////////////////////////////////////////////////////////////
-GameEntity* InfluenceMap::GetObj(RegObjEntry* p_pObjEntry)
+GameEntity* InfluenceMap::GetObj(RtsGame& p_RtsGame, RegObjEntry* p_ObjEntry)
 {
     GameEntity *pGameObj = nullptr;
     GamePlayer *pPlayer = nullptr;
 
-    pPlayer = g_Game->GetPlayer(p_pObjEntry->OwnerId);
+    pPlayer = p_RtsGame.GetPlayer(p_ObjEntry->OwnerId);
     assert(pPlayer);
 
-    pGameObj = pPlayer->GetEntity(p_pObjEntry->ObjId);
+    pGameObj = pPlayer->GetEntity(p_ObjEntry->ObjId);
     assert(pGameObj);
 
     return pGameObj;
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::ForEachObj(RegObjCallback p_pfnCallback)
+void InfluenceMap::ForEachObj(RtsGame& p_RtsGame, RegObjCallback p_pfnCallback)
 {
     RegObjectList::iterator objItr;
 
     for (objItr = m_registeredObjects.begin(); objItr != m_registeredObjects.end(); ++objItr)
     {
-        p_pfnCallback(this, *objItr);
+        p_pfnCallback(p_RtsGame, this, *objItr);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -289,7 +289,7 @@ bool InfluenceMap::InBound(int p_gridX, int p_gridY)
         p_gridY >= 0 && p_gridY < m_gridHeight;
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLength, SpiralMovePredicate p_pfnPred, void *p_pParam)
+void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLength, SpiralMovePredicate p_pfnPred, void *p_Param)
 {
     enum CycleStep { DOWN = 0, LEFT, UP, RIGHT };
 
@@ -350,7 +350,7 @@ void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLen
 
         if (InBound(currentX, currentY))
         {
-            if(p_pfnPred(currentX * m_cellSide, currentY * m_cellSide, &m_pMap[currentY * m_gridWidth + currentX], p_pParam))
+            if(p_pfnPred(currentX * m_cellSide, currentY * m_cellSide, &m_pMap[currentY * m_gridWidth + currentX], p_Param))
                 break;
         }
 
@@ -374,7 +374,7 @@ void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLen
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWidth, int p_areaHeight, CellPredicate p_pfnPred, void *p_pParam)
+void InfluenceMap::ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWidth, int p_areaHeight, CellPredicate p_pfnPred, void *p_Param)
 {
     int gridX = (int)((float)p_areaStartPos.X / m_cellSide);
     int gridY = (int)((float)p_areaStartPos.Y / m_cellSide);
@@ -392,7 +392,7 @@ void InfluenceMap::ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWi
 
             if (idx < m_numCells)
             {
-                if(p_pfnPred(x * m_cellSide, y * m_cellSide, &m_pMap[idx], p_pParam))
+                if(p_pfnPred(x * m_cellSide, y * m_cellSide, &m_pMap[idx], p_Param))
                     return;
             }
         }

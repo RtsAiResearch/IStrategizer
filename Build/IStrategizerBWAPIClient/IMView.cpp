@@ -18,12 +18,12 @@ IMView::~IMView()
 
 }
 //////////////////////////////////////////////////////////////////////////
-void IMView::SetIM(const InfluenceMap *p_pIM)
+void IMView::SetIM(const InfluenceMap *p_IM)
 {
-    m_pIM = p_pIM;
+    m_pIM = p_IM;
     m_transformationCached = false;
-  if (p_pIM)
-      m_pfnIMDrawer = IMDrawingStrategy::GetStrategy(p_pIM->TypeId());
+  if (p_IM)
+      m_pfnIMDrawer = IMDrawingStrategy::GetStrategy(p_IM->TypeId());
 }
 //////////////////////////////////////////////////////////////////////////
 QSize IMView::minimumSizeHint() const

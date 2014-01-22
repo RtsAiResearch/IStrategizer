@@ -29,7 +29,7 @@ class EntityClassExist : public ConditionEx
         EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, bool p_oneUse = false);
         EntityClassExist(PlayerType p_player, int p_amount, bool p_oneUse = false);
         EntityClassExist(PlayerType p_player);
-        bool Evaluate(RtsGame& pRtsGame);
+        bool Evaluate(RtsGame& p_RtsGame);
         void Copy(IClonable* p_dest);
         bool Consume(int p_amount);
     };

@@ -1,21 +1,20 @@
 #ifndef ENGINECOMPONENT_H
 #define ENGINECOMPONENT_H
 
-#ifndef LOGGER_H
 #include "Logger.h"
-#endif
-#ifndef MESSAGEPUMPOBSERVER_H
 #include "MessagePumpObserver.h"
-#endif
+#include "Message.h"
 
 namespace IStrategizer
 {
+    class RtsGame;
+
     class EngineComponent : public MessagePumpObserver
     {
     public:
-        EngineComponent(const char* p_name);
+        EngineComponent(RtsGame& p_RtsGame, const char* p_name);
         ~EngineComponent();
-        void NotifyMessegeSent(Message* p_message);
+        void NotifyMessegeSent(RtsGame& p_RtsGame, Message* p_message);
         const char* Name() const { return m_pName; }
 
     protected:

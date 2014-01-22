@@ -46,7 +46,6 @@ namespace IStrategizer
 
     /*********************************************************** Learning From Human Demonstration Definitions ***********************************************************/
 
-
 #define MAX_PLAYER_ENTITIES 90
 #define INPUT_ACTION "input"
 #define MOVE_ACTION "move"

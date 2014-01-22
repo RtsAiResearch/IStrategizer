@@ -1,22 +1,14 @@
 #ifndef GAMEPLAYER_H
 #define GAMEPLAYER_H
 
-#ifndef ENGINEDATA_H
-#include "EngineData.h"
-#endif
-#ifndef WORLDCOMPONENT_H
-#include "WorldComponent.h"
-#endif
-#ifndef DYNAMICMAP_H
-#include "DynamicMap.h"
-#endif
-#ifndef DYNAMICSET_H
-#include "DynamicSet.h"
-#endif
-#ifndef MESSAGEPUMPOBSERVER_H
-#include "MessagePumpObserver.h"
-#endif
 #include <vector>
+#include "EngineData.h"
+#include "WorldComponent.h"
+#include "DynamicMap.h"
+#include "DynamicSet.h"
+#include "MessagePumpObserver.h"
+
+using namespace std;
 
 namespace IStrategizer
 {
@@ -33,26 +25,26 @@ namespace IStrategizer
     class GamePlayer : MessagePumpObserver
     {
     public:
-        GamePlayer();
+        GamePlayer(RtsGame& p_RtsGame);
         virtual ~GamePlayer();
         virtual PlayerType Id() { return m_id; }
         PlayerResources* Resources();
         GameTechTree* TechTree() const;
-        void Entities(std::vector<TID>& p_entityIds);
+        void Entities(vector<TID>& p_entityIds);
         void Entities(EntityClassType p_typeId, vector<TID> &p_entityIds);
         GameEntity* GetEntity(TID p_id);
         virtual EntityClassType GetWorkerType() = 0;
         virtual EntityClassType GetBaseType() = 0;
-        void GetBases(std::vector<TID> &p_basesIds);
+        void GetBases(vector<TID> &p_basesIds);
         virtual const GameStateEx* State() = 0;
-        void NotifyMessegeSent(Message* p_pMessage);
+        void NotifyMessegeSent(RtsGame& p_RtsGame, Message* p_Message);
 
     protected:
         virtual GameEntity* FetchEntity(TID p_id) = 0;
         virtual void Finalize();
-        virtual void OnEntityRenegade(Message* p_pMessage);
-        virtual void OnEntityCreate(Message* p_pMessage);
-        virtual void OnEntityDestroy(Message* p_pMessage);
+        virtual void OnEntityRenegade(RtsGame& p_RtsGame, Message* p_Message);
+        virtual void OnEntityCreate(RtsGame& p_RtsGame, Message* p_Message);
+        virtual void OnEntityDestroy(RtsGame& p_RtsGame, Message* p_Message);
 
         PlayerType m_id;
         EntitiesMap m_entities;

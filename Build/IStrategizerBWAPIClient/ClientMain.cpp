@@ -34,23 +34,23 @@ using namespace std;
 #define TilePositionFromUnitPosition(UnitPos)    (UnitPos / 32)
 #define UnitPositionFromTilePosition(TilePos)    (TilePos * 32)
 
-ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
+ClientMain::ClientMain(RtsGame* p_RtsGame, QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags),
-    m_pIStrategizer(nullptr),
-    m_pGameModel(nullptr),
+    m_IStrategizer(nullptr),
+    m_GameModel(p_RtsGame),
     m_isLearning(false),
-    m_pTraceCollector(nullptr)
+    m_TraceCollector(nullptr)
 {
     ui.setupUi(this);
     IStrategizer::Init();
-    g_MessagePump.RegisterForMessage(MSG_PlanStructureChange, this);
+    MessagePump::Instance(*m_GameModel).RegisterForMessage(*m_GameModel, MSG_PlanStructureChange, this);
 }
 //////////////////////////////////////////////////////////////////////////
 ClientMain::~ClientMain()
 {
     FinalizeIStrategizer();
 
-    delete m_pTraceCollector;
+    delete m_TraceCollector;
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIStrategizer()
@@ -59,8 +59,8 @@ void ClientMain::InitIStrategizer()
 
     try
     {
-        m_pGameModel = new StarCraftGame;
-        assert(m_pGameModel);
+        m_GameModel = new StarCraftGame;
+        assert(m_GameModel);
 
         param.BuildingDataIMCellSize = TILE_SIZE;
         param.GrndCtrlIMCellSize = TILE_SIZE;
@@ -72,28 +72,28 @@ void ClientMain::InitIStrategizer()
             Playerset players = Broodwar->getPlayers();
             TID playerToObserveID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
 
-            m_pTraceCollector = new GameTraceCollector(playerToObserveID);
+            m_TraceCollector = new GameTraceCollector(playerToObserveID);
             param.Phase = PHASE_Offline;
             m_isLearning = true;
         }
         else
             param.Phase = PHASE_Online;
 
-        m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
-        assert(m_pIStrategizer);
+        m_IStrategizer = new IStrategizerEx(param, *m_GameModel);
+        assert(m_IStrategizer);
     }
     catch (IStrategizer::Exception& e)
     {
         e.To(cout);
     }
 
-    m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
-    m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+    m_BuildingDataIMWidget->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
+    m_GroundControlIMWidget->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
 
     // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
     // and the engine Enums[*] table is fully initialized
     InitIdLookup();
-    m_pPlanGraphView->View(new OlcbpPlanGraphAdapter(*m_pIStrategizer->Planner()->ExpansionExecution()));
+    m_PlanGraphView->View(new OlcbpPlanGraphAdapter(*m_IStrategizer->Planner()->ExpansionExecution()));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
@@ -103,7 +103,7 @@ void ClientMain::InitIMView()
 
     // 1. Init Building Data IM
     pIMView = new IMViewWidget;
-    m_pBldngDataIMWdgt= pIMView;
+    m_BuildingDataIMWidget= pIMView;
     m_IMViews.push_back(pIMView);
 
     gridLayout = new QGridLayout;
@@ -115,7 +115,7 @@ void ClientMain::InitIMView()
 
     // 2. Init Ground Control IM
     pIMView = new IMViewWidget;
-    m_pGrndCtrlIMWdgt = pIMView;
+    m_GroundControlIMWidget = pIMView;
     m_IMViews.push_back(pIMView);
 
     gridLayout = new QGridLayout;
@@ -129,8 +129,8 @@ void ClientMain::InitIMView()
 void ClientMain::InitPlannerView()
 {
     GraphScene *pGraphScene = new GraphScene(&m_idLookup);
-    m_pPlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
-    ui.plannerGridLayout->addWidget(m_pPlanGraphView);
+    m_PlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
+    ui.plannerGridLayout->addWidget(m_PlanGraphView);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()
@@ -146,11 +146,11 @@ void ClientMain::InitIdLookup()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeIStrategizer()
 {
-    delete m_pIStrategizer;
-    m_pIStrategizer = nullptr;
+    delete m_IStrategizer;
+    m_IStrategizer = nullptr;
 
-    delete m_pGameModel;
-    m_pGameModel = nullptr;
+    delete m_GameModel;
+    m_GameModel = nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeViews()
@@ -200,7 +200,7 @@ void ClientMain::OnSendText(const string& p_text)
     TextMessage *pTxtMsg;
 
     pTxtMsg = new TextMessage(Broodwar->getFrameCount(), MSG_Input, new string(p_text));
-    g_MessagePump.Send(pTxtMsg);
+    MessagePump::Instance(*m_GameModel).Send(pTxtMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
@@ -229,7 +229,7 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
     pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityCreate, pData);
     assert(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    MessagePump::Instance(*m_GameModel).Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
@@ -259,7 +259,7 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
     pMsg = new EntityDestroyMessage(Broodwar->getFrameCount(), MSG_EntityDestroy, pData);
     assert(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    MessagePump::Instance(*m_GameModel).Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
@@ -288,17 +288,17 @@ void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
     pMsg = new EntityRenegadeMessage(Broodwar->getFrameCount(), MSG_EntityRenegade, pData);
     assert(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    MessagePump::Instance(*m_GameModel).Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchStart()
 {
     Message *pMsg;
 
-    pMsg = new Message(Broodwar->getFrameCount(), MSG_GameStart);
+    pMsg = new Message(Broodwar->getFrameCount(), MSp_RtsGameStart);
     assert(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    MessagePump::Instance(*m_GameModel).Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchEnd(bool p_isWinner)
@@ -311,20 +311,20 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
 
     pData->IsWinner = p_isWinner;
 
-    pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSG_GameEnd, pData);
+    pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSp_RtsGameEnd, pData);
     assert(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    MessagePump::Instance(*m_GameModel).Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateStatsView()
 {
     float engineRatio, gameRatio;
 
-    ui.lblEngineCycleData->setText(tr("%1").arg(m_pIStrategizer->Clock().ElapsedEngineCycles()));
+    ui.lblEngineCycleData->setText(tr("%1").arg(m_IStrategizer->Clock().ElapsedEngineCycles()));
     ui.lblGameCyclesData->setText(tr("%1").arg(Broodwar->getFrameCount()));
 
-    engineRatio = (float)m_pIStrategizer->Clock().ElapsedEngineCycles();
+    engineRatio = (float)m_IStrategizer->Clock().ElapsedEngineCycles();
     gameRatio = (float)Broodwar->getFrameCount();
 
     if (engineRatio > gameRatio)
@@ -341,7 +341,7 @@ void ClientMain::UpdateStatsView()
     ui.lblEngineRatioData->setText(tr("%1").arg(engineRatio));
     ui.lblGameRatioData->setText(tr("%1").arg(gameRatio));
     ui.lblFrameDiffData->setText(tr("%1").arg(
-        abs((int)(m_pIStrategizer->Clock().ElapsedEngineCycles() - Broodwar->getFrameCount()))));
+        abs((int)(m_IStrategizer->Clock().ElapsedEngineCycles() - Broodwar->getFrameCount()))));
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -367,7 +367,7 @@ void ClientMain::OnClientUpdate()
 
     try
     {
-        m_pIStrategizer->Update(Broodwar->getFrameCount());
+        m_IStrategizer->Update(Broodwar->getFrameCount());
     }
     catch (IStrategizer::Exception &e)
     {
@@ -383,7 +383,7 @@ void ClientMain::UpdateViews()
     for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->update();
 
-    // m_pPlanGraphView->update();
+    // m_PlanGraphView->update();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitResourceManager()
@@ -409,17 +409,17 @@ void ClientMain::OnGameFrame()
 {
     if (Broodwar->isReplay())
     {
-        assert(m_pTraceCollector);
-        m_pTraceCollector->OnGameFrame();
+        assert(m_TraceCollector);
+        m_TraceCollector->OnGameFrame(*m_GameModel);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::NotifyMessegeSent(Message* p_pMessage)
+void ClientMain::NotifyMessegeSent(RtsGame& p_RtsGame, Message* p_Message)
 {
-    assert(p_pMessage != nullptr);
+    assert(p_Message != nullptr);
 
-    if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange)
+    if (p_Message->MessageTypeID() == MSG_PlanStructureChange)
     {
-        m_pPlanGraphView->OnPlanStructureChange();
+        m_PlanGraphView->OnPlanStructureChange();
     }
 }

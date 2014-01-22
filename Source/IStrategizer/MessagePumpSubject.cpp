@@ -7,7 +7,7 @@
 #endif
 using namespace IStrategizer;
 
-void MessagePumpSubject::AddMessage(MessageType p_messageTypeID)
+void MessagePumpSubject::AddMessage(RtsGame& p_RtsGame, MessageType p_messageTypeID)
 {
     if(_messageObserversTable.find(p_messageTypeID) == _messageObserversTable.end())
     {
@@ -15,7 +15,7 @@ void MessagePumpSubject::AddMessage(MessageType p_messageTypeID)
     }
 }
 //----------------------------------------------------------------------------------------------
-void MessagePumpSubject::RegisterForMessage(MessageType p_messageTypeID, MessagePumpObserver* p_observer)
+void MessagePumpSubject::RegisterForMessage(RtsGame& p_RtsGame, MessageType p_messageTypeID, MessagePumpObserver* p_observer)
 {
     ObserverList* m_observerList;
 
@@ -29,7 +29,7 @@ void MessagePumpSubject::RegisterForMessage(MessageType p_messageTypeID, Message
     }
 }
 //----------------------------------------------------------------------------------------------
-void MessagePumpSubject::UnRegisterForMessage(MessageType p_messageTypeID, MessagePumpObserver* p_observer)
+void MessagePumpSubject::UnRegisterForMessage(RtsGame& p_RtsGame, MessageType p_messageTypeID, MessagePumpObserver* p_observer)
 {
     if(_messageObserversTable.find(p_messageTypeID) != _messageObserversTable.end())
     {
@@ -37,7 +37,7 @@ void MessagePumpSubject::UnRegisterForMessage(MessageType p_messageTypeID, Messa
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void MessagePumpSubject::UnregisterForAllMessages(MessagePumpObserver* p_observer)
+void MessagePumpSubject::UnregisterForAllMessages(RtsGame& p_RtsGame, MessagePumpObserver* p_observer)
 {
     ObserverList* m_observerList;
 
@@ -49,7 +49,7 @@ void MessagePumpSubject::UnregisterForAllMessages(MessagePumpObserver* p_observe
     }
 }
 //----------------------------------------------------------------------------------------------
-void MessagePumpSubject::OnMessageSent(Message* p_message)
+void MessagePumpSubject::OnMessageSent(RtsGame& p_RtsGame, Message* p_message)
 {
     ObserverList* m_observerList;
 
@@ -61,7 +61,7 @@ void MessagePumpSubject::OnMessageSent(Message* p_message)
             itr != m_observerList->end();
             itr++)
         {
-            (*itr)->NotifyMessegeSent(p_message);
+            (*itr)->NotifyMessegeSent(p_RtsGame, p_message);
         }
     }
 }

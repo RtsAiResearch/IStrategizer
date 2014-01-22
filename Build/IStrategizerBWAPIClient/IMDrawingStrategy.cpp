@@ -21,16 +21,16 @@ DrawIMCallback IMDrawingStrategy::GetStrategy(IMType p_type)
     return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-void IMDrawingStrategy::DrawBuildingDataIM(const InfluenceMap *p_pIM, QPainter &p_painter)
+void IMDrawingStrategy::DrawBuildingDataIM(const InfluenceMap *p_IM, QPainter &p_painter)
 {
     QPen pen(Qt::black, 0);
     QBrush occupanceBrush(Qt::blue);
     QBrush reserveBrush(Qt::yellow, Qt::Dense5Pattern);
-    int endX = p_pIM->GridWidth();
-    int endY = p_pIM->GridHeight();
-    int dX = p_pIM->CellSide();
-    int dY = p_pIM->CellSide();
-    const TCell *pIMData = p_pIM->Map();
+    int endX = p_IM->GridWidth();
+    int endY = p_IM->GridHeight();
+    int dX = p_IM->CellSide();
+    int dY = p_IM->CellSide();
+    const TCell *pIMData = p_IM->Map();
 
     if (!(endX && endX && dX && dY))
         return;
@@ -63,19 +63,19 @@ void IMDrawingStrategy::DrawBuildingDataIM(const InfluenceMap *p_pIM, QPainter &
     p_painter.restore();
 }
 //////////////////////////////////////////////////////////////////////////
-void IMDrawingStrategy::DrawGroundControlIM(const InfluenceMap *p_pIM, QPainter &p_painter)
+void IMDrawingStrategy::DrawGroundControlIM(const InfluenceMap *p_IM, QPainter &p_painter)
 {
     QPen pen(Qt::black, 0);
     QBrush enemyBrush(QColor(0, 0, 255));
     QBrush playerBrush(QColor(255, 0, 0));
     QBrush emptyBrush(QColor(0, 0, 0));
-    int endX = p_pIM->GridWidth();
-    int endY = p_pIM->GridHeight();
-    int dX = p_pIM->CellSide();
-    int dY = p_pIM->CellSide();
+    int endX = p_IM->GridWidth();
+    int endY = p_IM->GridHeight();
+    int dX = p_IM->CellSide();
+    int dY = p_IM->CellSide();
     int intenisty;
-    const TCell *pIMData = p_pIM->Map();
-    const IMStatistics &stat = p_pIM->Statistics();
+    const TCell *pIMData = p_IM->Map();
+    const IMStatistics &stat = p_IM->Statistics();
 
     if (!(endX && endX && dX && dY))
         return;

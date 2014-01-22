@@ -38,7 +38,6 @@ namespace IStrategizer
 
         IClonable*  Clone();
         void        Copy(IClonable* p_dest);
-        
 
     protected:
         void InitializeAddressesAux() { AddMemberAddress(4, &Top, &Left, &Width, &Height); }

@@ -4,6 +4,8 @@
 #include <vector>
 #include "MetaData.h"
 
+using namespace std;
+
 namespace IStrategizer
 {
     class Action;
@@ -12,16 +14,15 @@ namespace IStrategizer
     class ActionFactory
     {
     private:
+        RtsGame* m_RtsGame;
         ActionFactory() {}
     public:
-        static    ActionFactory& Instance() { static ActionFactory m_instance; return m_instance; }
-        Action*    GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions = true);
-        Action*    GetAction(ActionType p_actionType, bool p_initConditions = true);
-        Action* GetBuildAction(const std::vector<int>& p_paramaters);
+        static    ActionFactory& Instance();
+        static    ActionFactory& Instance(RtsGame& p_RtsGame);
+        Action*    GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters);
+        Action*    GetAction(ActionType p_actionType);
+        Action* GetBuildAction(const vector<int>& p_paramaters);
     };
-
-#define g_ActionFactory IStrategizer::ActionFactory::Instance()
-
 }
 
 #endif // ACTIONFACTORY_H

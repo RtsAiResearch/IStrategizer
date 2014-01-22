@@ -1,12 +1,9 @@
 #ifndef WORLDMAP_H
 #define WORLDMAP_H
 
-#ifndef STATICCOMPONENT_H
 #include "WorldComponent.h"
-#endif
-#ifndef VECTOR2_H
 #include "Vector2.h"
-#endif
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -37,7 +34,7 @@ namespace IStrategizer
         virtual Vector2         Size() const = 0;
         Vector2 CellMatrixSize() const;
         Vector2 CellSize() const;
-        void UpdateAux();
+        void UpdateAux(RtsGame& p_RtsGame);
         CellFeature* GetCellFeatureFromWorldPosition(Vector2 p_position) const;
         Vector2 GetNearestCell(CellFeature* p_cell) const;
         bool IsBuildable(Vector2 p_position, Vector2 p_dimension) const ;

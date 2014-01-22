@@ -6,19 +6,19 @@
 
 using namespace IStrategizer;
 
-void ForceDescription::AddEntity(GameEntity *p_entity)
+void ForceDescription::AddEntity(RtsGame& p_RtsGame, GameEntity *p_entity)
 {
     m_numberOfUnits++;
     m_totalHP += p_entity->Attr(EOATTR_Health);
-    m_totalDamage += g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
+    m_totalDamage += p_RtsGame.GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
     
 }
 
-void ForceDescription::RemoveEntity(GameEntity *p_entity)
+void ForceDescription::RemoveEntity(RtsGame& p_RtsGame, GameEntity *p_entity)
 {
     m_numberOfUnits--;
     m_totalHP -= p_entity->Attr(EOATTR_Health);
-    m_totalDamage -= g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
+    m_totalDamage -= p_RtsGame.GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
 }
 
 void ForceDescription::Clear()

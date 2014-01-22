@@ -17,7 +17,7 @@ class IMViewWidget : public QWidget
 public:
     IMViewWidget(QWidget *parent = 0);
     ~IMViewWidget();
-    void SetIM(const IStrategizer::InfluenceMap *p_pIM);
+    void SetIM(const IStrategizer::InfluenceMap *p_IM);
     void update();
 private:
     Ui::IMViewWidgetClass ui;

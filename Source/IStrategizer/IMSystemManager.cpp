@@ -10,7 +10,7 @@
 using namespace IStrategizer;
 using namespace std;
 
-void IMSystemManager::Update(const WorldClock& p_clock)
+void IMSystemManager::Update(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     unsigned elapsedTimeSinceLastUpdateMs = p_clock.ElapsedMilliseconds() - m_lastUpdateTimeMs;
 
@@ -28,17 +28,17 @@ void IMSystemManager::Update(const WorldClock& p_clock)
             break;
         }
 
-        itr->second->Update(p_clock);
+        itr->second->Update(p_RtsGame, p_clock);
     }
 
     m_lastUpdateTimeMs = p_clock.ElapsedMilliseconds();
 }
 //////////////////////////////////////////////////////////////////////////
-void IMSystemManager::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
+void IMSystemManager::RegisterGameObj(RtsGame& p_RtsGame, TID p_objId, PlayerType p_ownerId)
 {
     for (IMContainer::iterator itr = m_managedMaps.begin(); itr != m_managedMaps.end(); ++itr)
     {
-        itr->second->RegisterGameObj(p_objId, p_ownerId);
+        itr->second->RegisterGameObj(p_RtsGame, p_objId, p_ownerId);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ void IMSystemManager::UnregisterGameObj(TID p_objId)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void IMSystemManager::Init(const IMSysManagerParam& p_params)
+void IMSystemManager::Init(RtsGame& p_RtsGame, const IMSysManagerParam& p_params)
 {
     int worldWidth;
     int worldHeight;
@@ -65,7 +65,7 @@ void IMSystemManager::Init(const IMSysManagerParam& p_params)
 
     m_params = p_params;
 
-    pMap = g_Game->Map();
+    pMap = p_RtsGame.Map();
     worldWidth = pMap->Size().X;
     worldHeight = pMap->Size().Y;
     

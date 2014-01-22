@@ -45,7 +45,7 @@ void DestroyEntityTypeGoal::Copy(IClonable* p_dest)
     m_dest->_forceDescription   = _forceDescription;
 }
 //----------------------------------------------------------------------------------------------
-bool DestroyEntityTypeGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool DestroyEntityTypeGoal::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
     return false;
 }

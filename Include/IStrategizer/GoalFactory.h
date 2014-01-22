@@ -18,7 +18,6 @@ namespace IStrategizer
         GoalEx* GetGoal(GoalType p_goalType, PlanStepParameters& p_paramaters, bool p_initConditions = true);
         GoalEx* GetGoal(GoalType p_goalType, bool p_initConditions = true);
     };
-#define g_GoalFactory IStrategizer::GoalFactory::Instance()
 }
 
 #endif // GOALFACTORY_H

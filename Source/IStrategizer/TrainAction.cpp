@@ -39,7 +39,7 @@ TrainAction::TrainAction(const PlanStepParameters& p_parameters)
 {
 }
 //----------------------------------------------------------------------------------------------
-void TrainAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void TrainAction::HandleMessage(RtsGame& p_RtsGame, Message* p_msg, bool& p_consumed)
 {
     if (PlanStepEx::State() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_EntityCreate)
     {
@@ -50,13 +50,13 @@ void TrainAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consu
             return;
 
         TID entityId = pMsg->Data()->EntityId;
-        GameEntity *pEntity = pRtsGame.Self()->GetEntity(entityId);
+        GameEntity *pEntity = p_RtsGame.Self()->GetEntity(entityId);
         assert(pEntity);
 
         if (pEntity->Type() == _params[PARAM_EntityClassId])
         {
             // Check if the trainer is training that entity
-            GameEntity* pTrainer = pRtsGame.Self()->GetEntity(_trainerId);
+            GameEntity* pTrainer = p_RtsGame.Self()->GetEntity(_trainerId);
             assert(pTrainer);
 
             if (pTrainer->IsTraining(entityId))
@@ -68,7 +68,7 @@ void TrainAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consu
     }
 }
 //----------------------------------------------------------------------------------------------
-bool TrainAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool TrainAction::AliveConditionsSatisfied(RtsGame& p_RtsGame)
 {
     bool trainerExist = false;
     bool traineeExist = false;
@@ -77,14 +77,14 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
     bool success = false;
 
     // 1. Trainer building exist
-    trainerExist = g_Assist.DoesEntityObjectExist(_trainerId);
+    trainerExist = EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_trainerId);
 
     if (trainerExist)
     {
         if (_trainStarted)
         {
             // 2. Trainer building is busy or in the training state
-            GameEntity* pTrainer = pRtsGame.Self()->GetEntity(_trainerId);
+            GameEntity* pTrainer = p_RtsGame.Self()->GetEntity(_trainerId);
             assert(pTrainer);
             ObjectStateType trainerState = (ObjectStateType)pTrainer->Attr(EOATTR_State);
             trainerBusy = trainerState == OBJSTATE_Training;
@@ -92,12 +92,12 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
             if (trainerBusy)
             {
                 // 3. The trainee unit object exist, i.e not cancel
-                traineeExist = g_Assist.DoesEntityObjectExist(_traineeId);
+                traineeExist = EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_traineeId);
 
                 if (traineeExist)
                 {
                     // 4. Trainee is still being trained
-                    GameEntity* pTrainee = pRtsGame.Self()->GetEntity(_traineeId);
+                    GameEntity* pTrainee = p_RtsGame.Self()->GetEntity(_traineeId);
                     assert(pTrainee);
                     ObjectStateType traineeState = (ObjectStateType)pTrainee->Attr(EOATTR_State);
                     traineeBeingTrained = traineeState == OBJSTATE_BeingConstructed;
@@ -116,7 +116,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
     return success;
 }
 //----------------------------------------------------------------------------------------------
-bool TrainAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool TrainAction::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
     bool success = false;
     bool traineeBeingTrained = false;
@@ -124,12 +124,12 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
     if (_trainStarted)
     {
         // 1. Trainee unit object exist
-        bool traineeExist = g_Assist.DoesEntityObjectExist(_traineeId);
+        bool traineeExist = EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_traineeId);
 
         if (traineeExist)
         {
             // 2. Trainee is ready and no more being constructed
-            GameEntity* pTrainee = pRtsGame.Self()->GetEntity(_traineeId);
+            GameEntity* pTrainee = p_RtsGame.Self()->GetEntity(_traineeId);
             assert(pTrainee);
             ObjectStateType traineeState = (ObjectStateType)pTrainee->Attr(EOATTR_State);
             traineeBeingTrained = traineeState == OBJSTATE_BeingConstructed;
@@ -142,7 +142,7 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
     return success;
 }
 //----------------------------------------------------------------------------------------------
-bool TrainAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool TrainAction::ExecuteAux(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
     GameEntity *pGameTrainer;
@@ -150,12 +150,12 @@ bool TrainAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
     bool executed = false;
 
     // Adapt trainer
-    _trainerId = pAdapter->AdaptBuildingForTraining(traineeType);
+    _trainerId = pAdapter->AdaptBuildingForTraining(p_RtsGame, traineeType);
 
     if (_trainerId != INVALID_TID)
     {
         // Issue train order
-        pGameTrainer = pRtsGame.Self()->GetEntity(_trainerId);
+        pGameTrainer = p_RtsGame.Self()->GetEntity(_trainerId);
         assert(pGameTrainer);
         executed = pGameTrainer->Train(traineeType);
     }
@@ -170,13 +170,13 @@ void TrainAction::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void TrainAction::InitializePreConditions()
+void TrainAction::InitializePreConditions(RtsGame& p_RtsGame)
 {
     EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
-    EntityClassType trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
+    EntityClassType trainerType = p_RtsGame.Self()->TechTree()->SourceEntity(traineeType);
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, trainerType, 1, true));
-    g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
+    EngineAssist::Instance(&p_RtsGame).GetPrerequisites(traineeType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

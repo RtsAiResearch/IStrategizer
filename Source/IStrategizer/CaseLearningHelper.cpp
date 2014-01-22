@@ -3,28 +3,20 @@
 #include "GameStateEx.h"
 #include "MessagePump.h"
 #include "IStrategizerException.h"
-
-#ifndef GOALSATISFACTIONROW_H
 #include "GoalMatrixRowEvaluator.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-
-#ifndef SVECTOR_H
 #include "SVector.h"
-#endif
 
 using namespace IStrategizer;
 using namespace std;
 
-CaseLearningHelper::CaseLearningHelper()
+CaseLearningHelper::CaseLearningHelper(RtsGame& p_RtsGame)
 {
   m_goalMatrixRowEvaluator.Initialize(PLAYER_Self, PLAYER_Enemy);
   m_row.resize(m_goalMatrixRowEvaluator.GetRowSize());
 
-  g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
-  g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
+  MessagePump::Instance(p_RtsGame).RegisterForMessage(p_RtsGame, MSp_RtsGameActionLog, this);
+  MessagePump::Instance(p_RtsGame).RegisterForMessage(p_RtsGame, MSp_RtsGameEnd, this);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------
 GoalMatrixRow CaseLearningHelper::ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle)
@@ -33,7 +25,7 @@ GoalMatrixRow CaseLearningHelper::ComputeGoalMatrixRowSatisfaction(unsigned p_ga
   return m_row;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------
-void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
+void CaseLearningHelper::NotifyMessegeSent(RtsGame& p_RtsGame, Message* p_message)
 {
   DataMessage<GameTrace>* pTraceMsg = nullptr;
   GameTrace* pTrace = nullptr;
@@ -43,7 +35,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 
   switch(p_message->MessageTypeID())
   {
-  case MSG_GameActionLog:
+  case MSp_RtsGameActionLog:
     pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
 
     if (pTraceMsg ->Data() == nullptr)
@@ -58,7 +50,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 
     break;
 
-    /*case MSG_GameEnd:
+    /*case MSp_RtsGameEnd:
     m_observedTraces[m_observedTraces.size() - 1]->GoalSatisfaction(ComputeGoalMatrixRowSatisfaction(m_observedTraces[m_observedTraces.size() - 1]->GameCycle()));
     break;*/
   }

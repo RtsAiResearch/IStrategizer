@@ -433,12 +433,12 @@ namespace IStrategizer
 #define Prefix_MessageType MSG
     enum MessageType
     {
-        MSG_GameActionLog    = 0x21900,
+        MSp_RtsGameActionLog    = 0x21900,
         MSG_START            = 0x21900, 
         MSG_Input,
-        MSG_GameExit,
-        MSG_GameStart,
-        MSG_GameEnd,
+        MSp_RtsGameExit,
+        MSp_RtsGameStart,
+        MSp_RtsGameEnd,
         MSG_BuildingBuilt,
         MSG_EntityTrained,
         MSG_EntityAttacked,

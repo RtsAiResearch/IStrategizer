@@ -24,13 +24,13 @@
 using namespace std;
 using namespace IStrategizer;
 
-LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy)
+LearningFromHumanDemonstration::LearningFromHumanDemonstration(RtsGame& p_RtsGame, PlayerType p_player, PlayerType p_enemy)
 {
-    _helper     = new CaseLearningHelper();
-    _retainer   = new RetainerEx(g_CaseBasePath);
+    _helper     = new CaseLearningHelper(p_RtsGame);
+    _retainer   = new RetainerEx(p_RtsGame, g_CaseBasePath);
 }
 //------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::Learn()
+void LearningFromHumanDemonstration::Learn(RtsGame& p_RtsGame)
 {
     vector<CookedPlan*> m_cookedPlans;
  //   vector<CookedCase*> m_cookedCases;
@@ -83,10 +83,10 @@ void LearningFromHumanDemonstration::Learn()
     // HierarchicalComposition(m_cookedPlans[i], m_cookedPlans, i);
     //}
 
-    RetainLearntCases(m_cookedPlans);
+    RetainLearntCases(p_RtsGame, m_cookedPlans);
 }
 //------------------------------------------------------------------------------------------------
-vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrace*>& p_traces)
+vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(RtsGame& p_RtsGame, vector<GameTrace*>& p_traces)
 {
     size_t rowSize = _helper->GetGoalMatrixRowEvaluator().GetRowSize();
     vector<RawCaseEx*> learntRawCases;
@@ -105,16 +105,16 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrac
                 tempRPlan = RawPlanEx(nullptr, SequentialPlan());
                 currentCases[g] = new RawCaseEx(tempRPlan, p_traces[i]->GameState());
                 //m_currentCases[g] = new RawCaseEx(m_tempRPlan, nullptr);
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                AddAction(p_RtsGame, currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
             }
             else if(!currGoalMatrixRow[g] && currentCases[g])
             {
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                AddAction(p_RtsGame, currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
             }
             else if (!currGoalMatrixRow[g] && currentCases[g])
             {
                 currentCases[g]->rawPlan.Goal = _helper->GetGoalMatrixRowEvaluator().GetGoal(g);
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                AddAction(p_RtsGame, currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
                 learntRawCases.push_back(currentCases[g]);
                 currentCases[g] = nullptr;
             }
@@ -124,11 +124,11 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrac
     return learntRawCases;
 }
 //------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId)
+void LearningFromHumanDemonstration::AddAction(RtsGame& p_RtsGame, RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId)
 {
-    Action* action = g_ActionFactory.GetAction(p_action, p_params);
+    Action* action = ActionFactory::Instance(p_RtsGame).GetAction(p_action, p_params);
     action->Data(p_traceId);
-    action->InitializeConditions();
+    action->InitializeConditions(p_RtsGame);
 
     p_case->rawPlan.sPlan.push_back(action);
 }
@@ -300,7 +300,7 @@ void LearningFromHumanDemonstration::HierarchicalComposition(CookedPlan* p_plan,
     }
 }
 //----------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::RetainLearntCases( vector<CookedPlan*>& p_cookedPlans )
+void LearningFromHumanDemonstration::RetainLearntCases(RtsGame& p_RtsGame, vector<CookedPlan*>& p_cookedPlans )
 {
     CaseEx* pLearntCase = nullptr;
 

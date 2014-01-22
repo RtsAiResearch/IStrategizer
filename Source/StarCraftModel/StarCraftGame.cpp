@@ -105,12 +105,12 @@ void StarCraftGame::EnumerateResearches()
     }
 }
 //----------------------------------------------------------------------------------------------
-GamePlayer* StarCraftGame::FetchPlayer(IStrategizer::PlayerType p_id)
+GamePlayer* StarCraftGame::FetchPlayer(RtsGame& p_RtsGame, IStrategizer::PlayerType p_id)
 {
     TID typeId = g_Database.PlayerMapping.GetBySecond(p_id);
     BWAPI::Player pPlayer = Broodwar->getPlayer(typeId);
 
-    return new StarCraftPlayer(pPlayer);
+    return new StarCraftPlayer(p_RtsGame, pPlayer);
 }
 //----------------------------------------------------------------------------------------------
 IStrategizer::GameType* StarCraftGame::FetchEntityType(EntityClassType p_id)

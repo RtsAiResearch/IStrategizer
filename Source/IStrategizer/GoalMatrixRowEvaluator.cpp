@@ -271,7 +271,7 @@ GoalEx* GoalMatrixRowEvaluator::GetGoal(TPathKey p_pathId, list<NodeType>& p_pat
             m_params[(ParameterType)itr->first] = itr->second;
         }
 
-        GoalEx* m_goal = g_GoalFactory.GetGoal((GoalType)GET(_currentGoal, GoalType), m_params);
+        GoalEx* m_goal = GoalFactory::Instance().GetGoal((GoalType)GET(_currentGoal, GoalType), m_params);
         assert(m_goal != nullptr);
         _goals[p_pathId] = m_goal;
     }

@@ -29,25 +29,25 @@ namespace IStrategizer
     {
     public:
         AdapterEx();
-        MapArea AdaptPositionForBuilding(EntityClassType p_buildingType);
-        TID AdaptBuildingForTraining(EntityClassType p_traineeType);
-        TID AdaptBuildingForResearch(ResearchType p_researchType);
-        TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters);
-        TID GetEntityObjectId(EntityClassType p_entityType,const vector<ObjectStateType>& p_rankedStates);
-        TID GetEntityObjectId(EntityClassType p_entityType);
-        Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
+        MapArea AdaptPositionForBuilding(RtsGame& p_RtsGame, EntityClassType p_buildingType);
+        TID AdaptBuildingForTraining(RtsGame& p_RtsGame, EntityClassType p_traineeType);
+        TID AdaptBuildingForResearch(RtsGame& p_RtsGame, ResearchType p_researchType);
+        TID AdaptTargetEntity(RtsGame& p_RtsGame, EntityClassType p_targetType, const PlanStepParameters& p_parameters);
+        TID GetEntityObjectId(RtsGame& p_RtsGame, EntityClassType p_entityType,const vector<ObjectStateType>& p_rankedStates);
+        TID GetEntityObjectId(RtsGame& p_RtsGame, EntityClassType p_entityType);
+        Vector2 AdaptPosition(RtsGame& p_RtsGame, const PlanStepParameters& p_parameters);
 
         static vector<ObjectStateType> WorkerStatesRankVector;
         static vector<ObjectStateType> AttackerStatesRankVector;
         static vector<ObjectStateType> EntityToMoveStatesRankVector;
 
     private:
-        Vector2 GetBotColonyCenter();
+        Vector2 GetBotColonyCenter(RtsGame& p_RtsGame);
         static void InitializePredefinedRankedStates();
         static bool EntityToMoveStatesComparer(pair<TID, ObjectStateType> &p_leftAttacker, pair<TID, ObjectStateType> &p_rightAttacker);
         static bool IsValidEntityState(ObjectStateType p_entityState, const vector<ObjectStateType>& p_rankedStates);
         static int GetEntityStateIndex(ObjectStateType p_entityState, const vector<ObjectStateType>& p_rankedStates);
-        static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_pCell, void *p_pParam);
+        static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_Cell, void *p_Param);
 
         const static int DefaultBuildingSpacing;
         static bool IsRankedStatesInitialized;

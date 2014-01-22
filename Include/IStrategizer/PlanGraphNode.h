@@ -28,7 +28,7 @@ namespace IStrategizer
         typedef std::queue<PlanGraphNode*> Queue;
         typedef unsigned NodeID;
 
-        PlanGraphNode(PlanStepEx* p_pPlanStep, PlanGraphNode* p_pSubPlanGoal);
+        PlanGraphNode(PlanStepEx* p_PlanStep, PlanGraphNode* p_SubPlanGoal);
 
         inline PlanGraphNodeType Type(){return _type;}
         inline const List& Children(){ return _children; }
@@ -41,28 +41,28 @@ namespace IStrategizer
         inline PlanGraphNode* SubPlanGoal() { return _pSubPlanGoal; }
         inline bool IsNull() { return _type == PGNTYPE_NULL; }
         CaseEx * BelongingCase() const { return _pBelongingCase; }
-        void BelongingCase(CaseEx *p_pCase) { _pBelongingCase = p_pCase; }
+        void BelongingCase(CaseEx *p_Case) { _pBelongingCase = p_Case; }
 
         GoalEx* GetGoal();
         Action* GetAction();
         void Open();
         void Close();
         void SetChildrenAsBelongingSubPlanChildren();
-        void NotifyParentSuccess(PlanGraphNode *p_pSuccededParent);
+        void NotifyParentSuccess(PlanGraphNode *p_SucceededParent);
         void CrossUnlinkChildren();
-        void CrossLinkChild(PlanGraphNode* p_pChild);
-        void CrossUnlinkChild(PlanGraphNode* p_pChild);
+        void CrossLinkChild(PlanGraphNode* p_Child);
+        void CrossUnlinkChild(PlanGraphNode* p_Child);
         NodeID Id() const { return _id; }
-        static PlanGraphNode* CreatePlanRoot(PlanStepEx *p_pPlanStep);
+        static PlanGraphNode* CreatePlanRoot(PlanStepEx *p_PlanStep);
         static PlanGraphNode& Null();
         static void* operator new (size_t p_size); 
-        static void operator delete (void *p_pNode);
+        static void operator delete (void *p_Node);
 
     protected:
-        void AddChild(PlanGraphNode *p_pChild);
-        void AddParent(PlanGraphNode *p_pParent);
-        void DeleteChild(PlanGraphNode* p_pChild);
-        void DeleteParent(PlanGraphNode* p_pParent);
+        void AddChild(PlanGraphNode *p_Child);
+        void AddParent(PlanGraphNode *p_Parent);
+        void DeleteChild(PlanGraphNode* p_Child);
+        void DeleteParent(PlanGraphNode* p_Parent);
 
     private:
         PlanStepEx                *_pPlanStep;

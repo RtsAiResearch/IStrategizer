@@ -30,31 +30,31 @@ ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)
     
 }
 //----------------------------------------------------------------------------------------------
-bool ResearchAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool ResearchAction::AliveConditionsSatisfied(RtsGame& p_RtsGame)
 {
     bool success = false;
 
-    success = g_Assist.DoesEntityObjectExist(_researcherId);
+    success = EngineAssist::Instance(&p_RtsGame).DoesEntityObjectExist(_researcherId);
     
     return success;
 }
 //----------------------------------------------------------------------------------------------
-bool ResearchAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool ResearchAction::SuccessConditionsSatisfied(RtsGame& p_RtsGame)
 {
-    return pRtsGame.Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
+    return p_RtsGame.Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
 }
 //----------------------------------------------------------------------------------------------
-bool ResearchAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool ResearchAction::ExecuteAux(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     ResearchType    researchType = (ResearchType)_params[PARAM_ResearchId];
     GameEntity        *pGameResearcher;
     AbstractAdapter    *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
     // Adapt researcher
-    _researcherId = pAdapter->AdaptBuildingForResearch(researchType);
+    _researcherId = pAdapter->AdaptBuildingForResearch(p_RtsGame, researchType);
 
     // Issue research order
-    pGameResearcher = pRtsGame.Self()->GetEntity(_researcherId);
+    pGameResearcher = p_RtsGame.Self()->GetEntity(_researcherId);
     assert(pGameResearcher);
 
     return pGameResearcher->Research(researchType);
@@ -67,13 +67,13 @@ void ResearchAction::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void ResearchAction::InitializePreConditions()
+void ResearchAction::InitializePreConditions(RtsGame& p_RtsGame)
 {
     ResearchType researchType =(ResearchType)_params[PARAM_ResearchId];
-    EntityClassType researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
+    EntityClassType researcherType = p_RtsGame.Self()->TechTree()->SourceEntity(researchType);
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, researcherType, 1, true));
-    g_Assist.GetPrerequisites(researchType, PLAYER_Self, m_terms);
+    EngineAssist::Instance(&p_RtsGame).GetPrerequisites(researchType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

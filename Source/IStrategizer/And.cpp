@@ -8,7 +8,7 @@ void And::InitializeAddressesAux()
     CompositeExpression::InitializeAddressesAux();
 }
 //----------------------------------------------------------------------------------------------
-bool And::Evaluate(RtsGame& pRtsGame)
+bool And::Evaluate(RtsGame& p_RtsGame)
 {
     if(_shortCircuit)
     {
@@ -16,7 +16,7 @@ bool And::Evaluate(RtsGame& pRtsGame)
             itr != _expressions.end();
             itr++)
         {
-            (*itr)->Evaluate(pRtsGame);
+            (*itr)->Evaluate(p_RtsGame);
             _isEvaluated = (*itr)->IsEvaluated();
             _isSatisfied = (*itr)->IsSatisfied();
 
@@ -35,7 +35,7 @@ bool And::Evaluate(RtsGame& pRtsGame)
             itr != _expressions.end();
             itr++)
         {
-            (*itr)->Evaluate(pRtsGame);
+            (*itr)->Evaluate(p_RtsGame);
             _isEvaluated    &= (*itr)->IsEvaluated();
             _isSatisfied    &= (*itr)->IsSatisfied();
         }

@@ -1,6 +1,8 @@
 #ifndef BUILDINGDESCRIPTION_H
 #define BUILDINGDESCRIPTION_H
 
+#include "RtsGame.h"
+
 namespace IStrategizer
 {
     class GameEntity;
@@ -11,8 +13,8 @@ namespace IStrategizer
         int m_numberOfBuildings;
         int m_numberOfCriticalBuildings;
 
-        void AddEntity(GameEntity *p_entity);
-        void RemoveEntity(GameEntity *p_entity);
+        void AddEntity(RtsGame& p_RtsGame, GameEntity *p_entity);
+        void RemoveEntity(RtsGame& p_RtsGame, GameEntity *p_entity);
         void Clear();
         float GetDistance(BuildingDescription *p_other);
     

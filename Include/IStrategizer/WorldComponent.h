@@ -13,11 +13,11 @@ namespace IStrategizer
     class WorldComponent : public DynamicComponent
     {
     protected:
-        virtual void UpdateAux(RtsGame& pRtsGame, const WorldClock& p_clock) = 0;
+        virtual void UpdateAux(RtsGame& p_RtsGame, const WorldClock& p_clock) = 0;
 
     public:
         WorldComponent(unsigned p_invalidationInterval) : DynamicComponent(p_invalidationInterval) {}
-        void Update(const WorldClock& p_clock);
+        void Update(RtsGame& p_RtsGame, const WorldClock& p_clock);
     };
 }
 

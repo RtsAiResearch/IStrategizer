@@ -1,26 +1,19 @@
-#ifndef ENGINECOMPONENT_H
-#include "EngineComponent.h"
-#endif
-#ifndef MESSAGEPUMP_H
-#include "MessagePump.h"
-#endif
-#ifndef DATAMESSAGE_H
-#include "DataMessage.h"
-#endif
-
 #include <string>
 #include <cassert>
+#include "EngineComponent.h"
+#include "MessagePump.h"
+#include "DataMessage.h"
 
 using namespace IStrategizer;
 
-EngineComponent::EngineComponent(const char* p_pName)
-    : m_pName(p_pName)
+EngineComponent::EngineComponent(RtsGame& p_RtsGame, const char* p_name)
 {
+    m_pName = p_name;
     LogInfo("%s is initializing ...", m_pName);
-    g_MessagePump.RegisterForMessage(MSG_Input, this);
+    MessagePump::Instance(p_RtsGame).RegisterForMessage(p_RtsGame, MSG_Input, this);
 }
 //----------------------------------------------------------------------------------------------
-void EngineComponent::NotifyMessegeSent(Message *p_message)
+void EngineComponent::NotifyMessegeSent(RtsGame& p_RtsGame, Message *p_message)
 {
     assert(p_message->MessageTypeID() == MSG_Input);
     DataMessage<string>* inputMessage = static_cast<DataMessage<string>*>(p_message);

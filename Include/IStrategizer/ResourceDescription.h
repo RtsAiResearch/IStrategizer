@@ -2,12 +2,10 @@
 #ifndef RESOURCEDESCRIPTION_H
 #define RESOURCEDESCRIPTION_H
 
-#ifndef SVECTOR_H
 #include "SVector.h"
-#endif
-
 #include "MetaData.h"
 #include "UserObject.h"
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -28,8 +26,8 @@ namespace IStrategizer
         ///> type=int
         int m_numberOfSupply;
 
-        void AddEntity(GameEntity *p_entity);
-        void RemoveEntity(GameEntity *p_entity);
+        void AddEntity(RtsGame& p_RtsGame, GameEntity *p_entity);
+        void RemoveEntity(RtsGame& p_RtsGame, GameEntity *p_entity);
         void Clear();
         float GetDistance(ResourceDescription *p_other);
 

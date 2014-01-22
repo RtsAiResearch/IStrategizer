@@ -12,54 +12,54 @@ const TInfluence NegativeInfluence = -1;
 const TInfluence nullptrInfluence = 0;
 
 //////////////////////////////////////////////////////////////////////////
-void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
+void UnstampDirtyObj(RtsGame& p_RtsGame, InfluenceMap *p_Caller, RegObjEntry *p_ObjEntry)
 {
     GameEntity *pGameObj = nullptr;
     Vector2 currentPosition;
 
-    pGameObj = p_pCaller->GetObj(p_pObjEntry);
+    pGameObj = p_Caller->GetObj(p_RtsGame, p_ObjEntry);
     assert(pGameObj);
     currentPosition.X = pGameObj->Attr(EOATTR_PosX);
     currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
     
     // If not dirty, then skip
-    if (currentPosition == p_pObjEntry->LastPosition)
+    if (currentPosition == p_ObjEntry->LastPosition)
         return;
 
     // Unstamp dirty object
-    if(p_pObjEntry->Stamped)
-        p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, NegativeInfluence);
+    if(p_ObjEntry->Stamped)
+        p_Caller->StampInfluenceShape(p_ObjEntry->LastPosition, p_ObjEntry->ObjWidth, p_ObjEntry->ObjHeight, NegativeInfluence);
 }
 //////////////////////////////////////////////////////////////////////////
-void StampNonDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
+void StampNonDirtyObj(RtsGame& p_RtsGame, InfluenceMap *p_Caller, RegObjEntry *p_ObjEntry)
 {
     GameEntity *pGameObj = nullptr;
     Vector2 currentPosition;
 
-    pGameObj = p_pCaller->GetObj(p_pObjEntry);
+    pGameObj = p_Caller->GetObj(p_RtsGame, p_ObjEntry);
     assert(pGameObj);
     currentPosition.X = pGameObj->Attr(EOATTR_PosX);
     currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
 
     // If not dirty, then skip
     // Note that objects added for the first time will have an invalid position and is considered as dirty
-    if (currentPosition == p_pObjEntry->LastPosition)
+    if (currentPosition == p_ObjEntry->LastPosition)
         return;
 
-    p_pObjEntry->Stamped = true;
-    p_pObjEntry->LastPosition = currentPosition;
-    p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, PositiveInfluence);
+    p_ObjEntry->Stamped = true;
+    p_ObjEntry->LastPosition = currentPosition;
+    p_Caller->StampInfluenceShape(p_ObjEntry->LastPosition, p_ObjEntry->ObjWidth, p_ObjEntry->ObjHeight, PositiveInfluence);
 }
 //////////////////////////////////////////////////////////////////////////
-void OccupanceDataIM::Update(const WorldClock& p_clock)
+void OccupanceDataIM::Update(RtsGame& p_RtsGame, const WorldClock& p_clock)
 {
     if (m_registeredObjects.empty())
         return;
 
     // Using the dirty rectangles techniques used in Graphics, we keep unchanged objects and
     // unstamp dirty objects
-    ForEachObj(UnstampDirtyObj);
-    ForEachObj(StampNonDirtyObj);
+    ForEachObj(p_RtsGame, UnstampDirtyObj);
+    ForEachObj(p_RtsGame, StampNonDirtyObj);
 }
 //////////////////////////////////////////////////////////////////////////
 void OccupanceDataIM::UnregisterGameObj(TID p_objId)
@@ -86,15 +86,15 @@ void OccupanceDataIM::UnregisterGameObj(TID p_objId)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
+bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_Cell, void *p_Param)
 {
     bool stopSearch = false;
 
-    assert(p_pParam);
-    bool *pAllCellsFree = (bool*)p_pParam;
+    assert(p_Param);
+    bool *pAllCellsFree = (bool*)p_Param;
 
-    assert(p_pCell);
-    if (p_pCell->Inf != nullptrInfluence || p_pCell->Data != CELL_Free)
+    assert(p_Cell);
+    if (p_Cell->Inf != nullptrInfluence || p_Cell->Data != CELL_Free)
     {
         stopSearch = true;
         *pAllCellsFree = false;
@@ -112,17 +112,17 @@ bool OccupanceDataIM::IsAreaOccupied(const Vector2& p_areaPos, int p_areaWidth, 
     return !allCellsFree;
 }
 //////////////////////////////////////////////////////////////////////////
-bool OccupanceDataIM::ReservePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
+bool OccupanceDataIM::ReservePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_Cell, void *p_Param)
 {
     bool stopSearch = false;
 
-    assert(p_pParam);
-    bool *pReserveOk = (bool*)p_pParam;
+    assert(p_Param);
+    bool *pReserveOk = (bool*)p_Param;
 
-    assert(p_pCell);
-    if (p_pCell->Data == CELL_Free)
+    assert(p_Cell);
+    if (p_Cell->Data == CELL_Free)
     {
-        p_pCell->Data = CELL_Reserved;
+        p_Cell->Data = CELL_Reserved;
     }
     else
     {
@@ -142,17 +142,17 @@ bool OccupanceDataIM::ReserveArea(const Vector2& p_areaPos, int p_areaWidth, int
     return reserveOk;
 }
 //////////////////////////////////////////////////////////////////////////
-bool OccupanceDataIM::FreePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
+bool OccupanceDataIM::FreePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_Cell, void *p_Param)
 {
     bool stopSearch = false;
 
-    assert(p_pParam);
-    bool *pFreeOk = (bool*)p_pParam;
+    assert(p_Param);
+    bool *pFreeOk = (bool*)p_Param;
 
-    assert(p_pCell);
-    if (p_pCell->Data == CELL_Reserved)
+    assert(p_Cell);
+    if (p_Cell->Data == CELL_Reserved)
     {
-        p_pCell->Data = CELL_Free;
+        p_Cell->Data = CELL_Free;
     }
     else
     {

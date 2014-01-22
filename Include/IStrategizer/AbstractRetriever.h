@@ -15,12 +15,11 @@ namespace IStrategizer
     class AbstractRetriever : public EngineComponent
     {
     public:
-                        AbstractRetriever(AbstractRetainer* p_pRetainer, const char* p_pName) : EngineComponent(p_pName), m_pRetainer(p_pRetainer) {}
+        AbstractRetriever(RtsGame& p_RtsGame, AbstractRetainer* p_Retainer, const char* p_pName) : EngineComponent(p_RtsGame, p_pName), m_pRetainer(p_Retainer) {}
         virtual CaseEx* Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameState) = 0;
         
     protected:
         AbstractRetainer *m_pRetainer;
-
     };
 }
 

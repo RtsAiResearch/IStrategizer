@@ -26,12 +26,12 @@ namespace IStrategizer
             unsigned p_gameCycle,
             ActionType p_action,
             const PlanStepParameters& p_actionParams, 
-            const GameStateEx& p_pGameState,
+            const GameStateEx& p_GameState,
             PlayerType p_self)
             : m_gameCycle(p_gameCycle),
             m_action(p_action),
             m_actionParams(p_actionParams),
-            m_gameState(p_pGameState),
+            m_gameState(p_GameState),
             m_self(p_self)
     {}
 

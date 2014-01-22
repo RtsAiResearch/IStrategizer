@@ -12,7 +12,6 @@
 #endif
 #include "IStrategizerException.h"
 #include "MathHelper.h"
-#include "RtsGame.h"
 
 using namespace StarCraftModel;
 using namespace IStrategizer;

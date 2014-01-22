@@ -1,5 +1,5 @@
+#include <cassert>
 #include "IStrategizerEx.h"
-
 #include "MessagePump.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "LearningFromHumanDemonstration.h"
@@ -8,37 +8,25 @@
 #include "IMSystemManager.h"
 #include "DataMessage.h"
 #include "IStrategizerException.h"
-
-#ifndef SERIALIZATIONESSENTIALS_H
 #include "SerializationEssentials.h"
-#endif
-#ifndef WORLDCLOCK_H
 #include "WorldClock.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-#ifndef DYNAMICCOMPONENT_H
 #include "DynamicComponent.h"
-#endif
-#ifndef TOOLBOX_H
 #include "Toolbox.h"
-#endif
-#include <cassert>
 #include "IMSystemManager.h"
 
 using namespace IStrategizer;
 
-IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame) 
+IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame& p_RtsGame) 
     : _self(PLAYER_Self),
     _enemy(PLAYER_Enemy),
     _param(p_param),
     _caseLearning(nullptr),
     _planner(nullptr),
-    _isFirstUpdate(true)
+    _isFirstUpdate(true),
+    m_RtsGame(p_RtsGame)
 {
-    g_Game = p_rtsGame;
-    g_Game->Init();
+    m_RtsGame.Init();
 
     PlanStepParameters params;
     params[PARAM_PlayerId] = _self;
@@ -48,13 +36,13 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsG
     {
     case PHASE_Online:
         _planner = new OnlineCaseBasedPlannerEx();
-        _planner->Init(g_GoalFactory.GetGoal(GOALEX_WinGame, params));
+        _planner->Init(m_RtsGame, GoalFactory::Instance().GetGoal(GOALEX_WinGame, params));
         g_OnlineCaseBasedPlanner = _planner;
         break;
 
     case PHASE_Offline:
-        _caseLearning = new LearningFromHumanDemonstration(_self, _enemy);
-        g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
+        _caseLearning = new LearningFromHumanDemonstration(m_RtsGame, _self, _enemy);
+        MessagePump::Instance(m_RtsGame).RegisterForMessage(m_RtsGame, MSp_RtsGameEnd, this);
         break;
     }
 
@@ -62,22 +50,22 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsG
     imSysMgrParam.BuildingDataIMCellSize = _param.BuildingDataIMCellSize;
     imSysMgrParam.GroundControlIMCellSize = _param.GrndCtrlIMCellSize;
 
-    g_IMSysMgr.Init(imSysMgrParam);
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_IMSysMgr.Init(m_RtsGame, imSysMgrParam);
+    MessagePump::Instance(m_RtsGame).RegisterForMessage(m_RtsGame, MSG_EntityCreate, this);
+    MessagePump::Instance(m_RtsGame).RegisterForMessage(m_RtsGame, MSG_EntityDestroy, this);
 
     DynamicComponent::RealTime(true);
     // DynamicComponent::GlobalInvalidation(true);
     // DynamicComponent::GlobalInvalidationInterval(2);
 }
 //---------------------------------------------------------------------------------------------
-void IStrategizerEx::NotifyMessegeSent(Message* p_message)
+void IStrategizerEx::NotifyMessegeSent(RtsGame& m_RtsGame, Message* p_message)
 {
     switch(p_message->MessageTypeID())
     {
-    case MSG_GameStart:
+    case MSp_RtsGameStart:
         _clock.Reset();
-    case MSG_GameEnd:
+    case MSp_RtsGameEnd:
         if (_param.Phase == PHASE_Offline)
         {
             StartOfflineLearning();
@@ -97,11 +85,11 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
         }
 
         _clock.Update(p_gameCycle);
-        g_MessagePump.Update(_clock);
-        g_IMSysMgr.Update(_clock);
+        MessagePump::Instance(m_RtsGame).Update(_clock);
+        g_IMSysMgr.Update(m_RtsGame, _clock);
 
         if (_param.Phase == PHASE_Online)
-            _planner->Update(_clock);
+            _planner->Update(m_RtsGame, _clock);
     }
     catch (IStrategizer::Exception &e)
     {
@@ -115,7 +103,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 //--------------------------------------------------------------------------------
 void IStrategizerEx::StartOfflineLearning()
 {
-    _caseLearning->Learn();
+    _caseLearning->Learn(m_RtsGame);
 }
 //----------------------------------------------------------------------------------------------
 IStrategizerEx::~IStrategizerEx()

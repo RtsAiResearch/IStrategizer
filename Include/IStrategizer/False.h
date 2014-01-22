@@ -16,7 +16,7 @@ namespace IStrategizer
 
     public:
         False() : ConditionEx(PLAYER_Self, CONDEX_False) {}
-        bool Evaluate(RtsGame& pRtsGame) { return false; }
+        bool Evaluate(RtsGame& p_RtsGame) { return false; }
         bool Consume(int p_amount) { return true; }
     };
 }
