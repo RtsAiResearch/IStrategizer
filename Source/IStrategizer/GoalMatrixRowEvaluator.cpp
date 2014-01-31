@@ -53,7 +53,7 @@ void GoalMatrixRowEvaluator::Initialize(PlayerType p_humanPlayer, PlayerType p_s
     _parameterStart[PARAM_StrategyTypeId] = STRTYPE_START;
 
     // Goal: TrainForce
-    m_goalIdx = INDEX(GOALEX_TrainForce, GoalType);
+    m_goalIdx = INDEX(GOALEX_TrainArmy, GoalType);
     m_level.clear();
     m_group.clear();
     for(int paramIdx = START(ForceSizeType); paramIdx < END(ForceSizeType); ++paramIdx)

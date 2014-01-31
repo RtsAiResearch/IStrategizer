@@ -342,13 +342,13 @@
     <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp">
+      <Filter>Source Files\CaseBase\GoalEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\TrainArmyGoal.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
   </ItemGroup>
@@ -662,13 +662,13 @@
     <ClInclude Include="..\..\Include\IStrategizer\CollectResourceGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h">
-      <Filter>Header Files\CaseBase\Goal</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DestroyEntityTypeGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include "EntityClassExist.h"
 #include "And.h"
 #include <cassert>
+#include "EntityClassNearArea.h"
 
 using namespace IStrategizer;
 
@@ -25,5 +26,8 @@ bool DeployArmyGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 //----------------------------------------------------------------------------------------------
 void DeployArmyGoal::InitializePostConditions()
 {
-    
+    vector<Expression*> m_terms;
+   // m_terms.push_back(new EntityClassNearArea(PLAYER_Self,FILTER_AttackingUnit, new CellFeature(_params), 0, _params[PARAM_ForceSizeId]));
+    /*over EntityClassNearArea constructor to take filter Type*/
+    _postCondition = new And(m_terms);
 }
