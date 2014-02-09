@@ -26,6 +26,7 @@ CellFeature::CellFeature(const PlanStepParameters& p_parameters)
     m_resourceDescription.m_numberOfSupply = p_parameters.at(PARAM_NumberOfSupplyResources);
     m_distanceFromBase = p_parameters.at(PARAM_DistanceToBase);
     m_distanceFromEnemyBase = p_parameters.at(PARAM_DistanceToEnemyBase);
+    m_influnce = p_parameters.at(PARAM_Influnce);
 }
 //----------------------------------------------------------------------------------------------
 void CellFeature::To(PlanStepParameters& p_parameters) const
@@ -45,6 +46,7 @@ void CellFeature::To(PlanStepParameters& p_parameters) const
     p_parameters[PARAM_NumberOfSupplyResources] = m_resourceDescription.m_numberOfSupply;
     p_parameters[PARAM_DistanceToBase] = m_distanceFromBase;
     p_parameters[PARAM_DistanceToEnemyBase] = m_distanceFromEnemyBase;
+    p_parameters[PARAM_Influnce] = m_influnce;
 }
 //----------------------------------------------------------------------------------------------
 void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
@@ -102,6 +104,7 @@ void CellFeature::Clear()
     m_resourceDescription.Clear();
     m_distanceFromBase = 0;
     m_distanceFromEnemyBase = 0;
+    m_influnce = 0;
 }
 //----------------------------------------------------------------------------------------------
 float CellFeature::GetDistance(CellFeature *p_other)
@@ -114,7 +117,8 @@ float CellFeature::GetDistance(CellFeature *p_other)
     float resourceDistance = m_resourceDescription.GetDistance(&(p_other->m_resourceDescription));
     float distanceFromBase = GetBaseDistanceSimilarity(this->m_distanceFromBase, p_other->m_distanceFromBase);
     float distanceFromEnemyBase = GetBaseDistanceSimilarity(this->m_distanceFromEnemyBase, p_other->m_distanceFromEnemyBase);
-    
+    float influenceDiff = GetInflunceSimilarity(p_other->m_influnce);
+
     res += alliedBuildingDistance;
     res += enemyBuildingDistance;
     res += alliedForceDistance;
@@ -122,6 +126,7 @@ float CellFeature::GetDistance(CellFeature *p_other)
     res += resourceDistance;
     res += distanceFromBase;
     res += distanceFromEnemyBase;
+    res += influenceDiff * 10000;
 
     return sqrt(res);
 }
@@ -157,4 +162,9 @@ float CellFeature::GetBaseDistanceSimilarity(int firstBase, int secondBase) cons
         dist = pow((float)(firstBase - secondBase), 2);
 
     return dist;
+}
+
+float IStrategizer::CellFeature::GetInflunceSimilarity( TInfluence& p_otherInflunce )
+{
+    return abs(m_influnce - p_otherInflunce);
 }

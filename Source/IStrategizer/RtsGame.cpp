@@ -169,3 +169,18 @@ GamePlayer* RtsGame::Enemy()
     return GetPlayer(PLAYER_Enemy);
 }
 
+
+int RtsGame::GetForceSizeCount( ForceSizeType p_forceSizeType )
+{
+    int period = GetMaxForceSize() / 3;
+
+        switch (p_forceSizeType)
+        {
+        case FORCESIZE_SmallForce:
+            return 1;
+        case FORCESIZE_MediumForce:
+            return period;
+        case FORCESIZE_LargeForce: 
+            return period * 2;
+        }
+}

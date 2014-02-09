@@ -3,6 +3,7 @@
 #define TRAINARMYGOAL_H
 
 #include "GoalEx.h"
+#include "Serializable.h"
 
 namespace IStrategizer
 {
@@ -15,10 +16,14 @@ namespace IStrategizer
     public:
         TrainArmyGoal();
         TrainArmyGoal(const PlanStepParameters& p_parameters);
-    
+        void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
+
     protected:
         void InitializePostConditions();
-        bool SuccessConditionsSatisfied(RtsGame* pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
+
+    private:
+        int m_demandSize;
     };
 }
 #endif // TRAINARMYGOAL_H

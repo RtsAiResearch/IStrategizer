@@ -7,12 +7,14 @@
 #include "And.h"
 #include <cassert>
 #include "EntityClassNearArea.h"
+#include "CellFeature.h"
 
 using namespace IStrategizer;
 
 DeployArmyGoal::DeployArmyGoal() : GoalEx(GOALEX_DeployArmy)
 {
     _params[PARAM_DeployType] = DEPTYPE_START;
+    _params[PARAM_EntityClassId] = ECLASS_START;
 }
 //----------------------------------------------------------------------------------------------
 DeployArmyGoal::DeployArmyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_DeployArmy, p_parameters)
@@ -26,6 +28,8 @@ bool DeployArmyGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 //----------------------------------------------------------------------------------------------
 void DeployArmyGoal::InitializePostConditions()
 {
+
+
     vector<Expression*> m_terms;
    // m_terms.push_back(new EntityClassNearArea(PLAYER_Self,FILTER_AttackingUnit, new CellFeature(_params), 0, _params[PARAM_ForceSizeId]));
     /*over EntityClassNearArea constructor to take filter Type*/
