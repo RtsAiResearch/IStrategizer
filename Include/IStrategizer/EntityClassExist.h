@@ -9,11 +9,11 @@
 
 namespace IStrategizer
 {
-///> class=EntityClassExist
-///> parent=ConditionEx
-class EntityClassExist : public ConditionEx
-{
-    OBJECT_SERIALIZABLE(EntityClassExist);
+    ///> class=EntityClassExist
+    ///> parent=ConditionEx
+    class EntityClassExist : public ConditionEx
+    {
+        OBJECT_SERIALIZABLE(EntityClassExist);
 
     private:
         int _similarityThreshold;

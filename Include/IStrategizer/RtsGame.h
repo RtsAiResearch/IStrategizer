@@ -46,6 +46,7 @@ namespace IStrategizer
         void                    InitializeTypes();
         void                    InitializePlayers();
         virtual void            InitializeMap() = 0;
+        virtual int             GetMaxForceSize() = 0;
 
     public:
                         RtsGame() : EngineComponent("game"), m_pMap(nullptr), m_initialized(false) {}
@@ -55,6 +56,7 @@ namespace IStrategizer
         void            Players(std::vector<PlayerType>& p_playerIds);
         void            EntityTypes(std::vector<EntityClassType>& p_entityTypeIds);
         void            Researches(std::vector<ResearchType>& p_researchTypeIds);
+        int RtsGame::GetForceSizeCount( ForceSizeType p_forceSizeType );
         GamePlayer*     GetPlayer(PlayerType p_id);
         GameType*       GetEntityType(EntityClassType p_id);
         GameResearch*   GetResearch(ResearchType p_id);

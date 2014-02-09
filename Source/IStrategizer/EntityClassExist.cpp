@@ -13,7 +13,7 @@ using namespace IStrategizer;
 using namespace Serialization;
 
 EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, map< EntityObjectAttribute,int > p_entityObjectAttributes, int p_similarityThreshold) 
-: ConditionEx(p_player, CONDEX_EntityClassExist)
+    : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
     _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
     _conditionParameters[PARAM_Amount] = p_amount;
@@ -34,7 +34,7 @@ EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitCl
 //---------------------------------------------------------------------------------------------------
 EntityClassExist::EntityClassExist(PlayerType p_player, int p_amount, bool p_oneUse) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
-    _conditionParameters[PARAM_EntityClassId] = ANY_ID;
+    _conditionParameters[PARAM_EntityClassId] = DONT_CARE;
     _conditionParameters[PARAM_Amount] = p_amount;
 
     _oneUse = p_oneUse;
@@ -43,8 +43,8 @@ EntityClassExist::EntityClassExist(PlayerType p_player, int p_amount, bool p_one
 //---------------------------------------------------------------------------------------------------
 EntityClassExist::EntityClassExist(PlayerType p_player) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
-    _conditionParameters[PARAM_EntityClassId] = ANY_ID;
-    _conditionParameters[PARAM_Amount] = MAX_POPULATION;
+    _conditionParameters[PARAM_EntityClassId] = DONT_CARE;
+    _conditionParameters[PARAM_Amount] = DONT_CARE;
 
     _oneUse = false;
     _used = false;
@@ -59,9 +59,9 @@ void EntityClassExist::InitializeAddressesAux()
         &_used);
 }
 //---------------------------------------------------------------------------------------------------
-bool EntityClassExist::Evaluate(RtsGame* pRtsGame)
+bool EntityClassExist::Evaluate(RtsGame& pRtsGame)
 {
-    if (_conditionParameters[PARAM_EntityClassId] != _conditionParameters[PARAM_FilterTypeId])
+    if (_conditionParameters[PARAM_EntityClassId] != DONT_CARE)
     {
         EntityClassType entityClassId = (EntityClassType)_conditionParameters[PARAM_EntityClassId];
         int amount = _conditionParameters[PARAM_Amount];

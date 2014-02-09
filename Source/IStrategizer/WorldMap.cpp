@@ -71,10 +71,6 @@ void WorldMap::UpdateAux()
             m_cellFeatureMatrix[i][j].Clear();
             m_cellFeatureMatrix[i][j].CalculateDistanceToBases(FromGridToWorld(Vector2(j ,i)));
             m_cellFeatureMatrix[i][j].m_influnce = IM->GetCellInf(Vector2(j*8, i*8));
-            if ( m_cellFeatureMatrix[i][j].m_influnce != 0)
-            {
-                int x =  m_cellFeatureMatrix[i][j].m_influnce;
-            }
         }
     }
 
@@ -187,10 +183,6 @@ vector<Vector2> WorldMap::GetNearestEnemyBorders(int p_numberOfBorders)
             if ( m_cellFeatureMatrix[i][j].m_influnce == 0)
             {
               minDistanceQueue.push(Record(Vector2(j,i),m_cellFeatureMatrix[i][j].m_distanceFromEnemyBase));
-            }
-            else
-            {
-                int x = m_cellFeatureMatrix[i][j].m_influnce;
             }
         } 
     }

@@ -23,6 +23,12 @@ DeployArmyGoal::DeployArmyGoal(const PlanStepParameters& p_parameters): GoalEx(G
 //----------------------------------------------------------------------------------------------
 bool DeployArmyGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
+    //Access worldMap getNearestEnemyBorders (10 for example)
+    //check the number of allied units in these cells 
+    //if equals to or greater than force size
+    //      success 
+    //else 
+    //      failed
     return false;
 }
 //----------------------------------------------------------------------------------------------
