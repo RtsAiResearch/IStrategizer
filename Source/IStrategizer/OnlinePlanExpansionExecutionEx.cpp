@@ -65,7 +65,9 @@ void OnlinePlanExpansionExecutionEx::Update(const WorldClock& p_clock)
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecutionEx::ExpandGoal(PlanGraphNode *p_pGoalNode, CaseEx *p_pCase)
 {
-    PlanGraph                    *pSubPlanGraph = p_pCase->GetPlanGraph();
+    PlanGraph                    *pSubPlanGraph = nullptr;
+    assert(0);
+
     vector<int>                    subPlanGraphRoots = pSubPlanGraph->GetRoots();
     PlanGraphNode::List        preExpansionGoalChildren(p_pGoalNode->BelongingSubPlanChildren().begin(), p_pGoalNode->BelongingSubPlanChildren().end());
     PlanGraphNode::List        subPlanTreeNodes;

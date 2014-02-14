@@ -23,14 +23,14 @@ namespace IStrategizer
     class PlanStepEx;
     class ConditionEx;
 
-    ///> alias=NodeValue(PlanStepEx*)
-    typedef PlanStepEx* NodeValue;
+    ///> alias=PlanGraphNodeValue(PlanStepEx*)
+    typedef PlanStepEx* PlanGraphNodeValue;
     ///> alias=EdgeAnnotation(vector(Expression*))
     typedef Serialization::SVector<Expression*> EdgeAnnotation;
 
     ///> class=PlanGraph
-    ///> parent=Diagraph(NodeValue,EdgeAnnotation)
-    class PlanGraph : public Diagraph<NodeValue, EdgeAnnotation>
+    ///> parent=Diagraph(PlanGraphNodeValue,EdgeAnnotation)
+    class PlanGraph : public Diagraph<PlanGraphNodeValue, EdgeAnnotation>
     {
         OBJECT_SERIALIZABLE(PlanGraph);
 
@@ -50,7 +50,7 @@ namespace IStrategizer
             AddNode(p_planStep, 0);
         }
         //----------------------------------------------------------------------------------------------
-        void SubGraphSubstitution(vector<int> p_subGraphIndexes, NodeValue p_substitute)
+        void SubGraphSubstitution(vector<int> p_subGraphIndexes, PlanGraphNodeValue p_substitute)
         {
             map<int, EdgeAnnotation> m_parents;
             map<int, EdgeAnnotation> m_children;

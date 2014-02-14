@@ -154,9 +154,8 @@ namespace IStrategizer
         PARAM_EntityObjectId,
         PARAM_AttributeId,
         PARAM_OperatorId,
-        PARAM_ResearchId,
         PARAM_Value,
-        PARAM_UpgradeId,
+        PARAM_ResearchId,
         PARAM_ResourceId,
         PARAM_FilterTypeId,
         PARAM_BuildingClassId,
@@ -203,7 +202,7 @@ namespace IStrategizer
     Enums[PARAM_AttributeId] = "Attribute"; \
     Enums[PARAM_OperatorId] = "Operator"; \
     Enums[PARAM_Value] = "Value"; \
-    Enums[PARAM_UpgradeId] = "Upgrade"; \
+    Enums[PARAM_ResearchId] = "Upgrade"; \
     Enums[PARAM_ResourceId] = "Resource"; \
     Enums[PARAM_FilterTypeId] = "Filter Type"; \
     Enums[PARAM_BuildingClassId] = "Building Class"; \

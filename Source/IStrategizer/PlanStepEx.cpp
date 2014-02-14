@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <algorithm>
 #include "Logger.h"
+#include <Windows.h>
 
 using namespace std;
 using namespace IStrategizer;
@@ -126,7 +127,13 @@ std::string PlanStepEx::ToString() const
     {
         // Parameters format is:
         // <key>=<value>, ...
-        stepDescription += Enums[itr->first];
+        ParameterType paramKey = itr->first;
+        const char* paramDesc = Enums[(int)paramKey];
+        
+        if (nullptr == paramDesc)
+            DebugBreak();
+
+        stepDescription += paramDesc;
         stepDescription += '=';
 
         // Parameter value is not an engine defined ID,
