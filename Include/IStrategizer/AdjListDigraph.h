@@ -13,7 +13,7 @@ namespace IStrategizer
     ///> class=AdjListDigraph(TNodeValue)
     ///> parent=IDigraph(TNodeValue)
     template<class TNodeValue>
-    class AdjListDigraph : public IDigraph<TNodeValue>, public Serialization::UserObject
+    class AdjListDigraph :  public Serialization::UserObject, public IDigraph<TNodeValue>
     {
     public:
         ///> alias=NodeEntry(pair(NodeValue,NodeSet))
@@ -190,13 +190,13 @@ namespace IStrategizer
             return orphans;
         }
 
-        OBJECT_SERIALIZABLE(AdjListDigraph<TNodeValue>);
+        OBJECT_SERIALIZABLE(AdjListDigraph);
         OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
 
     private:
         ///> type=NodeID
         NodeID m_lastNodeId;
-        ///> type=map(NodeID,NodeEntry)
+        ///> type=map(pair(NodeID,NodeEntry))
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
     };
 }

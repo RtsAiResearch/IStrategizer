@@ -72,7 +72,6 @@ namespace IStrategizer
         OBJECT_MEMBERS(5, &m_goal, &m_gameState, &m_trialCount, &m_successCount, &m_pPlan);
 
     private:
-        PlanGraph* m_planGraph;
         ///> type=GoalEx*
         GoalEx* m_goal;
         ///> type=GameStateEx*
@@ -81,8 +80,10 @@ namespace IStrategizer
         int m_trialCount;
         ///> type=int
         int m_successCount;
-        ///> type=AdjListDigraph(PlanStepEx*)*
+        ///> type=OlcbpPlanDigraph*
         OlcbpPlanDigraph *m_pPlan;
+
+        PlanGraph* m_planGraph;
     };
 }
 
