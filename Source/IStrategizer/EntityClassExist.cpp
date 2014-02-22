@@ -11,6 +11,7 @@
 
 using namespace IStrategizer;
 using namespace Serialization;
+using namespace std;
 
 EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, map< EntityObjectAttribute,int > p_entityObjectAttributes, int p_similarityThreshold) 
 : ConditionEx(p_player, CONDEX_EntityClassExist)

@@ -24,9 +24,9 @@ namespace IStrategizer
     class ConditionEx;
     class GoalEx;
 
-    typedef string TAction;
-    typedef string TEntity;
-    typedef string TUpgrade;
+    typedef std::string TAction;
+    typedef std::string TEntity;
+    typedef std::string TUpgrade;
 
     typedef int TPlayer;
     typedef int TID;

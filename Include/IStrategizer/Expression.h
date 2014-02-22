@@ -40,8 +40,8 @@ namespace IStrategizer
         virtual void Copy(IClonable* p_dest);
         virtual bool Evaluate(RtsGame& pRtsGame) = 0;
         virtual bool Equals(const Expression* p_rhs) const = 0;
-        virtual bool PartiallyEquals(const Expression* p_rhs, std::vector<pair<Expression*, Expression*>>& p_matchedLeafs) { return PartiallyEqualsAux(p_rhs, MATCHSIDE_Left, p_matchedLeafs); }
-        virtual bool PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_anchor, std::vector<pair<Expression*, Expression*>>& p_matchedLeafs) const = 0;
+        virtual bool PartiallyEquals(const Expression* p_rhs, std::vector<std::pair<Expression*, Expression*>>& p_matchedLeafs) { return PartiallyEqualsAux(p_rhs, MATCHSIDE_Left, p_matchedLeafs); }
+        virtual bool PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_anchor, std::vector<std::pair<Expression*, Expression*>>& p_matchedLeafs) const = 0;
         virtual IClonable* Clone();
         inline ExpressionType ExpressionType() const { return _expressionType; }
         inline void IsEvaluated(bool val) { _isEvaluated = val; }

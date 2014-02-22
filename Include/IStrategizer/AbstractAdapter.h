@@ -20,7 +20,7 @@ namespace IStrategizer
         virtual TID AdaptBuildingForTraining(EntityClassType p_traineeType) = 0;
         virtual TID AdaptBuildingForResearch(ResearchType p_researchType) = 0;
         virtual TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters) = 0;
-        virtual TID GetEntityObjectId(EntityClassType p_entityType,const vector<ObjectStateType>& p_rankedStates) = 0;
+        virtual TID GetEntityObjectId(EntityClassType p_entityType,const std::vector<ObjectStateType>& p_rankedStates) = 0;
         virtual TID GetEntityObjectId(EntityClassType p_entityType) = 0;
         virtual Vector2 AdaptPosition(const PlanStepParameters& p_parameters) = 0;
     };

@@ -37,7 +37,7 @@ namespace IStrategizer
     public:
         PlanGraph() {}
         //----------------------------------------------------------------------------------------------
-        PlanGraph(vector<PlanStepEx*> p_sPlan) : Diagraph(p_sPlan.size())
+        PlanGraph(std::vector<PlanStepEx*> p_sPlan) : Diagraph(p_sPlan.size())
         {
             for (unsigned i = 0; i < p_sPlan.size(); ++i)
             {
@@ -50,15 +50,15 @@ namespace IStrategizer
             AddNode(p_planStep, 0);
         }
         //----------------------------------------------------------------------------------------------
-        void SubGraphSubstitution(vector<int> p_subGraphIndexes, PlanGraphNodeValue p_substitute)
+        void SubGraphSubstitution(std::vector<int> p_subGraphIndexes, PlanGraphNodeValue p_substitute)
         {
-            map<int, EdgeAnnotation> m_parents;
-            map<int, EdgeAnnotation> m_children;
-            vector<int> m_temp;
+            std::map<int, EdgeAnnotation> m_parents;
+            std::map<int, EdgeAnnotation> m_children;
+            std::vector<int> m_temp;
             unsigned i, j;
             EdgeAnnotation m_eAnn;
 
-            sort(p_subGraphIndexes.begin(), p_subGraphIndexes.end(), less<int>());
+            std::sort(p_subGraphIndexes.begin(), p_subGraphIndexes.end(), std::less<int>());
             int m_sgNodeIndex;
 
             for (i = 0; i < p_subGraphIndexes.size(); ++i)
@@ -87,10 +87,10 @@ namespace IStrategizer
 
             AddNode(p_substitute, Size());
 
-            for (map<int, EdgeAnnotation>::iterator i = m_parents.begin(); i != m_parents.end(); ++i) 
+            for (std::map<int, EdgeAnnotation>::iterator i = m_parents.begin(); i != m_parents.end(); ++i) 
                 Connect((*i).first, Size() - 1, (*i).second);
 
-            for (map<int, EdgeAnnotation>::iterator i = m_children.begin(); i != m_children.end(); ++i)
+            for (std::map<int, EdgeAnnotation>::iterator i = m_children.begin(); i != m_children.end(); ++i)
                 Connect(Size() - 1, (*i).first, (*i).second);
 
             for (unsigned i = 0; i < p_subGraphIndexes.size(); ++i)

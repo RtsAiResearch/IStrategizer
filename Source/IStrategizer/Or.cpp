@@ -1,6 +1,7 @@
 #include "Or.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 bool Or::Evaluate(RtsGame& pRtsGame)
 {

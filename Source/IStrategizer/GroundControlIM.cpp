@@ -6,6 +6,7 @@
 #include "Vector2.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 const TInfluence PositiveInfluence = 1;
 const TInfluence NegativeInfluence = -1;

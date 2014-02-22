@@ -3,6 +3,7 @@
 #include <cassert>
 
 using namespace IStrategizer;
+using namespace std;
 
 //----------------------------------------------------------------------------------------------
 void CompositeExpression::InitializeAddressesAux()

@@ -8,6 +8,7 @@
 #include <cmath>
 
 using namespace IStrategizer;
+using namespace std;
 
 CellFeature::CellFeature(const PlanStepParameters& p_parameters)
 {

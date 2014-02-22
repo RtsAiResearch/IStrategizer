@@ -9,6 +9,7 @@
 #include <limits>
 
 using namespace IStrategizer;
+using namespace std;
 
 WorldMap::WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight)
 {

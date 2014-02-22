@@ -33,20 +33,20 @@ namespace IStrategizer
         TID AdaptBuildingForTraining(EntityClassType p_traineeType);
         TID AdaptBuildingForResearch(ResearchType p_researchType);
         TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters);
-        TID GetEntityObjectId(EntityClassType p_entityType,const vector<ObjectStateType>& p_rankedStates);
+        TID GetEntityObjectId(EntityClassType p_entityType,const std::vector<ObjectStateType>& p_rankedStates);
         TID GetEntityObjectId(EntityClassType p_entityType);
         Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
 
-        static vector<ObjectStateType> WorkerStatesRankVector;
-        static vector<ObjectStateType> AttackerStatesRankVector;
-        static vector<ObjectStateType> EntityToMoveStatesRankVector;
+        static std::vector<ObjectStateType> WorkerStatesRankVector;
+        static std::vector<ObjectStateType> AttackerStatesRankVector;
+        static std::vector<ObjectStateType> EntityToMoveStatesRankVector;
 
     private:
         Vector2 GetBotColonyCenter();
         static void InitializePredefinedRankedStates();
-        static bool EntityToMoveStatesComparer(pair<TID, ObjectStateType> &p_leftAttacker, pair<TID, ObjectStateType> &p_rightAttacker);
-        static bool IsValidEntityState(ObjectStateType p_entityState, const vector<ObjectStateType>& p_rankedStates);
-        static int GetEntityStateIndex(ObjectStateType p_entityState, const vector<ObjectStateType>& p_rankedStates);
+        static bool EntityToMoveStatesComparer(std::pair<TID, ObjectStateType> &p_leftAttacker, std::pair<TID, ObjectStateType> &p_rightAttacker);
+        static bool IsValidEntityState(ObjectStateType p_entityState, const std::vector<ObjectStateType>& p_rankedStates);
+        static int GetEntityStateIndex(ObjectStateType p_entityState, const std::vector<ObjectStateType>& p_rankedStates);
         static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_pCell, void *p_pParam);
 
         const static int DefaultBuildingSpacing;

@@ -1,6 +1,7 @@
 #include "ConditionEx.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 void ConditionEx::InitializeAddressesAux()
 {

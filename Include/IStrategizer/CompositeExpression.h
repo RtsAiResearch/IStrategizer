@@ -30,7 +30,7 @@ namespace IStrategizer
         bool AddExpression(Expression* p_expression);
         bool RemoveExpression(Expression* p_expression);
         bool Equals(const Expression* p_rhs) const;
-        bool PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_anchor, std::vector<pair<Expression*,Expression*>>& p_matchedLeafs) const;
+        bool PartiallyEqualsAux(const Expression* p_rhs, MatchSide p_anchor, std::vector<std::pair<Expression*,Expression*>>& p_matchedLeafs) const;
         bool ShortCircuit() const { return _shortCircuit; }
         void ShortCircuit(bool val) { _shortCircuit = val; }
         const std::vector<Expression*>& Expressions() const { return _expressions; }

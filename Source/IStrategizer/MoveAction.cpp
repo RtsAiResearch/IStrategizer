@@ -15,6 +15,7 @@
 
 using namespace IStrategizer;
 using namespace Serialization;
+using namespace std;
 
 MoveAction::MoveAction() : Action(ACTIONEX_Move)
 {
