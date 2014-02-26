@@ -34,11 +34,11 @@ namespace IStrategizer
     ///> alias=PlanStepParameters(map(pair(int,int)))
     typedef Serialization::SMap<ParameterType, int> PlanStepParameters;
 
-    ///> alias=IOlcbpPlanDigraph(IDigraph(PlanStepEx*))
-    typedef IDigraph<PlanStepEx*> IOlcbpPlanDigraph;
+    ///> alias=IOlcbpPlan(IDigraph(PlanStepEx*))
+    typedef IDigraph<PlanStepEx*> IOlcbpPlan;
 
-    ///> alias=OlcbpPlanDigraph(AdjListDigraph(PlanStepEx*))
-    typedef AdjListDigraph<PlanStepEx*> OlcbpPlanDigraph;
+    ///> alias=OlcbpPlan(AdjListDigraph(PlanStepEx*))
+    typedef AdjListDigraph<PlanStepEx*> OlcbpPlan;
 
     ///> alias=ShallowFeaturesEx(vector(float))
     typedef Serialization::SVector<float> ShallowFeaturesEx;

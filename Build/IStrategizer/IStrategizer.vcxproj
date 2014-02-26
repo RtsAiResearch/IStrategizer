@@ -72,11 +72,7 @@
       <Command>xcopy "$(OutDir)TypeInfo" "$(SolutionDir)..\..\CaseVisualizer\Debug\TypeInfo" /Y /I
 </Command>
     </PreLinkEvent>
-    <Lib>
-      <AdditionalDependencies>ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-    </Lib>
+    <Lib />
     <PostBuildEvent>
       <Command>
       </Command>
@@ -147,8 +143,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\RetainerEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\RetrieverEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Reviser.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecutionEx.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\PlanGraphNode.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecution.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ActionFactory.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GoalFactory.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Message.cpp" />
@@ -229,8 +224,7 @@
     <CustomBuildStep Include="..\..\Include\IStrategizer\GameTrace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineComponent.h" />
     <ClInclude Include="..\..\Include\IStrategizer\OnlineCaseBasedPlannerEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecutionEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\PlanGraphNode.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecution.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractAdapter.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractRetainer.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractRetriever.h" />

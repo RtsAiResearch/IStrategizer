@@ -20,11 +20,10 @@
 #include "WorldClock.h"
 #include <iostream>
 #include "OnlineCaseBasedPlannerEx.h"
-#include "OnlinePlanExpansionExecutionEx.h"
+#include "OnlinePlanExpansionExecution.h"
 #include "GameTraceCollector.h"
 #include "GraphScene.h"
 #include "PlanGraphView.h"
-#include "OlcbpPlanGraphAdapter.h"
 
 using namespace IStrategizer;
 using namespace StarCraftModel;
@@ -93,7 +92,7 @@ void ClientMain::InitIStrategizer()
     // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
     // and the engine Enums[*] table is fully initialized
     InitIdLookup();
-    m_pPlanGraphView->View(new OlcbpPlanGraphAdapter(*m_pIStrategizer->Planner()->ExpansionExecution()));
+    m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
@@ -139,7 +138,8 @@ void ClientMain::InitIdLookup()
     {
         if (Enums[currID] != nullptr)
         {
-            m_idLookup.SetByFirst(currID, string(Enums[currID]));
+            string enumStr(Enums[currID]);
+            m_idLookup.SetByFirst(currID, enumStr);
         }
     }
 }

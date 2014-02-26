@@ -267,9 +267,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\Reviser.cpp">
       <Filter>Source Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecutionEx.cpp">
-      <Filter>Source Files\Engine Components\Online Case-based Planner\Planner</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ActionFactory.cpp">
       <Filter>Source Files\CaseBase\Factories</Filter>
     </ClCompile>
@@ -321,9 +318,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp">
       <Filter>Source Files\EngineData</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\PlanGraphNode.cpp">
-      <Filter>Source Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
@@ -347,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecution.cpp">
+      <Filter>Source Files\Engine Components\Online Case-based Planner\Planner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -500,9 +497,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\OnlineCaseBasedPlannerEx.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecutionEx.h">
-      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\AbstractAdapter.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
     </ClInclude>
@@ -644,9 +638,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\SerializationEssentials.h">
       <Filter>Header Files\EngineData</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\PlanGraphNode.h">
-      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\PlanGraph.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
     </ClInclude>
@@ -679,6 +670,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\AdjListDigraph.h">
       <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecution.h">
+      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

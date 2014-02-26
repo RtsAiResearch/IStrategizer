@@ -32,7 +32,7 @@ namespace IStrategizer
         // Returns:   	NodeID:  A unique ID used to reference the added node
         // in further Digraph methods
         //************************************
-        NodeID AddNode(NodeValue val)
+        NodeID AddNode(_In_ NodeValue& val)
         {
             m_adjList.insert(make_pair(++m_lastNodeId, MakePair(val, NodeSet())));
             
@@ -45,16 +45,17 @@ namespace IStrategizer
         // Parameter: 	NodeID id: Unique ID to identify the node
         // Returns:   	void
         //************************************
-        void RemoveNode(NodeID id)
+        void RemoveNode(_In_ NodeID id)
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(id) == 0)
                 throw ItemNotFoundException(XcptHere);
 
             // Disconnect the node from graph nodes
-            for each (auto nodeEntry in m_adjList)
+            for (Serialization::SMap<NodeID, NodeEntry>::iterator nodeEntryItr = m_adjList.begin();
+                nodeEntryItr != m_adjList.end(); ++nodeEntryItr)
             {
-                NodeSet& adjNodes = nodeEntry.second.second;
+                NodeSet& adjNodes = nodeEntryItr->second.second;
                 if (adjNodes.count(id) > 0)
                 {
                     adjNodes.erase(id);
@@ -71,7 +72,7 @@ namespace IStrategizer
         // Parameter: 	NodeID destNodeId: Unique ID to identify destNode
         // Returns:   	void
         //************************************
-        void AddEdge(NodeID sourceNodeId, NodeID destNodeId) 
+        void AddEdge(_In_ NodeID sourceNodeId, _In_ NodeID destNodeId) 
             throw(ItemAlreadyExistsException)
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
@@ -88,7 +89,7 @@ namespace IStrategizer
         // Parameter: 	NodeID destNodeId: Unique ID to identify destNode
         // Returns:   	void
         //************************************
-        void RemoveEdge(NodeID sourceNodeId, NodeID destNodeId) 
+        void RemoveEdge(_In_ NodeID sourceNodeId, _In_ NodeID destNodeId) 
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
@@ -104,7 +105,7 @@ namespace IStrategizer
         // Parameter: 	NodeID id: Unique ID to identify the node
         // Returns:   	IStrategizer::NodeValue
         //************************************
-        NodeValue GetNode(NodeID id) 
+        NodeValue& GetNode(_In_ NodeID id) 
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(id) == 0)
@@ -131,13 +132,27 @@ namespace IStrategizer
         }
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Size
+        // Description:	Returns the number of nodes inside the digraph
+        // Returns:   	size_t
+        //************************************
+        size_t Size() const { return m_adjList.size(); }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Clear
+        // Description:	Delete all graph nodes and edges
+        // Returns:   	void
+        //************************************
+        virtual void Clear() { m_adjList.clear(); }
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::IsAdjacent
         // Description:	Check whether there is an edge that goes from sourceNode to destNode
         // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
         // Parameter: 	NodeID destNodeId: Unique ID to identify destNode
         // Returns:   	bool
         //************************************
-        bool IsAdjacent(NodeID sourceNodeId, NodeID destNodeId) const 
+        bool IsAdjacent(_In_ NodeID sourceNodeId, _In_ NodeID destNodeId) const 
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
@@ -153,7 +168,7 @@ namespace IStrategizer
         // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
         // Returns:   	NodeSet: A set of all node ids adjacent to sourceNode
         //************************************
-        NodeSet GetAdjacentNodes(NodeID sourceNodeId) const 
+        const NodeSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(sourceNodeId) == 0)
@@ -188,6 +203,26 @@ namespace IStrategizer
             }
 
             return orphans;
+        }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetLeafNodes
+        // Description:	Get all nodes that do not have an edge going from them to any node
+        // Returns:   	NodeSet
+        //************************************
+        NodeSet GetLeafNodes() const
+        {
+            NodeSet leaves;
+
+            for each (auto nodeEntry in m_adjList)
+            {
+                NodeSet& adjacents = nodeEntry.second.second;
+
+                if (adjacents.empty())
+                    leaves.insert(nodeEntry.first);
+            }
+
+            return leaves;
         }
 
         OBJECT_SERIALIZABLE(AdjListDigraph);

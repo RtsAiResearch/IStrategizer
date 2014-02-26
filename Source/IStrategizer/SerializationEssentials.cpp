@@ -117,7 +117,7 @@ void SerializationEssentials::Init()
     g_ObjectFactory.AddPrototype(new GraphEdge<EdgeAnnotation>, "GraphEdge(vector(Expression*))");
     
     g_ObjectFactory.AddPrototype(new CaseBaseEx);
-    g_ObjectFactory.AddPrototype(new OlcbpPlanDigraph, "AdjListDigraph(PlanStepEx*)");
+    g_ObjectFactory.AddPrototype(new OlcbpPlan, "AdjListDigraph(PlanStepEx*)");
 
     g_ObjectFormatter.FinalizeTypeTable(g_ObjectSerializer.TypeTable(), g_ObjectFactory.GetObjectTable());
     

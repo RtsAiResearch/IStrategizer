@@ -137,16 +137,16 @@ void CellFeature::CalculateDistanceToBases(Vector2 cellWorldPosition)
     CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromBase);
 }
 //----------------------------------------------------------------------------------------------
-void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, vector<TID> bases, int& distance)
+void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, const vector<TID>& bases, int& distance) const
 {
-    assert(bases.size() > 0);
+    _ASSERTE(bases.size() > 0);
     TID baseId = bases[0];
     GameEntity* pBase = g_Game->Self()->GetEntity(baseId);
 
     if (pBase == nullptr)
         pBase = g_Game->Enemy()->GetEntity(baseId);
 
-    assert(pBase);
+    _ASSERTE(pBase);
 
     distance = cellWorldPosition.Distance(pBase->GetPosition());
 }

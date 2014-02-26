@@ -4,6 +4,7 @@
 
 #include "IStrategizerException.h"
 #include "SSet.h"
+#include <queue>
 
 namespace IStrategizer
 {
@@ -22,6 +23,12 @@ namespace IStrategizer
         ///> alias=NodeSet(set(NodeID))
         typedef Serialization::SSet<NodeID> NodeSet;
 
+        typedef std::vector<NodeID> NodeList;
+
+        typedef std::queue<NodeID> NodeQueue;
+
+        static const NodeID NullNodeID = 0;
+
         virtual ~IDigraph() {};
 
         //************************************
@@ -31,7 +38,7 @@ namespace IStrategizer
         // Returns:   	NodeID:  A unique ID used to reference the added node
         // in further Digraph methods
         //************************************
-        virtual NodeID AddNode(NodeValue val) = 0;
+        virtual NodeID AddNode(_In_ NodeValue& val) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::RemoveNode
@@ -39,7 +46,7 @@ namespace IStrategizer
         // Parameter: 	NodeID id: Unique ID to identify the node
         // Returns:   	void
         //************************************
-        virtual void RemoveNode(NodeID id)
+        virtual void RemoveNode(_In_ NodeID id)
             throw(ItemNotFoundException) = 0;
 
         //************************************
@@ -49,7 +56,7 @@ namespace IStrategizer
         // Parameter: 	NodeID destNodeId: Unique ID to identify destNode
         // Returns:   	void
         //************************************
-        virtual void AddEdge(NodeID sourceNodeId, NodeID destNodeId) 
+        virtual void AddEdge(_In_ NodeID sourceNodeId, _In_ NodeID destNodeId) 
             throw(ItemAlreadyExistsException) = 0;
 
         //************************************
@@ -59,7 +66,7 @@ namespace IStrategizer
         // Parameter: 	NodeID destNodeId: Unique ID to identify destNode
         // Returns:   	void
         //************************************
-        virtual void RemoveEdge(NodeID sourceNodeId, NodeID destNodeId) 
+        virtual void RemoveEdge(_In_ NodeID sourceNodeId, _In_ NodeID destNodeId) 
             throw(ItemNotFoundException) = 0;
 
         //************************************
@@ -68,7 +75,7 @@ namespace IStrategizer
         // Parameter: 	NodeID id: Unique ID to identify the node
         // Returns:   	IStrategizer::NodeValue
         //************************************
-        virtual NodeValue GetNode(NodeID id) 
+        virtual NodeValue& GetNode(_In_ NodeID id) 
             throw(ItemNotFoundException) = 0;
 
         //************************************
@@ -79,13 +86,27 @@ namespace IStrategizer
         virtual NodeSet GetNodes() const = 0;
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Size
+        // Description:	Returns the number of nodes inside the digraph
+        // Returns:   	size_t
+        //************************************
+        virtual size_t Size() const = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Clear
+        // Description:	Delete all graph nodes and edges
+        // Returns:   	void
+        //************************************
+        virtual void Clear() = 0;
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::IsAdjacent
         // Description:	Check whether there is an edge that goes from sourceNode to destNode
         // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
         // Parameter: 	NodeID destNodeId: Unique ID to identify destNode
         // Returns:   	bool
         //************************************
-        virtual bool IsAdjacent(NodeID sourceNodeId, NodeID destNodeId) const 
+        virtual bool IsAdjacent(_In_ NodeID sourceNodeId, _In_ NodeID destNodeId) const 
             throw(ItemNotFoundException) = 0;
 
         //************************************
@@ -94,7 +115,7 @@ namespace IStrategizer
         // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
         // Returns:   	NodeSet: A set of all node ids adjacent to sourceNode
         //************************************
-        virtual NodeSet GetAdjacentNodes(NodeID sourceNodeId) const 
+        virtual const NodeSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
             throw(ItemNotFoundException) = 0;
 
         //************************************
@@ -103,6 +124,13 @@ namespace IStrategizer
         // Returns:   	NodeSet: A set of all orphan node ids
         //************************************
         virtual NodeSet GetOrphanNodes() const = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetLeafNodes
+        // Description:	Get all nodes that do not have an edge going from them to any node
+        // Returns:   	NodeSet
+        //************************************
+        virtual NodeSet GetLeafNodes() const = 0;
     };
 }
 

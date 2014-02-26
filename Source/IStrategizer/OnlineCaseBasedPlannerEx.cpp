@@ -35,7 +35,7 @@
 #include "Toolbox.h"
 #endif
 #ifndef ONLINEPLANEXPANSIONEXECUTIONEX_H
-#include "OnlinePlanExpansionExecutionEx.h"
+#include "OnlinePlanExpansionExecution.h"
 #endif
 
 #include "RtsGame.h"
@@ -67,7 +67,7 @@ void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
 
     _caseBasedReasoner->Initialize();
 
-    _onlineExpansionExecution = new OnlinePlanExpansionExecutionEx(p_initialGoal, _caseBasedReasoner);
+    _onlineExpansionExecution = new OnlinePlanExpansionExecution(p_initialGoal, _caseBasedReasoner);
 }
 //----------------------------------------------------------------------------------------------
 void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)

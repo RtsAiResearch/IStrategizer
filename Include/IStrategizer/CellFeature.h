@@ -36,7 +36,7 @@ namespace IStrategizer
         static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
 
     private:
-        void CalculateDistanceToBasesAux(Vector2 cellWorldPosition, std::vector<TID> bases, int& distance);
+        void CalculateDistanceToBasesAux(Vector2 cellWorldPosition, const std::vector<TID>& bases, int& distance) const;
         float GetBaseDistanceSimilarity(int firstBase, int secondBase) const;
     };
 }
