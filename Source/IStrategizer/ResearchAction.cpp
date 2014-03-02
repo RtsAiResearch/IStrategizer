@@ -56,8 +56,7 @@ bool ResearchAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
     // Issue research order
     pGameResearcher = pRtsGame.Self()->GetEntity(_researcherId);
     assert(pGameResearcher);
-
-    g_Assist.ControlResource(researchType, PLAYER_Self, false);
+    
     return pGameResearcher->Research(researchType);
 }
 //----------------------------------------------------------------------------------------------
@@ -77,9 +76,4 @@ void ResearchAction::InitializePreConditions()
     m_terms.push_back(new EntityClassExist(PLAYER_Self, researcherType, 1, true));
     g_Assist.GetPrerequisites(researchType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
-}
-//----------------------------------------------------------------------------------------------
-void ResearchAction::PreExecution(RtsGame& pRtsGame)
-{
-    g_Assist.ControlResource(_params[PARAM_ResearchId], PLAYER_Self, true);
 }

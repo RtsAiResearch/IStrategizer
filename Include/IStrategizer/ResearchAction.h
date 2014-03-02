@@ -28,7 +28,6 @@ namespace IStrategizer
 
     protected:
         bool ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock);
-        void PreExecution(RtsGame& pRtsGame);
         void InitializePostConditions();
         void InitializePreConditions();
 

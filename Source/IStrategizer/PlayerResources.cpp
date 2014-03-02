@@ -9,34 +9,45 @@ bool PlayerResources::HasEnough(const WorldResources* p_resources)
         this->Supply() >= p_resources->Supply();
 }
 //////////////////////////////////////////////////////////////////////////
-void PlayerResources::Lock(ResourceType p_resourceId, int p_amount)
+bool PlayerResources::Lock(WorldResources* resources)
 {
-    switch(p_resourceId)
+    bool amountAvailable = HasEnough(resources);
+
+    if (amountAvailable)
     {
-    case RESOURCE_Supply:
-        _lockedSupply += p_amount;
-        break;
-    case RESOURCE_Primary:
-        _lockedPrimary += p_amount;
-        break;
-    case RESOURCE_Secondary:
-        _lockedSecondary += p_amount;
-        break;
+        if (resources->Supply() > 0)
+        {
+            _lockedSupply += resources->Supply();
+        }
+
+        if (resources->Secondary() > 0)
+        {
+            _lockedSecondary += resources->Secondary();
+        }
+
+        if (resources->Primary() > 0)
+        {
+            _lockedPrimary += resources->Primary();
+        }
     }
+    
+    return amountAvailable;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlayerResources::Unlock(ResourceType p_resourceId, int p_amount)
+void PlayerResources::Unlock(WorldResources* resources)
 {
-    switch(p_resourceId)
+    if (resources->Supply() > 0)
     {
-    case RESOURCE_Supply:
-        _lockedSupply -= p_amount;
-        break;
-    case RESOURCE_Primary:
-        _lockedPrimary -= p_amount;
-        break;
-    case RESOURCE_Secondary:
-        _lockedSecondary -= p_amount;
-        break;
+        _lockedSupply -= resources->Supply();
+    }
+
+    if (resources->Secondary() > 0)
+    {
+        _lockedSecondary -= resources->Secondary();
+    }
+
+    if (resources->Primary() > 0)
+    {
+        _lockedPrimary -= resources->Primary();
     }
 }

@@ -55,6 +55,7 @@ void BuildActionEx::OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock)
     {
         assert(!_buildArea.IsNull());
         _buildArea.Unlock(this);
+        _requiredResources.Unlock(this);
 
         GameEntity *pEntity = pRtsGame.Self()->GetEntity(_builderId);
 
@@ -90,7 +91,7 @@ void BuildActionEx::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_con
         {
             _buildingId = pGameBuilding->Id();
             _buildStarted = true;
-            g_Assist.ControlResource(_params[PARAM_EntityClassId], PLAYER_Self, false);
+            _requiredResources.Unlock(this);
         }
     }
 }
@@ -191,6 +192,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
             _buildIssued = true;
             pGameBuilder->Lock(this);
             _buildArea.Lock(this);
+            _requiredResources.Lock(this);
         }
     }
 
@@ -208,14 +210,10 @@ void BuildActionEx::InitializePreConditions()
 {
     EntityClassType builderType = g_Game->Self()->GetWorkerType();
     EntityClassType buildingType = (EntityClassType)_params[PARAM_EntityClassId];
+    _requiredResources = WorldResources::FromEntity(buildingType);
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, 1, true));
     g_Assist.GetPrerequisites(buildingType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
-}
-//----------------------------------------------------------------------------------------------
-void BuildActionEx::PreExecution(RtsGame& pRtsGame)
-{
-    g_Assist.ControlResource(_params[PARAM_EntityClassId], PLAYER_Self, true);
 }

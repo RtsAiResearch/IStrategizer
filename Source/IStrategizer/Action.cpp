@@ -23,7 +23,6 @@ Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxEx
 : PlanStepEx(p_actionType, ESTATE_END), _preCondition(nullptr)
 {
     _stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
-    _stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
     _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -31,7 +30,6 @@ Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, 
 : PlanStepEx(p_actionType, ESTATE_END, p_parameters), _preCondition(nullptr)
 {
     _stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
-    _stateTimeout[INDEX(ESTATE_Pending, ExecutionStateType)] = p_maxExecTime;
     _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -54,8 +52,6 @@ bool Action::PreconditionsSatisfied(RtsGame& pRtsGame)
     if (_preCondition == nullptr) { InitializeConditions(); }
     bool satisfied = _preCondition->Evaluate(pRtsGame);
 
-    if (satisfied) { PreExecution(pRtsGame); }
-
     return satisfied;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -69,7 +65,7 @@ bool Action::Execute(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     bool bOk;
 
-    assert(PlanStepEx::State() == ESTATE_Pending);
+    assert(PlanStepEx::State() == ESTATE_NotPrepared);
     bOk = ExecuteAux(pRtsGame, p_clock);
 
     return bOk;
@@ -89,16 +85,15 @@ void Action::UpdateAux(RtsGame& pRtsGame, const WorldClock& p_clock)
     {
     case ESTATE_NotPrepared:
         if (PreconditionsSatisfied(pRtsGame))
-            State(ESTATE_Pending, pRtsGame, p_clock);
-        break;
-
-    case ESTATE_Pending:
-        if (Execute(pRtsGame, p_clock))
-            State(ESTATE_Executing, pRtsGame, p_clock);
-        else
         {
-            LogInfo("Executing '%s' failed", ToString().c_str());
-            State(ESTATE_NotPrepared, pRtsGame, p_clock);
+            if (Execute(pRtsGame, p_clock))
+            {
+                State(ESTATE_Executing, pRtsGame, p_clock);
+            }
+            else
+            {
+                LogInfo("Executing '%s' failed", ToString().c_str());
+            }
         }
         break;
 

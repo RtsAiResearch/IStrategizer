@@ -27,7 +27,6 @@ namespace IStrategizer
         virtual void InitializePreConditions() = 0;
         virtual void OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock) {};
         virtual void OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock) {};
-        virtual void PreExecution(RtsGame& pRtsGame) {};
 
     public:
         int Type() const { return PlanStepEx::_stepTypeId; }

@@ -13,8 +13,8 @@ namespace IStrategizer
     class PlayerResources
     {
     public:
-        void Lock(ResourceType p_resourceId, int p_amount);
-        void Unlock(ResourceType p_resourceId, int p_amount);
+        bool Lock(WorldResources* resources);
+        void Unlock(WorldResources* resources);
         int AvailableSupply() { return (Supply() - _lockedSupply); }
         int AvailablePrimary() { return (Primary() - _lockedPrimary); }
         int AvailableSecondary() { return (Secondary() - _lockedSecondary); }

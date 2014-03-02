@@ -4,6 +4,7 @@
 #include "Misc.h"
 #include "EngineData.h"
 #include "Expression.h"
+#include "WorldResources.h"
 #include <vector>
 #include <map>
 
@@ -50,7 +51,7 @@ namespace IStrategizer
         CheckReturn bool DoesEntityObjectExist(IN const vector<TID> &p_entityObjects, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance);
         CheckReturn void GetPrerequisites(IN int p_entityOrResearchType, IN PlayerType p_playerType, OUT vector<Expression*>& p_prerequisites);
-        CheckReturn void ControlResource(IN int p_entityOrResearchType, IN PlayerType p_playerType, IN bool lock);
+        CheckReturn void GetPrerequisiteResources(IN int p_entityOrResearchType, IN PlayerType p_playerType, IN WorldResources& p_resources);
 
 #define g_Assist EngineAssist::Instance()
     };
