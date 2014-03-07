@@ -33,3 +33,10 @@ void WorldResources::Set(WorldResources* pOther)
     m_secondary = pOther->m_secondary;
     m_primary = pOther->m_primary;
 }
+//////////////////////////////////////////////////////////////////////////
+bool WorldResources::IsNull()
+{
+    return m_supply < 0 ||
+        m_primary < 0 ||
+        m_secondary < 0;
+}

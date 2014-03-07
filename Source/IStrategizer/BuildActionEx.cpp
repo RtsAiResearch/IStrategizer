@@ -55,6 +55,7 @@ void BuildActionEx::OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock)
     {
         assert(!_buildArea.IsNull());
         _buildArea.Unlock(this);
+        assert(!_requiredResources.IsNull());
         _requiredResources.Unlock(this);
 
         GameEntity *pEntity = pRtsGame.Self()->GetEntity(_builderId);
@@ -91,6 +92,7 @@ void BuildActionEx::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_con
         {
             _buildingId = pGameBuilding->Id();
             _buildStarted = true;
+            assert(!_requiredResources.IsNull());
             _requiredResources.Unlock(this);
         }
     }
@@ -191,7 +193,9 @@ bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
         {
             _buildIssued = true;
             pGameBuilder->Lock(this);
+            assert(!_buildArea.IsNull());
             _buildArea.Lock(this);
+            assert(!_requiredResources.IsNull());
             _requiredResources.Lock(this);
         }
     }

@@ -18,6 +18,7 @@ namespace IStrategizer
         virtual int Secondary() const { return m_secondary; }
         virtual int Primary() const { return m_primary; }
         void Set(WorldResources* pOther);
+        bool IsNull();
 
     protected:
         bool Acquire();

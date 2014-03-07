@@ -629,5 +629,5 @@ void EngineAssist::GetPrerequisiteResources(int p_entityOrResearchType, PlayerTy
 
         p_resources.Set(pEntityType->RequiredResources());
     }
-    else assert(0);
+    else _ASSERTE(!"Not supported type");
 }
