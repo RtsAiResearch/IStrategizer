@@ -89,6 +89,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp" />

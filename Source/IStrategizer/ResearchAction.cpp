@@ -46,9 +46,9 @@ bool ResearchAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
-    ResearchType    researchType = (ResearchType)_params[PARAM_ResearchId];
-    GameEntity        *pGameResearcher;
-    AbstractAdapter    *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+    ResearchType researchType = (ResearchType)_params[PARAM_ResearchId];
+    GameEntity *pGameResearcher;
+    AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
     // Adapt researcher
     _researcherId = pAdapter->AdaptBuildingForResearch(researchType);
@@ -56,7 +56,7 @@ bool ResearchAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
     // Issue research order
     pGameResearcher = pRtsGame.Self()->GetEntity(_researcherId);
     assert(pGameResearcher);
-
+    
     return pGameResearcher->Research(researchType);
 }
 //----------------------------------------------------------------------------------------------

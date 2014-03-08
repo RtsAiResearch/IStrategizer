@@ -31,6 +31,7 @@ namespace StarCraftModel
         bool AttackEntity(IStrategizer::TID p_targetEntityObjectId);
         bool Train(IStrategizer::EntityClassType p_entityClassId);
         bool Move(IStrategizer::Vector2 p_position);
+        bool IsNull();
 
     protected:
         IStrategizer::ObjectStateType FetchState() const;
