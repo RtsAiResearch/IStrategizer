@@ -175,7 +175,6 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     GamePlayer     *pPlayer;
     GameEntity     *pEntity;
     vector<TID>    entityIds;
-    EntityClassType     entityTypeId;
     ObjectStateType     curEntityState;
     TID      adaptedEntityId = INVALID_TID;
     vector<UnitEntry>    validEntities;
@@ -217,7 +216,6 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
     GamePlayer            *pPlayer;
     GameEntity            *pEntity;
     vector<TID>            entityIds;
-    EntityClassType        entityTypeId;
     TID                    adaptedEntityId = INVALID_TID;
 
     pPlayer = g_Game->Self();

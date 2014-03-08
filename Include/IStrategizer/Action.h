@@ -35,7 +35,7 @@ namespace IStrategizer
         void Copy(IClonable* p_dest);
         virtual bool Execute(RtsGame& pRtsGame, const WorldClock& p_clock);
         virtual bool AliveConditionsSatisfied(RtsGame& pRtsGame) = 0;
-        bool PreconditionsSatisfied(RtsGame& pRtsGame) { if (_preCondition == nullptr) InitializeConditions(); return _preCondition->Evaluate(pRtsGame); }
+        bool PreconditionsSatisfied(RtsGame& pRtsGame);
     };
 }
 

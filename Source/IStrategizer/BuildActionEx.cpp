@@ -15,6 +15,7 @@
 #include "GameEntity.h"
 #include "AdapterEx.h"
 #include "EntityClassExist.h"
+#include "PlayerResources.h"
 
 using namespace IStrategizer;
 
@@ -54,6 +55,8 @@ void BuildActionEx::OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock)
     {
         assert(!_buildArea.IsNull());
         _buildArea.Unlock(this);
+        assert(!_requiredResources.IsNull());
+        _requiredResources.Unlock(this);
 
         GameEntity *pEntity = pRtsGame.Self()->GetEntity(_builderId);
 
@@ -66,10 +69,10 @@ void BuildActionEx::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_con
 {
     if(PlanStepEx::State() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_EntityCreate) 
     {
-        EntityCreateMessage*    pMsg = static_cast<EntityCreateMessage*>(p_msg);
-        TID                        buildingId;
-        GameEntity                *pGameBuilding;
-        Vector2                    msgBuildPosition;
+        EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
+        TID buildingId;
+        GameEntity *pGameBuilding;
+        Vector2 msgBuildPosition;
 
         if (pMsg->Data()->OwnerId != PLAYER_Self)
             return;
@@ -89,17 +92,19 @@ void BuildActionEx::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_con
         {
             _buildingId = pGameBuilding->Id();
             _buildStarted = true;
+            assert(!_requiredResources.IsNull());
+            _requiredResources.Unlock(this);
         }
     }
 }
 //////////////////////////////////////////////////////////////////////////
 bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
 {
-    bool        builderExist = false;
-    bool        buildingExist = false;
-    bool        isBuilderConstructing = false;
-    bool        success = false;
-    GameEntity  *pEntity = nullptr;
+    bool builderExist = false;
+    bool buildingExist = false;
+    bool isBuilderConstructing = false;
+    bool success = false;
+    GameEntity *pEntity = nullptr;
 
     assert(PlanStepEx::State() == ESTATE_Executing);
 
@@ -107,6 +112,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
 
     if (builderExist)
     {
+        success = true;
         pEntity = pRtsGame.Self()->GetEntity(_builderId);
 
         assert(pEntity);
@@ -122,14 +128,10 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& pRtsGame)
             {
                 buildingExist = g_Assist.DoesEntityObjectExist(_buildingId);
 
-                if (buildingExist)
+                if (!buildingExist)
                 {
-                    success = true;
+                    success = false;
                 }
-            }
-            else
-            {
-                success = true;
             }
         }
     }
@@ -161,13 +163,13 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 //////////////////////////////////////////////////////////////////////////
 bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
-    EntityClassType        buildingType;
-    GameEntity            *pGameBuilder;
-    AbstractAdapter        *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-    bool                bOk = false;
+    EntityClassType buildingType;
+    GameEntity *pGameBuilder;
+    AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+    bool bOk = false;
 
     // Adapt builder
-    _builderId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
+    _builderId = pAdapter->GetEntityObjectId(pRtsGame.Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
 
     if (_builderId != INVALID_TID)
     {
@@ -191,7 +193,10 @@ bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
         {
             _buildIssued = true;
             pGameBuilder->Lock(this);
+            assert(!_buildArea.IsNull());
             _buildArea.Lock(this);
+            assert(!_requiredResources.IsNull());
+            _requiredResources.Lock(this);
         }
     }
 
@@ -209,6 +214,7 @@ void BuildActionEx::InitializePreConditions()
 {
     EntityClassType builderType = g_Game->Self()->GetWorkerType();
     EntityClassType buildingType = (EntityClassType)_params[PARAM_EntityClassId];
+    _requiredResources = WorldResources::FromEntity(buildingType);
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, 1, true));

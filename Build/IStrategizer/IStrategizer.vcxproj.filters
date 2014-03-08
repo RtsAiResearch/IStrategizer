@@ -219,9 +219,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CheckEntityClassAttribute.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ConditionEx.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
@@ -245,9 +242,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\Or.cpp">
       <Filter>Source Files\CaseBase\Condition\Expression</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\AttackEnemyGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\GoalEx.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
@@ -350,6 +344,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp">
+      <Filter>Source Files\World Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -670,6 +673,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
