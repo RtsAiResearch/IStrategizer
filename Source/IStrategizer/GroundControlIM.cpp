@@ -79,7 +79,10 @@ void GroundControlIM::Update(const WorldClock& p_clock)
     ForEachObj(StampObjField);
 }
 //////////////////////////////////////////////////////////////////////////
-TInfluence GroundControlIM::GetCellInf(Vector2 p_position)
+TInfluence GroundControlIM::GetCellInfluenceFromWorldPosition(const Vector2 p_worldPosition)//world position
 {
-    return Map()[p_position.Y * GridWidth() + p_position.X].Inf;
+    Vector2 tempGridPostion;
+    FromWorldToGrid(p_worldPosition, tempGridPostion);
+    return Map()[tempGridPostion.Y * GridWidth() + tempGridPostion.X].Inf;
+    //world coordinates
 }

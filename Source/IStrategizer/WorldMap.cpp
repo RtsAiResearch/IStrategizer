@@ -70,9 +70,9 @@ void WorldMap::UpdateAux()
         {
             m_cellFeatureMatrix[i][j].Clear();
             m_cellFeatureMatrix[i][j].CalculateDistanceToBases(FromGridToWorld(Vector2(j ,i)));
-            m_cellFeatureMatrix[i][j].m_influnce = IM->GetCellInf(Vector2(j*8, i*8));
+            m_cellFeatureMatrix[i][j].m_influnce = IM->GetCellInfluenceFromWorldPosition(FromGridToWorld(Vector2(j, i)));
         }
-    }
+    }   
 
     g_Game->Players(players);
 
