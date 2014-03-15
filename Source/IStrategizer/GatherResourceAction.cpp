@@ -20,6 +20,7 @@ IStrategizer::GatherResourceAction::GatherResourceAction():
 {
 	_params[PARAM_ResourceId] = RESOURCE_START;
 	_params[PARAM_EntityClassId] = ECLASS_START;
+	_params[PARAM_AlliedBuildingsCount] = 1;
 	_params[PARAM_Amount] = 10;
 	CellFeature::Null().To(_params);
 }
@@ -147,7 +148,7 @@ bool IStrategizer::GatherResourceAction::ExecuteAux(RtsGame* pRtsGame, const Wor
 
 		// Adapt resource id
 		assert(pAdapter);
-		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters());
+		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters(), _gathererId);
 		if(_resourceId != INVALID_TID)
 		{
 			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(_gathererId);
@@ -188,7 +189,7 @@ void IStrategizer::GatherResourceAction::HandleMessage( RtsGame* pRtsGame, Messa
 		ResourceType		resourceType = (ResourceType)_params[PARAM_ResourceId];
 		assert(pAdapter);
 
-		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters());
+		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters(), _gathererId);
 
 		if(_resourceId != INVALID_TID)
 		{

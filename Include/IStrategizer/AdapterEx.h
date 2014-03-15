@@ -35,7 +35,7 @@ namespace IStrategizer
         TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters);
         TID GetEntityObjectId(EntityClassType p_entityType,const vector<ObjectStateType>& p_rankedStates);
         TID GetEntityObjectId(EntityClassType p_entityType);
-		TID AdaptResourceForGathering(ResourceType p_resourceType, const PlanStepParameters& p_parameters);
+		TID AdaptResourceForGathering(ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID);
         Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
 
         static vector<ObjectStateType> WorkerStatesRankVector;

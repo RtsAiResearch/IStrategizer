@@ -272,7 +272,11 @@ void DefinitionCrossMapping::InitResources()
 {
 	vector< pair<TID, IStrategizer::ResourceType> > resources;
 
-	resources.push_back(make_pair(UnitTypes::Resource_Mineral_Field, RESOURCE_Primary));
+	//resources.push_back(make_pair(UnitTypes::Resource_Mineral_Field, RESOURCE_Primary));
+	//resources.push_back(make_pair(UnitTypes::Resource_Vespene_Geyser, RESOURCE_Secondary));
+
+	// [Debugging]
+	resources.push_back(make_pair(UnitTypes::Terran_Marine, RESOURCE_Primary));
 	resources.push_back(make_pair(UnitTypes::Resource_Vespene_Geyser, RESOURCE_Secondary));
 
 	ResourceMapping = CrossMap<TID, IStrategizer::ResourceType>(resources);

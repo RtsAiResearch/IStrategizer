@@ -379,21 +379,28 @@ void ClientMain::UpdateViews()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitResourceManager()
 {
-    //send each worker to the mineral field that is closest to it
-    for(Unitset::iterator i = Broodwar->self()->getUnits().begin(); i != Broodwar->self()->getUnits().end(); i++)
-    {
-        if ((*i)->getType().isWorker())
-        {
-            Unit closestMineral=nullptr;
-            for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
-            {
-                if (closestMineral==nullptr || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
-                    closestMineral = *m;
-            }
-            if (closestMineral!=nullptr)
-                (*i)->rightClick(closestMineral);
-        }
-    }
+	//send each worker to the mineral field that is closest to it
+	for(Unitset::iterator i = Broodwar->self()->getUnits().begin(); i != Broodwar->self()->getUnits().end(); i++)
+	{
+		if ((*i)->getType().isWorker())
+		{
+			Unit closestMineral=nullptr;
+			for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
+			{
+				if (closestMineral==nullptr || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
+				{
+					closestMineral = *m;
+					
+					// [Debugging]
+					auto type = closestMineral->getType();
+					auto initialType = closestMineral->getInitialType();
+					auto nResources = closestMineral->getInitialResources();
+				}
+			}
+			if (closestMineral!=nullptr)
+				(*i)->rightClick(closestMineral);
+		}
+	}
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnGameFrame()

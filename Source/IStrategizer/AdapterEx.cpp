@@ -15,7 +15,7 @@
 #include "IMSystemManager.h"
 #include "InfluenceMap.h"
 #include "OccupanceDataIM.h"
-#include "..\StarCraftModel\DefinitionCrossMapping.h"
+//#include "..\StarCraftModel\DefinitionCrossMapping.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -238,7 +238,7 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
     return adaptedEntityId;
 }
 //////////////////////////////////////////////////////////////////////////
-IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceType p_resourceType, const PlanStepParameters& p_parameters)
+IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID )
 {
 	GamePlayer	*pPlayer;
 	GameEntity	*pEntity;
@@ -246,27 +246,30 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
 	TID			adaptedResourceId = INVALID_TID;
 	double		bestDistance = numeric_limits<double>::max();
 	CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
-	DefinitionCrossMapping pDefinitionCrossMapping = DefinitionCrossMapping::Instance();
+	//DefinitionCrossMapping pDefinitionCrossMapping = DefinitionCrossMapping::Instance();
 
 	pPlayer = g_Game->GetPlayer(PLAYER_Neutral);
 	assert(pPlayer);
 
-	pPlayer->Entities(entityIds);
+	pPlayer->Entities((EntityClassType)131236, entityIds);
 
 	TID fetchedResourceId;
+	g_Game->Map()->UpdateAux();
 	
-	if(pDefinitionCrossMapping.ResourceMapping.TryGetBySecond(p_resourceType, fetchedResourceId) == true)
+	//if(pDefinitionCrossMapping.ResourceMapping.TryGetBySecond(p_resourceType, fetchedResourceId) == true)
 	{
 		for (size_t i = 0, size = entityIds.size(); i < size; ++i)
 		{
-			if (fetchedResourceId == entityIds[i])
+			//if (fetchedResourceId == entityIds[i])
 			{
 				pEntity = pPlayer->GetEntity(entityIds[i]);
 				assert(pEntity);
 
-				CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
-				double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
+				//CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+				//double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
 
+				GameEntity* gatherer = g_Game->GetPlayer(PLAYER_Self)->GetEntity(p_gathererID);
+				double dist = gatherer->GetPosition().Distance(pEntity->GetPosition());
 				if (dist <= bestDistance)
 				{
 					bestDistance = dist;
