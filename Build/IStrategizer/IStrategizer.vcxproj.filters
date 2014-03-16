@@ -348,6 +348,15 @@
     <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp">
+      <Filter>Source Files\World Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h">
@@ -673,6 +682,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

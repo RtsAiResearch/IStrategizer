@@ -280,7 +280,7 @@ void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateGoalNode(PlanGraphNode*
         }
         else
         {
-            assert(pCurrentPlanStep->State() == ESTATE_Pending ||
+            assert(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
                 pCurrentPlanStep->State() == ESTATE_Succeeded ||
                 pCurrentPlanStep->State() == ESTATE_END);
 
@@ -313,7 +313,6 @@ void IStrategizer::OnlinePlanExpansionExecutionEx::UpdateActionNode(PlanGraphNod
         else
         {
             assert(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
-                pCurrentPlanStep->State() == ESTATE_Pending ||
                 pCurrentPlanStep->State() == ESTATE_Executing ||
                 pCurrentPlanStep->State() == ESTATE_END);
 

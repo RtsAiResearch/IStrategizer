@@ -60,6 +60,7 @@ namespace IStrategizer
         virtual std::string ToString() const { return m_rescourceDescription; }
         void Unlock(Action *p_pOwner);
         bool IsLocked() { return m_pOwner != nullptr; }
+        virtual bool IsNull() = 0;
 
         static void AddResource(SharedResource *p_pResource) throw(IStrategizer::ItemAlreadyExistsException);
         static void RemoveResource(SharedResource *p_pResource) throw(IStrategizer::ItemNotFoundException);

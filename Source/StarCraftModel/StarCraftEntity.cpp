@@ -221,4 +221,9 @@ bool StarCraftEntity::Move(Vector2 p_position)
 {
     Position pos(p_position.X, p_position.Y);
     return m_unit->move(pos);
-};
+}
+//----------------------------------------------------------------------------------------------
+bool StarCraftEntity::IsNull()
+{
+    return m_unit == nullptr;
+}

@@ -12,6 +12,9 @@
 #ifndef MAPAREA_H
 #include "MapArea.h"
 #endif
+#ifndef WORLDRESOURCES_H
+#include "WorldResources.h"
+#endif
 
 namespace IStrategizer
 {
@@ -43,6 +46,7 @@ namespace IStrategizer
         IStrategizer::MapArea _buildArea;
         bool _buildStarted;
         bool _buildIssued;
+        IStrategizer::WorldResources _requiredResources;
     };
 }
 

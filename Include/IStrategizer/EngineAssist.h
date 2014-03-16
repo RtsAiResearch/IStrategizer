@@ -4,6 +4,7 @@
 #include "Misc.h"
 #include "EngineData.h"
 #include "Expression.h"
+#include "WorldResources.h"
 #include <vector>
 #include <map>
 
@@ -42,15 +43,15 @@ namespace IStrategizer
         CheckReturn int GetPlayerAttribute(IN PlayerType p_playerType, IN PlayerAttribute p_attribute, OUT int& p_value);
         CheckReturn int GetTireBaseBuildingId(IN PlayerType p_playerType, IN BaseType p_baseType, OUT EntityClassType& p_entityClassId);
         CheckReturn int GetEntities(IN PlayerType p_playerType, IN const vector<EntityClassType>& p_entityTypes, OUT vector<TID>& p_entityObjects);
-
+        CheckReturn int ResearchesDone(IN const vector<ResearchType> &p_researchTypes, OUT bool &p_done, IN PlayerType p_playerType = PLAYER_Self);
+        CheckReturn int PrerequisitesSatisfied(IN int p_entityOrResearchType, OUT bool &p_satisfied, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool DoesEntityClassExist(IN pair<EntityClassType, unsigned> p_entityType, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool DoesEntityClassExist(IN const std::map<EntityClassType, unsigned> &p_entityTypes, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool DoesEntityObjectExist(IN TID p_entityObject, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool DoesEntityObjectExist(IN const vector<TID> &p_entityObjects, IN PlayerType p_playerType = PLAYER_Self);
-        CheckReturn int ResearchesDone(IN const vector<ResearchType> &p_researchTypes, OUT bool &p_done, IN PlayerType p_playerType = PLAYER_Self);
-        CheckReturn int PrerequisitesSatisfied(IN int p_entityOrResearchType, OUT bool &p_satisfied, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance);
-        CheckReturn void GetPrerequisites(int p_entityOrResearchType, PlayerType p_playerType, vector<Expression*>& p_prerequisites);
+        CheckReturn void GetPrerequisites(IN int p_entityOrResearchType, IN PlayerType p_playerType, OUT vector<Expression*>& p_prerequisites);
+        CheckReturn void GetPrerequisiteResources(IN int p_entityOrResearchType, IN PlayerType p_playerType, IN WorldResources& p_resources);
 
 #define g_Assist EngineAssist::Instance()
     };
