@@ -23,7 +23,7 @@ namespace IStrategizer
         bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
 
     private:
-        int m_demandSize;
+        int _demandSize;
     };
 }
 #endif // TRAINARMYGOAL_H

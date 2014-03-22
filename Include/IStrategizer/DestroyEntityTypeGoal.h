@@ -14,7 +14,7 @@ namespace IStrategizer
 
     private:
         ForceDescriptionEx _forceDescription;
-        int          m_demandTargetSize;
+        int _demandTargetSize;
     public:
         DestroyEntityTypeGoal();
         DestroyEntityTypeGoal(const PlanStepParameters& p_parameters);

@@ -2,13 +2,13 @@
 #ifndef ENTITYCLASSNEARAREA_H
 #define ENTITYCLASSNEARAREA_H
 
+
+#include "EngineData.h"
 #include "ConditionEx.h"
 #ifndef CELLFEATURE_H
 #include "CellFeature.h"
 #endif
 
-
-#define NEGLECTED_AMOUNT -1
 
 namespace IStrategizer
 {
@@ -20,7 +20,7 @@ namespace IStrategizer
 
     public:
         EntityClassNearArea() {}
-        EntityClassNearArea(PlayerType p_player, EntityClassType p_entityType, CellFeature* cellFeature, int howFar, int p_amount =  NEGLECTED_AMOUNT);
+        EntityClassNearArea(PlayerType p_player, EntityClassType p_entityType, CellFeature* cellFeature, int howFar, int p_amount =  DONT_CARE);
 
         bool Evaluate(RtsGame& pRtsGame);
         bool Consume(int p_amount) { return true; }

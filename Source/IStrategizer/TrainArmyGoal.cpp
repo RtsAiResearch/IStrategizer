@@ -15,7 +15,7 @@ TrainArmyGoal::TrainArmyGoal() : GoalEx(GOALEX_TrainArmy)
 {
     _params[PARAM_ForceSizeId] = FORCESIZE_START;
     _params[PARAM_EntityClassId] = ECLASS_START;
-    m_demandSize = 0;
+    _demandSize = 0;
 }
 //----------------------------------------------------------------------------------------------
 TrainArmyGoal::TrainArmyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainArmy, p_parameters)
@@ -25,14 +25,14 @@ TrainArmyGoal::TrainArmyGoal(const PlanStepParameters& p_parameters): GoalEx(GOA
 void TrainArmyGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId]/*don't care of type #def engineData search*/, _params[PARAM_ForceSizeId], true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], _params[PARAM_ForceSizeId], true));
     /*over EntityClassNearArea constructor to take filter Type*/
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
 bool TrainArmyGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {    
-    return m_demandSize >= pRtsGame.GetForceSizeCount((ForceSizeType)_params[PARAM_ForceSizeId]);
+    return _demandSize >= pRtsGame.GetForceSizeCount((ForceSizeType)_params[PARAM_ForceSizeId]);
 }
 //----------------------------------------------------------------------------------------------
 void TrainArmyGoal::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
@@ -52,7 +52,7 @@ void TrainArmyGoal::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_con
         EntityClassType tempParam = (EntityClassType)_params[PARAM_EntityClassId];
         if (tempEntity == tempParam)
         {
-            m_demandSize++;
+            _demandSize++;
         }
     }
 }

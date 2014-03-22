@@ -15,20 +15,13 @@ using namespace IStrategizer;
 
 DestroyEntityTypeGoal::DestroyEntityTypeGoal() : GoalEx(GOALEX_DestroyEntityType)
 {
-    /*_forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
-    _params[PARAM_ForceSizeId] = FORCESIZE_START;
-    _params[PARAM_AttackTypeId] = ATTACK_START;*/
-
-  //  _params[PARAM_Amount] = FORCESIZE_START;
     _params[PARAM_TargetEntityClassId] = ECLASS_START;
     _params[PARAM_Amount] = 0;
-    m_demandTargetSize = 0;
+    _demandTargetSize = 0;
 }
 //----------------------------------------------------------------------------------------------
 DestroyEntityTypeGoal::DestroyEntityTypeGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_DestroyEntityType, p_parameters)
 {
-    // FIXME: There should be a commander that specify force description in details
-    //_forceDescription = ForceDescriptionEx(FORCESIZE_SmallForce, PRCNT_0, PRCNT_0, PRCNT_100, PRCNT_0, PRCNT_0, PRCNT_0);
 }
 //----------------------------------------------------------------------------------------------
 void DestroyEntityTypeGoal::InitializePostConditions()
@@ -73,7 +66,7 @@ void DestroyEntityTypeGoal::Copy(IClonable* p_dest)
 //----------------------------------------------------------------------------------------------
 bool DestroyEntityTypeGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
-    return m_demandTargetSize >= _params[PARAM_Amount];
+    return _demandTargetSize >= _params[PARAM_Amount];
 }
 //----------------------------------------------------------------------------------------------
 void DestroyEntityTypeGoal::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed )
@@ -88,7 +81,7 @@ void DestroyEntityTypeGoal::HandleMessage(RtsGame& pRtsGame, Message* p_msg, boo
 
         if (pMsg->Data()->EntityType == (EntityClassType)_params[PARAM_TargetEntityClassId])
         {
-            m_demandTargetSize++;
+            _demandTargetSize++;
         }
     }
 }

@@ -4,8 +4,6 @@
 #include "GamePlayer.h"
 #include <vector>
 
-
-
 using namespace IStrategizer;
 using namespace std;
 
@@ -31,14 +29,14 @@ bool EntityClassNearArea::Evaluate(RtsGame& pRtsGame)
 
         if (!position.IsNull())
         {
-            if (_conditionParameters[PARAM_Amount] == NEGLECTED_AMOUNT)
+            if (_conditionParameters[PARAM_Amount] == DONT_CARE)
             {
                  _isSatisfied = true;
                  break;
             }
             else
             {
-                counter ++;
+                counter++;
                 if (counter == _conditionParameters[PARAM_Amount])
                 {
                     _isSatisfied = true;

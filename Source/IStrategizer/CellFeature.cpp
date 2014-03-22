@@ -126,7 +126,7 @@ float CellFeature::GetDistance(CellFeature *p_other)
     res += resourceDistance;
     res += distanceFromBase;
     res += distanceFromEnemyBase;
-    res += influenceDiff * 10000;
+    res += influenceDiff;
 
     return sqrt(res);
 }
