@@ -14,7 +14,7 @@ using namespace Serialization;
 using namespace std;
 
 EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, map< EntityObjectAttribute,int > p_entityObjectAttributes, int p_similarityThreshold) 
-: ConditionEx(p_player, CONDEX_EntityClassExist)
+    : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
     _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
     _conditionParameters[PARAM_Amount] = p_amount;

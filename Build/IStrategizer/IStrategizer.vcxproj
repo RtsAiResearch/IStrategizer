@@ -135,7 +135,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GoalEx.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\TrainArmyGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WinGameGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EngineComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\OnlineCaseBasedPlannerEx.cpp" />
@@ -217,7 +217,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\DestroyEntityTypeGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CollectResourceGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GoalEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WinGameGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h" />

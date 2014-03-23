@@ -36,7 +36,7 @@ namespace IStrategizer
         TID GetEntityObjectId(EntityClassType p_entityType,const std::vector<ObjectStateType>& p_rankedStates);
         TID GetEntityObjectId(EntityClassType p_entityType);
         Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
-
+        Vector2 AdaptEnemyBorder();
         static std::vector<ObjectStateType> WorkerStatesRankVector;
         static std::vector<ObjectStateType> AttackerStatesRankVector;
         static std::vector<ObjectStateType> EntityToMoveStatesRankVector;

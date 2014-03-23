@@ -23,6 +23,7 @@ namespace IStrategizer
         virtual TID GetEntityObjectId(EntityClassType p_entityType,const std::vector<ObjectStateType>& p_rankedStates) = 0;
         virtual TID GetEntityObjectId(EntityClassType p_entityType) = 0;
         virtual Vector2 AdaptPosition(const PlanStepParameters& p_parameters) = 0;
+        virtual Vector2 AdaptEnemyBorder() = 0;
     };
 }
 

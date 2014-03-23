@@ -43,6 +43,7 @@ namespace IStrategizer
     //----------------------------------------------------------------------------------------------
     struct EntityMessageData
     {
+        EntityClassType EntityType;
         TID EntityId;
         PlayerType OwnerId;
         int X;

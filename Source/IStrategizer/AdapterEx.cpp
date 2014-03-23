@@ -15,6 +15,7 @@
 #include "IMSystemManager.h"
 #include "InfluenceMap.h"
 #include "OccupanceDataIM.h"
+#include <vector>
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -235,6 +236,12 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
     return adaptedEntityId;
 }
 //////////////////////////////////////////////////////////////////////////
+Vector2 AdapterEx::AdaptEnemyBorder()
+{
+   g_Game->Map()->UpdateAux();
+   return g_Game->Map()->GetNearestEnemyBorders(1).at(0);
+}
+//////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
 {
     // The entity search algorithm should be moved to GamePlayer class
@@ -290,7 +297,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
     assert(pPlayer);
 
     pPlayer->Entities(entityIds);
-
+    g_Game->Map()->UpdateAux();
     for (size_t i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);

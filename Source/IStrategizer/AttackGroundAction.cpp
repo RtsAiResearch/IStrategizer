@@ -48,7 +48,7 @@ bool AttackGroundAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock
         pGameAttacker->Lock(this);
 
         // Adapt attack position
-        _position = pAdapter->AdaptPosition(Parameters());
+        _position = pAdapter->AdaptEnemyBorder();
         executed = pGameAttacker->AttackGround(_position);
     }
     

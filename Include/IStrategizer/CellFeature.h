@@ -8,6 +8,7 @@
 #include "EngineData.h"
 #include "Vector2.h"
 #include  <map>
+#include "InfluenceMap.h"
 
 namespace IStrategizer
 {
@@ -23,7 +24,7 @@ namespace IStrategizer
         BuildingDescription m_enemyBuildingDescription;
         int m_distanceFromEnemyBase;
         int m_distanceFromBase;
-
+        TInfluence m_influnce;
         CellFeature() { Clear(); }
         CellFeature(const PlanStepParameters& p_parameters);
         void AddEntity(GameEntity *p_entity,bool p_isAllied);
@@ -32,6 +33,7 @@ namespace IStrategizer
         void To(PlanStepParameters& p_parameters) const;
         void CalculateDistanceToBases(Vector2 cellWorldPosition);
         float GetDistance(CellFeature *p_other);
+        float GetInflunceSimilarity (TInfluence& p_otherInflunce);
 
         static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
 

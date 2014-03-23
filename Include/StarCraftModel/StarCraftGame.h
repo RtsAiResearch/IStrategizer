@@ -19,6 +19,7 @@ namespace StarCraftModel
         GameType*       FetchEntityType(EntityClassType p_id);
         GameResearch*   FetchResearch(ResearchType p_id);
         void            InitializeMap();
+        int             GetMaxForceSize();
     public:
         StarCraftGame();
         void ExecuteCommand(const char *p_cmd);

@@ -98,9 +98,12 @@ void Action::UpdateAux(RtsGame& pRtsGame, const WorldClock& p_clock)
         break;
 
     case ESTATE_Executing:
-        if (SuccessConditionsSatisfied(pRtsGame))
-            State(ESTATE_Succeeded, pRtsGame, p_clock);
-        else if (!AliveConditionsSatisfied(pRtsGame))
+        if(AliveConditionsSatisfied(pRtsGame))
+        { 
+            if (SuccessConditionsSatisfied(pRtsGame))
+                State(ESTATE_Succeeded, pRtsGame, p_clock);
+        }
+        else
         {
             LogInfo("%s alive conditions not satisfied, failing it", ToString().c_str());
             State(ESTATE_Failed, pRtsGame, p_clock);

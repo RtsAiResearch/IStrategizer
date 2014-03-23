@@ -88,9 +88,6 @@
     <Filter Include="Source Files\CaseBase\Condition\Expression">
       <UniqueIdentifier>{d99198b9-e3aa-40c9-bb10-56cef8f95ead}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\CaseBase\GoalEx">
-      <UniqueIdentifier>{76cad8cb-caa0-4485-a932-789108dc80b4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\CaseBase">
       <UniqueIdentifier>{25be6052-63ff-456e-8c3b-02ca644a477c}</UniqueIdentifier>
     </Filter>
@@ -129,6 +126,9 @@
     </Filter>
     <Filter Include="Source Files\Engine Components\MessgeSystem">
       <UniqueIdentifier>{df6e7167-2c12-48c8-9778-275113689989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CaseBase\Goal">
+      <UniqueIdentifier>{76cad8cb-caa0-4485-a932-789108dc80b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -192,9 +192,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp">
       <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CaseEx.cpp">
-      <Filter>Source Files\CaseBase</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\GameStateEx.cpp">
       <Filter>Source Files\CaseBase</Filter>
     </ClCompile>
@@ -218,9 +215,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CheckEntityClassAttribute.cpp">
-      <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ConditionEx.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
@@ -246,14 +240,8 @@
     <ClCompile Include="..\..\Source\IStrategizer\Or.cpp">
       <Filter>Source Files\CaseBase\Condition\Expression</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\AttackEnemyGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\GoalEx.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
+      <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\EngineComponent.cpp">
       <Filter>Source Files\Engine Components</Filter>
@@ -275,9 +263,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\Reviser.cpp">
       <Filter>Source Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecutionEx.cpp">
-      <Filter>Source Files\Engine Components\Online Case-based Planner\Planner</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ActionFactory.cpp">
       <Filter>Source Files\CaseBase\Factories</Filter>
@@ -330,41 +315,38 @@
     <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp">
       <Filter>Source Files\EngineData</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\PlanGraphNode.cpp">
-      <Filter>Source Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\WinGameGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
+      <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
+      <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
+      <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
-
-
-
-
-
-
-    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecution.cpp">
       <Filter>Source Files\Engine Components\Online Case-based Planner\Planner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\TrainArmyGoal.cpp">
+      <Filter>Source Files\CaseBase\Goal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp">
+      <Filter>Source Files\World Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -518,9 +500,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\OnlineCaseBasedPlannerEx.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecutionEx.h">
-      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\AbstractAdapter.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner\Reasoner</Filter>
     </ClInclude>
@@ -662,9 +641,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\SerializationEssentials.h">
       <Filter>Header Files\EngineData</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\PlanGraphNode.h">
-      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\PlanGraph.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
     </ClInclude>
@@ -677,26 +653,11 @@
     <ClInclude Include="..\..\Include\IStrategizer\CollectResourceGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h">
-      <Filter>Header Files\CaseBase\Goal</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DestroyEntityTypeGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
-    </ClInclude>
-
-
-
-
-
-
-    <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\IDigraph.h">
       <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
@@ -706,6 +667,15 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecution.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
+      <Filter>Header Files\CaseBase\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
+      <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

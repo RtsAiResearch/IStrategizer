@@ -7,9 +7,28 @@
 #include "CellFeature.h"
 #include "MetaData.h"
 #include <limits>
+#include "IMSystemManager.h"
+#include "GroundControlIM.h"
+#include <queue>
 
 using namespace IStrategizer;
 using namespace std;
+
+
+struct Record
+{
+   Vector2 gridPosition;
+    int distance;
+    Record(Vector2 p_gridPosition, int p_Distance): gridPosition(p_gridPosition), distance(p_Distance) { };
+};
+
+struct RecordComparator
+{
+    bool operator() (const Record& lhs, const Record& rhs)
+    {
+        return lhs.distance > rhs.distance;
+    }
+};
 
 WorldMap::WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight)
 {
@@ -40,20 +59,21 @@ void WorldMap::UpdateAux()
     vector<TID>         currPlayerEntites;
     GameEntity *currentEntity;
     unsigned cellX, cellY;
+    GroundControlIM* IM =  dynamic_cast<GroundControlIM*>(g_IMSysMgr.GetIM(IM_GroundControl));
 
     if (!m_initialized)
     {
         Initialize();
     }
-
     for (unsigned i = 0; i < m_gridHeight; i++)
     {
         for (unsigned j = 0; j < m_gridWidth; j++)
         {
             m_cellFeatureMatrix[i][j].Clear();
             m_cellFeatureMatrix[i][j].CalculateDistanceToBases(FromGridToWorld(Vector2(j ,i)));
+            m_cellFeatureMatrix[i][j].m_influnce = IM->GetCellInfluenceFromWorldPosition(FromGridToWorld(Vector2(j, i)));
         }
-    }
+    }   
 
     g_Game->Players(players);
 
@@ -152,4 +172,28 @@ Vector2 WorldMap::FromWorldToGrid(const Vector2 &p_worldPosition) const
     gridPosition.Y = p_worldPosition.Y / m_cellSide;
 
     return gridPosition;
+}
+//----------------------------------------------------------------------------------------------
+vector<Vector2> WorldMap::GetNearestEnemyBorders(int p_numberOfBorders)
+{
+ std::priority_queue<Record, std::vector<Record>, RecordComparator> minDistanceQueue;
+    for (unsigned i = 0 ; i < m_gridHeight ; i++)
+    {
+        for (unsigned j = 0 ; j < m_gridWidth ; j++)
+        {
+            if ( m_cellFeatureMatrix[i][j].m_influnce == 0)
+            {
+              minDistanceQueue.push(Record(Vector2(j,i),m_cellFeatureMatrix[i][j].m_distanceFromEnemyBase));
+            }
+        } 
+    }
+
+    vector<Vector2> result;
+
+    for (int i = 0; i < p_numberOfBorders; i++)
+    {
+        result.push_back(FromGridToWorld(minDistanceQueue.top().gridPosition));
+        minDistanceQueue.pop();
+    }
+    return result;
 }

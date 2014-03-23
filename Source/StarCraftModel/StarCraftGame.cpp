@@ -195,3 +195,8 @@ void StarCraftGame::DisplayMessage(const char* p_msg)
 {
     BroodwarPtr->sendText(p_msg);
 }
+
+int StarCraftModel::StarCraftGame::GetMaxForceSize()
+{
+    return 12;
+}
