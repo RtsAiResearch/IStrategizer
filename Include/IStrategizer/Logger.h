@@ -1,8 +1,12 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <fstream>
+
 namespace IStrategizer
 {
+#define LOG_FILENAME "IStrategizerLog.txt"
+
     class Logger
     {
     public:
@@ -17,11 +21,17 @@ namespace IStrategizer
         const static unsigned FlushRate     = 4;
 
         void Log(LogType p_type, const char* p_pFunc, const char* p_pFormat, ...);
+        void InitLogFile();
+        void FinalizeLogFile();
 
         static Logger& Instance() { static Logger inst; return inst; }
 
     private:
-        Logger() {}
+        Logger()
+        : m_isLogFileInitialized(false) { InitLogFile(); }
+        virtual ~Logger() { FinalizeLogFile(); }
+        bool m_isLogFileInitialized;
+        std::fstream m_pen;
     };
 }
 #define g_Logger IStrategizer::Logger::Instance()

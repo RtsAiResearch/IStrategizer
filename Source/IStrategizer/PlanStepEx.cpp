@@ -7,21 +7,32 @@
 using namespace std;
 using namespace IStrategizer;
 
+unsigned PlanStepEx::s_lastPlanstepID = 0;
+
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeAddressesAux()
 {
     AddMemberAddress(1, &_params);
 }
 //////////////////////////////////////////////////////////////////////////
-PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) :
-_stepTypeId(p_stepTypeId), _state(p_state), _postCondition(nullptr), _firstUpdate(true)
+PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) 
+    : _stepTypeId(p_stepTypeId),
+    _state(p_state), 
+    _postCondition(nullptr), 
+    _firstUpdate(true),
+    _id(++s_lastPlanstepID)
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
 }
 //////////////////////////////////////////////////////////////////////////
-PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters) : 
-_stepTypeId(p_stepTypeId), _state(p_state), _params(p_parameters), _postCondition(nullptr), _firstUpdate(true)
+PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters) 
+    : _stepTypeId(p_stepTypeId),
+    _state(p_state),
+    _params(p_parameters),
+    _postCondition(nullptr),
+    _firstUpdate(true),
+    _id(++s_lastPlanstepID)
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
@@ -120,6 +131,9 @@ std::string PlanStepEx::ToString() const
     const char* stepName = Enums[_stepTypeId];
     unsigned    paramIdx = 0;
     stepDescription += stepName;
+    stepDescription += "[";
+    stepDescription += to_string((_ULonglong)_id);
+    stepDescription += "]";
     stepDescription += '(';
 
     for (PlanStepParameters::const_iterator itr = _params.begin();
@@ -130,9 +144,7 @@ std::string PlanStepEx::ToString() const
         ParameterType paramKey = itr->first;
         const char* paramDesc = Enums[(int)paramKey];
         
-        if (nullptr == paramDesc)
-            DebugBreak();
-
+        _ASSERTE(paramDesc);
         stepDescription += paramDesc;
         stepDescription += '=';
 
@@ -147,7 +159,7 @@ std::string PlanStepEx::ToString() const
         // Use the Enums lookup table to translate it to string
         else
         {
-            assert(Enums[itr->second] != nullptr);
+            _ASSERTE(Enums[itr->second] != nullptr);
             stepDescription += Enums[itr->second];
         }
 

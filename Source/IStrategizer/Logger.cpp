@@ -8,6 +8,7 @@
 #include <Windows.h>
 
 using namespace IStrategizer;
+using namespace std;
 
 void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
 {
@@ -30,4 +31,32 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
         buffer1);
 
     printf_s(buffer2);
+
+#ifdef _DEBUG
+    OutputDebugStringA(buffer2);
+#endif
+
+    if (m_isLogFileInitialized)
+        m_pen << buffer2;
+}
+
+void Logger::InitLogFile()
+{
+    if (!m_isLogFileInitialized)
+    {
+        m_pen.open(LOG_FILENAME, ios::out);
+
+        if (m_pen.is_open())
+            m_isLogFileInitialized = true;
+    }
+}
+
+void Logger::FinalizeLogFile()
+{
+    if (m_isLogFileInitialized)
+    {
+        m_pen.flush();
+        m_pen.close();
+        m_isLogFileInitialized = false;
+    }
 }

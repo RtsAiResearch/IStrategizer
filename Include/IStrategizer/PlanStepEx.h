@@ -52,6 +52,8 @@ namespace IStrategizer
         unsigned _stateStartTime[COUNT(ExecutionStateType)];
         unsigned _stateTimeout[COUNT(ExecutionStateType)];
         bool _firstUpdate;
+        unsigned _id;
+        static unsigned s_lastPlanstepID;
 
         PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
         PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
@@ -82,6 +84,7 @@ namespace IStrategizer
         ExecutionStateType State() const { return _state; }
         StepLevelType LevelType() const { return _stepLevelType; }
         IClonable* Clone();
+        unsigned Id() const { return _id; }
     };
 }
 

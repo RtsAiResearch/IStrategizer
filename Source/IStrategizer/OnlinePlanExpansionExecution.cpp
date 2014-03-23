@@ -256,7 +256,8 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
         }
         else
         {
-            _ASSERTE(pCurrentPlanStep->State() == ESTATE_Pending ||
+            _ASSERTE(
+                pCurrentPlanStep->State() == ESTATE_NotPrepared ||
                 pCurrentPlanStep->State() == ESTATE_Succeeded ||
                 pCurrentPlanStep->State() == ESTATE_END);
 
@@ -288,7 +289,6 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
         else
         {
             _ASSERTE(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
-                pCurrentPlanStep->State() == ESTATE_Pending ||
                 pCurrentPlanStep->State() == ESTATE_Executing ||
                 pCurrentPlanStep->State() == ESTATE_END);
 
