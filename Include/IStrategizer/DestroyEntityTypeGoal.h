@@ -14,11 +14,12 @@ namespace IStrategizer
 
     private:
         ForceDescriptionEx _forceDescription;
-
+        int _demandTargetSize;
     public:
         DestroyEntityTypeGoal();
         DestroyEntityTypeGoal(const PlanStepParameters& p_parameters);
         void Copy(IClonable* p_dest);
+        void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
 
     protected:
         void InitializePostConditions();

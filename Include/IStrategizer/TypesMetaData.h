@@ -92,7 +92,7 @@ namespace IStrategizer
         GOALEX_WinGame    = 0x20700,                                
         GOALEX_START    = 0x20700,
         GOALEX_CollectResource,
-        GOALEX_TrainForce,
+        GOALEX_TrainArmy,
         GOALEX_DestroyEntityType,
         GOALEX_DeployArmy,
         GOALEX_END
@@ -100,7 +100,7 @@ namespace IStrategizer
 #define Define_GoalType \
     Enums[GOALEX_WinGame] = "Win Game"; \
     Enums[GOALEX_CollectResource] = "Collect Resource"; \
-    Enums[GOALEX_TrainForce] = "Train Force"; \
+    Enums[GOALEX_TrainArmy] = "Train Army"; \
     Enums[GOALEX_DestroyEntityType] = "Destroy Entity Type"; \
     Enums[GOALEX_DeployArmy] = "Deploy Army";
     //---------------------------------------------------------------------------
@@ -150,7 +150,6 @@ namespace IStrategizer
     {
         PARAM_EntityClassId    = 0x20a00,
         PARAM_START            = 0x20a00,
-        PARAM_Amount,
         PARAM_EntityObjectId,
         PARAM_AttributeId,
         PARAM_OperatorId,
@@ -193,6 +192,8 @@ namespace IStrategizer
         PARAM_DistanceToEnemyBase,
         PARAM_DistanceToBase,
         PARAM_Distance,
+        PARAM_Influnce,
+        PARAM_Amount,
         PARAM_REALVALEND,
         PARAM_END = PARAM_REALVALEND
     };
@@ -236,6 +237,7 @@ namespace IStrategizer
     Enums[PARAM_AlliedCriticalBuildingsCount] = "Allied Critical Buildings Count"; \
     Enums[PARAM_DistanceToEnemyBase] = "Distance To Enemy Base"; \
     Enums[PARAM_DistanceToBase] = "Distance To Base"; \
+    Enums[PARAM_Influnce] = "Influence"; \
     Enums[PARAM_ObjectStateType] = "Object State Type"; \
     //---------------------------------------------------------------------------
 #define Prefix_ExecutionStateType ESTATE

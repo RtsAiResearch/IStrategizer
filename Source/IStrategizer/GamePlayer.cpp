@@ -173,6 +173,7 @@ void GamePlayer::OnEntityDestroy(Message* p_pMessage)
         entityId = pDestroyMsg->Data()->EntityId;
         assert(m_entities.Contains(entityId));
         pEntity = GetEntity(entityId);
+        pDestroyMsg->Data()->EntityType = pEntity->Type();
         assert(pEntity);
         m_entities.erase(entityId);
 

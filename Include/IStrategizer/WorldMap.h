@@ -40,6 +40,7 @@ namespace IStrategizer
         void UpdateAux();
         CellFeature* GetCellFeatureFromWorldPosition(Vector2 p_position) const;
         Vector2 GetNearestCell(CellFeature* p_cell) const;
+        vector<Vector2> GetNearestEnemyBorders(int p_numberOfBorders);
         bool IsBuildable(Vector2 p_position, Vector2 p_dimension) const ;
 
     };

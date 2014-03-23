@@ -4,6 +4,7 @@
 #include "GameEntity.h"
 #include "GameType.h"
 #include "Vector2.h"
+#include "InfluenceMap.h"
 
 using namespace IStrategizer;
 
@@ -78,3 +79,10 @@ void GroundControlIM::Update(const WorldClock& p_clock)
     ForEachObj(StampObjField);
 }
 //////////////////////////////////////////////////////////////////////////
+TInfluence GroundControlIM::GetCellInfluenceFromWorldPosition(const Vector2 p_worldPosition)//world position
+{
+    Vector2 tempGridPostion;
+    FromWorldToGrid(p_worldPosition, tempGridPostion);
+    return Map()[tempGridPostion.Y * GridWidth() + tempGridPostion.X].Inf;
+    //world coordinates
+}

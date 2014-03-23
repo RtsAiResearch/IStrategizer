@@ -246,9 +246,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\GoalEx.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\EngineComponent.cpp">
       <Filter>Source Files\Engine Components</Filter>
     </ClCompile>
@@ -336,14 +333,20 @@
     <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp">
       <Filter>Source Files\CaseBase\GoalEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\TrainArmyGoal.cpp">
+      <Filter>Source Files\CaseBase\GoalEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
       <Filter>Source Files</Filter>
@@ -665,14 +668,20 @@
     <ClInclude Include="..\..\Include\IStrategizer\CollectResourceGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h">
-      <Filter>Header Files\CaseBase\Goal</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DestroyEntityTypeGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
+      <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
       <Filter>Header Files</Filter>

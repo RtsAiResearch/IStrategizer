@@ -15,6 +15,9 @@
 #include "GameType.h"
 #include "GameEntity.h"
 #include "AdapterEx.h"
+#include "TypesMetaData.h"
+#include "EntityClassNearArea.h"
+#include "And.h"
 
 using namespace IStrategizer;
 
@@ -103,7 +106,10 @@ bool MoveEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 //////////////////////////////////////////////////////////////////////////
 void MoveEntityAction::InitializePostConditions()
 {
-
+    vector<Expression*> m_terms;
+    EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
+    m_terms.push_back(new EntityClassNearArea(PLAYER_Self, entityType, new CellFeature(_params), 0, 1));
+    _postCondition = new And(m_terms);
 }
 //////////////////////////////////////////////////////////////////////////
 void MoveEntityAction::InitializePreConditions()

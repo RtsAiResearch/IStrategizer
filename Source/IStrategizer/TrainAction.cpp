@@ -17,9 +17,9 @@
 
 using namespace IStrategizer;
 
-const unsigned MaxPrepTime = 300000;
+const unsigned MaxPrepTime = 0;
 const unsigned MaxExecTrialTime = 60000;
-const unsigned MaxExecTime = 60000;
+const unsigned MaxExecTime = 0;
 
 TrainAction::TrainAction()
     : Action(ACTIONEX_Train, MaxPrepTime, MaxExecTrialTime, MaxExecTime),
@@ -88,12 +88,15 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
             assert(pTrainer);
             ObjectStateType trainerState = (ObjectStateType)pTrainer->Attr(EOATTR_State);
             trainerBusy = trainerState == OBJSTATE_Training;
-
-            if (trainerBusy)
+            // 3. The trainee unit object exist, i.e not cancel
+            traineeExist = g_Assist.DoesEntityObjectExist(_traineeId);
+            
+            if (traineeExist && !trainerBusy)
             {
-                // 3. The trainee unit object exist, i.e not cancel
-                traineeExist = g_Assist.DoesEntityObjectExist(_traineeId);
-
+                success = true;
+            }
+            else if (trainerBusy)
+            {
                 if (traineeExist)
                 {
                     // 4. Trainee is still being trained
@@ -102,7 +105,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
                     ObjectStateType traineeState = (ObjectStateType)pTrainee->Attr(EOATTR_State);
                     traineeBeingTrained = traineeState == OBJSTATE_BeingConstructed;
 
-                    if (traineeBeingTrained)
+                    if (traineeBeingTrained || traineeState == OBJSTATE_Idle)
                         success = true;
                 }
             }
