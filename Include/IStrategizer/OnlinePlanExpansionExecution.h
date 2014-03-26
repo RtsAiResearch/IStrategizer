@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ONLINEPLANEXPANSIONEXECUTION_H
+#define ONLINEPLANEXPANSIONEXECUTION_H
 
 #include <map>
 #include "EngineData.h"
@@ -82,3 +83,5 @@ namespace IStrategizer
         IOlcbpPlan *m_pOlcbpPlan;
     };
 }
+
+#endif // ONLINEPLANEXPANSIONEXECUTION_H
