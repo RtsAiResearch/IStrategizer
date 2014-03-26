@@ -44,13 +44,13 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
 {
     if (PlanStepEx::State() == ESTATE_Executing && pMsg->MessageTypeID() == MSG_EntityCreate)
     {
-        EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(pMsg);
-        _ASSERTE(pMsg && pMsg->Data());
+        EntityCreateMessage* pEntityMsg = static_cast<EntityCreateMessage*>(pMsg);
+        _ASSERTE(pEntityMsg && pEntityMsg->Data());
 
-        if (pMsg->Data()->OwnerId != PLAYER_Self)
+        if (pEntityMsg->Data()->OwnerId != PLAYER_Self)
             return;
 
-        TID entityId = pMsg->Data()->EntityId;
+        TID entityId = pEntityMsg->Data()->EntityId;
         GameEntity *pEntity = game.Self()->GetEntity(entityId);
         _ASSERTE(pEntity);
 
