@@ -148,9 +148,9 @@ namespace IStrategizer
             _inEdges.erase(_inEdges.begin() + p_node);
         }
         //--------------------------------------------------------------------------
-        vector<int> GetChildren(vector<int> p_execluded = vector<int>())
+        std::vector<int> GetChildren(std::vector<int> p_execluded = std::vector<int>())
         {
-            vector<int> m_children;
+            std::vector<int> m_children;
 
             for (unsigned i = 0; i < _outEdges.size(); ++i)
             {
@@ -161,9 +161,9 @@ namespace IStrategizer
             return m_children;
         }
         //--------------------------------------------------------------------------
-        vector<int> GetParents(vector<int> p_execluded = vector<int>())
+        std::vector<int> GetParents(std::vector<int> p_execluded = std::vector<int>())
         {
-            vector<int> m_parents;
+            std::vector<int> m_parents;
 
             for (unsigned i = 0; i < _inEdges.size(); ++i)
             {

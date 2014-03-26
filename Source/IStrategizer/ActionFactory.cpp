@@ -9,6 +9,7 @@
 #include "MoveAction.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions) {
     Action* m_action = nullptr;

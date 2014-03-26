@@ -25,6 +25,7 @@
 #include "Logger.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 GamePlayer::GamePlayer() : m_pState(new GameStateEx()), m_pResources(nullptr), m_pTechTree(nullptr)
 {

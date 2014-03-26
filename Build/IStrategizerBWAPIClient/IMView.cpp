@@ -5,6 +5,7 @@
 #include "IMDrawingStrategy.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 IMView::IMView(QWidget *parent)
 : QWidget(parent), m_pIM(nullptr), m_pfnIMDrawer(nullptr), m_transformationCached(false)

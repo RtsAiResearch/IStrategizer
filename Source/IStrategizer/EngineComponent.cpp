@@ -12,6 +12,7 @@
 #include <cassert>
 
 using namespace IStrategizer;
+using namespace std;
 
 EngineComponent::EngineComponent(const char* p_pName)
     : m_pName(p_pName)

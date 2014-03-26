@@ -20,13 +20,11 @@ namespace IStrategizer
     class CaseBaseEx : public Serialization::UserObject
     {
         OBJECT_SERIALIZABLE(CaseBaseEx);
+        OBJECT_MEMBERS(1, &CaseContainer);
 
     public:
         ///> type=vector(CaseEx*)
         Serialization::SVector<CaseEx*> CaseContainer;
-
-    protected:
-        void InitializeAddressesAux() { AddMemberAddress(1, &CaseContainer); }
     };
 }
 

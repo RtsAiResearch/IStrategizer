@@ -15,7 +15,7 @@ namespace IStrategizer
         IM_GroundControl
     };
 
-    typedef map<IMType, InfluenceMap*> IMContainer;
+    typedef std::map<IMType, InfluenceMap*> IMContainer;
 
     struct IMSysManagerParam
     {

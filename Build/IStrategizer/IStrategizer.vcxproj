@@ -23,6 +23,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <PlatformToolset>v100</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -36,8 +37,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -46,38 +45,34 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">IStrategizerD</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Message>Building TypeInfo database</Message>
-      <Command>"$(SolutionDir)..\..\Serialization\Debug\TypeInfoCollector.exe" "$(SolutionDir)..\Include\IStrategizer" $(OutDir)</Command>
+      <Command>"$(OutDir)\TypeInfoCollector.exe" "$(ProjectDir)..\..\Include\IStrategizer" $(OutDir)</Command>
     </PreBuildEvent>
     <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\Include\IStrategizer;..\..\..\Serialization\UnrealCompiler;..\..\..\Serialization\ObjectSerializer\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\..\Include\IStrategizer;..\..\..\Serialization\UnrealCompiler;..\..\..\Serialization\ObjectSerializer\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4480;4290;4100%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SmallerTypeCheck>true</SmallerTypeCheck>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <MinimalRebuild>false</MinimalRebuild>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying TypeInfo databse to CaseVisualizer</Message>
       <Command>xcopy "$(OutDir)TypeInfo" "$(SolutionDir)..\..\CaseVisualizer\Debug\TypeInfo" /Y /I
 </Command>
     </PreLinkEvent>
-    <Lib>
-      <AdditionalDependencies>ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)D.lib</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\Serialization\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-    </Lib>
+    <Lib />
     <PostBuildEvent>
       <Command>
       </Command>
@@ -121,7 +116,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\GoalMatrixRowEvaluator.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstration.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\CaseEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GameStateEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\PlanStepEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Action.cpp" />
@@ -150,8 +144,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\RetainerEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\RetrieverEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Reviser.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecutionEx.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\PlanGraphNode.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecution.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ActionFactory.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GoalFactory.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Message.cpp" />
@@ -166,9 +159,11 @@
     <ClCompile Include="..\..\Source\IStrategizer\MetaData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Include\IStrategizer\AdjListDigraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\IDigraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h" />
@@ -230,8 +225,7 @@
     <CustomBuildStep Include="..\..\Include\IStrategizer\GameTrace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineComponent.h" />
     <ClInclude Include="..\..\Include\IStrategizer\OnlineCaseBasedPlannerEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecutionEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\PlanGraphNode.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecution.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractAdapter.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractRetainer.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AbstractRetriever.h" />

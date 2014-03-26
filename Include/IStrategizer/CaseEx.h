@@ -8,18 +8,6 @@
 #include "UserObject.h"
 #endif
 
-#ifndef PLANGRAPH_H
-#include "PlanGraph.h"
-#endif
-
-#ifndef GOALEX_H
-#include "GoalEx.h"
-#endif
-
-#ifndef SPAIR_H
-#include "SPair.h"
-#endif
-
 #ifndef ENGINEDATA_H
 #include "EngineData.h"
 #endif
@@ -29,39 +17,47 @@ namespace IStrategizer
     class GoalEx;
     class PlanGraph;
     class GameStateEx;
-    class CookedPlan;
 
     ///> class=CaseEx
     class CaseEx : public Serialization::UserObject
     {
+    public:
+        CaseEx() 
+            : m_pGoal(nullptr),
+            m_pGameState(nullptr),
+            m_trialCount(1),
+            m_successCount(1),
+            m_pPlan(nullptr) {};
+        
+        CaseEx(OlcbpPlan* pPlan, GoalEx* pGoal, GameStateEx* pGameState, int trialCount, int successCount)
+            : m_pGoal(pGoal),
+            m_pGameState(pGameState),
+            m_trialCount(trialCount),
+            m_successCount(successCount),
+            m_pPlan(pPlan) {}
+
+        IOlcbpPlan* Plan() const { return m_pPlan; }
+        GoalEx* Goal() const { return m_pGoal; }
+        GameStateEx* GameState() const { return m_pGameState; }
+        int TrialCount() const { return m_trialCount; }
+        int SuccessCount() const { return m_successCount; }
+        void TrialCount(int val) { m_trialCount = val; }
+        void SuccessCount(int val) { m_successCount = val; }
+
         OBJECT_SERIALIZABLE(CaseEx);
+        OBJECT_MEMBERS(5, &m_pGoal, &m_pGameState, &m_trialCount, &m_successCount, &m_pPlan);
 
     private:
-        ///> type=PlanGraph*
-        PlanGraph* _planGraph;
         ///> type=GoalEx*
-        GoalEx* _goal;
+        GoalEx* m_pGoal;
         ///> type=GameStateEx*
-        GameStateEx* _gameState;
+        GameStateEx* m_pGameState;
         ///> type=int
-        int _trialCount;
+        int m_trialCount;
         ///> type=int
-        int _successCount;
-
-    public:
-        CaseEx() : _planGraph(nullptr), _goal(nullptr), _gameState(nullptr), _trialCount(1), _successCount(1) {};
-        CaseEx(PlanGraph* p_planGraph, GoalEx* p_goal, GameStateEx* p_gameState, int p_trialCount, int p_successCount);
-        //----------------------------------------------------------------------------------------------------------------------------------------------------
-        PlanGraph*      GetPlanGraph() const { return _planGraph; }
-        GoalEx*         Goal() const { return _goal; }
-        GameStateEx*    GameState() const { return _gameState; }
-        int TrialCount() const { return _trialCount; }
-        int SuccessCount() const { return _successCount; }
-        void TrialCount(int val) { _trialCount = val; }
-        void SuccessCount(int val) { _successCount = val; }
-
-    protected:
-        void            InitializeAddressesAux();
+        int m_successCount;
+        ///> type=OlcbpPlan*
+        OlcbpPlan *m_pPlan;
     };
 }
 

@@ -3,7 +3,6 @@
 #define TRAINARMYGOAL_H
 
 #include "GoalEx.h"
-#include "Serializable.h"
 
 namespace IStrategizer
 {

@@ -6,6 +6,7 @@
 #endif
 #include <cstdio>
 #include "Logger.h"
+#include "GoalEx.h"
 
 using namespace IStrategizer;
 

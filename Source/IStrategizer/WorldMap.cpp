@@ -12,6 +12,7 @@
 #include <queue>
 
 using namespace IStrategizer;
+using namespace std;
 
 
 struct Record

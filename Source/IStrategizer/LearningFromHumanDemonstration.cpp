@@ -309,7 +309,7 @@ void LearningFromHumanDemonstration::RetainLearntCases( vector<CookedPlan*>& p_c
     for(size_t i = 0, size = p_cookedPlans.size(); i < size; ++i)
     {
         CookedPlan* currCookedPlan = p_cookedPlans[i];
-        pLearntCase = new CaseEx(currCookedPlan->pPlan, currCookedPlan->Goal, currCookedPlan->gameState, 1, 1);
+        pLearntCase = new CaseEx(nullptr/*currCookedPlan->pPlan*/, currCookedPlan->Goal, currCookedPlan->gameState, 1, 1);
         _retainer->Retain(pLearntCase);
     }
 

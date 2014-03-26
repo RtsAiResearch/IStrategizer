@@ -9,22 +9,22 @@ namespace IStrategizer
     enum PlayerType;
     class GoalEx;
 
-    class OnlinePlanExpansionExecutionEx;
+    class OnlinePlanExpansionExecution;
     class CaseBasedReasonerEx;
 
     class OnlineCaseBasedPlannerEx
     {
     private:
         CaseBasedReasonerEx*            _caseBasedReasoner;
-        OnlinePlanExpansionExecutionEx*    _onlineExpansionExecution;
+        OnlinePlanExpansionExecution*    _onlineExpansionExecution;
 
     public:
         OnlineCaseBasedPlannerEx();
         void       Update(const WorldClock& p_clock);
         void       Init(GoalEx *p_initialGoal);
         const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
-        const OnlinePlanExpansionExecutionEx* ExpansionExecution() const { return _onlineExpansionExecution; }
-        OnlinePlanExpansionExecutionEx* ExpansionExecution() { return _onlineExpansionExecution; }
+        const OnlinePlanExpansionExecution* ExpansionExecution() const { return _onlineExpansionExecution; }
+        OnlinePlanExpansionExecution* ExpansionExecution() { return _onlineExpansionExecution; }
         virtual    ~OnlineCaseBasedPlannerEx();
     };
 }
