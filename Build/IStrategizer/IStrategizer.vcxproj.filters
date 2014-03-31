@@ -315,6 +315,10 @@
     <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp">
       <Filter>Source Files\EngineData</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
+    <ClCompile Include="..\..\Source\IStrategizer\GatherResourceAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
@@ -643,6 +647,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\PlanGraph.h">
       <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
+    <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
+    <ClInclude Include="..\..\Include\IStrategizer\GatherResourceAction.h">
+      <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h">
       <Filter>Header Files\CaseBase\Condition</Filter>

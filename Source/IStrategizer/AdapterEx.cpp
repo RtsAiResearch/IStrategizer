@@ -16,6 +16,7 @@
 #include "InfluenceMap.h"
 #include "OccupanceDataIM.h"
 #include <vector>
+//#include "..\StarCraftModel\DefinitionCrossMapping.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -240,6 +241,50 @@ Vector2 AdapterEx::AdaptEnemyBorder()
 {
    g_Game->Map()->UpdateAux();
    return g_Game->Map()->GetNearestEnemyBorders(1).at(0);
+}
+//////////////////////////////////////////////////////////////////////////
+IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID )
+{
+	GamePlayer	*pPlayer;
+	GameEntity	*pEntity;
+	vector<TID>	entityIds;
+	TID			adaptedResourceId = INVALID_TID;
+	double		bestDistance = numeric_limits<double>::max();
+	CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
+	//DefinitionCrossMapping pDefinitionCrossMapping = DefinitionCrossMapping::Instance();
+
+	pPlayer = g_Game->GetPlayer(PLAYER_Neutral);
+	assert(pPlayer);
+
+	pPlayer->Entities((EntityClassType)131236, entityIds);
+
+	TID fetchedResourceId;
+	g_Game->Map()->UpdateAux();
+	
+	//if(pDefinitionCrossMapping.ResourceMapping.TryGetBySecond(p_resourceType, fetchedResourceId) == true)
+	{
+		for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+		{
+			//if (fetchedResourceId == entityIds[i])
+			{
+				pEntity = pPlayer->GetEntity(entityIds[i]);
+				assert(pEntity);
+
+				//CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+				//double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
+
+				GameEntity* gatherer = g_Game->GetPlayer(PLAYER_Self)->GetEntity(p_gathererID);
+				double dist = gatherer->GetPosition().Distance(pEntity->GetPosition());
+				if (dist <= bestDistance)
+				{
+					bestDistance = dist;
+					adaptedResourceId = pEntity->Id();
+				}
+			}
+		}
+	}
+
+	return adaptedResourceId;
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
