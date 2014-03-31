@@ -115,6 +115,7 @@ namespace IStrategizer
         ACTIONEX_AttackEntity,
         ACTIONEX_MoveEntity,
         ACTIONEX_Move,
+		ACTIONEX_GatherResource,
         ACTIONEX_END
     };
 #define Define_ActionType \
@@ -123,8 +124,9 @@ namespace IStrategizer
     Enums[ACTIONEX_Research] = "Research"; \
     Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
     Enums[ACTIONEX_AttackEntity] = "Attack Entity"; \
-    Enums[ACTIONEX_Move] = "Move"; \
-    Enums[ACTIONEX_MoveEntity] = "Move Entity";
+    Enums[ACTIONEX_MoveEntity] = "Move Entity Action";\
+    Enums[ACTIONEX_Move] = "Move Action"; \
+	Enums[ACTIONEX_GatherResource] = "Gather Resource";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
     enum ConditionType
@@ -148,8 +150,8 @@ namespace IStrategizer
 #define Prefix_ParameterType PARAM
     enum ParameterType
     {
-        PARAM_EntityClassId    = 0x20a00,
-        PARAM_START            = 0x20a00,
+        PARAM_EntityClassId = 0x20a00,
+        PARAM_START = 0x20a00,
         PARAM_EntityObjectId,
         PARAM_AttributeId,
         PARAM_OperatorId,
@@ -193,6 +195,7 @@ namespace IStrategizer
         PARAM_Distance,
         PARAM_Influnce,
         PARAM_Amount,
+		PARAM_Amount,
         PARAM_REALVALEND,
         PARAM_END = PARAM_REALVALEND
     };
