@@ -54,18 +54,23 @@ void ResourceDescription::RemoveEntity(GameEntity *p_entity)
 //----------------------------------------------------------------------------------------------
 void ResourceDescription::Clear()
 {
-    m_numberOfPrimary = 0;
-    m_numberOfSecondary = 0;
-    m_numberOfSupply = 0;
+    m_numberOfPrimary = DONT_CARE;
+    m_numberOfSecondary = DONT_CARE;
+    m_numberOfSupply = DONT_CARE;
 }
 //----------------------------------------------------------------------------------------------
-float ResourceDescription::GetDistance(ResourceDescription *p_other)
+float ResourceDescription::GetDistance(ResourceDescription *p_other) const
 {
     float dist = 0.0;
 
-    dist += pow((float)(m_numberOfPrimary - p_other->m_numberOfPrimary), 2);
-    dist += pow((float)(m_numberOfSecondary - p_other->m_numberOfSecondary), 2);
-    dist += pow((float)(m_numberOfSupply - p_other->m_numberOfSupply), 2);
+    if (m_numberOfPrimary != DONT_CARE && p_other->m_numberOfPrimary != DONT_CARE)
+        dist += pow((float)(m_numberOfPrimary - p_other->m_numberOfPrimary), 2);
+    
+    if (m_numberOfSecondary != DONT_CARE && p_other->m_numberOfSecondary != DONT_CARE)
+        dist += pow((float)(m_numberOfSecondary - p_other->m_numberOfSecondary), 2);
+    
+    if (m_numberOfSupply != DONT_CARE && p_other->m_numberOfSupply != DONT_CARE)
+        dist += pow((float)(m_numberOfSupply - p_other->m_numberOfSupply), 2);
 
     return dist;
 }

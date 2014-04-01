@@ -131,7 +131,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
     return success;
 }
 //----------------------------------------------------------------------------------------------
-bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
+bool TrainAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 {
     bool success = false;
     bool traineeBeingTrained = false;
@@ -144,7 +144,7 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
         if (traineeExist)
         {
             // 2. Trainee is ready and no more being constructed
-            GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
+            GameEntity* pTrainee = pRtsGame.Self()->GetEntity(m_traineeId);
             _ASSERTE(pTrainee);
             ObjectStateType traineeState = (ObjectStateType)pTrainee->Attr(EOATTR_State);
             traineeBeingTrained = traineeState == OBJSTATE_BeingConstructed;

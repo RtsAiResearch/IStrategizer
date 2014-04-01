@@ -18,7 +18,7 @@ namespace IStrategizer
         void AddEntity(GameEntity *p_entity);
         void RemoveEntity(GameEntity *p_entity);
         void Clear();
-        float GetDistance(ForceDescription *p_other);
+        float GetDistance(ForceDescription *p_other) const;
     };
 }
 

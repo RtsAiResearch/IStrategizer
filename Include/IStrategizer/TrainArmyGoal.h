@@ -22,7 +22,9 @@ namespace IStrategizer
         bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
 
     private:
-        int _demandSize;
+        int m_demandUnitsCount;
+        int m_trainedUnitsCount;
+        std::vector<TID> m_pendingUnits;
     };
 }
 #endif // TRAINARMYGOAL_H
