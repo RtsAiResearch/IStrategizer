@@ -20,8 +20,8 @@ namespace IStrategizer
         inline GoalEx(GoalType p_goalType, const PlanStepParameters& p_parameters) : PlanStepEx(p_goalType, ESTATE_END, p_parameters) {}
 
     public:
-        void UpdateAux(RtsGame& pRtsGame, const WorldClock& p_clock);
-        void Reset(RtsGame& pRtsGame, const WorldClock& p_clock);
+        void UpdateAux(RtsGame& game, const WorldClock& p_clock);
+        void Reset(RtsGame& game, const WorldClock& p_clock);
     };
 }
 

@@ -37,7 +37,7 @@ void AttackEntityAction::Copy(IClonable* p_dest)
     Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
     EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
@@ -53,8 +53,8 @@ bool AttackEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock
 
         if (_targetId != INVALID_TID)
         {
-            GameEntity* pGameAttacker = pRtsGame.Self()->GetEntity(_attackerId);
-            GameEntity* pGameTarget = pRtsGame.Enemy()->GetEntity(_targetId);
+            GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
+            GameEntity* pGameTarget = game.Enemy()->GetEntity(_targetId);
             assert(pGameAttacker);
             assert(pGameTarget);
             pGameAttacker->Lock(this);
@@ -65,22 +65,22 @@ bool AttackEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock
     return executed;
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void AttackEntityAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
     
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& game)
 {
     return g_Assist.DoesEntityObjectExist(_attackerId) && g_Assist.DoesEntityObjectExist(_targetId, PLAYER_Enemy);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& game)
 {
     assert(PlanStepEx::State() == ESTATE_Executing);
 
-    GameEntity* pGameAttacker = pRtsGame.Self()->GetEntity(_attackerId);
-    GameEntity* pGameTarget = pRtsGame.Enemy()->GetEntity(_targetId);
+    GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
+    GameEntity* pGameTarget = game.Enemy()->GetEntity(_targetId);
     assert(pGameAttacker);
     assert(pGameTarget);
 

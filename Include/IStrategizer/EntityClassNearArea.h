@@ -22,7 +22,7 @@ namespace IStrategizer
         EntityClassNearArea() {}
         EntityClassNearArea(PlayerType p_player, EntityClassType p_entityType, CellFeature* cellFeature, int howFar, int p_amount =  DONT_CARE);
 
-        bool Evaluate(RtsGame& pRtsGame);
+        bool Evaluate(RtsGame& game);
         bool Consume(int p_amount) { return true; }
     };
 }

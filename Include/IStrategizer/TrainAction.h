@@ -10,6 +10,10 @@
 #include "Vector2.h"
 #endif
 
+#ifndef WORLDRESOURCES_H
+#include "WorldResources.h"
+#endif
+
 namespace IStrategizer
 {
     class CellFeature;
@@ -24,7 +28,7 @@ namespace IStrategizer
         TrainAction();
         TrainAction(const PlanStepParameters& params);
         bool AliveConditionsSatisfied(RtsGame& game);
-        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame& game);
 
     protected:
         void OnSucccess(RtsGame& game, const WorldClock& clock);
@@ -39,6 +43,7 @@ namespace IStrategizer
         TID m_traineeId;
         GameEntity* m_pTrainee;
         bool m_trainStarted;
+        WorldResources m_requiredResources;
     };
 }
 

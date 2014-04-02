@@ -5,6 +5,7 @@
 #include "GamePlayer.h"
 #include "EntityClassExist.h"
 #include "And.h"
+#include "Not.h"
 #include <cassert>
 
 using namespace IStrategizer;
@@ -18,10 +19,10 @@ WinGameGoal::WinGameGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_
 {
 }
 //----------------------------------------------------------------------------------------------
-bool WinGameGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool WinGameGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
     vector<TID> enemyEntities;
-    pRtsGame.Enemy()->Entities(enemyEntities);
+    game.Enemy()->Entities(enemyEntities);
 
     // All enemy units are destroyed, win game!
     return enemyEntities.empty();
@@ -29,7 +30,5 @@ bool WinGameGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
 //----------------------------------------------------------------------------------------------
 void WinGameGoal::InitializePostConditions()
 {
-    vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Enemy));
-    _postCondition = new And(m_terms);
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy));
 }

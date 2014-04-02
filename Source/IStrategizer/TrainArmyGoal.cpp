@@ -31,13 +31,13 @@ void TrainArmyGoal::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-bool TrainArmyGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool TrainArmyGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
     vector<TID> trainedUnits;
 
     for (size_t i = 0; i < m_pendingUnits.size(); ++i)
     {
-        GameEntity *pEntity = pRtsGame.Self()->GetEntity(m_pendingUnits[i]);
+        GameEntity *pEntity = game.Self()->GetEntity(m_pendingUnits[i]);
 
         if (pEntity)
         {
@@ -57,12 +57,12 @@ bool TrainArmyGoal::SuccessConditionsSatisfied(RtsGame& pRtsGame)
         m_pendingUnits.erase(std::remove(m_pendingUnits.begin(), m_pendingUnits.end(), trainedUnits[i]), m_pendingUnits.end());
     }
 
-    m_demandUnitsCount = pRtsGame.GetForceSizeCount((ForceSizeType)_params[PARAM_ForceSizeId]);
+    m_demandUnitsCount = game.GetForceSizeCount((ForceSizeType)_params[PARAM_ForceSizeId]);
 
     return m_trainedUnitsCount >= m_demandUnitsCount;
 }
 //----------------------------------------------------------------------------------------------
-void TrainArmyGoal::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void TrainArmyGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
     if (p_msg->MessageTypeID() == MSG_EntityCreate)
     {
@@ -73,7 +73,7 @@ void TrainArmyGoal::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_con
             return;
 
         TID entityId = pMsg->Data()->EntityId;
-        GameEntity *pEntity = pRtsGame.Self()->GetEntity(entityId);
+        GameEntity *pEntity = game.Self()->GetEntity(entityId);
         assert(pEntity);
         EntityClassType tempEntity = pEntity->Type();
         EntityClassType tempParam = (EntityClassType)_params[PARAM_EntityClassId];

@@ -33,17 +33,17 @@ void MoveAction::Copy(IClonable* p_dest)
     Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
-void MoveAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void MoveAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
 
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool MoveAction::AliveConditionsSatisfied(RtsGame& game)
 {
     bool satisfied = false;
     if (g_Assist.DoesEntityObjectExist(_entityId))
     {
-        GameEntity* pEntity = pRtsGame.Self()->GetEntity(_entityId);
+        GameEntity* pEntity = game.Self()->GetEntity(_entityId);
         assert(pEntity);
         satisfied = (pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false);
     }
@@ -51,7 +51,7 @@ bool MoveAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
     return satisfied;
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool MoveAction::SuccessConditionsSatisfied(RtsGame& game)
 {
     return g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
 }
@@ -61,7 +61,7 @@ void MoveAction::InitializeAddressesAux()
     Action::InitializeAddressesAux();
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool MoveAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
@@ -74,7 +74,7 @@ bool MoveAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
     {
         //Adapt position
         _position = pAdapter->AdaptPosition(Parameters());
-        _pEntity  = pRtsGame.Self()->GetEntity(_entityId);
+        _pEntity  = game.Self()->GetEntity(_entityId);
         _pEntity->Lock(this);
         assert(_pEntity);
         executed = _pEntity->Move(_position);

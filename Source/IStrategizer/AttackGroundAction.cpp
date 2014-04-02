@@ -32,7 +32,7 @@ AttackGroundAction::AttackGroundAction(const PlanStepParameters& p_parameters) :
 {
 }
 //----------------------------------------------------------------------------------------------
-bool AttackGroundAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool AttackGroundAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
     EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
@@ -43,7 +43,7 @@ bool AttackGroundAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock
 
     if (_attackerId != INVALID_TID)
     {
-        GameEntity* pGameAttacker = pRtsGame.Self()->GetEntity(_attackerId);
+        GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
         assert(pGameAttacker);
         pGameAttacker->Lock(this);
 
@@ -55,21 +55,21 @@ bool AttackGroundAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock
     return executed;
 }
 //----------------------------------------------------------------------------------------------
-void AttackGroundAction::HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed)
+void AttackGroundAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
     
 }
 //----------------------------------------------------------------------------------------------
-bool AttackGroundAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool AttackGroundAction::AliveConditionsSatisfied(RtsGame& game)
 {
     return g_Assist.DoesEntityObjectExist(_attackerId);
 }
 //----------------------------------------------------------------------------------------------
-bool AttackGroundAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool AttackGroundAction::SuccessConditionsSatisfied(RtsGame& game)
 {
     assert(PlanStepEx::State() == ESTATE_Executing);
 
-    GameEntity* pGameAttacker = pRtsGame.Self()->GetEntity(_attackerId);
+    GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
     assert(pGameAttacker);
     ObjectStateType attackerState = (ObjectStateType)pGameAttacker->Attr(EOATTR_State);
     return (attackerState == OBJSTATE_Attacking) || (attackerState == OBJSTATE_UnderAttack);

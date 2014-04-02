@@ -168,18 +168,23 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 {
-    Unit            building = m_unit;
-    TID             unitTypeId;
-    string          typeName;
-    UnitType        type;
+    Unit building = m_unit;
+    TID unitTypeId;
+    string typeName;
+    UnitType type;
+    bool success = false;
 
     unitTypeId = g_Database.EntityMapping.GetBySecond(p_entityClassId);
     typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
 
     type = BWAPI::UnitType::getType(typeName);
+    
+    if (building->getTrainingQueue().size() < g_Game->GetMaxTrainingQueueCount())
+    {
+        success = building->train(type);
+    }
 
-    return building->train(type);
-
+    return success;
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
