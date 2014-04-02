@@ -103,12 +103,12 @@ void CellFeature::Clear()
     m_alliedForceDescription.Clear();
     m_enemyForceDescription.Clear();
     m_resourceDescription.Clear();
-    m_distanceFromBase = 0;
-    m_distanceFromEnemyBase = 0;
-    m_influnce = 0;
+    m_distanceFromBase = DONT_CARE;
+    m_distanceFromEnemyBase = DONT_CARE;
+    m_influnce = DONT_CARE;
 }
 //----------------------------------------------------------------------------------------------
-float CellFeature::GetDistance(CellFeature *p_other)
+float CellFeature::GetDistance(CellFeature *p_other) const
 {
     float res = 0.0;
     float alliedBuildingDistance = m_alliedBuildingDescription.GetDistance(&(p_other->m_alliedBuildingDescription));
@@ -165,7 +165,12 @@ float CellFeature::GetBaseDistanceSimilarity(int firstBase, int secondBase) cons
     return dist;
 }
 
-float IStrategizer::CellFeature::GetInflunceSimilarity( TInfluence& p_otherInflunce )
+float IStrategizer::CellFeature::GetInflunceSimilarity(TInfluence& p_otherInflunce) const
 {
-    return (float)abs(m_influnce - p_otherInflunce);
+    float dist = 0.0;
+
+    if (m_influnce != DONT_CARE && p_otherInflunce != DONT_CARE)
+        dist = pow((float)(m_influnce - p_otherInflunce), 2);
+
+    return dist;
 }

@@ -32,8 +32,8 @@ namespace IStrategizer
         void Clear();
         void To(PlanStepParameters& p_parameters) const;
         void CalculateDistanceToBases(Vector2 cellWorldPosition);
-        float GetDistance(CellFeature *p_other);
-        float GetInflunceSimilarity (TInfluence& p_otherInflunce);
+        float GetDistance(CellFeature *p_other) const;
+        float GetInflunceSimilarity (TInfluence& p_otherInflunce) const;
 
         static const CellFeature& Null() { static CellFeature nullCellFeature; return nullCellFeature; }
 

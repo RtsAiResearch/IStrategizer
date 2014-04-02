@@ -24,7 +24,7 @@ namespace IStrategizer
         TrainAction();
         TrainAction(const PlanStepParameters& params);
         bool AliveConditionsSatisfied(RtsGame& game);
-        bool SuccessConditionsSatisfied(RtsGame& game);
+        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
 
     protected:
         void OnSucccess(RtsGame& game, const WorldClock& clock);
