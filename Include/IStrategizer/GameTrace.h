@@ -13,11 +13,11 @@ namespace IStrategizer
     class GameTrace
     {
     private:
-        unsigned       m_gameCycle;
-        ActionType     m_action;
-        PlanStepParameters   m_actionParams;
-        GameStateEx     m_gameState;
-        PlayerType     m_self;
+        unsigned m_gameCycle;
+        ActionType m_action;
+        PlanStepParameters m_actionParams;
+        GameStateEx m_gameState;
+        PlayerType m_self;
 
     public:
         typedef std::vector<GameTrace> List;

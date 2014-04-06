@@ -33,8 +33,8 @@ LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_play
 void LearningFromHumanDemonstration::Learn()
 {
     vector<CookedPlan*> m_cookedPlans;
-    GameTrace::List m_rawCases =_helper->ObservedTraces();
-
+    vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
+    
  //   vector<CookedCase*> m_cookedCases;
     //vector<PlanStepEx*> m_steps;
 
@@ -86,7 +86,7 @@ void LearningFromHumanDemonstration::Learn()
     RetainLearntCases(m_cookedPlans);
 }
 //------------------------------------------------------------------------------------------------
-vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrace*>& p_traces)
+vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List p_traces)
 {
     size_t rowSize = _helper->GetGoalMatrixRowEvaluator().GetRowSize();
     vector<RawCaseEx*> learntRawCases;
@@ -100,21 +100,23 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrac
         {
             const GoalMatrixRow& currGoalMatrixRow = _helper->GetGoalMatrixRow(p_traces[i]);
             
+            // If the goal in index g is not satisfied and is has no acions added, add it to the current cases.
             if (!currGoalMatrixRow[g] && !currentCases[g])
             {
                 tempRPlan = RawPlanEx(nullptr, SequentialPlan());
-                currentCases[g] = new RawCaseEx(tempRPlan, p_traces[i]->GameState());
-                //m_currentCases[g] = new RawCaseEx(m_tempRPlan, nullptr);
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                currentCases[g] = new RawCaseEx(tempRPlan, p_traces[i].GameState());
+                AddAction(currentCases[g], p_traces[i].Action(), p_traces[i].ActionParams(), i);
             }
+            // If the goal in index g is not satisfied and has actions added, add new action to its current sequential plan.
             else if(!currGoalMatrixRow[g] && currentCases[g])
             {
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                AddAction(currentCases[g], p_traces[i].Action(), p_traces[i].ActionParams(), i);
             }
-            else if (!currGoalMatrixRow[g] && currentCases[g])
+            // If the goal is satisfied then add it to learnt cases!
+            else if (currGoalMatrixRow[g] && currentCases[g])
             {
                 currentCases[g]->rawPlan.Goal = _helper->GetGoalMatrixRowEvaluator().GetGoal(g);
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
+                AddAction(currentCases[g], p_traces[i].Action(), p_traces[i].ActionParams(), i);
                 learntRawCases.push_back(currentCases[g]);
                 currentCases[g] = nullptr;
             }

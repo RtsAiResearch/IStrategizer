@@ -13,8 +13,11 @@
 #include "GoalEx.h"
 #endif
 
-#include <map>
+#ifndef GAMETRACE_H
 #include "GameTrace.h"
+#endif
+
+#include <map>
 
 namespace IStrategizer
 {
@@ -36,15 +39,15 @@ namespace IStrategizer
         std::map<TPathKey, int> _keyToIdxMapping;
 
     protected:
-        bool        EvaluatePath();
-        TPathKey    Hash(int p_goalIdx, std::list<NodeType>& p_parameters);
-        void        GeneratePossibleParams();
-        void        GeneratePossibleParamsAux(int p_abstractGoalIdx, unsigned p_level, TPathKey p_path, int& p_lastParamGoalIdx);
-        GoalEx*     GetGoal(TPathKey p_pathId, std::list<NodeType>& p_path);
+        bool EvaluatePath();
+        TPathKey Hash(int p_goalIdx, std::list<NodeType>& p_parameters);
+        void GeneratePossibleParams();
+        void GeneratePossibleParamsAux(int p_abstractGoalIdx, unsigned p_level, TPathKey p_path, int& p_lastParamGoalIdx);
+        GoalEx* GetGoal(TPathKey p_pathId, std::list<NodeType>& p_path);
     public:
-        void    Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot);
-        void    Compute(unsigned p_gameCycle, GoalMatrixRow& p_row);
-        size_t     GetRowSize() const { return (size_t)_rowSize; }
+        void Initialize(PlayerType p_humanPlayer, PlayerType p_staticAIBot);
+        void Compute(unsigned p_gameCycle, GoalMatrixRow& p_row);
+        size_t GetRowSize() const { return (size_t)_rowSize; }
         GoalEx* GetGoal(int p_goalIdx);
     };
 }

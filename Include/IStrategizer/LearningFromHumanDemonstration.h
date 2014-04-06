@@ -62,9 +62,9 @@ namespace IStrategizer
     {
     private:
         CaseLearningHelper* _helper;
-        RetainerEx*  _retainer;
+        RetainerEx* _retainer;
 
-        vector<RawCaseEx*> LearnRawCases(std::vector<GameTrace*>& p_traces);
+        vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
         void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
         CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
         bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, std::vector<Expression*>& p_matchedConditions);

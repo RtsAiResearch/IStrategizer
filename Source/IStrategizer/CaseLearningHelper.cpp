@@ -20,48 +20,49 @@ using namespace std;
 
 CaseLearningHelper::CaseLearningHelper()
 {
-  m_goalMatrixRowEvaluator.Initialize(PLAYER_Self, PLAYER_Enemy);
-  m_row.resize(m_goalMatrixRowEvaluator.GetRowSize());
-
-  g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
-  g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
+    m_goalMatrixRowEvaluator.Initialize(PLAYER_Self, PLAYER_Enemy);
+    g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
+    g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------
 GoalMatrixRow CaseLearningHelper::ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle)
 {
-  m_goalMatrixRowEvaluator.Compute(p_gameCycle, m_row);
-  return m_row;
+    GoalMatrixRow row;
+    row.resize(m_goalMatrixRowEvaluator.GetRowSize());
+    m_goalMatrixRowEvaluator.Compute(p_gameCycle, row);
+    
+    return row;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------
 void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 {
-  DataMessage<GameTrace>* pTraceMsg = nullptr;
-  GameTrace trace;
+    DataMessage<GameTrace>* pTraceMsg = nullptr;
+    GameTrace trace;
 
-  if (p_message == nullptr)
-    throw InvalidParameterException(XcptHere);
+    if (p_message == nullptr)
+        throw InvalidParameterException(XcptHere);
 
-  switch(p_message->MessageTypeID())
-  {
-  case MSG_GameActionLog:
-    pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
+    switch(p_message->MessageTypeID())
+    {
+    case MSG_GameActionLog:
+        pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
 
-    if (pTraceMsg ->Data() == nullptr)
-      throw InvalidParameterException(XcptHere);
+        if (pTraceMsg ->Data() == nullptr)
+            throw InvalidParameterException(XcptHere);
 
-    trace = *pTraceMsg->Data();
-    //pTrace->GoalSatisfaction(ComputeGoalSatisfactionRow(pTrace->GameCycle()));
+        trace = *pTraceMsg->Data();
+        m_goalMatrix[trace.GameCycle()] = ComputeGoalMatrixRowSatisfaction(trace.GameCycle());
 
-    LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
+        LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
 
-    m_observedTraces.push_back(trace);
+        m_observedTraces.push_back(trace);
 
-    break;
-
-    case MSG_GameEnd:
-        LogInfo("Received game end mmessage");
-        //m_observedTraces[m_observedTraces.size() - 1]->GoalSatisfaction(ComputeGoalMatrixRowSatisfaction(m_observedTraces[m_observedTraces.size() - 1]->GameCycle()));
         break;
-  }
+
+        case MSG_GameEnd:
+            LogInfo("Received game end mmessage");
+            m_goalMatrix[p_message->GameCycle()] = ComputeGoalMatrixRowSatisfaction(p_message->GameCycle());
+            break;
+    }
 }
 
