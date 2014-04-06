@@ -92,7 +92,9 @@ void ClientMain::InitIStrategizer()
     // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
     // and the engine Enums[*] table is fully initialized
     InitIdLookup();
-    m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
+
+    if (!m_isLearning)
+        m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()

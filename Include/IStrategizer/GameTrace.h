@@ -20,7 +20,9 @@ namespace IStrategizer
         PlayerType     m_self;
 
     public:
-        typedef std::vector<GameTrace*> List;
+        typedef std::vector<GameTrace> List;
+
+        GameTrace() { }
 
         GameTrace(
             unsigned p_gameCycle,

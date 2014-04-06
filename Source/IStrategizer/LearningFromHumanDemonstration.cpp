@@ -26,17 +26,17 @@ using namespace IStrategizer;
 
 LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy)
 {
-    _helper     = new CaseLearningHelper();
-    _retainer   = new RetainerEx(g_CaseBasePath);
+    _helper = new CaseLearningHelper();
+    _retainer = new RetainerEx(g_CaseBasePath);
 }
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::Learn()
 {
     vector<CookedPlan*> m_cookedPlans;
+    GameTrace::List m_rawCases =_helper->ObservedTraces();
+
  //   vector<CookedCase*> m_cookedCases;
     //vector<PlanStepEx*> m_steps;
-
- //   vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
 
  //   m_cookedCases.resize(m_rawCases.size());
 

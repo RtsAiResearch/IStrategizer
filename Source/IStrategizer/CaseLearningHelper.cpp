@@ -36,7 +36,7 @@ GoalMatrixRow CaseLearningHelper::ComputeGoalMatrixRowSatisfaction(unsigned p_ga
 void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 {
   DataMessage<GameTrace>* pTraceMsg = nullptr;
-  GameTrace* pTrace = nullptr;
+  GameTrace trace;
 
   if (p_message == nullptr)
     throw InvalidParameterException(XcptHere);
@@ -49,18 +49,19 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     if (pTraceMsg ->Data() == nullptr)
       throw InvalidParameterException(XcptHere);
 
-    pTrace = pTraceMsg->Data();
+    trace = *pTraceMsg->Data();
     //pTrace->GoalSatisfaction(ComputeGoalSatisfactionRow(pTrace->GameCycle()));
 
-    LogInfo("Received game trace for action=%s", Enums[pTrace->Action()]);
+    LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
 
-    m_observedTraces.push_back(pTrace);
+    m_observedTraces.push_back(trace);
 
     break;
 
-    /*case MSG_GameEnd:
-    m_observedTraces[m_observedTraces.size() - 1]->GoalSatisfaction(ComputeGoalMatrixRowSatisfaction(m_observedTraces[m_observedTraces.size() - 1]->GameCycle()));
-    break;*/
+    case MSG_GameEnd:
+        LogInfo("Received game end mmessage");
+        //m_observedTraces[m_observedTraces.size() - 1]->GoalSatisfaction(ComputeGoalMatrixRowSatisfaction(m_observedTraces[m_observedTraces.size() - 1]->GameCycle()));
+        break;
   }
 }
 

@@ -22,11 +22,11 @@ namespace IStrategizer
         GoalMatrixRow m_satisfiedGoals;
 
         GameStateEx* ComputeGameState();
-        GoalMatrixRow     ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle);
+        GoalMatrixRow ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle);
 
     public:
         CaseLearningHelper();
-        void     NotifyMessegeSent(Message* p_message);
+        void NotifyMessegeSent(Message* p_message);
         const GameTrace::List ObservedTraces() const { return m_observedTraces; }
         const GoalMatrixRowEvaluator& GetGoalMatrixRowEvaluator() const { return m_goalMatrixRowEvaluator; }
         GoalMatrixRowEvaluator& GetGoalMatrixRowEvaluator() { return m_goalMatrixRowEvaluator; }
