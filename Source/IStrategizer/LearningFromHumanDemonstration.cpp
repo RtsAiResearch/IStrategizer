@@ -159,11 +159,11 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
             {
                 aJ = (Action*)m_planSteps[j];
 
-                /*if (Depends(m_planSteps[i]->PostConditions(), aJ->Preconditions(), m_matchedConditions))
+                if (Depends(m_planSteps[i]->PostCondition(), aJ->PreCondition(), m_matchedConditions))
                 {
                     m_graph->Connect(i, j, m_matchedConditions);
                     m_matchedConditions.clear();
-                }*/
+                }
             }
         }
     }
@@ -202,53 +202,53 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNod
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_case)
 {
- //   SequentialPlan steps = vector<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan.size());
- //   SequentialPlan fSteps;
- //   vector<int> rSteps;
- //   int i, initSize;
-    //vector<Expression*> m_usedConditions;
+    SequentialPlan steps = vector<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan.size());
+    SequentialPlan fSteps;
+    vector<int> rSteps;
+    unsigned int i, initSize;
+    vector<Expression*> m_usedConditions;
 
-    //for ( i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
-    //{
-    // steps[i] = static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone());
-    //}
+    for ( i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
+    {
+        steps[i] = static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone());
+    }
 
- //   // Extract direct steps
- //   for (i = 0; i < steps.size(); ++i)
- //   {
- //       if (Depends(steps[i]->PostConditions(), p_case->rawCase->rawPlan.Goal->PostConditions(), m_usedConditions))
- //       {
- //           fSteps.push_back(steps[i]);
- //           rSteps.push_back(i);
-    // m_usedConditions.clear();
- //       }
- //   }
+    // Extract direct steps
+    for (i = 0; i < steps.size(); ++i)
+    {
+        if (Depends(steps[i]->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition(), m_usedConditions))
+        {
+            fSteps.push_back(steps[i]);
+            rSteps.push_back(i);
+            m_usedConditions.clear();
+        }
+    }
 
- //   initSize = rSteps.size();
-    //steps.clear();
-    //
-    //for ( i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
-    //{
-    // steps.push_back(static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone()));
-    //}
+    initSize = rSteps.size();
+    steps.clear();
 
- //   // Extract indirect steps
- //   for (i = 0; i < initSize; ++i)
- //   {
- //       NecessaryStepsExtraction(p_case->dGraph, rSteps[i], fSteps, steps);
- //   }
+    for ( i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
+    {
+        steps.push_back(static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone()));
+    }
 
-    //p_case->rawCase->rawPlan.sPlan.clear();
-    //p_case->rawCase->rawPlan.sPlan.insert(p_case->rawCase->rawPlan.sPlan.begin(), fSteps.begin(), fSteps.end());
+    // Extract indirect steps
+    for (i = 0; i < initSize; ++i)
+    {
+        NecessaryStepsExtraction(p_case->dGraph, rSteps[i], fSteps, steps);
+    }
 
- //   //if(!fSteps.empty())
- //   //{
- //   //    // use the game state of the first action, the index of the trace is stored in the data storage
- //   //    TraceEx* firstTrace = _helper->ObservedTraces()[fSteps[0]->Data()];
- //   //    p_case->rawCase->gameState = firstTrace->GameState();
- //   //}
+    p_case->rawCase->rawPlan.sPlan.clear();
+    p_case->rawCase->rawPlan.sPlan.insert(p_case->rawCase->rawPlan.sPlan.begin(), fSteps.begin(), fSteps.end());
 
-    //p_case->dGraph = new PlanGraph(fSteps);
+    if(!fSteps.empty())
+    {
+        // use the game state of the first action, the index of the trace is stored in the data storage
+        GameTrace firstTrace = _helper->ObservedTraces()[fSteps[0]->Data()];
+        p_case->rawCase->gameState = firstTrace.GameState();
+    }
+
+    p_case->dGraph = new PlanGraph(fSteps);
 }
 //--------------------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::NecessaryStepsExtraction(PlanGraph* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)
