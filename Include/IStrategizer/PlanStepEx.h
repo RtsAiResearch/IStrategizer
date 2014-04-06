@@ -83,6 +83,7 @@ namespace IStrategizer
         PlanStepParameters& Parameters() { return _params; }
         ExecutionStateType State() const { return _state; }
         StepLevelType LevelType() const { return _stepLevelType; }
+        CompositeExpression* PostCondition() { return _postCondition; }
         IClonable* Clone();
         unsigned Id() const { return _id; }
     };

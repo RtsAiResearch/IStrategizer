@@ -157,11 +157,11 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
             {
                 aJ = (Action*)m_planSteps[j];
 
-                /*if (Depends(m_planSteps[i]->PostConditions(), aJ->Preconditions(), m_matchedConditions))
+                if (Depends(m_planSteps[i]->PostCondition(), aJ->PreCondition(), m_matchedConditions))
                 {
                     m_graph->Connect(i, j, m_matchedConditions);
                     m_matchedConditions.clear();
-                }*/
+                }
             }
         }
     }
