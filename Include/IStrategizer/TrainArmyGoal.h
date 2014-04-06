@@ -15,11 +15,11 @@ namespace IStrategizer
     public:
         TrainArmyGoal();
         TrainArmyGoal(const PlanStepParameters& p_parameters);
-        void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
+        void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
 
     protected:
         void InitializePostConditions();
-        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame& game);
 
     private:
         int m_demandUnitsCount;

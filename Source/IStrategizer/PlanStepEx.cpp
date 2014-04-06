@@ -76,7 +76,7 @@ void PlanStepEx::Copy(IClonable* p_dest)
     m_dest->_data = _data;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::State(ExecutionStateType p_state, RtsGame& pRtsGame, const WorldClock& p_clock)
+void PlanStepEx::State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)
 {
     string stepName = ToString();
     const char* oldStateName = Enums[_state];
@@ -100,11 +100,11 @@ bool PlanStepEx::IsCurrentStateTimeout(const WorldClock& p_clock)
         return ((p_clock.ElapsedMilliseconds() - startTime) > timeout);
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::Update(RtsGame& pRtsGame, const WorldClock& p_clock)
+void PlanStepEx::Update(RtsGame& game, const WorldClock& p_clock)
 {
     if (_firstUpdate)
     {
-        Reset(pRtsGame, p_clock);
+        Reset(game, p_clock);
         _firstUpdate = false;
     }
 
@@ -114,11 +114,11 @@ void PlanStepEx::Update(RtsGame& pRtsGame, const WorldClock& p_clock)
             "State %s timed-out after %dms",
             Enums[(int)State()],
             _stateTimeout[INDEX(State(), ExecutionStateType)]);
-        State(ESTATE_Failed, pRtsGame, p_clock);
+        State(ESTATE_Failed, game, p_clock);
     }
     else
     {
-        UpdateAux(pRtsGame, p_clock);
+        UpdateAux(game, p_clock);
     }
 }
 //////////////////////////////////////////////////////////////////////////

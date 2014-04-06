@@ -23,11 +23,11 @@ namespace IStrategizer
     public:
         ResearchAction();
         ResearchAction(const PlanStepParameters& p_parameters);
-        bool AliveConditionsSatisfied(RtsGame& pRtsGame);
-        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
+        bool AliveConditionsSatisfied(RtsGame& game);
+        bool SuccessConditionsSatisfied(RtsGame& game);
 
     protected:
-        bool ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock);
+        bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);
         void InitializePostConditions();
         void InitializePreConditions();
 

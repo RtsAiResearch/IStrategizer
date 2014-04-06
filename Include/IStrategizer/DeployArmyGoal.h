@@ -18,7 +18,7 @@ namespace IStrategizer
         
     protected:
         void InitializePostConditions();
-        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame& game);
     };
 }
 
