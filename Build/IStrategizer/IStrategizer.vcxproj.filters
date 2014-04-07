@@ -130,6 +130,18 @@
     <Filter Include="Source Files\CaseBase\Goal">
       <UniqueIdentifier>{76cad8cb-caa0-4485-a932-789108dc80b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\World Model\Dyanmics">
+      <UniqueIdentifier>{36a5af95-d313-471d-bd25-6d4ad63a334d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\World Model\Obselete">
+      <UniqueIdentifier>{285d67c6-bcfd-430b-964b-563ba1a3c7a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\World Model\Map">
+      <UniqueIdentifier>{eab7d3ac-221b-4e5b-965c-1853a45c8bb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\World Model\Resources">
+      <UniqueIdentifier>{3a61e5fd-2327-46e6-bcf8-cfa2ba36c80b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp">
@@ -324,9 +336,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
@@ -346,6 +355,9 @@
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp">
+      <Filter>Source Files\World Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\GameEntity.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -551,30 +563,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\TypesMetaData.h">
       <Filter>Header Files\EngineData\Metadata</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\BuildingDescription.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CellFeature.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicComponent.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicMap.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicSet.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicVector.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\ForceDescription.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameDependency.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GameEntity.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
@@ -590,34 +578,10 @@
     <ClInclude Include="..\..\Include\IStrategizer\GameType.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\MapArea.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\PlayerResources.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\ResourceDescription.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\RtsGame.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\SharedResource.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\StaticComponent.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldClock.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\WorldComponent.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\WorldMap.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\WorldResources.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GroundControlIM.h">
@@ -676,6 +640,54 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\DynamicComponent.h">
+      <Filter>Header Files\World Model\Dyanmics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\DynamicVector.h">
+      <Filter>Header Files\World Model\Dyanmics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\DynamicMap.h">
+      <Filter>Header Files\World Model\Dyanmics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\DynamicSet.h">
+      <Filter>Header Files\World Model\Dyanmics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\StaticComponent.h">
+      <Filter>Header Files\World Model\Dyanmics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\WorldComponent.h">
+      <Filter>Header Files\World Model\Dyanmics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GameDependency.h">
+      <Filter>Header Files\World Model\Obselete</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\WorldMap.h">
+      <Filter>Header Files\World Model\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MapArea.h">
+      <Filter>Header Files\World Model\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\BuildingDescription.h">
+      <Filter>Header Files\World Model\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\ResourceDescription.h">
+      <Filter>Header Files\World Model\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\ForceDescription.h">
+      <Filter>Header Files\World Model\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\CellFeature.h">
+      <Filter>Header Files\World Model\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\SharedResource.h">
+      <Filter>Header Files\World Model\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\WorldResources.h">
+      <Filter>Header Files\World Model\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\PlayerResources.h">
+      <Filter>Header Files\World Model\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

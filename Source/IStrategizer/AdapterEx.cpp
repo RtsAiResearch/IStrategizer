@@ -127,7 +127,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     */
     Vector2    mapeSize = g_Game->Map()->Size();
     OccupanceDataIM    *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-    GameType    *pGameType;
+    GameTypeStrongPtr    pGameType;
     unsigned    searchRadius;
     Vector2    colonyCenter;
     SpiralSearchData    searchData;

@@ -15,6 +15,7 @@
 #include "GameEntity.h"
 #include "EntityClassExist.h"
 
+using namespace std;
 using namespace IStrategizer;
 
 const unsigned MaxPrepTime = 0;

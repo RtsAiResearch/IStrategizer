@@ -20,6 +20,7 @@ TrainArmyGoal::TrainArmyGoal() : GoalEx(GOALEX_TrainArmy)
 //----------------------------------------------------------------------------------------------
 TrainArmyGoal::TrainArmyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainArmy, p_parameters)
 {
+
 }
 //----------------------------------------------------------------------------------------------
 void TrainArmyGoal::InitializePostConditions()

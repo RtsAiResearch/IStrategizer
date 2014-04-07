@@ -30,7 +30,7 @@ namespace IStrategizer
 
     typedef MapEx<TID, GameEntity*> EntitiesMap;
 
-    class GamePlayer : MessagePumpObserver
+    class GamePlayer : public MessagePumpObserver, public IClonable
     {
     public:
         GamePlayer();
@@ -41,11 +41,9 @@ namespace IStrategizer
         void Entities(std::vector<TID>& p_entityIds);
         void Entities(EntityClassType p_typeId, std::vector<TID> &p_entityIds);
         GameEntity* GetEntity(TID p_id);
-        virtual EntityClassType GetWorkerType() = 0;
-        virtual EntityClassType GetBaseType() = 0;
         void GetBases(std::vector<TID> &p_basesIds);
-        virtual const GameStateEx* State() = 0;
         void NotifyMessegeSent(Message* p_pMessage);
+        void Copy(IClonable* pDest);
 
     protected:
         virtual GameEntity* FetchEntity(TID p_id) = 0;
@@ -58,7 +56,6 @@ namespace IStrategizer
         EntitiesMap m_entities;
         PlayerResources *m_pResources;
         GameTechTree *m_pTechTree;
-        GameStateEx *m_pState;
     };
 }
 

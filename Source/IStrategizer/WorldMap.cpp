@@ -39,7 +39,7 @@ WorldMap::WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_world
     m_gridWidth = m_worldWidth / m_cellSide;
     m_gridHeight = m_worldHeight / m_cellSide;
     m_numCells = m_gridWidth * m_gridHeight;
-
+    m_cellFeatureMatrix = nullptr;
     m_initialized = false;
 }
 //----------------------------------------------------------------------------------------------
@@ -196,4 +196,35 @@ vector<Vector2> WorldMap::GetNearestEnemyBorders(int p_numberOfBorders)
         minDistanceQueue.pop();
     }
     return result;
+}
+//----------------------------------------------------------------------------------------------
+void WorldMap::Copy(IClonable* pDest)
+{
+    WorldMap* pConDest = dynamic_cast<WorldMap*>(pDest);
+    _ASSERTE(pConDest);
+
+    pConDest->m_cellSide = m_cellSide;
+    pConDest->m_numCells = m_numCells;
+    pConDest->m_worldWidth = m_worldWidth;
+    pConDest->m_worldHeight = m_worldHeight;
+    pConDest->m_gridWidth = m_gridWidth;
+    pConDest->m_gridHeight = m_gridHeight;
+    pConDest->m_initialized = m_initialized;
+
+    if (m_initialized)
+    {
+        pConDest->m_cellFeatureMatrix = new CellFeature* [m_gridHeight];
+        for (unsigned i = 0 ; i < m_gridHeight ; i++)
+        {
+            pConDest->m_cellFeatureMatrix[i] = new CellFeature[m_gridWidth];
+        }
+
+        for (unsigned i = 0; i < m_gridHeight; i++)
+        {
+            for (unsigned j = 0; j < m_gridWidth; j++)
+            {
+                pConDest->m_cellFeatureMatrix[i][j] = m_cellFeatureMatrix[i][j];
+            }
+        }  
+    }
 }

@@ -213,7 +213,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), false);
         }
 
-        CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State());
+        CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, nullptr);
 
         // We found a matching case and it was not tried for that goal before
         if (caseEx != nullptr &&

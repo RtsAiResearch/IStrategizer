@@ -36,7 +36,6 @@
 
 using namespace StarCraftModel;
 using namespace IStrategizer;
-using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
@@ -73,11 +72,10 @@ void StarCraftGame::EnumeratePlayers()
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::EnumerateEntityTypes()
 {
-    vector<IStrategizer::GameType*> oldEntityTypes;
+    vector<GameTypeStrongPtr> oldEntityTypes;
     vector<EntityClassType> newEntityTypes;
 
     m_entityTypes.Values(oldEntityTypes);
-    Toolbox::MemoryClean(oldEntityTypes);
     m_entityTypes.clear();
 
     g_Database.EntityTypes(newEntityTypes);
@@ -90,11 +88,10 @@ void StarCraftGame::EnumerateEntityTypes()
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::EnumerateResearches()
 {
-    vector<GameResearch*> oldResearchTypes;
+    vector<GameResearchStrongPtr> oldResearchTypes;
     vector<ResearchType> newResearchTypes;
 
     m_researches.Values(oldResearchTypes);
-    Toolbox::MemoryClean(oldResearchTypes);
     m_researches.clear();
 
     g_Database.ResearchTypes(newResearchTypes);
@@ -195,8 +192,17 @@ void StarCraftGame::DisplayMessage(const char* p_msg)
 {
     BroodwarPtr->sendText(p_msg);
 }
-
-int StarCraftModel::StarCraftGame::GetMaxForceSize()
+//----------------------------------------------------------------------------------------------
+int StarCraftGame::GetMaxForceSize()
 {
     return 12;
 }
+//----------------------------------------------------------------------------------------------
+IClonable* StarCraftGame::Clone()
+{
+    StarCraftGame* pClone = new StarCraftGame();
+    Copy(pClone);
+
+    return pClone;
+}
+

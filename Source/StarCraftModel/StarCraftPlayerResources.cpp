@@ -9,15 +9,32 @@ using namespace BWAPI;
 
 int StarCraftPlayerResources::Supply() 
 { 
-    return m_player->supplyTotal();
+    return m_pPlayer->supplyTotal();
 }
 //////////////////////////////////////////////////////////////////////////
 int StarCraftPlayerResources::Secondary()
 {
-    return m_player->gas();
+    return m_pPlayer->gas();
 }
 //////////////////////////////////////////////////////////////////////////
 int StarCraftPlayerResources::Primary()
 {
-    return m_player->minerals();
+    return m_pPlayer->minerals();
+}
+//////////////////////////////////////////////////////////////////////////
+IClonable* StarCraftPlayerResources::Clone()
+{
+    StarCraftPlayerResources* pClone = new StarCraftPlayerResources();
+    Copy(pClone);
+
+    return pClone;
+}
+//////////////////////////////////////////////////////////////////////////
+void StarCraftPlayerResources::Copy(IClonable* pDest)
+{
+    StarCraftPlayerResources* pConDest = dynamic_cast<StarCraftPlayerResources*>(pDest);
+    _ASSERTE(pConDest);
+
+    PlayerResources::Copy(pDest);
+    pConDest->m_pPlayer = m_pPlayer;
 }

@@ -4,6 +4,7 @@
 #ifndef STATICCOMPONENT_H
 #include "StaticComponent.h"
 #endif
+#include <memory>
 
 namespace IStrategizer
 {
@@ -22,6 +23,8 @@ namespace IStrategizer
         int             Id() const { return m_id; }
         WorldResources* RequiredResources() const { return m_requiredResources; }
     };
+
+    typedef std::tr1::shared_ptr<GameResearch> GameResearchStrongPtr;
 }
 
 #endif // GAMERESEARCH_H

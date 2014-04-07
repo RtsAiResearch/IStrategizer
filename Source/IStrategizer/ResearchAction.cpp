@@ -16,6 +16,7 @@
 #include "EntityClassExist.h"
 #include "ResearchDone.h"
 
+using namespace std;
 using namespace IStrategizer;
 
 ResearchAction::ResearchAction() : Action(ACTIONEX_Research)

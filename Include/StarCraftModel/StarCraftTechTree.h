@@ -12,34 +12,39 @@
 
 namespace IStrategizer
 {
-  enum PlayerType;
-  enum ResearchType;
-  enum EntityClassType;
+    enum PlayerType;
+    enum ResearchType;
+    enum EntityClassType;
 }
 
 namespace StarCraftModel
 {
-  using namespace IStrategizer;
-  using namespace std;
-  using namespace BWAPI;
-  using namespace IStrategizer;
+    using namespace IStrategizer;
+    using namespace std;
+    using namespace BWAPI;
 
-  class StarCraftTechTree : public IStrategizer::GameTechTree
-  {
-    typedef std::vector<IStrategizer::EntityClassType> Entities;
-    typedef std::vector<IStrategizer::ResearchType> Researches;
-    typedef std::pair<Entities, Researches> Dependency;
+    class StarCraftTechTree : public IStrategizer::GameTechTree
+    {
+    public:
+        typedef std::vector<IStrategizer::EntityClassType> Entities;
+        typedef std::vector<IStrategizer::ResearchType> Researches;
+        typedef std::pair<Entities, Researches> Dependency;
 
-    Player m_player;
+        StarCraftTechTree() {}
+        StarCraftTechTree(Player p_player) : m_player(p_player) {}
+        IClonable* Clone();
+        void Copy(IClonable* pDest);
+        bool ResearchAvailable(ResearchType p_researchId) const;
+        bool ResearchDone(ResearchType p_researchId) const ;
+        EntityClassType TireBaseBuilding(BaseType p_tireId) const;
+        EntityClassType SourceEntity(int p_typeOrResearchId) const;
+        void            GetRequirements(int p_typeOrResearchId, std::vector<ResearchType>& p_researches, std::map<EntityClassType, unsigned>& p_buildings);
+        void            GetDependents(int p_typeOrResearchId, std::vector<ResearchType>& p_researches, std::vector<EntityClassType>& p_entityTypes);
+        EntityClassType GetWorkerType();
+        EntityClassType GetBaseType();
 
-  public:
-    StarCraftTechTree(Player p_player) : m_player(p_player) {}
-    bool ResearchAvailable(ResearchType p_researchId) const;
-    bool ResearchDone(ResearchType p_researchId) const ;
-    EntityClassType TireBaseBuilding(BaseType p_tireId) const;
-    EntityClassType SourceEntity(int p_typeOrResearchId) const;
-    void            GetRequirements(int p_typeOrResearchId, vector<ResearchType>& p_researches, map<EntityClassType, unsigned>& p_buildings);
-    void            GetDependents(int p_typeOrResearchId, vector<ResearchType>& p_researches, vector<EntityClassType>& p_entityTypes);
-  };  
+    protected:
+        Player m_player;
+    };  
 }
 #endif // STARCRAFTTECHTREE_H

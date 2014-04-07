@@ -1,18 +1,19 @@
 #ifndef RTSGAME_H
 #define RTSGAME_H
 
-#ifndef DYNAMICMAP_H
-#include "DynamicMap.h"
-#endif
+#include <vector>
+#include <map>
+
 #ifndef ENGINEDATA_H
 #include "EngineData.h"
 #endif
 #ifndef ENGINECOMPONENT_H
 #include "EngineComponent.h"
 #endif
-
-#include <vector>
-#include <map>
+#include "IClonable.h"
+#include "GameType.h"
+#include "GameResearch.h"
+#include "MapEx.h"
 
 namespace IStrategizer
 {
@@ -27,18 +28,23 @@ namespace IStrategizer
     class GameResearch;
     class WorldMap;
 
-    class RtsGame : public EngineComponent
+    class RtsGame : public EngineComponent, public IClonable
     {
-    protected:
-        MapEx<PlayerType, GamePlayer*>      m_players;
-        MapEx<EntityClassType, GameType*>   m_entityTypes;
-        MapEx<ResearchType, GameResearch*>  m_researches;
-        WorldMap*                           m_pMap;
-        bool                                m_initialized;
+    public:
+        typedef MapEx<PlayerType, GamePlayer*> PlayersMap;
+        typedef MapEx<EntityClassType, GameTypeStrongPtr> TypesMap;
+        typedef MapEx<ResearchType, GameResearchStrongPtr> ResearchesMap;
 
-        virtual GamePlayer*     FetchPlayer(PlayerType p_id) = 0;
-        virtual GameType*       FetchEntityType(EntityClassType p_id) = 0;
-        virtual GameResearch*   FetchResearch(ResearchType p_id) = 0;
+    protected:
+        PlayersMap m_players;
+        WorldMap* m_pMap;
+        TypesMap m_entityTypes;
+        ResearchesMap m_researches;
+        bool m_initialized;
+
+        virtual GamePlayer*     FetchPlayer(PlayerType id) = 0;
+        virtual GameType*       FetchEntityType(EntityClassType id) = 0;
+        virtual GameResearch*   FetchResearch(ResearchType id) = 0;
         virtual void            EnumeratePlayers() = 0;
         virtual void            EnumerateEntityTypes() = 0;
         virtual void            EnumerateResearches() = 0;
@@ -52,18 +58,19 @@ namespace IStrategizer
                         RtsGame() : EngineComponent("game"), m_pMap(nullptr), m_initialized(false) {}
         virtual         ~RtsGame();
         virtual void    Init();
-        virtual void Finalize();
-        void            Players(std::vector<PlayerType>& p_playerIds);
-        void            EntityTypes(std::vector<EntityClassType>& p_entityTypeIds);
-        void            Researches(std::vector<ResearchType>& p_researchTypeIds);
-        int             GetForceSizeCount( ForceSizeType p_forceSizeType );
-        GamePlayer*     GetPlayer(PlayerType p_id);
-        GameType*       GetEntityType(EntityClassType p_id);
-        GameResearch*   GetResearch(ResearchType p_id);
-        GamePlayer* Self();
-        GamePlayer* Enemy();
-        virtual void    DisplayMessage(const char* p_msg) = 0;
+        virtual void    Finalize();
+        void            Players(std::vector<PlayerType>& playerIds);
+        void            EntityTypes(std::vector<EntityClassType>& entityTypeIds);
+        void            Researches(std::vector<ResearchType>& researchTypeIds);
+        int             GetForceSizeCount( ForceSizeType forceSizeType );
+        GamePlayer*     GetPlayer(PlayerType id);
+        GameTypeStrongPtr     GetEntityType(EntityClassType id);
+        GameResearchStrongPtr GetResearch(ResearchType id);
+        GamePlayer*     Self();
+        GamePlayer*     Enemy();
+        virtual void    DisplayMessage(const char* pMsg) = 0;
         WorldMap*       Map();
+        void            Copy(IClonable* pDest);
     };
 }
 

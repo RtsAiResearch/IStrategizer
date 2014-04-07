@@ -27,7 +27,7 @@
 using namespace IStrategizer;
 using namespace std;
 
-GamePlayer::GamePlayer() : m_pState(new GameStateEx()), m_pResources(nullptr), m_pTechTree(nullptr)
+GamePlayer::GamePlayer() : m_pResources(nullptr), m_pTechTree(nullptr)
 {
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
@@ -48,7 +48,6 @@ void GamePlayer::Finalize()
 
     Toolbox::MemoryClean(m_pResources);
     Toolbox::MemoryClean(m_pTechTree);
-    Toolbox::MemoryClean(m_pState);
 }
 //////////////////////////////////////////////////////////////////////////
 PlayerResources* GamePlayer::Resources()
@@ -85,7 +84,7 @@ void GamePlayer::GetBases(vector<TID> &p_basesIds)
 {
     EntityClassType typeId;
 
-    typeId = GetBaseType();
+    typeId = TechTree()->GetBaseType();
 
     p_basesIds.clear();
 
@@ -105,11 +104,6 @@ void GamePlayer::Entities(EntityClassType p_typeId, vector<TID> &p_entityIds)
         if (itr->second->Type() == p_typeId)
             p_entityIds.push_back(itr->first);
     }
-}
-//////////////////////////////////////////////////////////////////////////
-const GameStateEx* GamePlayer::State()
-{
-    return m_pState;
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::NotifyMessegeSent(Message* p_pMessage)
@@ -229,3 +223,22 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
     }
 }
 //////////////////////////////////////////////////////////////////////////
+void GamePlayer::Copy(IClonable* pDest)
+{
+    GamePlayer* pConDest = dynamic_cast<GamePlayer*>(pDest);
+    _ASSERTE(pConDest);
+
+    pConDest->m_id = m_id;
+    pConDest->m_pResources = dynamic_cast<PlayerResources*>(m_pResources->Clone());
+    _ASSERTE(pConDest->m_pResources);
+    pConDest->m_pTechTree = dynamic_cast<GameTechTree*>(m_pTechTree->Clone());
+    _ASSERTE(pConDest->m_pResources);
+
+    _ASSERTE(m_entities.empty());
+    for (EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
+    {
+        GameEntity* pEntity = dynamic_cast<GameEntity*>(itr->second->Clone());
+        _ASSERTE(pEntity);
+        pConDest->m_entities.insert(make_pair(itr->first, pEntity));
+    }
+}

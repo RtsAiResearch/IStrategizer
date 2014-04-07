@@ -16,20 +16,20 @@ void DefinitionCrossMapping::Init()
     {
         // Because we depend on player actual Id in the game, and this class is singleton
         // The starcraft game may change player ids from game run to another
-        PlayerMapping.Clear();
         InitPlayers();
-        return;
     }
-
-    InitEntities();
-    InitUpgrades();
-    InitTeches();
-    InitPlayers();
-    InitActions();
-    InitEntityIdents();
-    InitUpgradeIdents();
-    InitTechIdents();
-    InitActions();
+    else
+    {
+        InitEntities();
+        InitUpgrades();
+        InitTeches();
+        InitPlayers();
+        InitActions();
+        InitEntityIdents();
+        InitUpgradeIdents();
+        InitTechIdents();
+        InitActions();
+    }
 
     m_initialized = true;
 }
@@ -106,6 +106,8 @@ void DefinitionCrossMapping::InitPlayers()
     vector< pair<TID, IStrategizer::PlayerType> > m_players;
     const Playerset &players = Broodwar->getPlayers();
     BWAPI::Player pPlayer;
+
+    PlayerMapping.Clear();
 
     for (Playerset::iterator i = players.begin();
         i != players.end();

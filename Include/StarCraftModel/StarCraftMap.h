@@ -16,6 +16,10 @@ namespace StarCraftModel
 
         IStrategizer::Vector2 Size() const;
         bool IsBuildable(IStrategizer::Vector2 p_position, IStrategizer::Vector2 p_dimension) const ;
+        IClonable* Clone();
+        
+    protected:
+        StarCraftMap() {}
     };
 }
 

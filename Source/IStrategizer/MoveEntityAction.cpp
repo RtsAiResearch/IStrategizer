@@ -19,6 +19,7 @@
 #include "EntityClassNearArea.h"
 #include "And.h"
 
+using namespace std;
 using namespace IStrategizer;
 
 MoveEntityAction::MoveEntityAction() :
@@ -86,7 +87,7 @@ bool MoveEntityAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
-    _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
+    _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->TechTree()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
     assert(_entityId != INVALID_TID);
 
     _position = pAdapter->AdaptPosition(Parameters());

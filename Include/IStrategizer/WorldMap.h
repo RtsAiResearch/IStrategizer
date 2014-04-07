@@ -7,13 +7,14 @@
 #ifndef VECTOR2_H
 #include "Vector2.h"
 #endif
+#include "IClonable.h"
 
 namespace IStrategizer
 {
     enum TileFlagType;
     class CellFeature;
 
-    class WorldMap
+    class WorldMap : public IClonable
     {
     private:
         void Initialize();
@@ -21,6 +22,8 @@ namespace IStrategizer
         Vector2 FromWorldToGrid(const Vector2 &p_worldPosition) const;
 
     protected:
+        WorldMap() {}
+
         CellFeature** m_cellFeatureMatrix;
         unsigned        m_cellSide;
         unsigned        m_numCells;
@@ -34,7 +37,7 @@ namespace IStrategizer
         WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight);
         ~WorldMap();
 
-        virtual Vector2         Size() const = 0;
+        virtual Vector2 Size() const = 0;
         Vector2 CellMatrixSize() const;
         Vector2 CellSize() const;
         void UpdateAux();
@@ -43,6 +46,7 @@ namespace IStrategizer
         std::vector<Vector2> GetNearestEnemyBorders(int p_numberOfBorders);
         bool IsBuildable(Vector2 p_position, Vector2 p_dimension) const ;
 
+        void Copy(IClonable* pDest);
     };
 }
 

@@ -21,18 +21,16 @@ namespace StarCraftModel
     {
     public:
         StarCraftPlayer(Player p_pPlayer);
-        const GameStateEx* State();
-        EntityClassType GetWorkerType() { return m_workerTypeId; }
-        EntityClassType GetBaseType() { return m_baseTypeId; }
+        IClonable* Clone();
+        void Copy(IClonable* pDest);
 
     protected:
+        StarCraftPlayer() {}
         void EnumerateEntities();
         GameEntity* FetchEntity(TID p_id);
 
     private:
         Player m_pPlayer;
-        EntityClassType m_workerTypeId;
-        EntityClassType m_baseTypeId;
     };
 }
 

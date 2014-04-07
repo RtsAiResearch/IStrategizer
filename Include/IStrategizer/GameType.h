@@ -8,6 +8,7 @@
 #ifndef METADATA_H
 #include "MetaData.h"
 #endif
+#include <memory>
 
 namespace IStrategizer
 {
@@ -30,6 +31,8 @@ namespace IStrategizer
         WorldResources* RequiredResources() const { return m_requiredResources; }
         int             Attr(EntityClassAttribute p_attrId) const { return m_attributes[INDEX(p_attrId, EntityClassAttribute)]; }
     };
+    
+    typedef std::tr1::shared_ptr<GameType> GameTypeStrongPtr;
 }
 
 #endif // GAMETYPE_H

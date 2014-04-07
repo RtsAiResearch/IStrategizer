@@ -20,7 +20,6 @@ namespace StarCraftModel
     {
     public:
         StarCraftEntity(BWAPI::Unit p_unit);
-        int    Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
         std::string ToString() const;
         IStrategizer::Vector2 GetPosition() const;
         bool IsTraining(IStrategizer::TID p_traineeId) const;
@@ -32,12 +31,16 @@ namespace StarCraftModel
         bool Train(IStrategizer::EntityClassType p_entityClassId);
         bool Move(IStrategizer::Vector2 p_position);
         bool IsNull();
+        IClonable* Clone();
+        void Copy(IClonable* pDest);
 
     protected:
+        StarCraftEntity() {}
+        int FetchAttr(IStrategizer::EntityObjectAttribute attrId) const;
         IStrategizer::ObjectStateType FetchState() const;
 
     private:
-        BWAPI::Unit    m_unit;
+        BWAPI::Unit    m_pUnit;
     };
 }
 

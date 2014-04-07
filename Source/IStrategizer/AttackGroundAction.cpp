@@ -18,6 +18,7 @@
 #include "EntityClassExist.h"
 #include "Not.h"
 
+using namespace std;
 using namespace IStrategizer;
 using namespace Serialization;
 

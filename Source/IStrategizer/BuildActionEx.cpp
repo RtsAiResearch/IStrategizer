@@ -17,6 +17,7 @@
 #include "EntityClassExist.h"
 #include "PlayerResources.h"
 
+using namespace std;
 using namespace IStrategizer;
 
 const unsigned MaxPrepTime = 300000;
@@ -169,7 +170,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
     bool bOk = false;
 
     // Adapt builder
-    _builderId = pAdapter->GetEntityObjectId(pRtsGame.Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
+    _builderId = pAdapter->GetEntityObjectId(pRtsGame.Self()->TechTree()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
 
     if (_builderId != INVALID_TID)
     {
@@ -212,7 +213,7 @@ void BuildActionEx::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 void BuildActionEx::InitializePreConditions()
 {
-    EntityClassType builderType = g_Game->Self()->GetWorkerType();
+    EntityClassType builderType = g_Game->Self()->TechTree()->GetWorkerType();
     EntityClassType buildingType = (EntityClassType)_params[PARAM_EntityClassId];
     _requiredResources = WorldResources::FromEntity(buildingType);
     vector<Expression*> m_terms;

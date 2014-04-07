@@ -40,6 +40,8 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsG
     g_Game = p_rtsGame;
     g_Game->Init();
 
+    RtsGame* pGameModelClone = dynamic_cast<RtsGame*>(g_Game->Clone());
+
     PlanStepParameters params;
     params[PARAM_PlayerId] = _self;
     params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;

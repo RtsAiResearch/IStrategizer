@@ -35,6 +35,7 @@ using namespace std;
 
 IStrategizer::RtsGame* g_Game = nullptr;
 
+
 RtsGame::~RtsGame()
 {
     Finalize();
@@ -42,7 +43,6 @@ RtsGame::~RtsGame()
 //----------------------------------------------------------------------------------------------
 void RtsGame::Init()
 {
-    assert(!m_initialized);
     if (m_initialized)
         return;
 
@@ -61,38 +61,28 @@ void RtsGame::Finalize()
         Toolbox::MemoryClean(itr->second);
     m_players.clear();
 
-    for (MapEx<EntityClassType, GameType*>::iterator itr = m_entityTypes.begin();
-        itr != m_entityTypes.end(); ++itr)
-        Toolbox::MemoryClean(itr->second);
-    m_entityTypes.clear();
-
-    for (MapEx<ResearchType, GameResearch*>::iterator itr = m_researches.begin();
-        itr != m_researches.end(); ++itr)
-        Toolbox::MemoryClean(itr->second);
-    m_researches.clear();
-
     Toolbox::MemoryClean(m_pMap);
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::InitializeTypes()
 {
     EnumerateEntityTypes();
-    for(MapEx<EntityClassType, GameType*>::iterator itr = m_entityTypes.begin();
+    for(TypesMap::iterator itr = m_entityTypes.begin();
         itr != m_entityTypes.end();
         ++itr)
     {
-        itr->second = FetchEntityType(itr->first);
+        itr->second = GameTypeStrongPtr(FetchEntityType(itr->first));
     }
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::InitializeResearches() 
 {
     EnumerateResearches();
-    for(MapEx<ResearchType, GameResearch*>::iterator itr = m_researches.begin();
+    for(ResearchesMap::iterator itr = m_researches.begin();
         itr != m_researches.end();
         ++itr)
     {
-        itr->second = FetchResearch(itr->first);
+        itr->second = GameResearchStrongPtr(FetchResearch(itr->first));
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -132,7 +122,7 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
         throw ItemNotFoundException(XcptHere);
 }
 //----------------------------------------------------------------------------------------------
-GameType* RtsGame::GetEntityType(EntityClassType p_id)
+GameTypeStrongPtr RtsGame::GetEntityType(EntityClassType p_id)
 {
     assert(m_initialized);
     
@@ -142,7 +132,7 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
     return nullptr;
 }
 //----------------------------------------------------------------------------------------------
-GameResearch* RtsGame::GetResearch(ResearchType p_id)
+GameResearchStrongPtr RtsGame::GetResearch(ResearchType p_id)
 {
     assert(m_initialized);
 
@@ -185,4 +175,28 @@ int RtsGame::GetForceSizeCount(ForceSizeType p_forceSizeType)
 
     _ASSERTE(!"Not Supported Force Size");
     return 0;
+}
+
+void RtsGame::Copy(IClonable* pDest)
+{
+    RtsGame* pConDest = dynamic_cast<RtsGame*>(pDest);
+    _ASSERT(pConDest);
+
+    // Note that types are shared across RtsGame instances
+    // Shallow copy is sufficient, and since types instances are
+    // referenced by smart pointers, them memory management is OK
+    pConDest->m_entityTypes = m_entityTypes;
+    pConDest->m_researches = m_researches;
+    pConDest->m_initialized = m_initialized;
+
+    for (PlayersMap::iterator itr = m_players.begin(); itr != m_players.end(); ++itr)
+    {
+        GamePlayer* pPlayer = dynamic_cast<GamePlayer*>(itr->second->Clone());
+        _ASSERT(pPlayer);
+
+        pConDest->m_players.insert(make_pair(itr->first, pPlayer));
+    }
+
+    pConDest->m_pMap = dynamic_cast<WorldMap*>(m_pMap->Clone());
+    _ASSERT(pConDest->m_pMap);
 }

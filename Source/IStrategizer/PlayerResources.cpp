@@ -2,52 +2,62 @@
 
 using namespace IStrategizer;
 
-bool PlayerResources::HasEnough(const WorldResources* p_resources)
+bool PlayerResources::HasEnough(const WorldResources* pResources)
 {
-    return this->Primary() >= p_resources->Primary() &&
-        this->Secondary() >= p_resources->Secondary() &&
-        this->Supply() >= p_resources->Supply();
+    return this->Primary() >= pResources->Primary() &&
+        this->Secondary() >= pResources->Secondary() &&
+        this->Supply() >= pResources->Supply();
 }
 //////////////////////////////////////////////////////////////////////////
-bool PlayerResources::Lock(WorldResources* resources)
+bool PlayerResources::Lock(WorldResources* pResources)
 {
-    bool amountAvailable = HasEnough(resources);
+    bool amountAvailable = HasEnough(pResources);
 
     if (amountAvailable)
     {
-        if (resources->Supply() > 0)
+        if (pResources->Supply() > 0)
         {
-            _lockedSupply += resources->Supply();
+            m_lockedSupply += pResources->Supply();
         }
 
-        if (resources->Secondary() > 0)
+        if (pResources->Secondary() > 0)
         {
-            _lockedSecondary += resources->Secondary();
+            m_lockedSecondary += pResources->Secondary();
         }
 
-        if (resources->Primary() > 0)
+        if (pResources->Primary() > 0)
         {
-            _lockedPrimary += resources->Primary();
+            m_lockedPrimary += pResources->Primary();
         }
     }
     
     return amountAvailable;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlayerResources::Unlock(WorldResources* resources)
+void PlayerResources::Unlock(WorldResources* pResources)
 {
-    if (resources->Supply() > 0)
+    if (pResources->Supply() > 0)
     {
-        _lockedSupply -= resources->Supply();
+        m_lockedSupply -= pResources->Supply();
     }
 
-    if (resources->Secondary() > 0)
+    if (pResources->Secondary() > 0)
     {
-        _lockedSecondary -= resources->Secondary();
+        m_lockedSecondary -= pResources->Secondary();
     }
 
-    if (resources->Primary() > 0)
+    if (pResources->Primary() > 0)
     {
-        _lockedPrimary -= resources->Primary();
+        m_lockedPrimary -= pResources->Primary();
     }
+}
+//////////////////////////////////////////////////////////////////////////
+void PlayerResources::Copy(IClonable* pDest) const
+{
+    PlayerResources* pConDest = dynamic_cast<PlayerResources*>(pDest);
+    _ASSERTE(pConDest);
+
+    pConDest->m_lockedSupply = m_lockedSupply;
+    pConDest->m_lockedSecondary = m_lockedSecondary;
+    pConDest->m_lockedPrimary = m_lockedPrimary;
 }

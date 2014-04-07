@@ -6,8 +6,9 @@ namespace IStrategizer
     class IClonable
     {
     public:
+        ~IClonable() {}
         virtual IClonable* Clone() = 0;
-        virtual void Copy(IClonable* p_dest) = 0;
+        virtual void Copy(IClonable* pDest) = 0;
     };
 }
 

@@ -20,10 +20,12 @@ namespace StarCraftModel
         GameResearch*   FetchResearch(ResearchType p_id);
         void            InitializeMap();
         int             GetMaxForceSize();
+
     public:
         StarCraftGame();
         void ExecuteCommand(const char *p_cmd);
         void    DisplayMessage(const char *p_msg);
+        IClonable* Clone();
 
     };
 }

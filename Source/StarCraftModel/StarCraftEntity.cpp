@@ -22,13 +22,13 @@ using namespace std;
 #define TilePositionFromUnitPosition(UnitPos) (UnitPos / 32)
 #define UnitPositionFromTilePosition(TilePos) (TilePos * 32)
 
-StarCraftEntity::StarCraftEntity(Unit p_unit) : GameEntity(p_unit->getID()), m_unit(p_unit)
+StarCraftEntity::StarCraftEntity(Unit p_unit) : GameEntity(p_unit->getID()), m_pUnit(p_unit)
 {
-    m_ownerId = g_Database.PlayerMapping.GetByFirst(m_unit->getPlayer()->getID());
-    m_type = g_Database.EntityMapping.GetByFirst(m_unit->getType().getID());
+    m_ownerId = g_Database.PlayerMapping.GetByFirst(m_pUnit->getPlayer()->getID());
+    m_type = g_Database.EntityMapping.GetByFirst(m_pUnit->getType().getID());
 }
 //----------------------------------------------------------------------------------------------
-int StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
+int StarCraftEntity::FetchAttr(EntityObjectAttribute p_attrId) const
 {
     // Positions are measured in pixels and are the highest resolution
     // Walk Tiles - each walk tile is an 8x8 square of pixels. These are called walk tiles because walkability data is available at this resolution.
@@ -41,19 +41,19 @@ int StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
     switch(p_attrId)
     {
     case EOATTR_Health:
-        return m_unit->getHitPoints();
+        return m_pUnit->getHitPoints();
 
     case EOATTR_PosX:
-        if (m_unit->getType().isBuilding())
-            return UnitPositionFromTilePosition(m_unit->getTilePosition().x);
+        if (m_pUnit->getType().isBuilding())
+            return UnitPositionFromTilePosition(m_pUnit->getTilePosition().x);
         else
-            return m_unit->getLeft();
+            return m_pUnit->getLeft();
 
     case EOATTR_PosY:
-        if (m_unit->getType().isBuilding())
-            return UnitPositionFromTilePosition(m_unit->getTilePosition().y);
+        if (m_pUnit->getType().isBuilding())
+            return UnitPositionFromTilePosition(m_pUnit->getTilePosition().y);
         else
-            return m_unit->getTop();
+            return m_pUnit->getTop();
 
     case EOATTR_State:
         return FetchState();
@@ -62,16 +62,16 @@ int StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
         return m_ownerId;
 
     case EOATTR_PosCenterX:
-        return m_unit->getPosition().x;
+        return m_pUnit->getPosition().x;
 
     case EOATTR_PosCenterY:
-        return m_unit->getPosition().y;
+        return m_pUnit->getPosition().y;
 
     case EOATTR_IsMoving:
-        return m_unit->isMoving();
+        return m_pUnit->isMoving();
 
     default:
-        assert(0);
+        _ASSERTE(!"Invalid Entity Attribute");
     }
 
     return 0;
@@ -79,16 +79,16 @@ int StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
 //----------------------------------------------------------------------------------------------
 ObjectStateType StarCraftEntity::FetchState() const
 {
-    bool isIdle = m_unit->isIdle();
-    bool isCompleted = m_unit->isCompleted();
-    bool isBeingConstructed = m_unit->isBeingConstructed();
-    bool isConstructing = m_unit->isConstructing();
-    bool isMoving = m_unit->isMoving();
-    bool isGatheringGas = m_unit->isGatheringGas();
-    bool isGatheringMinerals = m_unit->isGatheringMinerals();
-    bool isTraining = m_unit->isTraining();
-    bool isAttacking = m_unit->isAttacking();
-    bool isUnderAttack = m_unit->isUnderAttack();
+    bool isIdle = m_pUnit->isIdle();
+    bool isCompleted = m_pUnit->isCompleted();
+    bool isBeingConstructed = m_pUnit->isBeingConstructed();
+    bool isConstructing = m_pUnit->isConstructing();
+    bool isMoving = m_pUnit->isMoving();
+    bool isGatheringGas = m_pUnit->isGatheringGas();
+    bool isGatheringMinerals = m_pUnit->isGatheringMinerals();
+    bool isTraining = m_pUnit->isTraining();
+    bool isAttacking = m_pUnit->isAttacking();
+    bool isUnderAttack = m_pUnit->isUnderAttack();
 
     if (isIdle && isCompleted)
         return OBJSTATE_Idle;
@@ -119,13 +119,13 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
     {
         TID gameTypeID = g_Database.TechMapping.GetBySecond(p_researchId);
 
-        bOk = m_unit->research(TechType(gameTypeID));
+        bOk = m_pUnit->research(TechType(gameTypeID));
     }
     // Is upgrade
     else
     {
         TID gameTypeID = g_Database.UpgradeMapping.GetBySecond(p_researchId);
-        bOk = m_unit->upgrade(UpgradeType(gameTypeID));
+        bOk = m_pUnit->upgrade(UpgradeType(gameTypeID));
     }
 
     return bOk;
@@ -144,18 +144,18 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     type = UnitType::getType(typeName);
     type = BWAPI::UnitType::getType(typeName);
 
-    return m_unit->build(type, pos);
+    return m_pUnit->build(type, pos);
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackGround(Vector2 p_position)
 {
     Position pos(p_position.X, p_position.Y);
-    return m_unit->attack(pos);
+    return m_pUnit->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 {
-    Unit attacker = m_unit;
+    Unit attacker = m_pUnit;
     Unit target;
 
     target = Broodwar->getUnit(p_targetEntityObjectId);
@@ -168,7 +168,7 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 {
-    Unit            building = m_unit;
+    Unit            building = m_pUnit;
     TID             unitTypeId;
     string          typeName;
     UnitType        type;
@@ -190,10 +190,10 @@ bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
         throw ItemNotFoundException(XcptHere);
 
     return MathHelper::RectangleMembership(
-        m_unit->getLeft(),
-        m_unit->getTop(),
-        m_unit->getRight() - m_unit->getLeft(),
-        m_unit->getBottom() - m_unit->getTop(),
+        m_pUnit->getLeft(),
+        m_pUnit->getTop(),
+        m_pUnit->getRight() - m_pUnit->getLeft(),
+        m_pUnit->getBottom() - m_pUnit->getTop(),
         traineeObj->getPosition().x,
         traineeObj->getPosition().y);
 }
@@ -202,9 +202,9 @@ string StarCraftModel::StarCraftEntity::ToString() const
 {
     std::string asSharedResource = SharedResource::ToString();
 
-    std::string description = m_unit->getType().getName();
+    std::string description = m_pUnit->getType().getName();
     description += "(";
-    description += to_string((long long)m_unit->getID());
+    description += to_string((long long)m_pUnit->getID());
     description += ",";
     description += asSharedResource;
     description += ")";
@@ -214,16 +214,33 @@ string StarCraftModel::StarCraftEntity::ToString() const
 //----------------------------------------------------------------------------------------------
 Vector2 StarCraftEntity::GetPosition() const
 {
-    return Vector2(m_unit->getPosition().x, m_unit->getPosition().y);
+    return Vector2(m_pUnit->getPosition().x, m_pUnit->getPosition().y);
 }
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Move(Vector2 p_position)
 {
     Position pos(p_position.X, p_position.Y);
-    return m_unit->move(pos);
+    return m_pUnit->move(pos);
 }
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::IsNull()
 {
-    return m_unit == nullptr;
+    return m_pUnit == nullptr;
+}
+//----------------------------------------------------------------------------------------------
+IClonable* StarCraftEntity::Clone()
+{
+    StarCraftEntity* pClone = new StarCraftEntity();
+    Copy(pClone);
+
+    return pClone;
+}
+//----------------------------------------------------------------------------------------------
+void StarCraftEntity::Copy(IClonable* pDest)
+{
+    StarCraftEntity* pConDest = dynamic_cast<StarCraftEntity*>(pDest);
+    _ASSERTE(pConDest);
+
+    GameEntity::Copy(pDest);
+    pConDest->m_pUnit = m_pUnit;
 }

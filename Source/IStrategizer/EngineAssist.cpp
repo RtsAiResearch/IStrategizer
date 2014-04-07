@@ -54,14 +54,14 @@ int EngineAssist::GetRequiredResources(PlayerType p_playerIndex, TID p_classId, 
 {
     if (BELONG(EntityClassType, p_classId))
     {
-        const GameType* m_type = g_Game->GetEntityType((EntityClassType)p_classId);
+        GameTypeStrongPtr m_type = g_Game->GetEntityType((EntityClassType)p_classId);
         p_requiredCost.Gold = m_type->RequiredResources()->Primary();
         p_requiredCost.Wood = m_type->RequiredResources()->Secondary();
         p_requiredCost.Food = m_type->RequiredResources()->Supply();
     }
     else if (BELONG(ResearchType, p_classId))
     {
-        const GameResearch* m_research = g_Game->GetResearch((ResearchType)p_classId);
+        GameResearchStrongPtr m_research = g_Game->GetResearch((ResearchType)p_classId);
         p_requiredCost.Gold = m_research->RequiredResources()->Primary();
         p_requiredCost.Wood = m_research->RequiredResources()->Secondary();
         p_requiredCost.Food = m_research->RequiredResources()->Supply();
@@ -360,8 +360,9 @@ int EngineAssist::GetEntities(IN PlayerType p_playerType, IN const vector<Entity
 int EngineAssist::GetFilterCount(PlayerType p_playerIndex, FilterType p_filterIndex, IN const Vector2& p_cellIndex, int& p_count)
 {
     assert(0);
-    //assert(p_playerIndex != PLAYER_Any);
-    GameType* type;
+
+    GameTypeStrongPtr type;
+
     if(p_filterIndex == FILTER_AnyEntity)
     {
         //GetPlayerAttribute(p_playerIndex, PATTRIBUTE_EntitiesCount, p_count);
@@ -430,7 +431,7 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
 {
     GamePlayer* pPlayer;
     GameEntity* pEntity;
-    GameType* pType;
+    GameTypeStrongPtr pType;
     vector<TID> entities;
     unsigned matches;
     bool        exist = false;
@@ -453,7 +454,7 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
 
             if (pEntity->Type() == itr->first)
             {
-                pType = g_Game->GetEntityType(itr->first);
+                pType = GameTypeStrongPtr(g_Game->GetEntityType(itr->first));
                 assert(pType);
 
                 // Building are considered exist if and only if it is constructed
@@ -608,8 +609,8 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
 void EngineAssist::GetPrerequisiteResources(int p_entityOrResearchType, PlayerType p_playerType, WorldResources& p_resources)
 {
     GamePlayer *pPlayer = nullptr;
-    GameType *pEntityType = nullptr;
-    GameResearch *pResearchType = nullptr;
+    GameTypeStrongPtr pEntityType = nullptr;
+    GameResearchStrongPtr pResearchType = nullptr;
 
     pPlayer = g_Game->GetPlayer(p_playerType);
     assert(pPlayer);

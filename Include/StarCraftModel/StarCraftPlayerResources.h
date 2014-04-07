@@ -9,18 +9,26 @@
 
 namespace StarCraftModel
 {
-  using namespace IStrategizer;
-  using namespace BWAPI;
+    using namespace IStrategizer;
+    using namespace BWAPI;
 
-  class StarCraftPlayerResources : public PlayerResources
-  {
-    Player m_player;
-  public:
-    StarCraftPlayerResources(Player p_player) :  m_player(p_player) {}
-    int Supply();
-    int Secondary();
-    int Primary();
-  };
+    class StarCraftPlayerResources : public PlayerResources
+    {
+    public:
+        StarCraftPlayerResources(Player p_player) :  m_pPlayer(p_player) {}
+        int Supply();
+        int Secondary();
+        int Primary();
+
+        IClonable* Clone();
+        void Copy(IClonable* pDest);
+
+    protected:
+        StarCraftPlayerResources() {}
+
+    private:
+        Player m_pPlayer;
+    };
 }
 
 #endif // STARCRAFTPLAYERRESOURCES_H

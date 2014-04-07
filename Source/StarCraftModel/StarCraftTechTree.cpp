@@ -261,3 +261,32 @@ EntityClassType StarCraftTechTree::SourceEntity(int p_typeOrResearchId) const
 
     return ECLASS_END;
 }
+//----------------------------------------------------------------------------------------------
+EntityClassType StarCraftTechTree::GetWorkerType()
+{
+    TID typeId = m_player->getRace().getWorker().getID();
+    return g_Database.EntityMapping.GetByFirst(typeId);
+}
+//----------------------------------------------------------------------------------------------
+EntityClassType StarCraftTechTree::GetBaseType()
+{
+    TID typeId = m_player->getRace().getCenter().getID();
+    return g_Database.EntityMapping.GetByFirst(typeId);
+}
+//----------------------------------------------------------------------------------------------
+void StarCraftTechTree::Copy(IClonable* pDest)
+{
+    StarCraftTechTree* pConDest = dynamic_cast<StarCraftTechTree*>(pDest);
+    _ASSERTE(pConDest);
+
+    GameTechTree::Copy(pDest);
+    pConDest->m_player = m_player;
+}
+//----------------------------------------------------------------------------------------------
+IClonable* StarCraftTechTree::Clone()
+{
+    StarCraftTechTree* pClone = new StarCraftTechTree();
+    Copy(pClone);
+
+    return pClone;
+}
