@@ -39,3 +39,8 @@ bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
     return false;
 }
+//----------------------------------------------------------------------------------------------
+GoalEx* CollectResourceGoal::GetSucceededInstance(const RtsGame &rtGame) const
+{
+    return nullptr;
+}

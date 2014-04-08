@@ -111,9 +111,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\CombinatoricsAndOrGraph.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\GoalMatrixRowEvaluator.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstration.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GameStateEx.cpp" />
@@ -181,7 +179,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\Predicate.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Vector2.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\CombinatoricsAndOrGraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MapEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\PlanGraph.h" />
@@ -220,7 +217,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WinGameGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseLearningHelper.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h" />
     <CustomBuildStep Include="..\..\Include\IStrategizer\LearningFromHumanDemonstration.h" />
     <CustomBuildStep Include="..\..\Include\IStrategizer\GameTrace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineComponent.h" />

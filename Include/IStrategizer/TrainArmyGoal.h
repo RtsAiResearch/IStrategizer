@@ -16,6 +16,7 @@ namespace IStrategizer
         TrainArmyGoal();
         TrainArmyGoal(const PlanStepParameters& p_parameters);
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
+        GoalEx* GetSucceededInstance(const RtsGame &rtGame) const;
 
     protected:
         void InitializePostConditions();

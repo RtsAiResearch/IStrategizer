@@ -32,3 +32,8 @@ void WinGameGoal::InitializePostConditions()
 {
     _postCondition = new Not(new EntityClassExist(PLAYER_Enemy));
 }
+//----------------------------------------------------------------------------------------------
+GoalEx* WinGameGoal::GetSucceededInstance(const RtsGame &rtGame) const
+{
+    return nullptr;
+}

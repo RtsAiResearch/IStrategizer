@@ -121,8 +121,9 @@ float RetrieverEx::StateSimilarity(const GameStateEx *p_gs1, const GameStateEx *
 float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const GameStateEx* p_gameState)
 {
     float alpha = 0.95f;
-    float goalSimilarity    = GoalSimilarity(p_case->Goal(), p_goal);
-    float stateSimilarity   = StateSimilarity(p_case->GameState(), p_gameState);
+    float goalSimilarity = GoalSimilarity(p_case->Goal(), p_goal);
+    // To Do: fix to use RtsGame somehow instead of GameStateEx
+    float stateSimilarity = 0.0; //StateSimilarity(p_case->GameState(), p_gameState);
 
     return (alpha * goalSimilarity) + (float)((1.0 - alpha) * stateSimilarity);
 }

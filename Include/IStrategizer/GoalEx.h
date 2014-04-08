@@ -22,6 +22,7 @@ namespace IStrategizer
     public:
         void UpdateAux(RtsGame& game, const WorldClock& p_clock);
         void Reset(RtsGame& game, const WorldClock& p_clock);
+        virtual GoalEx* GetSucceededInstance(const RtsGame &rtGame) const = 0;
     };
 }
 

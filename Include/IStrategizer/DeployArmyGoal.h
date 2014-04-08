@@ -15,6 +15,7 @@ namespace IStrategizer
     public:
         DeployArmyGoal();
         DeployArmyGoal(const PlanStepParameters& p_parameters);
+        GoalEx* GetSucceededInstance(const RtsGame &rtGame) const;
         
     protected:
         void InitializePostConditions();

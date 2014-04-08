@@ -41,3 +41,8 @@ void DeployArmyGoal::InitializePostConditions()
     /*over EntityClassNearArea constructor to take filter Type*/
     _postCondition = new And(m_terms);
 }
+//----------------------------------------------------------------------------------------------
+GoalEx* DeployArmyGoal::GetSucceededInstance(const RtsGame &rtGame) const
+{
+    return nullptr;
+}

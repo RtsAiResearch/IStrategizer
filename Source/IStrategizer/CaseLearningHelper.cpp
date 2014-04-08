@@ -3,44 +3,55 @@
 #include "GameStateEx.h"
 #include "MessagePump.h"
 #include "IStrategizerException.h"
-
-#ifndef GOALSATISFACTIONROW_H
-#include "GoalMatrixRowEvaluator.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-
-#ifndef SVECTOR_H
 #include "SVector.h"
-#endif
+#include "GoalFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
 
 CaseLearningHelper::CaseLearningHelper()
 {
-    m_goalMatrixRowEvaluator.Initialize(PLAYER_Self, PLAYER_Enemy);
     g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
     g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+
+    for(unsigned i = START(GoalType); i < END(GoalType); ++i)
+    {
+        m_goals.push_back(g_GoalFactory.GetGoal((GoalType)i, true));
+    }
 }
-//---------------------------------------------------------------------------------------------------------------------------------------------
-GoalMatrixRow CaseLearningHelper::ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle)
+//--------------------------------------------------------------------------------------------------------------------------------------------
+std::vector<GoalEx*> CaseLearningHelper::GetSatisfiedGoals() const
 {
-    GoalMatrixRow row;
-    row.resize(m_goalMatrixRowEvaluator.GetRowSize());
-    m_goalMatrixRowEvaluator.Compute(p_gameCycle, row);
-    
-    return row;
+    vector<GoalEx*> satisfiedGoals;
+
+    for (size_t i = 0; i < m_goals.size(); ++i)
+    {
+        GoalEx* goal = m_goals[i]->GetSucceededInstance(*g_Game);
+
+        if (goal)
+        {
+            satisfiedGoals.push_back(goal);
+        }
+    }
+
+    return satisfiedGoals;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------
 void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 {
     DataMessage<GameTrace>* pTraceMsg = nullptr;
     GameTrace trace;
+    bool dummy = false;
 
     if (p_message == nullptr)
         throw InvalidParameterException(XcptHere);
+
+    for (size_t i = 0; i < m_goals.size(); ++i)
+    {
+        m_goals[i]->HandleMessage(*g_Game, p_message, dummy);
+    }
 
     switch(p_message->MessageTypeID())
     {
@@ -51,17 +62,15 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
             throw InvalidParameterException(XcptHere);
 
         trace = *pTraceMsg->Data();
-        m_goalMatrix[trace.GameCycle()] = ComputeGoalMatrixRowSatisfaction(trace.GameCycle());
+        m_observedTraces.push_back(trace);
+        m_goalMatrix[p_message->GameCycle()] = GetSatisfiedGoals();
 
         LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
-
-        m_observedTraces.push_back(trace);
-
         break;
 
         case MSG_GameEnd:
             LogInfo("Received game end mmessage");
-            m_goalMatrix[p_message->GameCycle()] = ComputeGoalMatrixRowSatisfaction(p_message->GameCycle());
+            m_goalMatrix[p_message->GameCycle()] = GetSatisfiedGoals();
             break;
     }
 }

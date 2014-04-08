@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef RTSGAME_H
 #define RTSGAME_H
 
@@ -27,6 +28,7 @@ namespace IStrategizer
     class GameResearch;
     class WorldMap;
 
+    ///> class=RtsGame
     class RtsGame : public EngineComponent
     {
     protected:

@@ -17,7 +17,6 @@ TrainArmyGoal::TrainArmyGoal() : GoalEx(GOALEX_TrainArmy)
     _params[PARAM_ForceSizeId] = FORCESIZE_START;
     _params[PARAM_EntityClassId] = ECLASS_START;
     m_trainedUnitsCount = 0;
-    m_trainedUnitsCount = 0;
 }
 //----------------------------------------------------------------------------------------------
 TrainArmyGoal::TrainArmyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainArmy, p_parameters)
@@ -82,4 +81,13 @@ void TrainArmyGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
             m_pendingUnits.push_back(entityId);
         }
     }
+}
+//----------------------------------------------------------------------------------------------
+GoalEx* TrainArmyGoal::GetSucceededInstance(const RtsGame &rtGame) const
+{
+    PlanStepParameters parameters;
+    parameters[PARAM_ForceSizeId] = FORCESIZE_MediumForce;
+    parameters[PARAM_EntityClassId] = ECLASS_START;
+    
+    return new TrainArmyGoal(parameters);
 }

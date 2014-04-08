@@ -6,6 +6,7 @@
 #include "EngineData.h"
 #include "CompositeExpression.h"
 #include "CaseLearningHelper.h"
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -31,21 +32,21 @@ namespace IStrategizer
     {
     public:
         RawPlanEx rawPlan;
-        GameStateEx gameState;
+        const RtsGame* gameState;
 
         RawCaseEx() {}
-        RawCaseEx(RawPlanEx p_rawPlan, const GameStateEx& p_gameState): rawPlan(p_rawPlan), gameState(p_gameState){}
+        RawCaseEx(RawPlanEx p_rawPlan, const RtsGame* p_gameState): rawPlan(p_rawPlan), gameState(p_gameState) {}
     };
 
     class CookedPlan
     {
     public:
         GoalEx* Goal;
-        GameStateEx* gameState;
+        RtsGame* gameState;
         PlanGraph* pPlan;
 
         CookedPlan(){}
-        CookedPlan(GoalEx* p_goal, PlanGraph* p_pPlan, GameStateEx* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
+        CookedPlan(GoalEx* p_goal, PlanGraph* p_pPlan, RtsGame* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
     };
 
     class CookedCase

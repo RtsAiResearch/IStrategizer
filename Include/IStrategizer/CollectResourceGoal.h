@@ -16,6 +16,7 @@ namespace IStrategizer
     public:
         CollectResourceGoal();
         CollectResourceGoal(const PlanStepParameters& p_parameters);
+        GoalEx* GetSucceededInstance(const RtsGame &rtGame) const;
         
     protected:
         void InitializePostConditions();
