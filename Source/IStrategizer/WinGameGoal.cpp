@@ -35,5 +35,17 @@ void WinGameGoal::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 vector<GoalEx*> WinGameGoal::GetSucceededInstances(RtsGame &game)
 {
-    return vector<GoalEx*>();
+    vector<GoalEx*> succeededGoals;
+    vector<TID> enemyEntities;
+    game.Enemy()->Entities(enemyEntities);
+
+    if (enemyEntities.empty())
+    {
+        PlanStepParameters params;
+        params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
+        succeededGoals.push_back(new WinGameGoal(params));
+        LogInfo("WinGameGoal succeeded with strategt type='%s'", Enums[params[PARAM_StrategyTypeId]]);
+    }
+
+    return succeededGoals;
 }
