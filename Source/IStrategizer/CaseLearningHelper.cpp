@@ -46,6 +46,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     DataMessage<GameTrace>* pTraceMsg = nullptr;
     GameTrace trace;
     bool dummy = false;
+    vector<GoalEx*> succeededGoals;
 
     if (p_message == nullptr)
         throw InvalidParameterException(XcptHere);
@@ -65,14 +66,27 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 
         trace = *pTraceMsg->Data();
         m_observedTraces.push_back(trace);
-        m_goalMatrix[p_message->GameCycle()] = GetSatisfiedGoals();
+
+        succeededGoals = GetSatisfiedGoals();
+        
+        for (size_t i = 0; i < succeededGoals.size(); ++i)
+        {
+            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
+        }
+
         LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
 
         break;
 
     case MSG_GameEnd:
         LogInfo("Received game end mmessage");
-        m_goalMatrix[p_message->GameCycle()] = GetSatisfiedGoals();
+        
+        succeededGoals = GetSatisfiedGoals();
+        
+        for (size_t i = 0; i < succeededGoals.size(); ++i)
+        {
+            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
+        }
 
         break;
     }

@@ -3,6 +3,7 @@
 #define DESTROYENTITYTYPEGOAL_H
 
 #include "GoalEx.h"
+#include <map>
 
 namespace IStrategizer
 {
@@ -14,6 +15,7 @@ namespace IStrategizer
 
     private:
         int m_demandTargetSize;
+        std::map<EntityClassType, int> m_destroyed;
 
     public:
         DestroyEntityTypeGoal();
