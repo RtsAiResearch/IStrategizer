@@ -61,6 +61,7 @@ namespace IStrategizer
         void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds);
         void Researches(std::vector<ResearchType>& p_researchTypeIds);
         int GetForceSizeCount( ForceSizeType p_forceSizeType );
+        ForceSizeType GetForceSizeType(int forceCount);
         GamePlayer* GetPlayer(PlayerType p_id);
         GameType* GetEntityType(EntityClassType p_id);
         GameResearch* GetResearch(ResearchType p_id);

@@ -28,12 +28,14 @@ std::vector<GoalEx*> CaseLearningHelper::GetSatisfiedGoals() const
 
     for (size_t i = 0; i < m_goals.size(); ++i)
     {
-        GoalEx* goal = m_goals[i]->GetSucceededInstance(*g_Game);
+        vector<GoalEx*> newGoals = m_goals[i]->GetSucceededInstances(*g_Game);
 
-        if (goal)
+        for (size_t j = 0; j < newGoals.size(); ++j)
         {
-            satisfiedGoals.push_back(goal);
+            satisfiedGoals.push_back((GoalEx*)newGoals[j]->Clone());
         }
+
+        newGoals.clear();
     }
 
     return satisfiedGoals;
@@ -64,14 +66,15 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
         trace = *pTraceMsg->Data();
         m_observedTraces.push_back(trace);
         m_goalMatrix[p_message->GameCycle()] = GetSatisfiedGoals();
-
         LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
+
         break;
 
-        case MSG_GameEnd:
-            LogInfo("Received game end mmessage");
-            m_goalMatrix[p_message->GameCycle()] = GetSatisfiedGoals();
-            break;
+    case MSG_GameEnd:
+        LogInfo("Received game end mmessage");
+        m_goalMatrix[p_message->GameCycle()] = GetSatisfiedGoals();
+
+        break;
     }
 }
 

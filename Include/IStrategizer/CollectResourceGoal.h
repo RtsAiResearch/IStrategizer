@@ -16,7 +16,7 @@ namespace IStrategizer
     public:
         CollectResourceGoal();
         CollectResourceGoal(const PlanStepParameters& p_parameters);
-        GoalEx* GetSucceededInstance(const RtsGame &rtGame) const;
+        std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         
     protected:
         void InitializePostConditions();

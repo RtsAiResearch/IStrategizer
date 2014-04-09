@@ -42,7 +42,7 @@ void DeployArmyGoal::InitializePostConditions()
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-GoalEx* DeployArmyGoal::GetSucceededInstance(const RtsGame &rtGame) const
+vector<GoalEx*> DeployArmyGoal::GetSucceededInstances(RtsGame &game)
 {
-    return nullptr;
+    return vector<GoalEx*>();
 }

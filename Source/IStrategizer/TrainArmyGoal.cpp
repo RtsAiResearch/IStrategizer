@@ -8,6 +8,7 @@
 #include "DataMessage.h"
 #include "GameEntity.h"
 #include "GamePlayer.h"
+#include "GameType.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -74,20 +75,54 @@ void TrainArmyGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
         TID entityId = pMsg->Data()->EntityId;
         GameEntity *pEntity = game.Self()->GetEntity(entityId);
         assert(pEntity);
-        EntityClassType tempEntity = pEntity->Type();
-        EntityClassType tempParam = (EntityClassType)_params[PARAM_EntityClassId];
-        if (tempEntity == tempParam)
+        EntityClassType entityType = pEntity->Type();
+        EntityClassType requiredEntityType = (EntityClassType)_params[PARAM_EntityClassId];
+        if (entityType == requiredEntityType)
         {
             m_pendingUnits.push_back(entityId);
         }
     }
 }
 //----------------------------------------------------------------------------------------------
-GoalEx* TrainArmyGoal::GetSucceededInstance(const RtsGame &rtGame) const
+vector<GoalEx*> TrainArmyGoal::GetSucceededInstances(RtsGame &game)
 {
-    PlanStepParameters parameters;
-    parameters[PARAM_ForceSizeId] = FORCESIZE_MediumForce;
-    parameters[PARAM_EntityClassId] = ECLASS_START;
+    vector<GoalEx*> succeededInstances;
+    vector<TID> entities;
+    map<EntityClassType, int> newForces;
+
+    game.Self()->Entities(entities);
     
-    return new TrainArmyGoal(parameters);
+    // Include new added units
+    for (size_t i = 0; i < entities.size(); ++i)
+    {
+        if (find(m_usedUnits.begin(), m_usedUnits.end(), entities[i]) == m_usedUnits.end())
+        {
+            GameEntity* gameEntity = game.Self()->GetEntity(entities[i]);
+
+            if (!game.GetEntityType(gameEntity->Type())->Attr(ECATTR_IsBuilding) &&
+                 game.Self()->GetWorkerType() != gameEntity->Type())
+            {
+                newForces[game.Self()->GetEntity(entities[i])->Type()]++;
+                m_usedUnits.push_back(gameEntity->Id());
+            }
+        }
+    }
+
+    PlanStepParameters params;
+
+    // Find succeeded goals
+    for (map<EntityClassType, int>::iterator itr = newForces.begin(); itr != newForces.end(); itr++)
+    {
+        params[PARAM_EntityClassId] = (*itr).first;
+        params[PARAM_ForceSizeId] = game.GetForceSizeType((*itr).second + m_forces[(*itr).first]);
+        succeededInstances.push_back(new TrainArmyGoal(params));
+        m_forces[(*itr).first] += (*itr).second;
+
+        LogInfo("TrainArmyGoal succeeded for entity type='%s' with force size='%s'",
+            Enums[params[PARAM_EntityClassId]],
+            Enums[params[PARAM_ForceSizeId]]);
+    }
+
+    
+    return succeededInstances;
 }

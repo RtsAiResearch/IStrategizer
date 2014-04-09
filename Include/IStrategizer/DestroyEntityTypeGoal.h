@@ -20,7 +20,7 @@ namespace IStrategizer
         DestroyEntityTypeGoal(const PlanStepParameters& p_parameters);
         void Copy(IClonable* p_dest);
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
-        GoalEx* GetSucceededInstance(const RtsGame &rtGame) const;
+        std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
 
     protected:
         void InitializePostConditions();

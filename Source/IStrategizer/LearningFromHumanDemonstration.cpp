@@ -34,6 +34,7 @@ void LearningFromHumanDemonstration::Learn()
 {
     vector<CookedPlan*> m_cookedPlans;
     GameTrace::List traces = _helper->ObservedTraces();
+    std::map<unsigned long, std::vector<GoalEx*>> goalMatrix = _helper->GoalMatrix();
     // vector<RawCaseEx*> m_rawCases = LearnRawCases(traces);
     
  //   vector<CookedCase*> m_cookedCases;

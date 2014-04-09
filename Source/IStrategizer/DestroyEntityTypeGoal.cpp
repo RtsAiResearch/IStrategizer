@@ -61,7 +61,7 @@ void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p
     }
 }
 //----------------------------------------------------------------------------------------------
-GoalEx* DestroyEntityTypeGoal::GetSucceededInstance(const RtsGame &rtGame) const
+vector<GoalEx*> DestroyEntityTypeGoal::GetSucceededInstances(RtsGame &game)
 {
-    return nullptr;
+    return vector<GoalEx*>();
 }

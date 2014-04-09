@@ -27,6 +27,7 @@ namespace IStrategizer
         CaseLearningHelper();
         void NotifyMessegeSent(Message* p_message);
         const GameTrace::List& ObservedTraces() const { return m_observedTraces; }
+        std::map<unsigned long, std::vector<GoalEx*>>& GoalMatrix() { return m_goalMatrix; }
     };
 }
 
