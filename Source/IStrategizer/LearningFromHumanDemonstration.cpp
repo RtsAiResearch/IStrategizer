@@ -6,7 +6,6 @@
 #include "Action.h"
 #include "GoalFactory.h"
 #include "GoalEx.h"
-#include "PlanGraph.h"
 #include "ConditionEx.h"
 
 #ifndef RETAINEREX_H

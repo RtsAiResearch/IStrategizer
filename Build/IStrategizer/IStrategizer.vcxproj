@@ -184,7 +184,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\CombinatoricsAndOrGraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MapEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\PlanGraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Diagraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GraphNode.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Collection.h" />
