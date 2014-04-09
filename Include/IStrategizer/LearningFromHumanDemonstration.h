@@ -42,20 +42,20 @@ namespace IStrategizer
     public:
         GoalEx* Goal;
         GameStateEx* gameState;
-        PlanGraph* pPlan;
+        OlcbpPlan* pPlan;
 
         CookedPlan(){}
-        CookedPlan(GoalEx* p_goal, PlanGraph* p_pPlan, GameStateEx* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
+        CookedPlan(GoalEx* p_goal, OlcbpPlan* p_pPlan, GameStateEx* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
     };
 
     class CookedCase
     {
     public:
         RawCaseEx* rawCase;
-        PlanGraph* dGraph;
+        OlcbpPlan* plan;
 
         CookedCase(){}
-        CookedCase(RawCaseEx* p_rawCase, PlanGraph* p_dGraph): rawCase(p_rawCase), dGraph(p_dGraph) {}
+        CookedCase(RawCaseEx* p_rawCase, OlcbpPlan* p_plan): rawCase(p_rawCase), plan(p_plan) {}
     };
 
     class LearningFromHumanDemonstration
@@ -68,7 +68,7 @@ namespace IStrategizer
         void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
         CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
         bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, std::vector<Expression*>& p_matchedConditions);
-        void NecessaryStepsExtraction(PlanGraph* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps);
+        void NecessaryStepsExtraction(OlcbpPlan* p_plan, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps);
         void UnnecessaryStepsElimination(CookedCase* p_case);
         CookedPlan* PlanParallelization(PlanGraph* p_graph, RawPlanEx* p_steps);
         void HierarchicalComposition(CookedPlan* p_plan, const std::vector<CookedPlan*>& p_plans, unsigned p_index);
