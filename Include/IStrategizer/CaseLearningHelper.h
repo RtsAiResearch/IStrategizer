@@ -16,18 +16,21 @@ namespace IStrategizer
 
     class CaseLearningHelper : public MessagePumpObserver
     {
-    private:
-        GameTrace::List m_observedTraces;
-        std::map<unsigned long, std::vector<GoalEx*>> m_goalMatrix;
-        std::vector<GoalEx*> m_goals;
-
-        std::vector<GoalEx*> GetSatisfiedGoals() const;
-
     public:
+        typedef unsigned long GameCycle;
+        typedef std::map<GameCycle, std::vector<GoalEx*>> GoalMatrix;
+
         CaseLearningHelper();
         void NotifyMessegeSent(Message* p_message);
         const GameTrace::List& ObservedTraces() const { return m_observedTraces; }
-        std::map<unsigned long, std::vector<GoalEx*>>& GoalMatrix() { return m_goalMatrix; }
+        GoalMatrix& GetGoalSatisfacionMatrix() { return m_goalMatrix; }
+
+    private:
+        GameTrace::List m_observedTraces;
+        GoalMatrix m_goalMatrix;
+        std::vector<GoalEx*> m_goals;
+
+        std::vector<GoalEx*> GetSatisfiedGoals() const;
     };
 }
 
