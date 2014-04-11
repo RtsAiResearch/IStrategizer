@@ -101,7 +101,10 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
         if(AliveConditionsSatisfied(game))
         { 
             if (SuccessConditionsSatisfied(game))
+            {
                 State(ESTATE_Succeeded, game, p_clock);
+                m_history.Add(ESTATE_Succeeded);
+            }
         }
         else
         {

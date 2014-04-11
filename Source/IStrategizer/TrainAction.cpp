@@ -127,6 +127,11 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
             success = true;
         }
     }
+    else
+    {
+        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, m_trainerType, 1, false);
+        m_history.Add(ESTATE_Failed, failedCondition);
+    }
 
     return success;
 }
@@ -199,7 +204,7 @@ void TrainAction::InitializePostConditions()
 void TrainAction::InitializePreConditions()
 {
     EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
-    EntityClassType trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
+    m_trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
     vector<Expression*> m_terms;
     WorldResources completeRequiredRespurces = WorldResources::FromEntity(traineeType);
     
@@ -208,7 +213,7 @@ void TrainAction::InitializePreConditions()
     // consumed upon executing the action
     m_requiredResources = WorldResources(completeRequiredRespurces.Supply(), 0, 0);
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, trainerType, 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, 1, true));
     g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

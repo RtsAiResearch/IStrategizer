@@ -137,6 +137,13 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
     }
     else
     {
+        ConditionEx* failedCondition = new EntityClassExist(
+            PLAYER_Self,
+            game.Self()->GetWorkerType(),
+            1,
+            true);
+        m_history.Add(ESTATE_Failed, failedCondition);
+
         LogInfo("Builder with ID=%d of action %s does not exist", _builderId, ToString().c_str());
     }
 

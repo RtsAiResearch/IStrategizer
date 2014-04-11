@@ -72,6 +72,6 @@ MessagePumpSubject::~MessagePumpSubject()
         itr != _messageObserversTable.end();
         itr++)
     {
-        delete (*itr).second;
+        delete itr->second;
     }
 }

@@ -1,10 +1,11 @@
 ///> [Serializable]
 #ifndef MOVEACTION_H
 #define MOVEACTION_H
+
 #include "Action.h"
 #include "Vector2.h"
 
- namespace IStrategizer 
+namespace IStrategizer 
 {
     class GameEntity;
 

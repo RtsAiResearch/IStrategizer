@@ -44,6 +44,7 @@ namespace IStrategizer
         GameEntity* m_pTrainee;
         bool m_trainStarted;
         WorldResources m_requiredResources;
+        EntityClassType m_trainerType;
     };
 }
 

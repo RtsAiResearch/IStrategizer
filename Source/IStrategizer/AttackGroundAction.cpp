@@ -62,7 +62,19 @@ void AttackGroundAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_co
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied(RtsGame& game)
 {
-    return g_Assist.DoesEntityObjectExist(_attackerId);
+    bool attackerExists = g_Assist.DoesEntityObjectExist(_attackerId);
+
+    if (!attackerExists)
+    {
+        ConditionEx* failedCondition = new EntityClassExist(
+            PLAYER_Self,
+            (EntityClassType)_params[PARAM_EntityClassId],
+            1,
+            true);
+        m_history.Add(ESTATE_Failed, failedCondition);
+    }
+
+    return attackerExists;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied(RtsGame& game)

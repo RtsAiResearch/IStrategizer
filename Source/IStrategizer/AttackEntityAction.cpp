@@ -72,7 +72,20 @@ void AttackEntityAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_co
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& game)
 {
-    return g_Assist.DoesEntityObjectExist(_attackerId) && g_Assist.DoesEntityObjectExist(_targetId, PLAYER_Enemy);
+    bool attackerExists = g_Assist.DoesEntityObjectExist(_attackerId);
+    bool targetExists = g_Assist.DoesEntityObjectExist(_targetId, PLAYER_Enemy);
+
+    if (!attackerExists)
+    {
+        ConditionEx* failedCondition = new EntityClassExist(
+            PLAYER_Self,
+            (EntityClassType)_params[PARAM_EntityClassId],
+            1,
+            true);
+        m_history.Add(ESTATE_Failed, failedCondition);
+    }
+
+    return attackerExists && targetExists;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& game)
