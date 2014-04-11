@@ -6,6 +6,7 @@
 #include "EngineData.h"
 #include "CompositeExpression.h"
 #include "CaseLearningHelper.h"
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -31,21 +32,21 @@ namespace IStrategizer
     {
     public:
         RawPlanEx rawPlan;
-        GameStateEx gameState;
+        const RtsGame* gameState;
 
         RawCaseEx() {}
-        RawCaseEx(RawPlanEx p_rawPlan, const GameStateEx& p_gameState): rawPlan(p_rawPlan), gameState(p_gameState){}
+        RawCaseEx(RawPlanEx p_rawPlan, const RtsGame* p_gameState): rawPlan(p_rawPlan), gameState(p_gameState) {}
     };
 
     class CookedPlan
     {
     public:
         GoalEx* Goal;
-        GameStateEx* gameState;
+        const RtsGame* gameState;
         OlcbpPlan* pPlan;
 
         CookedPlan(){}
-        CookedPlan(GoalEx* p_goal, OlcbpPlan* p_pPlan, GameStateEx* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
+        CookedPlan(GoalEx* p_goal, OlcbpPlan* p_pPlan, const RtsGame* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
     };
 
     class CookedCase
@@ -64,19 +65,20 @@ namespace IStrategizer
         CaseLearningHelper* _helper;
         RetainerEx* _retainer;
 
-        vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
         void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
-        CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
-        bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, std::vector<Expression*>& p_matchedConditions);
-        void NecessaryStepsExtraction(OlcbpPlan* p_plan, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps);
+        void NecessaryStepsExtraction(OlcbpPlan* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps);
         void UnnecessaryStepsElimination(CookedCase* p_case);
-        CookedPlan* PlanParallelization(PlanGraph* p_graph, RawPlanEx* p_steps);
         void HierarchicalComposition(CookedPlan* p_plan, const std::vector<CookedPlan*>& p_plans, unsigned p_index);
-        void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans );
+        void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans);
+        bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, std::vector<Expression*>& p_matchedConditions);
+        bool IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right);
+        CookedPlan* PlanParallelization(PlanGraph* p_graph, RawPlanEx* p_steps);
+        CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
+        vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
 
     public:
         LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy);
-        virtual     ~LearningFromHumanDemonstration();
+        virtual ~LearningFromHumanDemonstration();
         void Learn();
     };
 }

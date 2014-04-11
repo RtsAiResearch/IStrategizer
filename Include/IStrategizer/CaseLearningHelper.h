@@ -3,13 +3,11 @@
 
 #include "EngineData.h"
 #include "MessagePumpObserver.h"
-#include "GoalMatrixRowEvaluator.h"
-
-#ifndef GAMETRACE_H
 #include "GameTrace.h"
-#endif
+#include "GoalEx.h"
 
 #include <map>
+#include <vector>
 
 namespace IStrategizer
 {
@@ -18,21 +16,21 @@ namespace IStrategizer
 
     class CaseLearningHelper : public MessagePumpObserver
     {
-    private:
-        GameTrace::List m_observedTraces;
-        std::map<unsigned int, GoalMatrixRow> m_goalMatrix;
-        GoalMatrixRowEvaluator m_goalMatrixRowEvaluator;
-
-        GameStateEx* ComputeGameState();
-        GoalMatrixRow ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle);
-
     public:
+        typedef unsigned long GameCycle;
+        typedef std::map<GameCycle, std::vector<GoalEx*>> GoalMatrix;
+
         CaseLearningHelper();
         void NotifyMessegeSent(Message* p_message);
         const GameTrace::List& ObservedTraces() const { return m_observedTraces; }
-        const GoalMatrixRowEvaluator& GetGoalMatrixRowEvaluator() const { return m_goalMatrixRowEvaluator; }
-        GoalMatrixRowEvaluator GetGoalMatrixRowEvaluator() { return m_goalMatrixRowEvaluator; }
-        const GoalMatrixRow& GetGoalMatrixRow(GameTrace p_pTrace) const { return m_goalMatrix.at(p_pTrace.GameCycle()); }
+        GoalMatrix& GetGoalSatisfacionMatrix() { return m_goalMatrix; }
+
+    private:
+        GameTrace::List m_observedTraces;
+        GoalMatrix m_goalMatrix;
+        std::vector<GoalEx*> m_goals;
+
+        std::vector<GoalEx*> GetSatisfiedGoals() const;
     };
 }
 

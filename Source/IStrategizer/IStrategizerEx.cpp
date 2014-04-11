@@ -25,9 +25,11 @@
 #include "Toolbox.h"
 #endif
 #include <cassert>
+#include <iostream>
 #include "IMSystemManager.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame) 
     : _self(PLAYER_Self),

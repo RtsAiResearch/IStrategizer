@@ -56,7 +56,7 @@ void LearningFromHumanDemonstration::Learn()
 
     for (size_t i = 0; i < m_cookedCases.size(); ++i)
     {
-        m_cookedPlans.push_back( new CookedPlan(m_cookedCases[i]->rawCase->rawPlan.Goal, m_cookedCases[i]->plan, &m_cookedCases[i]->rawCase->gameState));
+        m_cookedPlans.push_back( new CookedPlan(m_cookedCases[i]->rawCase->rawPlan.Goal, m_cookedCases[i]->plan, m_cookedCases[i]->rawCase->gameState));
     }
 
     // Initial code of adding plans to High Level Steps using Medium Level
@@ -85,43 +85,69 @@ void LearningFromHumanDemonstration::Learn()
     RetainLearntCases(m_cookedPlans);
 }
 //------------------------------------------------------------------------------------------------
-vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List p_traces)
+vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List traces)
 {
-    size_t rowSize = _helper->GetGoalMatrixRowEvaluator().GetRowSize();
     vector<RawCaseEx*> learntRawCases;
-    vector<RawCaseEx*> currentCases = vector<RawCaseEx*>(rowSize, nullptr);
-    RawPlanEx tempRPlan;
+    vector<RawCaseEx*> candidateRawCases;
+    CaseLearningHelper::GoalMatrix goalMatrix = _helper->GetGoalSatisfacionMatrix();
 
-    for (size_t i = 0; i < p_traces.size(); ++i)
+    // Learn the succeeded goals
+    for (CaseLearningHelper::GoalMatrix::iterator itr = goalMatrix.begin(); itr != goalMatrix.end(); itr++)
     {
-        for (size_t g = 0; g < rowSize; ++g)
-        {
-            const GoalMatrixRow& currGoalMatrixRow = _helper->GetGoalMatrixRow(p_traces[i]);
+        size_t i = 0;
+        SequentialPlan plan;
 
-            // If the goal in index g is not satisfied and is has no acions added, add it to the current cases.
-            if (!currGoalMatrixRow[g] && !currentCases[g])
-            {
-                tempRPlan = RawPlanEx(nullptr, SequentialPlan());
-                currentCases[g] = new RawCaseEx(tempRPlan, p_traces[i].GameState());
-                AddAction(currentCases[g], p_traces[i].Action(), p_traces[i].ActionParams(), i);
-            }
-            // If the goal in index g is not satisfied and has actions added, add new action to its current sequential plan.
-            else if(!currGoalMatrixRow[g] && currentCases[g])
-            {
-                AddAction(currentCases[g], p_traces[i].Action(), p_traces[i].ActionParams(), i);
-            }
-            // If the goal is satisfied then add it to learnt cases!
-            else if (currGoalMatrixRow[g] && currentCases[g])
-            {
-                currentCases[g]->rawPlan.Goal = _helper->GetGoalMatrixRowEvaluator().GetGoal(g);
-                AddAction(currentCases[g], p_traces[i].Action(), p_traces[i].ActionParams(), i);
-                learntRawCases.push_back(currentCases[g]);
-                currentCases[g] = nullptr;
-            }
+        do
+        {
+            // Set the action id to use it in the future to reference the trace game state.
+            Action* action = g_ActionFactory.GetAction(traces[i].Action(), traces[i].ActionParams());
+            action->Id(i);
+
+            plan.push_back(action);
+        }
+        while ((*itr).first >= traces[++i].GameCycle());
+
+        vector<GoalEx*> currentGoals = (*itr).second;
+
+        for (size_t j = 0; j < currentGoals.size(); ++j)
+        {
+            candidateRawCases.push_back(new RawCaseEx(RawPlanEx(currentGoals[j], plan), nullptr));
         }
     }
 
+    // Remove duplicate cases
+    for (size_t i = 0; i < candidateRawCases.size(); ++i)
+    {
+        bool duplicate = false;
+
+        for (size_t j = 0; j < learntRawCases.size(); ++j)
+        {
+            if (candidateRawCases[i]->rawPlan.Goal == learntRawCases[j]->rawPlan.Goal &&
+                IdenticalSequentialPlan(candidateRawCases[i]->rawPlan.sPlan, learntRawCases[j]->rawPlan.sPlan))
+            {
+                duplicate = true;
+                break;
+            }
+        }
+
+        if (!duplicate)
+            learntRawCases.push_back(candidateRawCases[i]);
+    }
+
     return learntRawCases;
+}
+//------------------------------------------------------------------------------------------------
+bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right)
+{
+    bool identical = left.size() == right.size();
+    size_t i = 0;
+
+    while (identical && i < left.size())
+    {
+        identical = left[i]->Id() == right[i++]->Id();
+    }
+
+    return identical;
 }
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId)

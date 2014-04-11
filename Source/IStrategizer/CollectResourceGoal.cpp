@@ -39,3 +39,8 @@ bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
     return false;
 }
+//----------------------------------------------------------------------------------------------
+vector<GoalEx*> CollectResourceGoal::GetSucceededInstances(RtsGame &game)
+{
+    return vector<GoalEx*>();
+}

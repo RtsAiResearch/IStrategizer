@@ -86,6 +86,7 @@ namespace IStrategizer
         CompositeExpression* PostCondition() { return _postCondition; }
         IClonable* Clone();
         unsigned Id() const { return _id; }
+        void Id(unsigned id) { _id = id; }
     };
 }
 
