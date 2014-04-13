@@ -50,15 +50,6 @@ EntityClassExist::EntityClassExist(PlayerType p_player) : ConditionEx(p_player, 
     _oneUse = false;
     _used = false;
 }
-//----------------------------------------------------------------------------------------------
-void EntityClassExist::InitializeAddressesAux()
-{
-    ConditionEx::InitializeAddressesAux();
-    AddMemberAddress(4,
-        &_similarityThreshold,
-        &_oneUse,
-        &_used);
-}
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Evaluate(RtsGame& game)
 {

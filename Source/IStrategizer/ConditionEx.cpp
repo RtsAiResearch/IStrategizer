@@ -3,14 +3,6 @@
 using namespace IStrategizer;
 using namespace std;
 
-void ConditionEx::InitializeAddressesAux()
-{
-    Expression::InitializeAddressesAux();
-    AddMemberAddress(3,
-        &_conditionType,
-        &_conditionParameters,
-        &_playerType);
-}
 //----------------------------------------------------------------------------------------------
 bool ConditionEx::Equals(const Expression* p_rhs) const
 {

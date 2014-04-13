@@ -15,6 +15,8 @@ namespace IStrategizer
     ///> parent=Expression
     class ConditionEx : public Expression
     {
+        OBJECT_MEMBERS_P(Expression, 3, &_conditionType, &_conditionParameters, &_playerType);
+
     protected:
         ///> type=int
         ConditionType _conditionType;
@@ -24,7 +26,6 @@ namespace IStrategizer
         PlayerType _playerType;
 
         inline ConditionEx() {}
-        void InitializeAddressesAux();
 
     public:
         inline ConditionEx(PlayerType p_player, ConditionType p_conditionType) : Expression(EXPRESSION_Leaf), _conditionType(p_conditionType), _playerType(p_player) { _conditionParameters[PARAM_PlayerId] = p_player; }

@@ -5,7 +5,7 @@ using namespace std;
 
 double ExecutionHistory::GetFailureProbability() const
 {
-    return (double)FailedTrials().size() / (double)m_history.size();
+    return m_history.empty() ? 0 : (double)FailedTrials().size() / (double)m_history.size();
 }
 //////////////////////////////////////////////////////////////////////////
 void ExecutionHistory::Add(ExecutionStateType state)

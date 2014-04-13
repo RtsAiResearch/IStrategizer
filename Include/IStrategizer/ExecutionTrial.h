@@ -15,7 +15,6 @@ namespace IStrategizer
         OBJECT_MEMBERS(2, &m_lastExecutionState, &m_failedAliveCondition);
 
     public:
-        ///> alias=List(vector(ExecutionTrial))
         typedef Serialization::SVector<ExecutionTrial> List;
 
         ExecutionTrial() {}

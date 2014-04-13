@@ -19,6 +19,7 @@ namespace IStrategizer
         void Add(ExecutionStateType state);
         void Add(ExecutionStateType state, ConditionEx* failedAliveCondition);
         ConditionEx* GetMostVulnerableAliveCondition() const;
+        bool IsEmpty() const { return m_history.empty(); }
 
     private:
         ExecutionTrial::List FailedTrials() const;
