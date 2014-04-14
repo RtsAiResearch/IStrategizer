@@ -56,7 +56,7 @@ namespace IStrategizer
         virtual void Init();
         virtual void Finalize();
         virtual void DisplayMessage(const char* p_msg) = 0;
-        virtual int GetMaxTrainingQueueCount() = 0;
+        virtual size_t GetMaxTrainingQueueCount() = 0;
         void Players(std::vector<PlayerType>& p_playerIds);
         void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds);
         void Researches(std::vector<ResearchType>& p_researchTypeIds);

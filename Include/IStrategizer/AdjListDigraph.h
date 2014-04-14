@@ -35,7 +35,7 @@ namespace IStrategizer
         NodeID AddNode(_In_ NodeValue& val)
         {
             m_adjList.insert(make_pair(++m_lastNodeId, MakePair(val, NodeSet())));
-            
+
             return m_lastNodeId;
         }
 
@@ -178,6 +178,76 @@ namespace IStrategizer
         }
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetRoots
+        // Description:	Gets a list of all nodes that has an InDegree of zero.
+        // Returns:   	std::vector<int>: A list of all nodes that has an InDegree of zero.
+        //************************************
+        std::vector<int> GetRoots() const
+        {
+            std::vector<int> roots;
+
+            for(Serialization::SMap<NodeID, NodeEntry>::const_iterator possibleRoot = m_adjList.begin();
+                possibleRoot != m_adjList.end();
+                ++possibleRoot)
+            {
+                bool hasZeroDegree = true;
+                
+                for(Serialization::SMap<NodeID, NodeEntry>::const_iterator otherNode = m_adjList.begin();
+                    hasZeroDegree && otherNode != m_adjList.end();
+                    ++otherNode)
+                {
+                    hasZeroDegree = otherNode->second.second.find(possibleRoot->first) == otherNode->second.second.end();
+                }
+
+                if(hasZeroDegree)
+                {
+                    roots.push_back(possibleRoot->first);
+                }
+            }
+            
+            return roots;
+        }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
+        // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
+        // Parameter: 	std::vector<int> p_subGraphIndexes: The indexes describing the sub-part to replace.
+        // Parameter:   TNodeValue p_substitute: The TNodeValue to replace the sub-part with.
+        //************************************      
+        void SubGraphSubstitution(std::vector<int> p_subGraphIndexes, TNodeValue p_substitute)
+        {
+            std::vector<int>    m_parents;
+            std::vector<int>    m_children;
+            std::vector<int>    m_temp;
+            size_t              i;
+
+            sort(p_subGraphIndexes.begin(), p_subGraphIndexes.end(), less<int>());
+
+            for (i = 0; i < p_subGraphIndexes.size(); ++i)
+            {
+                m_temp.clear();
+                m_temp = GetChildren(p_subGraphIndexes[i]);
+
+                for(size_t j = 0; j < m_temp.size(); ++j) m_children[j] += GetConnectionAnnotation(i, j);
+
+                m_temp.clear();
+                m_temp = GetParents(p_subGraphIndexes[i]);
+
+                for(size_t j = 0; j < m_temp.size(); ++j) m_parents[j] += GetConnectionAnnotation(j, i);
+            }
+
+            AddNode(p_substitute);
+
+            for (i = 0; i < m_parents.size(); ++i) Connect(m_parents[i], Size() - 1, m_pAnnotations[i]);
+            for (i = 0; i < m_children.size(); ++i) Connect(Size() - 1, m_children[i], m_cAnnotations[i]);
+
+            for (size_t i = 0; i < p_subGraphIndexes.size(); ++i)
+            {
+                RemoveNode( p_subGraphIndexes[i] - i );
+            }
+        }
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetOrphanNodes
         // Description:	Get all nodes that do not have an edge going from any node to them
         // Returns:   	NodeSet: A set of all orphan node ids
@@ -224,6 +294,63 @@ namespace IStrategizer
 
             return leaves;
         }
+        
+        bool IsSubGraph(const AdjListDigraph<TNodeValue>& p_candidate, std::vector<int>& p_matchedIndexes, int& p_matchedCount) const
+        {
+            std::vector<int> m_roots = p_candidate.GetRoots();
+            std::vector<int>    m_matching;
+            std::vector<int>    m_primaryMatched;
+            std::vector<int>    m_candidateMatched;
+            std::vector<int>    m_currentMatched;
+            bool                m_match = false;
+
+            m_candidateMatched.reserve(p_candidate.m_adjList.size());
+            p_matchedIndexes.reserve(p_candidate.m_adjList.size());
+            m_currentMatched.reserve(p_candidate.m_adjList.size());
+            m_primaryMatched.reserve(m_adjList.size());
+
+            for (size_t i = 0; i < m_roots.size(); ++i)
+            {
+                for (Serialization::SMap<NodeID, NodeEntry>::const_iterator itr1 = m_adjList.begin();
+                    itr1 != m_adjList.end();
+                    ++itr1)
+                {
+                    for(Serialization::SMap<NodeID, NodeEntry>::const_iterator itr2 = p_candidate.m_adjList.begin();
+                        itr2 != p_candidate.m_adjList.end();
+                        ++itr2)
+                    {
+                        if (itr1->second == itr2->second)
+                        {
+                            m_candidateMatched.clear();
+                            m_currentMatched.clear();
+                            m_primaryMatched.clear();
+                            m_match = false;
+
+                            m_primaryMatched.push_back(itr1->first);
+                            m_candidateMatched.push_back(m_roots[i]);
+
+                            MatchPath(p_candidate, m_primaryMatched, m_candidateMatched, m_currentMatched, m_match);
+
+                            if(m_match)
+                            {
+                                for (unsigned k = 0; k < m_currentMatched.size(); ++k)
+                                {
+                                    if (find(p_matchedIndexes.begin(), p_matchedIndexes.end(), m_currentMatched[k]) == p_matchedIndexes.end())
+                                    {
+                                        p_matchedIndexes.push_back(m_currentMatched[k]);
+                                    }
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            p_matchedCount = p_matchedIndexes.size();
+            return (p_matchedCount > 0);
+        }
 
         OBJECT_SERIALIZABLE(AdjListDigraph);
         OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
@@ -233,7 +360,44 @@ namespace IStrategizer
         NodeID m_lastNodeId;
         ///> type=map(pair(NodeID,NodeEntry))
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
+
+        void MatchPath(AdjListDigraph<TNodeValue> p_candidate, std::vector<int>& p_primaryMatched, 
+            std::vector<int>& p_candidateMatched, std::vector<int>& p_currentMatched, bool& p_match) const
+        {
+            if (p_candidateMatched.empty())
+            {
+                p_match = true;
+            }
+
+            int m_primaryIndex, m_candidateIndex;
+
+            for (unsigned i = 0; i < p_candidateMatched.size() && !p_match; ++i)
+            {
+                m_candidateIndex = p_candidateMatched[i];
+
+                for (unsigned j = 0; j < p_primaryMatched.size() && !p_match; ++j)
+                {
+                    m_primaryIndex = p_primaryMatched[j];
+
+                    if (_adjacencyMatrix[m_primaryIndex]->Equals(*p_candidate[m_candidateIndex]))
+                    {
+                        p_currentMatched.push_back(m_primaryIndex);
+                        p_candidateMatched.erase(p_candidateMatched.begin() + i);
+                        p_primaryMatched.erase(p_primaryMatched.begin() + j);
+
+                        std::vector<int> m_childrenIndexes = GetChildren(m_primaryIndex);
+                        p_primaryMatched.insert(p_primaryMatched.begin(), m_childrenIndexes.begin(), m_childrenIndexes.end());
+
+                        m_childrenIndexes.clear();
+                        m_childrenIndexes = p_candidate.GetChildren(m_candidateIndex);
+                        p_candidateMatched.insert(p_candidateMatched.begin(), m_childrenIndexes.begin(), m_childrenIndexes.end());
+
+                        MatchPath(p_candidate, p_primaryMatched, p_candidateMatched, p_currentMatched, p_match);
+                    }
+                }
+            }
+        }
     };
 }
 
-#endif // ADJLISTDIGRAPH_H
+#endif

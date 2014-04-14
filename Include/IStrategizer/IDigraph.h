@@ -117,6 +117,21 @@ namespace IStrategizer
         //************************************
         virtual const NodeSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
             throw(ItemNotFoundException) = 0;
+        
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetRoots
+        // Description:	Gets a list of all nodes that has an InDegree of zero.
+        // Returns:   	std::vector<int>: A list of all nodes that has an InDegree of zero.
+        //************************************
+        virtual std::vector<int> GetRoots() const = 0;
+        
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
+        // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
+        // Parameter: 	std::vector<int> p_subGraphIndexes: The indexes describing the sub-part to replace.
+        // Parameter:   TNodeValue p_substitute: The TNodeValue to replace the sub-part with.
+        //************************************      
+        virtual void SubGraphSubstitution(std::vector<int> p_subGraphIndexes, TNodeValue p_substitute) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetOrphanNodes

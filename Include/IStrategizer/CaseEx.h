@@ -11,7 +11,6 @@
 namespace IStrategizer
 {
     class GoalEx;
-    class PlanGraph;
     class RtsGame;
 
     ///> class=CaseEx

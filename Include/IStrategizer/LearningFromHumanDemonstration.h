@@ -72,7 +72,7 @@ namespace IStrategizer
         void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans);
         bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, std::vector<Expression*>& p_matchedConditions);
         bool IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right);
-        CookedPlan* PlanParallelization(PlanGraph* p_graph, RawPlanEx* p_steps);
+        CookedPlan* PlanParallelization(OlcbpPlan* p_graph, RawPlanEx* p_steps);
         CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
         vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
 

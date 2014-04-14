@@ -201,7 +201,7 @@ int StarCraftGame::GetMaxForceSize()
     return 12;
 }
 //----------------------------------------------------------------------------------------------
-int StarCraftGame::GetMaxTrainingQueueCount()
+size_t StarCraftGame::GetMaxTrainingQueueCount()
 {
     return 5;
 }

@@ -70,7 +70,7 @@ void LearningFromHumanDemonstration::Learn()
     //         {
     //             if(Depends(m_cookedPlans[j]->Goal->PostConditions(), m_cookedPlans[i]->Goal->SuccessConditions(), m_usedConditions))
     //             {
-    //                 m_cookedPlans[i]->pPlan = new PlanGraph(m_cookedPlans[j]->Goal);
+    //                 m_cookedPlans[i]->pPlan = new OlcbpPlan(m_cookedPlans[j]->Goal);
     //                 break;
     //             }
     //         }

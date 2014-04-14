@@ -383,9 +383,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\Diagraph.h">
       <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GraphNode.h">
-      <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Collection.h">
       <Filter>Header Files\Utilities\Data Structures\MultiIndexContainer</Filter>
     </ClInclude>

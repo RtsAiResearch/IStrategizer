@@ -25,7 +25,7 @@ namespace StarCraftModel
         StarCraftGame();
         void ExecuteCommand(const char *p_cmd);
         void DisplayMessage(const char *p_msg);
-        int GetMaxTrainingQueueCount();
+        size_t GetMaxTrainingQueueCount();
     };
 }
 
