@@ -46,7 +46,6 @@ namespace IStrategizer
         ///> type=PlanStepParameters
         PlanStepParameters _params;
         int _stepTypeId;
-        unsigned _data;
         StepLevelType _stepLevelType;
         CompositeExpression* _postCondition;
         unsigned _stateStartTime[COUNT(ExecutionStateType)];
@@ -65,14 +64,12 @@ namespace IStrategizer
     public:
         void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()) ; }
         void Copy(IClonable* p_dest);
-        void Data(const unsigned p_data) { _data = p_data; }
         void Update(RtsGame& game, const WorldClock& p_clock);
         int StepTypeId() const { return _stepTypeId; }
         int Parameter(int p_parameterName) { return _params[(ParameterType)p_parameterName]; }
         int Compare(IComparable* p_rhs) { return !Equals((PlanStepEx*)p_rhs); }
         bool Equals(PlanStepEx* p_planStep);
         const PlanStepParameters& Parameters() const { return _params; }
-        unsigned Data() const { return _data; }
         virtual void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed) {}
         virtual void InitializeConditions();
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
@@ -83,7 +80,7 @@ namespace IStrategizer
         PlanStepParameters& Parameters() { return _params; }
         ExecutionStateType State() const { return _state; }
         StepLevelType LevelType() const { return _stepLevelType; }
-        CompositeExpression* PostCondition() { return _postCondition; }
+        CompositeExpression* PostCondition() { if (!_postCondition) InitializeConditions(); return _postCondition; }
         IClonable* Clone();
         unsigned Id() const { return _id; }
         void Id(unsigned id) { _id = id; }

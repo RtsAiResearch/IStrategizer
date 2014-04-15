@@ -32,21 +32,21 @@ namespace IStrategizer
     {
     public:
         RawPlanEx rawPlan;
-        const RtsGame* gameState;
+        RtsGame* gameState;
 
         RawCaseEx() {}
-        RawCaseEx(RawPlanEx p_rawPlan, const RtsGame* p_gameState): rawPlan(p_rawPlan), gameState(p_gameState) {}
+        RawCaseEx(RawPlanEx p_rawPlan, RtsGame* p_gameState): rawPlan(p_rawPlan), gameState(p_gameState) {}
     };
 
     class CookedPlan
     {
     public:
         GoalEx* Goal;
-        const RtsGame* gameState;
+        RtsGame* gameState;
         OlcbpPlan* pPlan;
 
         CookedPlan(){}
-        CookedPlan(GoalEx* p_goal, OlcbpPlan* p_pPlan, const RtsGame* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
+        CookedPlan(GoalEx* p_goal, OlcbpPlan* p_pPlan, RtsGame* p_gameState): Goal(p_goal), pPlan(p_pPlan), gameState(p_gameState) {}
     };
 
     class CookedCase

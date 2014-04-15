@@ -153,11 +153,10 @@ namespace IStrategizer
         // Returns:   	bool
         //************************************
         bool IsAdjacent(_In_ NodeID sourceNodeId, _In_ NodeID destNodeId) const 
-            throw(ItemNotFoundException)
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
                 m_adjList.count(destNodeId) == 0)
-                throw ItemNotFoundException(XcptHere);
+                return false;
 
             return m_adjList.at(sourceNodeId).second.count(destNodeId) > 0;
         }

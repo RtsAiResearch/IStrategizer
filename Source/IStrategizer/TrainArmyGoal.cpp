@@ -27,7 +27,7 @@ TrainArmyGoal::TrainArmyGoal(const PlanStepParameters& p_parameters): GoalEx(GOA
 void TrainArmyGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], _params[PARAM_ForceSizeId], true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], DONT_CARE, true));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------

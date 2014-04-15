@@ -40,7 +40,7 @@ namespace IStrategizer
         unsigned GameCycle() const { return m_gameCycle; }
         ActionType Action() const { return m_action; }
         const PlanStepParameters& ActionParams() const { return m_actionParams; }
-        const RtsGame* GameState() const { return m_gameState; }
+        RtsGame* GameState() const { return m_gameState; }
         PlayerType Self() const { return m_self; }
         std::string ToString() const;
     };
