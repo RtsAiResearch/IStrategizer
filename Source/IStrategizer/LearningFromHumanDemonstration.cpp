@@ -129,14 +129,14 @@ bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left
 //------------------------------------------------------------------------------------------------
 CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx* p_rawCase)
 {
-    SequentialPlan m_planSteps = p_rawCase->rawPlan.sPlan;
+    SequentialPlan m_planSteps;
     vector<Expression*> m_matchedConditions;
     OlcbpPlan* m_olcpbPlan = new OlcbpPlan();
 
     for (size_t i = 0; i < p_rawCase->rawPlan.sPlan.size(); ++i)
     {
-        PlanStepEx* planStep = static_cast<PlanStepEx*>(p_rawCase->rawPlan.sPlan[i]->Clone());
-        m_olcpbPlan->AddNode(planStep);
+        m_olcpbPlan->AddNode(p_rawCase->rawPlan.sPlan[i]);
+        m_planSteps.push_back((PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone());
     }
 
     for (size_t i = 0; i < m_planSteps.size(); ++i)
@@ -171,7 +171,7 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNod
             m_precondition = (ConditionEx*)m_candidateConditions[i].second;
             m_postCondition = (ConditionEx*)m_candidateConditions[i].first;
 
-            if (m_postCondition->Consume( (m_precondition->ContainsParameter(PARAM_Amount)) ? m_precondition->Parameter(PARAM_Amount) : 0 ))
+            if (m_postCondition->Consume(m_precondition->ContainsParameter(PARAM_Amount) ? m_precondition->Parameter(PARAM_Amount) : 0))
             {
                 p_matchedConditions.push_back(m_candidateConditions[i].first);
                 p_dependentNode->RemoveExpression(m_candidateConditions[i].second);
@@ -220,7 +220,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     // Extract indirect steps
     for (size_t i = 0; i < initSize; ++i)
     {
-        NecessaryStepsExtraction(p_case->plan, rSteps[i], fSteps, steps);
+        NecessaryStepsExtraction(steps, rSteps, fSteps);
     }
 
     p_case->rawCase->rawPlan.sPlan.clear();
@@ -229,7 +229,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     if(!fSteps.empty())
     {
         // use the game state of the first action, the index of the trace is stored in the data storage
-        GameTrace firstTrace = _helper->ObservedTraces()[fSteps[0]->Id()];
+        GameTrace firstTrace = _helper->ObservedTraces()[fSteps[fSteps.size() - 1]->Id()];
         p_case->rawCase->gameState = firstTrace.GameState();
     }
 
@@ -241,26 +241,28 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     }
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::NecessaryStepsExtraction(OlcbpPlan* p_plan, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)
+void LearningFromHumanDemonstration::NecessaryStepsExtraction(const SequentialPlan& p_steps, vector<int>& p_rSteps, SequentialPlan& p_fSteps)
 {
-    vector< pair<int, PlanStepEx*> > rSteps;
-    vector<int> toDelete;
+    vector<Expression*> m_usedConditions;
 
-    for (size_t i = 0; i < p_plan->Size(); ++i)
+    for (size_t i = 0; i < p_rSteps.size(); ++i)
     {
-        if (i != p_sIndex && p_plan->IsAdjacent(i, p_sIndex))
+        for (size_t j = 0; j < p_steps.size(); ++j)
         {
-            if (find(p_fSteps.begin(), p_fSteps.end(), p_steps[i]) == p_fSteps.end())
+            if (Depends(p_steps[j]->PostCondition(), ((Action*)p_steps[p_rSteps[i]])->PreCondition(), m_usedConditions))
             {
-                rSteps.push_back(make_pair(i, p_steps[i]));
-                p_fSteps.insert(p_fSteps.begin(), p_steps[i]);
+                p_fSteps.push_back(p_steps[j]);
+                p_rSteps.push_back(j);
+                m_usedConditions.clear();
             }
         }
+
+        p_rSteps.erase(p_rSteps.begin() + i);
     }
 
-    for (size_t i = 0; i < rSteps.size(); ++i)
+    for (size_t i = 0; i < p_rSteps.size(); ++i)
     {
-        NecessaryStepsExtraction(p_plan, rSteps[i].first, p_fSteps, p_steps);
+        NecessaryStepsExtraction(p_steps, p_rSteps, p_fSteps);
     }
 }
 //--------------------------------------------------------------------------------------------------------------
