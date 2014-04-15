@@ -23,7 +23,7 @@ namespace IStrategizer
 
     private:
         ExecutionTrial::List FailedTrials() const;
-        ///> class=vector(ExecutionTrial)
+        ///> type=vector(ExecutionTrial)
         ExecutionTrial::List m_history;
     };
 }

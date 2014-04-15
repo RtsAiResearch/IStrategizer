@@ -13,10 +13,10 @@ namespace IStrategizer
     class AbstractRetainer : public EngineComponent
     {
     public:
-                            AbstractRetainer(const char* p_name) : EngineComponent(p_name), _caseBase(nullptr) {}
-        virtual void     ReadCaseBase() = 0;
-        virtual void     Flush() = 0;
-        virtual void        Retain(const CaseEx* p_case) = 0;
+        AbstractRetainer(const char* p_name) : EngineComponent(p_name), _caseBase(nullptr) {}
+        virtual void ReadCaseBase() = 0;
+        virtual void Flush() = 0;
+        virtual void Retain(CaseEx* p_case) = 0;
         CaseBaseEx* CaseBase() { return _caseBase; }
 
     protected:

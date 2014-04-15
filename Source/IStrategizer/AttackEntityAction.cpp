@@ -45,35 +45,30 @@ bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     bool executed = false;
     
     // Adapt attacker
-    _attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
+    m_attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
 
-    if (_attackerId != INVALID_TID)
+    if (m_attackerId != INVALID_TID)
     {
-        _targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
+        m_targetId = pAdapter->AdaptTargetEntity(targetType, Parameters());
 
-        if (_targetId != INVALID_TID)
+        if (m_targetId != INVALID_TID)
         {
-            GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
-            GameEntity* pGameTarget = game.Enemy()->GetEntity(_targetId);
+            GameEntity* pGameAttacker = game.Self()->GetEntity(m_attackerId);
+            GameEntity* pGameTarget = game.Enemy()->GetEntity(m_targetId);
             assert(pGameAttacker);
             assert(pGameTarget);
             pGameAttacker->Lock(this);
-            executed = pGameAttacker->AttackEntity(_targetId);
+            executed = pGameAttacker->AttackEntity(m_targetId);
         }
     }
 
     return executed;
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
-{
-    
-}
-//----------------------------------------------------------------------------------------------
 bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& game)
 {
-    bool attackerExists = g_Assist.DoesEntityObjectExist(_attackerId);
-    bool targetExists = g_Assist.DoesEntityObjectExist(_targetId, PLAYER_Enemy);
+    bool attackerExists = g_Assist.DoesEntityObjectExist(m_attackerId);
+    bool targetExists = g_Assist.DoesEntityObjectExist(m_targetId, PLAYER_Enemy);
 
     if (!attackerExists)
     {
@@ -92,14 +87,11 @@ bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& game)
 {
     assert(PlanStepEx::State() == ESTATE_Executing);
 
-    GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
-    GameEntity* pGameTarget = game.Enemy()->GetEntity(_targetId);
-    assert(pGameAttacker);
+    GameEntity* pGameTarget = game.Enemy()->GetEntity(m_targetId);
     assert(pGameTarget);
 
-    ObjectStateType attackerState = (ObjectStateType)pGameAttacker->Attr(EOATTR_State);
     ObjectStateType targetState = (ObjectStateType)pGameTarget->Attr(EOATTR_State);
-    return (attackerState == OBJSTATE_Attacking) || (targetState == OBJSTATE_UnderAttack);
+    return targetState == OBJSTATE_UnderAttack;
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializeAddressesAux()

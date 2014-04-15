@@ -144,6 +144,19 @@ namespace IStrategizer
         CONDEX_EntityClassNearArea,
         CONDEX_END
     };
+#define Define_ConditionType \
+    Enums[CONDEX_EntityClassExist] = "Entity Class Exist"; \
+    Enums[CONDEX_EntityObjectExist] = "Entity Object Exist"; \
+    Enums[CONDEX_CheckEntityClassAttribute] = "CheckEntity Class Attribute"; \
+    Enums[CONDEX_CheckEntityObjectAttribute] = "CheckEntity Object Attribute"; \
+    Enums[CONDEX_CheckEntityObjectSimilarity] = "CheckEntity Object Similarity"; \
+    Enums[CONDEX_ResearchDone] = "Research Done"; \
+    Enums[CONDEX_ResourceExist] = "Resource Exist"; \
+    Enums[CONDEX_CheckColonyFilterCount] = "Check Colony Filter Count"; \
+    Enums[CONDEX_CheckPositionFilterCount] = "Check Position Filter Count"; \
+    Enums[CONDEX_False] = "False"; \
+    Enums[CONDEX_True] = "True"; \
+    Enums[CONDEX_EntityClassNearArea] = "Entity Class Near Area";
     //---------------------------------------------------------------------------
 #define Prefix_ParameterType PARAM
     enum ParameterType

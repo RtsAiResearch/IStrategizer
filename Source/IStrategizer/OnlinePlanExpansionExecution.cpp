@@ -1,31 +1,18 @@
 #include "OnlinePlanExpansionExecution.h"
-#ifndef CASEBASEDREASONEREX_H
 #include "CaseBasedReasonerEx.h"
-#endif
-#ifndef WINGAMEGOAL_H
 #include "WinGameGoal.h"
-#endif
-#ifndef CASEEX_H
 #include "CaseEx.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-#ifndef ACTION_H
 #include "Action.h"
-#endif
-#ifndef MESSAGEPUMP_H
 #include "MessagePump.h"
-#endif
-#ifndef MESSAGE_H
 #include "Message.h"
-#endif
 #include <crtdbg.h>
 #include "AbstractReviser.h"
 #include "AbstractRetriever.h"
 #include "GamePlayer.h"
 #include "Toolbox.h"
 #include "Logger.h"
+#include "RetainerEx.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -211,13 +198,14 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             LogInfo("Node with plan-step '%s' is open and has children nodes, case is sent for revision and children have been destroyed", pCurrentPlanStep->ToString().c_str());
 
             m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), false);
+            m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
+            m_pCbReasoner->Retainer()->Flush();
         }
 
         CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State());
 
         // We found a matching case and it was not tried for that goal before
-        if (caseEx != nullptr &&
-            !IsCaseTried(currentNode, caseEx))
+        if (caseEx != nullptr && !IsCaseTried(currentNode, caseEx))
         {
             LogInfo("Retrieved case '%s' has not been tried before, and its goal is being sent for expansion",
                 caseEx->Goal()->ToString().c_str());
@@ -261,8 +249,17 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                 pCurrentPlanStep->State() == ESTATE_Succeeded ||
                 pCurrentPlanStep->State() == ESTATE_END);
 
+            ExecutionStateType oldState = pCurrentPlanStep->State();
             pCurrentPlanStep->Update(*g_Game, clock);
             AddReadyChildrenToUpdateQueue(currentNode, updateQ);
+
+            // This condition will be true just once when the case succeeds
+            if (oldState == ESTATE_NotPrepared && pCurrentPlanStep->State() == ESTATE_Succeeded)
+            {
+                m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), true);
+                m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
+                m_pCbReasoner->Retainer()->Flush();
+            }
         }
     }
 }

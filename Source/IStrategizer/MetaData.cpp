@@ -28,6 +28,7 @@ namespace IStrategizer
     void InitTypesMetaData()
     {
         DEFINE(ActionType);
+        DEFINE(ConditionType);
         DEFINE(AttackType);
         DEFINE(BaseType);
         DEFINE(ForceSizeType);
