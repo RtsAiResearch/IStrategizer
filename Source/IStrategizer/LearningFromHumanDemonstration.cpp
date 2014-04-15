@@ -32,10 +32,9 @@ LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_play
 void LearningFromHumanDemonstration::Learn()
 {
     vector<CookedPlan*> m_cookedPlans;
-    vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
-
     vector<CookedCase*> m_cookedCases;
     vector<PlanStepEx*> m_steps;
+    vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
 
     m_cookedCases.resize(m_rawCases.size());
 
@@ -56,26 +55,8 @@ void LearningFromHumanDemonstration::Learn()
 
     for (size_t i = 0; i < m_cookedCases.size(); ++i)
     {
-        m_cookedPlans.push_back( new CookedPlan(m_cookedCases[i]->rawCase->rawPlan.Goal, m_cookedCases[i]->plan, m_cookedCases[i]->rawCase->gameState));
+        m_cookedPlans.push_back(new CookedPlan(m_cookedCases[i]->rawCase->rawPlan.Goal, m_cookedCases[i]->plan, m_cookedCases[i]->rawCase->gameState));
     }
-
-    // Initial code of adding plans to High Level Steps using Medium Level
-    // FIXME: needs to be recursive.
-    // for (size_t i = 0; i < m_cookedPlans.size(); ++i)
-    // {
-    //     if (m_cookedPlans[i]->Goal->LevelType() == SLEVELTYPE_High)
-    //     {
-    //         vector<Expression*> m_usedConditions;
-    //         for (size_t j = m_cookedPlans.size() - 1; j > 0; --j)
-    //         {
-    //             if(Depends(m_cookedPlans[j]->Goal->PostConditions(), m_cookedPlans[i]->Goal->SuccessConditions(), m_usedConditions))
-    //             {
-    //                 m_cookedPlans[i]->pPlan = new OlcbpPlan(m_cookedPlans[j]->Goal);
-    //                 break;
-    //             }
-    //         }
-    //     }
-    // }
 
     for (size_t i = 0; i < m_cookedPlans.size(); ++i)
     {
@@ -144,15 +125,6 @@ bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left
     }
 
     return identical;
-}
-//------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId)
-{
-    Action* action = g_ActionFactory.GetAction(p_action, p_params);
-    action->Data(p_traceId);
-    action->InitializeConditions();
-
-    p_case->rawPlan.sPlan.push_back(action);
 }
 //------------------------------------------------------------------------------------------------
 CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx* p_rawCase)
@@ -257,7 +229,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     if(!fSteps.empty())
     {
         // use the game state of the first action, the index of the trace is stored in the data storage
-        GameTrace firstTrace = _helper->ObservedTraces()[fSteps[0]->Data()];
+        GameTrace firstTrace = _helper->ObservedTraces()[fSteps[0]->Id()];
         p_case->rawCase->gameState = firstTrace.GameState();
     }
 
@@ -319,7 +291,7 @@ void LearningFromHumanDemonstration::HierarchicalComposition(CookedPlan* p_plan,
     }
 }
 //----------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::RetainLearntCases( vector<CookedPlan*>& p_cookedPlans )
+void LearningFromHumanDemonstration::RetainLearntCases(vector<CookedPlan*>& p_cookedPlans)
 {
     CaseEx* pLearntCase = nullptr;
 
@@ -328,7 +300,7 @@ void LearningFromHumanDemonstration::RetainLearntCases( vector<CookedPlan*>& p_c
     for(size_t i = 0, size = p_cookedPlans.size(); i < size; ++i)
     {
         CookedPlan* currCookedPlan = p_cookedPlans[i];
-        pLearntCase = new CaseEx(NULL, currCookedPlan->Goal, currCookedPlan->gameState, 1, 1);
+        pLearntCase = new CaseEx(currCookedPlan->pPlan, currCookedPlan->Goal, currCookedPlan->gameState, 1, 1);
         _retainer->Retain(pLearntCase);
     }
 

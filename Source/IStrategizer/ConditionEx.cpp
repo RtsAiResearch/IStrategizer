@@ -33,11 +33,25 @@ bool ConditionEx::Equals(const Expression* p_rhs) const
     {
         if ((*i).first == PARAM_Amount && (*j).first == PARAM_Amount)
         {
-            m_equal &= ((*i).first == (*j).first) && ((*i).second <= (*j).second);
+            if ((*i).second == DONT_CARE || (*j).second == DONT_CARE)
+            {
+                m_equal &= true;
+            }
+            else
+            {
+                m_equal &= ((*i).first == (*j).first) && ((*i).second <= (*j).second);
+            }
         }
         else
         {
-            m_equal &= ((*i).first == (*j).first) && ((*i).second == (*j).second);
+            if ((*i).second == DONT_CARE || (*j).second == DONT_CARE)
+            {
+                m_equal &= true;
+            }
+            else
+            {
+                m_equal &= ((*i).first == (*j).first) && ((*i).second == (*j).second);
+            }
         }
     }
     
