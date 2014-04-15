@@ -92,12 +92,11 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
     CaseLearningHelper::GoalMatrix goalMatrix = _helper->GetGoalSatisfacionMatrix();
 
     // Learn the succeeded goals
-    for (CaseLearningHelper::GoalMatrix::iterator itr = goalMatrix.begin(); itr != goalMatrix.end(); itr++)
+    for each(auto goalPair in goalMatrix)
     {
-        size_t i = 0;
         SequentialPlan plan;
 
-        do
+        for(size_t i = 0; i < traces.size() && goalPair.first >= traces[i].GameCycle(); ++i)
         {
             // Set the action id to use it in the future to reference the trace game state.
             Action* action = g_ActionFactory.GetAction(traces[i].Action(), traces[i].ActionParams());
@@ -105,13 +104,10 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
 
             plan.push_back(action);
         }
-        while ((*itr).first >= traces[++i].GameCycle());
 
-        vector<GoalEx*> currentGoals = (*itr).second;
-
-        for (size_t j = 0; j < currentGoals.size(); ++j)
+        for (size_t j = 0; j < goalPair.second.size(); ++j)
         {
-            candidateRawCases.push_back(new RawCaseEx(RawPlanEx(currentGoals[j], plan), nullptr));
+            candidateRawCases.push_back(new RawCaseEx(RawPlanEx(goalPair.second[j], plan), nullptr));
         }
     }
 
@@ -161,8 +157,7 @@ void LearningFromHumanDemonstration::AddAction(RawCaseEx* p_case, ActionType p_a
 //------------------------------------------------------------------------------------------------
 CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx* p_rawCase)
 {
-    SequentialPlan m_planSteps = vector<PlanStepEx*>(p_rawCase->rawPlan.sPlan.size());
-    unsigned m_stepsCount = m_planSteps.size();
+    SequentialPlan m_planSteps = p_rawCase->rawPlan.sPlan;
     vector<Expression*> m_matchedConditions;
     OlcbpPlan* m_olcpbPlan = new OlcbpPlan();
 
@@ -172,9 +167,9 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
         m_olcpbPlan->AddNode(planStep);
     }
 
-    for (size_t i = 0; i < m_stepsCount; ++i)
+    for (size_t i = 0; i < m_planSteps.size(); ++i)
     {
-        for (size_t j = 0; j < m_stepsCount; ++j)
+        for (size_t j = 0; j < m_planSteps.size(); ++j)
         {
             if (i != j)
             {
