@@ -13,17 +13,17 @@ namespace IStrategizer
         OBJECT_SERIALIZABLE(DestroyEntityTypeGoal);
 
     private:
-        ForceDescriptionEx _forceDescription;
-        int _demandTargetSize;
+        int m_demandTargetSize;
+
     public:
         DestroyEntityTypeGoal();
         DestroyEntityTypeGoal(const PlanStepParameters& p_parameters);
         void Copy(IClonable* p_dest);
-        void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
+        void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
 
     protected:
         void InitializePostConditions();
-        bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
+        bool SuccessConditionsSatisfied(RtsGame& game);
     };
 }
 #endif // DESTROYENTITYTYPEGOAL_H

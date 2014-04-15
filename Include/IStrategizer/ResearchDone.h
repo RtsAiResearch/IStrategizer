@@ -15,7 +15,7 @@ namespace IStrategizer
     public:
         ResearchDone() {}
         ResearchDone(PlayerType p_player, ResearchType p_researchId) : ConditionEx(p_player, CONDEX_ResearchDone) { _conditionParameters[PARAM_ResearchId] = p_researchId; }
-        bool Evaluate(RtsGame& pRtsGame);
+        bool Evaluate(RtsGame& game);
         bool Consume(int p_amount) { return true; }
     };
 }

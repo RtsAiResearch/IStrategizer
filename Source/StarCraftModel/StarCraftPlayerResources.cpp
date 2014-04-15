@@ -10,7 +10,7 @@ using namespace BWAPI;
 
 int StarCraftPlayerResources::Supply() 
 { 
-    return m_player->supplyTotal();
+    return m_player->supplyTotal() - m_player->supplyUsed();
 }
 //////////////////////////////////////////////////////////////////////////
 int StarCraftPlayerResources::Secondary()

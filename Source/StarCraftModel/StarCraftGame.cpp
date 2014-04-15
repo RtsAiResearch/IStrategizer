@@ -195,8 +195,13 @@ void StarCraftGame::DisplayMessage(const char* p_msg)
 {
     BroodwarPtr->sendText(p_msg);
 }
-
-int StarCraftModel::StarCraftGame::GetMaxForceSize()
+//----------------------------------------------------------------------------------------------
+int StarCraftGame::GetMaxForceSize()
 {
     return 12;
+}
+//----------------------------------------------------------------------------------------------
+int StarCraftGame::GetMaxTrainingQueueCount()
+{
+    return 5;
 }

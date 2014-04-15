@@ -59,25 +59,25 @@ namespace IStrategizer
         PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
         void InitializeAddressesAux();
         bool IsCurrentStateTimeout(const WorldClock& p_clock);
-        virtual void State(ExecutionStateType p_state, RtsGame& pRtsGame, const WorldClock& p_clock);
+        virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         virtual void InitializePostConditions() = 0;
 
     public:
         void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()) ; }
         void Copy(IClonable* p_dest);
         void Data(const unsigned p_data) { _data = p_data; }
-        void Update(RtsGame& pRtsGame, const WorldClock& p_clock);
+        void Update(RtsGame& game, const WorldClock& p_clock);
         int StepTypeId() const { return _stepTypeId; }
         int Parameter(int p_parameterName) { return _params[(ParameterType)p_parameterName]; }
         int Compare(IComparable* p_rhs) { return !Equals((PlanStepEx*)p_rhs); }
         bool Equals(PlanStepEx* p_planStep);
         const PlanStepParameters& Parameters() const { return _params; }
         unsigned Data() const { return _data; }
-        virtual void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed) {}
+        virtual void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed) {}
         virtual void InitializeConditions();
-        virtual bool SuccessConditionsSatisfied(RtsGame& pRtsGame) = 0;
-        virtual void UpdateAux(RtsGame& pRtsGame, const WorldClock& p_clock) = 0;
-        virtual void Reset(RtsGame& pRtsGame, const WorldClock& p_clock) = 0;
+        virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
+        virtual void UpdateAux(RtsGame& game, const WorldClock& p_clock) = 0;
+        virtual void Reset(RtsGame& game, const WorldClock& p_clock) = 0;
         virtual std::string ToString() const;
         virtual ~PlanStepEx() {}
         PlanStepParameters& Parameters() { return _params; }

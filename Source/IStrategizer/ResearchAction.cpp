@@ -30,7 +30,7 @@ ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)
     
 }
 //----------------------------------------------------------------------------------------------
-bool ResearchAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
+bool ResearchAction::AliveConditionsSatisfied(RtsGame& game)
 {
     bool success = false;
 
@@ -39,12 +39,12 @@ bool ResearchAction::AliveConditionsSatisfied(RtsGame& pRtsGame)
     return success;
 }
 //----------------------------------------------------------------------------------------------
-bool ResearchAction::SuccessConditionsSatisfied(RtsGame& pRtsGame)
+bool ResearchAction::SuccessConditionsSatisfied(RtsGame& game)
 {
-    return pRtsGame.Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
+    return game.Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
 }
 //----------------------------------------------------------------------------------------------
-bool ResearchAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
+bool ResearchAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
     ResearchType researchType = (ResearchType)_params[PARAM_ResearchId];
     GameEntity *pGameResearcher;
@@ -54,7 +54,7 @@ bool ResearchAction::ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock)
     _researcherId = pAdapter->AdaptBuildingForResearch(researchType);
 
     // Issue research order
-    pGameResearcher = pRtsGame.Self()->GetEntity(_researcherId);
+    pGameResearcher = game.Self()->GetEntity(_researcherId);
     assert(pGameResearcher);
     
     return pGameResearcher->Research(researchType);
