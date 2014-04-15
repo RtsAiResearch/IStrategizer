@@ -186,22 +186,22 @@ namespace IStrategizer
         {
             std::vector<int> roots;
 
-            for(Serialization::SMap<NodeID, NodeEntry>::const_iterator possibleRoot = m_adjList.begin();
-                possibleRoot != m_adjList.end();
-                ++possibleRoot)
+            for each(auto possibleRoot in m_adjList)
             {
                 bool hasZeroDegree = true;
-                
-                for(Serialization::SMap<NodeID, NodeEntry>::const_iterator otherNode = m_adjList.begin();
-                    hasZeroDegree && otherNode != m_adjList.end();
-                    ++otherNode)
+
+                for each(auto otherNode in m_adjList)
                 {
-                    hasZeroDegree = otherNode->second.second.find(possibleRoot->first) == otherNode->second.second.end();
+                    if(otherNode.second.second.count(possibleRoot.first))
+                    {
+                        hasZeroDegree = false;
+                        break;
+                    }
                 }
 
                 if(hasZeroDegree)
                 {
-                    roots.push_back(possibleRoot->first);
+                    roots.push_back(possibleRoot.first);
                 }
             }
             
@@ -219,32 +219,21 @@ namespace IStrategizer
             std::vector<int>    m_parents;
             std::vector<int>    m_children;
             std::vector<int>    m_temp;
-            size_t              i;
 
-            sort(p_subGraphIndexes.begin(), p_subGraphIndexes.end(), less<int>());
-
-            for (i = 0; i < p_subGraphIndexes.size(); ++i)
+            for(size_t i = 0; i < p_subGraphIndexes.size(); ++i)
             {
-                m_temp.clear();
-                m_temp = GetChildren(p_subGraphIndexes[i]);
+                m_temp = GetParents(p_subGraphIndexes[i], m_parents);
+                m_parents.insert(m_parents.end(), m_temp.begin(), m_temp.end());
 
-                for(size_t j = 0; j < m_temp.size(); ++j) m_children[j] += GetConnectionAnnotation(i, j);
-
-                m_temp.clear();
-                m_temp = GetParents(p_subGraphIndexes[i]);
-
-                for(size_t j = 0; j < m_temp.size(); ++j) m_parents[j] += GetConnectionAnnotation(j, i);
+                m_temp = GetChildren(p_subGraphIndexes[i], m_children);
+                m_children.insert(m_children.end(), m_temp.begin(), m_temp.end());
             }
 
-            AddNode(p_substitute);
+            NodeID m_nodeID = AddNode(p_substitute);
 
-            for (i = 0; i < m_parents.size(); ++i) Connect(m_parents[i], Size() - 1, m_pAnnotations[i]);
-            for (i = 0; i < m_children.size(); ++i) Connect(Size() - 1, m_children[i], m_cAnnotations[i]);
-
-            for (size_t i = 0; i < p_subGraphIndexes.size(); ++i)
-            {
-                RemoveNode( p_subGraphIndexes[i] - i );
-            }
+            for(size_t i = 0; i < m_parents.size(); ++i) AddEdge(m_parents[i], m_nodeID);
+            for(size_t i = 0; i < m_children.size(); ++i) AddEdge(m_nodeID, m_children[i]);
+            for(size_t i = 0; i < p_subGraphIndexes.size(); ++i) RemoveNode(p_subGraphIndexes[i]);
         }
 
         //************************************
@@ -297,7 +286,7 @@ namespace IStrategizer
         
         bool IsSubGraph(const AdjListDigraph<TNodeValue>& p_candidate, std::vector<int>& p_matchedIndexes, int& p_matchedCount) const
         {
-            std::vector<int> m_roots = p_candidate.GetRoots();
+            std::vector<int>    m_roots = p_candidate.GetRoots();
             std::vector<int>    m_matching;
             std::vector<int>    m_primaryMatched;
             std::vector<int>    m_candidateMatched;
@@ -309,40 +298,33 @@ namespace IStrategizer
             m_currentMatched.reserve(p_candidate.m_adjList.size());
             m_primaryMatched.reserve(m_adjList.size());
 
-            for (size_t i = 0; i < m_roots.size(); ++i)
+            for (unsigned i = 0; i < m_roots.size(); ++i)
             {
-                for (Serialization::SMap<NodeID, NodeEntry>::const_iterator itr1 = m_adjList.begin();
-                    itr1 != m_adjList.end();
-                    ++itr1)
+                for each(auto j in m_adjList)
                 {
-                    for(Serialization::SMap<NodeID, NodeEntry>::const_iterator itr2 = p_candidate.m_adjList.begin();
-                        itr2 != p_candidate.m_adjList.end();
-                        ++itr2)
+                    if (j.second.first == p_candidate.m_adjList.at(m_roots[i]).first)
                     {
-                        if (itr1->second == itr2->second)
+                        m_candidateMatched.clear();
+                        m_currentMatched.clear();
+                        m_primaryMatched.clear();
+                        m_match = false;
+
+                        m_primaryMatched.push_back(j.first);
+                        m_candidateMatched.push_back(m_roots[i]);
+
+                        MatchPath(p_candidate, m_primaryMatched, m_candidateMatched, m_currentMatched, m_match);
+
+                        if(m_match)
                         {
-                            m_candidateMatched.clear();
-                            m_currentMatched.clear();
-                            m_primaryMatched.clear();
-                            m_match = false;
-
-                            m_primaryMatched.push_back(itr1->first);
-                            m_candidateMatched.push_back(m_roots[i]);
-
-                            MatchPath(p_candidate, m_primaryMatched, m_candidateMatched, m_currentMatched, m_match);
-
-                            if(m_match)
+                            for (unsigned k = 0; k < m_currentMatched.size(); ++k)
                             {
-                                for (unsigned k = 0; k < m_currentMatched.size(); ++k)
+                                if (find(p_matchedIndexes.begin(), p_matchedIndexes.end(), m_currentMatched[k]) == p_matchedIndexes.end())
                                 {
-                                    if (find(p_matchedIndexes.begin(), p_matchedIndexes.end(), m_currentMatched[k]) == p_matchedIndexes.end())
-                                    {
-                                        p_matchedIndexes.push_back(m_currentMatched[k]);
-                                    }
+                                    p_matchedIndexes.push_back(m_currentMatched[k]);
                                 }
-
-                                break;
                             }
+
+                            break;
                         }
                     }
                 }
@@ -358,7 +340,7 @@ namespace IStrategizer
     private:
         ///> type=NodeID
         NodeID m_lastNodeId;
-        ///> type=map(pair(NodeID,NodeEntry))
+            ///> type=map(pair(NodeID,NodeEntry))
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
 
         void MatchPath(AdjListDigraph<TNodeValue> p_candidate, std::vector<int>& p_primaryMatched, 
@@ -379,7 +361,7 @@ namespace IStrategizer
                 {
                     m_primaryIndex = p_primaryMatched[j];
 
-                    if (_adjacencyMatrix[m_primaryIndex]->Equals(*p_candidate[m_candidateIndex]))
+                    if (m_adjList.at(m_primaryIndex).first == p_candidate.m_adjList.at(m_candidateIndex).first)
                     {
                         p_currentMatched.push_back(m_primaryIndex);
                         p_candidateMatched.erase(p_candidateMatched.begin() + i);
@@ -396,6 +378,43 @@ namespace IStrategizer
                     }
                 }
             }
+        }
+
+        std::vector<int> GetChildren(NodeID p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const
+        {
+            if (m_adjList.count(p_nodeIndex) == 0)
+                throw ItemNotFoundException(XcptHere);
+
+            std::vector<int> m_children;
+
+            for each(auto child in m_adjList.at(p_nodeIndex).second)
+            {
+                if(find(p_execluded.begin(), p_execluded.end(), child) == p_execluded.end())
+                {
+                    m_children.push_back(child);
+                }
+            }
+
+            return m_children;
+        }
+
+        std::vector<int> GetParents(NodeID p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const
+        {
+            if (m_adjList.count(p_nodeIndex) == 0)
+                throw ItemNotFoundException(XcptHere);
+
+            std::vector<int> m_parents;
+            
+            for each(auto parent in m_adjList)
+            {
+                if(find(p_execluded.begin(), p_execluded.end(), parent.first) == p_execluded.end()
+                    && find(parent.second.second.begin(), parent.second.second.end(), p_nodeIndex) != parent.second.second.end())
+                {
+                    m_parents.push_back(parent.first);
+                }
+            }
+
+            return m_parents;
         }
     };
 }
