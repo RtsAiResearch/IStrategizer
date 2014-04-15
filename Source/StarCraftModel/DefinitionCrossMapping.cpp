@@ -253,3 +253,4 @@ void DefinitionCrossMapping::InitActions()
 
     ActionMapping = CrossMap<TID, IStrategizer::ActionType>(actions);
 }
+

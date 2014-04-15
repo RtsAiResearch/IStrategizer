@@ -24,7 +24,7 @@ private:
     void InitEntityIdents();
     void InitUpgradeIdents();
     void InitTechIdents();
-    void InitActions();
+	void InitActions();
     bool m_initialized;
 
 public:
@@ -40,6 +40,7 @@ public:
     CrossMap<TID, IStrategizer::ResearchType> TechMapping;
     CrossMap<TID, IStrategizer::PlayerType> PlayerMapping;
     CrossMap<TID, IStrategizer::ActionType> ActionMapping;
+	CrossMap<TID, IStrategizer::ResourceType> ResourceMapping;
     CrossMap<TID, TName> EntityIdentMapping; 
     CrossMap<TID, TName> UpgradeIdentMapping;
     CrossMap<TID, TName> TechIdentMapping;

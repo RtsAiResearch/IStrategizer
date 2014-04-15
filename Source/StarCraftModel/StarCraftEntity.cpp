@@ -227,3 +227,16 @@ bool StarCraftEntity::IsNull()
 {
     return m_unit == nullptr;
 }
+//----------------------------------------------------------------------------------------------
+bool StarCraftModel::StarCraftEntity::GatherResourceEntity(IStrategizer::TID p_resourceEntityObjectId )
+{
+	Unit gatherer = m_unit;
+	Unit resource;
+
+	resource = Broodwar->getUnit(p_resourceEntityObjectId);
+
+	if (!resource)
+		throw ItemNotFoundException(XcptHere);
+
+	return gatherer->gather(resource);
+}
