@@ -32,30 +32,17 @@ LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_play
 void LearningFromHumanDemonstration::Learn()
 {
     vector<CookedPlan*> m_cookedPlans;
-    vector<CookedCase*> m_cookedCases;
-    vector<PlanStepEx*> m_steps;
-    vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
 
-    m_cookedCases.resize(m_rawCases.size());
-
-    for (size_t i = 0; i < m_rawCases.size(); ++i)
+    for each(auto m_rawCase in LearnRawCases(_helper->ObservedTraces()))
     {
-        m_cookedCases[i] = DependencyGraphGeneration(m_rawCases[i]);
-    }
+        IStrategizer::CookedCase* m_cookedCase = DependencyGraphGeneration(m_rawCase);
 
-    for (size_t i = 0; i < m_cookedCases.size(); ++i)
-    {
-        UnnecessaryStepsElimination(m_cookedCases[i]);
-    }
+        UnnecessaryStepsElimination(m_cookedCase);
 
-    for (size_t i = 0; i < m_cookedCases.size(); ++i)
-    {
-        m_cookedCases[i] = DependencyGraphGeneration(m_cookedCases[i]->rawCase);
-    }
-
-    for (size_t i = 0; i < m_cookedCases.size(); ++i)
-    {
-        m_cookedPlans.push_back(new CookedPlan(m_cookedCases[i]->rawCase->rawPlan.Goal, m_cookedCases[i]->plan, m_cookedCases[i]->rawCase->gameState));
+        m_cookedPlans.push_back(new CookedPlan(
+            m_cookedCase->rawCase->rawPlan.Goal,
+            m_cookedCase->plan,
+            m_cookedCase->rawCase->gameState));
     }
 
     for (size_t i = 0; i < m_cookedPlans.size(); ++i)
