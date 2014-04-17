@@ -38,7 +38,7 @@ namespace IStrategizer
         // Returns:   	NodeID:  A unique ID used to reference the added node
         // in further Digraph methods
         //************************************
-        virtual NodeID AddNode(_In_ NodeValue& val) = 0;
+        virtual NodeID AddNode(const _In_ NodeValue& val) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::RemoveNode

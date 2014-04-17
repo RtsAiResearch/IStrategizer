@@ -70,7 +70,7 @@ namespace IStrategizer
         void UnnecessaryStepsElimination(CookedCase* p_case);
         void HierarchicalComposition(CookedPlan* p_plan, const std::vector<CookedPlan*>& p_plans, unsigned p_index);
         void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans);
-        bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, std::vector<Expression*>& p_matchedConditions);
+        bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode);
         bool IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right);
         CookedPlan* PlanParallelization(OlcbpPlan* p_graph, RawPlanEx* p_steps);
         CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);

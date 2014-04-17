@@ -32,8 +32,9 @@ LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_play
 void LearningFromHumanDemonstration::Learn()
 {
     vector<CookedPlan*> m_cookedPlans;
+    vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
 
-    for each(auto m_rawCase in LearnRawCases(_helper->ObservedTraces()))
+    for each(auto m_rawCase in m_rawCases)
     {
         IStrategizer::CookedCase* m_cookedCase = DependencyGraphGeneration(m_rawCase);
 
@@ -116,26 +117,22 @@ bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left
 //------------------------------------------------------------------------------------------------
 CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx* p_rawCase)
 {
-    SequentialPlan m_planSteps;
-    vector<Expression*> m_matchedConditions;
     OlcbpPlan* m_olcpbPlan = new OlcbpPlan();
 
     for (size_t i = 0; i < p_rawCase->rawPlan.sPlan.size(); ++i)
     {
-        m_olcpbPlan->AddNode(p_rawCase->rawPlan.sPlan[i]);
-        m_planSteps.push_back((PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone());
+        m_olcpbPlan->AddNode((PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone());
     }
 
-    for (size_t i = 0; i < m_planSteps.size(); ++i)
+    for each(size_t i in m_olcpbPlan->GetNodes())
     {
-        for (size_t j = 0; j < m_planSteps.size(); ++j)
+        for each(size_t j in m_olcpbPlan->GetNodes())
         {
-            if (i != j)
+            if(i != j)
             {
-                if (Depends(m_planSteps[i]->PostCondition(), ((Action*)m_planSteps[j])->PreCondition(), m_matchedConditions))
+                if(Depends(m_olcpbPlan->GetNode(i)->PostCondition(), ((Action*)m_olcpbPlan->GetNode(j))->PreCondition()))
                 {
                     m_olcpbPlan->AddEdge(i, j);
-                    m_matchedConditions.clear();
                 }
             }
         }
@@ -144,33 +141,26 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
     return new CookedCase(p_rawCase, m_olcpbPlan);
 }
 //--------------------------------------------------------------------------------------------------------------
-bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode, vector<Expression*>& p_matchedConditions)
+bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode)
 {
-    if (p_candidateNode && p_dependentNode)
-    {
-        vector< pair<Expression*,Expression*> > m_candidateConditions;
-        ConditionEx* m_precondition;
-        ConditionEx* m_postCondition;
+    assert(p_candidateNode);
+    assert(p_dependentNode);
 
-        p_candidateNode->PartiallyEquals(p_dependentNode, m_candidateConditions);
-        for (size_t i = 0; i < m_candidateConditions.size(); ++i)
+    vector< pair<Expression*,Expression*> > m_candidateConditions;
+    p_candidateNode->PartiallyEquals(p_dependentNode, m_candidateConditions);
+
+    for each(auto m_candidateCondition in m_candidateConditions)
+    {
+        ConditionEx* m_precondition = (ConditionEx*)m_candidateCondition.second;
+        ConditionEx* m_postCondition = (ConditionEx*)m_candidateCondition.first;
+
+        if (m_postCondition->Consume(m_precondition->ContainsParameter(PARAM_Amount) ? m_precondition->Parameter(PARAM_Amount) : 0))
         {
-            m_precondition = (ConditionEx*)m_candidateConditions[i].second;
-            m_postCondition = (ConditionEx*)m_candidateConditions[i].first;
-
-            if (m_postCondition->Consume(m_precondition->ContainsParameter(PARAM_Amount) ? m_precondition->Parameter(PARAM_Amount) : 0))
-            {
-                p_matchedConditions.push_back(m_candidateConditions[i].first);
-                p_dependentNode->RemoveExpression(m_candidateConditions[i].second);
-            }
+            return true;
         }
+    }
 
-        return (!p_matchedConditions.empty());
-    }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_case)
@@ -178,7 +168,6 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     SequentialPlan steps = vector<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan.size());
     SequentialPlan fSteps;
     vector<int> rSteps;
-    vector<Expression*> m_usedConditions;
 
     for (size_t i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
     {
@@ -188,11 +177,10 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     // Extract direct steps
     for (size_t i = 0; i < steps.size(); ++i)
     {
-        if (Depends(steps[i]->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition(), m_usedConditions))
+        if (Depends(steps[i]->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition()))
         {
             fSteps.push_back(steps[i]);
             rSteps.push_back(i);
-            m_usedConditions.clear();
         }
     }
 
@@ -230,17 +218,14 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
 //--------------------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::NecessaryStepsExtraction(const SequentialPlan& p_steps, vector<int>& p_rSteps, SequentialPlan& p_fSteps)
 {
-    vector<Expression*> m_usedConditions;
-
     for (size_t i = 0; i < p_rSteps.size(); ++i)
     {
         for (size_t j = 0; j < p_steps.size(); ++j)
         {
-            if (Depends(p_steps[j]->PostCondition(), ((Action*)p_steps[p_rSteps[i]])->PreCondition(), m_usedConditions))
+            if (Depends(p_steps[j]->PostCondition(), ((Action*)p_steps[p_rSteps[i]])->PreCondition()))
             {
                 p_fSteps.push_back(p_steps[j]);
                 p_rSteps.push_back(j);
-                m_usedConditions.clear();
             }
         }
 

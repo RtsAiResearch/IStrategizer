@@ -31,7 +31,7 @@ namespace IStrategizer
         inline void Parameter(int p_paramId, int p_newValue) { _conditionParameters[(ParameterType)p_paramId] = p_newValue; }
         inline int Type() const { return _conditionType; } 
         inline int Parameter(int p_paramId) { return _conditionParameters[(ParameterType)p_paramId]; }
-        inline bool ContainsParameter(ParameterType p_parameter) { return (_conditionParameters.find(p_parameter) == _conditionParameters.end()); }
+        inline bool ContainsParameter(ParameterType p_parameter) { return (_conditionParameters.find(p_parameter) != _conditionParameters.end()); }
         inline PlanStepParameters   Parameters() const { return _conditionParameters; }
         void Copy(IClonable* p_dest);
         bool PartiallyEqualsAux(const Expression* p_rhs,  MatchSide p_anchor, std::vector<std::pair<Expression*,Expression*>>& p_matchedLeafs) const;
