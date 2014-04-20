@@ -37,9 +37,9 @@ void LearningFromHumanDemonstration::Learn()
     for each(auto m_rawCase in m_rawCases)
     {
         IStrategizer::CookedCase* m_cookedCase = DependencyGraphGeneration(m_rawCase);
-
+        
         UnnecessaryStepsElimination(m_cookedCase);
-
+        
         m_cookedPlans.push_back(new CookedPlan(
             m_cookedCase->rawCase->rawPlan.Goal,
             m_cookedCase->plan,
@@ -165,76 +165,49 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNod
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_case)
 {
-    SequentialPlan steps = vector<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan.size());
-    SequentialPlan fSteps;
-    vector<int> rSteps;
+    OlcbpPlan::NodeSet m_unprocessedSteps = p_case->plan->GetNodes();
+    OlcbpPlan::NodeSet m_necessarySteps;
+    OlcbpPlan::NodeSet m_finalSteps;
 
-    for (size_t i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
+    for(OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
     {
-        steps[i] = static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone());
-    }
-
-    // Extract direct steps
-    for (size_t i = 0; i < steps.size(); ++i)
-    {
-        if (Depends(steps[i]->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition()))
+        if (Depends(p_case->plan->GetNode(*it)->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition()))
         {
-            fSteps.push_back(steps[i]);
-            rSteps.push_back(i);
+            m_necessarySteps.insert(*it);
+            m_unprocessedSteps.erase(it++);
+        }
+        else
+        {
+            ++it;
         }
     }
 
-    size_t initSize = rSteps.size();
-    steps.clear();
-
-    for (size_t i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
+    while(m_necessarySteps.size())
     {
-        steps.push_back(static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone()));
-    }
+        OlcbpPlan::NodeID current = *m_necessarySteps.begin();
+        m_necessarySteps.erase(current);
+        m_finalSteps.insert(current);
 
-    // Extract indirect steps
-    for (size_t i = 0; i < initSize; ++i)
-    {
-        NecessaryStepsExtraction(steps, rSteps, fSteps);
-    }
-
-    p_case->rawCase->rawPlan.sPlan.clear();
-    p_case->rawCase->rawPlan.sPlan.insert(p_case->rawCase->rawPlan.sPlan.begin(), fSteps.begin(), fSteps.end());
-
-    if(!fSteps.empty())
-    {
-        // use the game state of the first action, the index of the trace is stored in the data storage
-        GameTrace firstTrace = _helper->ObservedTraces()[fSteps[fSteps.size() - 1]->Id()];
-        p_case->rawCase->gameState = firstTrace.GameState();
-    }
-
-    p_case->plan = new OlcbpPlan();
-
-    for(size_t i = 0; i < fSteps.size(); ++i)
-    {
-        p_case->plan->AddNode(fSteps[i]);
-    }
-}
-//--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::NecessaryStepsExtraction(const SequentialPlan& p_steps, vector<int>& p_rSteps, SequentialPlan& p_fSteps)
-{
-    for (size_t i = 0; i < p_rSteps.size(); ++i)
-    {
-        for (size_t j = 0; j < p_steps.size(); ++j)
+        for(OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
         {
-            if (Depends(p_steps[j]->PostCondition(), ((Action*)p_steps[p_rSteps[i]])->PreCondition()))
+            if(p_case->plan->IsAdjacent(*it, current))
             {
-                p_fSteps.push_back(p_steps[j]);
-                p_rSteps.push_back(j);
+                m_necessarySteps.insert(*it);
+                m_unprocessedSteps.erase(it++);
+            }
+            else
+            {
+                ++it;
             }
         }
-
-        p_rSteps.erase(p_rSteps.begin() + i);
     }
 
-    for (size_t i = 0; i < p_rSteps.size(); ++i)
+    for each(OlcbpPlan::NodeID i in p_case->plan->GetNodes())
     {
-        NecessaryStepsExtraction(p_steps, p_rSteps, p_fSteps);
+        if(m_finalSteps.find(i) == m_finalSteps.end())
+        {
+            p_case->plan->RemoveNode(i);
+        }
     }
 }
 //--------------------------------------------------------------------------------------------------------------

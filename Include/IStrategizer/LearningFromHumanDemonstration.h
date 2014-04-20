@@ -66,7 +66,6 @@ namespace IStrategizer
         RetainerEx* _retainer;
 
         void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
-        void NecessaryStepsExtraction(const SequentialPlan& p_steps, vector<int>& p_rSteps, SequentialPlan& p_fSteps);
         void UnnecessaryStepsElimination(CookedCase* p_case);
         void HierarchicalComposition(CookedPlan* p_plan, const std::vector<CookedPlan*>& p_plans, unsigned p_index);
         void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans);
