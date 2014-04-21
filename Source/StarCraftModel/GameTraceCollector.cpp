@@ -3,11 +3,14 @@
 #include "DataMessage.h"
 #include "GameTrace.h"
 #include "Logger.h"
-#include <Windows.h>
 #include "DefinitionCrossMapping.h"
+
+#include <Windows.h>
+#include <set>
 
 using namespace BWAPI;
 using namespace IStrategizer;
+using namespace std;
 
 void GameTraceCollector::OnGameFrame()
 {
@@ -206,9 +209,8 @@ void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
     
     GameTrace *pTrace = nullptr;
     PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(action, unit);
-    GameStateEx gameState;
 
-    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
+    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game, m_playerToObserve);
 
     SendGameTrace(pTrace);
 }
@@ -228,9 +230,8 @@ void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit traine
 
     GameTrace *pTrace = nullptr;
     PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(trainee, trainer);
-    GameStateEx gameState;
 
-    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
+    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game, m_playerToObserve);
 
     SendGameTrace(pTrace);
 }

@@ -11,9 +11,6 @@
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{c516ba86-6d97-445e-9e85-7b59f7549353}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utilities\Data Structures">
-      <UniqueIdentifier>{0a3e91e0-211c-44e6-92f7-b75abcfa6b5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine Components">
       <UniqueIdentifier>{33f9f95d-800f-4618-83f7-2767d4407b0f}</UniqueIdentifier>
     </Filter>
@@ -186,9 +183,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CombinatoricsAndOrGraph.cpp">
-      <Filter>Source Files\Utilities\Data Structures</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp">
       <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
@@ -309,9 +303,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp">
       <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\GoalMatrixRowEvaluator.cpp">
-      <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp">
       <Filter>Source Files\EngineData</Filter>
     </ClCompile>
@@ -329,9 +320,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
@@ -397,9 +385,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Vector2.h">
       <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CombinatoricsAndOrGraph.h">
-      <Filter>Header Files\Utilities\Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h">
       <Filter>Header Files\Utilities\Data Structures</Filter>
@@ -640,9 +625,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h">
       <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h">
-      <Filter>Header Files\Engine Components\CaseBaseLearner</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\SerializationEssentials.h">
       <Filter>Header Files\EngineData</Filter>

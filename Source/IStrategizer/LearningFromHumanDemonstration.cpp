@@ -26,17 +26,17 @@ using namespace IStrategizer;
 
 LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy)
 {
-    _helper     = new CaseLearningHelper();
-    _retainer   = new RetainerEx(g_CaseBasePath);
+    _helper = new CaseLearningHelper();
+    _retainer = new RetainerEx(g_CaseBasePath);
 }
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::Learn()
 {
     vector<CookedPlan*> m_cookedPlans;
+    vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
+    
  //   vector<CookedCase*> m_cookedCases;
     //vector<PlanStepEx*> m_steps;
-
- //   vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
 
  //   m_cookedCases.resize(m_rawCases.size());
 
@@ -86,42 +86,66 @@ void LearningFromHumanDemonstration::Learn()
     RetainLearntCases(m_cookedPlans);
 }
 //------------------------------------------------------------------------------------------------
-vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(vector<GameTrace*>& p_traces)
+vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List traces)
 {
-    size_t rowSize = _helper->GetGoalMatrixRowEvaluator().GetRowSize();
     vector<RawCaseEx*> learntRawCases;
-    vector<RawCaseEx*> currentCases = vector<RawCaseEx*>(rowSize, nullptr);
-    RawPlanEx tempRPlan;
-    size_t i, g;
+    vector<RawCaseEx*> candidateRawCases;
+    CaseLearningHelper::GoalMatrix goalMatrix = _helper->GetGoalSatisfacionMatrix();
 
-    for (i = 0; i < p_traces.size(); ++i)
+    // Learn the succeeded goals
+    for (CaseLearningHelper::GoalMatrix::iterator itr = goalMatrix.begin(); itr != goalMatrix.end(); itr++)
     {
-        for (g = 0; g < rowSize; ++g)
+        size_t i = 0;
+        SequentialPlan plan;
+
+        do
         {
-            const GoalMatrixRow& currGoalMatrixRow = _helper->GetGoalMatrixRow(p_traces[i]);
-            
-            if (!currGoalMatrixRow[g] && !currentCases[g])
-            {
-                tempRPlan = RawPlanEx(nullptr, SequentialPlan());
-                currentCases[g] = new RawCaseEx(tempRPlan, p_traces[i]->GameState());
-                //m_currentCases[g] = new RawCaseEx(m_tempRPlan, nullptr);
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
-            }
-            else if(!currGoalMatrixRow[g] && currentCases[g])
-            {
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
-            }
-            else if (!currGoalMatrixRow[g] && currentCases[g])
-            {
-                currentCases[g]->rawPlan.Goal = _helper->GetGoalMatrixRowEvaluator().GetGoal(g);
-                AddAction(currentCases[g], p_traces[i]->Action(), p_traces[i]->ActionParams(), i);
-                learntRawCases.push_back(currentCases[g]);
-                currentCases[g] = nullptr;
-            }
+            // Set the action id to use it in the future to reference the trace game state.
+            Action* action = g_ActionFactory.GetAction(traces[i].Action(), traces[i].ActionParams());
+            action->Id(i);
+
+            plan.push_back(action);
+        }
+        while ((*itr).first >= traces[++i].GameCycle());
+
+        vector<GoalEx*> currentGoals = (*itr).second;
+
+        for (size_t j = 0; j < currentGoals.size(); ++j)
+        {
+            candidateRawCases.push_back(new RawCaseEx(RawPlanEx(currentGoals[j], plan), nullptr));
         }
     }
 
+    // Remove duplicate cases
+    for (size_t i = 0; i < candidateRawCases.size(); ++i)
+    {
+        bool duplicate = false;
+
+        for (size_t j = 0; j < learntRawCases.size(); ++j)
+        {
+            if (candidateRawCases[i]->rawPlan.Goal == learntRawCases[j]->rawPlan.Goal &&
+                IdenticalSequentialPlan(candidateRawCases[i]->rawPlan.sPlan, learntRawCases[j]->rawPlan.sPlan))
+            {
+                duplicate = true;
+                break;
+            }
+        }
+
+        if (!duplicate)
+            learntRawCases.push_back(candidateRawCases[i]);
+    }
+
     return learntRawCases;
+}
+//------------------------------------------------------------------------------------------------
+bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right)
+{
+    bool identical = left.size() == right.size();
+    size_t i = 0;
+
+    while (identical) { left[i]->Id() == right[i++]->Id(); }
+
+    return identical;
 }
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId)
@@ -157,11 +181,11 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
             {
                 aJ = (Action*)m_planSteps[j];
 
-                /*if (Depends(m_planSteps[i]->PostConditions(), aJ->Preconditions(), m_matchedConditions))
+                if (Depends(m_planSteps[i]->PostCondition(), aJ->PreCondition(), m_matchedConditions))
                 {
                     m_graph->Connect(i, j, m_matchedConditions);
                     m_matchedConditions.clear();
-                }*/
+                }
             }
         }
     }
@@ -200,53 +224,53 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNod
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_case)
 {
- //   SequentialPlan steps = vector<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan.size());
- //   SequentialPlan fSteps;
- //   vector<int> rSteps;
- //   int i, initSize;
-    //vector<Expression*> m_usedConditions;
+    SequentialPlan steps = vector<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan.size());
+    SequentialPlan fSteps;
+    vector<int> rSteps;
+    unsigned int i, initSize;
+    vector<Expression*> m_usedConditions;
 
-    //for ( i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
-    //{
-    // steps[i] = static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone());
-    //}
+    for ( i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
+    {
+        steps[i] = static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone());
+    }
 
- //   // Extract direct steps
- //   for (i = 0; i < steps.size(); ++i)
- //   {
- //       if (Depends(steps[i]->PostConditions(), p_case->rawCase->rawPlan.Goal->PostConditions(), m_usedConditions))
- //       {
- //           fSteps.push_back(steps[i]);
- //           rSteps.push_back(i);
-    // m_usedConditions.clear();
- //       }
- //   }
+    // Extract direct steps
+    for (i = 0; i < steps.size(); ++i)
+    {
+        if (Depends(steps[i]->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition(), m_usedConditions))
+        {
+            fSteps.push_back(steps[i]);
+            rSteps.push_back(i);
+            m_usedConditions.clear();
+        }
+    }
 
- //   initSize = rSteps.size();
-    //steps.clear();
-    //
-    //for ( i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
-    //{
-    // steps.push_back(static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone()));
-    //}
+    initSize = rSteps.size();
+    steps.clear();
 
- //   // Extract indirect steps
- //   for (i = 0; i < initSize; ++i)
- //   {
- //       NecessaryStepsExtraction(p_case->dGraph, rSteps[i], fSteps, steps);
- //   }
+    for ( i = 0; i < p_case->rawCase->rawPlan.sPlan.size(); ++i)
+    {
+        steps.push_back(static_cast<PlanStepEx*>(p_case->rawCase->rawPlan.sPlan[i]->Clone()));
+    }
 
-    //p_case->rawCase->rawPlan.sPlan.clear();
-    //p_case->rawCase->rawPlan.sPlan.insert(p_case->rawCase->rawPlan.sPlan.begin(), fSteps.begin(), fSteps.end());
+    // Extract indirect steps
+    for (i = 0; i < initSize; ++i)
+    {
+        NecessaryStepsExtraction(p_case->dGraph, rSteps[i], fSteps, steps);
+    }
 
- //   //if(!fSteps.empty())
- //   //{
- //   //    // use the game state of the first action, the index of the trace is stored in the data storage
- //   //    TraceEx* firstTrace = _helper->ObservedTraces()[fSteps[0]->Data()];
- //   //    p_case->rawCase->gameState = firstTrace->GameState();
- //   //}
+    p_case->rawCase->rawPlan.sPlan.clear();
+    p_case->rawCase->rawPlan.sPlan.insert(p_case->rawCase->rawPlan.sPlan.begin(), fSteps.begin(), fSteps.end());
 
-    //p_case->dGraph = new PlanGraph(fSteps);
+    if(!fSteps.empty())
+    {
+        // use the game state of the first action, the index of the trace is stored in the data storage
+        GameTrace firstTrace = _helper->ObservedTraces()[fSteps[0]->Data()];
+        p_case->rawCase->gameState = firstTrace.GameState();
+    }
+
+    p_case->dGraph = new PlanGraph(fSteps);
 }
 //--------------------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::NecessaryStepsExtraction(PlanGraph* p_graph, unsigned p_sIndex, SequentialPlan& p_fSteps, const SequentialPlan& p_steps)

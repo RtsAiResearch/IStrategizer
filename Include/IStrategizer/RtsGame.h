@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef RTSGAME_H
 #define RTSGAME_H
 
@@ -27,14 +28,15 @@ namespace IStrategizer
     class GameResearch;
     class WorldMap;
 
+    ///> class=RtsGame
     class RtsGame : public EngineComponent
     {
-	private:
-		
-		// Been determined empirically by analyzing professional games. 
-		// Refer to paper "Build Order Optimization in StarCraft" page 3
-		static const float MineralsPerWorkerPerFrame; 
-		static const float GasPerWorkerPerFrame;
+    private:
+
+        // Been determined empirically by analyzing professional games. 
+        // Refer to paper "Build Order Optimization in StarCraft" page 3
+        static const float MineralsPerWorkerPerFrame; 
+        static const float GasPerWorkerPerFrame;
 
     protected:
         MapEx<PlayerType, GamePlayer*> m_players;
@@ -66,13 +68,14 @@ namespace IStrategizer
         void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds);
         void Researches(std::vector<ResearchType>& p_researchTypeIds);
         int GetForceSizeCount( ForceSizeType p_forceSizeType );
+        ForceSizeType GetForceSizeType(int forceCount);
         GamePlayer* GetPlayer(PlayerType p_id);
         GameType* GetEntityType(EntityClassType p_id);
         GameResearch* GetResearch(ResearchType p_id);
         GamePlayer* Self();
         GamePlayer* Enemy();
         WorldMap* Map();
-		float			GetResourceConsumbtionRatePerWorker(ResourceType p_id);
+        float GetResourceConsumbtionRatePerWorker(ResourceType p_id);
     };
 }
 

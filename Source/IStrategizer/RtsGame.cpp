@@ -200,3 +200,17 @@ float IStrategizer::RtsGame::GetResourceConsumbtionRatePerWorker(ResourceType p_
 		throw InvalidParameterException(XcptHere);
 	}
 }
+//----------------------------------------------------------------------------------------------
+ForceSizeType RtsGame::GetForceSizeType(int forceCount)
+{
+    int period = GetMaxForceSize() / 3;
+
+    if (forceCount == 1)
+        return FORCESIZE_SmallForce;
+    else if (forceCount <= period)
+        return FORCESIZE_MediumForce;
+    else
+    {
+        return FORCESIZE_LargeForce;
+    }
+}

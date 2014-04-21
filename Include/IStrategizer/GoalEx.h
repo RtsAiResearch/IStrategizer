@@ -22,6 +22,7 @@ namespace IStrategizer
     public:
         void UpdateAux(RtsGame& game, const WorldClock& p_clock);
         void Reset(RtsGame& game, const WorldClock& p_clock);
+        virtual std::vector<GoalEx*> GetSucceededInstances(RtsGame &game) = 0;
     };
 }
 

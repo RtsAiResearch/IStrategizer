@@ -14,6 +14,11 @@
 #include "AdapterEx.h"
 #include "EntityClassExist.h"
 #include "ResourceExist.h"
+
+#include <vector>
+using namespace std;
+
+
     
 IStrategizer::GatherResourceAction::GatherResourceAction():
 	Action(ACTIONEX_GatherResource), _gatherIssued(false), _gatherStarted(false), _gatheredAmount(0)

@@ -16,6 +16,7 @@ namespace IStrategizer
         TrainArmyGoal();
         TrainArmyGoal(const PlanStepParameters& p_parameters);
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
+        std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
 
     protected:
         void InitializePostConditions();
@@ -25,6 +26,8 @@ namespace IStrategizer
         int m_demandUnitsCount;
         int m_trainedUnitsCount;
         std::vector<TID> m_pendingUnits;
+        std::vector<TID> m_usedUnits;
+        std::map<EntityClassType, int> m_forces;
     };
 }
 #endif // TRAINARMYGOAL_H

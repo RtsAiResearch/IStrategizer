@@ -89,8 +89,8 @@ namespace IStrategizer
 #define Prefix_GoalType GOALEX
     enum GoalType
     {
-        GOALEX_WinGame    = 0x20700,                                
-        GOALEX_START    = 0x20700,
+        GOALEX_WinGame = 0x20700,                                
+        GOALEX_START   = 0x20700,
         GOALEX_CollectResource,
         GOALEX_TrainArmy,
         GOALEX_DestroyEntityType,
