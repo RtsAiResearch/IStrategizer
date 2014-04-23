@@ -21,7 +21,7 @@ namespace StarCraftModel
     int Secondary();
     int Primary();
 
-    EntityClassType GetEntityClassType(ResourceType p_type)const;
+    EntityClassType GetEntityClassType(ResourceType p_type) const;
 
   };
 }

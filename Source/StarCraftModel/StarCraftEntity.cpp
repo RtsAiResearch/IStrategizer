@@ -240,8 +240,7 @@ bool StarCraftModel::StarCraftEntity::GatherResourceEntity(IStrategizer::TID p_r
 
 	resource = Broodwar->getUnit(p_resourceEntityObjectId);
 
-	if (!resource)
-		throw ItemNotFoundException(XcptHere);
+	assert(resource);
 
 	return gatherer->gather(resource);
 }

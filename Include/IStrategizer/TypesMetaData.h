@@ -115,7 +115,7 @@ namespace IStrategizer
         ACTIONEX_AttackEntity,
         ACTIONEX_MoveEntity,
         ACTIONEX_Move,
-		ACTIONEX_GatherResource,
+        ACTIONEX_GatherResource,
         ACTIONEX_END
     };
 #define Define_ActionType \
@@ -126,7 +126,7 @@ namespace IStrategizer
     Enums[ACTIONEX_AttackEntity] = "Attack Entity"; \
     Enums[ACTIONEX_Move] = "Move"; \
     Enums[ACTIONEX_MoveEntity] = "Move Entity";\
-	Enums[ACTIONEX_GatherResource] = "Gather Resource";
+    Enums[ACTIONEX_GatherResource] = "Gather Resource";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
     enum ConditionType

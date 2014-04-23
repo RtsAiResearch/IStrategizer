@@ -29,12 +29,12 @@ namespace IStrategizer
         void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
 
     private:
-        TID	_gathererId;
-        TID	_resourceId;
-        int	_resourceAmount;
-        bool _gatherIssued;
-        bool _gatherStarted;
-        float _gatheredAmount;
+        TID m_gathererId;
+        TID	m_resourceId;
+        int	m_resourceAmount;
+        bool m_gatherIssued;
+        bool m_gatherStarted;
+        float m_gatheredAmount;
     };
 }
 

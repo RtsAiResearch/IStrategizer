@@ -21,17 +21,16 @@ using namespace std;
 
     
 IStrategizer::GatherResourceAction::GatherResourceAction():
-	Action(ACTIONEX_GatherResource), _gatherIssued(false), _gatherStarted(false), _gatheredAmount(0)
+	Action(ACTIONEX_GatherResource), m_gatherIssued(false), m_gatherStarted(false), m_gatheredAmount(0)
 {
 	_params[PARAM_ResourceId] = RESOURCE_START;
-	_params[PARAM_EntityClassId] = ECLASS_START;
-	_params[PARAM_AlliedBuildingsCount] = 1;
-	_params[PARAM_Amount] = 10;
+	_params[PARAM_EntityClassId] = g_Game->Self()->GetWorkerType();
+	_params[PARAM_Amount] = 0;
 	CellFeature::Null().To(_params);
 }
 //////////////////////////////////////////////////////////////////////////
 IStrategizer::GatherResourceAction::GatherResourceAction(const PlanStepParameters& p_parameters):
-	Action(ACTIONEX_GatherResource, p_parameters), _gatherIssued(false), _gatherStarted(false), _gatheredAmount(0)
+	Action(ACTIONEX_GatherResource, p_parameters), m_gatherIssued(false), m_gatherStarted(false), m_gatheredAmount(0)
 {
 
 }
@@ -42,7 +41,6 @@ void IStrategizer::GatherResourceAction::InitializePreConditions()
 	vector<Expression*> m_terms;
 
 	m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1, true));
-	//m_terms.push_back(new ResourceExist(PLAYER_Neutral, _params[PARAM_ResourceId], _params[PARAM_Amount]));
 	_preCondition = new And(m_terms);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -63,11 +61,11 @@ bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied(RtsGame& pRtsG
 	bool b_alive = false;
 
 	// 1. Gatherer is still alive
-	b_gathererExist = g_Assist.DoesEntityObjectExist(_gathererId);
+	b_gathererExist = g_Assist.DoesEntityObjectExist(m_gathererId);
 
 	if (b_gathererExist)
 	{
-		GameEntity* pGameGatherer = pRtsGame.Self()->GetEntity(_gathererId);
+		GameEntity* pGameGatherer = pRtsGame.Self()->GetEntity(m_gathererId);
 
         assert(pGameGatherer);
 
@@ -77,7 +75,7 @@ bool IStrategizer::GatherResourceAction::AliveConditionsSatisfied(RtsGame& pRtsG
 		if(gathererState == OBJSTATE_Gathering)
 		{
 			// 3. There is still remaining resource to be gathered
-			b_resourceExist = g_Assist.DoesEntityObjectExist(_resourceId, PLAYER_Neutral);
+			b_resourceExist = g_Assist.DoesEntityObjectExist(m_resourceId, PLAYER_Neutral);
 
 			// If resource doesn't exist a new unit should have been gathered by handleMessage
 			// if no resource has been assigned, this means it failed to find suitable resource
@@ -99,29 +97,29 @@ bool IStrategizer::GatherResourceAction::SuccessConditionsSatisfied(RtsGame& pRt
 	// Check that the worker has gathered needed amount of the resource
 	bool success = false;
 
-	if(_gatherStarted)
+	if(m_gatherStarted)
 	{
-		GameEntity* pGameGatherer = pRtsGame.Self()->GetEntity(_gathererId);
+		GameEntity* pGameGatherer = pRtsGame.Self()->GetEntity(m_gathererId);
 
         assert(pGameGatherer);
 
 		ObjectStateType gathererState = (ObjectStateType)pGameGatherer->Attr(EOATTR_State);
 		if (gathererState == OBJSTATE_Gathering)
 		{
-			_gatheredAmount += pRtsGame.GetResourceConsumbtionRatePerWorker((ResourceType)_params[PARAM_ResourceId]);
+			m_gatheredAmount += pRtsGame.GetResourceConsumbtionRatePerWorker((ResourceType)_params[PARAM_ResourceId]);
 		}
 	}
 
-	success = (_gatheredAmount >= _params[PARAM_Amount]);
+	success = (m_gatheredAmount >= _params[PARAM_Amount]);
 
 	return success;
 }
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::GatherResourceAction::OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock )
 {
-	if(_gatherIssued)
+	if(m_gatherIssued)
 	{
-		GameEntity* pEntity = g_Game->Self()->GetEntity(_gathererId);
+		GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
 
 		if (pEntity)
 			pEntity->Unlock(this);
@@ -130,9 +128,9 @@ void IStrategizer::GatherResourceAction::OnSucccess(RtsGame& pRtsGame, const Wor
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::GatherResourceAction::OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock )
 {
-	if(_gatherIssued)
+	if(m_gatherIssued)
 	{
-		GameEntity* pEntity = g_Game->Self()->GetEntity(_gathererId);
+		GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
 
 		if (pEntity)
 			pEntity->Unlock(this);
@@ -147,29 +145,29 @@ bool IStrategizer::GatherResourceAction::ExecuteAux(RtsGame& pRtsGame, const Wor
 	bool				bOK = false;
 
 	// Adapt gatherer
-	_gathererId = pAdapter->GetEntityObjectId(gathererType, AdapterEx::WorkerStatesRankVector);
+	m_gathererId = pAdapter->GetEntityObjectId(gathererType, AdapterEx::WorkerStatesRankVector);
 
-	if(_gathererId != INVALID_TID)
+	if(m_gathererId != INVALID_TID)
 	{
 		resourceType = (ResourceType)_params[PARAM_ResourceId];
 
 		// Initialize gather state
-		_gatherStarted = true;
+		m_gatherStarted = true;
 
 		// Adapt resource id
 		assert(pAdapter);
-		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters(), _gathererId);
-		if(_resourceId != INVALID_TID)
+		m_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters(), m_gathererId);
+		if(m_resourceId != INVALID_TID)
 		{
-			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(_gathererId);
-			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(_resourceId);
+			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(m_gathererId);
+			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(m_resourceId);
 			assert(pGameGatherer);
 			assert(pGameResource);
-			bOK = pGameGatherer->GatherResourceEntity(_resourceId);
+			bOK = pGameGatherer->GatherResourceEntity(m_resourceId);
 
 			if (bOK)
 			{
-				_gatherIssued = true;
+				m_gatherIssued = true;
 				pGameGatherer->Lock(this);
 			}
 		}
@@ -191,7 +189,7 @@ void IStrategizer::GatherResourceAction::HandleMessage( RtsGame& pRtsGame, Messa
 		assert(pMsg && pMsg->Data());
 		resourceId = pMsg->Data()->EntityId;
 
-		if (resourceId != _resourceId)
+		if (resourceId != m_resourceId)
 			return;
 
 		// Resource being gathered is destroyed, so adapt a new resource and gather it
@@ -199,18 +197,18 @@ void IStrategizer::GatherResourceAction::HandleMessage( RtsGame& pRtsGame, Messa
 		ResourceType		resourceType = (ResourceType)_params[PARAM_ResourceId];
 		assert(pAdapter);
 
-		_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters(), _gathererId);
+		m_resourceId = pAdapter->AdaptResourceForGathering(resourceType, Parameters(), m_gathererId);
 
-		if(_resourceId != INVALID_TID)
+		if(m_resourceId != INVALID_TID)
 		{
-			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(_gathererId);
-			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(_resourceId);
+			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(m_gathererId);
+			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(m_resourceId);
 			assert(pGameGatherer);
 			assert(pGameResource);
 
-			if (pGameGatherer->GatherResourceEntity(_resourceId))
+			if (pGameGatherer->GatherResourceEntity(m_resourceId))
 			{
-				_gatherIssued = true;
+				m_gatherIssued = true;
 				pGameGatherer->Lock(this);
 			}
 		}

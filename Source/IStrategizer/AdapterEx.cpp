@@ -248,8 +248,8 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( ResourceTy
 	GamePlayer	*pPlayer;
 	GameEntity	*pEntity;
 	vector<TID>	entityIds;
-	TID			adaptedResourceId = INVALID_TID;
-	double		bestDistance = numeric_limits<double>::max();
+	TID	adaptedResourceId = INVALID_TID;
+	double bestDistance = numeric_limits<double>::max();
 	CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
 
 	pPlayer = g_Game->GetPlayer(PLAYER_Neutral);
@@ -266,11 +266,10 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( ResourceTy
 		pEntity = pPlayer->GetEntity(entityIds[i]);
 		assert(pEntity);
 
-		//CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
-		//double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
+        //now we can depend on the cell feature for comparison to get the resource that matches the required cell feature.
+		CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+		double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
 
-		GameEntity* gatherer = g_Game->GetPlayer(PLAYER_Self)->GetEntity(p_gathererID);
-		double dist = gatherer->GetPosition().Distance(pEntity->GetPosition());
 		if (dist <= bestDistance)
 		{
 			bestDistance = dist;
