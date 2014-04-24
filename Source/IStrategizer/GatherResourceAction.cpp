@@ -25,7 +25,7 @@ IStrategizer::GatherResourceAction::GatherResourceAction():
 {
 	_params[PARAM_ResourceId] = RESOURCE_START;
 	_params[PARAM_EntityClassId] = g_Game->Self()->GetWorkerType();
-	_params[PARAM_Amount] = 0;
+	_params[PARAM_Amount] = DONT_CARE;
 	CellFeature::Null().To(_params);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -106,6 +106,9 @@ bool IStrategizer::GatherResourceAction::SuccessConditionsSatisfied(RtsGame& pRt
 		ObjectStateType gathererState = (ObjectStateType)pGameGatherer->Attr(EOATTR_State);
 		if (gathererState == OBJSTATE_Gathering)
 		{
+            if (_params[PARAM_Amount] == DONT_CARE)
+                return true;
+
 			m_gatheredAmount += pRtsGame.GetResourceConsumbtionRatePerWorker((ResourceType)_params[PARAM_ResourceId]);
 		}
 	}
