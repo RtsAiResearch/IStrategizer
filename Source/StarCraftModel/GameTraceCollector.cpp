@@ -58,13 +58,13 @@ bool GameTraceCollector::IsAutoGatheringResources(const Unit unit)
 
     isAutoGatheringMinerals = unit->isGatheringMinerals() &&
         (unit->getOrder() == Orders::MoveToMinerals ||
-        unit->getOrder() == Orders::MiningMinerals ||
+       /* unit->getOrder() == Orders::MiningMinerals ||*/
         unit->getOrder() == Orders::WaitForMinerals ||
         unit->getOrder() == Orders::ReturnMinerals);
 
     isAutoGatheringGas = unit->isGatheringGas() &&
         (unit->getOrder() == Orders::MoveToGas ||
-        unit->getOrder() == Orders::HarvestGas ||
+        /*unit->getOrder() == Orders::HarvestGas ||*/
         unit->getOrder() == Orders::WaitForGas ||
         unit->getOrder() == Orders::ReturnGas);
 
@@ -110,12 +110,15 @@ void GameTraceCollector::InitPlayerIssuedOrderTable()
     m_playerIssuedOrderIDs.insert(Orders::AttackUnit.getID());
     m_playerIssuedOrderIDs.insert(Orders::Patrol.getID());
     m_playerIssuedOrderIDs.insert(Orders::HoldPosition.getID());
+
+    m_playerIssuedOrderIDs.insert(Orders::HarvestGas.getID());
+    m_playerIssuedOrderIDs.insert(Orders::MiningMinerals.getID());
 }
 //////////////////////////////////////////////////////////////////////////
 bool GameTraceCollector::HasNewPlayerOrder(const Unit unit)
 {
     return IsPlayerIssuedOrder(unit->getOrder()) &&
-        !IsAutoGatheringResources(unit) &&
+        /*!IsAutoGatheringResources(unit) &&*/
         IsOrderChanged(unit);
 }
 //////////////////////////////////////////////////////////////////////////

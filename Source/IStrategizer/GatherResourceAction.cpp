@@ -24,7 +24,7 @@ IStrategizer::GatherResourceAction::GatherResourceAction():
 	Action(ACTIONEX_GatherResource), m_gatherIssued(false), m_gatherStarted(false), m_gatheredAmount(0)
 {
 	_params[PARAM_ResourceId] = RESOURCE_START;
-	_params[PARAM_EntityClassId] = g_Game->Self()->GetWorkerType();
+	_params[PARAM_EntityClassId] = ECLASS_START;
 	_params[PARAM_Amount] = DONT_CARE;
 	CellFeature::Null().To(_params);
 }
