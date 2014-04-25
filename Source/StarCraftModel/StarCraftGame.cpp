@@ -153,7 +153,7 @@ GameResearch* StarCraftGame::FetchResearch(ResearchType p_id)
         research = new StarCraftResearch(upgrade);
     }
 
-    assert(research);
+    _ASSERTE(research);
     research->Initialize();
 
     return research;

@@ -16,7 +16,7 @@ namespace IStrategizer
     public:
         Not() {}
         Not(Expression* p_expression) : CompositeExpression(p_expression) {}
-        bool Evaluate(RtsGame& game) { assert(_expressions.size() == 1); _isEvaluated = true; return _isSatisfied = !_expressions[0]->Evaluate(game); }
+        bool Evaluate(RtsGame& game) { _ASSERTE(_expressions.size() == 1); _isEvaluated = true; return _isSatisfied = !_expressions[0]->Evaluate(game); }
     };
 }
 

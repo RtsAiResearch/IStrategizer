@@ -216,7 +216,7 @@ bool GoalMatrixRowEvaluator::EvaluatePath()
     
     TPathKey m_pathId = Hash(_currentGoal, m_path);
 
-    assert(0);
+    _ASSERTE(0);
     // FIXME: Lines blow were commented to fix compilation error
     // GoalEx* m_goal = GetGoal(m_pathId, m_path);
     //m_goal->Update(_lastGameCycle);
@@ -230,7 +230,7 @@ bool GoalMatrixRowEvaluator::EvaluatePath()
 //----------------------------------------------------------------------------------------------
 TPathKey GoalMatrixRowEvaluator::Hash(int p_goalIdx, list<NodeType>& p_parameters)
 {
-    assert(!p_parameters.empty());
+    _ASSERTE(!p_parameters.empty());
 
     TPathKey m_key = p_goalIdx;
     int m_numBits;
@@ -272,7 +272,7 @@ GoalEx* GoalMatrixRowEvaluator::GetGoal(TPathKey p_pathId, list<NodeType>& p_pat
         }
 
         GoalEx* m_goal = g_GoalFactory.GetGoal((GoalType)GET(_currentGoal, GoalType), m_params);
-        assert(m_goal != nullptr);
+        _ASSERTE(m_goal != nullptr);
         _goals[p_pathId] = m_goal;
     }
 
@@ -294,6 +294,6 @@ GoalEx* GoalMatrixRowEvaluator::GetGoal(int p_goalIdx)
     }
 
     // this function should return a goal of and only if it succeeded during a previous goal satisfaction row computation
-    assert(m_goal != nullptr);
+    _ASSERTE(m_goal != nullptr);
     return m_goal;
 }

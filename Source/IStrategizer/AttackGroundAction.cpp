@@ -44,7 +44,7 @@ bool AttackGroundAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     if (_attackerId != INVALID_TID)
     {
         GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
-        assert(pGameAttacker);
+        _ASSERTE(pGameAttacker);
         pGameAttacker->Lock(this);
 
         // Adapt attack position
@@ -79,10 +79,10 @@ bool AttackGroundAction::AliveConditionsSatisfied(RtsGame& game)
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied(RtsGame& game)
 {
-    assert(PlanStepEx::State() == ESTATE_Executing);
+    _ASSERTE(PlanStepEx::State() == ESTATE_Executing);
 
     GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
-    assert(pGameAttacker);
+    _ASSERTE(pGameAttacker);
     ObjectStateType attackerState = (ObjectStateType)pGameAttacker->Attr(EOATTR_State);
     return (attackerState == OBJSTATE_Attacking) || (attackerState == OBJSTATE_UnderAttack);
 }

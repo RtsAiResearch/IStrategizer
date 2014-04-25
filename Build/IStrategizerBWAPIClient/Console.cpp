@@ -22,7 +22,7 @@ CConsole::CConsole()
     if (!m_bAlreadyHasConsole)
     {
         bOk = InitializeCrtHandles();
-        assert(bOk);
+        _ASSERTE(bOk);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -33,9 +33,9 @@ CConsole::~CConsole()
     {
         BOOL bOk;
         bOk = ResetCrtHandles();
-        assert(bOk);
+        _ASSERTE(bOk);
         bOk = FreeConsole();
-        assert(bOk);
+        _ASSERTE(bOk);
     }
 }
 //////////////////////////////////////////////////////////////////////////

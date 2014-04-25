@@ -45,7 +45,7 @@ bool MoveAction::AliveConditionsSatisfied(RtsGame& game)
     if (g_Assist.DoesEntityObjectExist(_entityId))
     {
         GameEntity* pEntity = game.Self()->GetEntity(_entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
         satisfied = (pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false);
     }
     else
@@ -86,7 +86,7 @@ bool MoveAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
         _position = pAdapter->AdaptPosition(Parameters());
         _pEntity  = game.Self()->GetEntity(_entityId);
         _pEntity->Lock(this);
-        assert(_pEntity);
+        _ASSERTE(_pEntity);
         executed = _pEntity->Move(_position);
     }
     return executed;

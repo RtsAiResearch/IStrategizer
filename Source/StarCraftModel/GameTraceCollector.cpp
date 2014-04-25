@@ -20,7 +20,7 @@ void GameTraceCollector::OnGameFrame()
     }
 
     Player playerToObserve = Broodwar->getPlayer(m_playerToObserveID);
-    assert(playerToObserve);
+    _ASSERTE(playerToObserve);
 
     for each (Unit unit in playerToObserve->getUnits())
     {
@@ -126,14 +126,14 @@ bool GameTraceCollector::IsUnitBeingTrained(const Unit unit)
 Unit GameTraceCollector::ReasonTrainerUnitForTrainee(const Unit trainee)
 {
     Player playerToObserve = Broodwar->getPlayer(m_playerToObserveID);
-    assert(playerToObserve);
+    _ASSERTE(playerToObserve);
     Unit suspectedTrainer = nullptr;
 
     for each (Unit trainer in playerToObserve->getUnits())
     {
         if (trainer->isTraining())
         {
-            assert(!trainer->getTrainingQueue().empty());
+            _ASSERTE(!trainer->getTrainingQueue().empty());
             // The first unit-type in the training queue is the same type of the unit
             // we are reasoning for
             if (*(trainer->getTrainingQueue().begin()) == trainee->getType())
@@ -190,7 +190,7 @@ void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
     Order order = unit->getOrder();
 
     // Train order has a special handling
-    assert(unit->getOrder() != Orders::Train);
+    _ASSERTE(unit->getOrder() != Orders::Train);
     ActionType action;
     
     LogInfo("(P%d,%s) %s[%d]: %s",
@@ -223,7 +223,7 @@ void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit traine
         trainer->getPlayer()->getID(), trainer->getPlayer()->getName().c_str(),
         trainer->getType().c_str(), trainer->getID(), "Train");
 
-    assert(g_Database.ActionMapping.ContainsFirst(Orders::Train.getID()));
+    _ASSERTE(g_Database.ActionMapping.ContainsFirst(Orders::Train.getID()));
     action = g_Database.ActionMapping.GetByFirst(Orders::Train.getID());
 
     GameTrace *pTrace = nullptr;
@@ -239,7 +239,7 @@ void GameTraceCollector::SendGameTrace(GameTrace* pTrace)
 {
     DataMessage<GameTrace> *pTraceMsg = nullptr;
 
-    assert(pTrace != nullptr);
+    _ASSERTE(pTrace != nullptr);
     pTraceMsg = new DataMessage<GameTrace>(Broodwar->getFrameCount(), MSG_GameActionLog, pTrace);
 
     g_MessagePump.Send(pTraceMsg, true);

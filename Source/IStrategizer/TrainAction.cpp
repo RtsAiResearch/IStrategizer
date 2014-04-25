@@ -184,7 +184,7 @@ bool TrainAction::ExecuteAux(RtsGame& game, const WorldClock& clock)
 
         if (executed)
         {
-            assert(!m_requiredResources.IsNull());
+            _ASSERTE(!m_requiredResources.IsNull());
             m_requiredResources.Lock(this);
 
             LogInfo("Action %s commanded trainer=%d to train trainee=%d", ToString().c_str(), m_trainerId, m_traineeId);
@@ -223,7 +223,7 @@ void IStrategizer::TrainAction::OnSucccess(RtsGame& game, const WorldClock& cloc
     if (m_pTrainee != nullptr)
         m_pTrainee->Unlock(this);
 
-    assert(!m_requiredResources.IsNull());
+    _ASSERTE(!m_requiredResources.IsNull());
     m_requiredResources.Unlock(this);
 }
 //----------------------------------------------------------------------------------------------
@@ -232,6 +232,6 @@ void IStrategizer::TrainAction::OnFailure(RtsGame& game, const WorldClock& clock
     if (m_pTrainee != nullptr)
         m_pTrainee->Unlock(this);
 
-    assert(!m_requiredResources.IsNull());
+    _ASSERTE(!m_requiredResources.IsNull());
     m_requiredResources.Unlock(this);
 }

@@ -56,8 +56,8 @@ void RetainerEx::Flush()
 //-------------------------------------------------------------------------------------------------------------------------------
 void RetainerEx::Retain(CaseEx* p_case)
 {
-    assert(_caseBaseLoaded);
-    assert(p_case);
+    _ASSERTE(_caseBaseLoaded);
+    _ASSERTE(p_case);
 
     LogInfo("retaining case");
 

@@ -23,7 +23,7 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameter(ActionType actionTyp
 //////////////////////////////////////////////////////////////////////////
 PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameters actionParameters, const Unit unit, const Unit trainer) const
 {
-    assert(unit);
+    _ASSERTE(unit);
     IStrategizer::Vector2 position;
 
     Order order = unit->getOrder();

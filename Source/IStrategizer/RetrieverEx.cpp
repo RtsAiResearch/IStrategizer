@@ -162,7 +162,7 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameSta
     {
         currCase = itr->second;
         outcome = (float)currCase->SuccessCount() / (float)currCase->TrialCount();
-        assert(outcome != 0);
+        _ASSERTE(outcome != 0);
         currCasePerformance = itr->first * outcome;
 
         if (currCasePerformance > bestCasePerformance)

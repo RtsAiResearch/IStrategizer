@@ -75,7 +75,7 @@ void IMSystemManager::Init(const IMSysManagerParam& p_params)
         ++cellSize;
 
     OccupanceDataIM *pBuildingDataIM = new OccupanceDataIM(IM_BuildingData);
-    assert(pBuildingDataIM);
+    _ASSERTE(pBuildingDataIM);
     pBuildingDataIM->Init(cellSize, cellSize, worldWidth, worldHeight);
     RegisterIM(pBuildingDataIM, IM_BuildingData);
 
@@ -85,7 +85,7 @@ void IMSystemManager::Init(const IMSysManagerParam& p_params)
         ++cellSize;
 
     GroundControlIM *pGroundControlIM = new GroundControlIM(IM_GroundControl);
-    assert(pGroundControlIM);
+    _ASSERTE(pGroundControlIM);
     pGroundControlIM->Init(cellSize, cellSize, worldWidth, worldHeight);
     RegisterIM(pGroundControlIM, IM_GroundControl);
 
@@ -104,7 +104,7 @@ void IMSystemManager::Finalize()
 //////////////////////////////////////////////////////////////////////////
 void IMSystemManager::RegisterIM(InfluenceMap *p_pMap, IMType p_mapTypeId)
 {
-    assert(p_pMap);
+    _ASSERTE(p_pMap);
 
     if (m_managedMaps.find(p_mapTypeId) == m_managedMaps.end())
         m_managedMaps[p_mapTypeId] = p_pMap;

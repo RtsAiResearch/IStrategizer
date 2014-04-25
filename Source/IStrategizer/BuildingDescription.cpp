@@ -13,11 +13,11 @@ void BuildingDescription::AddEntity(GameEntity *p_entity)
     EntityClassType typeId;
     GameType *pType;
 
-    assert(p_entity);
+    _ASSERTE(p_entity);
 
     typeId = p_entity->Type();
     pType = g_Game->GetEntityType(typeId);
-    assert(pType);
+    _ASSERTE(pType);
 
     if (pType->Attr(ECATTR_IsBuilding))
     {
@@ -32,11 +32,11 @@ void BuildingDescription::RemoveEntity(GameEntity *p_entity)
     EntityClassType typeId;
     GameType *pType;
 
-    assert(p_entity);
+    _ASSERTE(p_entity);
 
     typeId = p_entity->Type();
     pType = g_Game->GetEntityType(typeId);
-    assert(pType);
+    _ASSERTE(pType);
 
     if (pType->Attr(ECATTR_IsBuilding))
     {

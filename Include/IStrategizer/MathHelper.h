@@ -46,7 +46,7 @@ namespace IStrategizer
         template<class TFeature>
         static int EuclideanDistance(const std::vector<TFeature>& p_featureVector1, const std::vector<TFeature>& p_featureVector2)
         {
-            assert(p_featureVector1.size() == p_featureVector2.size());
+            _ASSERTE(p_featureVector1.size() == p_featureVector2.size());
 
             int m_distance = 0;
             for(unsigned i = 0; i < p_featureVector1.size(); ++i)

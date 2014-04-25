@@ -65,7 +65,7 @@ bool Action::Execute(RtsGame& game, const WorldClock& p_clock)
 {
     bool bOk;
 
-    assert(PlanStepEx::State() == ESTATE_NotPrepared);
+    _ASSERTE(PlanStepEx::State() == ESTATE_NotPrepared);
     bOk = ExecuteAux(game, p_clock);
 
     return bOk;

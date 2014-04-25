@@ -71,7 +71,7 @@ int StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
         return m_unit->isMoving();
 
     default:
-        assert(0);
+        _ASSERTE(0);
     }
 
     return 0;

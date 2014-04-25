@@ -34,21 +34,21 @@ namespace IStrategizer
 
             other = static_cast<const Delegate<TReciever>*>(p_other);
 
-            assert(other != nullptr);
-            assert(m_ptr2Object != nullptr);
+            _ASSERTE(other != nullptr);
+            _ASSERTE(m_ptr2Object != nullptr);
 
             return other->m_ptr2Object == m_ptr2Object && other->m_ptr2Func == m_ptr2Func;
         }
 
         virtual void operator()()
         {
-            assert(m_ptr2Object != nullptr);
+            _ASSERTE(m_ptr2Object != nullptr);
             (m_ptr2Object->*m_ptr2Func)();
         }
 
         virtual void Call()
         {
-            assert(m_ptr2Object != nullptr);
+            _ASSERTE(m_ptr2Object != nullptr);
             (m_ptr2Object->*m_ptr2Func)();
         }
     };

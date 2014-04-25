@@ -64,7 +64,7 @@ Vector2 AdapterEx::GetBotColonyCenter()
 
             g_Game->Self()->Entities(playerEntities);
             // This can't happen, If the player has no entities, then he must be losing
-            assert(!playerEntities.empty());
+            _ASSERTE(!playerEntities.empty());
 
             pPlayerBase = g_Game->Self()->GetEntity(playerEntities[0]);
         }
@@ -101,7 +101,7 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_world
     bool                stopSearch;
 
     // If an area is not occupied then we can build there
-    assert(pBuildingIM && pSearchData);
+    _ASSERTE(pBuildingIM && pSearchData);
     canBuildThere = !pBuildingIM->IsAreaOccupied(worldPos, pSearchData->BuildingWidth, pSearchData->BuildingHeight);
     stopSearch = canBuildThere;
 
@@ -133,7 +133,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     SpiralSearchData    searchData;
 
     pGameType = g_Game->GetEntityType(p_buildingType);
-    assert(pGameType);
+    _ASSERTE(pGameType);
 
     // Append building width with padding of free space to achieve building spacing
     searchData.BuildingWidth = pGameType->Attr(ECATTR_Width) + (m_buildingSpacing * 2);
@@ -183,13 +183,13 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     InitializePredefinedRankedStates();
 
     pPlayer = g_Game->Self();
-    assert(pPlayer);
+    _ASSERTE(pPlayer);
 
     pPlayer->Entities(entityIds);
     for (size_t i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);
-        assert(pEntity);
+        _ASSERTE(pEntity);
 
         if (p_entityType == pEntity->Type() && !pEntity->IsLocked())
         {
@@ -220,13 +220,13 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
     TID                    adaptedEntityId = INVALID_TID;
 
     pPlayer = g_Game->Self();
-    assert(pPlayer);
+    _ASSERTE(pPlayer);
 
     pPlayer->Entities(entityIds);
     for (size_t i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);
-        assert(pEntity);
+        _ASSERTE(pEntity);
 
         if (p_entityType == pEntity->Type() && !pEntity->IsLocked())
         {
@@ -260,14 +260,14 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
 
     trainerType = g_Game->Self()->TechTree()->SourceEntity(p_traineeType);
     pPlayer = g_Game->Self();
-    assert(pPlayer);
+    _ASSERTE(pPlayer);
 
     pPlayer->Entities(entityIds);
 
     for (size_t i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);
-        assert(pEntity);
+        _ASSERTE(pEntity);
 
         if (trainerType == pEntity->Type())
         {
@@ -294,14 +294,14 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
     CellFeature    *pTarGetCellFeatureFromWorldPosition = new CellFeature(p_parameters);
 
     pPlayer = g_Game->Enemy();
-    assert(pPlayer);
+    _ASSERTE(pPlayer);
 
     pPlayer->Entities(entityIds);
     g_Game->Map()->UpdateAux();
     for (size_t i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);
-        assert(pEntity);
+        _ASSERTE(pEntity);
 
         if (p_targetType == pEntity->Type())
         {

@@ -16,5 +16,5 @@ Vector2 StarCraftMap::Size() const
 //bool StarCraftMap::IsBuildable(Vector2 p_position, Vector2 p_dimension)
 //{
 // Region pRegion = Broodwar->getRegionAt(p_position.X, p_position.Y);
-// assert(pRegion);
+// _ASSERTE(pRegion);
 //}

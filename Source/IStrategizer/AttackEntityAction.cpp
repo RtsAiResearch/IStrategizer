@@ -55,8 +55,8 @@ bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
         {
             GameEntity* pGameAttacker = game.Self()->GetEntity(m_attackerId);
             GameEntity* pGameTarget = game.Enemy()->GetEntity(m_targetId);
-            assert(pGameAttacker);
-            assert(pGameTarget);
+            _ASSERTE(pGameAttacker);
+            _ASSERTE(pGameTarget);
             pGameAttacker->Lock(this);
             executed = pGameAttacker->AttackEntity(m_targetId);
         }
@@ -85,10 +85,10 @@ bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& game)
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& game)
 {
-    assert(PlanStepEx::State() == ESTATE_Executing);
+    _ASSERTE(PlanStepEx::State() == ESTATE_Executing);
 
     GameEntity* pGameTarget = game.Enemy()->GetEntity(m_targetId);
-    assert(pGameTarget);
+    _ASSERTE(pGameTarget);
 
     ObjectStateType targetState = (ObjectStateType)pGameTarget->Attr(EOATTR_State);
     return targetState == OBJSTATE_UnderAttack;

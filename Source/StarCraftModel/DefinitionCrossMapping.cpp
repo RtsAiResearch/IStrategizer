@@ -61,7 +61,7 @@ void DefinitionCrossMapping::InitUpgrades()
     const char *name;
 
     int currentId = (int)RESEARCH_START;
-    assert(UpgradeTypes::allUpgradeTypes().size() < (COUNT(ResearchType) / 2));
+    _ASSERTE(UpgradeTypes::allUpgradeTypes().size() < (COUNT(ResearchType) / 2));
 
     for(UpgradeType::set::iterator i = UpgradeTypes::allUpgradeTypes().begin();
         i != UpgradeTypes::allUpgradeTypes().end();
@@ -84,7 +84,7 @@ void DefinitionCrossMapping::InitTeches()
     const char *name;
 
     int currentId = (int)RESEARCH_START + TechIdOffset;
-    assert(TechTypes::allTechTypes().size() < (COUNT(ResearchType) / 2));
+    _ASSERTE(TechTypes::allTechTypes().size() < (COUNT(ResearchType) / 2));
 
     for(TechType::set::iterator i = TechTypes::allTechTypes().begin();
         i != TechTypes::allTechTypes().end();

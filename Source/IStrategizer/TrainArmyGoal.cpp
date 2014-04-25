@@ -67,14 +67,14 @@ void TrainArmyGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
     if (p_msg->MessageTypeID() == MSG_EntityCreate)
     {
         EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
-        assert(pMsg && pMsg->Data());
+        _ASSERTE(pMsg && pMsg->Data());
 
         if (pMsg->Data()->OwnerId != PLAYER_Self)
             return;
 
         TID entityId = pMsg->Data()->EntityId;
         GameEntity *pEntity = game.Self()->GetEntity(entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
         EntityClassType tempEntity = pEntity->Type();
         EntityClassType tempParam = (EntityClassType)_params[PARAM_EntityClassId];
         if (tempEntity == tempParam)

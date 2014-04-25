@@ -59,7 +59,7 @@ bool ResearchAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 
     // Issue research order
     pGameResearcher = game.Self()->GetEntity(m_researcherId);
-    assert(pGameResearcher);
+    _ASSERTE(pGameResearcher);
     
     return pGameResearcher->Research(researchType);
 }

@@ -55,7 +55,7 @@ void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
     TInfluence initValue;
 
     pGameObj = p_pCaller->GetObj(p_pObjEntry);
-    assert(pGameObj);
+    _ASSERTE(pGameObj);
     currentPosition.X = pGameObj->Attr(EOATTR_PosX);
     currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
 

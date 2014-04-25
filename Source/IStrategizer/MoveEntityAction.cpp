@@ -59,7 +59,7 @@ bool MoveEntityAction::AliveConditionsSatisfied(RtsGame& game)
     if(success)
     {
         GameEntity* entity = game.Self()->GetEntity(_entityId);
-        assert(entity);
+        _ASSERTE(entity);
         success = entity->Attr(EOATTR_IsMoving) > 0;
     }
 
@@ -73,7 +73,7 @@ bool MoveEntityAction::SuccessConditionsSatisfied(RtsGame& game)
     if(success)
     {
         GameEntity* entity = game.Self()->GetEntity(_entityId);
-        assert(entity);
+        _ASSERTE(entity);
 
         success = g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE)
             && entity->Attr(EOATTR_IsMoving) == false;
@@ -87,12 +87,12 @@ bool MoveEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
     _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
-    assert(_entityId != INVALID_TID);
+    _ASSERTE(_entityId != INVALID_TID);
 
     _position = pAdapter->AdaptPosition(Parameters());
 
     GameEntity* entity = game.Self()->GetEntity(_entityId);
-    assert(entity);
+    _ASSERTE(entity);
 
     bool success = entity->Move(_position);
 
