@@ -39,7 +39,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
   GameTrace* pTrace = nullptr;
 
   if (p_message == nullptr)
-    throw InvalidParameterException(XcptHere);
+    DEBUG_THROW(InvalidParameterException(XcptHere));
 
   switch(p_message->MessageTypeID())
   {
@@ -47,7 +47,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
 
     if (pTraceMsg ->Data() == nullptr)
-      throw InvalidParameterException(XcptHere);
+      DEBUG_THROW(InvalidParameterException(XcptHere))
 
     pTrace = pTraceMsg->Data();
     //pTrace->GoalSatisfaction(ComputeGoalSatisfactionRow(pTrace->GameCycle()));

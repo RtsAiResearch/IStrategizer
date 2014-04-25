@@ -92,7 +92,7 @@ namespace IStrategizer
                 xcptStream << p_key;
                 xcptStream << "' not found";
 
-                throw KeyNotFoundException(XcptHere, xcptStream.str().c_str());
+                DEBUG_THROW(KeyNotFoundException(XcptHere, xcptStream.str().c_str()));
             }
 
             return _data[_firstMap[p_key]].second; 
@@ -107,7 +107,7 @@ namespace IStrategizer
                 xcptStream << p_key;
                 xcptStream << "' not found";
 
-                throw KeyNotFoundException(XcptHere, xcptStream.str().c_str());
+                DEBUG_THROW(KeyNotFoundException(XcptHere, xcptStream.str().c_str()));
             }
 
             return _data[_secondMap[p_key]].first; 

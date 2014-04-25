@@ -12,7 +12,7 @@ void SharedResource::AddResource(SharedResource *p_pResource)
     itr = s_resources.find(p_pResource);
 
     if (itr != s_resources.end())
-        throw ItemAlreadyExistsException(XcptHere);
+        DEBUG_THROW(ItemAlreadyExistsException(XcptHere));
 
     s_resources.insert(p_pResource);
 }
@@ -24,7 +24,7 @@ void SharedResource::RemoveResource(SharedResource *p_pResource)
     itr = s_resources.find(p_pResource);
 
     if (itr == s_resources.end())
-        throw ItemNotFoundException(XcptHere);
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
 
     s_resources.erase(itr);
 }
@@ -34,7 +34,7 @@ void SharedResource::Lock(Action *p_pOwner)
     // Invalid owner
     if (p_pOwner == nullptr)
     {
-        throw IStrategizer::InvalidParameterException(XcptHere);
+        DEBUG_THROW(IStrategizer::InvalidParameterException(XcptHere));
     }
     else
     {
@@ -47,18 +47,18 @@ void SharedResource::Lock(Action *p_pOwner)
                 AddResource(this);
             }
             else
-                throw AcquireException(XcptHere);
+                DEBUG_THROW(AcquireException(XcptHere));
             
         }
         // Recursive look
         else if (m_pOwner == p_pOwner)
         {
-            throw RecursiveLockException(XcptHere);
+            DEBUG_THROW(RecursiveLockException(XcptHere));
         }
         // Already owned by someone else
         else
         {
-            throw AlreadyLockedException(XcptHere);
+            DEBUG_THROW(AlreadyLockedException(XcptHere))
         }
     }
 }
@@ -68,14 +68,14 @@ void SharedResource::Unlock(Action *p_pOwner)
     // Invalid owner
     if (p_pOwner == nullptr)
     {
-        throw IStrategizer::InvalidParameterException(XcptHere);
+        DEBUG_THROW(IStrategizer::InvalidParameterException(XcptHere));
     }
     else
     {
         // No owner, so it is FREE
         if (m_pOwner == nullptr)
         {
-            throw DifferentOwnerException(XcptHere);
+            DEBUG_THROW(DifferentOwnerException(XcptHere));
         }
         // We are the owner, release the lock
         else if (m_pOwner == p_pOwner)
@@ -86,12 +86,12 @@ void SharedResource::Unlock(Action *p_pOwner)
                 RemoveResource(this);
             }
             else
-                throw ReleaseException(XcptHere);
+                DEBUG_THROW(ReleaseException(XcptHere));
         }
         //  Owned by someone else, we can't unlock it
         else
         {
-            throw DifferentOwnerException(XcptHere);
+            DEBUG_THROW(DifferentOwnerException(XcptHere));
         }
     }
 }

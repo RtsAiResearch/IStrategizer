@@ -49,7 +49,7 @@ namespace IStrategizer
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(id) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             // Disconnect the node from graph nodes
             for (Serialization::SMap<NodeID, NodeEntry>::iterator nodeEntryItr = m_adjList.begin();
@@ -77,7 +77,7 @@ namespace IStrategizer
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
                 m_adjList.count(destNodeId) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             m_adjList[sourceNodeId].second.insert(destNodeId);
         }
@@ -94,7 +94,7 @@ namespace IStrategizer
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
                 m_adjList.count(destNodeId) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             m_adjList[sourceNodeId].second.erase(destNodeId);
         }
@@ -109,7 +109,7 @@ namespace IStrategizer
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(id) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             return m_adjList[id].first;
         }
@@ -157,7 +157,7 @@ namespace IStrategizer
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
                 m_adjList.count(destNodeId) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             return m_adjList.at(sourceNodeId).second.count(destNodeId) > 0;
         }
@@ -172,7 +172,7 @@ namespace IStrategizer
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(sourceNodeId) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             return m_adjList.at(sourceNodeId).second;
         }

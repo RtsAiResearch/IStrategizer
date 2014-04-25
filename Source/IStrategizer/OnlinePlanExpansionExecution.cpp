@@ -174,7 +174,7 @@ void OnlinePlanExpansionExecution::UpdateNodeChildrenWithParentReadiness(_In_ IO
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::OnlinePlanExpansionExecution::MarkCaseAsTried(_In_ IOlcbpPlan::NodeID nodeId, _In_ CaseEx* pCase)
 {
-    _ASSERTE(GetNodeData(nodeId).TriedCases.count(pCase) == 0);
+    //_ASSERTE(GetNodeData(nodeId).TriedCases.count(pCase) == 0);
 
     LogInfo("Marking case '%s'@%x as tried case for node %d", pCase->Goal()->ToString().c_str(), (void*)pCase, nodeId);
 
@@ -205,7 +205,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
         CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State());
 
         // We found a matching case and it was not tried for that goal before
-        if (caseEx != nullptr && !IsCaseTried(currentNode, caseEx))
+        if (caseEx != nullptr /*&& !IsCaseTried(currentNode, caseEx)*/)
         {
             LogInfo("Retrieved case '%s' has not been tried before, and its goal is being sent for expansion",
                 caseEx->Goal()->ToString().c_str());

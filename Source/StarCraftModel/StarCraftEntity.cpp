@@ -161,7 +161,7 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
     target = Broodwar->getUnit(p_targetEntityObjectId);
 
     if (!target)
-        throw ItemNotFoundException(XcptHere);
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
 
     return attacker->attack(target->getPosition());
 };
@@ -192,7 +192,9 @@ bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
     Unit traineeObj = Broodwar->getUnit(p_traineeId);
 
     if (nullptr == traineeObj)
-        throw ItemNotFoundException(XcptHere);
+    {
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
+    }
 
     return MathHelper::RectangleMembership(
         m_unit->getLeft(),
