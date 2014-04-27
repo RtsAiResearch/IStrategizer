@@ -46,11 +46,7 @@ void LearningFromHumanDemonstration::Learn()
             m_cookedCase->rawCase->gameState));
     }
 
-    for (size_t i = 0; i < m_cookedPlans.size(); ++i)
-    {
-        HierarchicalComposition(m_cookedPlans[i], m_cookedPlans, i);
-    }
-
+    HierarchicalComposition(m_cookedPlans);
     RetainLearntCases(m_cookedPlans);
 }
 //------------------------------------------------------------------------------------------------
@@ -211,30 +207,22 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     }
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::HierarchicalComposition(CookedPlan* p_plan, const vector<CookedPlan*>& p_plans, unsigned p_index)
+void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans)
 {
-    int m_maxSubgraphIndex = INT_MAX;
-    int m_maxMatchedCount = 0;
-    int m_currentMatchedCount;
-    vector<int> m_cMatchedIndexes;
-    vector<int> m_mMatchedIndexes;
-
-    for (size_t i = 0; i < p_plans.size(); ++i)
+    for (size_t i = 0; i < p_cookedPlans.size(); ++i)
     {
-        if (i != p_index && p_plan->pPlan->IsSubGraph((*p_plans[i]->pPlan), m_cMatchedIndexes, m_currentMatchedCount))
+        for (size_t j = 0; j < p_cookedPlans.size(); ++j)
         {
-            if (m_currentMatchedCount > m_maxMatchedCount)
+            if (i != j)
             {
-                m_maxSubgraphIndex = i;
-                m_mMatchedIndexes = m_cMatchedIndexes;
-                m_maxMatchedCount = m_currentMatchedCount;
+                std::vector<int> m_matchedIndexes;
+
+                if (p_cookedPlans[i]->pPlan->IsSubGraphOf((*p_cookedPlans[j]->pPlan), m_matchedIndexes))
+                {
+                    p_cookedPlans[j]->pPlan->SubGraphSubstitution(m_matchedIndexes, p_cookedPlans[i]->Goal);
+                }
             }
         }
-    }
-
-    if (m_maxSubgraphIndex != INT_MAX)
-    {
-        p_plan->pPlan->SubGraphSubstitution(m_mMatchedIndexes, p_plans[m_maxSubgraphIndex]->Goal);
     }
 }
 //----------------------------------------------------------------------------------------------

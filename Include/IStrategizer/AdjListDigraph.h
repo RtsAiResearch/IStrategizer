@@ -8,6 +8,9 @@
 #include "SSet.h"
 #include "UserObject.h"
 
+#include <vector>
+using namespace std;
+
 namespace IStrategizer
 {
     ///> class=AdjListDigraph(TNodeValue)
@@ -217,15 +220,14 @@ namespace IStrategizer
         {
             std::vector<int>    m_parents;
             std::vector<int>    m_children;
-            std::vector<int>    m_temp;
 
             for(size_t i = 0; i < p_subGraphIndexes.size(); ++i)
             {
-                m_temp = GetParents(p_subGraphIndexes[i], m_parents);
-                m_parents.insert(m_parents.end(), m_temp.begin(), m_temp.end());
+                std::vector<int> m_tempParents = GetParents(p_subGraphIndexes[i], m_parents);
+                m_parents.insert(m_parents.end(), m_tempParents.begin(), m_tempParents.end());
 
-                m_temp = GetChildren(p_subGraphIndexes[i], m_children);
-                m_children.insert(m_children.end(), m_temp.begin(), m_temp.end());
+                std::vector<int> m_tempChildren = GetChildren(p_subGraphIndexes[i], m_children);
+                m_children.insert(m_children.end(), m_tempChildren.begin(), m_tempChildren.end());
             }
 
             NodeID m_nodeID = AddNode(p_substitute);
@@ -283,54 +285,16 @@ namespace IStrategizer
             return leaves;
         }
         
-        bool IsSubGraph(const AdjListDigraph<TNodeValue>& p_candidate, std::vector<int>& p_matchedIndexes, int& p_matchedCount) const
+        bool IsSubGraphOf(AdjListDigraph<TNodeValue>& p_parentGraph, std::vector<int>& p_matchedIndexes)
         {
-            std::vector<int>    m_roots = p_candidate.GetRoots();
-            std::vector<int>    m_matching;
-            std::vector<int>    m_primaryMatched;
-            std::vector<int>    m_candidateMatched;
-            std::vector<int>    m_currentMatched;
-            bool                m_match = false;
+            std::vector<int> m_parentNodes;
 
-            m_candidateMatched.reserve(p_candidate.m_adjList.size());
-            p_matchedIndexes.reserve(p_candidate.m_adjList.size());
-            m_currentMatched.reserve(p_candidate.m_adjList.size());
-            m_primaryMatched.reserve(m_adjList.size());
-
-            for (unsigned i = 0; i < m_roots.size(); ++i)
+            for each (NodeID nodeID in p_parentGraph.GetNodes())
             {
-                for each(auto j in m_adjList)
-                {
-                    if (j.second.first == p_candidate.m_adjList.at(m_roots[i]).first)
-                    {
-                        m_candidateMatched.clear();
-                        m_currentMatched.clear();
-                        m_primaryMatched.clear();
-                        m_match = false;
-
-                        m_primaryMatched.push_back(j.first);
-                        m_candidateMatched.push_back(m_roots[i]);
-
-                        MatchPath(p_candidate, m_primaryMatched, m_candidateMatched, m_currentMatched, m_match);
-
-                        if(m_match)
-                        {
-                            for (unsigned k = 0; k < m_currentMatched.size(); ++k)
-                            {
-                                if (find(p_matchedIndexes.begin(), p_matchedIndexes.end(), m_currentMatched[k]) == p_matchedIndexes.end())
-                                {
-                                    p_matchedIndexes.push_back(m_currentMatched[k]);
-                                }
-                            }
-
-                            break;
-                        }
-                    }
-                }
+                m_parentNodes.push_back(nodeID);
             }
 
-            p_matchedCount = p_matchedIndexes.size();
-            return (p_matchedCount > 0);
+            return MatchNodesAndChildren(GetRoots(), m_parentNodes, p_parentGraph, p_matchedIndexes);
         }
 
         OBJECT_SERIALIZABLE(AdjListDigraph);
@@ -342,41 +306,47 @@ namespace IStrategizer
             ///> type=map(pair(NodeID,NodeEntry))
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
 
-        void MatchPath(AdjListDigraph<TNodeValue> p_candidate, std::vector<int>& p_primaryMatched, 
-            std::vector<int>& p_candidateMatched, std::vector<int>& p_currentMatched, bool& p_match) const
+        bool MatchNodesAndChildren(
+            std::vector<int>& p_candidateNodes,
+            std::vector<int>& p_parentNodes,
+            AdjListDigraph<TNodeValue>& p_parentGraph,
+            std::vector<int>& p_matchedIndexes)
         {
-            if (p_candidateMatched.empty())
+            for each(int m_candidateNodeId in p_candidateNodes)
             {
-                p_match = true;
-            }
+                bool m_foundMatch = false;
 
-            int m_primaryIndex, m_candidateIndex;
-
-            for (unsigned i = 0; i < p_candidateMatched.size() && !p_match; ++i)
-            {
-                m_candidateIndex = p_candidateMatched[i];
-
-                for (unsigned j = 0; j < p_primaryMatched.size() && !p_match; ++j)
+                for each(int m_parentNodeId in p_parentNodes)
                 {
-                    m_primaryIndex = p_primaryMatched[j];
-
-                    if (m_adjList.at(m_primaryIndex).first == p_candidate.m_adjList.at(m_candidateIndex).first)
+                    if (find(p_matchedIndexes.begin(), p_matchedIndexes.end(), m_parentNodeId) != p_matchedIndexes.end())
                     {
-                        p_currentMatched.push_back(m_primaryIndex);
-                        p_candidateMatched.erase(p_candidateMatched.begin() + i);
-                        p_primaryMatched.erase(p_primaryMatched.begin() + j);
+                        continue;
+                    }
 
-                        std::vector<int> m_childrenIndexes = GetChildren(m_primaryIndex);
-                        p_primaryMatched.insert(p_primaryMatched.begin(), m_childrenIndexes.begin(), m_childrenIndexes.end());
+                    IComparable* m_candidateNode = dynamic_cast<IComparable*>(GetNode(m_candidateNodeId));
+                    IComparable* m_parentNode = dynamic_cast<IComparable*>(p_parentGraph.GetNode(m_parentNodeId));
 
-                        m_childrenIndexes.clear();
-                        m_childrenIndexes = p_candidate.GetChildren(m_candidateIndex);
-                        p_candidateMatched.insert(p_candidateMatched.begin(), m_childrenIndexes.begin(), m_childrenIndexes.end());
+                    if (m_candidateNode->Compare(m_parentNode) == 0)
+                    {
+                        std::vector<int> m_currentMatchedSubNodes;
 
-                        MatchPath(p_candidate, p_primaryMatched, p_candidateMatched, p_currentMatched, p_match);
+                        if(MatchNodesAndChildren(GetChildren(m_candidateNodeId), p_parentGraph.GetChildren(m_parentNodeId), p_parentGraph, m_currentMatchedSubNodes))
+                        {
+                            p_matchedIndexes.insert(p_matchedIndexes.begin(), m_currentMatchedSubNodes.begin(), m_currentMatchedSubNodes.end());
+                            p_matchedIndexes.push_back(m_parentNodeId);
+                            m_foundMatch = true;
+                            break;
+                        }
                     }
                 }
+
+                if(m_foundMatch == false)
+                {
+                    return false;
+                }
             }
+
+            return true;
         }
 
         std::vector<int> GetChildren(NodeID p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const

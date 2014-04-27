@@ -67,7 +67,7 @@ namespace IStrategizer
 
         void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
         void UnnecessaryStepsElimination(CookedCase* p_case);
-        void HierarchicalComposition(CookedPlan* p_plan, const std::vector<CookedPlan*>& p_plans, unsigned p_index);
+        void HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans);
         void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans);
         bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode);
         bool IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right);
