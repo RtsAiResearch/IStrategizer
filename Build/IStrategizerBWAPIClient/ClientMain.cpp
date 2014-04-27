@@ -129,7 +129,7 @@ void ClientMain::InitPlannerView()
 {
     GraphScene *pGraphScene = new GraphScene(&m_idLookup);
     m_pPlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
-    ui.plannerGridLayout->addWidget(m_pPlanGraphView);
+    ui.tbPlanner->layout()->addWidget(m_pPlanGraphView);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()
