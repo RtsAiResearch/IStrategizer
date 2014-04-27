@@ -23,6 +23,8 @@
 #include "GameStateEx.h"
 #include "MessagePump.h"
 #include "Logger.h"
+#include "AttributesMetaData.h"
+#include "GameType.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -32,6 +34,7 @@ GamePlayer::GamePlayer() : m_pState(new GameStateEx()), m_pResources(nullptr), m
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
     g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+    m_colonyCenter = MapArea::Null();
 }
 //////////////////////////////////////////////////////////////////////////
 GamePlayer::~GamePlayer()
@@ -229,3 +232,40 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
     }
 }
 //////////////////////////////////////////////////////////////////////////
+MapArea GamePlayer::GetColonyMapArea()
+{
+    // We didn't calculate player colony center yet ?
+    if (m_colonyCenter.IsNull())
+    {
+        GameEntity *pPlayerBase = nullptr;
+        vector<TID> playerBases;
+
+        GetBases(playerBases);
+
+        // Player has at least one base, then we use the first one
+        // Note that player having many bases it not supported by the engine
+        if (!playerBases.empty())
+            pPlayerBase = GetEntity(playerBases[0]);
+        // No base! This is weird but for the case, we will select the first unit position as the player coloney center
+        else
+        {
+            vector<TID>    playerEntities;
+
+            Entities(playerEntities);
+            // This can't happen, If the player has no entities, then he must be losing
+            _ASSERTE(!playerEntities.empty());
+
+            pPlayerBase = GetEntity(playerEntities[0]);
+        }
+
+        GameType *pGameType = g_Game->GetEntityType(GetBaseType());
+        _ASSERTE(pGameType);
+
+        m_colonyCenter = MapArea(
+            Vector2(pPlayerBase->Attr(EOATTR_PosX), pPlayerBase->Attr(EOATTR_PosY)),
+            pGameType->Attr(ECATTR_Width),
+            pGameType->Attr(ECATTR_Height));
+    }
+
+    return m_colonyCenter;
+}

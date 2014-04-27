@@ -14,12 +14,12 @@ namespace IStrategizer
         Vector2() : X(0), Y(0) {}
         Vector2(int p_X, int p_Y) : X(p_X), Y(p_Y) {}
 
-        bool operator ==(const Vector2& p_right)
+        bool operator ==(const Vector2& p_right) const
         {
             return this->X == p_right.X && this->Y == p_right.Y;
         }
 
-        bool operator !=(const Vector2& p_right)
+        bool operator !=(const Vector2& p_right) const
         {
             return this->X != p_right.X || this->Y == p_right.Y;
         }

@@ -156,8 +156,8 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& game)
 
     if (_buildStarted)
     {
-        int            entityState;
-        GameEntity    *pEntity;
+        int entityState;
+        GameEntity *pEntity;
 
         pEntity = game.Self()->GetEntity(_buildingId);    
         entityState = pEntity->Attr(EOATTR_State);

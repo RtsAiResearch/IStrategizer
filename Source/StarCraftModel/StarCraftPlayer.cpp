@@ -50,3 +50,16 @@ const GameStateEx* StarCraftPlayer::State()
     // TODO: add StarCraft game state
     return GamePlayer::State();
 }
+//----------------------------------------------------------------------------------------------
+bool StarCraftPlayer::IsSpecialBuilding(EntityClassType p_buildingType) const
+{
+    UnitType type;
+    TID unitTypeId;
+    string typeName;
+
+    unitTypeId = g_Database.EntityMapping.GetBySecond(p_buildingType);
+    typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
+    type = BWAPI::UnitType::getType(typeName);
+
+    return type.isRefinery();
+}
