@@ -17,7 +17,7 @@ DrawIMCallback IMDrawingStrategy::GetStrategy(IMType p_type)
         return DrawGroundControlIM;
     }
 
-    assert(0);
+    _ASSERTE(0);
     return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////

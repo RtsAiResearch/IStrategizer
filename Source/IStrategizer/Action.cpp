@@ -65,7 +65,7 @@ bool Action::Execute(RtsGame& game, const WorldClock& p_clock)
 {
     bool bOk;
 
-    assert(PlanStepEx::State() == ESTATE_NotPrepared);
+    _ASSERTE(PlanStepEx::State() == ESTATE_NotPrepared);
     bOk = ExecuteAux(game, p_clock);
 
     return bOk;
@@ -92,6 +92,7 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
             }
             else
             {
+                State(ESTATE_Failed, game, p_clock);
                 LogInfo("Executing '%s' failed", ToString().c_str());
             }
         }
@@ -101,7 +102,10 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
         if(AliveConditionsSatisfied(game))
         { 
             if (SuccessConditionsSatisfied(game))
+            {
                 State(ESTATE_Succeeded, game, p_clock);
+                m_history.Add(ESTATE_Succeeded);
+            }
         }
         else
         {

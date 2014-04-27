@@ -42,7 +42,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
          break;
 
     default:
-        throw exception("Action not supported");
+        _ASSERTE(!"Action not supported");
     }
 
     if(p_initConditions)
@@ -82,7 +82,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
         break;
 
     default:
-        throw exception("Action not supported");
+        _ASSERTE(!"Action not supported");
     }
 
     if(p_initConditions)

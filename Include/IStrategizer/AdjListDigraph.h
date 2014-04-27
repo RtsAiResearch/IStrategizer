@@ -2,6 +2,7 @@
 #ifndef ADJLISTDIGRAPH_H
 #define ADJLISTDIGRAPH_H
 
+#include <mutex>
 #include "IDigraph.h"
 #include "SMap.h"
 #include "SPair.h"
@@ -25,7 +26,6 @@ namespace IStrategizer
         AdjListDigraph()
             : m_lastNodeId(0)
         {
-
         }
 
         //************************************
@@ -52,7 +52,7 @@ namespace IStrategizer
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(id) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             // Disconnect the node from graph nodes
             for (Serialization::SMap<NodeID, NodeEntry>::iterator nodeEntryItr = m_adjList.begin();
@@ -80,7 +80,7 @@ namespace IStrategizer
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
                 m_adjList.count(destNodeId) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             m_adjList[sourceNodeId].second.insert(destNodeId);
         }
@@ -97,7 +97,7 @@ namespace IStrategizer
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
                 m_adjList.count(destNodeId) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             m_adjList[sourceNodeId].second.erase(destNodeId);
         }
@@ -112,7 +112,7 @@ namespace IStrategizer
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(id) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             return m_adjList[id].first;
         }
@@ -126,7 +126,7 @@ namespace IStrategizer
         {
             NodeSet nodes;
 
-            for each (auto nodeEntry in m_adjList)
+            for (auto nodeEntry : m_adjList)
             {
                 nodes.insert(nodeEntry.first);
             }
@@ -174,7 +174,7 @@ namespace IStrategizer
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(sourceNodeId) == 0)
-                throw ItemNotFoundException(XcptHere);
+                DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             return m_adjList.at(sourceNodeId).second;
         }
@@ -252,11 +252,11 @@ namespace IStrategizer
             // ......Remove A from O
             NodeSet orphans = GetNodes();
 
-            for each (auto nodeEntry in m_adjList)
+            for (auto nodeEntry : m_adjList)
             {
                 NodeSet& adjacents = nodeEntry.second.second;
 
-                for each (auto adjNodeId in adjacents)
+                for (auto adjNodeId : adjacents)
                 {
                     orphans.erase(adjNodeId);
                 }
@@ -274,7 +274,7 @@ namespace IStrategizer
         {
             NodeSet leaves;
 
-            for each (auto nodeEntry in m_adjList)
+            for (auto nodeEntry : m_adjList)
             {
                 NodeSet& adjacents = nodeEntry.second.second;
 
@@ -297,7 +297,19 @@ namespace IStrategizer
             return MatchNodesAndChildren(GetRoots(), m_parentNodes, p_parentGraph, p_matchedIndexes);
         }
 
-        OBJECT_SERIALIZABLE(AdjListDigraph);
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Lock
+        // Description:	Locks the graph for exclusive read/write access by the caller thread
+        // Returns:   	void
+        //************************************
+        virtual void Lock() { m_lock.lock(); }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Unlock
+        // Description:	Unlocks the graph acquisition by caller thread
+        // Returns:   	void
+        //************************************
+        virtual void Unlock() { m_lock.unlock(); }        OBJECT_SERIALIZABLE(AdjListDigraph);
         OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
 
     private:
@@ -306,11 +318,13 @@ namespace IStrategizer
             ///> type=map(pair(NodeID,NodeEntry))
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
 
+        std::mutex m_lock;
+
         bool MatchNodesAndChildren(
-            std::vector<int>& p_candidateNodes,
-            std::vector<int>& p_parentNodes,
-            AdjListDigraph<TNodeValue>& p_parentGraph,
-            std::vector<int>& p_matchedIndexes)
+        std::vector<int>& p_candidateNodes,
+        std::vector<int>& p_parentNodes,
+        AdjListDigraph<TNodeValue>& p_parentGraph,
+        std::vector<int>& p_matchedIndexes)
         {
             for each(int m_candidateNodeId in p_candidateNodes)
             {
@@ -384,8 +398,7 @@ namespace IStrategizer
             }
 
             return m_parents;
-        }
-    };
+        }    };
 }
 
 #endif

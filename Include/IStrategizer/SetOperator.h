@@ -22,7 +22,7 @@ namespace IStrategizer
     public:
         void Intersect(std::set<T>** p_sets, int p_setsCount, Collection<T>& p_result)
         {
-            assert(p_setsCount > 0);
+            _ASSERTE(p_setsCount > 0);
 
             m_setsCount     = p_setsCount;
             m_sets          = p_sets;

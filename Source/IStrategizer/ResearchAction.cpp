@@ -32,11 +32,15 @@ ResearchAction::ResearchAction(const PlanStepParameters& p_parameters)
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::AliveConditionsSatisfied(RtsGame& game)
 {
-    bool success = false;
+    bool researcherExists = g_Assist.DoesEntityObjectExist(m_researcherId);
 
-    success = g_Assist.DoesEntityObjectExist(_researcherId);
+    if (!researcherExists)
+    {
+        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, m_researcherType, 1, false);
+        m_history.Add(ESTATE_Failed, failedCondition);
+    }
     
-    return success;
+    return researcherExists;
 }
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::SuccessConditionsSatisfied(RtsGame& game)
@@ -51,11 +55,11 @@ bool ResearchAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
     // Adapt researcher
-    _researcherId = pAdapter->AdaptBuildingForResearch(researchType);
+    m_researcherId = pAdapter->AdaptBuildingForResearch(researchType);
 
     // Issue research order
-    pGameResearcher = game.Self()->GetEntity(_researcherId);
-    assert(pGameResearcher);
+    pGameResearcher = game.Self()->GetEntity(m_researcherId);
+    _ASSERTE(pGameResearcher);
     
     return pGameResearcher->Research(researchType);
 }
@@ -70,10 +74,10 @@ void ResearchAction::InitializePostConditions()
 void ResearchAction::InitializePreConditions()
 {
     ResearchType researchType =(ResearchType)_params[PARAM_ResearchId];
-    EntityClassType researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
+    m_researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
     vector<Expression*> m_terms;
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, researcherType, 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, m_researcherType, 1, false));
     g_Assist.GetPrerequisites(researchType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

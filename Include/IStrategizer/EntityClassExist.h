@@ -20,9 +20,6 @@ namespace IStrategizer
         bool _oneUse;
         bool _used;
 
-    protected:
-        void InitializeAddressesAux();
-
     public:
         EntityClassExist() {}
         EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, std::map<EntityObjectAttribute,int> p_entityObjectAttributes, int p_similarityThreshold = ExactSimilarity);

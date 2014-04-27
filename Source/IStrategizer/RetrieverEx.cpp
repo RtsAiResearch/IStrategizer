@@ -29,6 +29,7 @@
 #include "CaseBaseEx.h"
 #include "Logger.h"
 #include <map>
+#include <functional>
 
 using namespace std;
 using namespace IStrategizer;
@@ -128,13 +129,13 @@ float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, con
     return (alpha * goalSimilarity) + (float)((1.0 - alpha) * stateSimilarity);
 }
 //----------------------------------------------------------------------------------------------
-CaseEx* RetrieverEx::Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameState)
+CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const GameStateEx* pGameState, const set<CaseEx*>& exclusion)
 {
     SVector<CaseEx*>& cases = m_pRetainer->CaseBase()->CaseContainer;
     multimap<float, CaseEx*, greater<float> > caseRelevanceTable;
     float caseRelevance;
 
-    LogInfo("Retrieving case for goal={%s} and current game-state", p_goal->ToString().c_str());
+    LogInfo("Retrieving case for goal={%s} and current game-state", pGoal->ToString().c_str());
 
     if (cases.empty())
     {
@@ -146,8 +147,20 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameSta
     // the current situation using the goal and game-state params
     for(size_t i = 0, size = cases.size(); i < size; ++i)
     {
-        caseRelevance = CaseRelevance(cases[i], p_goal, p_gameState);
+        if (exclusion.count(cases[i]) > 0)
+        {
+            LogInfo("Case %s is excluded from retrieval", cases[i]->Goal()->ToString().c_str());
+            continue;
+        }
+
+        caseRelevance = CaseRelevance(cases[i], pGoal, pGameState);
         caseRelevanceTable.insert(make_pair(caseRelevance, cases[i]));
+    }
+
+    if (caseRelevanceTable.empty())
+    {
+        LogInfo("Failed to retrieve any matching case for %s", pGoal->ToString().c_str());
+        return nullptr;
     }
 
     int i = 0;
@@ -163,7 +176,7 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameSta
     {
         currCase = itr->second;
         outcome = (float)currCase->SuccessCount() / (float)currCase->TrialCount();
-        assert(outcome != 0);
+        _ASSERTE(outcome != 0);
         currCasePerformance = itr->first * outcome;
 
         if (currCasePerformance > bestCasePerformance)

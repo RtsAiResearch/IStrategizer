@@ -52,7 +52,7 @@ void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p
     if (p_msg->MessageTypeID() == MSG_EntityDestroy)
     {
         EntityDestroyMessage* pMsg = static_cast<EntityDestroyMessage*>(p_msg);
-        assert(pMsg && pMsg->Data());
+        _ASSERTE(pMsg && pMsg->Data());
 
         if (pMsg->Data()->OwnerId != PLAYER_Enemy)
             return;

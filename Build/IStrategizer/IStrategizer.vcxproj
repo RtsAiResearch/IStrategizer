@@ -22,7 +22,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -89,6 +89,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\ExecutionHistory.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp" />
@@ -161,6 +162,8 @@
     <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\ExecutionHistory.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\ExecutionTrial.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IDigraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h" />

@@ -1,18 +1,8 @@
-#ifndef RETAINEREX_H
 #include "RetainerEx.h"
-#endif
-#ifndef CASEBASEEX_H
 #include "CaseBaseEx.h"
-#endif
-#ifndef TOOLBOX_H
 #include "Toolbox.h"
-#endif
-#ifndef OBJECTSERIALIZER_H
 #include "ObjectSerializer.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
 
 #include <fstream>
 using namespace std;
@@ -64,12 +54,21 @@ void RetainerEx::Flush()
     }
 }
 //-------------------------------------------------------------------------------------------------------------------------------
-void RetainerEx::Retain(const CaseEx* p_case)
+void RetainerEx::Retain(CaseEx* p_case)
 {
-    assert(_caseBaseLoaded);
-    assert(p_case);
+    _ASSERTE(_caseBaseLoaded);
+    _ASSERTE(p_case);
 
     LogInfo("retaining case");
+
+    for (size_t i = 0; i < _caseBase->CaseContainer.size(); ++i)
+    {
+        if (_caseBase->CaseContainer[i] == p_case)
+        {
+            _caseBase->CaseContainer[i] = p_case;
+            return;
+        }
+    }
 
     _caseBase->CaseContainer.push_back(const_cast<CaseEx*>(p_case));
 }

@@ -51,7 +51,7 @@ namespace IStrategizer
         //----------------------------------------------------------------------------------------------
         void Add(TPKey p_pkey, MultiIndex<TSKey> p_indices, const TValue& p_val)
         {
-            assert(m_pIndices.find(p_pkey) == m_pIndices.end());
+            _ASSERTE(m_pIndices.find(p_pkey) == m_pIndices.end());
 
             Record* record          = GetOrCreateRecord(p_pkey);
             record->SKeys           = p_indices;
@@ -73,7 +73,7 @@ namespace IStrategizer
         void Delete(TPKey p_pkey)
         {
             Record* record = TryGetRecord(p_pkey);
-            assert(record != nullptr);
+            _ASSERTE(record != nullptr);
 
             MultiIndex<TSKey>& sIndices = record->SKeys;
             for(int i = 0; i < sIndices.Count; ++i)
@@ -232,7 +232,7 @@ namespace IStrategizer
         void FreeRecord(const TPKey& p_pkey)
         {
             Record* record = m_pIndices[p_pkey];
-            assert(record != nullptr);
+            _ASSERTE(record != nullptr);
             delete record;
             m_pIndices.erase(p_pkey);
         }

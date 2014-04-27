@@ -23,14 +23,12 @@ namespace IStrategizer
     protected:
         bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);
         void InitializeAddressesAux();
-        void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         void InitializePostConditions();
         void InitializePreConditions();
 
     private:
-        TID _attackerId;
-        TID _targetId;
-        Vector2 _position;
+        TID m_attackerId;
+        TID m_targetId;
     };
 }
 

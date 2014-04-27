@@ -22,6 +22,7 @@ namespace IStrategizer
     ///> class=Expression
     class Expression : public Serialization::UserObject, public IClonable
     {
+        OBJECT_MEMBERS(3, &_expressionType, &_isEvaluated, &_isSatisfied);
     protected:
         ///> type=int
         ExpressionType _expressionType;
@@ -29,8 +30,6 @@ namespace IStrategizer
         bool _isEvaluated;
         ///> type=bool
         bool _isSatisfied;
-
-        void InitializeAddressesAux();
 
     public:
         Expression() {}

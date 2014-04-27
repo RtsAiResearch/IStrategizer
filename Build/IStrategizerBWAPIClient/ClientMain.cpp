@@ -59,7 +59,7 @@ void ClientMain::InitIStrategizer()
     try
     {
         m_pGameModel = new StarCraftGame;
-        assert(m_pGameModel);
+        _ASSERTE(m_pGameModel);
 
         param.BuildingDataIMCellSize = TILE_SIZE;
         param.GrndCtrlIMCellSize = TILE_SIZE;
@@ -79,7 +79,7 @@ void ClientMain::InitIStrategizer()
             param.Phase = PHASE_Online;
 
         m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
-        assert(m_pIStrategizer);
+        _ASSERTE(m_pIStrategizer);
     }
     catch (IStrategizer::Exception& e)
     {
@@ -211,9 +211,9 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
     EntityCreateMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
-    assert(pData);
+    _ASSERTE(pData);
 
-    assert(p_pUnit);
+    _ASSERTE(p_pUnit);
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
 
@@ -229,7 +229,7 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
     }
 
     pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityCreate, pData);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
@@ -240,9 +240,9 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
     EntityDestroyMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
-    assert(pData);
+    _ASSERTE(pData);
 
-    assert(p_pUnit);
+    _ASSERTE(p_pUnit);
 
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
@@ -259,7 +259,7 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
     }
 
     pMsg = new EntityDestroyMessage(Broodwar->getFrameCount(), MSG_EntityDestroy, pData);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
@@ -270,9 +270,9 @@ void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
     EntityRenegadeMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
-    assert(pData);
+    _ASSERTE(pData);
 
-    assert(p_pUnit);
+    _ASSERTE(p_pUnit);
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
 
@@ -288,7 +288,7 @@ void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
     }
 
     pMsg = new EntityRenegadeMessage(Broodwar->getFrameCount(), MSG_EntityRenegade, pData);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
@@ -298,7 +298,7 @@ void ClientMain::OnMatchStart()
     Message *pMsg;
 
     pMsg = new Message(Broodwar->getFrameCount(), MSG_GameStart);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
@@ -309,12 +309,12 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
     GameEndMessage        *pMsg = nullptr;
 
     pData = new GameEndMessageData;
-    assert(pData);
+    _ASSERTE(pData);
 
     pData->IsWinner = p_isWinner;
 
     pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSG_GameEnd, pData);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
@@ -411,17 +411,18 @@ void ClientMain::OnGameFrame()
 {
     if (Broodwar->isReplay())
     {
-        assert(m_pTraceCollector);
+        _ASSERTE(m_pTraceCollector);
         m_pTraceCollector->OnGameFrame();
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 {
-    assert(p_pMessage != nullptr);
+    _ASSERTE(p_pMessage != nullptr);
 
     if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange)
     {
-        m_pPlanGraphView->OnPlanStructureChange();
+        DataMessage<IOlcbpPlan>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan>*>(p_pMessage);
+        m_pPlanGraphView->OnPlanStructureChange(pPlanChangeMsg->Data());
     }
 }

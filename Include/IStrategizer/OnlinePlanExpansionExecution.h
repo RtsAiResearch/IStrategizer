@@ -80,6 +80,7 @@ namespace IStrategizer
         std::map<IOlcbpPlan::NodeID, NodeData> m_nodeData;
         IOlcbpPlan::NodeID m_planRootNodeId;
         IOlcbpPlan *m_pOlcbpPlan;
+        bool m_planStructureChangedThisFrame;
     };
 }
 

@@ -44,7 +44,7 @@ namespace IStrategizer
                 return IsNotEqual(p_lhs, p_rhs);
             }
 
-            throw std::exception("Operator not supported");
+            DEBUG_THROW(std::exception("Operator not supported"));
         }
     };
 }

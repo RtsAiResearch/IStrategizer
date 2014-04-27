@@ -7,6 +7,7 @@
 #include "PlanStepEx.h"
 #include "ErrorCode.h"
 #include "MetaData.h"
+#include "ExecutionHistory.h"
 
 namespace IStrategizer
 {
@@ -16,8 +17,11 @@ namespace IStrategizer
     ///> parent=PlanStepEx
     class Action : public PlanStepEx
     {
+        OBJECT_MEMBERS_P(PlanStepEx, 1, &m_history);
     protected:
         CompositeExpression* _preCondition;
+        ///> type=ExecutionHistory
+        ExecutionHistory m_history;
 
         Action(ActionType p_actionType, unsigned p_maxPrepTime = 0, unsigned p_maxExecTrialTime = 0, unsigned p_maxExecTime = 0);
         Action(ActionType p_actionType, const PlanStepParameters& p_parameters, unsigned p_maxPrepTime = 0,  unsigned p_maxExecTrialTime = 0, unsigned p_maxExecTime = 0);
@@ -34,9 +38,10 @@ namespace IStrategizer
         void Reset(RtsGame& game, const WorldClock& p_clock);
         void InitializeConditions();
         void Copy(IClonable* p_dest);
+        bool PreconditionsSatisfied(RtsGame& game);
+        ExecutionHistory ExecutionHistory() const { return m_history; }
         virtual bool Execute(RtsGame& game, const WorldClock& p_clock);
         virtual bool AliveConditionsSatisfied(RtsGame& game) = 0;
-        bool PreconditionsSatisfied(RtsGame& game);
     };
 }
 

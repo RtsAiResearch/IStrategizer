@@ -59,11 +59,7 @@ void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
     AbstractRetriever*  m_retriever = new RetrieverEx(m_retainer);
     AbstractReviser*    m_revisor   = new Reviser();
     AbstractAdapter*    m_adapter   = new AdapterEx();
-    _caseBasedReasoner = new CaseBasedReasonerEx(
-        m_retainer,
-        m_revisor,
-        m_retriever,
-        m_adapter);
+    _caseBasedReasoner = new CaseBasedReasonerEx(m_retainer, m_revisor, m_retriever, m_adapter);
 
     _caseBasedReasoner->Initialize();
 

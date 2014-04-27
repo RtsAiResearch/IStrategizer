@@ -42,7 +42,7 @@ RtsGame::~RtsGame()
 //----------------------------------------------------------------------------------------------
 void RtsGame::Init()
 {
-    assert(!m_initialized);
+    _ASSERTE(!m_initialized);
     if (m_initialized)
         return;
 
@@ -124,17 +124,17 @@ void RtsGame::Researches(vector<ResearchType>& p_researchTypeIds)
 //----------------------------------------------------------------------------------------------
 GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 {
-    assert(m_initialized);
+    _ASSERTE(m_initialized);
 
     if (m_players.Contains(p_id))
         return m_players[p_id];
     else
-        throw ItemNotFoundException(XcptHere);
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
 }
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
-    assert(m_initialized);
+    _ASSERTE(m_initialized);
     
     if (m_entityTypes.Contains(p_id))
         return m_entityTypes[p_id];
@@ -144,7 +144,7 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
 //----------------------------------------------------------------------------------------------
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
-    assert(m_initialized);
+    _ASSERTE(m_initialized);
 
     if (m_researches.Contains(p_id))
         return m_researches[p_id];
@@ -154,7 +154,7 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
 //----------------------------------------------------------------------------------------------
 WorldMap* RtsGame::Map()
 {
-    assert(m_initialized);
+    _ASSERTE(m_initialized);
 
     return m_pMap;
 }

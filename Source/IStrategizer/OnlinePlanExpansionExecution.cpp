@@ -1,42 +1,29 @@
 #include "OnlinePlanExpansionExecution.h"
-#ifndef CASEBASEDREASONEREX_H
 #include "CaseBasedReasonerEx.h"
-#endif
-#ifndef WINGAMEGOAL_H
 #include "WinGameGoal.h"
-#endif
-#ifndef CASEEX_H
 #include "CaseEx.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-#ifndef ACTION_H
 #include "Action.h"
-#endif
-#ifndef MESSAGEPUMP_H
 #include "MessagePump.h"
-#endif
-#ifndef MESSAGE_H
 #include "Message.h"
-#endif
 #include <crtdbg.h>
 #include "AbstractReviser.h"
 #include "AbstractRetriever.h"
 #include "GamePlayer.h"
 #include "Toolbox.h"
 #include "Logger.h"
+#include "RetainerEx.h"
+#include "DataMessage.h"
 
 using namespace std;
 using namespace IStrategizer;
 
 OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx *pCasedBasedReasoner)
-    : EngineComponent("OnlinePlanner")
+    : EngineComponent("OnlinePlanner"),
+    m_planStructureChangedThisFrame(false),
+    m_pCbReasoner(pCasedBasedReasoner),
+    m_pOlcbpPlan(new OlcbpPlan)
 {
-    m_pCbReasoner = pCasedBasedReasoner;
-
-    m_pOlcbpPlan = new OlcbpPlan;
-
     PlanStepEx* pRootNode = (PlanStepEx*)pInitialGoal;
     m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode);
     m_nodeData[m_planRootNodeId] = NodeData();
@@ -77,7 +64,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
         m_nodeData[plannerNodeId] = NodeData();
         SetNodeSatisfyingGoal(plannerNodeId, expansionGoalNodeId);
     }
-    
+
     // 2. Unlink goal node from its direct children
     UnlinkNodeChildren(expansionGoalNodeId);
 
@@ -140,41 +127,51 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     // for each plan graph node
     ComputeNodesNotReadyParents();
 
-    g_MessagePump.Send(new Message(0, MSG_PlanStructureChange));
+    m_planStructureChangedThisFrame = true;
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 {
-    IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeID currentNode;
-    IOlcbpPlan::NodeSet planRoots;
+    m_pOlcbpPlan->Lock();
 
     // We have exhausted all possible plans. We have surrendered, nothing to do
-    if (m_pOlcbpPlan->Size() == 0)
-        return;
-
-    Q.push(m_planRootNodeId);
-
-    while(!Q.empty())
+    if (m_pOlcbpPlan->Size() > 0)
     {
-        currentNode = Q.front();
-        Q.pop();
+        IOlcbpPlan::NodeQueue Q;
+        IOlcbpPlan::NodeID currentNode;
+        IOlcbpPlan::NodeSet planRoots;
 
-        if (IsGoalNode(currentNode))
+        Q.push(m_planRootNodeId);
+
+        while(!Q.empty())
         {
-            UpdateGoalNode(currentNode, clock, Q);
+            currentNode = Q.front();
+            Q.pop();
+
+            if (IsGoalNode(currentNode))
+            {
+                UpdateGoalNode(currentNode, clock, Q);
+            }
+            else if (IsActionNode(currentNode))
+            {
+                UpdateActionNode(currentNode, clock, Q);
+            }
         }
-        else if (IsActionNode(currentNode))
-        {
-            UpdateActionNode(currentNode, clock, Q);
-        }
+    }
+
+    m_pOlcbpPlan->Unlock();
+
+    if (m_planStructureChangedThisFrame)
+    {
+         g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanStructureChange, nullptr));
+         m_planStructureChangedThisFrame = false;
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::UpdateNodeChildrenWithParentReadiness(_In_ IOlcbpPlan::NodeID nodeId)
 {
     LogInfo("Updating node '%s' children with their parent readiness", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
-    
+
     const IOlcbpPlan::NodeSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
 
     for each (auto childId in children)
@@ -211,13 +208,15 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             LogInfo("Node with plan-step '%s' is open and has children nodes, case is sent for revision and children have been destroyed", pCurrentPlanStep->ToString().c_str());
 
             m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), false);
+            m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
         }
 
-        CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State());
+        CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State(), GetNodeData(currentNode).TriedCases);
+        // Retriever should always retrieve a non tried case for that specific node
+        _ASSERTE(!IsCaseTried(currentNode, caseEx));
 
         // We found a matching case and it was not tried for that goal before
-        if (caseEx != nullptr &&
-            !IsCaseTried(currentNode, caseEx))
+        if (caseEx != nullptr)
         {
             LogInfo("Retrieved case '%s' has not been tried before, and its goal is being sent for expansion",
                 caseEx->Goal()->ToString().c_str());
@@ -261,8 +260,16 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                 pCurrentPlanStep->State() == ESTATE_Succeeded ||
                 pCurrentPlanStep->State() == ESTATE_END);
 
+            ExecutionStateType oldState = pCurrentPlanStep->State();
             pCurrentPlanStep->Update(*g_Game, clock);
             AddReadyChildrenToUpdateQueue(currentNode, updateQ);
+
+            // This condition will be true just once when the case succeeds
+            if (oldState == ESTATE_NotPrepared && pCurrentPlanStep->State() == ESTATE_Succeeded)
+            {
+                m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), true);
+                m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
+            }
         }
     }
 }
@@ -383,7 +390,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
     // for each plan graph node
     ComputeNodesNotReadyParents();
 
-    g_MessagePump.Send(new Message(0, MSG_PlanStructureChange));
+    m_planStructureChangedThisFrame = true;
 
     return !visitedNodes.empty();
 }
@@ -485,7 +492,7 @@ void OnlinePlanExpansionExecution::ComputeNodesNotReadyParents()
     {
         GetNodeData(nodeId).NotReadyParentsCount = 0;
     }
-   
+
     Q.push(m_planRootNodeId);
     visitedNodes.insert(m_planRootNodeId);
 

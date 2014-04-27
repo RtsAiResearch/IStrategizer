@@ -121,6 +121,12 @@
     <Filter Include="Header Files\Utilities\World Model">
       <UniqueIdentifier>{62a17142-b9ac-4be5-a867-7b9bacbd1a08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine Components\ContingencyPlanner">
+      <UniqueIdentifier>{5f2373a8-a3cb-4a73-b661-177d6c391ad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine Components\ContingencyPlanner">
+      <UniqueIdentifier>{823b0a75-d6b1-401c-883b-70f2d05f092e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp">
@@ -327,8 +333,8 @@
     <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecution.cpp">
-      <Filter>Source Files\Engine Components\Online Case-based Planner</Filter>
+    <ClCompile Include="..\..\Source\IStrategizer\ExecutionHistory.cpp">
+      <Filter>Source Files\Engine Components\ContingencyPlanner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -644,8 +650,11 @@
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecution.h">
-      <Filter>Header Files\Engine Components\Online Case-based Planner</Filter>
+    <ClInclude Include="..\..\Include\IStrategizer\ExecutionHistory.h">
+      <Filter>Header Files\Engine Components\ContingencyPlanner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\ExecutionTrial.h">
+      <Filter>Header Files\Engine Components\ContingencyPlanner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

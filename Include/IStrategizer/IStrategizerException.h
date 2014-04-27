@@ -19,6 +19,18 @@ namespace IStrategizer
 
 #define XcptHere ExceptionLocation(__FILE__, __FUNCTION__, __LINE__)
 
+/*
+Use DEBUG_THROW macro to control thrown exceptions behavior between really throwing it or replace it with assert
+If DEBUG_ISTRATEGIZER_EXCEPTION is defined, DEBUG_THROW replaces the throw call with _ASSERTE(!<exception-string>)
+*/
+#define DEBUG_ISTRATEGIZER_EXCEPTION
+
+#ifdef DEBUG_ISTRATEGIZER_EXCEPTION
+#define DEBUG_THROW(X) _ASSERTE(!#X);
+#else
+#define DEBUG_THROW(X) throw X
+#endif
+
     class Exception : public std::exception
     {
     public:

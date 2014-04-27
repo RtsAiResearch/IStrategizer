@@ -53,13 +53,13 @@ void GamePlayer::Finalize()
 //////////////////////////////////////////////////////////////////////////
 PlayerResources* GamePlayer::Resources()
 {
-    assert(m_pResources != nullptr);
+    _ASSERTE(m_pResources != nullptr);
     return m_pResources;
 }
 //////////////////////////////////////////////////////////////////////////
 GameTechTree* GamePlayer::TechTree() const
 {
-    assert(m_pTechTree != nullptr);
+    _ASSERTE(m_pTechTree != nullptr);
     return m_pTechTree;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ GameEntity* GamePlayer::GetEntity(TID p_id)
     if(m_entities.Contains(p_id))
     {
         pEntity = m_entities[p_id];
-        assert(pEntity);
+        _ASSERTE(pEntity);
     }
 
     return pEntity;
@@ -149,7 +149,7 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
         }
 
         pEntity = FetchEntity(entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
         
         m_entities[entityId] = pEntity;
 
@@ -172,10 +172,10 @@ void GamePlayer::OnEntityDestroy(Message* p_pMessage)
     if (pDestroyMsg->Data()->OwnerId == m_id)
     {
         entityId = pDestroyMsg->Data()->EntityId;
-        assert(m_entities.Contains(entityId));
+        _ASSERTE(m_entities.Contains(entityId));
         pEntity = GetEntity(entityId);
         pDestroyMsg->Data()->EntityType = pEntity->Type();
-        assert(pEntity);
+        _ASSERTE(pEntity);
         m_entities.erase(entityId);
 
         g_IMSysMgr.UnregisterGameObj(entityId);
@@ -200,10 +200,10 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
     // I am the unit new owner
     if (pRenMsg->Data()->OwnerId == m_id)
     {
-        assert(!m_entities.Contains(entityId));
+        _ASSERTE(!m_entities.Contains(entityId));
 
         pEntity = FetchEntity(entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
 
         m_entities[entityId] = pEntity;
 
@@ -216,7 +216,7 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
     else if (pRenMsg->Data()->OwnerId != m_id && m_entities.Contains(entityId))
     {
         pEntity = GetEntity(entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
 
         m_entities.erase(entityId);
 

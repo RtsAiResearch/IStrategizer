@@ -49,7 +49,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     vector<GoalEx*> succeededGoals;
 
     if (p_message == nullptr)
-        throw InvalidParameterException(XcptHere);
+        DEBUG_THROW(InvalidParameterException(XcptHere));
 
     for (size_t i = 0; i < m_goals.size(); ++i)
     {
@@ -62,7 +62,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
         pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
 
         if (pTraceMsg ->Data() == nullptr)
-            throw InvalidParameterException(XcptHere);
+            DEBUG_THROW(InvalidParameterException(XcptHere));
 
         trace = *pTraceMsg->Data();
         m_observedTraces.push_back(trace);

@@ -34,21 +34,21 @@ namespace IStrategizer
 
             other = static_cast<const Predicate<TReciever>*>(p_other);
 
-            assert(other != nullptr);
-            assert(m_ptr2Object != nullptr);
+            _ASSERTE(other != nullptr);
+            _ASSERTE(m_ptr2Object != nullptr);
 
             return other->m_ptr2Object == m_ptr2Object && other->m_ptr2Func == m_ptr2Func;
         }
 
         virtual bool operator()()
         {
-            assert(m_ptr2Object != nullptr);
+            _ASSERTE(m_ptr2Object != nullptr);
             return (m_ptr2Object->*m_ptr2Func)();
         }
 
         virtual bool Call()
         {
-            assert(m_ptr2Object != nullptr);
+            _ASSERTE(m_ptr2Object != nullptr);
             return (m_ptr2Object->*m_ptr2Func)();
         }
     };

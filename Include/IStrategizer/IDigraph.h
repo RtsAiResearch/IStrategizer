@@ -146,6 +146,20 @@ namespace IStrategizer
         // Returns:   	NodeSet
         //************************************
         virtual NodeSet GetLeafNodes() const = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Lock
+        // Description:	Locks the graph for exclusive read/write access by the caller thread
+        // Returns:   	void
+        //************************************
+        virtual void Lock() = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Unlock
+        // Description:	Unlocks the graph acquisition by caller thread
+        // Returns:   	void
+        //************************************
+        virtual void Unlock() = 0;
     };
 }
 

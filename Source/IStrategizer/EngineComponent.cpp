@@ -23,7 +23,7 @@ EngineComponent::EngineComponent(const char* p_pName)
 //----------------------------------------------------------------------------------------------
 void EngineComponent::NotifyMessegeSent(Message *p_message)
 {
-    assert(p_message->MessageTypeID() == MSG_Input);
+    _ASSERTE(p_message->MessageTypeID() == MSG_Input);
     DataMessage<string>* inputMessage = static_cast<DataMessage<string>*>(p_message);
 
     if(!strncmp(inputMessage->Data()->c_str(), m_pName, strlen(m_pName)))
