@@ -291,6 +291,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
     vector<TID>    entityIds;
     TID            adaptedTargetId = INVALID_TID;
     double        bestDistance = numeric_limits<double>::max();
+
     CellFeature    *pTarGetCellFeatureFromWorldPosition = new CellFeature(p_parameters);
 
     pPlayer = g_Game->Enemy();

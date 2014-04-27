@@ -25,7 +25,8 @@ TrainAction::TrainAction()
     : Action(ACTIONEX_Train, MaxPrepTime, MaxExecTrialTime, MaxExecTime),
     m_trainStarted(false),
     m_traineeId(TID()),
-    m_trainerId(TID())
+    m_trainerId(TID()),
+    m_pTrainee(nullptr)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
@@ -224,7 +225,8 @@ void IStrategizer::TrainAction::OnSucccess(RtsGame& game, const WorldClock& cloc
         m_pTrainee->Unlock(this);
 
     _ASSERTE(!m_requiredResources.IsNull());
-    m_requiredResources.Unlock(this);
+    if (m_requiredResources.IsLocked())
+        m_requiredResources.Unlock(this);
 }
 //----------------------------------------------------------------------------------------------
 void IStrategizer::TrainAction::OnFailure(RtsGame& game, const WorldClock& clock)
@@ -233,5 +235,6 @@ void IStrategizer::TrainAction::OnFailure(RtsGame& game, const WorldClock& clock
         m_pTrainee->Unlock(this);
 
     _ASSERTE(!m_requiredResources.IsNull());
-    m_requiredResources.Unlock(this);
+    if (m_requiredResources.IsLocked())
+        m_requiredResources.Unlock(this);
 }

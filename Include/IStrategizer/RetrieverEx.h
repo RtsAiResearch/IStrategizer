@@ -20,7 +20,7 @@ namespace IStrategizer
     {
     public:
         RetrieverEx(AbstractRetainer *p_pRetainer);
-        CaseEx* Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameState);
+        CaseEx* Retrieve(const GoalEx* pGoal, const GameStateEx* pGameState, const std::set<CaseEx*>& exclusion);
 
     protected:
         float   GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2);

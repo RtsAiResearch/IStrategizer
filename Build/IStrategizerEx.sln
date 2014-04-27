@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B086163D-D289-4E97-B657-61096F84C73C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IStrategizer", "IStrategizer\IStrategizer.vcxproj", "{CA0A224E-C279-40AC-8171-4643A29E466E}"
@@ -13,33 +13,52 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IStrategizerBWAPIClient", "IStrategizerBWAPIClient\IStrategizerBWAPIClient.vcxproj", "{B617C4F1-92B7-401F-BAA5-10B29CAB2396}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CA0A224E-C279-40AC-8171-4643A29E466E} = {CA0A224E-C279-40AC-8171-4643A29E466E}
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD} = {9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}
 		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28} = {0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlanVisualizerWidget", "..\..\CaseVisualizer\PlanVisualizerWidget\PlanVisualizerWidget.vcxproj", "{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CA0A224E-C279-40AC-8171-4643A29E466E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{CA0A224E-C279-40AC-8171-4643A29E466E}.Debug|Win32.Build.0 = Debug|Win32
+		{CA0A224E-C279-40AC-8171-4643A29E466E}.Debug|x64.ActiveCfg = Debug|Win32
 		{CA0A224E-C279-40AC-8171-4643A29E466E}.Release|Win32.ActiveCfg = Release|Win32
 		{CA0A224E-C279-40AC-8171-4643A29E466E}.Release|Win32.Build.0 = Release|Win32
+		{CA0A224E-C279-40AC-8171-4643A29E466E}.Release|x64.ActiveCfg = Release|Win32
 		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}.Debug|Win32.Build.0 = Debug|Win32
+		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}.Debug|x64.ActiveCfg = Debug|Win32
 		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}.Release|Win32.ActiveCfg = Release|Win32
 		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}.Release|Win32.Build.0 = Release|Win32
+		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28}.Release|x64.ActiveCfg = Release|Win32
 		{B617C4F1-92B7-401F-BAA5-10B29CAB2396}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B617C4F1-92B7-401F-BAA5-10B29CAB2396}.Debug|Win32.Build.0 = Debug|Win32
+		{B617C4F1-92B7-401F-BAA5-10B29CAB2396}.Debug|x64.ActiveCfg = Debug|Win32
 		{B617C4F1-92B7-401F-BAA5-10B29CAB2396}.Release|Win32.ActiveCfg = Release|Win32
 		{B617C4F1-92B7-401F-BAA5-10B29CAB2396}.Release|Win32.Build.0 = Release|Win32
+		{B617C4F1-92B7-401F-BAA5-10B29CAB2396}.Release|x64.ActiveCfg = Release|Win32
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}.Debug|Win32.Build.0 = Debug|Win32
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}.Debug|x64.ActiveCfg = Debug|x64
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}.Debug|x64.Build.0 = Debug|x64
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}.Release|Win32.ActiveCfg = Release|Win32
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}.Release|Win32.Build.0 = Release|Win32
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}.Release|x64.ActiveCfg = Release|x64
+		{9C288A8B-AF2E-4A26-8573-A7A68E23A8BD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = $(DefaultQtVersion)
+		Qt5Version = Qt5.2.1_msvc2012
 	EndGlobalSection
 	GlobalSection(Qt) = preSolution
 		Integration = True

@@ -92,6 +92,7 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
             }
             else
             {
+                State(ESTATE_Failed, game, p_clock);
                 LogInfo("Executing '%s' failed", ToString().c_str());
             }
         }

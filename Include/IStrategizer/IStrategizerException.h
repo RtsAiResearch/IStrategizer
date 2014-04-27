@@ -26,9 +26,9 @@ If DEBUG_ISTRATEGIZER_EXCEPTION is defined, DEBUG_THROW replaces the throw call 
 #define DEBUG_ISTRATEGIZER_EXCEPTION
 
 #ifdef DEBUG_ISTRATEGIZER_EXCEPTION
-#define DEBUG_THROW(X) _ASSERTE(!X.what());
+#define DEBUG_THROW(X) _ASSERTE(!#X);
 #else
-#define DEBUG_EXCEPTION(X) throw X
+#define DEBUG_THROW(X) throw X
 #endif
 
     class Exception : public std::exception

@@ -420,6 +420,7 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 
     if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange)
     {
-        m_pPlanGraphView->OnPlanStructureChange();
+        DataMessage<IOlcbpPlan>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan>*>(p_pMessage);
+        m_pPlanGraphView->OnPlanStructureChange(pPlanChangeMsg->Data());
     }
 }

@@ -2,6 +2,7 @@
 #ifndef ADJLISTDIGRAPH_H
 #define ADJLISTDIGRAPH_H
 
+#include <mutex>
 #include "IDigraph.h"
 #include "SMap.h"
 #include "SPair.h"
@@ -22,7 +23,6 @@ namespace IStrategizer
         AdjListDigraph()
             : m_lastNodeId(0)
         {
-
         }
 
         //************************************
@@ -35,7 +35,7 @@ namespace IStrategizer
         NodeID AddNode(_In_ NodeValue& val)
         {
             m_adjList.insert(make_pair(++m_lastNodeId, MakePair(val, NodeSet())));
-            
+
             return m_lastNodeId;
         }
 
@@ -123,7 +123,7 @@ namespace IStrategizer
         {
             NodeSet nodes;
 
-            for each (auto nodeEntry in m_adjList)
+            for (auto nodeEntry : m_adjList)
             {
                 nodes.insert(nodeEntry.first);
             }
@@ -192,11 +192,11 @@ namespace IStrategizer
             // ......Remove A from O
             NodeSet orphans = GetNodes();
 
-            for each (auto nodeEntry in m_adjList)
+            for (auto nodeEntry : m_adjList)
             {
                 NodeSet& adjacents = nodeEntry.second.second;
 
-                for each (auto adjNodeId in adjacents)
+                for (auto adjNodeId : adjacents)
                 {
                     orphans.erase(adjNodeId);
                 }
@@ -214,7 +214,7 @@ namespace IStrategizer
         {
             NodeSet leaves;
 
-            for each (auto nodeEntry in m_adjList)
+            for (auto nodeEntry : m_adjList)
             {
                 NodeSet& adjacents = nodeEntry.second.second;
 
@@ -225,6 +225,20 @@ namespace IStrategizer
             return leaves;
         }
 
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Lock
+        // Description:	Locks the graph for exclusive read/write access by the caller thread
+        // Returns:   	void
+        //************************************
+        virtual void Lock() { m_lock.lock(); }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Unlock
+        // Description:	Unlocks the graph acquisition by caller thread
+        // Returns:   	void
+        //************************************
+        virtual void Unlock() { m_lock.unlock(); }
+
         OBJECT_SERIALIZABLE(AdjListDigraph);
         OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
 
@@ -233,6 +247,8 @@ namespace IStrategizer
         NodeID m_lastNodeId;
         ///> type=map(pair(NodeID,NodeEntry))
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
+
+        std::mutex m_lock;
     };
 }
 
