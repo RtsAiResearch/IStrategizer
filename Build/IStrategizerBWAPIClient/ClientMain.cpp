@@ -129,7 +129,7 @@ void ClientMain::InitPlannerView()
 {
     GraphScene *pGraphScene = new GraphScene(&m_idLookup);
     m_pPlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
-    ui.plannerGridLayout->addWidget(m_pPlanGraphView);
+    ui.tbPlanner->layout()->addWidget(m_pPlanGraphView);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()
@@ -234,7 +234,7 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData        *pData = nullptr;
+    EntityMessageData *pData = nullptr;
     EntityDestroyMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
@@ -262,10 +262,10 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
     g_MessagePump.Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
+void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData        *pData = nullptr;
-    EntityRenegadeMessage    *pMsg = nullptr;
+    EntityMessageData *pData = nullptr;
+    EntityRenegadeMessage *pMsg = nullptr;
 
     pData = new EntityMessageData;
     _ASSERTE(pData);
@@ -273,6 +273,7 @@ void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
     _ASSERTE(p_pUnit);
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
+    pData->EntityType = g_Database.EntityMapping.GetByFirst(p_pUnit->getType());
 
     if (p_pUnit->getType().isBuilding())
     {

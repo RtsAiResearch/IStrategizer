@@ -42,6 +42,7 @@ namespace IStrategizer
         virtual const GameStateEx* State() = 0;
         virtual EntityClassType GetWorkerType() const = 0;
         virtual EntityClassType GetBaseType() const = 0;
+        virtual EntityClassType GetBuilderType(EntityClassType p_buildingType) const = 0;
         void Entities(std::vector<TID>& p_entityIds);
         void Entities(EntityClassType p_typeId, std::vector<TID> &p_entityIds);
         void GetBases(std::vector<TID> &p_basesIds);

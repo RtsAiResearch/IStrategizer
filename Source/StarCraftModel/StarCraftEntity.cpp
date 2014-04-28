@@ -141,18 +141,14 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     type = UnitType::getType(typeName);
     type = BWAPI::UnitType::getType(typeName);
 
-
     if (type.isAddon())
     {
-        type = type.whatBuilds().first;
         _ASSERTE(m_unit->canBuildAddon(type));
-
         return m_unit->buildAddon(type);
     }
     else
     {
         _ASSERTE(m_unit->canBuild(type, pos));
-
         return m_unit->build(type, pos);
     }
 };

@@ -151,7 +151,7 @@ void BwapiClient::HandleGameEvents()
             OnUnitMorph(e->getUnit());
             break;
         case EventType::UnitRenegade:
-            OnUniRenegade(e->getUnit());
+            OnUnitRenegade(e->getUnit());
             break;
         case EventType::UnitCreate:
             OnUnitCreate(e->getUnit());

@@ -221,8 +221,10 @@ void TrainAction::InitializePreConditions()
 //----------------------------------------------------------------------------------------------
 void IStrategizer::TrainAction::OnSucccess(RtsGame& game, const WorldClock& clock)
 {
-    if (m_pTrainee != nullptr)
-        m_pTrainee->Unlock(this);
+    GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
+
+    if (pTrainee && pTrainee->IsLocked() && pTrainee->Owner() == this)
+        pTrainee->Unlock(this);
 
     _ASSERTE(!m_requiredResources.IsNull());
     if (m_requiredResources.IsLocked())
@@ -231,8 +233,10 @@ void IStrategizer::TrainAction::OnSucccess(RtsGame& game, const WorldClock& cloc
 //----------------------------------------------------------------------------------------------
 void IStrategizer::TrainAction::OnFailure(RtsGame& game, const WorldClock& clock)
 {
-    if (m_pTrainee != nullptr)
-        m_pTrainee->Unlock(this);
+    GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
+
+    if (pTrainee && pTrainee->IsLocked() && pTrainee->Owner() == this)
+        pTrainee->Unlock(this);
 
     _ASSERTE(!m_requiredResources.IsNull());
     if (m_requiredResources.IsLocked())

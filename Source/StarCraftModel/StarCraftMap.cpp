@@ -19,7 +19,7 @@ Vector2 StarCraftMap::Size() const
 //----------------------------------------------------------------------------------------------
 MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType) const
 {
-    MapArea candidatePosition;
+    MapArea candidatePosition = MapArea::Null();
 
     // Get the player base tile position
     MapArea colony = g_Game->Self()->GetColonyMapArea();
@@ -56,9 +56,8 @@ MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType)
                     type.tileHeight());
             }
         }
+        _ASSERTE(CanBuildHere(candidatePosition.Pos(), p_buildingType));
     }
-
-    _ASSERTE(CanBuildHere(candidatePosition.Pos(), p_buildingType));
 
     return candidatePosition;
 }

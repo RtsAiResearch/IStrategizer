@@ -23,6 +23,7 @@ namespace StarCraftModel
         StarCraftPlayer(Player p_pPlayer);
         const GameStateEx* State();
         EntityClassType GetWorkerType() const { return m_workerTypeId; }
+        EntityClassType GetBuilderType(EntityClassType p_buildingType) const;
         EntityClassType GetBaseType() const { return m_baseTypeId; }
         bool IsSpecialBuilding(EntityClassType p_buildingType) const;
 

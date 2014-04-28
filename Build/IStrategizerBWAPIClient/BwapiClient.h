@@ -25,7 +25,7 @@ protected:
     virtual void OnClientLoopEnd() {};
     virtual void OnUnitCreate(BWAPI::Unit p_pUnit) {}
     virtual void OnUnitDestroy(BWAPI::Unit p_pUnit) {}
-    virtual void OnUniRenegade(BWAPI::Unit p_pUnit) {}
+    virtual void OnUnitRenegade(BWAPI::Unit p_pUnit) {}
     virtual void OnUnitMorph(BWAPI::Unit p_pUnit) {}
     virtual void OnGameFrame() {}
     virtual void OnMatchStart() {};

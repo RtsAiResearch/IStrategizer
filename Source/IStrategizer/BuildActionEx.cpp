@@ -39,7 +39,8 @@ void BuildActionEx::OnSucccess(RtsGame& game, const WorldClock& p_clock)
 {
     if (_buildIssued)
     {
-        _ASSERTE(!_buildArea.IsNull());
+        // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
+        _ASSERTE(game.Self()->IsSpecialBuilding((EntityClassType)_params[PARAM_EntityClassId]) || !_buildArea.IsNull());
         _buildArea.Unlock(this);
 
         GameEntity *pEntity = game.Self()->GetEntity(_builderId);
@@ -53,7 +54,8 @@ void BuildActionEx::OnFailure(RtsGame& game, const WorldClock& p_clock)
 {
     if (_buildIssued)
     {
-        _ASSERTE(!_buildArea.IsNull());
+        // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
+        _ASSERTE(game.Self()->IsSpecialBuilding((EntityClassType)_params[PARAM_EntityClassId]) || !_buildArea.IsNull());
         _buildArea.Unlock(this);
         _ASSERTE(!_requiredResources.IsNull());
         _requiredResources.Unlock(this);
@@ -67,7 +69,9 @@ void BuildActionEx::OnFailure(RtsGame& game, const WorldClock& p_clock)
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
-    if(PlanStepEx::State() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_EntityCreate) 
+    if(PlanStepEx::State() == ESTATE_Executing &&
+       (p_msg->MessageTypeID() == MSG_EntityCreate || 
+        p_msg->MessageTypeID() == MSG_EntityRenegade))
     {
         EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
         TID buildingId;
@@ -86,9 +90,9 @@ void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
         msgBuildPosition.X = pMsg->Data()->X;
         msgBuildPosition.Y = pMsg->Data()->Y;
 
-        if (msgBuildPosition.X == _buildArea.Pos().X &&
-            msgBuildPosition.Y == _buildArea.Pos().Y &&
-            pGameBuilding->Type() == _params[PARAM_EntityClassId])
+        if (pGameBuilding->Type() == _params[PARAM_EntityClassId] &&
+            ((msgBuildPosition.X == _buildArea.Pos().X && msgBuildPosition.Y == _buildArea.Pos().Y) ||
+            game.Self()->IsSpecialBuilding(pGameBuilding->Type())))
         {
             _buildingId = pGameBuilding->Id();
             _buildStarted = true;
@@ -121,6 +125,12 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
         if (!isBuilderConstructing)
         {
             LogInfo("Builder with ID=%d of action %s is not in the constructing state", _builderId, ToString().c_str());
+
+            if (!(pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false) && !_buildStarted)
+            {
+                LogInfo("Builder with ID=%d of action %s is not moving toward the build position, fail the build action", _builderId, ToString().c_str());
+                success = false;
+            }
         }
         else
         {
@@ -170,19 +180,16 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& game)
 //////////////////////////////////////////////////////////////////////////
 bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
-    EntityClassType buildingType;
+    EntityClassType buildingType = (EntityClassType)_params[PARAM_EntityClassId];
     GameEntity *pGameBuilder;
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     bool bOk = false;
 
     // Adapt builder
-    _builderId = pAdapter->GetEntityObjectId(game.Self()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
+    _builderId = pAdapter->GetEntityObjectId(game.Self()->GetBuilderType(buildingType), AdapterEx::WorkerStatesRankVector);
 
     if (_builderId != INVALID_TID)
     {
-
-        buildingType = (EntityClassType)_params[PARAM_EntityClassId];
-
         // Initialize build state
         _buildStarted = false;
 
@@ -200,7 +207,8 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
         {
             _buildIssued = true;
             pGameBuilder->Lock(this);
-            _ASSERTE(!_buildArea.IsNull());
+            // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
+            _ASSERTE(game.Self()->IsSpecialBuilding(buildingType) || !_buildArea.IsNull());
             _buildArea.Lock(this);
             _ASSERTE(!_requiredResources.IsNull());
             _requiredResources.Lock(this);
