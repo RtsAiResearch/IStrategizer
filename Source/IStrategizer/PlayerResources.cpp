@@ -5,9 +5,17 @@ using namespace IStrategizer;
 
 bool PlayerResources::HasEnough(const WorldResources* p_resources)
 {
-    return this->AvailablePrimary() >= p_resources->Primary() &&
-        this->AvailableSecondary() >= p_resources->Secondary() &&
-        this->AvailableSupply() >= p_resources->Supply();
+    int availablePrimary = this->AvailablePrimary();
+    int availableSecondary = this->AvailableSecondary();
+    int availableSupply = this->AvailableSupply();
+
+    int requiredPrimary = p_resources->Primary();
+    int requiredSecondary = p_resources->Secondary();
+    int requiredSupply = p_resources->Supply();
+
+    return availablePrimary >= requiredPrimary &&
+           availableSecondary >= requiredSecondary &&
+           availableSupply >= requiredSupply;
 }
 //////////////////////////////////////////////////////////////////////////
 bool PlayerResources::Lock(WorldResources* resources)

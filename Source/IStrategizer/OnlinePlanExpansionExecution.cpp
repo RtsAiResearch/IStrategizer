@@ -213,6 +213,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
 
             m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), false);
             m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
+            m_pCbReasoner->Retainer()->Flush();
         }
         // This is the node first time expansion
         else
@@ -285,6 +286,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                 LogInfo("GoalNodeID=%d Goal=%s suceeded, revising and retaining it", currentNode, pCurrentPlanStep->ToString().c_str());
                 m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), true);
                 m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
+                m_pCbReasoner->Retainer()->Flush();
             }
         }
     }

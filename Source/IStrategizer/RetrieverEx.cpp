@@ -84,6 +84,8 @@ float RetrieverEx::GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2)
         {
             if (itrG1->second == itrG2->second)
                 similarity++;
+            else
+                return 0;
         }
 
         return similarity / (float)paramsG1.size();

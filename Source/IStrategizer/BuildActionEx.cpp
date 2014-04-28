@@ -132,8 +132,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 
             if (!(pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false) && !_buildStarted)
             {
-                LogInfo("Builder with ID=%d of action %s is not moving toward the build position, fail the build action", _builderId, ToString().c_str());
-                success = false;
+                LogInfo("Builder with ID=%d of action %s is not moving toward the build position, will NOT fail the action but this is weird case.", _builderId, ToString().c_str());
             }
         }
         else
