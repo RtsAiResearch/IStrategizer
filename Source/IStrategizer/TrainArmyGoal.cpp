@@ -79,6 +79,7 @@ void TrainArmyGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
         EntityClassType tempParam = (EntityClassType)_params[PARAM_EntityClassId];
         if (tempEntity == tempParam)
         {
+            p_consumed = true;
             m_pendingUnits.push_back(entityId);
         }
     }

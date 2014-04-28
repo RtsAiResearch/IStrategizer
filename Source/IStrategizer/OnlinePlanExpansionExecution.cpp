@@ -52,7 +52,8 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
 
     for each(auto caseNodeId in casePlanNodes)
     {
-        IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pCasePlan->GetNode(caseNodeId));
+        IOlcbpPlan::NodeValue pNode = static_cast<PlanStepEx*>(const_cast<PlanStepEx*>(pCasePlan->GetNode(caseNodeId))->Clone());
+        IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pNode);
 
         // Map node ID in in the planner plan with its counterpart in case plan and vice versa
         plannerToCasePlanNodeIdMap[plannerNodeId] = caseNodeId;
@@ -166,8 +167,8 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 
     if (m_planStructureChangedThisFrame)
     {
-         g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanStructureChange, nullptr));
-         m_planStructureChangedThisFrame = false;
+        g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanStructureChange, nullptr));
+        m_planStructureChangedThisFrame = false;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -329,8 +330,9 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
 void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 {
     IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeID currentPlanStep;
-    bool dummy = false;
+    IOlcbpPlan::NodeID currentPlanStepID;
+    bool msgConsumedByAction = false;
+    bool msgConsumedByGoal = false;
 
     if (m_pOlcbpPlan->Size() == 0 ||
         m_planRootNodeId == IOlcbpPlan::NullNodeID)
@@ -340,14 +342,28 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 
     while(!Q.empty())
     {
-        currentPlanStep = Q.front();
+        currentPlanStepID = Q.front();
         Q.pop();
 
-        m_pOlcbpPlan->GetNode(currentPlanStep)->HandleMessage(*g_Game, pMessage, dummy);
-        // Obsolete parameter: No one should use the message consuming anymore
-        _ASSERTE(dummy == false);
+        IOlcbpPlan::NodeValue pCurreNode = m_pOlcbpPlan->GetNode(currentPlanStepID);
 
-        AddReadyChildrenToUpdateQueue(currentPlanStep, Q);
+        if (IsActionNode(currentPlanStepID) && !msgConsumedByAction)
+        {
+            pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
+            LogInfo("Message with ID=%d consumed by action node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
+        }
+        else if (!IsActionNode(currentPlanStepID) && !msgConsumedByGoal)
+        {
+            pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByGoal);
+            LogInfo("Message with ID=%d consumed by goal node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
+        }
+  
+        if (msgConsumedByAction && msgConsumedByGoal)
+        {
+            break;
+        }
+
+        AddReadyChildrenToUpdateQueue(currentPlanStepID, Q);
     }
 }
 //////////////////////////////////////////////////////////////////////////

@@ -57,6 +57,7 @@ void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p
         if (pMsg->Data()->EntityType == (EntityClassType)_params[PARAM_TargetEntityClassId])
         {
             m_demandTargetSize++;
+            p_consumed = true;
         }
     }
 }

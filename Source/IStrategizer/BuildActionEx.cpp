@@ -24,53 +24,56 @@ const unsigned MaxExecTrialTime = 120000;
 const unsigned MaxExecTime = 120000;
 
 BuildActionEx::BuildActionEx() :
-Action(ACTIONEX_Build, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
+    Action(ACTIONEX_Build, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
 }
 //////////////////////////////////////////////////////////////////////////
 BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :
-Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false),  _buildIssued(false)
+    Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false),  _buildIssued(false)
 {
 }
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::OnSucccess(RtsGame& game, const WorldClock& p_clock)
 {
-    if (_buildIssued)
-    {
-        // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
-        _ASSERTE(game.Self()->IsSpecialBuilding((EntityClassType)_params[PARAM_EntityClassId]) || !_buildArea.IsNull());
-        _buildArea.Unlock(this);
-
-        GameEntity *pEntity = game.Self()->GetEntity(_builderId);
-
-        if (pEntity)
-            pEntity->Unlock(this);
-    }
+    FreeResources(game);
 }
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::OnFailure(RtsGame& game, const WorldClock& p_clock)
 {
-    if (_buildIssued)
+    FreeResources(game);
+}
+//////////////////////////////////////////////////////////////////////////
+void BuildActionEx::FreeResources(RtsGame &game)
+{
+    if (!_buildArea.IsNull() && _buildArea.IsLocked())
     {
         // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
         _ASSERTE(game.Self()->IsSpecialBuilding((EntityClassType)_params[PARAM_EntityClassId]) || !_buildArea.IsNull());
         _buildArea.Unlock(this);
-        _ASSERTE(!_requiredResources.IsNull());
-        _requiredResources.Unlock(this);
+    }
 
+    if (!_requiredResources.IsNull() && _requiredResources.IsLocked())
+    {
+        _requiredResources.Unlock(this);
+    }
+
+    if (_builderId != INVALID_TID)
+    {
         GameEntity *pEntity = game.Self()->GetEntity(_builderId);
 
-        if (pEntity)
+        if (pEntity && pEntity->IsLocked())
+        {
             pEntity->Unlock(this);
+        }
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
     if(PlanStepEx::State() == ESTATE_Executing &&
-       (p_msg->MessageTypeID() == MSG_EntityCreate || 
+        (p_msg->MessageTypeID() == MSG_EntityCreate || 
         p_msg->MessageTypeID() == MSG_EntityRenegade))
     {
         EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
@@ -98,6 +101,7 @@ void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
             _buildStarted = true;
             _ASSERTE(!_requiredResources.IsNull());
             _requiredResources.Unlock(this);
+            p_consumed = true;
         }
     }
 }
@@ -201,18 +205,19 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
         pGameBuilder = game.Self()->GetEntity(_builderId);
         _ASSERTE(pGameBuilder);
 
+        LogInfo("Builder=%d was selected to execute build", _builderId);
+
+        pGameBuilder->Lock(this);
+        // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
+        _ASSERTE(game.Self()->IsSpecialBuilding(buildingType) || !_buildArea.IsNull());
+        _buildArea.Lock(this);
+        _ASSERTE(!_requiredResources.IsNull());
+        _requiredResources.Lock(this);
+
         bOk = pGameBuilder->Build(buildingType, _buildArea.Pos());
 
         if (bOk)
-        {
             _buildIssued = true;
-            pGameBuilder->Lock(this);
-            // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
-            _ASSERTE(game.Self()->IsSpecialBuilding(buildingType) || !_buildArea.IsNull());
-            _buildArea.Lock(this);
-            _ASSERTE(!_requiredResources.IsNull());
-            _requiredResources.Lock(this);
-        }
     }
 
     return bOk;

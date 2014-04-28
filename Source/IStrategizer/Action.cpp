@@ -66,7 +66,17 @@ bool Action::Execute(RtsGame& game, const WorldClock& p_clock)
     bool bOk;
 
     _ASSERTE(PlanStepEx::State() == ESTATE_NotPrepared);
+    LogInfo("Trying to execute action %s", ToString().c_str());
     bOk = ExecuteAux(game, p_clock);
+
+    if (bOk)
+    {
+        LogInfo("Excuting action %s succeeded", ToString().c_str());
+    }
+    else
+    {
+        LogInfo("Excuting action %s failed", ToString().c_str());
+    }
 
     return bOk;
 }

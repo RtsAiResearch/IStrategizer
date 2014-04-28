@@ -75,24 +75,40 @@ float RetrieverEx::GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2)
     }
     else
     {
-        float alpha         = 0.5;
-        float similarity    = 0;
         const PlanStepParameters& paramsG1 = p_g1->Parameters();
         const PlanStepParameters& paramsG2 = p_g2->Parameters();
-
+        float similarity = 0;
         for(PlanStepParameters::const_iterator itrG1 = paramsG1.begin(), itrG2 = paramsG2.begin();
             itrG1 != p_g1->Parameters().end();
             ++itrG1, ++itrG2)
         {
-            similarity += (itrG1->second == itrG2->second);
+            if (itrG1->second == itrG2->second)
+                similarity++;
         }
 
-        similarity /= (float)paramsG1.size();
-        similarity *= (1 - alpha);
-        similarity += alpha;
-
-        return similarity;
+        return similarity / (float)paramsG1.size();
     }
+
+    /*else
+    {
+    float alpha         = 0.5;
+    float similarity    = 0;
+    const PlanStepParameters& paramsG1 = p_g1->Parameters();
+    const PlanStepParameters& paramsG2 = p_g2->Parameters();
+
+    for(PlanStepParameters::const_iterator itrG1 = paramsG1.begin(), itrG2 = paramsG2.begin();
+    itrG1 != p_g1->Parameters().end();
+    ++itrG1, ++itrG2)
+    {
+    similarity += (itrG1->second == itrG2->second);
+    }
+
+    similarity /= (float)paramsG1.size();
+    similarity *= (1 - alpha);
+    similarity += alpha;
+
+    return similarity;
+    }*/
 }
 //----------------------------------------------------------------------------------------------
 float RetrieverEx::StateSimilarity(const GameStateEx *p_gs1, const GameStateEx *p_gs2)
@@ -123,7 +139,7 @@ float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, con
 {
     float alpha = 0.95f;
     float goalSimilarity    = GoalSimilarity(p_case->Goal(), p_goal);
-    float stateSimilarity   = StateSimilarity(p_case->GameState(), p_gameState);
+    float stateSimilarity   = 0.0; // StateSimilarity(p_case->GameState(), p_gameState);
 
     return (alpha * goalSimilarity) + (float)((1.0 - alpha) * stateSimilarity);
 }
@@ -183,13 +199,14 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const GameStateEx* pGameState
         _ASSERTE(outcome != 0);
         currCasePerformance = itr->first * outcome;
 
-        if (currCasePerformance > bestCasePerformance)
+        if (currCasePerformance >= bestCasePerformance)
         {
             bestCasePerformance = currCasePerformance;
             bestCase = currCase;
         }
     }
 
+    _ASSERTE(bestCase);
     LogInfo("Retrieved case '%s' with max performance=%f",
         bestCase->Goal()->ToString().c_str(),
         bestCasePerformance);
