@@ -460,6 +460,7 @@ namespace IStrategizer
         MSG_EntityCreate,
         MSG_EntityDestroy,
         MSG_EntityRenegade,
+        MSG_EntityComplete,
         MSG_PlanStructureChange,
         MSG_END
     };

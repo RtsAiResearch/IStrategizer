@@ -130,6 +130,8 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
         return m_players[p_id];
     else
         DEBUG_THROW(ItemNotFoundException(XcptHere));
+
+    return nullptr;
 }
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
@@ -155,7 +157,7 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
 WorldMap* RtsGame::Map()
 {
     _ASSERTE(m_initialized);
-
+    
     return m_pMap;
 }
 //----------------------------------------------------------------------------------------------

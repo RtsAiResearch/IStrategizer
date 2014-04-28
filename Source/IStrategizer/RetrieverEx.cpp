@@ -147,6 +147,11 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const GameStateEx* pGameState
     // the current situation using the goal and game-state params
     for(size_t i = 0, size = cases.size(); i < size; ++i)
     {
+        // Ignore all cases with different goal type because it does not
+        // make sense to retrieve a WinGame case for TrainArmy goal for example
+        if (pGoal->StepTypeId() != cases[i]->Goal()->StepTypeId())
+            continue;
+
         if (exclusion.count(cases[i]) > 0)
         {
             LogInfo("Case %s is excluded from retrieval", cases[i]->Goal()->ToString().c_str());

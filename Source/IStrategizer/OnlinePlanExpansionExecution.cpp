@@ -30,6 +30,7 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
 
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionGoalNodeId, _In_ CaseEx *pExpansionCase)
@@ -133,6 +134,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
 void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 {
     m_pOlcbpPlan->Lock();
+    LogInfo("##### PLANNER UPDATE STARTED #####");
 
     // We have exhausted all possible plans. We have surrendered, nothing to do
     if (m_pOlcbpPlan->Size() > 0)
@@ -159,6 +161,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         }
     }
 
+    LogInfo("#### PLANNER UPDATE ENDED ####");
     m_pOlcbpPlan->Unlock();
 
     if (m_planStructureChangedThisFrame)
@@ -239,10 +242,10 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                 LogWarning("Planner has exhausted all possible cases");
                 m_planRootNodeId = IOlcbpPlan::NullNodeID;
                 m_pOlcbpPlan->Clear();
-                return;
             }
             else
             {
+                LogInfo("GoalNodeID=%d Goal=%s exhausted all cases, failing its case GoalNodeID=%d", currentNode, pCurrentPlanStep->ToString().c_str(), GetNodeData(currentNode).SatisfyingGoal);
                 OpenNode(GetNodeData(currentNode).SatisfyingGoal);
             }
         }
@@ -251,6 +254,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
     {
         if (pCurrentPlanStep->State() == ESTATE_Failed)
         {
+            LogInfo("GoalNodeID=%d Goal=%s failed, opening it", currentNode, pCurrentPlanStep->ToString().c_str());
             OpenNode(currentNode);
         }
         else
@@ -267,6 +271,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             // This condition will be true just once when the case succeeds
             if (oldState == ESTATE_NotPrepared && pCurrentPlanStep->State() == ESTATE_Succeeded)
             {
+                LogInfo("GoalNodeID=%d Goal=%s suceeded, revising and retaining it", currentNode, pCurrentPlanStep->ToString().c_str());
                 m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), true);
                 m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
             }

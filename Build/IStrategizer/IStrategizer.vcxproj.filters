@@ -207,9 +207,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\ResearchAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp">
-      <Filter>Source Files\CaseBase\Action</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ConditionEx.cpp">
       <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
@@ -335,6 +332,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ExecutionHistory.cpp">
       <Filter>Source Files\Engine Components\ContingencyPlanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

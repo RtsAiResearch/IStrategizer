@@ -17,8 +17,8 @@ namespace StarCraftModel
         void EnumerateResearches();
         void InitializeMap();
         int GetMaxForceSize();
-        GamePlayer* FetchPlayer(PlayerType p_id);
-        GameType* FetchEntityType(EntityClassType p_id);
+        GamePlayer* FetchPlayer(IStrategizer::PlayerType p_id);
+        IStrategizer::GameType* FetchEntityType(EntityClassType p_id);
         GameResearch* FetchResearch(ResearchType p_id);
 
     public:

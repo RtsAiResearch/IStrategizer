@@ -21,20 +21,17 @@
 using namespace IStrategizer;
 using namespace Serialization;
 
-AttackEntityAction::AttackEntityAction() : Action(ACTIONEX_AttackEntity)
+AttackEntityAction::AttackEntityAction() :
+    Action(ACTIONEX_AttackEntity)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     _params[PARAM_TargetEntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
 }
 //----------------------------------------------------------------------------------------------
-AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) : Action(ACTIONEX_AttackEntity, p_parameters)
+AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) :
+    Action(ACTIONEX_AttackEntity, p_parameters)
 {
-}
-//----------------------------------------------------------------------------------------------
-void AttackEntityAction::Copy(IClonable* p_dest)
-{
-    Action::Copy(p_dest);
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
@@ -43,7 +40,7 @@ bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     bool executed = false;
-    
+
     // Adapt attacker
     m_attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
 
@@ -53,12 +50,11 @@ bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 
         if (m_targetId != INVALID_TID)
         {
-            GameEntity* pGameAttacker = game.Self()->GetEntity(m_attackerId);
-            GameEntity* pGameTarget = game.Enemy()->GetEntity(m_targetId);
-            _ASSERTE(pGameAttacker);
-            _ASSERTE(pGameTarget);
-            pGameAttacker->Lock(this);
-            executed = pGameAttacker->AttackEntity(m_targetId);
+            GameEntity* pAttacker = game.Self()->GetEntity(m_attackerId);
+            _ASSERTE(pAttacker);
+
+            pAttacker->Lock(this);
+            executed = pAttacker->AttackEntity(m_targetId);
         }
     }
 
@@ -118,4 +114,20 @@ void AttackEntityAction::InitializePreConditions()
     m_terms.push_back(new EntityClassExist(PLAYER_Self, attacker, 1, true));
     m_terms.push_back(new EntityClassExist(PLAYER_Enemy, target, 1, false));
     _preCondition = new And(m_terms);
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::OnSucccess(RtsGame& game, const WorldClock& p_clock)
+{
+    GameEntity* pAttacker = game.Self()->GetEntity(m_attackerId);
+
+    if (pAttacker && pAttacker->IsLocked() && pAttacker->Owner() == this)
+        pAttacker->Unlock(this);
+}
+//----------------------------------------------------------------------------------------------
+void AttackEntityAction::OnFailure(RtsGame& game, const WorldClock& p_clock)
+{
+    GameEntity* pAttacker = game.Self()->GetEntity(m_attackerId);
+
+    if (pAttacker && pAttacker->IsLocked() && pAttacker->Owner() == this)
+        pAttacker->Unlock(this);
 }

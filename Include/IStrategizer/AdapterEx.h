@@ -23,6 +23,7 @@ namespace IStrategizer
         int BuildingWidth;
         int BuildingHeight;
         Vector2 CandidateBuildPos;
+        EntityClassType BuildingType;
     };
 
     class AdapterEx : public AbstractAdapter
@@ -42,16 +43,14 @@ namespace IStrategizer
         static std::vector<ObjectStateType> EntityToMoveStatesRankVector;
 
     private:
-        Vector2 GetBotColonyCenter();
         static void InitializePredefinedRankedStates();
         static bool EntityToMoveStatesComparer(std::pair<TID, ObjectStateType> &p_leftAttacker, std::pair<TID, ObjectStateType> &p_rightAttacker);
         static bool IsValidEntityState(ObjectStateType p_entityState, const std::vector<ObjectStateType>& p_rankedStates);
         static int GetEntityStateIndex(ObjectStateType p_entityState, const std::vector<ObjectStateType>& p_rankedStates);
         static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_pCell, void *p_pParam);
-
+        MapArea AdaptPositionForSpecialBuilding(EntityClassType p_buildingType);
         const static int DefaultBuildingSpacing;
         static bool IsRankedStatesInitialized;
-        Vector2 m_botColonyCenter;
         int m_buildingSpacing;
 
     };
