@@ -19,9 +19,6 @@ using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
-#define TilePositionFromUnitPosition(UnitPos) (UnitPos / 32)
-#define UnitPositionFromTilePosition(TilePos) (TilePos * 32)
-
 StarCraftEntity::StarCraftEntity(Unit p_unit) : GameEntity(p_unit->getID()), m_unit(p_unit)
 {
     m_ownerId = g_Database.PlayerMapping.GetByFirst(m_unit->getPlayer()->getID());
@@ -133,18 +130,27 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position) 
 {
-    TilePosition   pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
+    TilePosition pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
     UnitType type;
-    TID             gameTypeId;
-    string         typeName;
+    TID gameTypeId;
+    string typeName;
 
     gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
     typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
-
+    
     type = UnitType::getType(typeName);
     type = BWAPI::UnitType::getType(typeName);
 
-    return m_unit->build(type, pos);
+    if (type.isAddon())
+    {
+        _ASSERTE(m_unit->canBuildAddon(type));
+        return m_unit->buildAddon(type);
+    }
+    else
+    {
+        _ASSERTE(m_unit->canBuild(type, pos));
+        return m_unit->build(type, pos);
+    }
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackGround(Vector2 p_position)
