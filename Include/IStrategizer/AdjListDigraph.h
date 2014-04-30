@@ -10,6 +10,7 @@
 #include "UserObject.h"
 
 #include <vector>
+#include <unordered_set>
 using namespace std;
 
 namespace IStrategizer
@@ -288,13 +289,16 @@ namespace IStrategizer
         bool IsSubGraphOf(AdjListDigraph<TNodeValue>& p_parentGraph, std::vector<int>& p_matchedIndexes)
         {
             std::vector<int> m_parentNodes;
+            std::unordered_set<int> m_matchedNodes;
 
             for each (NodeID nodeID in p_parentGraph.GetNodes())
             {
                 m_parentNodes.push_back(nodeID);
             }
 
-            return MatchNodesAndChildren(GetRoots(), m_parentNodes, p_parentGraph, p_matchedIndexes);
+            bool result = MatchNodesAndChildren(GetRoots(), m_parentNodes, p_parentGraph, m_matchedNodes);
+            p_matchedIndexes.insert(p_matchedIndexes.begin(), m_matchedNodes.begin(), m_matchedNodes.end());
+            return result;
         }
 
         //************************************
@@ -324,7 +328,7 @@ namespace IStrategizer
         std::vector<int>& p_candidateNodes,
         std::vector<int>& p_parentNodes,
         AdjListDigraph<TNodeValue>& p_parentGraph,
-        std::vector<int>& p_matchedIndexes)
+        std::unordered_set<int>& p_matchedIndexes)
         {
             for each(int m_candidateNodeId in p_candidateNodes)
             {
@@ -332,7 +336,7 @@ namespace IStrategizer
 
                 for each(int m_parentNodeId in p_parentNodes)
                 {
-                    if (find(p_matchedIndexes.begin(), p_matchedIndexes.end(), m_parentNodeId) != p_matchedIndexes.end())
+                    if (p_matchedIndexes.find(m_parentNodeId) != p_matchedIndexes.end())
                     {
                         continue;
                     }
@@ -342,12 +346,20 @@ namespace IStrategizer
 
                     if (m_candidateNode->Compare(m_parentNode) == 0)
                     {
-                        std::vector<int> m_currentMatchedSubNodes;
+                        std::unordered_set<int> m_currentMatchedSubNodes;
 
-                        if(MatchNodesAndChildren(GetChildren(m_candidateNodeId), p_parentGraph.GetChildren(m_parentNodeId), p_parentGraph, m_currentMatchedSubNodes))
+                        if (MatchNodesAndChildren(GetChildren(m_candidateNodeId), p_parentGraph.GetChildren(m_parentNodeId), p_parentGraph, m_currentMatchedSubNodes))
                         {
-                            p_matchedIndexes.insert(p_matchedIndexes.begin(), m_currentMatchedSubNodes.begin(), m_currentMatchedSubNodes.end());
-                            p_matchedIndexes.push_back(m_parentNodeId);
+                            m_currentMatchedSubNodes.insert(m_parentNodeId);
+
+                            for each (int m_matchedSubNode in m_currentMatchedSubNodes)
+                            {
+                                if (p_matchedIndexes.find(m_matchedSubNode) == p_matchedIndexes.end())
+                                {
+                                    p_matchedIndexes.insert(m_matchedSubNode);
+                                }
+                            }
+
                             m_foundMatch = true;
                             break;
                         }
