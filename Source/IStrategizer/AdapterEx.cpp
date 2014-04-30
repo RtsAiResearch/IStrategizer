@@ -31,7 +31,7 @@ RankedStates AdapterEx::AttackerStatesRankVector;
 RankedStates AdapterEx::EntityToMoveStatesRankVector;
 
 // Minimum number of build cells to be between colony buildings
-const int AdapterEx::DefaultBuildingSpacing = 32;
+const int AdapterEx::DefaultBuildingSpacing = 64;
 
 bool AdapterEx::IsRankedStatesInitialized = false;
 
@@ -63,17 +63,15 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_world
     SpiralSearchData *pSearchData = (SpiralSearchData*)p_pParam;
     Vector2 worldPos(p_worldX, p_worldY);
     bool canBuildThere;
-    bool stopSearch;
 
     // If an area is not occupied then we can build there
     _ASSERTE(pBuildingIM && pSearchData);
-    canBuildThere = !pBuildingIM->IsAreaOccupied(worldPos, pSearchData->BuildingWidth, pSearchData->BuildingHeight);
-    stopSearch = canBuildThere;
+    canBuildThere = pBuildingIM->CanBuildHere(worldPos, pSearchData->BuildingWidth, pSearchData->BuildingHeight, pSearchData->BuildingType);
 
     if (canBuildThere)
         pSearchData->CandidateBuildPos = worldPos;
 
-    return stopSearch;
+    return canBuildThere;
 }
 //////////////////////////////////////////////////////////////////////////
 MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)

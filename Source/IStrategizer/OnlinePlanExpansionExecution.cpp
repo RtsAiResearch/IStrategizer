@@ -52,7 +52,8 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
 
     for each(auto caseNodeId in casePlanNodes)
     {
-        IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pCasePlan->GetNode(caseNodeId));
+        IOlcbpPlan::NodeValue pNode = static_cast<PlanStepEx*>(const_cast<PlanStepEx*>(pCasePlan->GetNode(caseNodeId))->Clone());
+        IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pNode);
 
         // Map node ID in in the planner plan with its counterpart in case plan and vice versa
         plannerToCasePlanNodeIdMap[plannerNodeId] = caseNodeId;
@@ -166,8 +167,8 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 
     if (m_planStructureChangedThisFrame)
     {
-         g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanStructureChange, nullptr));
-         m_planStructureChangedThisFrame = false;
+        g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanStructureChange, nullptr));
+        m_planStructureChangedThisFrame = false;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -212,41 +213,52 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
 
             m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), false);
             m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
+            m_pCbReasoner->Retainer()->Flush();
         }
-
-        CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State(), GetNodeData(currentNode).TriedCases);
-        // Retriever should always retrieve a non tried case for that specific node
-        _ASSERTE(!IsCaseTried(currentNode, caseEx));
-
-        // We found a matching case and it was not tried for that goal before
-        if (caseEx != nullptr)
-        {
-            LogInfo("Retrieved case '%s' has not been tried before, and its goal is being sent for expansion",
-                caseEx->Goal()->ToString().c_str());
-
-            MarkCaseAsTried(currentNode, caseEx);
-            ExpandGoal(currentNode, caseEx);
-
-            CloseNode(currentNode);
-            UpdateNodeChildrenWithParentReadiness(currentNode);
-        }
+        // This is the node first time expansion
         else
         {
-            // The current failed goal node is the root goal and the planner exhausted all possible 
-            // plans form the case-base for that goal node and nothing succeeded so far
-            //
-            // WE SURRENDER!!
-            //
-            if (m_planRootNodeId == currentNode)
+            if (clock.ElapsedGameCycles() > 1 && (GoalEx*)pCurrentPlanStep->SuccessConditionsSatisfied(*g_Game))
             {
-                LogWarning("Planner has exhausted all possible cases");
-                m_planRootNodeId = IOlcbpPlan::NullNodeID;
-                m_pOlcbpPlan->Clear();
+                LogInfo("Goal already satisfied, no need to expand it");
             }
             else
             {
-                LogInfo("GoalNodeID=%d Goal=%s exhausted all cases, failing its case GoalNodeID=%d", currentNode, pCurrentPlanStep->ToString().c_str(), GetNodeData(currentNode).SatisfyingGoal);
-                OpenNode(GetNodeData(currentNode).SatisfyingGoal);
+                CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State(), GetNodeData(currentNode).TriedCases);
+                // Retriever should always retrieve a non tried case for that specific node
+                _ASSERTE(!IsCaseTried(currentNode, caseEx));
+
+                // We found a matching case and it was not tried for that goal before
+                if (caseEx != nullptr)
+                {
+                    LogInfo("Retrieved case '%s' has not been tried before, and its goal is being sent for expansion",
+                        caseEx->Goal()->ToString().c_str());
+
+                    MarkCaseAsTried(currentNode, caseEx);
+                    ExpandGoal(currentNode, caseEx);
+
+                    CloseNode(currentNode);
+                    UpdateNodeChildrenWithParentReadiness(currentNode);
+                }
+                else
+                {
+                    // The current failed goal node is the root goal and the planner exhausted all possible 
+                    // plans form the case-base for that goal node and nothing succeeded so far
+                    //
+                    // WE SURRENDER!!
+                    //
+                    if (m_planRootNodeId == currentNode)
+                    {
+                        LogWarning("Planner has exhausted all possible cases");
+                        m_planRootNodeId = IOlcbpPlan::NullNodeID;
+                        m_pOlcbpPlan->Clear();
+                    }
+                    else
+                    {
+                        LogInfo("GoalNodeID=%d Goal=%s exhausted all cases, failing its case GoalNodeID=%d", currentNode, pCurrentPlanStep->ToString().c_str(), GetNodeData(currentNode).SatisfyingGoal);
+                        OpenNode(GetNodeData(currentNode).SatisfyingGoal);
+                    }
+                }
             }
         }
     }
@@ -274,6 +286,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                 LogInfo("GoalNodeID=%d Goal=%s suceeded, revising and retaining it", currentNode, pCurrentPlanStep->ToString().c_str());
                 m_pCbReasoner->Reviser()->Revise(GetLastCaseForGoalNode(currentNode), true);
                 m_pCbReasoner->Retainer()->Retain(GetLastCaseForGoalNode(currentNode));
+                m_pCbReasoner->Retainer()->Flush();
             }
         }
     }
@@ -319,8 +332,9 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
 void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 {
     IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeID currentPlanStep;
-    bool dummy = false;
+    IOlcbpPlan::NodeID currentPlanStepID;
+    bool msgConsumedByAction = false;
+    bool msgConsumedByGoal = false;
 
     if (m_pOlcbpPlan->Size() == 0 ||
         m_planRootNodeId == IOlcbpPlan::NullNodeID)
@@ -330,14 +344,28 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 
     while(!Q.empty())
     {
-        currentPlanStep = Q.front();
+        currentPlanStepID = Q.front();
         Q.pop();
 
-        m_pOlcbpPlan->GetNode(currentPlanStep)->HandleMessage(*g_Game, pMessage, dummy);
-        // Obsolete parameter: No one should use the message consuming anymore
-        _ASSERTE(dummy == false);
+        IOlcbpPlan::NodeValue pCurreNode = m_pOlcbpPlan->GetNode(currentPlanStepID);
 
-        AddReadyChildrenToUpdateQueue(currentPlanStep, Q);
+        if (IsActionNode(currentPlanStepID) && !msgConsumedByAction)
+        {
+            pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
+            LogInfo("Message with ID=%d consumed by action node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
+        }
+        else if (!IsActionNode(currentPlanStepID) && !msgConsumedByGoal)
+        {
+            pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByGoal);
+            LogInfo("Message with ID=%d consumed by goal node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
+        }
+  
+        if (msgConsumedByAction && msgConsumedByGoal)
+        {
+            break;
+        }
+
+        AddReadyChildrenToUpdateQueue(currentPlanStepID, Q);
     }
 }
 //////////////////////////////////////////////////////////////////////////

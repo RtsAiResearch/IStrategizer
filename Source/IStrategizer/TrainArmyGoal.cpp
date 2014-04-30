@@ -79,6 +79,7 @@ void TrainArmyGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
         EntityClassType requiredEntityType = (EntityClassType)_params[PARAM_EntityClassId];
         if (entityType == requiredEntityType)
         {
+            p_consumed = true;
             m_pendingUnits.push_back(entityId);
         }
     }

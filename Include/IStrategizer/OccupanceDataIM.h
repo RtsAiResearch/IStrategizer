@@ -20,6 +20,7 @@ namespace IStrategizer
         bool IsAreaOccupied(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight);
         bool ReserveArea(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight);
         bool FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight);
+        bool CanBuildHere(Vector2 p_worldPos, int p_buildingWidth, int p_buildingHeight, EntityClassType p_buildingType);
 
     private:
         static bool OccupancePredicate(unsigned p_cellX, unsigned p_cellY, TCell* p_pCell, void *p_pParam);

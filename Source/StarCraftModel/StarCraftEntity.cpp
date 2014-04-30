@@ -148,7 +148,7 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     }
     else
     {
-        _ASSERTE(m_unit->canBuild(type, pos));
+        _ASSERTE(Broodwar->canBuildHere(pos, type));
         return m_unit->build(type, pos);
     }
 };

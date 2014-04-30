@@ -74,7 +74,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
                 // other ready actions in the same update cycle will receive the same message
                 // and they may bind to the same trainee
                 pEntity->Lock(this);
-
+                consumed = true;
                 LogInfo("Action %s has bound trainee=%d to trainer=%d", ToString().c_str(), m_traineeId, m_trainerId);
             }
         }
@@ -103,7 +103,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
             trainerBusy = trainerState == OBJSTATE_Training;
             // 3. The trainee unit object exist, i.e not cancel
             traineeExist = g_Assist.DoesEntityObjectExist(m_traineeId);
-            
+
             if (traineeExist && !trainerBusy)
             {
                 success = true;
@@ -208,7 +208,7 @@ void TrainAction::InitializePreConditions()
     m_trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
     vector<Expression*> m_terms;
     WorldResources completeRequiredRespurces = WorldResources::FromEntity(traineeType);
-    
+
     // Do not lock resources other than supply, because supply does not get consumed
     // when the action is triggered. Unlike primary and secondary resources which get
     // consumed upon executing the action
@@ -219,26 +219,23 @@ void TrainAction::InitializePreConditions()
     _preCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void IStrategizer::TrainAction::OnSucccess(RtsGame& game, const WorldClock& clock)
+void TrainAction::OnSucccess(RtsGame& game, const WorldClock& clock)
 {
-    GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
-
-    if (pTrainee && pTrainee->IsLocked() && pTrainee->Owner() == this)
-        pTrainee->Unlock(this);
-
-    _ASSERTE(!m_requiredResources.IsNull());
-    if (m_requiredResources.IsLocked())
-        m_requiredResources.Unlock(this);
+    FreeResources(game);
 }
 //----------------------------------------------------------------------------------------------
-void IStrategizer::TrainAction::OnFailure(RtsGame& game, const WorldClock& clock)
+void TrainAction::OnFailure(RtsGame& game, const WorldClock& clock)
+{
+    FreeResources(game);
+}
+//----------------------------------------------------------------------------------------------
+void TrainAction::FreeResources(RtsGame& game)
 {
     GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
 
-    if (pTrainee && pTrainee->IsLocked() && pTrainee->Owner() == this)
+    if (pTrainee && pTrainee->IsLocked())
         pTrainee->Unlock(this);
 
-    _ASSERTE(!m_requiredResources.IsNull());
-    if (m_requiredResources.IsLocked())
+    if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
         m_requiredResources.Unlock(this);
 }

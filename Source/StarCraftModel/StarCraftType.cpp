@@ -25,7 +25,8 @@ void StarCraftType::InitializeAux()
     // See: http://code.google.com/p/bwapi/wiki/Misc
 
     m_id                = g_Database.EntityMapping.GetByFirst(m_type.getID());
-    m_requiredResources = new WorldResources(m_type.supplyRequired(), m_type.gasPrice(), m_type.mineralPrice());
+    // The supply amount is doubled, divide over two.
+    m_requiredResources = new WorldResources(m_type.supplyRequired() / 2, m_type.gasPrice(), m_type.mineralPrice());
 
     Attr(ECATTR_CanAttack, m_type.canAttack());
     Attr(ECATTR_CanBuild, m_type.isWorker());

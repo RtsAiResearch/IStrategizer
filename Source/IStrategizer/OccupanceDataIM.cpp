@@ -1,6 +1,7 @@
 #include "OccupanceDataIM.h"
 #include <algorithm>
 #include "RtsGame.h"
+#include "WorldMap.h"
 #include "GameEntity.h"
 #include "Vector2.h"
 
@@ -170,4 +171,10 @@ bool OccupanceDataIM::FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_
     ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, FreePredicate, &freeOk);
 
     return freeOk;
+}
+//////////////////////////////////////////////////////////////////////////
+bool OccupanceDataIM::CanBuildHere(Vector2 p_worldPos, int p_buildingWidth, int p_buildingHeight, EntityClassType p_buildingType)
+{
+    return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight) &&
+           g_Game->Map()->CanBuildHere(p_worldPos, p_buildingType);
 }
