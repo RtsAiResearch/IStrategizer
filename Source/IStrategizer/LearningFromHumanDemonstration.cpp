@@ -120,9 +120,9 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
         m_olcpbPlan->AddNode((PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone());
     }
 
-    for each(size_t i in m_olcpbPlan->GetNodes())
+    for each(int i in m_olcpbPlan->GetNodes())
     {
-        for each(size_t j in m_olcpbPlan->GetNodes())
+        for each(int j in m_olcpbPlan->GetNodes())
         {
             if(i != j)
             {
@@ -215,7 +215,7 @@ void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedP
         {
             if (i != j)
             {
-                std::vector<int> m_matchedIndexes;
+                OlcbpPlan::NodeList m_matchedIndexes;
 
                 if (p_cookedPlans[i]->pPlan->IsSubGraphOf((*p_cookedPlans[j]->pPlan), m_matchedIndexes))
                 {
