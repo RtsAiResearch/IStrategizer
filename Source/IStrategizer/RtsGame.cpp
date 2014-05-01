@@ -35,6 +35,10 @@ using namespace std;
 
 IStrategizer::RtsGame* g_Game = nullptr;
 
+MapEx<EntityClassType, GameType*> RtsGame::sm_entityTypes;
+MapEx<ResearchType, GameResearch*> RtsGame::sm_researches;
+bool RtsGame::sm_gameTypesInitialized = false;
+
 RtsGame::~RtsGame()
 {
     Finalize();
@@ -42,16 +46,20 @@ RtsGame::~RtsGame()
 //----------------------------------------------------------------------------------------------
 void RtsGame::Init()
 {
+    if (!sm_gameTypesInitialized)
+    {
+        InitializeTypes();
+        InitializeResearches();
+        sm_gameTypesInitialized = true;
+    }
+
     _ASSERTE(!m_initialized);
-    if (m_initialized)
-        return;
-
-    InitializeTypes();
-    InitializeResearches();
-    InitializePlayers();
-    InitializeMap();
-
-    m_initialized = true;
+    if (!m_initialized)
+    {
+        InitializePlayers();
+        InitializeMap();
+        m_initialized = true;
+    }
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::Finalize()
@@ -61,24 +69,14 @@ void RtsGame::Finalize()
         Toolbox::MemoryClean(itr->second);
     m_players.clear();
 
-    for (MapEx<EntityClassType, GameType*>::iterator itr = m_entityTypes.begin();
-        itr != m_entityTypes.end(); ++itr)
-        Toolbox::MemoryClean(itr->second);
-    m_entityTypes.clear();
-
-    for (MapEx<ResearchType, GameResearch*>::iterator itr = m_researches.begin();
-        itr != m_researches.end(); ++itr)
-        Toolbox::MemoryClean(itr->second);
-    m_researches.clear();
-
     Toolbox::MemoryClean(m_pMap);
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::InitializeTypes()
 {
     EnumerateEntityTypes();
-    for(MapEx<EntityClassType, GameType*>::iterator itr = m_entityTypes.begin();
-        itr != m_entityTypes.end();
+    for(MapEx<EntityClassType, GameType*>::iterator itr = sm_entityTypes.begin();
+        itr != sm_entityTypes.end();
         ++itr)
     {
         itr->second = FetchEntityType(itr->first);
@@ -88,8 +86,8 @@ void RtsGame::InitializeTypes()
 void RtsGame::InitializeResearches() 
 {
     EnumerateResearches();
-    for(MapEx<ResearchType, GameResearch*>::iterator itr = m_researches.begin();
-        itr != m_researches.end();
+    for(MapEx<ResearchType, GameResearch*>::iterator itr = sm_researches.begin();
+        itr != sm_researches.end();
         ++itr)
     {
         itr->second = FetchResearch(itr->first);
@@ -114,12 +112,12 @@ void RtsGame::Players(vector<PlayerType>& p_playerIds)
 //----------------------------------------------------------------------------------------------
 void RtsGame::EntityTypes(vector<EntityClassType>& p_entityTypeIds)
 {
-    m_entityTypes.Keys(p_entityTypeIds);
+    sm_entityTypes.Keys(p_entityTypeIds);
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::Researches(vector<ResearchType>& p_researchTypeIds)
 {
-    m_researches.Keys(p_researchTypeIds);
+    sm_researches.Keys(p_researchTypeIds);
 }
 //----------------------------------------------------------------------------------------------
 GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
@@ -138,8 +136,8 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
     _ASSERTE(m_initialized);
     
-    if (m_entityTypes.Contains(p_id))
-        return m_entityTypes[p_id];
+    if (sm_entityTypes.Contains(p_id))
+        return sm_entityTypes[p_id];
 
     return nullptr;
 }
@@ -148,8 +146,8 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
     _ASSERTE(m_initialized);
 
-    if (m_researches.Contains(p_id))
-        return m_researches[p_id];
+    if (sm_researches.Contains(p_id))
+        return sm_researches[p_id];
 
     return nullptr;
 }

@@ -31,25 +31,6 @@ namespace IStrategizer
     ///> class=RtsGame
     class RtsGame : public EngineComponent
     {
-    protected:
-        MapEx<PlayerType, GamePlayer*> m_players;
-        MapEx<EntityClassType, GameType*> m_entityTypes;
-        MapEx<ResearchType, GameResearch*> m_researches;
-        WorldMap* m_pMap;
-        bool m_initialized;
-
-        virtual GamePlayer* FetchPlayer(PlayerType p_id) = 0;
-        virtual GameType* FetchEntityType(EntityClassType p_id) = 0;
-        virtual GameResearch* FetchResearch(ResearchType p_id) = 0;
-        virtual void EnumeratePlayers() = 0;
-        virtual void EnumerateEntityTypes() = 0;
-        virtual void EnumerateResearches() = 0;
-        void InitializeResearches();
-        void InitializeTypes();
-        void InitializePlayers();
-        virtual void InitializeMap() = 0;
-        virtual int GetMaxForceSize() = 0;
-
     public:
         RtsGame() : EngineComponent("game"), m_pMap(nullptr), m_initialized(false) {}
         virtual ~RtsGame();
@@ -68,6 +49,31 @@ namespace IStrategizer
         GamePlayer* Self();
         GamePlayer* Enemy();
         WorldMap* Map();
+
+    protected:
+        void InitializeTypes();
+        void InitializeResearches();
+        void InitializePlayers();
+        virtual void InitializeMap() = 0;
+
+        virtual GameType* FetchEntityType(EntityClassType p_id) = 0;
+        virtual GameResearch* FetchResearch(ResearchType p_id) = 0;
+        virtual GamePlayer* FetchPlayer(PlayerType p_id) = 0;
+
+        virtual void EnumeratePlayers() = 0;
+        virtual void EnumerateEntityTypes() = 0;
+        virtual void EnumerateResearches() = 0;
+
+        virtual int GetMaxForceSize() = 0;
+
+        // Game types are shared across all RtsGame instances
+        static MapEx<EntityClassType, GameType*> sm_entityTypes;
+        static MapEx<ResearchType, GameResearch*> sm_researches;
+        static bool sm_gameTypesInitialized;
+
+        MapEx<PlayerType, GamePlayer*> m_players;
+        WorldMap* m_pMap;
+        bool m_initialized;
     };
 }
 

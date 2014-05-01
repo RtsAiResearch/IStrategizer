@@ -38,7 +38,8 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     m_pIStrategizer(nullptr),
     m_pGameModel(nullptr),
     m_isLearning(false),
-    m_pTraceCollector(nullptr)
+    m_pTraceCollector(nullptr),
+    m_enemyPlayerUnitsCollected(false)
 {
     ui.setupUi(this);
     IStrategizer::Init();
@@ -181,6 +182,8 @@ void ClientMain::closeEvent(QCloseEvent *pEvent)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientLoopStart()
 {
+    m_enemyPlayerUnitsCollected = false;
+
     if (!Broodwar->isReplay())
     {
         InitResourceManager();
@@ -350,10 +353,8 @@ void ClientMain::UpdateStatsView()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
 {
-    static bool enemyPlayerCollected = false;
-
     if (!Broodwar->isReplay() &&
-        !enemyPlayerCollected)
+        !m_enemyPlayerUnitsCollected)
     {
         // This to solve the bug that the game does not send  messages about creating enemy units at game start
         TID enemyPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy);
@@ -365,7 +366,7 @@ void ClientMain::OnClientUpdate()
             OnUnitCreate(*itr);
         }
 
-        enemyPlayerCollected = !enemyUnits.empty();
+        m_enemyPlayerUnitsCollected = !enemyUnits.empty();
     }
 
     try
