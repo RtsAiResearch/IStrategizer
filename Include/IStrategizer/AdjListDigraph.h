@@ -9,8 +9,6 @@
 #include "SSet.h"
 #include "UserObject.h"
 
-#include <vector>
-#include <unordered_set>
 using namespace std;
 
 namespace IStrategizer
@@ -181,61 +179,30 @@ namespace IStrategizer
         }
 
         //************************************
-        // IStrategizer::IDigraph<TNodeValue>::GetRoots
-        // Description:	Gets a list of all nodes that has an InDegree of zero.
-        // Returns:   	std::vector<int>: A list of all nodes that has an InDegree of zero.
-        //************************************
-        std::vector<int> GetRoots() const
-        {
-            std::vector<int> roots;
-
-            for each(auto possibleRoot in m_adjList)
-            {
-                bool hasZeroDegree = true;
-
-                for each(auto otherNode in m_adjList)
-                {
-                    if(otherNode.second.second.count(possibleRoot.first))
-                    {
-                        hasZeroDegree = false;
-                        break;
-                    }
-                }
-
-                if(hasZeroDegree)
-                {
-                    roots.push_back(possibleRoot.first);
-                }
-            }
-            
-            return roots;
-        }
-
-        //************************************
         // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
         // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
-        // Parameter: 	std::vector<int> p_subGraphIndexes: The indexes describing the sub-part to replace.
+        // Parameter: 	NodeList p_subGraphIndexes: The indexes describing the sub-part to replace.
         // Parameter:   TNodeValue p_substitute: The TNodeValue to replace the sub-part with.
         //************************************      
-        void SubGraphSubstitution(std::vector<int> p_subGraphIndexes, TNodeValue p_substitute)
+        void SubGraphSubstitution(NodeList p_subGraphIndexes, TNodeValue p_substitute)
         {
-            std::vector<int>    m_parents;
-            std::vector<int>    m_children;
+            NodeList    m_parents;
+            NodeList    m_children;
 
-            for(size_t i = 0; i < p_subGraphIndexes.size(); ++i)
+            for each(NodeID m_subGraphIndex in p_subGraphIndexes)
             {
-                std::vector<int> m_tempParents = GetParents(p_subGraphIndexes[i], m_parents);
+                NodeSet m_tempParents = GetParents(m_subGraphIndex, m_parents);
                 m_parents.insert(m_parents.end(), m_tempParents.begin(), m_tempParents.end());
 
-                std::vector<int> m_tempChildren = GetChildren(p_subGraphIndexes[i], m_children);
+                NodeSet m_tempChildren = GetChildren(m_subGraphIndex, m_children);
                 m_children.insert(m_children.end(), m_tempChildren.begin(), m_tempChildren.end());
             }
 
             NodeID m_nodeID = AddNode(p_substitute);
 
-            for(size_t i = 0; i < m_parents.size(); ++i) AddEdge(m_parents[i], m_nodeID);
-            for(size_t i = 0; i < m_children.size(); ++i) AddEdge(m_nodeID, m_children[i]);
-            for(size_t i = 0; i < p_subGraphIndexes.size(); ++i) RemoveNode(p_subGraphIndexes[i]);
+            for each(NodeID m_parent in m_parents) AddEdge(m_parent, m_nodeID);
+            for each(NodeID m_child in m_children) AddEdge(m_nodeID, m_child);
+            for each(NodeID m_subGraphIndex in p_subGraphIndexes) RemoveNode(m_subGraphIndex);
         }
 
         //************************************
@@ -286,17 +253,17 @@ namespace IStrategizer
             return leaves;
         }
         
-        bool IsSubGraphOf(AdjListDigraph<TNodeValue>& p_parentGraph, std::vector<int>& p_matchedIndexes)
+        bool IsSubGraphOf(AdjListDigraph<TNodeValue>& p_parentGraph, NodeList& p_matchedIndexes)
         {
-            std::vector<int> m_parentNodes;
-            std::unordered_set<int> m_matchedNodes;
+            NodeSet m_parentNodes;
+            UnorderedNodeSet m_matchedNodes;
 
             for each (NodeID nodeID in p_parentGraph.GetNodes())
             {
-                m_parentNodes.push_back(nodeID);
+                m_parentNodes.insert(nodeID);
             }
 
-            bool result = MatchNodesAndChildren(GetRoots(), m_parentNodes, p_parentGraph, m_matchedNodes);
+            bool result = MatchNodesAndChildren(GetOrphanNodes(), m_parentNodes, p_parentGraph, m_matchedNodes);
             p_matchedIndexes.insert(p_matchedIndexes.begin(), m_matchedNodes.begin(), m_matchedNodes.end());
             return result;
         }
@@ -325,16 +292,16 @@ namespace IStrategizer
         std::mutex m_lock;
 
         bool MatchNodesAndChildren(
-        std::vector<int>& p_candidateNodes,
-        std::vector<int>& p_parentNodes,
+        NodeSet& p_candidateNodes,
+        NodeSet& p_parentNodes,
         AdjListDigraph<TNodeValue>& p_parentGraph,
-        std::unordered_set<int>& p_matchedIndexes)
+        UnorderedNodeSet& p_matchedIndexes)
         {
-            for each(int m_candidateNodeId in p_candidateNodes)
+            for each(NodeID m_candidateNodeId in p_candidateNodes)
             {
                 bool m_foundMatch = false;
 
-                for each(int m_parentNodeId in p_parentNodes)
+                for each(NodeID m_parentNodeId in p_parentNodes)
                 {
                     if (p_matchedIndexes.find(m_parentNodeId) != p_matchedIndexes.end())
                     {
@@ -346,13 +313,13 @@ namespace IStrategizer
 
                     if (m_candidateNode->Compare(m_parentNode) == 0)
                     {
-                        std::unordered_set<int> m_currentMatchedSubNodes;
+                        UnorderedNodeSet m_currentMatchedSubNodes;
 
                         if (MatchNodesAndChildren(GetChildren(m_candidateNodeId), p_parentGraph.GetChildren(m_parentNodeId), p_parentGraph, m_currentMatchedSubNodes))
                         {
                             m_currentMatchedSubNodes.insert(m_parentNodeId);
 
-                            for each (int m_matchedSubNode in m_currentMatchedSubNodes)
+                            for each (NodeID m_matchedSubNode in m_currentMatchedSubNodes)
                             {
                                 if (p_matchedIndexes.find(m_matchedSubNode) == p_matchedIndexes.end())
                                 {
@@ -375,42 +342,40 @@ namespace IStrategizer
             return true;
         }
 
-        std::vector<int> GetChildren(NodeID p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const
+        NodeSet GetChildren(NodeID p_nodeIndex, NodeList p_execluded = NodeList()) const
         {
-            if (m_adjList.count(p_nodeIndex) == 0)
-                throw ItemNotFoundException(XcptHere);
+            NodeSet m_children;
 
-            std::vector<int> m_children;
-
-            for each(auto child in m_adjList.at(p_nodeIndex).second)
+            for each(auto child in GetAdjacentNodes(p_nodeIndex))
             {
                 if(find(p_execluded.begin(), p_execluded.end(), child) == p_execluded.end())
                 {
-                    m_children.push_back(child);
+                    m_children.insert(child);
                 }
             }
 
             return m_children;
         }
 
-        std::vector<int> GetParents(NodeID p_nodeIndex, std::vector<int> p_execluded = std::vector<int>()) const
+        NodeSet GetParents(NodeID p_nodeIndex, NodeList p_execluded = NodeList()) const
         {
             if (m_adjList.count(p_nodeIndex) == 0)
                 throw ItemNotFoundException(XcptHere);
 
-            std::vector<int> m_parents;
+            NodeSet m_parents;
             
             for each(auto parent in m_adjList)
             {
                 if(find(p_execluded.begin(), p_execluded.end(), parent.first) == p_execluded.end()
                     && find(parent.second.second.begin(), parent.second.second.end(), p_nodeIndex) != parent.second.second.end())
                 {
-                    m_parents.push_back(parent.first);
+                    m_parents.insert(parent.first);
                 }
             }
 
             return m_parents;
-        }    };
+        }
+    };
 }
 
 #endif
