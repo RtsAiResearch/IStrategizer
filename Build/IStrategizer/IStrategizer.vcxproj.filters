@@ -336,6 +336,12 @@
     <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecution.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\GatherResourceAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h">
@@ -655,6 +661,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\ExecutionTrial.h">
       <Filter>Header Files\Engine Components\ContingencyPlanner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecution.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GatherResourceAction.h">
+      <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

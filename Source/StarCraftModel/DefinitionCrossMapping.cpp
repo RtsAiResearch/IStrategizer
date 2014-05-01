@@ -250,6 +250,9 @@ void DefinitionCrossMapping::InitActions()
     actions.push_back(make_pair(Orders::Upgrade.getID(), ACTIONEX_Research));
     actions.push_back(make_pair(Orders::PlaceBuilding.getID(), ACTIONEX_Build));
     actions.push_back(make_pair(Orders::Train.getID(), ACTIONEX_Train));
+    actions.push_back(make_pair(Orders::MiningMinerals.getID(), ACTIONEX_GatherResource));
+    actions.push_back(make_pair(Orders::HarvestGas.getID(), ACTIONEX_GatherResource));
 
     ActionMapping = CrossMap<TID, IStrategizer::ActionType>(actions);
 }
+

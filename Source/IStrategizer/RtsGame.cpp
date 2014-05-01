@@ -34,6 +34,8 @@ using namespace IStrategizer;
 using namespace std;
 
 IStrategizer::RtsGame* g_Game = nullptr;
+const float RtsGame::MineralsPerWorkerPerFrame = 0.045f;
+const float RtsGame::GasPerWorkerPerFrame = 0.07f;
 
 RtsGame::~RtsGame()
 {
@@ -187,6 +189,18 @@ int RtsGame::GetForceSizeCount(ForceSizeType p_forceSizeType)
 
     _ASSERTE(!"Not Supported Force Size");
     return 0;
+}//----------------------------------------------------------------------------------------------
+float IStrategizer::RtsGame::GetResourceConsumbtionRatePerWorker(ResourceType p_id)
+{
+	switch(p_id)
+	{
+	case RESOURCE_Primary:
+		return MineralsPerWorkerPerFrame;
+	case RESOURCE_Secondary:
+		return GasPerWorkerPerFrame;
+	default:
+		throw InvalidParameterException(XcptHere);
+	}
 }
 //----------------------------------------------------------------------------------------------
 ForceSizeType RtsGame::GetForceSizeType(int forceCount)

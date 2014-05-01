@@ -20,6 +20,9 @@ namespace StarCraftModel
     int Supply();
     int Secondary();
     int Primary();
+
+    EntityClassType GetEntityClassType(ResourceType p_type) const;
+
   };
 }
 
