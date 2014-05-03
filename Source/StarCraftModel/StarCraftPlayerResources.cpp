@@ -4,6 +4,7 @@
 
 #include "BWAPI.h"
 #include "DefinitionCrossMapping.h"
+#include "IStrategizerException.h"
 
 using namespace StarCraftModel;
 using namespace BWAPI;
@@ -42,5 +43,7 @@ IStrategizer::EntityClassType StarCraftModel::StarCraftPlayerResources::GetEntit
         return g_Database.EntityMapping.GetByFirst(UnitTypes::Resource_Mineral_Field.getID());
     case RESOURCE_Secondary:
         return g_Database.EntityMapping.GetByFirst(UnitTypes::Resource_Vespene_Geyser.getID());
+    default:
+        DEBUG_THROW(InvalidParameterException(XcptHere));
     }
 }

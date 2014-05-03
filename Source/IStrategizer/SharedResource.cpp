@@ -59,7 +59,7 @@ void SharedResource::Lock(Action *p_pOwner)
         // Already owned by someone else
         else
         {
-            DEBUG_THROW(AlreadyLockedException(XcptHere))
+            DEBUG_THROW(AlreadyLockedException(XcptHere));
         }
     }
 }

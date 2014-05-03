@@ -252,7 +252,7 @@ namespace IStrategizer
 
             return leaves;
         }
-        
+
         bool IsSubGraphOf(AdjListDigraph<TNodeValue>& p_parentGraph, NodeList& p_matchedIndexes)
         {
             NodeSet m_parentNodes;
@@ -263,7 +263,9 @@ namespace IStrategizer
                 m_parentNodes.insert(nodeID);
             }
 
-            bool result = MatchNodesAndChildren(GetOrphanNodes(), m_parentNodes, p_parentGraph, m_matchedNodes);
+            NodeSet roots = GetOrphanNodes();
+
+            bool result = MatchNodesAndChildren(roots, m_parentNodes, p_parentGraph, m_matchedNodes);
             p_matchedIndexes.insert(p_matchedIndexes.begin(), m_matchedNodes.begin(), m_matchedNodes.end());
             return result;
         }
@@ -286,16 +288,16 @@ namespace IStrategizer
     private:
         ///> type=NodeID
         NodeID m_lastNodeId;
-            ///> type=map(pair(NodeID,NodeEntry))
+        ///> type=map(pair(NodeID,NodeEntry))
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
 
         std::mutex m_lock;
 
         bool MatchNodesAndChildren(
-        NodeSet& p_candidateNodes,
-        NodeSet& p_parentNodes,
-        AdjListDigraph<TNodeValue>& p_parentGraph,
-        UnorderedNodeSet& p_matchedIndexes)
+            NodeSet& p_candidateNodes,
+            NodeSet& p_parentNodes,
+            AdjListDigraph<TNodeValue>& p_parentGraph,
+            UnorderedNodeSet& p_matchedIndexes)
         {
             for each(NodeID m_candidateNodeId in p_candidateNodes)
             {
@@ -315,7 +317,10 @@ namespace IStrategizer
                     {
                         UnorderedNodeSet m_currentMatchedSubNodes;
 
-                        if (MatchNodesAndChildren(GetChildren(m_candidateNodeId), p_parentGraph.GetChildren(m_parentNodeId), p_parentGraph, m_currentMatchedSubNodes))
+                        NodeSet candidateNodeChildren = GetChildren(m_candidateNodeId);
+                        NodeSet parentNodeChildren = p_parentGraph.GetChildren(m_parentNodeId);
+
+                        if (MatchNodesAndChildren(candidateNodeChildren, parentNodeChildren, p_parentGraph, m_currentMatchedSubNodes))
                         {
                             m_currentMatchedSubNodes.insert(m_parentNodeId);
 
@@ -363,7 +368,7 @@ namespace IStrategizer
                 throw ItemNotFoundException(XcptHere);
 
             NodeSet m_parents;
-            
+
             for each(auto parent in m_adjList)
             {
                 if(find(p_execluded.begin(), p_execluded.end(), parent.first) == p_execluded.end()

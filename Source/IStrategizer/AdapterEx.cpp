@@ -227,8 +227,6 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( ResourceTy
 	pPlayer = g_Game->GetPlayer(PLAYER_Neutral);
 	assert(pPlayer);
 
-	TID fetchedResourceId;
-
     pPlayer->Entities(pPlayer->Resources()->GetEntityClassType(p_resourceType), entityIds);
 	
     g_Game->Map()->UpdateAux();
