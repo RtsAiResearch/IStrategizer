@@ -120,7 +120,5 @@ void Action::Copy(IClonable* p_dest)
     PlanStepEx::Copy(p_dest);
 
     Action* m_dest = static_cast<Action*>(p_dest);
-
     m_dest->_preCondition = _preCondition ? static_cast<CompositeExpression*>(_preCondition->Clone()) : nullptr;
-    m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
 }

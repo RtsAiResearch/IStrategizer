@@ -12,6 +12,7 @@
 namespace IStrategizer
 {
     class CompositeExpression;
+    class ExecutionHistory;
 
     ///> class=Action
     ///> parent=PlanStepEx
@@ -38,8 +39,9 @@ namespace IStrategizer
         void Reset(RtsGame& game, const WorldClock& p_clock);
         void InitializeConditions();
         void Copy(IClonable* p_dest);
+        void ExecutionHistory(ExecutionHistory history) { m_history.AddRange(history); }
         bool PreconditionsSatisfied(RtsGame& game);
-        ExecutionHistory ExecutionHistory() const { return m_history; }
+        IStrategizer::ExecutionHistory ExecutionHistory() const { return m_history; }
         virtual bool Execute(RtsGame& game, const WorldClock& p_clock);
         virtual bool AliveConditionsSatisfied(RtsGame& game) = 0;
     };

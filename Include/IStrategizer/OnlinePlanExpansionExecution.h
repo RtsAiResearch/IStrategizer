@@ -75,12 +75,16 @@ namespace IStrategizer
         void GetNodeChildrenInBelongingSubplan(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSet& children) const;
         void UnlinkNodeChildren(_In_ IOlcbpPlan::NodeID nodeId);
         void ComputeNodesNotReadyParents();
-
+        void UpdateHistory(CaseEx* pCase);
         CaseBasedReasonerEx *m_pCbReasoner;
         std::map<IOlcbpPlan::NodeID, NodeData> m_nodeData;
         IOlcbpPlan::NodeID m_planRootNodeId;
         IOlcbpPlan *m_pOlcbpPlan;
         bool m_planStructureChangedThisFrame;
+        
+        typedef IOlcbpPlan::NodeValue CaseNodeValue;
+        typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
+        std::map<CaseNodeValue, ClonedCaseNodeValue> m_clonedNodesMapping;
     };
 }
 
