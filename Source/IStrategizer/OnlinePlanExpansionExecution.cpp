@@ -50,7 +50,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     std::map<IOlcbpPlan::NodeID, IOlcbpPlan::NodeID> plannerToCasePlanNodeIdMap;
     std::map<IOlcbpPlan::NodeID, IOlcbpPlan::NodeID> casePlanToPlannerNodeIdMap;
 
-    for each(auto caseNodeId in casePlanNodes)
+    for (auto caseNodeId : casePlanNodes)
     {
         IOlcbpPlan::NodeValue pNode = static_cast<PlanStepEx*>(const_cast<PlanStepEx*>(pCasePlan->GetNode(caseNodeId))->Clone());
         IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pNode);
@@ -74,7 +74,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     IOlcbpPlan::NodeQueue Q;
     IOlcbpPlan::NodeSet visitedNodes;
 
-    for each(auto rootNodeId in newExpansionPlanRoots)
+    for (auto rootNodeId : newExpansionPlanRoots)
     {
         // Cross link the goal node with the sub plan roots
         LinkNodes(expansionGoalNodeId, rootNodeId);
@@ -92,7 +92,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
 
         IOlcbpPlan::NodeSet currCaseChildren = pCasePlan->GetAdjacentNodes(plannerToCasePlanNodeIdMap[currPlannerNodeId]);
 
-        for each (auto currCaseChildNodeId in currCaseChildren)
+        for (auto currCaseChildNodeId : currCaseChildren)
         {
             IOlcbpPlan::NodeID currPlannerChildNodeId = casePlanToPlannerNodeIdMap[currCaseChildNodeId];
 
@@ -114,9 +114,9 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     {
         IOlcbpPlan::NodeSet casePlanLeaves = pCasePlan->GetLeafNodes();
 
-        for each (auto preExpansionNodeId in preExpansionGoalChildren)
+        for (auto preExpansionNodeId : preExpansionGoalChildren)
         {
-            for each (auto casePlanLeafNodeId in casePlanLeaves)
+            for (auto casePlanLeafNodeId : casePlanLeaves)
             {
                 IOlcbpPlan::NodeID plannerNodeId = casePlanToPlannerNodeIdMap[casePlanLeafNodeId];
 
@@ -176,7 +176,7 @@ void OnlinePlanExpansionExecution::UpdateNodeChildrenWithParentReadiness(_In_ IO
 
     const IOlcbpPlan::NodeSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
 
-    for each (auto childId in children)
+    for (auto childId : children)
     {
         _ASSERTE(GetNodeData(childId).NotReadyParentsCount > 0);
 
@@ -222,7 +222,15 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             }
             else
             {
-                CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State(), GetNodeData(currentNode).TriedCases);
+                CaseSet exclusions = GetNodeData(currentNode).TriedCases;
+
+                if (GetNodeData(currentNode).BelongingCase != nullptr)
+                {
+                    // Add belonging case to exclusion to avoid recursive expansion of plans
+                    exclusions.insert(GetNodeData(currentNode).BelongingCase);
+                }
+                
+                CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State(), exclusions);
                 // Retriever should always retrieve a non tried case for that specific node
                 _ASSERTE(!IsCaseTried(currentNode, caseEx));
 
@@ -388,7 +396,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
 
         const IOlcbpPlan::NodeSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
 
-        for each (auto currChildNodeId in currChildren)
+        for (auto currChildNodeId : currChildren)
         {
             if (GetNodeData(currChildNodeId).SatisfyingGoal == goalSatisfyingGoal)
                 preExpansionChildren.insert(currChildNodeId);
@@ -405,14 +413,14 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
     visitedNodes.erase(planGoalNodeId);
 
     // 2. Remove visited nodes from the plan
-    for each (auto visitedNodeId in visitedNodes)
+    for (auto visitedNodeId : visitedNodes)
     {
         m_pOlcbpPlan->RemoveNode(visitedNodeId);
         m_nodeData.erase(visitedNodeId);
     }
 
     // 3. Link the goal node with the pre expansion children
-    for each (auto childNodeId in preExpansionChildren)
+    for (auto childNodeId : preExpansionChildren)
     {
         LinkNodes(planGoalNodeId, childNodeId );
     }
@@ -430,7 +438,7 @@ void OnlinePlanExpansionExecution::AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan
 {
     const IOlcbpPlan::NodeSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
 
-    for each (auto childNodeId in children)
+    for (auto childNodeId : children)
     {
         if (IsNodeReady(childNodeId))
         {
@@ -483,7 +491,7 @@ void OnlinePlanExpansionExecution::GetNodeChildrenInBelongingSubplan(_In_ IOlcbp
 
         const IOlcbpPlan::NodeSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
 
-        for each (auto currChildNodeId in currChildren)
+        for (auto currChildNodeId : currChildren)
         {
             if (GetNodeData(currChildNodeId).SatisfyingGoal == nodeSatisfyingGoal)
                 children.insert(currChildNodeId);
@@ -500,7 +508,7 @@ void OnlinePlanExpansionExecution::UnlinkNodeChildren(_In_ IOlcbpPlan::NodeID no
 {
     IOlcbpPlan::NodeSet currChildren = m_pOlcbpPlan->GetAdjacentNodes(nodeId);
 
-    for each (auto currChild in currChildren)
+    for (auto currChild : currChildren)
     {
         m_pOlcbpPlan->RemoveEdge(nodeId, currChild);
     }
@@ -519,7 +527,7 @@ void OnlinePlanExpansionExecution::ComputeNodesNotReadyParents()
     IOlcbpPlan::NodeSet planNodes;
 
     planNodes = m_pOlcbpPlan->GetNodes();
-    for each (auto nodeId in planNodes)
+    for (auto nodeId : planNodes)
     {
         GetNodeData(nodeId).NotReadyParentsCount = 0;
     }
@@ -539,7 +547,7 @@ void OnlinePlanExpansionExecution::ComputeNodesNotReadyParents()
 
         const IOlcbpPlan::NodeSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
 
-        for each (auto currChildNodeId in currChildren)
+        for (auto currChildNodeId : currChildren)
         {
             // If current node is open, then update its children to consider the 
             // current open node in the NotReadyParentsCount, by incrementing it by 1
