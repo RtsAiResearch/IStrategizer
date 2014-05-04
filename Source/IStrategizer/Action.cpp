@@ -84,7 +84,7 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
     case ESTATE_NotPrepared:
         if (PreconditionsSatisfied(game))
         {
-            LogInfo("Preconditions satisfied, trying to execute aciton %s", ToString().c_str());
+            LogInfo("Preconditions satisfied, trying to execute action %s", ToString().c_str());
 
             if (Execute(game, p_clock))
             {
