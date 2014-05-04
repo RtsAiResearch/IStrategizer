@@ -181,15 +181,10 @@ bool TrainAction::ExecuteAux(RtsGame& game, const WorldClock& clock)
         // Issue train order
         pGameTrainer = game.Self()->GetEntity(m_trainerId);
         _ASSERTE(pGameTrainer);
+        _ASSERTE(!m_requiredResources.IsNull());
+        m_requiredResources.Lock(this);
+        LogInfo("Action %s commanded trainer=%d to train trainee=%d", ToString().c_str(), m_trainerId, m_traineeId);
         executed = pGameTrainer->Train(traineeType);
-
-        if (executed)
-        {
-            _ASSERTE(!m_requiredResources.IsNull());
-            m_requiredResources.Lock(this);
-
-            LogInfo("Action %s commanded trainer=%d to train trainee=%d", ToString().c_str(), m_trainerId, m_traineeId);
-        }
     }
 
     return executed;

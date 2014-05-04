@@ -75,7 +75,7 @@ namespace IStrategizer
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
         virtual void UpdateAux(RtsGame& game, const WorldClock& p_clock) = 0;
         virtual void Reset(RtsGame& game, const WorldClock& p_clock) = 0;
-        virtual std::string ToString() const;
+        virtual std::string ToString(bool minimal = false) const;
         virtual ~PlanStepEx() {}
         PlanStepParameters& Parameters() { return _params; }
         ExecutionStateType State() const { return _state; }

@@ -63,22 +63,10 @@ void Action::InitializeConditions()
 //////////////////////////////////////////////////////////////////////////
 bool Action::Execute(RtsGame& game, const WorldClock& p_clock)
 {
-    bool bOk;
-
     _ASSERTE(PlanStepEx::State() == ESTATE_NotPrepared);
+
     LogInfo("Trying to execute action %s", ToString().c_str());
-    bOk = ExecuteAux(game, p_clock);
-
-    if (bOk)
-    {
-        LogInfo("Excuting action %s succeeded", ToString().c_str());
-    }
-    else
-    {
-        LogInfo("Excuting action %s failed", ToString().c_str());
-    }
-
-    return bOk;
+    return ExecuteAux(game, p_clock);
 }
 //////////////////////////////////////////////////////////////////////////
 void Action::Reset(RtsGame& game, const WorldClock& p_clock)
@@ -96,6 +84,8 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
     case ESTATE_NotPrepared:
         if (PreconditionsSatisfied(game))
         {
+            LogInfo("Preconditions satisfied, trying to execute aciton %s", ToString().c_str());
+
             if (Execute(game, p_clock))
             {
                 State(ESTATE_Executing, game, p_clock);
@@ -103,7 +93,6 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
             else
             {
                 State(ESTATE_Failed, game, p_clock);
-                LogInfo("Executing '%s' failed", ToString().c_str());
             }
         }
         break;
@@ -119,7 +108,7 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
         }
         else
         {
-            LogInfo("%s alive conditions not satisfied, failing it", ToString().c_str());
+            LogInfo("%s alive conditions not satisfied", ToString().c_str());
             State(ESTATE_Failed, game, p_clock);
         }
         break;
