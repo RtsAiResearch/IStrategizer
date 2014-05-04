@@ -10,12 +10,13 @@
 
 using namespace IStrategizer;
 
-void Reviser::Revise(CaseEx* p_case, bool p_succeeded)
+void Reviser::Revise(CaseEx* pCase, bool succeeded)
 {
-    LogWarning("Pretending to revise case %s, but case revision is not functional actually", p_case->Goal()->ToString().c_str());
-    // p_case->TrialCount(p_case->TrialCount() + 1);
-    // p_case->SuccessCount(p_case->SuccessCount() + (p_succeeded ? 1 : 0));
+    // Revise case usage
+    LogWarning("Pretending to revise case %s, but case revision is not functional actually", pCase->Goal()->ToString().c_str());
+    pCase->TrialCount(pCase->TrialCount() + 1);
+    pCase->SuccessCount(pCase->SuccessCount() + (succeeded ? 1 : 0));
 
-    // LogInfo("Revising case: %s, trial-count=%d, success-count=%d",
-    // p_case->Goal()->ToString().c_str(), p_case->TrialCount(), p_case->SuccessCount());
+    LogInfo("Revising case: %s, trial-count=%d, success-count=%d",
+    pCase->Goal()->ToString().c_str(), pCase->TrialCount(), pCase->SuccessCount());
 }

@@ -72,3 +72,11 @@ ExecutionTrial::List ExecutionHistory::FailedTrials() const
 
     return failedTrials;
 }
+//////////////////////////////////////////////////////////////////////////
+void ExecutionHistory::AddRange(ExecutionHistory other)
+{
+    for (size_t i = 0; i < other.m_history.size(); ++i)
+    {
+        this->m_history.push_back(other.m_history[i]);
+    }
+}

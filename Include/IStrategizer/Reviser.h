@@ -10,7 +10,7 @@ namespace IStrategizer
     class Reviser : public AbstractReviser
     {
     public:
-        void Revise(CaseEx* p_case, bool p_succeeded);
+        void Revise(CaseEx* pCase, bool succeeded);
     };
 }
 

@@ -9,7 +9,7 @@ namespace IStrategizer
     class AbstractReviser
     {
     public:
-        virtual void Revise(CaseEx* p_case, bool p_succeeded) = 0;
+        virtual void Revise(CaseEx* pCase, bool succeeded) = 0;
     };
 }
 

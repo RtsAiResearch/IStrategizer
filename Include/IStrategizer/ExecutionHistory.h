@@ -18,6 +18,7 @@ namespace IStrategizer
         double GetFailureProbability() const;
         void Add(ExecutionStateType state);
         void Add(ExecutionStateType state, ConditionEx* failedAliveCondition);
+        void AddRange(ExecutionHistory other);
         ConditionEx* GetMostVulnerableAliveCondition() const;
         bool IsEmpty() const { return m_history.empty(); }
 
