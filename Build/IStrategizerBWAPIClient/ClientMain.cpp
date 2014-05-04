@@ -38,7 +38,8 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     m_pIStrategizer(nullptr),
     m_pGameModel(nullptr),
     m_isLearning(false),
-    m_pTraceCollector(nullptr)
+    m_pTraceCollector(nullptr),
+    m_enemyPlayerUnitsCollected(false)
 {
     ui.setupUi(this);
     IStrategizer::Init();
@@ -92,7 +93,9 @@ void ClientMain::InitIStrategizer()
     // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
     // and the engine Enums[*] table is fully initialized
     InitIdLookup();
-    m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
+
+    if (!m_isLearning)
+        m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
@@ -179,6 +182,8 @@ void ClientMain::closeEvent(QCloseEvent *pEvent)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientLoopStart()
 {
+    m_enemyPlayerUnitsCollected = false;
+
     if (!Broodwar->isReplay())
     {
         InitResourceManager();
@@ -348,10 +353,8 @@ void ClientMain::UpdateStatsView()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
 {
-    static bool enemyPlayerCollected = false;
-
     if (!Broodwar->isReplay() &&
-        !enemyPlayerCollected)
+        !m_enemyPlayerUnitsCollected)
     {
         // This to solve the bug that the game does not send  messages about creating enemy units at game start
         TID enemyPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy);
@@ -363,7 +366,7 @@ void ClientMain::OnClientUpdate()
             OnUnitCreate(*itr);
         }
 
-        enemyPlayerCollected = !enemyUnits.empty();
+        m_enemyPlayerUnitsCollected = !enemyUnits.empty();
     }
 
     try
@@ -389,21 +392,23 @@ void ClientMain::UpdateViews()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitResourceManager()
 {
-    //send each worker to the mineral field that is closest to it
-    for(Unitset::iterator i = Broodwar->self()->getUnits().begin(); i != Broodwar->self()->getUnits().end(); i++)
-    {
-        if ((*i)->getType().isWorker())
-        {
-            Unit closestMineral=nullptr;
-            for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
-            {
-                if (closestMineral==nullptr || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
-                    closestMineral = *m;
-            }
-            if (closestMineral!=nullptr)
-                (*i)->rightClick(closestMineral);
-        }
-    }
+	//send each worker to the mineral field that is closest to it
+	for(Unitset::iterator i = Broodwar->self()->getUnits().begin(); i != Broodwar->self()->getUnits().end(); i++)
+	{
+		if ((*i)->getType().isWorker())
+		{
+			Unit closestMineral=nullptr;
+			for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
+			{
+				if (closestMineral==nullptr || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
+				{
+					closestMineral = *m;
+				}
+			}
+			if (closestMineral!=nullptr)
+				(*i)->rightClick(closestMineral);
+		}
+	}
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnGameFrame()

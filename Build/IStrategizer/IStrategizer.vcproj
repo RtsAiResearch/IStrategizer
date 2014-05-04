@@ -647,10 +647,6 @@
 						RelativePath="..\..\Include\IStrategizer\MapEx.h"
 						>
 					</File>
-					<File
-						RelativePath="..\..\Include\IStrategizer\PlanGraph.h"
-						>
-					</File>
 					<Filter
 						Name="Diagraph"
 						>

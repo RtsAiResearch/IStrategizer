@@ -3,11 +3,14 @@
 #include "DataMessage.h"
 #include "GameTrace.h"
 #include "Logger.h"
-#include <Windows.h>
 #include "DefinitionCrossMapping.h"
+
+#include <Windows.h>
+#include <set>
 
 using namespace BWAPI;
 using namespace IStrategizer;
+using namespace std;
 
 void GameTraceCollector::OnGameFrame()
 {
@@ -55,13 +58,13 @@ bool GameTraceCollector::IsAutoGatheringResources(const Unit unit)
 
     isAutoGatheringMinerals = unit->isGatheringMinerals() &&
         (unit->getOrder() == Orders::MoveToMinerals ||
-        unit->getOrder() == Orders::MiningMinerals ||
+       /* unit->getOrder() == Orders::MiningMinerals ||*/
         unit->getOrder() == Orders::WaitForMinerals ||
         unit->getOrder() == Orders::ReturnMinerals);
 
     isAutoGatheringGas = unit->isGatheringGas() &&
         (unit->getOrder() == Orders::MoveToGas ||
-        unit->getOrder() == Orders::HarvestGas ||
+        /*unit->getOrder() == Orders::HarvestGas ||*/
         unit->getOrder() == Orders::WaitForGas ||
         unit->getOrder() == Orders::ReturnGas);
 
@@ -107,12 +110,15 @@ void GameTraceCollector::InitPlayerIssuedOrderTable()
     m_playerIssuedOrderIDs.insert(Orders::AttackUnit.getID());
     m_playerIssuedOrderIDs.insert(Orders::Patrol.getID());
     m_playerIssuedOrderIDs.insert(Orders::HoldPosition.getID());
+
+    m_playerIssuedOrderIDs.insert(Orders::HarvestGas.getID());
+    m_playerIssuedOrderIDs.insert(Orders::MiningMinerals.getID());
 }
 //////////////////////////////////////////////////////////////////////////
 bool GameTraceCollector::HasNewPlayerOrder(const Unit unit)
 {
     return IsPlayerIssuedOrder(unit->getOrder()) &&
-        !IsAutoGatheringResources(unit) &&
+        /*!IsAutoGatheringResources(unit) &&*/
         IsOrderChanged(unit);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -206,9 +212,8 @@ void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
     
     GameTrace *pTrace = nullptr;
     PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(action, unit);
-    GameStateEx gameState;
 
-    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
+    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game, m_playerToObserve);
 
     SendGameTrace(pTrace);
 }
@@ -228,9 +233,8 @@ void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit traine
 
     GameTrace *pTrace = nullptr;
     PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(trainee, trainer);
-    GameStateEx gameState;
 
-    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, gameState, m_playerToObserve);
+    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game, m_playerToObserve);
 
     SendGameTrace(pTrace);
 }

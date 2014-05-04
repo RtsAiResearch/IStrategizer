@@ -64,7 +64,6 @@ bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& game)
 {
     bool attackerExists = g_Assist.DoesEntityObjectExist(m_attackerId);
-    bool targetExists = g_Assist.DoesEntityObjectExist(m_targetId, PLAYER_Enemy);
 
     if (!attackerExists)
     {
@@ -76,18 +75,26 @@ bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& game)
         m_history.Add(ESTATE_Failed, failedCondition);
     }
 
-    return attackerExists && targetExists;
+    return attackerExists;
 }
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& game)
 {
     _ASSERTE(PlanStepEx::State() == ESTATE_Executing);
+    bool targetExists = g_Assist.DoesEntityObjectExist(m_targetId, PLAYER_Enemy);
 
-    GameEntity* pGameTarget = game.Enemy()->GetEntity(m_targetId);
-    _ASSERTE(pGameTarget);
+    if (targetExists)
+    {
+        GameEntity* pGameTarget = game.Enemy()->GetEntity(m_targetId);
+        _ASSERTE(pGameTarget);
 
-    ObjectStateType targetState = (ObjectStateType)pGameTarget->Attr(EOATTR_State);
-    return targetState == OBJSTATE_UnderAttack;
+        ObjectStateType targetState = (ObjectStateType)pGameTarget->Attr(EOATTR_State);
+        return targetState == OBJSTATE_UnderAttack;
+    }
+    else
+    {
+        return true;
+    }
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializeAddressesAux()
@@ -97,8 +104,12 @@ void AttackEntityAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePostConditions()
 {
-    EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, target, 1, true));
+    EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
+    
+    std::vector<Expression*> expressions;
+    expressions.push_back(new EntityClassExist(PLAYER_Enemy, targetType, 0, true));
+
+    _postCondition = new And(expressions);
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePreConditions()

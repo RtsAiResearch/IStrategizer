@@ -141,7 +141,6 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
 void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 {
     m_pOlcbpPlan->Lock();
-    LogInfo("##### PLANNER UPDATE STARTED #####");
 
     // We have exhausted all possible plans. We have surrendered, nothing to do
     if (m_pOlcbpPlan->Size() > 0)
@@ -168,7 +167,6 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         }
     }
 
-    LogInfo("#### PLANNER UPDATE ENDED ####");
     m_pOlcbpPlan->Unlock();
 
     if (m_planStructureChangedThisFrame)

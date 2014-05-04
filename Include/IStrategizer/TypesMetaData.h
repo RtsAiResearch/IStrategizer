@@ -32,9 +32,9 @@ namespace IStrategizer
         RESOURCE_END
     };
 #define Define_ResourceType \
-    Enums[RESOURCE_Primary] = "Primary"; \
-    Enums[RESOURCE_Secondary] = "Secondary"; \
-    Enums[RESOURCE_Supply] = "Supply";
+    Enums[RESOURCE_Primary] = "Primary Resource Type"; \
+    Enums[RESOURCE_Secondary] = "Secondary Resource Type"; \
+    Enums[RESOURCE_Supply] = "Supply Resource Type";
     //---------------------------------------------------------------------------
 #define Prefix_PlayerType PLAYER
     enum PlayerType
@@ -89,8 +89,8 @@ namespace IStrategizer
 #define Prefix_GoalType GOALEX
     enum GoalType
     {
-        GOALEX_WinGame    = 0x20700,                                
-        GOALEX_START    = 0x20700,
+        GOALEX_WinGame = 0x20700,                                
+        GOALEX_START   = 0x20700,
         GOALEX_CollectResource,
         GOALEX_TrainArmy,
         GOALEX_DestroyEntityType,
@@ -115,6 +115,7 @@ namespace IStrategizer
         ACTIONEX_AttackEntity,
         ACTIONEX_MoveEntity,
         ACTIONEX_Move,
+        ACTIONEX_GatherResource,
         ACTIONEX_END
     };
 #define Define_ActionType \
@@ -124,7 +125,8 @@ namespace IStrategizer
     Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
     Enums[ACTIONEX_AttackEntity] = "Attack Entity"; \
     Enums[ACTIONEX_Move] = "Move"; \
-    Enums[ACTIONEX_MoveEntity] = "Move Entity";
+    Enums[ACTIONEX_MoveEntity] = "Move Entity";\
+    Enums[ACTIONEX_GatherResource] = "Gather Resource";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
     enum ConditionType
@@ -161,8 +163,8 @@ namespace IStrategizer
 #define Prefix_ParameterType PARAM
     enum ParameterType
     {
-        PARAM_EntityClassId    = 0x20a00,
-        PARAM_START            = 0x20a00,
+        PARAM_EntityClassId = 0x20a00,
+        PARAM_START = 0x20a00,
         PARAM_EntityObjectId,
         PARAM_AttributeId,
         PARAM_OperatorId,

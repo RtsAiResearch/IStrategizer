@@ -11,7 +11,6 @@
 namespace IStrategizer
 {
     enum PlayerType;
-    class PlanGraph;
     class CaseEx;
     class GoalEx;
     class CaseBasedReasonerEx;

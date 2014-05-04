@@ -9,6 +9,8 @@
 #include "SSet.h"
 #include "UserObject.h"
 
+using namespace std;
+
 namespace IStrategizer
 {
     ///> class=AdjListDigraph(TNodeValue)
@@ -32,7 +34,7 @@ namespace IStrategizer
         // Returns:   	NodeID:  A unique ID used to reference the added node
         // in further Digraph methods
         //************************************
-        NodeID AddNode(_In_ NodeValue& val)
+        NodeID AddNode(const _In_ NodeValue& val)
         {
             m_adjList.insert(make_pair(++m_lastNodeId, MakePair(val, NodeSet())));
 
@@ -153,11 +155,10 @@ namespace IStrategizer
         // Returns:   	bool
         //************************************
         bool IsAdjacent(_In_ NodeID sourceNodeId, _In_ NodeID destNodeId) const 
-            throw(ItemNotFoundException)
         {
             if (m_adjList.count(sourceNodeId) == 0 ||
                 m_adjList.count(destNodeId) == 0)
-                DEBUG_THROW(ItemNotFoundException(XcptHere));
+                return false;
 
             return m_adjList.at(sourceNodeId).second.count(destNodeId) > 0;
         }
@@ -175,6 +176,33 @@ namespace IStrategizer
                 DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             return m_adjList.at(sourceNodeId).second;
+        }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
+        // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
+        // Parameter: 	NodeList p_subGraphIndexes: The indexes describing the sub-part to replace.
+        // Parameter:   TNodeValue p_substitute: The TNodeValue to replace the sub-part with.
+        //************************************      
+        void SubGraphSubstitution(NodeList p_subGraphIndexes, TNodeValue p_substitute)
+        {
+            NodeList    m_parents;
+            NodeList    m_children;
+
+            for each(NodeID m_subGraphIndex in p_subGraphIndexes)
+            {
+                NodeSet m_tempParents = GetParents(m_subGraphIndex, m_parents);
+                m_parents.insert(m_parents.end(), m_tempParents.begin(), m_tempParents.end());
+
+                NodeSet m_tempChildren = GetChildren(m_subGraphIndex, m_children);
+                m_children.insert(m_children.end(), m_tempChildren.begin(), m_tempChildren.end());
+            }
+
+            NodeID m_nodeID = AddNode(p_substitute);
+
+            for each(NodeID m_parent in m_parents) AddEdge(m_parent, m_nodeID);
+            for each(NodeID m_child in m_children) AddEdge(m_nodeID, m_child);
+            for each(NodeID m_subGraphIndex in p_subGraphIndexes) RemoveNode(m_subGraphIndex);
         }
 
         //************************************
@@ -225,6 +253,23 @@ namespace IStrategizer
             return leaves;
         }
 
+        bool IsSubGraphOf(AdjListDigraph<TNodeValue>& p_parentGraph, NodeList& p_matchedIndexes)
+        {
+            NodeSet m_parentNodes;
+            UnorderedNodeSet m_matchedNodes;
+
+            for each (NodeID nodeID in p_parentGraph.GetNodes())
+            {
+                m_parentNodes.insert(nodeID);
+            }
+
+            NodeSet roots = GetOrphanNodes();
+
+            bool result = MatchNodesAndChildren(roots, m_parentNodes, p_parentGraph, m_matchedNodes);
+            p_matchedIndexes.insert(p_matchedIndexes.begin(), m_matchedNodes.begin(), m_matchedNodes.end());
+            return result;
+        }
+
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::Lock
         // Description:	Locks the graph for exclusive read/write access by the caller thread
@@ -237,9 +282,7 @@ namespace IStrategizer
         // Description:	Unlocks the graph acquisition by caller thread
         // Returns:   	void
         //************************************
-        virtual void Unlock() { m_lock.unlock(); }
-
-        OBJECT_SERIALIZABLE(AdjListDigraph);
+        virtual void Unlock() { m_lock.unlock(); }        OBJECT_SERIALIZABLE(AdjListDigraph);
         OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
 
     private:
@@ -249,7 +292,95 @@ namespace IStrategizer
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
 
         std::mutex m_lock;
+
+        bool MatchNodesAndChildren(
+            NodeSet& p_candidateNodes,
+            NodeSet& p_parentNodes,
+            AdjListDigraph<TNodeValue>& p_parentGraph,
+            UnorderedNodeSet& p_matchedIndexes)
+        {
+            for each(NodeID m_candidateNodeId in p_candidateNodes)
+            {
+                bool m_foundMatch = false;
+
+                for each(NodeID m_parentNodeId in p_parentNodes)
+                {
+                    if (p_matchedIndexes.find(m_parentNodeId) != p_matchedIndexes.end())
+                    {
+                        continue;
+                    }
+
+                    IComparable* m_candidateNode = dynamic_cast<IComparable*>(GetNode(m_candidateNodeId));
+                    IComparable* m_parentNode = dynamic_cast<IComparable*>(p_parentGraph.GetNode(m_parentNodeId));
+
+                    if (m_candidateNode->Compare(m_parentNode) == 0)
+                    {
+                        UnorderedNodeSet m_currentMatchedSubNodes;
+
+                        NodeSet candidateNodeChildren = GetChildren(m_candidateNodeId);
+                        NodeSet parentNodeChildren = p_parentGraph.GetChildren(m_parentNodeId);
+
+                        if (MatchNodesAndChildren(candidateNodeChildren, parentNodeChildren, p_parentGraph, m_currentMatchedSubNodes))
+                        {
+                            m_currentMatchedSubNodes.insert(m_parentNodeId);
+
+                            for each (NodeID m_matchedSubNode in m_currentMatchedSubNodes)
+                            {
+                                if (p_matchedIndexes.find(m_matchedSubNode) == p_matchedIndexes.end())
+                                {
+                                    p_matchedIndexes.insert(m_matchedSubNode);
+                                }
+                            }
+
+                            m_foundMatch = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(m_foundMatch == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        NodeSet GetChildren(NodeID p_nodeIndex, NodeList p_execluded = NodeList()) const
+        {
+            NodeSet m_children;
+
+            for each(auto child in GetAdjacentNodes(p_nodeIndex))
+            {
+                if(find(p_execluded.begin(), p_execluded.end(), child) == p_execluded.end())
+                {
+                    m_children.insert(child);
+                }
+            }
+
+            return m_children;
+        }
+
+        NodeSet GetParents(NodeID p_nodeIndex, NodeList p_execluded = NodeList()) const
+        {
+            if (m_adjList.count(p_nodeIndex) == 0)
+                throw ItemNotFoundException(XcptHere);
+
+            NodeSet m_parents;
+
+            for each(auto parent in m_adjList)
+            {
+                if(find(p_execluded.begin(), p_execluded.end(), parent.first) == p_execluded.end()
+                    && find(parent.second.second.begin(), parent.second.second.end(), p_nodeIndex) != parent.second.second.end())
+                {
+                    m_parents.insert(parent.first);
+                }
+            }
+
+            return m_parents;
+        }
     };
 }
 
-#endif // ADJLISTDIGRAPH_H
+#endif

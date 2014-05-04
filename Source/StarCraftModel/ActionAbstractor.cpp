@@ -83,6 +83,25 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
             actionParameters[PARAM_ResearchId] = g_Database.UpgradeMapping.GetByFirst(unit->getTech());
         }
     }
-    
+//     if (actionParameters.count(PARAM_Amount)> 0)
+//     {
+//         if (unit->isGatheringMinerals() || unit->isGatheringGas())
+//         {
+//             actionParameters[PARAM_Amount] = 10;
+//         }
+//     }
+    if (actionParameters.count(PARAM_ResourceId)> 0)
+    {
+        if (unit->isGatheringMinerals())
+        {
+            actionParameters[PARAM_ResourceId] = RESOURCE_Primary;
+        }
+        else if (unit->isGatheringGas())
+        {
+            actionParameters[PARAM_ResourceId] = RESOURCE_Secondary;
+        }
+    }
+
+
     return actionParameters;
 }

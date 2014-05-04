@@ -64,6 +64,7 @@ private:
     IStrategizer::GameTraceCollector *m_pTraceCollector;
     IStrategizer::CrossMap<unsigned, std::string>    m_idLookup;
     IStrategizer::PlanGraphView *m_pPlanGraphView;
+    bool m_enemyPlayerUnitsCollected;
 };
 
 #endif // CLIENTMAIN_H

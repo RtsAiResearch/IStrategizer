@@ -78,19 +78,26 @@ void EntityClassExist::Copy(IClonable* p_dest)
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Consume(int p_amount)
 {
-    if (_oneUse)
+    if (_conditionParameters[PARAM_Amount] == DONT_CARE || p_amount == DONT_CARE)
     {
-        if (!_used)
-        {
-            _used = true;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return true;
     }
+    else
+    {
+        if (_oneUse)
+        {
+            if (!_used)
+            {
+                _used = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-    return true;
+        return true;
+    }
 }
 //---------------------------------------------------------------------------------------------------

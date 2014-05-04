@@ -225,7 +225,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 void BuildActionEx::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
