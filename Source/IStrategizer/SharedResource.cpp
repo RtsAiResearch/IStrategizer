@@ -45,7 +45,7 @@ void SharedResource::Lock(Action *p_pOwner)
             {
                 m_pOwner = p_pOwner;
                 AddResource(this);
-                LogInfo("Action acquired resources");
+                LogInfo("Action '%s' acquired resources", m_pOwner->ToString(true).c_str());
             }
             else
                 DEBUG_THROW(AcquireException(XcptHere));

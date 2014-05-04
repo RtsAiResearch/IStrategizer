@@ -50,7 +50,7 @@ bool PlayerResources::Lock(WorldResources* resources)
     }
     else
     {
-        LogWarning("Action failed to lock requested resources");
+        LogInfo("Action failed to lock requested resources");
     }
     
     return amountAvailable;
