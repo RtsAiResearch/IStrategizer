@@ -27,6 +27,7 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     PlanStepEx* pRootNode = (PlanStepEx*)pInitialGoal;
     m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode);
     m_nodeData[m_planRootNodeId] = NodeData();
+    OpenNode(m_planRootNodeId);
 
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
@@ -55,22 +56,25 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
         IOlcbpPlan::NodeValue pOriginalNode = pCasePlan->GetNode(caseNodeId);
         IOlcbpPlan::NodeValue pNode = static_cast<PlanStepEx*>(const_cast<PlanStepEx*>(pOriginalNode)->Clone());
         IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pNode);
+        m_nodeData[plannerNodeId] = NodeData();
+        // Add Data record for the new node
+        SetNodeSatisfyingGoal(plannerNodeId, expansionGoalNodeId);
+
+        if (casePlanRoots.count(caseNodeId) > 0)
+            newExpansionPlanRoots.insert(plannerNodeId);
 
         if (IsActionNode(plannerNodeId))
         {
             m_clonedNodesMapping[pOriginalNode] = pNode;
         }
+        else if (IsGoalNode(plannerNodeId))
+        {
+            OpenNode(plannerNodeId);
+        }
 
         // Map node ID in in the planner plan with its counterpart in case plan and vice versa
         plannerToCasePlanNodeIdMap[plannerNodeId] = caseNodeId;
         casePlanToPlannerNodeIdMap[caseNodeId] = plannerNodeId;
-
-        if (casePlanRoots.count(caseNodeId) > 0)
-            newExpansionPlanRoots.insert(plannerNodeId);
-
-        // Add Data record for the new node
-        m_nodeData[plannerNodeId] = NodeData();
-        SetNodeSatisfyingGoal(plannerNodeId, expansionGoalNodeId);
     }
 
     // 2. Unlink goal node from its direct children
@@ -133,7 +137,12 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
 
     // 5. Since the plan structure changed, recompute the NotReadyParentsCount
     // for plan graph node
-    ComputeNodesNotReadyParents();
+    ComputeNodesWaitOnParentsCount();
+
+    // 6. Record that the expanded goal node is waiting for N number of open nodes
+    // If the number of those open nodes = 0, and the goal node is not satisfied, then
+    // there is no way for the goal to succeed, and the goal should fail
+    GetNodeData(expansionGoalNodeId).WaitOnChildrenCount = pExpansionCase->Plan()->Size();
 
     m_planStructureChangedThisFrame = true;
 }
@@ -184,9 +193,9 @@ void OnlinePlanExpansionExecution::UpdateNodeChildrenWithParentReadiness(_In_ IO
 
     for (auto childId : children)
     {
-        _ASSERTE(GetNodeData(childId).NotReadyParentsCount > 0);
+        _ASSERTE(GetNodeData(childId).WaitOnParentsCount > 0);
 
-        --GetNodeData(childId).NotReadyParentsCount;
+        --GetNodeData(childId).WaitOnParentsCount;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -204,7 +213,12 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
     PlanStepEx* pCurrentPlanStep = m_pOlcbpPlan->GetNode(currentNode);
     bool hasPreviousPlan = false;
 
-    if (IsNodeOpen(currentNode))
+    if (IsNodeDone(currentNode) &&
+        pCurrentPlanStep->State() == ESTATE_Succeeded)
+    {
+        AddReadyChildrenToUpdateQueue(currentNode, updateQ);
+    }
+    else if (IsNodeOpen(currentNode))
     {
         hasPreviousPlan = DestroyGoalPlanIfExist(currentNode);
 
@@ -272,8 +286,10 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                     }
                     else
                     {
-                        LogInfo("GoalNodeID=%d Goal=%s exhausted all cases, failing its case GoalNodeID=%d", currentNode, pCurrentPlanStep->ToString().c_str(), GetNodeData(currentNode).SatisfyingGoal);
-                        OpenNode(GetNodeData(currentNode).SatisfyingGoal);
+                        LogInfo("Goal=%s with NodeID=%d exhausted all possible cases, failing it", pCurrentPlanStep->ToString().c_str(), currentNode);
+                        pCurrentPlanStep->State(ESTATE_Failed, *g_Game, clock);
+                        MarkNodeAsDone(currentNode);
+                        // OpenNode(GetNodeData(currentNode).SatisfyingGoal);
                     }
                 }
             }
@@ -286,26 +302,39 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             LogInfo("GoalNodeID=%d Goal=%s failed, opening it", currentNode, pCurrentPlanStep->ToString().c_str());
             OpenNode(currentNode);
         }
+        else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
+        {
+            LogInfo("GoalNodeID=%d Goal=%s suceeded, revising and retaining it", currentNode, pCurrentPlanStep->ToString().c_str());
+            CaseEx* currentCase = GetLastCaseForGoalNode(currentNode);
+            m_pCbReasoner->Reviser()->Revise(currentCase, true);
+            UpdateHistory(currentCase);
+            m_pCbReasoner->Retainer()->Retain(currentCase);
+            m_pCbReasoner->Retainer()->Flush();
+
+            MarkNodeAsDone(currentNode);
+            AddReadyChildrenToUpdateQueue(currentNode, updateQ);
+        }
         else
         {
             _ASSERTE(
                 pCurrentPlanStep->State() == ESTATE_NotPrepared ||
-                pCurrentPlanStep->State() == ESTATE_Succeeded ||
                 pCurrentPlanStep->State() == ESTATE_END);
 
-            ExecutionStateType oldState = pCurrentPlanStep->State();
             pCurrentPlanStep->Update(*g_Game, clock);
-            AddReadyChildrenToUpdateQueue(currentNode, updateQ);
 
-            // This condition will be true just once when the case succeeds
-            if (oldState == ESTATE_NotPrepared && pCurrentPlanStep->State() == ESTATE_Succeeded)
+            // The goal is not done yet, and all of its children are done and
+            // finished execution. It does not make sense for the goal to continue
+            // this goal should fail
+            if (pCurrentPlanStep->State() == ESTATE_NotPrepared &&
+                GetNodeData(currentNode).WaitOnChildrenCount == 0)
             {
-                LogInfo("GoalNodeID=%d Goal=%s suceeded, revising and retaining it", currentNode, pCurrentPlanStep->ToString().c_str());
-                CaseEx* currentCase = GetLastCaseForGoalNode(currentNode);
-                m_pCbReasoner->Reviser()->Revise(currentCase, true);
-                UpdateHistory(currentCase);
-                m_pCbReasoner->Retainer()->Retain(currentCase);
-                m_pCbReasoner->Retainer()->Flush();
+                LogInfo("Goal '%s' NodeID=%d is still not done and all of its children are done execution, failing it", 
+                    pCurrentPlanStep->ToString().c_str(), currentNode);
+                pCurrentPlanStep->State(ESTATE_Failed, *g_Game, clock);
+            }
+            else
+            {
+                AddReadyChildrenToUpdateQueue(currentNode, updateQ);
             }
         }
     }
@@ -316,34 +345,32 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
     PlanStepEx *pCurrentPlanStep  = m_pOlcbpPlan->GetNode(currentNode);
     _ASSERTE(IsNodeReady(currentNode));
 
-    if (IsNodeOpen(currentNode))
+    if (IsNodeDone(currentNode))
     {
-        if (pCurrentPlanStep->State() == ESTATE_Failed)
-        {
-            // We check to make sure that our parent is open before closing
-            // Our sub plan goal may be already open because any of our siblings may have failed and opened our sub plan goal
-            if (!IsNodeOpen(GetNodeData(currentNode).SatisfyingGoal))
-                OpenNode(GetNodeData(currentNode).SatisfyingGoal);
-        }
-        else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
-        {
-            CloseNode(currentNode);
-            UpdateNodeChildrenWithParentReadiness(currentNode);
-        }
-        else
-        {
-            _ASSERTE(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
-                pCurrentPlanStep->State() == ESTATE_Executing ||
-                pCurrentPlanStep->State() == ESTATE_END);
-
-            pCurrentPlanStep->Update(*g_Game, clock);
-        }
+        if (pCurrentPlanStep->State() == ESTATE_Succeeded)
+            AddReadyChildrenToUpdateQueue(currentNode, updateQ);
     }
-    else
+    else if (pCurrentPlanStep->State() == ESTATE_Failed)
     {
-        _ASSERTE(pCurrentPlanStep->State() == ESTATE_Succeeded);
+        MarkNodeAsDone(currentNode);
 
-        AddReadyChildrenToUpdateQueue(currentNode, updateQ);
+        //    // We check to make sure that our parent is open before closing
+        //    // Our sub plan goal may be already open because any of our siblings may have failed and opened our sub plan goal
+        //    if (!IsNodeOpen(GetNodeData(currentNode).SatisfyingGoal))
+        //        OpenNode(GetNodeData(currentNode).SatisfyingGoal);
+    }
+    else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
+    {
+        MarkNodeAsDone(currentNode);
+        UpdateNodeChildrenWithParentReadiness(currentNode);
+    }
+    else if (pCurrentPlanStep->State() != ESTATE_Failed)
+    {
+        _ASSERTE(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
+            pCurrentPlanStep->State() == ESTATE_Executing ||
+            pCurrentPlanStep->State() == ESTATE_END);
+
+        pCurrentPlanStep->Update(*g_Game, clock);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -364,7 +391,6 @@ void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
         }
     }
 }
-
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 {
@@ -389,12 +415,16 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
         if (IsActionNode(currentPlanStepID) && !msgConsumedByAction)
         {
             pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
-            LogInfo("Message with ID=%d consumed by action node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
+
+            if (msgConsumedByAction)
+                LogInfo("Message with ID=%d consumed by action node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
         }
-        else if (!IsActionNode(currentPlanStepID) && !msgConsumedByGoal)
+        else if (IsGoalNode(currentPlanStepID) && !msgConsumedByGoal)
         {
             pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByGoal);
-            LogInfo("Message with ID=%d consumed by goal node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
+
+            if (msgConsumedByGoal)
+                LogInfo("Message with ID=%d consumed by goal node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
         }
 
         if (msgConsumedByAction && msgConsumedByGoal)
@@ -458,7 +488,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
 
     // 4. Since the plan structure changed, recompute the NotReadyParentsCount
     // for plan graph node
-    ComputeNodesNotReadyParents();
+    ComputeNodesWaitOnParentsCount();
 
     m_planStructureChangedThisFrame = true;
 
@@ -545,7 +575,7 @@ void OnlinePlanExpansionExecution::UnlinkNodeChildren(_In_ IOlcbpPlan::NodeID no
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::ComputeNodesNotReadyParents()
+void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
 {
     IOlcbpPlan::NodeQueue Q;
     IOlcbpPlan::NodeSet visitedNodes;
@@ -560,7 +590,7 @@ void OnlinePlanExpansionExecution::ComputeNodesNotReadyParents()
     planNodes = m_pOlcbpPlan->GetNodes();
     for (auto nodeId : planNodes)
     {
-        GetNodeData(nodeId).NotReadyParentsCount = 0;
+        GetNodeData(nodeId).WaitOnParentsCount = 0;
     }
 
     Q.push(m_planRootNodeId);
@@ -574,17 +604,16 @@ void OnlinePlanExpansionExecution::ComputeNodesNotReadyParents()
         IOlcbpPlan::NodeID currNodeId = Q.front();
         Q.pop();
 
-        bool isCurrNodeOpen = GetNodeData(currNodeId).IsOpen;
-
         const IOlcbpPlan::NodeSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
+
+        bool waitOnCurrNode = 
+            (IsActionNode(currNodeId) && m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded) ||
+            (IsGoalNode(currNodeId) && IsNodeOpen(currNodeId));
 
         for (auto currChildNodeId : currChildren)
         {
-            // If current node is open, then update its children to consider the 
-            // current open node in the NotReadyParentsCount, by incrementing it by 1
-            //
-            if (isCurrNodeOpen)
-                ++GetNodeData(currChildNodeId).NotReadyParentsCount;
+            if (waitOnCurrNode)
+                ++GetNodeData(currChildNodeId).WaitOnParentsCount;
 
             if (visitedNodes.count(currChildNodeId) == 0)
             {
@@ -592,5 +621,19 @@ void OnlinePlanExpansionExecution::ComputeNodesNotReadyParents()
                 visitedNodes.insert(currChildNodeId);
             }
         }
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
+{
+    IOlcbpPlan::NodeID satisfyingGoalNode = GetNodeData(nodeId).SatisfyingGoal;
+
+    if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
+    {
+        LogInfo("On '%s' node[%d] DONE, notifying its satisfying goal '%s' node[%d]",
+            m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str(), nodeId, m_pOlcbpPlan->GetNode(satisfyingGoalNode)->ToString().c_str(), satisfyingGoalNode);
+
+        _ASSERTE(GetNodeData(satisfyingGoalNode).WaitOnChildrenCount > 0);
+        --GetNodeData(satisfyingGoalNode).WaitOnChildrenCount;
     }
 }
