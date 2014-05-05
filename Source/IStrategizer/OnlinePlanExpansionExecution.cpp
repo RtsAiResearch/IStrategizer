@@ -50,12 +50,12 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     std::map<IOlcbpPlan::NodeID, IOlcbpPlan::NodeID> plannerToCasePlanNodeIdMap;
     std::map<IOlcbpPlan::NodeID, IOlcbpPlan::NodeID> casePlanToPlannerNodeIdMap;
 
-    for (auto caseNodeId : casePlanNodes)
+    for(auto caseNodeId : casePlanNodes)
     {
         IOlcbpPlan::NodeValue pOriginalNode = pCasePlan->GetNode(caseNodeId);
         IOlcbpPlan::NodeValue pNode = static_cast<PlanStepEx*>(const_cast<PlanStepEx*>(pOriginalNode)->Clone());
         IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pNode);
-        
+
         if (IsActionNode(plannerNodeId))
         {
             m_clonedNodesMapping[pOriginalNode] = pNode;
@@ -80,7 +80,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     IOlcbpPlan::NodeQueue Q;
     IOlcbpPlan::NodeSet visitedNodes;
 
-    for (auto rootNodeId : newExpansionPlanRoots)
+    for(auto rootNodeId : newExpansionPlanRoots)
     {
         // Cross link the goal node with the sub plan roots
         LinkNodes(expansionGoalNodeId, rootNodeId);
@@ -232,12 +232,15 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             {
                 CaseSet exclusions = GetNodeData(currentNode).TriedCases;
 
-                if (GetNodeData(currentNode).BelongingCase != nullptr)
+                IOlcbpPlan::NodeID satisfyingGoalNode = GetNodeData(currentNode).SatisfyingGoal;
+
+                if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
                 {
                     // Add belonging case to exclusion to avoid recursive expansion of plans
-                    exclusions.insert(GetNodeData(currentNode).BelongingCase);
+                    _ASSERTE(GetNodeData(satisfyingGoalNode).BelongingCase != nullptr);
+                    exclusions.insert(GetNodeData(satisfyingGoalNode).BelongingCase);
                 }
-                
+
                 CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State(), exclusions);
                 // Retriever should always retrieve a non tried case for that specific node
                 _ASSERTE(!IsCaseTried(currentNode, caseEx));
@@ -352,7 +355,7 @@ void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
     for (auto caseNodeId : casePlanNodes)
     {
         IOlcbpPlan::NodeValue pOriginalNode = pCasePlan->GetNode(caseNodeId);
-        
+
         if (BELONG(ActionType, pCasePlan->GetNode(caseNodeId)->StepTypeId()))
         {
             Action* pOriginalActionNode = (Action*)pOriginalNode;
@@ -393,7 +396,7 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
             pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByGoal);
             LogInfo("Message with ID=%d consumed by goal node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
         }
-  
+
         if (msgConsumedByAction && msgConsumedByGoal)
         {
             break;
