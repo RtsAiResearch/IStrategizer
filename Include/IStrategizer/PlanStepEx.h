@@ -58,7 +58,6 @@ namespace IStrategizer
         PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
         void InitializeAddressesAux();
         bool IsCurrentStateTimeout(const WorldClock& p_clock);
-        virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         virtual void InitializePostConditions() = 0;
 
     public:
@@ -79,6 +78,7 @@ namespace IStrategizer
         virtual ~PlanStepEx() {}
         PlanStepParameters& Parameters() { return _params; }
         ExecutionStateType State() const { return _state; }
+        virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         StepLevelType LevelType() const { return _stepLevelType; }
         CompositeExpression* PostCondition() { if (!_postCondition) InitializeConditions(); return _postCondition; }
         IClonable* Clone();

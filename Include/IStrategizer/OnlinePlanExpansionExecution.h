@@ -30,23 +30,37 @@ namespace IStrategizer
         class NodeData
         {
         public:
+            IOlcbpPlan::NodeID ID;
             CaseSet TriedCases;
             CaseEx* BelongingCase;
             IOlcbpPlan::NodeID SatisfyingGoal;
-            unsigned NotReadyParentsCount;
+            unsigned WaitOnParentsCount;
+            unsigned WaitOnChildrenCount;
             bool IsOpen;
+            bool IsDone;
 
             NodeData()
-                : BelongingCase(nullptr),
+                :
+                ID(IOlcbpPlan::NullNodeID),
+                BelongingCase(nullptr),
                 SatisfyingGoal(IOlcbpPlan::NullNodeID),
-                NotReadyParentsCount(0),
-                IsOpen(true)
+                WaitOnParentsCount(0),
+                WaitOnChildrenCount(0),
+                IsDone(false),
+                IsOpen(false)
             { }
+
+            void DecWaitOnParentsCount() { LogInfo("Dec WaitOnParentsCount=%d for node[%d]", WaitOnParentsCount, ID); --WaitOnParentsCount; }
+            void IncWaitOnParentsCount() { LogInfo("Inc WaitOnParentsCount=%d for node[%d]", WaitOnParentsCount, ID); ++WaitOnParentsCount; }
+            void SetWaitOnParentsCount(unsigned val) { WaitOnParentsCount = val; }
+            void DecWaitOnChildrenCount() { LogInfo("Dec WaitOnChildrenCount=%d for node[%d]", WaitOnChildrenCount, ID); --WaitOnChildrenCount; }
+            void SetWaitOnChildrenCount(unsigned val) { WaitOnChildrenCount = val; }
         };
 
         void ExpandGoal(IOlcbpPlan::NodeID goalNode, CaseEx* pCase);
 
-        void UpdateNodeChildrenWithParentReadiness(_In_ IOlcbpPlan::NodeID nodeId);
+        void UpdateBelongingSubplanChildrenWithParentReadiness(_In_ IOlcbpPlan::NodeID nodeId);
+        void UpdateGoalPlanChildrenWithParentReadiness(_In_ IOlcbpPlan::NodeID nodeId);
         bool DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeID planGoalNodeId);
         void AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan::NodeID nodeId, _Inout_ IOlcbpPlan::NodeQueue &updateQ);
         void UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock, _Inout_ IOlcbpPlan::NodeQueue& updateQ);
@@ -58,11 +72,14 @@ namespace IStrategizer
 
         void OpenNode(_In_ IOlcbpPlan::NodeID nodeId) { GetNodeData(nodeId).IsOpen = true; }
         void CloseNode(_In_ IOlcbpPlan::NodeID nodeId) { GetNodeData(nodeId).IsOpen = false; }
+        void MarkNodeAsDone(_In_ IOlcbpPlan::NodeID nodeId) { GetNodeData(nodeId).IsDone = true; OnNodeDone(nodeId); }
         bool IsNodeOpen(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).IsOpen == true; }
-        bool IsNodeReady(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).NotReadyParentsCount == 0; }
+        bool IsNodeReady(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).WaitOnParentsCount == 0; }
+        bool IsNodeDone(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).IsDone == true; }
 
         void SetGoalNodeBelongingCase(_In_ IOlcbpPlan::NodeID nodeId, _In_ CaseEx* pCase) { GetNodeData(nodeId).BelongingCase = pCase; }
         void SetNodeSatisfyingGoal(_In_ IOlcbpPlan::NodeID nodeId, _In_ IOlcbpPlan::NodeID goalNodeId) { GetNodeData(nodeId).SatisfyingGoal = goalNodeId; }
+        void OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId);
 
         bool IsGoalNode(_In_ IOlcbpPlan::NodeID nodeId) const;
         bool IsActionNode(_In_ IOlcbpPlan::NodeID nodeId) const;
@@ -74,7 +91,7 @@ namespace IStrategizer
 
         void GetNodeChildrenInBelongingSubplan(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSet& children) const;
         void UnlinkNodeChildren(_In_ IOlcbpPlan::NodeID nodeId);
-        void ComputeNodesNotReadyParents();
+        void ComputeNodesWaitOnParentsCount();
         void UpdateHistory(CaseEx* pCase);
         CaseBasedReasonerEx *m_pCbReasoner;
         std::map<IOlcbpPlan::NodeID, NodeData> m_nodeData;
