@@ -17,15 +17,15 @@ namespace StarCraftModel
         void EnumerateResearches();
         void InitializeMap();
         int GetMaxForceSize();
-        GamePlayer* FetchPlayer(PlayerType p_id);
-        GameType* FetchEntityType(EntityClassType p_id);
+        GamePlayer* FetchPlayer(IStrategizer::PlayerType p_id);
+        IStrategizer::GameType* FetchEntityType(EntityClassType p_id);
         GameResearch* FetchResearch(ResearchType p_id);
 
     public:
         StarCraftGame();
         void ExecuteCommand(const char *p_cmd);
         void DisplayMessage(const char *p_msg);
-        int GetMaxTrainingQueueCount();
+        size_t GetMaxTrainingQueueCount();
     };
 }
 

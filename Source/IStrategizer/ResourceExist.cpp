@@ -33,12 +33,19 @@ void ResourceExist::Copy(IClonable* p_dest)
 //----------------------------------------------------------------------------------------------
 bool ResourceExist::Consume(int p_amount)
 {
-    if (_conditionParameters[PARAM_Amount] >= p_amount)
+    if (_conditionParameters[PARAM_Amount] == DONT_CARE || p_amount == DONT_CARE)
     {
-        _conditionParameters[PARAM_Amount] -= p_amount;
         return true;
     }
+    else
+    {
+        if (_conditionParameters[PARAM_Amount] >= p_amount)
+        {
+            _conditionParameters[PARAM_Amount] -= p_amount;
+            return true;
+        }
 
-    return false;
+        return false;
+    }
 }
 //----------------------------------------------------------------------------------------------

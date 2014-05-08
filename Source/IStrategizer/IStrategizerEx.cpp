@@ -25,9 +25,11 @@
 #include "Toolbox.h"
 #endif
 #include <cassert>
+#include <iostream>
 #include "IMSystemManager.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 IStrategizerEx::IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame) 
     : _self(PLAYER_Self),
@@ -80,7 +82,7 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
     case MSG_GameEnd:
         if (_param.Phase == PHASE_Offline)
         {
-            StartOfflineLearning();
+            _caseLearning->Learn();
         }
         break;
     }
@@ -111,11 +113,6 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
     {
         cout << "IStrategizer encountered unhandled std exception: " << e.what() << endl;
     }
-}
-//--------------------------------------------------------------------------------
-void IStrategizerEx::StartOfflineLearning()
-{
-    _caseLearning->Learn();
 }
 //----------------------------------------------------------------------------------------------
 IStrategizerEx::~IStrategizerEx()

@@ -18,7 +18,7 @@ namespace IStrategizer
         //----------------------------------------------------------------------------------------------
         MultiIndex(int p_count, ...) : Count(p_count)
         {
-            assert(p_count > 0);
+            _ASSERTE(p_count > 0);
             int     i = -1;
             va_list argList;
 

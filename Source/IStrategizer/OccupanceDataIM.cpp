@@ -1,6 +1,7 @@
 #include "OccupanceDataIM.h"
 #include <algorithm>
 #include "RtsGame.h"
+#include "WorldMap.h"
 #include "GameEntity.h"
 #include "Vector2.h"
 
@@ -18,7 +19,7 @@ void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
     Vector2 currentPosition;
 
     pGameObj = p_pCaller->GetObj(p_pObjEntry);
-    assert(pGameObj);
+    _ASSERTE(pGameObj);
     currentPosition.X = pGameObj->Attr(EOATTR_PosX);
     currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
     
@@ -37,7 +38,7 @@ void StampNonDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
     Vector2 currentPosition;
 
     pGameObj = p_pCaller->GetObj(p_pObjEntry);
-    assert(pGameObj);
+    _ASSERTE(pGameObj);
     currentPosition.X = pGameObj->Attr(EOATTR_PosX);
     currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
 
@@ -90,10 +91,10 @@ bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, T
 {
     bool stopSearch = false;
 
-    assert(p_pParam);
+    _ASSERTE(p_pParam);
     bool *pAllCellsFree = (bool*)p_pParam;
 
-    assert(p_pCell);
+    _ASSERTE(p_pCell);
     if (p_pCell->Inf != nullptrInfluence || p_pCell->Data != CELL_Free)
     {
         stopSearch = true;
@@ -116,10 +117,10 @@ bool OccupanceDataIM::ReservePredicate(unsigned p_worldX, unsigned p_worldY, TCe
 {
     bool stopSearch = false;
 
-    assert(p_pParam);
+    _ASSERTE(p_pParam);
     bool *pReserveOk = (bool*)p_pParam;
 
-    assert(p_pCell);
+    _ASSERTE(p_pCell);
     if (p_pCell->Data == CELL_Free)
     {
         p_pCell->Data = CELL_Reserved;
@@ -146,10 +147,10 @@ bool OccupanceDataIM::FreePredicate(unsigned p_worldX, unsigned p_worldY, TCell*
 {
     bool stopSearch = false;
 
-    assert(p_pParam);
+    _ASSERTE(p_pParam);
     bool *pFreeOk = (bool*)p_pParam;
 
-    assert(p_pCell);
+    _ASSERTE(p_pCell);
     if (p_pCell->Data == CELL_Reserved)
     {
         p_pCell->Data = CELL_Free;
@@ -170,4 +171,10 @@ bool OccupanceDataIM::FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_
     ForEachCellInArea(p_areaPos, p_areaWidth, p_areaHeight, FreePredicate, &freeOk);
 
     return freeOk;
+}
+//////////////////////////////////////////////////////////////////////////
+bool OccupanceDataIM::CanBuildHere(Vector2 p_worldPos, int p_buildingWidth, int p_buildingHeight, EntityClassType p_buildingType)
+{
+    return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight) &&
+           g_Game->Map()->CanBuildHere(p_worldPos, p_buildingType);
 }

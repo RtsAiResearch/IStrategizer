@@ -12,6 +12,7 @@
 #include "DataMessage.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 DestroyEntityTypeGoal::DestroyEntityTypeGoal() : GoalEx(GOALEX_DestroyEntityType)
 {
@@ -27,9 +28,11 @@ DestroyEntityTypeGoal::DestroyEntityTypeGoal(const PlanStepParameters& p_paramet
 void DestroyEntityTypeGoal::InitializePostConditions()
 {
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    int amount = _params[PARAM_Amount];
     
-    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, targetType, amount, true));
+    std::vector<Expression*> expressions;
+    expressions.push_back(new EntityClassExist(PLAYER_Enemy, targetType, 0, true));
+
+    _postCondition = new And(expressions);
 }   
 //----------------------------------------------------------------------------------------------
 void DestroyEntityTypeGoal::Copy(IClonable* p_dest)
@@ -44,19 +47,43 @@ bool DestroyEntityTypeGoal::SuccessConditionsSatisfied(RtsGame& game)
     return m_demandTargetSize >= _params[PARAM_Amount];
 }
 //----------------------------------------------------------------------------------------------
-void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed )
+void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
     if (p_msg->MessageTypeID() == MSG_EntityDestroy)
     {
         EntityDestroyMessage* pMsg = static_cast<EntityDestroyMessage*>(p_msg);
-        assert(pMsg && pMsg->Data());
+        _ASSERTE(pMsg && pMsg->Data());
 
         if (pMsg->Data()->OwnerId != PLAYER_Enemy)
             return;
 
+        m_destroyed[pMsg->Data()->EntityType]++;
+
         if (pMsg->Data()->EntityType == (EntityClassType)_params[PARAM_TargetEntityClassId])
         {
             m_demandTargetSize++;
+            p_consumed = true;
         }
     }
+}
+//----------------------------------------------------------------------------------------------
+vector<GoalEx*> DestroyEntityTypeGoal::GetSucceededInstances(RtsGame &game)
+{
+    vector<GoalEx*> succeededGoals;
+    PlanStepParameters params;
+
+    for (map<EntityClassType, int>::iterator itr = m_destroyed.begin(); itr != m_destroyed.end(); itr++)
+    {
+        params[PARAM_TargetEntityClassId] = (*itr).first;
+        params[PARAM_Amount] = (*itr).second;
+        succeededGoals.push_back(new DestroyEntityTypeGoal(params));
+
+        LogInfo("DestroyEntityTypeGoal succeeded for entity type='%s' with amount='%d'",
+            Enums[params[PARAM_TargetEntityClassId]],
+            params[PARAM_Amount]);
+    }
+
+    m_destroyed.clear();
+
+    return succeededGoals;
 }

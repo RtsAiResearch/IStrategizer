@@ -25,7 +25,8 @@ TrainAction::TrainAction()
     : Action(ACTIONEX_Train, MaxPrepTime, MaxExecTrialTime, MaxExecTime),
     m_trainStarted(false),
     m_traineeId(TID()),
-    m_trainerId(TID())
+    m_trainerId(TID()),
+    m_pTrainee(nullptr)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
@@ -73,7 +74,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
                 // other ready actions in the same update cycle will receive the same message
                 // and they may bind to the same trainee
                 pEntity->Lock(this);
-
+                consumed = true;
                 LogInfo("Action %s has bound trainee=%d to trainer=%d", ToString().c_str(), m_traineeId, m_trainerId);
             }
         }
@@ -102,7 +103,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
             trainerBusy = trainerState == OBJSTATE_Training;
             // 3. The trainee unit object exist, i.e not cancel
             traineeExist = g_Assist.DoesEntityObjectExist(m_traineeId);
-            
+
             if (traineeExist && !trainerBusy)
             {
                 success = true;
@@ -126,6 +127,11 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
         {
             success = true;
         }
+    }
+    else
+    {
+        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, m_trainerType, 1, false);
+        m_history.Add(ESTATE_Failed, failedCondition);
     }
 
     return success;
@@ -175,15 +181,10 @@ bool TrainAction::ExecuteAux(RtsGame& game, const WorldClock& clock)
         // Issue train order
         pGameTrainer = game.Self()->GetEntity(m_trainerId);
         _ASSERTE(pGameTrainer);
+        _ASSERTE(!m_requiredResources.IsNull());
+        m_requiredResources.Lock(this);
+        LogInfo("Action %s commanded trainer=%d to train trainee=%d", ToString().c_str(), m_trainerId, m_traineeId);
         executed = pGameTrainer->Train(traineeType);
-
-        if (executed)
-        {
-            assert(!m_requiredResources.IsNull());
-            m_requiredResources.Lock(this);
-
-            LogInfo("Action %s commanded trainer=%d to train trainee=%d", ToString().c_str(), m_trainerId, m_traineeId);
-        }
     }
 
     return executed;
@@ -199,34 +200,37 @@ void TrainAction::InitializePostConditions()
 void TrainAction::InitializePreConditions()
 {
     EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
-    EntityClassType trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
+    m_trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
     vector<Expression*> m_terms;
     WorldResources completeRequiredRespurces = WorldResources::FromEntity(traineeType);
-    
+
     // Do not lock resources other than supply, because supply does not get consumed
     // when the action is triggered. Unlike primary and secondary resources which get
     // consumed upon executing the action
     m_requiredResources = WorldResources(completeRequiredRespurces.Supply(), 0, 0);
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, trainerType, 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, 1, true));
     g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void IStrategizer::TrainAction::OnSucccess(RtsGame& game, const WorldClock& clock)
+void TrainAction::OnSucccess(RtsGame& game, const WorldClock& clock)
 {
-    if (m_pTrainee != nullptr)
-        m_pTrainee->Unlock(this);
-
-    assert(!m_requiredResources.IsNull());
-    m_requiredResources.Unlock(this);
+    FreeResources(game);
 }
 //----------------------------------------------------------------------------------------------
-void IStrategizer::TrainAction::OnFailure(RtsGame& game, const WorldClock& clock)
+void TrainAction::OnFailure(RtsGame& game, const WorldClock& clock)
 {
-    if (m_pTrainee != nullptr)
-        m_pTrainee->Unlock(this);
+    FreeResources(game);
+}
+//----------------------------------------------------------------------------------------------
+void TrainAction::FreeResources(RtsGame& game)
+{
+    GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
 
-    assert(!m_requiredResources.IsNull());
-    m_requiredResources.Unlock(this);
+    if (pTrainee && pTrainee->IsLocked())
+        pTrainee->Unlock(this);
+
+    if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
+        m_requiredResources.Unlock(this);
 }

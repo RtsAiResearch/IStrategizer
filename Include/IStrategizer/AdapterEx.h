@@ -23,6 +23,7 @@ namespace IStrategizer
         int BuildingWidth;
         int BuildingHeight;
         Vector2 CandidateBuildPos;
+        EntityClassType BuildingType;
     };
 
     class AdapterEx : public AbstractAdapter
@@ -35,6 +36,7 @@ namespace IStrategizer
         TID AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters);
         TID GetEntityObjectId(EntityClassType p_entityType,const std::vector<ObjectStateType>& p_rankedStates);
         TID GetEntityObjectId(EntityClassType p_entityType);
+        TID AdaptResourceForGathering(ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID);
         Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
         Vector2 AdaptEnemyBorder();
         static std::vector<ObjectStateType> WorkerStatesRankVector;
@@ -42,16 +44,14 @@ namespace IStrategizer
         static std::vector<ObjectStateType> EntityToMoveStatesRankVector;
 
     private:
-        Vector2 GetBotColonyCenter();
         static void InitializePredefinedRankedStates();
         static bool EntityToMoveStatesComparer(std::pair<TID, ObjectStateType> &p_leftAttacker, std::pair<TID, ObjectStateType> &p_rightAttacker);
         static bool IsValidEntityState(ObjectStateType p_entityState, const std::vector<ObjectStateType>& p_rankedStates);
         static int GetEntityStateIndex(ObjectStateType p_entityState, const std::vector<ObjectStateType>& p_rankedStates);
         static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_pCell, void *p_pParam);
-
+        MapArea AdaptPositionForSpecialBuilding(EntityClassType p_buildingType);
         const static int DefaultBuildingSpacing;
         static bool IsRankedStatesInitialized;
-        Vector2 m_botColonyCenter;
         int m_buildingSpacing;
 
     };

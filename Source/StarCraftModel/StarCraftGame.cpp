@@ -76,15 +76,15 @@ void StarCraftGame::EnumerateEntityTypes()
     vector<IStrategizer::GameType*> oldEntityTypes;
     vector<EntityClassType> newEntityTypes;
 
-    m_entityTypes.Values(oldEntityTypes);
+    sm_entityTypes.Values(oldEntityTypes);
     Toolbox::MemoryClean(oldEntityTypes);
-    m_entityTypes.clear();
+    sm_entityTypes.clear();
 
     g_Database.EntityTypes(newEntityTypes);
 
     for(unsigned i = 0, size = newEntityTypes.size(); i < size; ++i)
     {
-        m_entityTypes[(EntityClassType)newEntityTypes[i]] = nullptr;
+        sm_entityTypes[(EntityClassType)newEntityTypes[i]] = nullptr;
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -93,15 +93,15 @@ void StarCraftGame::EnumerateResearches()
     vector<GameResearch*> oldResearchTypes;
     vector<ResearchType> newResearchTypes;
 
-    m_researches.Values(oldResearchTypes);
+    sm_researches.Values(oldResearchTypes);
     Toolbox::MemoryClean(oldResearchTypes);
-    m_researches.clear();
+    sm_researches.clear();
 
     g_Database.ResearchTypes(newResearchTypes);
 
     for(unsigned i = 0, size = newResearchTypes.size(); i < size; ++i)
     {
-        m_researches[(ResearchType)newResearchTypes[i]] = nullptr;
+        sm_researches[(ResearchType)newResearchTypes[i]] = nullptr;
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ GameResearch* StarCraftGame::FetchResearch(ResearchType p_id)
         research = new StarCraftResearch(upgrade);
     }
 
-    assert(research);
+    _ASSERTE(research);
     research->Initialize();
 
     return research;
@@ -201,7 +201,7 @@ int StarCraftGame::GetMaxForceSize()
     return 12;
 }
 //----------------------------------------------------------------------------------------------
-int StarCraftGame::GetMaxTrainingQueueCount()
+size_t StarCraftGame::GetMaxTrainingQueueCount()
 {
     return 5;
 }

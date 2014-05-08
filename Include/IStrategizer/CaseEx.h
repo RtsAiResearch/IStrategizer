@@ -2,21 +2,16 @@
 #ifndef CASEEX_H
 #define CASEEX_H
 
-#include <vector>
-
-#ifndef USEROBJECT_H
+#include "RtsGame.h"
 #include "UserObject.h"
-#endif
-
-#ifndef ENGINEDATA_H
 #include "EngineData.h"
-#endif
+
+#include <vector>
 
 namespace IStrategizer
 {
     class GoalEx;
-    class PlanGraph;
-    class GameStateEx;
+    class RtsGame;
 
     ///> class=CaseEx
     class CaseEx : public Serialization::UserObject
@@ -29,16 +24,17 @@ namespace IStrategizer
             m_successCount(1),
             m_pPlan(nullptr) {};
         
-        CaseEx(OlcbpPlan* pPlan, GoalEx* pGoal, GameStateEx* pGameState, int trialCount, int successCount)
+        CaseEx(OlcbpPlan* pPlan, GoalEx* pGoal, RtsGame* pGameState, int trialCount, int successCount)
             : m_pGoal(pGoal),
-            m_pGameState(pGameState),
+            // FIXME: set to the actual RtsGame object when serializing RtsGame code is ready
+            m_pGameState(nullptr),
             m_trialCount(trialCount),
             m_successCount(successCount),
             m_pPlan(pPlan) {}
 
         IOlcbpPlan* Plan() const { return m_pPlan; }
         GoalEx* Goal() const { return m_pGoal; }
-        GameStateEx* GameState() const { return m_pGameState; }
+        RtsGame* GameState() const { return m_pGameState; }
         int TrialCount() const { return m_trialCount; }
         int SuccessCount() const { return m_successCount; }
         void TrialCount(int val) { m_trialCount = val; }
@@ -50,8 +46,8 @@ namespace IStrategizer
     private:
         ///> type=GoalEx*
         GoalEx* m_pGoal;
-        ///> type=GameStateEx*
-        GameStateEx* m_pGameState;
+        ///> type=RtsGame*
+        RtsGame* m_pGameState;
         ///> type=int
         int m_trialCount;
         ///> type=int

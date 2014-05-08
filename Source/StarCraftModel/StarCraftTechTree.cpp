@@ -166,7 +166,7 @@ void StarCraftTechTree::GetDependents(int p_typeOrResearchId, vector<ResearchTyp
     UNREFERENCED_PARAMETER(p_typeOrResearchId);
     UNREFERENCED_PARAMETER(p_researches);
     UNREFERENCED_PARAMETER(p_entityTypes);
-    assert(0);
+    _ASSERTE(0);
     /*if(m_dependentsCache.Contains(p_typeOrResearchId))
     {
         Dependency& dependents = m_dependentsCache[p_typeOrResearchId];

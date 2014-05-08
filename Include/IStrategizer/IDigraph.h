@@ -4,7 +4,10 @@
 
 #include "IStrategizerException.h"
 #include "SSet.h"
+
+#include <vector>
 #include <queue>
+#include <unordered_set>
 
 namespace IStrategizer
 {
@@ -22,6 +25,8 @@ namespace IStrategizer
         typedef TNodeValue NodeValue;
         ///> alias=NodeSet(set(NodeID))
         typedef Serialization::SSet<NodeID> NodeSet;
+        
+        typedef std::unordered_set<NodeID> UnorderedNodeSet;
 
         typedef std::vector<NodeID> NodeList;
 
@@ -38,7 +43,7 @@ namespace IStrategizer
         // Returns:   	NodeID:  A unique ID used to reference the added node
         // in further Digraph methods
         //************************************
-        virtual NodeID AddNode(_In_ NodeValue& val) = 0;
+        virtual NodeID AddNode(const _In_ NodeValue& val) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::RemoveNode
@@ -117,6 +122,14 @@ namespace IStrategizer
         //************************************
         virtual const NodeSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
             throw(ItemNotFoundException) = 0;
+        
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
+        // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
+        // Parameter: 	NodeList p_subGraphIndexes: The indexes describing the sub-part to replace.
+        // Parameter:   TNodeValue p_substitute: The TNodeValue to replace the sub-part with.
+        //************************************      
+        virtual void SubGraphSubstitution(NodeList p_subGraphIndexes, TNodeValue p_substitute) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetOrphanNodes
@@ -131,6 +144,20 @@ namespace IStrategizer
         // Returns:   	NodeSet
         //************************************
         virtual NodeSet GetLeafNodes() const = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Lock
+        // Description:	Locks the graph for exclusive read/write access by the caller thread
+        // Returns:   	void
+        //************************************
+        virtual void Lock() = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Unlock
+        // Description:	Unlocks the graph acquisition by caller thread
+        // Returns:   	void
+        //************************************
+        virtual void Unlock() = 0;
     };
 }
 

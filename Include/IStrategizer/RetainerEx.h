@@ -15,17 +15,18 @@ namespace IStrategizer
     class RetainerEx : public AbstractRetainer
     {
     private:
-        string     _caseBasePath;
-        bool        _caseBaseLoaded;
+        string _caseBasePath;
+        bool _caseBaseLoaded;
 
     protected:
-        void                ExecuteCommand(const char* p_cmd);
+        void ExecuteCommand(const char* p_cmd);
+
     public:
-                            RetainerEx(string p_caseBasePath);
-        void             ReadCaseBase();
-        void             Flush();
-        void                Retain(const CaseEx* p_case);
-                            ~RetainerEx();
+        RetainerEx(string p_caseBasePath);
+        void ReadCaseBase();
+        void Flush();
+        void Retain(CaseEx* p_case);
+        ~RetainerEx();
     };
 }
 #endif // RETAINEREX_H

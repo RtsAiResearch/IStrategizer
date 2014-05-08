@@ -37,6 +37,7 @@ namespace IStrategizer
         void HandleMessage(RtsGame& game, Message* pMsg, bool& consumed);
         void InitializePostConditions();
         void InitializePreConditions();
+        void FreeResources(RtsGame& game);
 
     private:
         TID m_trainerId;
@@ -44,6 +45,7 @@ namespace IStrategizer
         GameEntity* m_pTrainee;
         bool m_trainStarted;
         WorldResources m_requiredResources;
+        EntityClassType m_trainerType;
     };
 }
 

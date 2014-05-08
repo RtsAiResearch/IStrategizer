@@ -35,7 +35,7 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_paramete
         break;
 
     default:
-        throw exception("Not supported goal");
+        DEBUG_THROW(InvalidParameterException(XcptHere));
     }
 
     if(p_initConditions)
@@ -71,7 +71,7 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
         break;
 
     default:
-        throw exception("Not supported goal");
+        DEBUG_THROW(InvalidParameterException(XcptHere));
     }
 
     if(p_initConditions)

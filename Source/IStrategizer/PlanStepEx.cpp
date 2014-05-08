@@ -70,10 +70,9 @@ void PlanStepEx::Copy(IClonable* p_dest)
 
     m_dest->_stepTypeId = _stepTypeId;
     m_dest->_state = _state;
-    m_dest->_params                = _params;
+    m_dest->_params = _params;
     m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
     m_dest->_stepLevelType = _stepLevelType;
-    m_dest->_data = _data;
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)
@@ -122,7 +121,7 @@ void PlanStepEx::Update(RtsGame& game, const WorldClock& p_clock)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-std::string PlanStepEx::ToString() const
+std::string PlanStepEx::ToString(bool minimal) const
 {
     string stepDescription;
     // INT_MAX is 10 digits, reserve array of 16 for performance
@@ -134,45 +133,55 @@ std::string PlanStepEx::ToString() const
     stepDescription += "[";
     stepDescription += to_string((_ULonglong)_id);
     stepDescription += "]";
-    stepDescription += '(';
 
-    for (PlanStepParameters::const_iterator itr = _params.begin();
-        itr != _params.end(); ++itr)
+    if (!minimal)
     {
-        // Parameters format is:
-        // <key>=<value>, ...
-        ParameterType paramKey = itr->first;
-        const char* paramDesc = Enums[(int)paramKey];
-        
-        _ASSERTE(paramDesc);
-        stepDescription += paramDesc;
-        stepDescription += '=';
+        stepDescription += '(';
 
-        // Parameter value is not an engine defined ID,
-        // convert the int type to string
-        if (ISREALVAL(ParameterType, itr->first))
+        for (PlanStepParameters::const_iterator itr = _params.begin();
+            itr != _params.end(); ++itr)
         {
-            _itoa_s(itr->second, paramRealVal, 10);
-            stepDescription += paramRealVal;
-        }
-        // Parameter value is an engine defined ID
-        // Use the Enums lookup table to translate it to string
-        else
-        {
-            _ASSERTE(Enums[itr->second] != nullptr);
-            stepDescription += Enums[itr->second];
+            // Parameters format is:
+            // <key>=<value>, ...
+            ParameterType paramKey = itr->first;
+
+            if (ISREALVAL(ParameterType, paramKey) && 
+                itr->second == DONT_CARE)
+                continue;
+
+            _ASSERTE(Enums[(int)paramKey]);
+
+            string paramDesc = Enums[(int)paramKey];
+            paramDesc += '=';
+
+            // Parameter value is not an engine defined ID,
+            // convert the int type to string
+            if (ISREALVAL(ParameterType, paramKey))
+            {
+                _itoa_s(itr->second, paramRealVal, 10);
+                paramDesc += paramRealVal;
+            }
+            // Parameter value is an engine defined ID
+            // Use the Enums lookup table to translate it to string
+            else
+            {
+                _ASSERTE(Enums[itr->second] != nullptr);
+                paramDesc += Enums[itr->second];
+            }
+
+            stepDescription += paramDesc;
+
+            if (paramIdx < _params.size() - 1)
+            {
+                stepDescription += ',';
+                stepDescription += ' ';
+            }
+
+            ++paramIdx;
         }
 
-        if (paramIdx < _params.size() - 1)
-        {
-            stepDescription += ',';
-            stepDescription += ' ';
-        }
-
-        ++paramIdx;
+        stepDescription += ')';
     }
-
-    stepDescription += ')';
 
     return stepDescription;
 }

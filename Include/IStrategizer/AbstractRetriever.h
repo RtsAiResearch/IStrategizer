@@ -4,6 +4,7 @@
 #ifndef ENGINECOMPONENT_H
 #include "EngineComponent.h"
 #endif
+#include <set>
 
 namespace IStrategizer
 {
@@ -15,12 +16,11 @@ namespace IStrategizer
     class AbstractRetriever : public EngineComponent
     {
     public:
-                        AbstractRetriever(AbstractRetainer* p_pRetainer, const char* p_pName) : EngineComponent(p_pName), m_pRetainer(p_pRetainer) {}
-        virtual CaseEx* Retrieve(const GoalEx* p_goal, const GameStateEx* p_gameState) = 0;
+        AbstractRetriever(AbstractRetainer* p_pRetainer, const char* p_pName) : EngineComponent(p_pName), m_pRetainer(p_pRetainer) {}
+        virtual CaseEx* Retrieve(const GoalEx* pGoal, const GameStateEx* pGameState, const std::set<CaseEx*>& exclusion) = 0;
         
     protected:
         AbstractRetainer *m_pRetainer;
-
     };
 }
 

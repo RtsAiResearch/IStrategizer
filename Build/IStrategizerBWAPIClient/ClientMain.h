@@ -38,7 +38,7 @@ protected:
     void OnMatchEnd(bool p_isWinner);
     void OnUnitCreate(BWAPI::Unit p_pUnit);
     void OnUnitDestroy(BWAPI::Unit p_pUnit);
-    void OnUniRenegade(BWAPI::Unit p_pUnit);
+    void OnUnitRenegade(BWAPI::Unit p_pUnit);
     void OnSendText(const std::string &p_text);
     void OnGameFrame();
 
@@ -64,6 +64,7 @@ private:
     IStrategizer::GameTraceCollector *m_pTraceCollector;
     IStrategizer::CrossMap<unsigned, std::string>    m_idLookup;
     IStrategizer::PlanGraphView *m_pPlanGraphView;
+    bool m_enemyPlayerUnitsCollected;
 };
 
 #endif // CLIENTMAIN_H

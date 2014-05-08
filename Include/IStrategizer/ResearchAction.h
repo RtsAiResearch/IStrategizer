@@ -32,7 +32,8 @@ namespace IStrategizer
         void InitializePreConditions();
 
     private:
-        TID _researcherId;
+        TID m_researcherId;
+        EntityClassType m_researcherType;
     };
 }
 

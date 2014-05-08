@@ -2,13 +2,6 @@
 
 using namespace IStrategizer;
 
-void Expression::InitializeAddressesAux()
-{
-    AddMemberAddress(3,
-        &_expressionType,
-        &_isEvaluated,
-        &_isSatisfied);
-}
 //----------------------------------------------------------------------------------------------
 IClonable* Expression::Clone()
 {

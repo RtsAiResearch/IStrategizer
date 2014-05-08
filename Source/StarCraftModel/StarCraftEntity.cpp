@@ -19,9 +19,6 @@ using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
-#define TilePositionFromUnitPosition(UnitPos) (UnitPos / 32)
-#define UnitPositionFromTilePosition(TilePos) (TilePos * 32)
-
 StarCraftEntity::StarCraftEntity(Unit p_unit) : GameEntity(p_unit->getID()), m_unit(p_unit)
 {
     m_ownerId = g_Database.PlayerMapping.GetByFirst(m_unit->getPlayer()->getID());
@@ -71,7 +68,7 @@ int StarCraftEntity::Attr(EntityObjectAttribute p_attrId) const
         return m_unit->isMoving();
 
     default:
-        assert(0);
+        _ASSERTE(0);
     }
 
     return 0;
@@ -133,18 +130,27 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position) 
 {
-    TilePosition   pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
+    TilePosition pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
     UnitType type;
-    TID             gameTypeId;
-    string         typeName;
+    TID gameTypeId;
+    string typeName;
 
     gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
     typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
-
+    
     type = UnitType::getType(typeName);
     type = BWAPI::UnitType::getType(typeName);
 
-    return m_unit->build(type, pos);
+    if (type.isAddon())
+    {
+        _ASSERTE(m_unit->canBuildAddon(type));
+        return m_unit->buildAddon(type);
+    }
+    else
+    {
+        // _ASSERTE(Broodwar->canBuildHere(pos, type));
+        return m_unit->build(type, pos);
+    }
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackGround(Vector2 p_position)
@@ -161,7 +167,7 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
     target = Broodwar->getUnit(p_targetEntityObjectId);
 
     if (!target)
-        throw ItemNotFoundException(XcptHere);
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
 
     return attacker->attack(target->getPosition());
 };
@@ -192,7 +198,9 @@ bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
     Unit traineeObj = Broodwar->getUnit(p_traineeId);
 
     if (nullptr == traineeObj)
-        throw ItemNotFoundException(XcptHere);
+    {
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
+    }
 
     return MathHelper::RectangleMembership(
         m_unit->getLeft(),
@@ -231,4 +239,16 @@ bool StarCraftEntity::Move(Vector2 p_position)
 bool StarCraftEntity::IsNull()
 {
     return m_unit == nullptr;
+}
+//----------------------------------------------------------------------------------------------
+bool StarCraftModel::StarCraftEntity::GatherResourceEntity(IStrategizer::TID p_resourceEntityObjectId )
+{
+	Unit gatherer = m_unit;
+	Unit resource;
+
+	resource = Broodwar->getUnit(p_resourceEntityObjectId);
+
+	assert(resource);
+
+	return gatherer->gather(resource);
 }

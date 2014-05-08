@@ -7,6 +7,9 @@
 
 #include "BWAPI.h"
 
+#define TilePositionFromUnitPosition(UnitPos) (UnitPos / 32)
+#define UnitPositionFromTilePosition(TilePos) (TilePos * 32)
+
 namespace IStrategizer
 {
     enum ObjectStateType;
@@ -32,6 +35,7 @@ namespace StarCraftModel
         bool Train(IStrategizer::EntityClassType p_entityClassId);
         bool Move(IStrategizer::Vector2 p_position);
         bool IsNull();
+		bool GatherResourceEntity(IStrategizer::TID p_resourceEntityObjectId);
 
     protected:
         IStrategizer::ObjectStateType FetchState() const;

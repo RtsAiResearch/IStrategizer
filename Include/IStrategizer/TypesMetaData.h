@@ -32,9 +32,9 @@ namespace IStrategizer
         RESOURCE_END
     };
 #define Define_ResourceType \
-    Enums[RESOURCE_Primary] = "Primary"; \
-    Enums[RESOURCE_Secondary] = "Secondary"; \
-    Enums[RESOURCE_Supply] = "Supply";
+    Enums[RESOURCE_Primary] = "Primary Resource Type"; \
+    Enums[RESOURCE_Secondary] = "Secondary Resource Type"; \
+    Enums[RESOURCE_Supply] = "Supply Resource Type";
     //---------------------------------------------------------------------------
 #define Prefix_PlayerType PLAYER
     enum PlayerType
@@ -89,8 +89,8 @@ namespace IStrategizer
 #define Prefix_GoalType GOALEX
     enum GoalType
     {
-        GOALEX_WinGame    = 0x20700,                                
-        GOALEX_START    = 0x20700,
+        GOALEX_WinGame = 0x20700,                                
+        GOALEX_START   = 0x20700,
         GOALEX_CollectResource,
         GOALEX_TrainArmy,
         GOALEX_DestroyEntityType,
@@ -115,6 +115,7 @@ namespace IStrategizer
         ACTIONEX_AttackEntity,
         ACTIONEX_MoveEntity,
         ACTIONEX_Move,
+        ACTIONEX_GatherResource,
         ACTIONEX_END
     };
 #define Define_ActionType \
@@ -124,7 +125,8 @@ namespace IStrategizer
     Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
     Enums[ACTIONEX_AttackEntity] = "Attack Entity"; \
     Enums[ACTIONEX_Move] = "Move"; \
-    Enums[ACTIONEX_MoveEntity] = "Move Entity";
+    Enums[ACTIONEX_MoveEntity] = "Move Entity";\
+    Enums[ACTIONEX_GatherResource] = "Gather Resource";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
     enum ConditionType
@@ -144,12 +146,25 @@ namespace IStrategizer
         CONDEX_EntityClassNearArea,
         CONDEX_END
     };
+#define Define_ConditionType \
+    Enums[CONDEX_EntityClassExist] = "Entity Class Exist"; \
+    Enums[CONDEX_EntityObjectExist] = "Entity Object Exist"; \
+    Enums[CONDEX_CheckEntityClassAttribute] = "CheckEntity Class Attribute"; \
+    Enums[CONDEX_CheckEntityObjectAttribute] = "CheckEntity Object Attribute"; \
+    Enums[CONDEX_CheckEntityObjectSimilarity] = "CheckEntity Object Similarity"; \
+    Enums[CONDEX_ResearchDone] = "Research Done"; \
+    Enums[CONDEX_ResourceExist] = "Resource Exist"; \
+    Enums[CONDEX_CheckColonyFilterCount] = "Check Colony Filter Count"; \
+    Enums[CONDEX_CheckPositionFilterCount] = "Check Position Filter Count"; \
+    Enums[CONDEX_False] = "False"; \
+    Enums[CONDEX_True] = "True"; \
+    Enums[CONDEX_EntityClassNearArea] = "Entity Class Near Area";
     //---------------------------------------------------------------------------
 #define Prefix_ParameterType PARAM
     enum ParameterType
     {
-        PARAM_EntityClassId    = 0x20a00,
-        PARAM_START            = 0x20a00,
+        PARAM_EntityClassId = 0x20a00,
+        PARAM_START = 0x20a00,
         PARAM_EntityObjectId,
         PARAM_AttributeId,
         PARAM_OperatorId,
@@ -203,7 +218,7 @@ namespace IStrategizer
     Enums[PARAM_AttributeId] = "Attribute"; \
     Enums[PARAM_OperatorId] = "Operator"; \
     Enums[PARAM_Value] = "Value"; \
-    Enums[PARAM_ResearchId] = "Research"; \
+    Enums[PARAM_ResearchId] = "Research Name"; \
     Enums[PARAM_ResourceId] = "Resource"; \
     Enums[PARAM_FilterTypeId] = "Filter Type"; \
     Enums[PARAM_BuildingClassId] = "Building Class"; \
@@ -447,6 +462,7 @@ namespace IStrategizer
         MSG_EntityCreate,
         MSG_EntityDestroy,
         MSG_EntityRenegade,
+        MSG_EntityComplete,
         MSG_PlanStructureChange,
         MSG_END
     };

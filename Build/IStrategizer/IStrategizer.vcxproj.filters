@@ -11,9 +11,6 @@
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{c516ba86-6d97-445e-9e85-7b59f7549353}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utilities\Data Structures">
-      <UniqueIdentifier>{0a3e91e0-211c-44e6-92f7-b75abcfa6b5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine Components">
       <UniqueIdentifier>{33f9f95d-800f-4618-83f7-2767d4407b0f}</UniqueIdentifier>
     </Filter>
@@ -22,9 +19,6 @@
     </Filter>
     <Filter Include="Source Files\Engine Components\Online Case-based Planner\Reasoner">
       <UniqueIdentifier>{a58c129f-fb47-4661-914d-99aa03384714}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine Components\Online Case-based Planner\Planner">
-      <UniqueIdentifier>{0b6e8a7a-3ee1-476a-9013-4d63360c1067}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\EngineData">
       <UniqueIdentifier>{a009d412-3a4c-4e4b-ae8e-171508e9c9c1}</UniqueIdentifier>
@@ -54,9 +48,6 @@
     <Filter Include="Header Files\Engine Components\Online Case-based Planner">
       <UniqueIdentifier>{8aeb1d1c-7e29-4063-8e7d-42ede96cf16c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine Components\Online Case-based Planner\Planner">
-      <UniqueIdentifier>{ea3536d1-ef9e-417f-9e02-c5c0e5c10c59}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine Components\Online Case-based Planner\Reasoner">
       <UniqueIdentifier>{d2ae6a02-b739-40a9-a787-3c978acd5920}</UniqueIdentifier>
     </Filter>
@@ -65,9 +56,6 @@
     </Filter>
     <Filter Include="Header Files\EngineData\Metadata">
       <UniqueIdentifier>{33f50c11-d274-4a4d-8ad9-bc22abaf78ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\World Model">
-      <UniqueIdentifier>{62a17142-b9ac-4be5-a867-7b9bacbd1a08}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -130,6 +118,15 @@
     <Filter Include="Source Files\CaseBase\Goal">
       <UniqueIdentifier>{76cad8cb-caa0-4485-a932-789108dc80b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Utilities\World Model">
+      <UniqueIdentifier>{62a17142-b9ac-4be5-a867-7b9bacbd1a08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine Components\ContingencyPlanner">
+      <UniqueIdentifier>{5f2373a8-a3cb-4a73-b661-177d6c391ad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine Components\ContingencyPlanner">
+      <UniqueIdentifier>{823b0a75-d6b1-401c-883b-70f2d05f092e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp">
@@ -186,9 +183,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\CombinatoricsAndOrGraph.cpp">
-      <Filter>Source Files\Utilities\Data Structures</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp">
       <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
@@ -211,9 +205,6 @@
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ResearchAction.cpp">
-      <Filter>Source Files\CaseBase\Action</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ConditionEx.cpp">
@@ -309,9 +300,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp">
       <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\GoalMatrixRowEvaluator.cpp">
-      <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp">
       <Filter>Source Files\EngineData</Filter>
     </ClCompile>
@@ -324,17 +312,11 @@
     <ClCompile Include="..\..\Source\IStrategizer\CollectResourceGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files\CaseBase\GoalEx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DestroyEntityTypeGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecution.cpp">
-      <Filter>Source Files\Engine Components\Online Case-based Planner\Planner</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\TrainArmyGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
@@ -347,6 +329,18 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp">
       <Filter>Source Files\World Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\ExecutionHistory.cpp">
+      <Filter>Source Files\Engine Components\ContingencyPlanner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\TrainAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\OnlinePlanExpansionExecution.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\GatherResourceAction.cpp">
+      <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -392,9 +386,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\Vector2.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CombinatoricsAndOrGraph.h">
-      <Filter>Header Files\Utilities\Data Structures</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h">
       <Filter>Header Files\Utilities\Data Structures</Filter>
     </ClInclude>
@@ -402,9 +393,6 @@
       <Filter>Header Files\Utilities\Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Diagraph.h">
-      <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GraphNode.h">
       <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Collection.h">
@@ -552,73 +540,73 @@
       <Filter>Header Files\EngineData\Metadata</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\BuildingDescription.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\CellFeature.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DynamicComponent.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DynamicMap.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DynamicSet.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\DynamicVector.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\ForceDescription.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GameDependency.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GameEntity.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GamePlayer.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GameResearch.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GameTechTree.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GameType.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MapArea.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\PlayerResources.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\ResourceDescription.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\RtsGame.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\SharedResource.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\StaticComponent.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldClock.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldComponent.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldMap.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldResources.h">
-      <Filter>Header Files\World Model</Filter>
+      <Filter>Header Files\Utilities\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GroundControlIM.h">
       <Filter>Header Files\Engine Components\InfluenceMaps</Filter>
@@ -635,14 +623,8 @@
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GoalMatrixRowEvaluator.h">
-      <Filter>Header Files\Engine Components\CaseBaseLearner</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\SerializationEssentials.h">
       <Filter>Header Files\EngineData</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\PlanGraph.h">
-      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h">
       <Filter>Header Files\CaseBase\Condition</Filter>
@@ -665,9 +647,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\AdjListDigraph.h">
       <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecution.h">
-      <Filter>Header Files\Engine Components\Online Case-based Planner\Planner</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
@@ -675,6 +654,18 @@
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
+      <Filter>Header Files\CaseBase\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\ExecutionHistory.h">
+      <Filter>Header Files\Engine Components\ContingencyPlanner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\ExecutionTrial.h">
+      <Filter>Header Files\Engine Components\ContingencyPlanner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\OnlinePlanExpansionExecution.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GatherResourceAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
   </ItemGroup>

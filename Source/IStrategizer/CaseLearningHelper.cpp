@@ -3,64 +3,91 @@
 #include "GameStateEx.h"
 #include "MessagePump.h"
 #include "IStrategizerException.h"
-
-#ifndef GOALSATISFACTIONROW_H
-#include "GoalMatrixRowEvaluator.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-
-#ifndef SVECTOR_H
 #include "SVector.h"
-#endif
+#include "GoalFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
 
 CaseLearningHelper::CaseLearningHelper()
 {
-  m_goalMatrixRowEvaluator.Initialize(PLAYER_Self, PLAYER_Enemy);
-  m_row.resize(m_goalMatrixRowEvaluator.GetRowSize());
+    g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
+    g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
 
-  g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
-  g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
+    for(unsigned i = START(GoalType); i < END(GoalType); ++i)
+    {
+        m_goals.push_back(g_GoalFactory.GetGoal((GoalType)i, true));
+    }
 }
-//---------------------------------------------------------------------------------------------------------------------------------------------
-GoalMatrixRow CaseLearningHelper::ComputeGoalMatrixRowSatisfaction(unsigned p_gameCycle)
+//--------------------------------------------------------------------------------------------------------------------------------------------
+std::vector<GoalEx*> CaseLearningHelper::GetSatisfiedGoals() const
 {
-  m_goalMatrixRowEvaluator.Compute(p_gameCycle, m_row);
-  return m_row;
+    vector<GoalEx*> satisfiedGoals;
+
+    for (size_t i = 0; i < m_goals.size(); ++i)
+    {
+        vector<GoalEx*> newGoals = m_goals[i]->GetSucceededInstances(*g_Game);
+
+        for (size_t j = 0; j < newGoals.size(); ++j)
+        {
+            satisfiedGoals.push_back((GoalEx*)newGoals[j]->Clone());
+        }
+
+        newGoals.clear();
+    }
+
+    return satisfiedGoals;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------
 void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
 {
-  DataMessage<GameTrace>* pTraceMsg = nullptr;
-  GameTrace* pTrace = nullptr;
+    DataMessage<GameTrace>* pTraceMsg = nullptr;
+    GameTrace trace;
+    bool dummy = false;
+    vector<GoalEx*> succeededGoals;
 
-  if (p_message == nullptr)
-    throw InvalidParameterException(XcptHere);
+    if (p_message == nullptr)
+        DEBUG_THROW(InvalidParameterException(XcptHere));
 
-  switch(p_message->MessageTypeID())
-  {
-  case MSG_GameActionLog:
-    pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
+    for (size_t i = 0; i < m_goals.size(); ++i)
+    {
+        m_goals[i]->HandleMessage(*g_Game, p_message, dummy);
+    }
 
-    if (pTraceMsg ->Data() == nullptr)
-      throw InvalidParameterException(XcptHere);
+    switch(p_message->MessageTypeID())
+    {
+    case MSG_GameActionLog:
+        pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
 
-    pTrace = pTraceMsg->Data();
-    //pTrace->GoalSatisfaction(ComputeGoalSatisfactionRow(pTrace->GameCycle()));
+        if (pTraceMsg ->Data() == nullptr)
+            DEBUG_THROW(InvalidParameterException(XcptHere));
 
-    LogInfo("Received game trace for action=%s", Enums[pTrace->Action()]);
+        trace = *pTraceMsg->Data();
+        m_observedTraces.push_back(trace);
 
-    m_observedTraces.push_back(pTrace);
+        succeededGoals = GetSatisfiedGoals();
+        
+        for (size_t i = 0; i < succeededGoals.size(); ++i)
+        {
+            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
+        }
 
-    break;
+        LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
 
-    /*case MSG_GameEnd:
-    m_observedTraces[m_observedTraces.size() - 1]->GoalSatisfaction(ComputeGoalMatrixRowSatisfaction(m_observedTraces[m_observedTraces.size() - 1]->GameCycle()));
-    break;*/
-  }
+        break;
+
+    case MSG_GameEnd:
+        LogInfo("Received game end mmessage");
+        
+        succeededGoals = GetSatisfiedGoals();
+        
+        for (size_t i = 0; i < succeededGoals.size(); ++i)
+        {
+            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
+        }
+
+        break;
+    }
 }
-

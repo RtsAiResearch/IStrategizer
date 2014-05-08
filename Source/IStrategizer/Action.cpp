@@ -63,12 +63,10 @@ void Action::InitializeConditions()
 //////////////////////////////////////////////////////////////////////////
 bool Action::Execute(RtsGame& game, const WorldClock& p_clock)
 {
-    bool bOk;
+    _ASSERTE(PlanStepEx::State() == ESTATE_NotPrepared);
 
-    assert(PlanStepEx::State() == ESTATE_NotPrepared);
-    bOk = ExecuteAux(game, p_clock);
-
-    return bOk;
+    LogInfo("Trying to execute action %s", ToString().c_str());
+    return ExecuteAux(game, p_clock);
 }
 //////////////////////////////////////////////////////////////////////////
 void Action::Reset(RtsGame& game, const WorldClock& p_clock)
@@ -86,13 +84,15 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
     case ESTATE_NotPrepared:
         if (PreconditionsSatisfied(game))
         {
+            LogInfo("Preconditions satisfied, trying to execute action %s", ToString().c_str());
+
             if (Execute(game, p_clock))
             {
                 State(ESTATE_Executing, game, p_clock);
             }
             else
             {
-                LogInfo("Executing '%s' failed", ToString().c_str());
+                State(ESTATE_Failed, game, p_clock);
             }
         }
         break;
@@ -101,11 +101,14 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
         if(AliveConditionsSatisfied(game))
         { 
             if (SuccessConditionsSatisfied(game))
+            {
                 State(ESTATE_Succeeded, game, p_clock);
+                m_history.Add(ESTATE_Succeeded);
+            }
         }
         else
         {
-            LogInfo("%s alive conditions not satisfied, failing it", ToString().c_str());
+            LogInfo("%s alive conditions not satisfied", ToString().c_str());
             State(ESTATE_Failed, game, p_clock);
         }
         break;
@@ -117,7 +120,5 @@ void Action::Copy(IClonable* p_dest)
     PlanStepEx::Copy(p_dest);
 
     Action* m_dest = static_cast<Action*>(p_dest);
-
     m_dest->_preCondition = _preCondition ? static_cast<CompositeExpression*>(_preCondition->Clone()) : nullptr;
-    m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
 }

@@ -7,11 +7,13 @@
 #include "ActionFactory.h"
 #include "CellFeature.h"
 #include "MoveAction.h"
+#include "GatherResourceAction.h"
 
 using namespace IStrategizer;
 using namespace std;
 
-Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions) {
+Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParameters& p_paramaters, bool p_initConditions)
+{
     Action* m_action = nullptr;
 
     switch(p_actionType)
@@ -40,9 +42,12 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
     case ACTIONEX_AttackEntity:
         return new AttackEntityAction(p_paramaters);
          break;
+    case ACTIONEX_GatherResource:
+        m_action = new GatherResourceAction(p_paramaters);
+        break;
 
     default:
-        throw exception("Action not supported");
+        _ASSERTE(!"Action not supported");
     }
 
     if(p_initConditions)
@@ -80,9 +85,12 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
     case ACTIONEX_AttackEntity:
         m_action = new AttackEntityAction();
         break;
+    case ACTIONEX_GatherResource:
+        m_action = new GatherResourceAction();
+        break;
 
     default:
-        throw exception("Action not supported");
+        _ASSERTE(!"Action not supported");
     }
 
     if(p_initConditions)

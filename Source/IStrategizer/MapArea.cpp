@@ -20,7 +20,7 @@ bool MapArea::IsNull()
 bool MapArea::Acquire()
 {
     OccupanceDataIM *pIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-    assert(pIM);
+    _ASSERTE(pIM);
 
     return pIM->ReserveArea(m_pos, m_width, m_height);
 }
@@ -28,7 +28,7 @@ bool MapArea::Acquire()
 bool MapArea::Release()
 {
     OccupanceDataIM *pIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-    assert(pIM);
+    _ASSERTE(pIM);
 
     return pIM->FreeArea(m_pos, m_width, m_height);
 }

@@ -41,3 +41,8 @@ void DeployArmyGoal::InitializePostConditions()
     /*over EntityClassNearArea constructor to take filter Type*/
     _postCondition = new And(m_terms);
 }
+//----------------------------------------------------------------------------------------------
+vector<GoalEx*> DeployArmyGoal::GetSucceededInstances(RtsGame &game)
+{
+    return vector<GoalEx*>();
+}

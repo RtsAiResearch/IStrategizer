@@ -15,7 +15,7 @@ void BwapiClient::InitClient()
         return;
 
     m_hBwapiThread = chBEGINTHREADEX(nullptr, 0, BwapiThreadStart, this, 0, nullptr);
-    assert(m_hBwapiThread);
+    _ASSERTE(m_hBwapiThread);
 
     if (m_hBwapiThread)
         m_bClientInitialized = true;
@@ -56,13 +56,14 @@ void BwapiClient::BwapiMainThread()
 
         printf("Starting match!\n");
 
-        Broodwar->sendText("Hello world!");
-        Broodwar->printf("The map is %s, a %d player map",Broodwar->mapName().c_str(),Broodwar->getStartLocations().size());
-
         // Enable some cheat flags
         Broodwar->enableFlag(Flag::UserInput);
         // Uncomment to enable complete map information
         Broodwar->enableFlag(Flag::CompleteMapInformation);
+
+
+        Broodwar->sendText("Hello world!");
+        Broodwar->printf("The map is %s, a %d player map",Broodwar->mapName().c_str(),Broodwar->getStartLocations().size());
 
         if (Broodwar->isReplay())
         {
@@ -101,7 +102,7 @@ void BwapiClient::ShutdownClient()
     printf("Shutting down ...\n");
 
     dwWait = WaitForSingleObject(m_hBwapiThread, INFINITE);
-    assert(dwWait == WAIT_OBJECT_0);
+    _ASSERTE(dwWait == WAIT_OBJECT_0);
 
     CloseHandle(m_hBwapiThread);
 }
@@ -151,7 +152,7 @@ void BwapiClient::HandleGameEvents()
             OnUnitMorph(e->getUnit());
             break;
         case EventType::UnitRenegade:
-            OnUniRenegade(e->getUnit());
+            OnUnitRenegade(e->getUnit());
             break;
         case EventType::UnitCreate:
             OnUnitCreate(e->getUnit());

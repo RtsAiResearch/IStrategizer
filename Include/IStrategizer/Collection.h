@@ -19,7 +19,7 @@ namespace IStrategizer
         //----------------------------------------------------------------------------------------------
         void Add(TPKey p_pkey)
         {
-            assert(Count + 1 < MaxItems);
+            _ASSERTE(Count + 1 < MaxItems);
             Items[Count] = p_pkey;
             ++Count;
         }

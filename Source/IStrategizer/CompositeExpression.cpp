@@ -88,7 +88,7 @@ Expression* CompositeExpression::operator[](int p_index)
     Expression* m_exp = GetTermAux(m_seed, p_index);
     
     // Term index out of range
-    assert(m_exp != nullptr);
+    _ASSERTE(m_exp != nullptr);
     
     return m_exp;
 }
@@ -99,7 +99,7 @@ Expression* CompositeExpression::At(int p_index)
     Expression* m_exp = GetTermAux(m_seed, p_index);
 
     // Term index out of range
-    assert(m_exp != nullptr);
+    _ASSERTE(m_exp != nullptr);
 
     return m_exp;
 }
@@ -140,7 +140,7 @@ Expression* CompositeExpression::GetTermAux(int p_currentIdex, int p_targetIndex
         {
             m_compositeExp = nullptr;
             m_compositeExp = static_cast<CompositeExpression*>(*itr);
-            assert(m_compositeExp != nullptr);
+            _ASSERTE(m_compositeExp != nullptr);
 
             return m_compositeExp->GetTermAux(p_currentIdex, p_targetIndex);
         }

@@ -38,7 +38,8 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     m_pIStrategizer(nullptr),
     m_pGameModel(nullptr),
     m_isLearning(false),
-    m_pTraceCollector(nullptr)
+    m_pTraceCollector(nullptr),
+    m_enemyPlayerUnitsCollected(false)
 {
     ui.setupUi(this);
     IStrategizer::Init();
@@ -59,7 +60,7 @@ void ClientMain::InitIStrategizer()
     try
     {
         m_pGameModel = new StarCraftGame;
-        assert(m_pGameModel);
+        _ASSERTE(m_pGameModel);
 
         param.BuildingDataIMCellSize = TILE_SIZE;
         param.GrndCtrlIMCellSize = TILE_SIZE;
@@ -79,7 +80,7 @@ void ClientMain::InitIStrategizer()
             param.Phase = PHASE_Online;
 
         m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
-        assert(m_pIStrategizer);
+        _ASSERTE(m_pIStrategizer);
     }
     catch (IStrategizer::Exception& e)
     {
@@ -92,7 +93,9 @@ void ClientMain::InitIStrategizer()
     // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
     // and the engine Enums[*] table is fully initialized
     InitIdLookup();
-    m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
+
+    if (!m_isLearning)
+        m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
@@ -129,7 +132,7 @@ void ClientMain::InitPlannerView()
 {
     GraphScene *pGraphScene = new GraphScene(&m_idLookup);
     m_pPlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
-    ui.plannerGridLayout->addWidget(m_pPlanGraphView);
+    ui.tbPlanner->layout()->addWidget(m_pPlanGraphView);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()
@@ -179,6 +182,8 @@ void ClientMain::closeEvent(QCloseEvent *pEvent)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientLoopStart()
 {
+    m_enemyPlayerUnitsCollected = false;
+
     if (!Broodwar->isReplay())
     {
         InitResourceManager();
@@ -209,9 +214,9 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
     EntityCreateMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
-    assert(pData);
+    _ASSERTE(pData);
 
-    assert(p_pUnit);
+    _ASSERTE(p_pUnit);
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
 
@@ -227,20 +232,20 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
     }
 
     pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityCreate, pData);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData        *pData = nullptr;
+    EntityMessageData *pData = nullptr;
     EntityDestroyMessage    *pMsg = nullptr;
 
     pData = new EntityMessageData;
-    assert(pData);
+    _ASSERTE(pData);
 
-    assert(p_pUnit);
+    _ASSERTE(p_pUnit);
 
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
@@ -257,22 +262,23 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
     }
 
     pMsg = new EntityDestroyMessage(Broodwar->getFrameCount(), MSG_EntityDestroy, pData);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
+void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
 {
-    EntityMessageData        *pData = nullptr;
-    EntityRenegadeMessage    *pMsg = nullptr;
+    EntityMessageData *pData = nullptr;
+    EntityRenegadeMessage *pMsg = nullptr;
 
     pData = new EntityMessageData;
-    assert(pData);
+    _ASSERTE(pData);
 
-    assert(p_pUnit);
+    _ASSERTE(p_pUnit);
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
+    pData->EntityType = g_Database.EntityMapping.GetByFirst(p_pUnit->getType());
 
     if (p_pUnit->getType().isBuilding())
     {
@@ -286,7 +292,7 @@ void ClientMain::OnUniRenegade(BWAPI::Unit p_pUnit)
     }
 
     pMsg = new EntityRenegadeMessage(Broodwar->getFrameCount(), MSG_EntityRenegade, pData);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
@@ -296,7 +302,7 @@ void ClientMain::OnMatchStart()
     Message *pMsg;
 
     pMsg = new Message(Broodwar->getFrameCount(), MSG_GameStart);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
@@ -307,12 +313,12 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
     GameEndMessage        *pMsg = nullptr;
 
     pData = new GameEndMessageData;
-    assert(pData);
+    _ASSERTE(pData);
 
     pData->IsWinner = p_isWinner;
 
     pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSG_GameEnd, pData);
-    assert(pMsg);
+    _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);
 }
@@ -347,10 +353,8 @@ void ClientMain::UpdateStatsView()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
 {
-    static bool enemyPlayerCollected = false;
-
     if (!Broodwar->isReplay() &&
-        !enemyPlayerCollected)
+        !m_enemyPlayerUnitsCollected)
     {
         // This to solve the bug that the game does not send  messages about creating enemy units at game start
         TID enemyPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy);
@@ -362,7 +366,7 @@ void ClientMain::OnClientUpdate()
             OnUnitCreate(*itr);
         }
 
-        enemyPlayerCollected = !enemyUnits.empty();
+        m_enemyPlayerUnitsCollected = !enemyUnits.empty();
     }
 
     try
@@ -388,38 +392,41 @@ void ClientMain::UpdateViews()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitResourceManager()
 {
-    //send each worker to the mineral field that is closest to it
-    for(Unitset::iterator i = Broodwar->self()->getUnits().begin(); i != Broodwar->self()->getUnits().end(); i++)
-    {
-        if ((*i)->getType().isWorker())
-        {
-            Unit closestMineral=nullptr;
-            for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
-            {
-                if (closestMineral==nullptr || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
-                    closestMineral = *m;
-            }
-            if (closestMineral!=nullptr)
-                (*i)->rightClick(closestMineral);
-        }
-    }
+	//send each worker to the mineral field that is closest to it
+	for(Unitset::iterator i = Broodwar->self()->getUnits().begin(); i != Broodwar->self()->getUnits().end(); i++)
+	{
+		if ((*i)->getType().isWorker())
+		{
+			Unit closestMineral=nullptr;
+			for (Unitset::iterator m = Broodwar->getMinerals().begin(); m!=Broodwar->getMinerals().end(); m++)
+			{
+				if (closestMineral==nullptr || (*i)->getDistance(*m) < (*i)->getDistance(closestMineral))
+				{
+					closestMineral = *m;
+				}
+			}
+			if (closestMineral!=nullptr)
+				(*i)->rightClick(closestMineral);
+		}
+	}
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnGameFrame()
 {
     if (Broodwar->isReplay())
     {
-        assert(m_pTraceCollector);
+        _ASSERTE(m_pTraceCollector);
         m_pTraceCollector->OnGameFrame();
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 {
-    assert(p_pMessage != nullptr);
+    _ASSERTE(p_pMessage != nullptr);
 
     if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange)
     {
-        m_pPlanGraphView->OnPlanStructureChange();
+        DataMessage<IOlcbpPlan>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan>*>(p_pMessage);
+        m_pPlanGraphView->OnPlanStructureChange(pPlanChangeMsg->Data());
     }
 }

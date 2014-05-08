@@ -41,11 +41,21 @@ void MoveAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 bool MoveAction::AliveConditionsSatisfied(RtsGame& game)
 {
     bool satisfied = false;
+
     if (g_Assist.DoesEntityObjectExist(_entityId))
     {
         GameEntity* pEntity = game.Self()->GetEntity(_entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
         satisfied = (pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false);
+    }
+    else
+    {
+        ConditionEx* failedCondition = new EntityClassExist(
+            PLAYER_Self,
+            (EntityClassType)_params[PARAM_EntityClassId],
+            1,
+            true);
+        m_history.Add(ESTATE_Failed, failedCondition);
     }
 
     return satisfied;
@@ -76,7 +86,7 @@ bool MoveAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
         _position = pAdapter->AdaptPosition(Parameters());
         _pEntity  = game.Self()->GetEntity(_entityId);
         _pEntity->Lock(this);
-        assert(_pEntity);
+        _ASSERTE(_pEntity);
         executed = _pEntity->Move(_position);
     }
     return executed;

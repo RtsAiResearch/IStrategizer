@@ -23,6 +23,8 @@
 #include "GameStateEx.h"
 #include "MessagePump.h"
 #include "Logger.h"
+#include "AttributesMetaData.h"
+#include "GameType.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -32,6 +34,7 @@ GamePlayer::GamePlayer() : m_pState(new GameStateEx()), m_pResources(nullptr), m
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
     g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+    m_colonyCenter = MapArea::Null();
 }
 //////////////////////////////////////////////////////////////////////////
 GamePlayer::~GamePlayer()
@@ -53,13 +56,13 @@ void GamePlayer::Finalize()
 //////////////////////////////////////////////////////////////////////////
 PlayerResources* GamePlayer::Resources()
 {
-    assert(m_pResources != nullptr);
+    _ASSERTE(m_pResources != nullptr);
     return m_pResources;
 }
 //////////////////////////////////////////////////////////////////////////
 GameTechTree* GamePlayer::TechTree() const
 {
-    assert(m_pTechTree != nullptr);
+    _ASSERTE(m_pTechTree != nullptr);
     return m_pTechTree;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -75,7 +78,7 @@ GameEntity* GamePlayer::GetEntity(TID p_id)
     if(m_entities.Contains(p_id))
     {
         pEntity = m_entities[p_id];
-        assert(pEntity);
+        _ASSERTE(pEntity);
     }
 
     return pEntity;
@@ -149,7 +152,7 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
         }
 
         pEntity = FetchEntity(entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
         
         m_entities[entityId] = pEntity;
 
@@ -172,10 +175,10 @@ void GamePlayer::OnEntityDestroy(Message* p_pMessage)
     if (pDestroyMsg->Data()->OwnerId == m_id)
     {
         entityId = pDestroyMsg->Data()->EntityId;
-        assert(m_entities.Contains(entityId));
+        _ASSERTE(m_entities.Contains(entityId));
         pEntity = GetEntity(entityId);
         pDestroyMsg->Data()->EntityType = pEntity->Type();
-        assert(pEntity);
+        _ASSERTE(pEntity);
         m_entities.erase(entityId);
 
         g_IMSysMgr.UnregisterGameObj(entityId);
@@ -200,10 +203,10 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
     // I am the unit new owner
     if (pRenMsg->Data()->OwnerId == m_id)
     {
-        assert(!m_entities.Contains(entityId));
+        _ASSERTE(!m_entities.Contains(entityId));
 
         pEntity = FetchEntity(entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
 
         m_entities[entityId] = pEntity;
 
@@ -216,7 +219,7 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
     else if (pRenMsg->Data()->OwnerId != m_id && m_entities.Contains(entityId))
     {
         pEntity = GetEntity(entityId);
-        assert(pEntity);
+        _ASSERTE(pEntity);
 
         m_entities.erase(entityId);
 
@@ -229,3 +232,40 @@ void GamePlayer::OnEntityRenegade(Message* p_pMessage)
     }
 }
 //////////////////////////////////////////////////////////////////////////
+MapArea GamePlayer::GetColonyMapArea()
+{
+    // We didn't calculate player colony center yet ?
+    if (m_colonyCenter.IsNull())
+    {
+        GameEntity *pPlayerBase = nullptr;
+        vector<TID> playerBases;
+
+        GetBases(playerBases);
+
+        // Player has at least one base, then we use the first one
+        // Note that player having many bases it not supported by the engine
+        if (!playerBases.empty())
+            pPlayerBase = GetEntity(playerBases[0]);
+        // No base! This is weird but for the case, we will select the first unit position as the player coloney center
+        else
+        {
+            vector<TID>    playerEntities;
+
+            Entities(playerEntities);
+            // This can't happen, If the player has no entities, then he must be losing
+            _ASSERTE(!playerEntities.empty());
+
+            pPlayerBase = GetEntity(playerEntities[0]);
+        }
+
+        GameType *pGameType = g_Game->GetEntityType(GetBaseType());
+        _ASSERTE(pGameType);
+
+        m_colonyCenter = MapArea(
+            Vector2(pPlayerBase->Attr(EOATTR_PosX), pPlayerBase->Attr(EOATTR_PosY)),
+            pGameType->Attr(ECATTR_Width),
+            pGameType->Attr(ECATTR_Height));
+    }
+
+    return m_colonyCenter;
+}
