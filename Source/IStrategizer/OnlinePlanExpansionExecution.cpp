@@ -213,10 +213,10 @@ void OnlinePlanExpansionExecution::UpdateBelongingSubplanChildrenWithParentReadi
     {
         for (auto childId : children)
         {
-            _ASSERTE(GetNodeData(childId).WaitOnParentsCount > 0);
-
             if (GetNodeData(childId).SatisfyingGoal != nodeId)
             {
+                _ASSERTE(GetNodeData(childId).WaitOnParentsCount > 0);
+
                 LogInfo("Update node[%d] '%s' with parent readiness", childId, m_pOlcbpPlan->GetNode(childId)->ToString().c_str());
                 GetNodeData(childId).DecWaitOnParentsCount();
             }
@@ -526,7 +526,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
     // 2. Remove visited nodes from the plan
     for (auto visitedNodeId : visitedNodes)
     {
-        auto currNode = m_pOlcbpPlan->GetNode(visitedNodeId);
+        //auto currNode = m_pOlcbpPlan->GetNode(visitedNodeId);
         m_pOlcbpPlan->RemoveNode(visitedNodeId);
         m_nodeData.erase(visitedNodeId);
         
