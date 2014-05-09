@@ -68,6 +68,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <SDLCheck>false</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying TypeInfo databse to CaseVisualizer</Message>
@@ -88,6 +89,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\IStrategizer\BuildInfrastructureGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp" />
@@ -162,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\AdjListDigraph.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\BuildInfrastructureGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\DeployArmyGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h" />
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />

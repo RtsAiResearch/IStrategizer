@@ -93,6 +93,7 @@ namespace IStrategizer
         GOALEX_START   = 0x20700,
         GOALEX_CollectResource,
         GOALEX_TrainArmy,
+        GOALEX_BuildInfrastructure,
         GOALEX_DestroyEntityType,
         GOALEX_DeployArmy,
         GOALEX_END
@@ -102,7 +103,8 @@ namespace IStrategizer
     Enums[GOALEX_CollectResource] = "Collect Resource"; \
     Enums[GOALEX_TrainArmy] = "Train Army"; \
     Enums[GOALEX_DestroyEntityType] = "Destroy Entity Type"; \
-    Enums[GOALEX_DeployArmy] = "Deploy Army";
+    Enums[GOALEX_DeployArmy] = "Deploy Army"; \
+    Enums[GOALEX_BuildInfrastructure] = "Build Infrastructure";
     //---------------------------------------------------------------------------
 #define Prefix_ActionType ACTIONEX
     enum ActionType

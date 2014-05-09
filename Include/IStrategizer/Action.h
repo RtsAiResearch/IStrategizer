@@ -19,6 +19,7 @@ namespace IStrategizer
     class Action : public PlanStepEx
     {
         OBJECT_MEMBERS_P(PlanStepEx, 1, &m_history);
+
     protected:
         CompositeExpression* _preCondition;
         ///> type=ExecutionHistory

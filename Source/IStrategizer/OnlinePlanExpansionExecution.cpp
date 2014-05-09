@@ -282,7 +282,8 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
         // This is the node first time expansion
         else
         {
-            if (clock.ElapsedGameCycles() > 1 && (GoalEx*)pCurrentPlanStep->SuccessConditionsSatisfied(*g_Game))
+            GoalEx* currentGoalNode = (GoalEx*)pCurrentPlanStep;
+            if (clock.ElapsedGameCycles() > 1 && currentGoalNode->SuccessConditionsSatisfied(*g_Game))
             {
                 LogInfo("Goal already satisfied, no need to expand it");
             }
@@ -299,7 +300,8 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                     exclusions.insert(GetNodeData(satisfyingGoalNode).BelongingCase);
                 }
 
-                CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve((GoalEx*)pCurrentPlanStep, g_Game->Self()->State(), exclusions);
+                currentGoalNode->AdaptParameters(*g_Game);
+                CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve(currentGoalNode, g_Game->Self()->State(), exclusions);
                 // Retriever should always retrieve a non tried case for that specific node
                 _ASSERTE(!IsCaseTried(currentNode, caseEx));
 

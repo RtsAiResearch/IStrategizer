@@ -1,13 +1,19 @@
 #include "CollectResourceGoal.h"
 #include "And.h"
-#include "False.h"
+#include "ResourceExist.h"
+#include "GameEntity.h"
+#include "DataMessage.h"
+#include "GameEntity.h"
+#include "GamePlayer.h"
+#include "GameType.h"
 
 using namespace IStrategizer;
 
 CollectResourceGoal::CollectResourceGoal() : GoalEx(GOALEX_CollectResource)
 {
     _params[PARAM_ResourceId] = RESOURCE_START;
-    _params[PARAM_Amount] = 0;
+    _params[PARAM_ForceSizeId] = FORCESIZE_START;
+    m_workersCount = 0;
 }
 //----------------------------------------------------------------------------------------------
 CollectResourceGoal::CollectResourceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_CollectResource, p_parameters)
@@ -16,31 +22,67 @@ CollectResourceGoal::CollectResourceGoal(const PlanStepParameters& p_parameters)
 //----------------------------------------------------------------------------------------------
 void CollectResourceGoal::InitializePostConditions()
 {
-    //map<EntityClassType, int> m_baseTypeRequiredBuildings;
-    //EntityClassType m_baseBuildingClassId;
-
-    //g_Assist.GetRequiredBuildingsForBaseType(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseTypeRequiredBuildings);
-    //g_Assist.GetTireBaseBuildingId(PLAYER_Self, (BaseType)_params[PARAM_BaseTypeId], m_baseBuildingClassId);
-
-    //m_baseTypeRequiredBuildings[m_baseBuildingClassId] = 1;
-
-    vector<Expression*> m_termsPost;
-    m_termsPost.push_back(new False);
-    //m_termsPost.resize(m_baseTypeRequiredBuildings.size());
-
-    //int m_index = 0;
-    //for (map<EntityClassType, int>::const_iterator m_itr = m_baseTypeRequiredBuildings.begin(); m_itr != m_baseTypeRequiredBuildings.end(); m_itr++)
-    // m_termsPost[m_index++] = new EntityClassExist(PLAYER_Self, (*m_itr).first, (*m_itr).second, true);
-
-    _postCondition = new And(m_termsPost);
+    vector<Expression*> m_terms;
+    m_terms.push_back(new ResourceExist(PLAYER_Self, (ResourceType)_params[PARAM_ResourceId], DONT_CARE));
+    _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
 bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
-    return false;
+    vector<TID> entities;
+    game.Self()->Entities(game.Self()->GetWorkerType(), entities);
+    int gatherersCount = GetNumberOfGatherers(game, (ResourceType)_params[PARAM_ResourceId]);
+    int minGatherersCount = game.GetForceSizeCount((ForceSizeType)_params[PARAM_ForceSizeId]);
+
+    return gatherersCount >= minGatherersCount;
+}
+//----------------------------------------------------------------------------------------------
+int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) const
+{
+    int count = 0;
+    vector<TID> workers;
+    game.Self()->Entities(game.Self()->GetWorkerType(), workers);
+
+    for (auto workerId : workers)
+    {
+        GameEntity* worker = game.Self()->GetEntity(workerId);
+        if (worker->Attr(EOATTR_State) == OBJSTATE_Gathering)
+        {
+            if (resourceType == RESOURCE_Primary && worker->IsGatheringResource(resourceType))
+            {
+                ++count;
+            }
+        }
+    }
+
+    return count;
+}
+//----------------------------------------------------------------------------------------------
+void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, vector<GoalEx*>& succeededInstances)
+{
+    vector<TID> workers;
+    game.Self()->Entities(game.Self()->GetWorkerType(), workers);
+
+    if (workers.size() != m_workersCount)
+    {
+        m_workersCount = workers.size();
+        int gatherersCount = GetNumberOfGatherers(game, resourceType);
+        ForceSizeType gatherersForceSize = game.GetForceSizeType(gatherersCount);
+
+        PlanStepParameters params;
+        params[PARAM_ResourceId] = resourceType;
+        params[PARAM_ForceSizeId] = gatherersForceSize;
+
+        succeededInstances.push_back(new CollectResourceGoal(params));
+    }
 }
 //----------------------------------------------------------------------------------------------
 vector<GoalEx*> CollectResourceGoal::GetSucceededInstances(RtsGame &game)
 {
-    return vector<GoalEx*>();
+    vector<GoalEx*> succeededInstances;
+
+    AddSucceededInstancesForResourceType(game, RESOURCE_Primary, succeededInstances);
+    AddSucceededInstancesForResourceType(game, RESOURCE_Secondary, succeededInstances);
+
+    return succeededInstances;
 }

@@ -27,7 +27,6 @@ GatherResourceAction::GatherResourceAction():
     m_gathererId(INVALID_TID)
 {
 	_params[PARAM_ResourceId] = RESOURCE_START;
-	_params[PARAM_EntityClassId] = ECLASS_START;
 	_params[PARAM_Amount] = DONT_CARE;
 	CellFeature::Null().To(_params);
 }
@@ -143,7 +142,7 @@ void GatherResourceAction::OnSucccess(RtsGame& game, const WorldClock& p_clock )
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void GatherResourceAction::OnFailure(RtsGame& game, const WorldClock& p_clock )
+void GatherResourceAction::OnFailure(RtsGame& game, const WorldClock& p_clock)
 {
 	if(m_gatherIssued)
 	{
@@ -154,12 +153,12 @@ void GatherResourceAction::OnFailure(RtsGame& game, const WorldClock& p_clock )
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock )
+bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
-	EntityClassType		gathererType = (EntityClassType)_params[PARAM_EntityClassId];
-	ResourceType		resourceType;
-	AbstractAdapter*	pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
-	bool				bOK = false;
+	EntityClassType gathererType = game.Self()->GetWorkerType();
+	ResourceType resourceType;
+	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
+	bool bOK = false;
 
 	// Adapt gatherer
 	m_gathererId = pAdapter->GetEntityObjectId(gathererType, AdapterEx::WorkerStatesRankVector);
@@ -177,9 +176,8 @@ bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock )
 		if(m_resourceId != INVALID_TID)
 		{
 			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(m_gathererId);
-			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(m_resourceId);
-			_ASSERTE(pGameGatherer);
-			_ASSERTE(pGameResource);
+            _ASSERTE(pGameGatherer);
+            
 			bOK = pGameGatherer->GatherResourceEntity(m_resourceId);
 
 			if (bOK)
@@ -227,9 +225,7 @@ void GatherResourceAction::HandleMessage( RtsGame& game, Message* p_msg, bool& p
 		if(m_resourceId != INVALID_TID)
 		{
 			GameEntity* pGameGatherer = g_Game->Self()->GetEntity(m_gathererId);
-			GameEntity* pGameResource = g_Game->GetPlayer(PLAYER_Neutral)->GetEntity(m_resourceId);
 			_ASSERTE(pGameGatherer);
-			_ASSERTE(pGameResource);
 
 			if (pGameGatherer->GatherResourceEntity(m_resourceId))
 			{

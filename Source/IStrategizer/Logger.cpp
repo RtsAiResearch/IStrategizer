@@ -12,10 +12,11 @@ using namespace std;
 
 void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
 {
+    #ifdef LOG
     char buffer1[LogBufferMax];
     char buffer2[LogBufferMax];
     const char* logTypeName[] = { "Warning", "Error", "Info" };
-    
+
     va_list formatArgs;
     va_start(formatArgs, p_pFormat);
     vsprintf_s(buffer1, p_pFormat, formatArgs);
@@ -25,19 +26,20 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
     GetLocalTime(&sysTime);
 
     sprintf_s(buffer2, LogBufferMax, "[%s@%02d:%02d:%02d.%03d@%s] %s\n",
-        logTypeName[(unsigned)p_type],
-        sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
-        p_pFun,
-        buffer1);
+    logTypeName[(unsigned)p_type],
+    sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
+    p_pFun,
+    buffer1);
 
     printf_s(buffer2);
 
-#ifdef _DEBUG
+    #ifdef _DEBUG
     OutputDebugStringA(buffer2);
-#endif
+    #endif
 
     if (m_isLogFileInitialized)
-        m_pen << buffer2;
+    m_pen << buffer2;
+    #endif
 }
 
 void Logger::InitLogFile()

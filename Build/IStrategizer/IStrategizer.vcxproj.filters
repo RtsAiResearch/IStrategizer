@@ -342,6 +342,9 @@
     <ClCompile Include="..\..\Source\IStrategizer\GatherResourceAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\BuildInfrastructureGoal.cpp">
+      <Filter>Source Files\CaseBase\Goal</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\IStrategizer\EngineAssist.h">
@@ -667,6 +670,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GatherResourceAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\BuildInfrastructureGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
