@@ -24,7 +24,6 @@ namespace IStrategizer
         virtual int Supply() = 0;
         virtual int Secondary() = 0;
         virtual int Primary() = 0;
-        virtual EntityClassType GetEntityClassType(ResourceType p_type) const  = 0 ;
 
     private:
         int _lockedSupply;

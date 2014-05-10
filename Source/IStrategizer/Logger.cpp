@@ -12,7 +12,6 @@ using namespace std;
 
 void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
 {
-    #ifdef LOG
     char buffer1[LogBufferMax];
     char buffer2[LogBufferMax];
     const char* logTypeName[] = { "Warning", "Error", "Info" };
@@ -38,8 +37,7 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
     #endif
 
     if (m_isLogFileInitialized)
-    m_pen << buffer2;
-    #endif
+        m_pen << buffer2;
 }
 
 void Logger::InitLogFile()

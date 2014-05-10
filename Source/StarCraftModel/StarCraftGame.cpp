@@ -196,12 +196,42 @@ void StarCraftGame::DisplayMessage(const char* p_msg)
     BroodwarPtr->sendText(p_msg);
 }
 //----------------------------------------------------------------------------------------------
-int StarCraftGame::GetMaxForceSize()
+int StarCraftGame::GetMaxForceSize() const
 {
     return 12;
 }
 //----------------------------------------------------------------------------------------------
-size_t StarCraftGame::GetMaxTrainingQueueCount()
+size_t StarCraftGame::GetMaxTrainingQueueCount() const
 {
     return 5;
+}
+//----------------------------------------------------------------------------------------------
+EntityClassType StarCraftGame::GetResourceSource(ResourceType p_type) const
+{
+    // This method is hard-coded for Terran, ideally it should take race type.
+
+    switch(p_type)
+    {
+    case RESOURCE_Primary:
+        return g_Database.EntityMapping.GetByFirst(UnitTypes::Resource_Mineral_Field.getID());
+
+    case RESOURCE_Secondary:
+        return g_Database.EntityMapping.GetByFirst(UnitTypes::Terran_Refinery.getID());
+    
+    case RESOURCE_Supply:
+        return g_Database.EntityMapping.GetByFirst(UnitTypes::Terran_Supply_Depot.getID());
+    
+    default:
+        DEBUG_THROW(InvalidParameterException(XcptHere));
+    }
+}
+//----------------------------------------------------------------------------------------------
+int StarCraftGame::BaseSupplyAmount() const
+{
+    return 10;
+}
+//----------------------------------------------------------------------------------------------
+int StarCraftGame::SupplyBuildingSupplyAmount() const
+{
+    return 8;
 }

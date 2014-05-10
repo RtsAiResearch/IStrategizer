@@ -37,7 +37,10 @@ namespace IStrategizer
         virtual void Init();
         virtual void Finalize();
         virtual void DisplayMessage(const char* p_msg) = 0;
-        virtual size_t GetMaxTrainingQueueCount() = 0;
+        virtual size_t GetMaxTrainingQueueCount() const = 0;
+        virtual EntityClassType GetResourceSource(ResourceType p_type) const = 0;
+        virtual int BaseSupplyAmount() const = 0;
+        virtual int SupplyBuildingSupplyAmount() const = 0;
         void Players(std::vector<PlayerType>& p_playerIds);
         void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds);
         void Researches(std::vector<ResearchType>& p_researchTypeIds);
@@ -56,16 +59,13 @@ namespace IStrategizer
         void InitializeResearches();
         void InitializePlayers();
         virtual void InitializeMap() = 0;
-
         virtual GameType* FetchEntityType(EntityClassType p_id) = 0;
         virtual GameResearch* FetchResearch(ResearchType p_id) = 0;
         virtual GamePlayer* FetchPlayer(PlayerType p_id) = 0;
-
         virtual void EnumeratePlayers() = 0;
         virtual void EnumerateEntityTypes() = 0;
         virtual void EnumerateResearches() = 0;
-
-        virtual int GetMaxForceSize() = 0;
+        virtual int GetMaxForceSize() const = 0;
 
         // Game types are shared across all RtsGame instances
         static MapEx<EntityClassType, GameType*> sm_entityTypes;

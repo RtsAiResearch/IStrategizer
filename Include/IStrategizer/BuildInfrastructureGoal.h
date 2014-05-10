@@ -21,10 +21,10 @@ namespace IStrategizer
     protected:
         void InitializePostConditions();
         bool SuccessConditionsSatisfied(RtsGame& game);
+        int GetAvailableSupplyBuildingsCount(RtsGame &game) const;
 
     private:
         int m_existingAmount;
-        bool m_firstLearningInstance;
     };
 }
 
