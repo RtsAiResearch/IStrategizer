@@ -3,11 +3,11 @@
 #include "And.h"
 #include "Message.h"
 #include "GameEntity.h"
-#include "GameEntity.h"
 #include "GamePlayer.h"
 #include "GameType.h"
 #include "RtsGame.h"
 #include "PlayerResources.h"
+#include "DataMessage.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -25,36 +25,40 @@ BuildInfrastructureGoal::BuildInfrastructureGoal(const PlanStepParameters& p_par
 //----------------------------------------------------------------------------------------------
 vector<GoalEx*> BuildInfrastructureGoal::GetSucceededInstances(RtsGame &game)
 {
-    vector<GoalEx*> succeededInstaces;
-    PlanStepParameters params;
-    vector<TID> entities;
-    map<EntityClassType, int> buildingsCount;
-    game.Self()->Entities(entities);
-
-    for (auto entity : entities)
-    {
-        EntityClassType entityType = game.Self()->GetEntity(entity)->Type();
-        GameType* gameType = game.GetEntityType(entityType);
-
-        if (gameType->Attr(ECATTR_IsBuilding))
-        {
-            buildingsCount[entityType]++;
-
-            if (buildingsCount[entityType] == 1)
-            {
-                // Special case, learn for goals with zero amount.
-                params[PARAM_EntityClassId] = entityType;
-                params[PARAM_Amount] = 0;
-                succeededInstaces.push_back(new BuildInfrastructureGoal(params));
-            }
-
-            params[PARAM_EntityClassId] = entityType;
-            params[PARAM_Amount] = buildingsCount[entityType];
-            succeededInstaces.push_back(new BuildInfrastructureGoal(params));
-        }
-    }
+    vector<GoalEx*> succeededInstaces(m_succeededInstaces);
+    m_succeededInstaces.clear();
 
     return succeededInstaces;
+}
+//----------------------------------------------------------------------------------------------
+void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
+{
+    if (p_msg->MessageTypeID() == MSG_EntityCreate)
+    {
+        EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
+        _ASSERTE(pMsg && pMsg->Data());
+
+        if (pMsg->Data()->OwnerId != PLAYER_Self)
+            return;
+
+        EntityClassType entityType = pMsg->Data()->EntityType;
+        if (game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding))
+        {
+            PlanStepParameters params;
+            //if (m_createdBuildings[entityType] == 0)
+            //{
+            //    // Special case, learn for goals with zero amount.
+            //    params[PARAM_EntityClassId] = entityType;
+            //    params[PARAM_Amount] = 0;
+            //    m_succeededInstaces.push_back(new BuildInfrastructureGoal(params));
+            //}
+
+            m_createdBuildings[entityType]++;
+            params[PARAM_EntityClassId] = entityType;
+            params[PARAM_Amount] = m_createdBuildings[entityType];
+            m_succeededInstaces.push_back(new BuildInfrastructureGoal(params));
+        }
+    }
 }
 //----------------------------------------------------------------------------------------------
 void BuildInfrastructureGoal::InitializePostConditions()

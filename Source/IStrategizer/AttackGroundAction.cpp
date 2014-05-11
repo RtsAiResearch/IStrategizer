@@ -55,11 +55,6 @@ bool AttackGroundAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     return executed;
 }
 //----------------------------------------------------------------------------------------------
-void AttackGroundAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
-{
-    
-}
-//----------------------------------------------------------------------------------------------
 bool AttackGroundAction::AliveConditionsSatisfied(RtsGame& game)
 {
     bool attackerExists = g_Assist.DoesEntityObjectExist(_attackerId);

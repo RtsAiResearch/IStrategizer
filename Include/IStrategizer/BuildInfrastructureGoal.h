@@ -17,6 +17,7 @@ namespace IStrategizer
         BuildInfrastructureGoal(const PlanStepParameters& p_parameters);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         void AdaptParameters(RtsGame& game);
+        void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
 
     protected:
         void InitializePostConditions();
@@ -25,6 +26,8 @@ namespace IStrategizer
 
     private:
         int m_existingAmount;
+        std::map<EntityClassType, int> m_createdBuildings;
+        std::vector<GoalEx*> m_succeededInstaces;
     };
 }
 

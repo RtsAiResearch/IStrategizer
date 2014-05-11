@@ -46,7 +46,14 @@ namespace IStrategizer
         // Parameter:  BWAPI::Unit unit:
         // Returns:    true if the unit is auto controlled, false otherwise
         //************************************
-        bool IsAutoGatheringResources(const BWAPI::Unit unit);
+        bool StartedGathering(const BWAPI::Unit unit);
+
+        //************************************
+        // IStrategizer::GameTraceCollector::IsAutoGathering
+        // Description: 
+        // Parameter:  BWAPI::Unit unit: the candidate gathering worker
+        // Returns:    bool true if the given unit is auto-gathering
+        bool IsAutoGathering(const BWAPI::Unit unit);
 
         //************************************
         // IStrategizer::GameTraceCollector::IsOrderChanged
@@ -90,7 +97,7 @@ namespace IStrategizer
         // Parameter:  const BWAPI::Unit unit:
         // Returns:    bool
         //************************************
-        bool IsUnitBeingTrained(const BWAPI::Unit unit);
+        bool IsUnitBeingTrained(const BWAPI::Unit unit) const;
 
         //************************************
         // IStrategizer::GameTraceCollector::CollectGameTraceForTrainedUnit
@@ -118,14 +125,33 @@ namespace IStrategizer
         // Parameter:  GameTrace* pTrace: the collected game trace
         // Returns:    void
         //************************************
-        void SendGameTrace(GameTrace* pTrace);
+        void SendGameTrace(GameTrace* pTrace) const;
+        
+        //************************************
+        // IStrategizer::GameTraceCollector::CollectGameTraceForBuildAddon
+        // Description: 
+        // Parameter:  BWAPI::Unit unit: the addon to collect its order
+        // Returns:    void
+        //************************************
+        void CollectGameTraceForBuildAddon(const BWAPI::Unit unit);
+        
+        //************************************
+        // IStrategizer::GameTraceCollector::StartedAttacking
+        // Description: 
+        // Parameter:  BWAPI::Unit unit: the candidate attacking unit
+        // Returns:    bool true if the given unit started attacking
+        //************************************
+        bool StartedAttacking(const BWAPI::Unit unit);
 
         std::map<BWAPI::Unit, BWAPI::Order> m_unitOrder;
         std::map<BWAPI::Unit, BWAPI::Unit> m_unitOrderTarget;
         std::map<BWAPI::Unit, BWAPI::Position> m_unitOrderTargetPosition;
         std::map<BWAPI::Unit, std::set<BWAPI::Unit> > m_trainerToTraineesMap;
+        std::set<int> m_gatherers;
         std::set<int> m_trainedUnits;
+        std::set<int> m_constructedAddons;
         std::set<int> m_playerIssuedOrderIDs;
+        std::set<int> m_attackers;
 
         TID m_playerToObserveID;
         PlayerType m_playerToObserve;

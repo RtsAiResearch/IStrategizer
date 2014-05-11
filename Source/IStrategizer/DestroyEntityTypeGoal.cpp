@@ -1,5 +1,4 @@
 #include "DestroyEntityTypeGoal.h"
-
 #include "Not.h"
 #include "And.h"
 #include "EntityClassExist.h"

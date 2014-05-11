@@ -15,6 +15,7 @@ CaseLearningHelper::CaseLearningHelper()
     g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
     g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
 
     for(unsigned i = START(GoalType); i < END(GoalType); ++i)
     {

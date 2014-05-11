@@ -219,6 +219,7 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
     _ASSERTE(p_pUnit);
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
+    pData->EntityType = g_Database.EntityMapping.GetByFirst(p_pUnit->getType());
 
     if (p_pUnit->getType().isBuilding())
     {

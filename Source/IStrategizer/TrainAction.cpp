@@ -193,7 +193,7 @@ bool TrainAction::ExecuteAux(RtsGame& game, const WorldClock& clock)
 void TrainAction::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], DONT_CARE, true));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------

@@ -13,7 +13,6 @@ CollectResourceGoal::CollectResourceGoal() : GoalEx(GOALEX_CollectResource)
 {
     _params[PARAM_ResourceId] = RESOURCE_START;
     _params[PARAM_ForceSizeId] = FORCESIZE_START;
-    m_workersCount = 0;
 }
 //----------------------------------------------------------------------------------------------
 CollectResourceGoal::CollectResourceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_CollectResource, p_parameters)
@@ -63,17 +62,17 @@ void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, Re
     vector<TID> workers;
     game.Self()->Entities(game.Self()->GetWorkerType(), workers);
 
-    if (workers.size() != m_workersCount)
-    {
-        m_workersCount = workers.size();
-        int gatherersCount = GetNumberOfGatherers(game, resourceType);
-        ForceSizeType gatherersForceSize = game.GetForceSizeType(gatherersCount);
+    int gatherersCount = GetNumberOfGatherers(game, resourceType);
 
+    if (gatherersCount != 0 && find(m_succeededGatherersCount.begin(), m_succeededGatherersCount.end(), gatherersCount) == m_succeededGatherersCount.end())
+    {
+        ForceSizeType gatherersForceSize = game.GetForceSizeType(gatherersCount);
         PlanStepParameters params;
         params[PARAM_ResourceId] = resourceType;
         params[PARAM_ForceSizeId] = gatherersForceSize;
-
         succeededInstances.push_back(new CollectResourceGoal(params));
+
+        m_succeededGatherersCount.push_back(gatherersCount);
     }
 }
 //----------------------------------------------------------------------------------------------
