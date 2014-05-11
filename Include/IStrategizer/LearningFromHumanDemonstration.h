@@ -3,10 +3,9 @@
 
 #include <vector>
 #include <map>
-#include "EngineData.h"
 #include "CompositeExpression.h"
 #include "CaseLearningHelper.h"
-#include "RtsGame.h"
+#include "CaseEx.h"
 
 namespace IStrategizer
 {

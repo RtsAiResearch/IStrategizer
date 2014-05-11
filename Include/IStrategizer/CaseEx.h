@@ -2,16 +2,25 @@
 #ifndef CASEEX_H
 #define CASEEX_H
 
-#include "RtsGame.h"
 #include "UserObject.h"
-#include "EngineData.h"
-
+#include "PlanStepEx.h"
 #include <vector>
 
 namespace IStrategizer
 {
     class GoalEx;
     class RtsGame;
+
+    template<>
+    struct AdjListDigraphNodeValueTraits<PlanStepEx*>
+    {
+        typedef PlanStepEx* Type;
+        typedef const PlanStepEx* ConstType;
+        static std::string ToString(const PlanStepEx* pStep) { return pStep->ToString(true); }
+    };
+
+    ///> alias=OlcbpPlan(AdjListDigraph(PlanStepEx*))
+    typedef AdjListDigraph<PlanStepEx*> OlcbpPlan;
 
     ///> class=CaseEx
     class CaseEx : public Serialization::UserObject

@@ -80,7 +80,7 @@ namespace IStrategizer
         // Parameter: 	NodeID id: Unique ID to identify the node
         // Returns:   	IStrategizer::NodeValue
         //************************************
-        virtual NodeValue& GetNode(_In_ NodeID id) 
+        virtual NodeValue& GetNode(_In_ NodeID id)
             throw(ItemNotFoundException) = 0;
 
         //************************************
@@ -158,6 +158,14 @@ namespace IStrategizer
         // Returns:   	void
         //************************************
         virtual void Unlock() = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::ToString
+        // Description:	Visualize the digraph in a string representation that describes
+        // its nodes and the connections between them
+        // Returns:   	std::string
+        //************************************
+        virtual std::string ToString() const = 0;
     };
 }
 

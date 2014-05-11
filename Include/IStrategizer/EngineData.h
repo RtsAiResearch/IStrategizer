@@ -36,9 +36,6 @@ namespace IStrategizer
     ///> alias=IOlcbpPlan(IDigraph(PlanStepEx*))
     typedef IDigraph<PlanStepEx*> IOlcbpPlan;
 
-    ///> alias=OlcbpPlan(AdjListDigraph(PlanStepEx*))
-    typedef AdjListDigraph<PlanStepEx*> OlcbpPlan;
-
     ///> alias=ShallowFeaturesEx(vector(float))
     typedef Serialization::SVector<float> ShallowFeaturesEx;
 

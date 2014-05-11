@@ -13,9 +13,17 @@ using namespace std;
 
 namespace IStrategizer
 {
+    template<class T>
+    struct AdjListDigraphNodeValueTraits
+    {
+        typedef T Type;
+        typedef const T ConstType;
+        static std::string ToString(ConstType& v) { return std::to_string(v); }
+    };
+
     ///> class=AdjListDigraph(TNodeValue)
     ///> parent=IDigraph(TNodeValue)
-    template<class TNodeValue>
+    template<class TNodeValue, class TNodeValueTraits = AdjListDigraphNodeValueTraits<TNodeValue>>
     class AdjListDigraph :  public Serialization::UserObject, public IDigraph<TNodeValue>
     {
     public:
@@ -107,7 +115,7 @@ namespace IStrategizer
         // Parameter: 	NodeID id: Unique ID to identify the node
         // Returns:   	IStrategizer::NodeValue
         //************************************
-        NodeValue& GetNode(_In_ NodeID id) 
+        NodeValue& GetNode(_In_ NodeID id)
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(id) == 0)
@@ -253,7 +261,7 @@ namespace IStrategizer
             return leaves;
         }
 
-        bool IsSubGraphOf(AdjListDigraph<TNodeValue>& p_parentGraph, NodeList& p_matchedIndexes)
+        bool IsSubGraphOf(AdjListDigraph<TNodeValue, TNodeValueTraits>& p_parentGraph, NodeList& p_matchedIndexes)
         {
             NodeSet m_parentNodes;
             UnorderedNodeSet m_matchedNodes;
@@ -275,14 +283,68 @@ namespace IStrategizer
         // Description:	Locks the graph for exclusive read/write access by the caller thread
         // Returns:   	void
         //************************************
-        virtual void Lock() { m_lock.lock(); }
+        void Lock() { m_lock.lock(); }
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::Unlock
         // Description:	Unlocks the graph acquisition by caller thread
         // Returns:   	void
         //************************************
-        virtual void Unlock() { m_lock.unlock(); }        OBJECT_SERIALIZABLE(AdjListDigraph);
+        void Unlock() { m_lock.unlock(); }        OBJECT_SERIALIZABLE(AdjListDigraph);
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::ToString
+        // Description:	Visualize the digraph in a string representation that describes
+        // its nodes and the connections between them
+        // Returns:   	std::string
+        //************************************
+        std::string ToString() const
+        {
+            std::string str;
+
+            NodeSet roots = GetOrphanNodes();
+            str = "R = {";
+            for (auto rootID : roots)
+            {
+                str += to_string(rootID);
+                str += ',';
+            }
+            str += "}\n";
+
+            for (auto nodeEntry : m_adjList)
+            {
+                if (m_adjList.count(nodeEntry.first) == 0)
+                    DEBUG_THROW(ItemNotFoundException(XcptHere));
+
+                AdjListDigraphNodeValueTraits<TNodeValue>::ConstType nodeVal = m_adjList.at(nodeEntry.first).first;
+                str += TNodeValueTraits::ToString(nodeVal);
+                str += '[';
+                str += to_string(nodeEntry.first);
+                str += ']';
+                str += " -> ";
+
+                NodeSet& adjacents = nodeEntry.second.second;
+
+                for (auto adjNodeID : adjacents)
+                {
+                    if (m_adjList.count(adjNodeID) == 0)
+                        DEBUG_THROW(ItemNotFoundException(XcptHere));
+
+                    AdjListDigraphNodeValueTraits<TNodeValue>::ConstType adjNodeVal = m_adjList.at(adjNodeID).first;
+
+                    str += TNodeValueTraits::ToString(adjNodeVal);
+                    str += '[';
+                    str += to_string(nodeEntry.first);
+                    str += ']';
+                    str += ',';
+                }
+
+                str += '\n';
+            }
+
+            return str;
+        }
+
         OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
 
     private:
@@ -296,7 +358,7 @@ namespace IStrategizer
         bool MatchNodesAndChildren(
             NodeSet& p_candidateNodes,
             NodeSet& p_parentNodes,
-            AdjListDigraph<TNodeValue>& p_parentGraph,
+            AdjListDigraph<TNodeValue, TNodeValueTraits>& p_parentGraph,
             UnorderedNodeSet& p_matchedIndexes)
         {
             for each(NodeID m_candidateNodeId in p_candidateNodes)
