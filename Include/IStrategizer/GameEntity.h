@@ -25,13 +25,14 @@ namespace IStrategizer
     public:
         GameEntity(TID p_id) : m_id(p_id) {}
         virtual ~GameEntity() {}
-        TID             Id() const { return m_id; }
+        TID Id() const { return m_id; }
         EntityClassType Type() const { return m_type; }
         virtual std::string ToString() const = 0;
         virtual Vector2 GetPosition() const = 0;
-        virtual bool IsTraining(TID p_traineeId) const = 0;
-
         virtual int Attr(EntityObjectAttribute p_attrId) const = 0;
+        virtual bool IsTraining(TID p_traineeId) const = 0;
+        virtual bool IsGatheringResource(ResourceType resourceType) const = 0;
+        virtual bool CanTrain(EntityClassType p_entityClassId) const = 0;
         virtual bool Research(ResearchType p_researchId) = 0;
         virtual bool Build(EntityClassType p_buildingClassId, Vector2 p_position) = 0;
         virtual bool AttackGround(Vector2 p_position) = 0;
@@ -41,12 +42,12 @@ namespace IStrategizer
         virtual bool GatherResourceEntity(TID p_resourceEntityObjectId) = 0;
         bool Acquire() { return true; }
         bool Release() { return true; }
-        IStrategizer::PlayerType GetPlayer() const { return m_ownerId; }
+        PlayerType GetPlayer() const { return m_ownerId; }
 
     protected:
-        TID             m_id;
+        TID m_id;
         EntityClassType m_type;
-        IStrategizer::PlayerType m_ownerId;
+        PlayerType m_ownerId;
     };
 }
 

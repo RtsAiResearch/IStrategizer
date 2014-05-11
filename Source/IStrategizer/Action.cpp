@@ -92,7 +92,11 @@ void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
             }
             else
             {
-                State(ESTATE_Failed, game, p_clock);
+                LogInfo("Execution failed for action '%s', do not fail and keep retrying", ToString().c_str());
+                OnFailure(game, p_clock);
+                // It's intentional to comment this block as some actions require retrying.
+                //LogInfo("Execution failed for action %s", ToString().c_str());
+                //State(ESTATE_Failed, game, p_clock);
             }
         }
         break;

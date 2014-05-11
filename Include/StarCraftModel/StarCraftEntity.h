@@ -23,25 +23,26 @@ namespace StarCraftModel
     {
     public:
         StarCraftEntity(BWAPI::Unit p_unit);
-        int    Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
         std::string ToString() const;
         IStrategizer::Vector2 GetPosition() const;
+        int Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
         bool IsTraining(IStrategizer::TID p_traineeId) const;
-
+        bool IsNull();
+        bool IsGatheringResource(IStrategizer::ResourceType resourceType) const;
+        bool CanTrain(IStrategizer::EntityClassType p_entityClassId) const;
         bool Research(IStrategizer::ResearchType p_researchId);
         bool Build(IStrategizer::EntityClassType p_buildingClassId, IStrategizer::Vector2 p_position);
         bool AttackGround(IStrategizer::Vector2 p_position);
         bool AttackEntity(IStrategizer::TID p_targetEntityObjectId);
         bool Train(IStrategizer::EntityClassType p_entityClassId);
         bool Move(IStrategizer::Vector2 p_position);
-        bool IsNull();
 		bool GatherResourceEntity(IStrategizer::TID p_resourceEntityObjectId);
 
     protected:
         IStrategizer::ObjectStateType FetchState() const;
 
     private:
-        BWAPI::Unit    m_unit;
+        BWAPI::Unit m_unit;
     };
 }
 

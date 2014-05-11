@@ -49,6 +49,7 @@ namespace IStrategizer
         static bool IsValidEntityState(ObjectStateType p_entityState, const std::vector<ObjectStateType>& p_rankedStates);
         static int GetEntityStateIndex(ObjectStateType p_entityState, const std::vector<ObjectStateType>& p_rankedStates);
         static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_pCell, void *p_pParam);
+        TID GetSourceEntity(EntityClassType p_traineeType, ActionType actionType) const;
         MapArea AdaptPositionForSpecialBuilding(EntityClassType p_buildingType);
         const static int DefaultBuildingSpacing;
         static bool IsRankedStatesInitialized;

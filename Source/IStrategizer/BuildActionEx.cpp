@@ -31,7 +31,7 @@ BuildActionEx::BuildActionEx() :
 }
 //////////////////////////////////////////////////////////////////////////
 BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :
-    Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false),  _buildIssued(false)
+    Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
 {
 }
 //////////////////////////////////////////////////////////////////////////
@@ -212,7 +212,6 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
         _buildArea.Lock(this);
         _ASSERTE(!_requiredResources.IsNull());
         _requiredResources.Lock(this);
-
         bOk = pGameBuilder->Build(buildingType, _buildArea.Pos());
 
         if (bOk)

@@ -107,6 +107,31 @@ ObjectStateType StarCraftEntity::FetchState() const
         return OBJSTATE_END;
 }
 //----------------------------------------------------------------------------------------------
+bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position) 
+{
+    TilePosition pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
+    UnitType type;
+    TID gameTypeId;
+    string typeName;
+
+    gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
+    typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
+
+    type = UnitType::getType(typeName);
+    type = BWAPI::UnitType::getType(typeName);
+
+    if (type.isAddon())
+    {
+        _ASSERTE(m_unit->canBuildAddon(type));
+        return m_unit->buildAddon(type);
+    }
+    else
+    {
+        // _ASSERTE(Broodwar->canBuildHere(pos, type));
+        return m_unit->build(type, pos);
+    }
+};
+//----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Research(ResearchType p_researchId)
 {
     bool bOk;
@@ -127,31 +152,6 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
 
     return bOk;
 }
-//----------------------------------------------------------------------------------------------
-bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position) 
-{
-    TilePosition pos(TilePositionFromUnitPosition(p_position.X), TilePositionFromUnitPosition(p_position.Y));
-    UnitType type;
-    TID gameTypeId;
-    string typeName;
-
-    gameTypeId = g_Database.EntityMapping.GetBySecond(p_buildingClassId);
-    typeName = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
-    
-    type = UnitType::getType(typeName);
-    type = BWAPI::UnitType::getType(typeName);
-
-    if (type.isAddon())
-    {
-        _ASSERTE(m_unit->canBuildAddon(type));
-        return m_unit->buildAddon(type);
-    }
-    else
-    {
-        // _ASSERTE(Broodwar->canBuildHere(pos, type));
-        return m_unit->build(type, pos);
-    }
-};
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackGround(Vector2 p_position)
 {
@@ -175,25 +175,31 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 {
     Unit building = m_unit;
-    TID unitTypeId;
-    string typeName;
-    UnitType type;
-    bool success = false;
-
-    unitTypeId = g_Database.EntityMapping.GetBySecond(p_entityClassId);
-    typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
-
-    type = BWAPI::UnitType::getType(typeName);
+    TID unitTypeId = g_Database.EntityMapping.GetBySecond(p_entityClassId);
+    string typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
+    UnitType type = BWAPI::UnitType::getType(typeName);
     
-    if (building->getTrainingQueue().size() < g_Game->GetMaxTrainingQueueCount())
-    {
-        success = building->train(type);
-    }
+    _ASSERTE(CanTrain(p_entityClassId));
+    bool success = building->train(type);
 
     return success;
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
+bool StarCraftEntity::CanTrain(EntityClassType p_entityClassId) const
+{
+    TID unitTypeId = g_Database.EntityMapping.GetBySecond(p_entityClassId);
+    string typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
+    UnitType type = BWAPI::UnitType::getType(typeName);
+
+    if (m_unit->canTrain(type))
+    {
+        return m_unit->getTrainingQueue().size() < g_Game->GetMaxTrainingQueueCount();
+    }
+
+    return false;
+}
+//----------------------------------------------------------------------------------------------
+bool StarCraftEntity::IsTraining(TID p_traineeId) const
 {
     Unit traineeObj = Broodwar->getUnit(p_traineeId);
 
@@ -211,7 +217,7 @@ bool StarCraftModel::StarCraftEntity::IsTraining(TID p_traineeId) const
         traineeObj->getPosition().y);
 }
 //----------------------------------------------------------------------------------------------
-string StarCraftModel::StarCraftEntity::ToString() const
+string StarCraftEntity::ToString() const
 {
     std::string asSharedResource = SharedResource::ToString();
 
@@ -241,14 +247,30 @@ bool StarCraftEntity::IsNull()
     return m_unit == nullptr;
 }
 //----------------------------------------------------------------------------------------------
-bool StarCraftModel::StarCraftEntity::GatherResourceEntity(IStrategizer::TID p_resourceEntityObjectId )
+bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
 {
 	Unit gatherer = m_unit;
 	Unit resource;
 
 	resource = Broodwar->getUnit(p_resourceEntityObjectId);
+	_ASSERTE(resource);
 
-	assert(resource);
-
+    _ASSERTE(gatherer->canGather(resource));
 	return gatherer->gather(resource);
+}
+//----------------------------------------------------------------------------------------------
+bool StarCraftEntity::IsGatheringResource(ResourceType resourceType) const
+{
+    if (resourceType == RESOURCE_Primary)
+    {
+        return m_unit->isGatheringMinerals() || m_unit->isCarryingMinerals();
+    }
+    else if (resourceType == RESOURCE_Secondary)
+    {
+        return m_unit->isGatheringGas() || m_unit->isCarryingGas();
+    }
+    else
+    {
+        DEBUG_THROW(InvalidParameterException(XcptHere));
+    }
 }

@@ -15,13 +15,14 @@ namespace StarCraftModel
   class StarCraftPlayerResources : public PlayerResources
   {
     Player m_player;
+
   public:
     StarCraftPlayerResources(Player p_player) :  m_player(p_player) {}
     int Supply();
     int Secondary();
     int Primary();
 
-    EntityClassType GetEntityClassType(ResourceType p_type) const;
+    EntityClassType GetResourceSource(ResourceType p_type) const;
 
   };
 }

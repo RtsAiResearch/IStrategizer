@@ -34,16 +34,3 @@ int StarCraftPlayerResources::Primary()
     int amount = m_player->minerals();
     return amount;
 }
-
-IStrategizer::EntityClassType StarCraftModel::StarCraftPlayerResources::GetEntityClassType( ResourceType p_type ) const
-{
-    switch(p_type)
-    {
-    case RESOURCE_Primary:
-        return g_Database.EntityMapping.GetByFirst(UnitTypes::Resource_Mineral_Field.getID());
-    case RESOURCE_Secondary:
-        return g_Database.EntityMapping.GetByFirst(UnitTypes::Resource_Vespene_Geyser.getID());
-    default:
-        DEBUG_THROW(InvalidParameterException(XcptHere));
-    }
-}

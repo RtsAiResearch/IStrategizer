@@ -21,6 +21,12 @@ namespace IStrategizer
     protected:
         void InitializePostConditions();
         bool SuccessConditionsSatisfied(RtsGame& game);
+
+    private:
+        size_t m_workersCount;
+
+        int GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) const;
+        void AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, vector<GoalEx*>& succeededInstances);
     };
 }
 #endif // COLLECTRESOURCEGOAL_H

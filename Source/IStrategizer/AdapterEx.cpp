@@ -215,7 +215,7 @@ Vector2 AdapterEx::AdaptEnemyBorder()
     return g_Game->Map()->GetNearestEnemyBorders(1).at(0);
 }
 //////////////////////////////////////////////////////////////////////////
-IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID )
+IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID)
 {
 	GamePlayer	*pPlayer;
 	GameEntity	*pEntity;
@@ -224,17 +224,17 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( ResourceTy
 	double bestDistance = numeric_limits<double>::max();
 	CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
 
-	pPlayer = g_Game->GetPlayer(PLAYER_Neutral);
-	assert(pPlayer);
+	pPlayer = p_resourceType == RESOURCE_Primary ? g_Game->GetPlayer(PLAYER_Neutral) : g_Game->GetPlayer(PLAYER_Self);
+	_ASSERTE(pPlayer);
 
-    pPlayer->Entities(pPlayer->Resources()->GetEntityClassType(p_resourceType), entityIds);
-	
+    pPlayer->Entities(g_Game->GetResourceSource(p_resourceType), entityIds);
+
     g_Game->Map()->UpdateAux();
 	
 	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
 	{	
 		pEntity = pPlayer->GetEntity(entityIds[i]);
-		assert(pEntity);
+		_ASSERTE(pEntity);
 
         //now we can depend on the cell feature for comparison to get the resource that matches the required cell feature.
 		CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
@@ -250,23 +250,17 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering( ResourceTy
 	return adaptedResourceId;
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
+TID AdapterEx::GetSourceEntity(EntityClassType p_entityType, ActionType actionType) const
 {
-    // The entity search algorithm should be moved to GamePlayer class
-    return AdaptBuildingForTraining((EntityClassType)p_researchType);
-}
-//////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
-{
-    // Gets first building to train entity from type p_traineeType
-    // If no empty building is found, last non-idle building will be returned
-    GamePlayer            *pPlayer;
-    GameEntity            *pEntity;
-    vector<TID>            entityIds;
-    EntityClassType        trainerType;
-    TID                    id = INVALID_TID;
+    // Gets first building to train entity from type p_entityType
+    // If no empty building is found, first non-idle building will be returned
+    GamePlayer *pPlayer;
+    GameEntity *pEntity;
+    vector<TID> entityIds;
+    EntityClassType trainerType;
+    TID id = INVALID_TID;
 
-    trainerType = g_Game->Self()->TechTree()->SourceEntity(p_traineeType);
+    trainerType = g_Game->Self()->TechTree()->SourceEntity(p_entityType);
     pPlayer = g_Game->Self();
     _ASSERTE(pPlayer);
 
@@ -277,19 +271,30 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
         pEntity = pPlayer->GetEntity(entityIds[i]);
         _ASSERTE(pEntity);
 
-        if (trainerType == pEntity->Type())
+        if (trainerType == pEntity->Type() &&
+            (actionType == ACTIONEX_Research ||
+            (actionType == ACTIONEX_Train && pEntity->CanTrain(p_entityType))))
         {
             id = pEntity->Id();
-
             if (pEntity->Attr(EOATTR_State) == OBJSTATE_Idle)
             {
-                id = pEntity->Id();
                 break;
             }
         }
     }
 
     return id;
+}
+//////////////////////////////////////////////////////////////////////////
+TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
+{
+    // The entity search algorithm should be moved to GamePlayer class
+    return GetSourceEntity((EntityClassType)p_researchType, ACTIONEX_Research);
+}
+//////////////////////////////////////////////////////////////////////////
+TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
+{
+    return GetSourceEntity(p_traineeType, ACTIONEX_Train);
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
