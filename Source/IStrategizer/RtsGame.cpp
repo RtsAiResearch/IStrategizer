@@ -171,16 +171,16 @@ GamePlayer* RtsGame::Enemy()
 //----------------------------------------------------------------------------------------------
 int RtsGame::GetForceSizeCount(ForceSizeType p_forceSizeType)
 {
-    int period = GetMaxForceSize() / 3;
-
     switch (p_forceSizeType)
     {
     case FORCESIZE_SmallForce:
         return 1;
+
     case FORCESIZE_MediumForce:
-        return period;
+        return GetMaxForceSize() / 2;
+
     case FORCESIZE_LargeForce: 
-        return period * 2;
+        return GetMaxForceSize();
     }
 
     _ASSERTE(!"Not Supported Force Size");
@@ -201,14 +201,12 @@ float IStrategizer::RtsGame::GetResourceConsumbtionRatePerWorker(ResourceType p_
 //----------------------------------------------------------------------------------------------
 ForceSizeType RtsGame::GetForceSizeType(int forceCount)
 {
-    int period = GetMaxForceSize() / 3;
-
     if (forceCount == 1)
         return FORCESIZE_SmallForce;
-    else if (forceCount <= period)
+
+    else if (forceCount <= GetMaxForceSize() / 2)
         return FORCESIZE_MediumForce;
+
     else
-    {
         return FORCESIZE_LargeForce;
-    }
 }

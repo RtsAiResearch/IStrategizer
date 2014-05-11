@@ -71,7 +71,11 @@ void PlanStepEx::Copy(IClonable* p_dest)
     m_dest->_stepTypeId = _stepTypeId;
     m_dest->_state = _state;
     m_dest->_params = _params;
-    m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
+    if (!_postCondition)
+    {
+        InitializePostConditions();
+    }
+    m_dest->_postCondition = static_cast<CompositeExpression*>(_postCondition->Clone());
     m_dest->_stepLevelType = _stepLevelType;
 }
 //////////////////////////////////////////////////////////////////////////

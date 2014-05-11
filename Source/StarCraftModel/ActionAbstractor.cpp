@@ -29,7 +29,7 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
     Order order = unit->getOrder();
         
     if (order == Orders::PlaceBuilding || order == Orders::AttackMove ||
-        order == Orders::AttackUnit || order == Orders::Move)
+        order == Orders::AttackUnit || order == Orders::Move || Orders::PlaceAddon)
     {
         position.X = unit->getOrderTargetPosition().x;
         position.Y = unit->getOrderTargetPosition().y;
@@ -83,22 +83,17 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
             actionParameters[PARAM_ResearchId] = g_Database.UpgradeMapping.GetByFirst(unit->getTech());
         }
     }
-//     if (actionParameters.count(PARAM_Amount)> 0)
-//     {
-//         if (unit->isGatheringMinerals() || unit->isGatheringGas())
-//         {
-//             actionParameters[PARAM_Amount] = 10;
-//         }
-//     }
     if (actionParameters.count(PARAM_ResourceId)> 0)
     {
         if (unit->isGatheringMinerals())
         {
             actionParameters[PARAM_ResourceId] = RESOURCE_Primary;
+            actionParameters[PARAM_Amount] = DONT_CARE;
         }
         else if (unit->isGatheringGas())
         {
             actionParameters[PARAM_ResourceId] = RESOURCE_Secondary;
+            actionParameters[PARAM_Amount] = DONT_CARE;
         }
     }
 

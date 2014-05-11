@@ -244,14 +244,26 @@ void DefinitionCrossMapping::InitActions()
 {
     vector< pair<TID, ActionType> > actions;
 
+    actions.push_back(make_pair(Orders::Train.getID(), ACTIONEX_Train));
+    
     actions.push_back(make_pair(Orders::AttackMove.getID(), ACTIONEX_AttackGround));
     actions.push_back(make_pair(Orders::AttackUnit.getID(), ACTIONEX_AttackEntity));
+
     actions.push_back(make_pair(Orders::ResearchTech.getID(), ACTIONEX_Research));
     actions.push_back(make_pair(Orders::Upgrade.getID(), ACTIONEX_Research));
+
     actions.push_back(make_pair(Orders::PlaceBuilding.getID(), ACTIONEX_Build));
-    actions.push_back(make_pair(Orders::Train.getID(), ACTIONEX_Train));
+    actions.push_back(make_pair(Orders::PlaceAddon.getID(), ACTIONEX_Build));
+    
+    actions.push_back(make_pair(Orders::MoveToMinerals.getID(), ACTIONEX_GatherResource));
     actions.push_back(make_pair(Orders::MiningMinerals.getID(), ACTIONEX_GatherResource));
+    actions.push_back(make_pair(Orders::WaitForMinerals.getID(), ACTIONEX_GatherResource));
+    actions.push_back(make_pair(Orders::ReturnMinerals.getID(), ACTIONEX_GatherResource));
+    
+    actions.push_back(make_pair(Orders::MoveToGas.getID(), ACTIONEX_GatherResource));
     actions.push_back(make_pair(Orders::HarvestGas.getID(), ACTIONEX_GatherResource));
+    actions.push_back(make_pair(Orders::WaitForGas.getID(), ACTIONEX_GatherResource));
+    actions.push_back(make_pair(Orders::ReturnGas.getID(), ACTIONEX_GatherResource));
 
     ActionMapping = CrossMap<TID, IStrategizer::ActionType>(actions);
 }

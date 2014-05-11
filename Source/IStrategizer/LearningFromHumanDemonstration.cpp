@@ -34,7 +34,7 @@ void LearningFromHumanDemonstration::Learn()
     vector<CookedPlan*> m_cookedPlans;
     vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
 
-    for each(auto m_rawCase in m_rawCases)
+    for (auto m_rawCase : m_rawCases)
     {
         IStrategizer::CookedCase* m_cookedCase = DependencyGraphGeneration(m_rawCase);
         
@@ -57,11 +57,11 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
     CaseLearningHelper::GoalMatrix goalMatrix = _helper->GetGoalSatisfacionMatrix();
 
     // Learn the succeeded goals
-    for each(auto goalPair in goalMatrix)
+    for (auto goalPair : goalMatrix)
     {
         SequentialPlan plan;
 
-        for(size_t i = 0; i < traces.size() && goalPair.first >= traces[i].GameCycle(); ++i)
+        for (size_t i = 0; i < traces.size() && goalPair.first >= traces[i].GameCycle(); ++i)
         {
             // Set the action id to use it in the future to reference the trace game state.
             Action* action = g_ActionFactory.GetAction(traces[i].Action(), traces[i].ActionParams());
@@ -120,9 +120,9 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
         m_olcpbPlan->AddNode((PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone());
     }
 
-    for each(int i in m_olcpbPlan->GetNodes())
+    for (int i : m_olcpbPlan->GetNodes())
     {
-        for each(int j in m_olcpbPlan->GetNodes())
+        for (int j : m_olcpbPlan->GetNodes())
         {
             if(i != j)
             {
@@ -145,7 +145,7 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNod
     vector< pair<Expression*,Expression*> > m_candidateConditions;
     p_candidateNode->PartiallyEquals(p_dependentNode, m_candidateConditions);
 
-    for each(auto m_candidateCondition in m_candidateConditions)
+    for (auto m_candidateCondition : m_candidateConditions)
     {
         ConditionEx* m_precondition = (ConditionEx*)m_candidateCondition.second;
         ConditionEx* m_postCondition = (ConditionEx*)m_candidateCondition.first;
@@ -165,7 +165,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     OlcbpPlan::NodeSet m_necessarySteps;
     OlcbpPlan::NodeSet m_finalSteps;
 
-    for(OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
+    for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
     {
         if (Depends(p_case->plan->GetNode(*it)->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition()))
         {
@@ -184,7 +184,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         m_necessarySteps.erase(current);
         m_finalSteps.insert(current);
 
-        for(OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
+        for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
         {
             if(p_case->plan->IsAdjacent(*it, current))
             {
@@ -198,7 +198,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         }
     }
 
-    for each(OlcbpPlan::NodeID i in p_case->plan->GetNodes())
+    for (OlcbpPlan::NodeID i : p_case->plan->GetNodes())
     {
         if(m_finalSteps.find(i) == m_finalSteps.end())
         {
@@ -232,7 +232,7 @@ void LearningFromHumanDemonstration::RetainLearntCases(vector<CookedPlan*>& p_co
 
     _retainer->ReadCaseBase();
 
-    for(size_t i = 0, size = p_cookedPlans.size(); i < size; ++i)
+    for (size_t i = 0, size = p_cookedPlans.size(); i < size; ++i)
     {
         CookedPlan* currCookedPlan = p_cookedPlans[i];
         pLearntCase = new CaseEx(currCookedPlan->pPlan, currCookedPlan->Goal, currCookedPlan->gameState, 1, 1);

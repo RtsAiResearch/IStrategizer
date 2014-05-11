@@ -23,7 +23,7 @@ namespace IStrategizer
         bool SuccessConditionsSatisfied(RtsGame& game);
 
     private:
-        size_t m_workersCount;
+        vector<int> m_succeededGatherersCount;
 
         int GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) const;
         void AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, vector<GoalEx*>& succeededInstances);
