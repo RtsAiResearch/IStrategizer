@@ -15,6 +15,7 @@
 #include "GameEntity.h"
 #include "AdapterEx.h"
 #include "EntityClassExist.h"
+#include "ResourceExist.h"
 #include "PlayerResources.h"
 
 using namespace IStrategizer;
@@ -225,6 +226,12 @@ void BuildActionEx::InitializePostConditions()
 {
     vector<Expression*> m_terms;
     m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1));
+
+    if (g_Game->GetResourceSource(RESOURCE_Supply) == (EntityClassType)_params[PARAM_EntityClassId])
+    {
+        m_terms.push_back(new ResourceExist(PLAYER_Self, RESOURCE_Supply, g_Game->SupplyBuildingSupplyAmount()));
+    }
+
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------

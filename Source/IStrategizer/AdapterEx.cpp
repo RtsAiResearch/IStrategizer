@@ -217,37 +217,38 @@ Vector2 AdapterEx::AdaptEnemyBorder()
 //////////////////////////////////////////////////////////////////////////
 IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID)
 {
-	GamePlayer	*pPlayer;
-	GameEntity	*pEntity;
-	vector<TID>	entityIds;
-	TID	adaptedResourceId = INVALID_TID;
-	double bestDistance = numeric_limits<double>::max();
-	CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
+    GamePlayer	*pPlayer;
+    GameEntity	*pEntity;
+    vector<TID>	entityIds;
+    TID	adaptedResourceId = INVALID_TID;
+    double bestDistance = numeric_limits<double>::max();
+    CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
+    GameEntity *pGatherer = g_Game->Self()->GetEntity(p_gathererID);
 
-	pPlayer = p_resourceType == RESOURCE_Primary ? g_Game->GetPlayer(PLAYER_Neutral) : g_Game->GetPlayer(PLAYER_Self);
-	_ASSERTE(pPlayer);
+    pPlayer = p_resourceType == RESOURCE_Primary ? g_Game->GetPlayer(PLAYER_Neutral) : g_Game->GetPlayer(PLAYER_Self);
+    _ASSERTE(pPlayer);
 
     pPlayer->Entities(g_Game->GetResourceSource(p_resourceType), entityIds);
 
     g_Game->Map()->UpdateAux();
-	
-	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
-	{	
-		pEntity = pPlayer->GetEntity(entityIds[i]);
-		_ASSERTE(pEntity);
+    
+    for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+    {	
+        pEntity = pPlayer->GetEntity(entityIds[i]);
+        _ASSERTE(pEntity);
 
         //now we can depend on the cell feature for comparison to get the resource that matches the required cell feature.
-		CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
-		double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
+        CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+        double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
 
-		if (dist <= bestDistance)
-		{
-			bestDistance = dist;
-			adaptedResourceId = pEntity->Id();
-		}
-	}
+        if (dist <= bestDistance && pGatherer->CanGather(pEntity->Id()))
+        {
+            bestDistance = dist;
+            adaptedResourceId = pEntity->Id();
+        }
+    }
 
-	return adaptedResourceId;
+    return adaptedResourceId;
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::GetSourceEntity(EntityClassType p_entityType, ActionType actionType) const

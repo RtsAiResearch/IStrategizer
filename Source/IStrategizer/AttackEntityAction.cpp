@@ -105,11 +105,7 @@ void AttackEntityAction::InitializeAddressesAux()
 void AttackEntityAction::InitializePostConditions()
 {
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    
-    std::vector<Expression*> expressions;
-    expressions.push_back(new EntityClassExist(PLAYER_Enemy, targetType, 0, true));
-
-    _postCondition = new And(expressions);
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, targetType, 1));
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePreConditions()

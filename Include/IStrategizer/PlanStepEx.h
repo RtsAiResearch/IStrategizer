@@ -80,7 +80,7 @@ namespace IStrategizer
         ExecutionStateType State() const { return _state; }
         virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         StepLevelType LevelType() const { return _stepLevelType; }
-        CompositeExpression* PostCondition() { if (!_postCondition) InitializeConditions(); return _postCondition; }
+        CompositeExpression* PostCondition() { _ASSERTE(_postCondition); return _postCondition; }
         IClonable* Clone();
         unsigned Id() const { return _id; }
         void Id(unsigned id) { _id = id; }

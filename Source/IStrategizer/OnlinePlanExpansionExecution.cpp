@@ -25,7 +25,8 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     m_pOlcbpPlan(new OlcbpPlan)
 {
     PlanStepEx* pRootNode = (PlanStepEx*)pInitialGoal;
-    m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode);
+    m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
+
     m_nodeData[m_planRootNodeId] = NodeData();
     OpenNode(m_planRootNodeId);
 
@@ -55,7 +56,8 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     {
         IOlcbpPlan::NodeValue pOriginalNode = pCasePlan->GetNode(caseNodeId);
         IOlcbpPlan::NodeValue pNode = static_cast<PlanStepEx*>(const_cast<PlanStepEx*>(pOriginalNode)->Clone());
-        IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pNode);
+
+        IOlcbpPlan::NodeID plannerNodeId = m_pOlcbpPlan->AddNode(pNode, pNode->Id());
         m_nodeData[plannerNodeId] = NodeData();
         m_nodeData[plannerNodeId].ID = plannerNodeId;
 
@@ -285,7 +287,8 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             GoalEx* currentGoalNode = (GoalEx*)pCurrentPlanStep;
             if (clock.ElapsedGameCycles() > 1 && currentGoalNode->SuccessConditionsSatisfied(*g_Game))
             {
-                LogInfo("Goal already satisfied, no need to expand it");
+                CloseNode(currentNode);
+                LogInfo("Goal already satisfied, no need to expand it, closing the node");
             }
             else
             {
@@ -350,13 +353,20 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
         }
         else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
         {
-            LogInfo("GoalNodeID=%d Goal=%s suceeded, revising and retaining it", currentNode, pCurrentPlanStep->ToString().c_str());
-            CaseEx* currentCase = GetLastCaseForGoalNode(currentNode);
-            m_pCbReasoner->Reviser()->Revise(currentCase, true);
-            UpdateHistory(currentCase);
-            m_pCbReasoner->Retainer()->Retain(currentCase);
-            m_pCbReasoner->Retainer()->Flush();
-
+            if (GetNodeData(currentNode).BelongingCase != nullptr)
+            {
+                LogInfo("GoalNodeID=%d Goal=%s suceeded, revising and retaining it", currentNode, pCurrentPlanStep->ToString().c_str());
+                CaseEx* currentCase = GetLastCaseForGoalNode(currentNode);
+                m_pCbReasoner->Reviser()->Revise(currentCase, true);
+                UpdateHistory(currentCase);
+                m_pCbReasoner->Retainer()->Retain(currentCase);
+                m_pCbReasoner->Retainer()->Flush();
+            }
+            else
+            {
+                 LogInfo("GoalNodeID=%d Goal=%s suceeded, and no case was expaneded for it, and no need to revise it", currentNode, pCurrentPlanStep->ToString().c_str());
+            }
+            
             MarkNodeAsDone(currentNode);
             UpdateBelongingSubplanChildrenWithParentReadiness(currentNode);
             AddReadyChildrenToUpdateQueue(currentNode, updateQ);

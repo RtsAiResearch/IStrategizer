@@ -274,3 +274,8 @@ bool StarCraftEntity::IsGatheringResource(ResourceType resourceType) const
         DEBUG_THROW(InvalidParameterException(XcptHere));
     }
 }
+//----------------------------------------------------------------------------------------------
+bool StarCraftEntity::CanGather(IStrategizer::TID resourceObjectId) const
+{
+    return m_unit->canGather(Broodwar->getUnit(resourceObjectId));
+}

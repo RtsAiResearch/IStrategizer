@@ -33,17 +33,21 @@ void LearningFromHumanDemonstration::Learn()
 {
     vector<CookedPlan*> m_cookedPlans;
     vector<RawCaseEx*> m_rawCases = LearnRawCases(_helper->ObservedTraces());
-
+    int count = 0;
     for (auto m_rawCase : m_rawCases)
     {
         IStrategizer::CookedCase* m_cookedCase = DependencyGraphGeneration(m_rawCase);
-        
         UnnecessaryStepsElimination(m_cookedCase);
-        
-        m_cookedPlans.push_back(new CookedPlan(
-            m_cookedCase->rawCase->rawPlan.Goal,
-            m_cookedCase->plan,
-            m_cookedCase->rawCase->gameState));
+
+        if (m_cookedCase->plan->Size() > 0)
+        {
+            m_cookedPlans.push_back(new CookedPlan(
+                m_cookedCase->rawCase->rawPlan.Goal,
+                m_cookedCase->plan,
+                m_cookedCase->rawCase->gameState));
+        }
+
+        LogInfo("Finished learning case %d/%d", count++, m_rawCases.size());
     }
 
     HierarchicalComposition(m_cookedPlans);
@@ -64,7 +68,9 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
         for (size_t i = 0; i < traces.size() && goalPair.first >= traces[i].GameCycle(); ++i)
         {
             // Set the action id to use it in the future to reference the trace game state.
-            Action* action = g_ActionFactory.GetAction(traces[i].Action(), traces[i].ActionParams());
+            Action* action = g_ActionFactory.GetAction(traces[i].Action(), traces[i].ActionParams(), true);
+            _ASSERTE(action->PostCondition());
+            _ASSERTE(action->PreCondition());
             action->Id(i);
 
             plan.push_back(action);
@@ -92,7 +98,9 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
         }
 
         if (!duplicate)
+        {
             learntRawCases.push_back(candidateRawCases[i]);
+        }
     }
 
     return learntRawCases;
@@ -117,7 +125,8 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
 
     for (size_t i = 0; i < p_rawCase->rawPlan.sPlan.size(); ++i)
     {
-        m_olcpbPlan->AddNode((PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone());
+        PlanStepEx* pClone = (PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone();
+        m_olcpbPlan->AddNode(pClone, pClone->Id());
     }
 
     for (int i : m_olcpbPlan->GetNodes())
@@ -126,7 +135,18 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
         {
             if(i != j)
             {
-                if(Depends(m_olcpbPlan->GetNode(i)->PostCondition(), ((Action*)m_olcpbPlan->GetNode(j))->PreCondition()))
+                PlanStepEx* postConditionsNode = (PlanStepEx*)m_olcpbPlan->GetNode(i);
+                _ASSERTE(postConditionsNode);
+                CompositeExpression* postConditions = m_olcpbPlan->GetNode(i)->PostCondition();
+                _ASSERTE(postConditions);
+                
+                PlanStepEx* preConditionsNode = (PlanStepEx*)m_olcpbPlan->GetNode(j);
+                _ASSERTE(preConditionsNode);
+                CompositeExpression* preConditions = ((Action*)m_olcpbPlan->GetNode(j))->PreCondition();
+                _ASSERTE(preConditions);
+
+                if(Depends(m_olcpbPlan->GetNode(i)->PostCondition(), ((Action*)m_olcpbPlan->GetNode(j))->PreCondition()) &&
+                   !m_olcpbPlan->IsAdjacent(j, i))
                 {
                     m_olcpbPlan->AddEdge(i, j);
                 }
@@ -142,16 +162,17 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNod
     assert(p_candidateNode);
     assert(p_dependentNode);
 
-    vector< pair<Expression*,Expression*> > m_candidateConditions;
+    vector<pair<Expression*,Expression*>> m_candidateConditions;
     p_candidateNode->PartiallyEquals(p_dependentNode, m_candidateConditions);
 
     for (auto m_candidateCondition : m_candidateConditions)
     {
         ConditionEx* m_precondition = (ConditionEx*)m_candidateCondition.second;
         ConditionEx* m_postCondition = (ConditionEx*)m_candidateCondition.first;
-
+        int requiredAmount = m_precondition->ContainsParameter(PARAM_Amount) ? m_precondition->Parameter(PARAM_Amount) : 0;
         if (m_postCondition->Consume(m_precondition->ContainsParameter(PARAM_Amount) ? m_precondition->Parameter(PARAM_Amount) : 0))
         {
+            m_precondition->Consume(requiredAmount);
             return true;
         }
     }
@@ -167,7 +188,10 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
 
     for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
     {
-        if (Depends(p_case->plan->GetNode(*it)->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition()))
+        // The order of depends is important keep goal on left side and action on right side
+        // that's because if the goal depends on the action we'll consume the action's resources
+        // and assign the goals requirements as well.
+        if (Depends(p_case->rawCase->rawPlan.Goal->PostCondition(), p_case->plan->GetNode(*it)->PostCondition()))
         {
             m_necessarySteps.insert(*it);
             m_unprocessedSteps.erase(it++);

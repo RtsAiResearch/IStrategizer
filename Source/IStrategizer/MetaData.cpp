@@ -31,7 +31,6 @@ namespace IStrategizer
         DEFINE(ConditionType);
         DEFINE(AttackType);
         DEFINE(BaseType);
-        DEFINE(ForceSizeType);
         DEFINE(GoalType);
         DEFINE(ObjectStateType);
         DEFINE(ParameterType);

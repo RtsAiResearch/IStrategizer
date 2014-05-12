@@ -106,24 +106,39 @@ void DefinitionCrossMapping::InitPlayers()
     vector< pair<TID, IStrategizer::PlayerType> > m_players;
     const Playerset &players = Broodwar->getPlayers();
     BWAPI::Player pPlayer;
+    TID selfID = DONT_CARE;
+    bool isEnemy = false;
 
     for (Playerset::iterator i = players.begin();
         i != players.end();
         ++i)
     {
         pPlayer = (*i);
-
+        
+        if (selfID != DONT_CARE)
+        {
+            isEnemy = pPlayer->isEnemy(Broodwar->getPlayer(selfID));
+        }
         // FIXME: PLAYER_Self is not valid if there are more than 1 human player
         // for example in replays or network game
         // Player types should be removed from the engine and only Player IDs should be used
-        if(pPlayer->getType().getID() == PlayerTypes::Player.getID())
-            m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Self));
-        else if(pPlayer->getType().getID() == PlayerTypes::Computer.getID())
+        if (pPlayer->getType().getID() == PlayerTypes::Computer.getID() || isEnemy)
+        {
             m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Enemy));
-        else if(pPlayer->isNeutral())
+        }
+        else if (pPlayer->getType().getID() == PlayerTypes::Player.getID())
+        {
+            m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Self));
+            selfID = pPlayer->getID();
+        }
+        else if (pPlayer->isNeutral())
+        {
             m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Neutral));
+        }
     }
 
+    // We don't handle more that 3 players for now.
+    _ASSERTE(m_players.size() == 3);
     PlayerMapping = CrossMap<TID, IStrategizer::PlayerType>(m_players);
 }
 //----------------------------------------------------------------------------------------------

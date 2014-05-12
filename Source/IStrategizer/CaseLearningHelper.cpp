@@ -52,7 +52,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     if (p_message == nullptr)
         DEBUG_THROW(InvalidParameterException(XcptHere));
 
-    for (size_t i = 0; i < m_goals.size(); ++i)
+    for (size_t i = 0; i < m_goals.size() && p_message->GameCycle() > 0; ++i)
     {
         m_goals[i]->HandleMessage(*g_Game, p_message, dummy);
     }

@@ -19,15 +19,15 @@ namespace StarCraftModel
         GamePlayer* FetchPlayer(IStrategizer::PlayerType p_id);
         IStrategizer::GameType* FetchEntityType(EntityClassType p_id);
         GameResearch* FetchResearch(ResearchType p_id);
-        int GetMaxForceSize() const;
 
     public:
         StarCraftGame();
         void ExecuteCommand(const char *p_cmd);
         void DisplayMessage(const char *p_msg);
-        size_t GetMaxTrainingQueueCount() const;
         int BaseSupplyAmount() const;
         int SupplyBuildingSupplyAmount() const;
+        int GetMaxForceSize() const;
+        size_t GetMaxTrainingQueueCount() const;
         EntityClassType GetResourceSource(ResourceType p_type) const;
     };
 }

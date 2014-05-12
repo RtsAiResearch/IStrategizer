@@ -20,7 +20,6 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
     {
     case ACTIONEX_Research:
         m_action = new ResearchAction(p_paramaters);
-
         break;
 
     case ACTIONEX_Build:
@@ -28,7 +27,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
         break;
 
     case ACTIONEX_Train:
-        return new TrainAction(p_paramaters);
+        m_action = new TrainAction(p_paramaters);
         break;
 
     case ACTIONEX_AttackGround:
@@ -40,8 +39,9 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
         break;
 
     case ACTIONEX_AttackEntity:
-        return new AttackEntityAction(p_paramaters);
+        m_action = new AttackEntityAction(p_paramaters);
          break;
+
     case ACTIONEX_GatherResource:
         m_action = new GatherResourceAction(p_paramaters);
         break;
@@ -50,8 +50,12 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
         _ASSERTE(!"Action not supported");
     }
 
-    if(p_initConditions)
+    if (p_initConditions)
+    {
         m_action->InitializeConditions();
+        _ASSERTE(m_action->PostCondition());
+        _ASSERTE(m_action->PreCondition());
+    }
 
     return m_action;
 }
@@ -85,6 +89,7 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
     case ACTIONEX_AttackEntity:
         m_action = new AttackEntityAction();
         break;
+
     case ACTIONEX_GatherResource:
         m_action = new GatherResourceAction();
         break;
@@ -93,8 +98,12 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
         _ASSERTE(!"Action not supported");
     }
 
-    if(p_initConditions)
+    if (p_initConditions)
+    {
         m_action->InitializeConditions();
+        _ASSERTE(m_action->PostCondition());
+        _ASSERTE(m_action->PreCondition());
+    }
 
     return m_action;
 }

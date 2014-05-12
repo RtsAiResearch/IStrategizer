@@ -169,44 +169,22 @@ GamePlayer* RtsGame::Enemy()
     return GetPlayer(PLAYER_Enemy);
 }
 //----------------------------------------------------------------------------------------------
-int RtsGame::GetForceSizeCount(ForceSizeType p_forceSizeType)
-{
-    switch (p_forceSizeType)
-    {
-    case FORCESIZE_SmallForce:
-        return 1;
-
-    case FORCESIZE_MediumForce:
-        return GetMaxForceSize() / 2;
-
-    case FORCESIZE_LargeForce: 
-        return GetMaxForceSize();
-    }
-
-    _ASSERTE(!"Not Supported Force Size");
-    return 0;
-}//----------------------------------------------------------------------------------------------
 float IStrategizer::RtsGame::GetResourceConsumbtionRatePerWorker(ResourceType p_id)
 {
 	switch(p_id)
 	{
 	case RESOURCE_Primary:
 		return MineralsPerWorkerPerFrame;
+
 	case RESOURCE_Secondary:
 		return GasPerWorkerPerFrame;
+
 	default:
 		throw InvalidParameterException(XcptHere);
 	}
 }
 //----------------------------------------------------------------------------------------------
-ForceSizeType RtsGame::GetForceSizeType(int forceCount)
+int RtsGame::GetMinForceSize() const
 {
-    if (forceCount == 1)
-        return FORCESIZE_SmallForce;
-
-    else if (forceCount <= GetMaxForceSize() / 2)
-        return FORCESIZE_MediumForce;
-
-    else
-        return FORCESIZE_LargeForce;
+    return GetMaxForceSize() / 3;
 }

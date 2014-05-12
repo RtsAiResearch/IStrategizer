@@ -36,7 +36,7 @@ namespace IStrategizer
 
     public:
         int Type() const { return PlanStepEx::_stepTypeId; }
-        CompositeExpression* PreCondition() { return _preCondition; }
+        CompositeExpression* PreCondition() { _ASSERTE(_preCondition); return _preCondition; }
         void Reset(RtsGame& game, const WorldClock& p_clock);
         void InitializeConditions();
         void Copy(IClonable* p_dest);
