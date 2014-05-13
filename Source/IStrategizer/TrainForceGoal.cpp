@@ -62,7 +62,7 @@ void TrainForceGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consum
         _ASSERTE(pEntity);
         EntityClassType entityType = pEntity->Type();
 
-        if (!game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding) && m_trainedUnits[entityType] <= 12)
+        if (!game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding) && m_trainedUnits[entityType] <= 6)
         {
             PlanStepParameters params;
             m_trainedUnits[entityType]++;

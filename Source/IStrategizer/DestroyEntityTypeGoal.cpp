@@ -53,7 +53,7 @@ void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p
             return;
 
         m_destroyed[pMsg->Data()->EntityType]++;
-        if (m_destroyed[pMsg->Data()->EntityType] <= 12)
+        if (m_destroyed[pMsg->Data()->EntityType] <= 6)
         {
             PlanStepParameters params;
             params[PARAM_TargetEntityClassId] = pMsg->Data()->EntityType;

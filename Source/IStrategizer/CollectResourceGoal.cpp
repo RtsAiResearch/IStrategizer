@@ -65,7 +65,7 @@ void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, Re
 
     int gatherersCount = GetNumberOfGatherers(game, resourceType);
 
-    if (gatherersCount != 0 && gatherersCount <= 12 && find(m_succeededGatherersCount.begin(), m_succeededGatherersCount.end(), gatherersCount) == m_succeededGatherersCount.end())
+    if (gatherersCount != 0 && gatherersCount <= 6 && find(m_succeededGatherersCount.begin(), m_succeededGatherersCount.end(), gatherersCount) == m_succeededGatherersCount.end())
     {
         PlanStepParameters params;
         params[PARAM_ResourceId] = resourceType;
