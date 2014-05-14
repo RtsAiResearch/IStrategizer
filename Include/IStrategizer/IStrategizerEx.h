@@ -12,7 +12,6 @@ namespace IStrategizer
     class GameTrace;
     class CaseBaseEx;
     class LearningFromHumanDemonstration;
-    class GameAPI;
     class OnlineCaseBasedPlannerEx;
     class RtsGame;
 
@@ -28,21 +27,20 @@ namespace IStrategizer
     class IStrategizerEx : public MessagePumpObserver
     {
     private:
-        OnlineCaseBasedPlannerEx* _planner;
-        LearningFromHumanDemonstration* _caseLearning;
-        PlayerType _self;
-        PlayerType _enemy;
-        IStrategizerParam _param;
-        bool _isFirstUpdate;
-        WorldClock _clock;
+        OnlineCaseBasedPlannerEx* m_pPlanner;
+        LearningFromHumanDemonstration* m_pCaseLearning;
+        IStrategizerParam m_param;
+        bool m_isFirstUpdate;
+        WorldClock m_clock;
 
     public:
-        IStrategizerEx(const IStrategizerParam &p_param, RtsGame* p_rtsGame);
-        void Update(unsigned p_gameCycle);
-        const OnlineCaseBasedPlannerEx* Planner() const { return _planner; }
-        OnlineCaseBasedPlannerEx* Planner() { return _planner; }
-        void NotifyMessegeSent(Message* p_message);
-        const WorldClock& Clock() const { return _clock; }
+        IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame);
+        void Update(unsigned gameCycle);
+        const OnlineCaseBasedPlannerEx* Planner() const { return m_pPlanner; }
+        OnlineCaseBasedPlannerEx* Planner() { return m_pPlanner; }
+        void NotifyMessegeSent(Message* pMsg);
+        const WorldClock& Clock() const { return m_clock; }
+        bool Init();
         ~IStrategizerEx();
     };
 }

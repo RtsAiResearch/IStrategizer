@@ -1,5 +1,6 @@
 #include "PlayerResources.h"
 #include "Action.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
 

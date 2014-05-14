@@ -7,7 +7,7 @@
 
 #include "BWAPI.h"
 
-namespace StarCraftModel
+namespace IStrategizer
 {
     class StarCraftType : public IStrategizer::GameType
     {

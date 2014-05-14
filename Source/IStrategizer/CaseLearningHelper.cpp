@@ -1,11 +1,11 @@
 #include "CaseLearningHelper.h"
 #include "DataMessage.h"
-#include "GameStateEx.h"
 #include "MessagePump.h"
 #include "IStrategizerException.h"
 #include "RtsGame.h"
 #include "SVector.h"
 #include "GoalFactory.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
 using namespace std;

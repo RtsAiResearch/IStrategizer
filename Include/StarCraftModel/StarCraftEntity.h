@@ -17,7 +17,7 @@ namespace IStrategizer
     enum PlayerType;
 }
 
-namespace StarCraftModel
+namespace IStrategizer
 {
     class StarCraftEntity: public IStrategizer::GameEntity
     {

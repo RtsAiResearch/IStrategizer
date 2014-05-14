@@ -34,18 +34,21 @@
 
 #include "BWAPI.h"
 
-using namespace StarCraftModel;
-using namespace IStrategizer;
 using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
+
+// Been determined empirically by analyzing professional games. 
+// Refer to paper "Build Order Optimization in StarCraft" page 3
+const float StarCraftGame::MineralsPerWorkerPerFrame = 0.045f;
+const float StarCraftGame::GasPerWorkerPerFrame = 0.07f;
 
 StarCraftGame::StarCraftGame()
 {
     g_Database.Init();
 }
 //----------------------------------------------------------------------------------------------
-void StarCraftGame::InitializeMap()
+void StarCraftGame::InitMap()
 {
     // Set the world map grid cell size to be a square of size 8 build tiles
     m_pMap = new StarCraftMap(TILE_SIZE * 8);
@@ -234,4 +237,17 @@ int StarCraftGame::BaseSupplyAmount() const
 int StarCraftGame::SupplyBuildingSupplyAmount() const
 {
     return 8;
+}
+//----------------------------------------------------------------------------------------------
+float StarCraftGame::GetResourceConsumbtionRatePerWorker(ResourceType p_id)
+{
+    switch(p_id)
+    {
+    case RESOURCE_Primary:
+        return MineralsPerWorkerPerFrame;
+    case RESOURCE_Secondary:
+        return GasPerWorkerPerFrame;
+    default:
+        throw InvalidParameterException(XcptHere);
+    }
 }

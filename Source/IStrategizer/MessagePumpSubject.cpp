@@ -1,5 +1,4 @@
 #include "MessagePumpSubject.h"
-#include "Persist.h"
 #include <algorithm>
 
 #ifndef METADATA_H

@@ -10,7 +10,7 @@
 #include <cassert>
 #include "BWAPI.h"
 
-using namespace StarCraftModel;
+using namespace IStrategizer;
 using namespace BWAPI;
 
 void StarCraftResearch::InitializeAux()

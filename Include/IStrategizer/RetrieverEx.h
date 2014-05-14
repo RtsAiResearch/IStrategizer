@@ -13,19 +13,19 @@ namespace IStrategizer
     class AbstractRetainer;
     class CaseEx;
     class GoalEx;
-    class GameStateEx;
     class CaseBaseEx;
+    class RtsGame;
 
     class RetrieverEx : public AbstractRetriever
     {
     public:
         RetrieverEx(AbstractRetainer *p_pRetainer);
-        CaseEx* Retrieve(const GoalEx* pGoal, const GameStateEx* pGameState, const std::set<CaseEx*>& exclusion);
+        CaseEx* Retrieve(const GoalEx* pGoal, const RtsGame* pGameState, const std::set<CaseEx*>& exclusion);
 
     protected:
         float   GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2);
-        float   StateSimilarity(const GameStateEx* p_gs1, const GameStateEx* p_gs2);
-        float   CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const GameStateEx* p_gameState);
+        float   StateSimilarity(const RtsGame* p_gs1, const RtsGame* p_gs2);
+        float   CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const RtsGame* p_gameState);
         void    ExecuteCommand(const char* p_cmd);
         void BuildCaseCluster();
 

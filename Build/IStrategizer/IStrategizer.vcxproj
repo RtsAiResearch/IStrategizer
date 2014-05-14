@@ -49,7 +49,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Message>Building TypeInfo database</Message>
-      <Command>"$(OutDir)\TypeInfoCollector.exe" "$(ProjectDir)..\..\Include\IStrategizer" $(OutDir)</Command>
+      <Command>"$(OutDir)\TypeInfoCollector.exe" "$(ProjectDir)..\..\Include" $(OutDir)</Command>
     </PreBuildEvent>
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\Include\IStrategizer;..\..\..\Serialization\UnrealCompiler;..\..\..\Serialization\ObjectSerializer\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -115,12 +115,10 @@
     <ClCompile Include="..\..\Source\IStrategizer\WorldClock.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\LearningFromHumanDemonstration.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GameTrace.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\GameStateEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\PlanStepEx.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Action.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\AttackEntityAction.cpp" />
@@ -185,13 +183,10 @@
     <ClInclude Include="..\..\Include\IStrategizer\Delegate.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ErrorCode.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MathHelper.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\Persist.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Predicate.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Vector2.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\MapEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\Diagraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Collection.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MultiIndex.h" />
     <ClInclude Include="..\..\Include\IStrategizer\MultiIndexContainer.h" />
@@ -200,7 +195,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\IComparable.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseBaseEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CaseEx.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\GameStateEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\PlanStepEx.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Action.h" />
     <ClInclude Include="..\..\Include\IStrategizer\AttackEntityAction.h" />

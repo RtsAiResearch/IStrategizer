@@ -13,6 +13,7 @@
 #include "AdapterEx.h"
 #include "EntityClassExist.h"
 #include "ResourceExist.h"
+#include "Logger.h"
 #include <vector>
 
 using namespace std;
@@ -43,7 +44,7 @@ GatherResourceAction::GatherResourceAction(const PlanStepParameters& p_parameter
 //////////////////////////////////////////////////////////////////////////
 void GatherResourceAction::InitializePreConditions()
 {
-	EntityClassType gathererType = g_Game->Self()->GetWorkerType();
+	EntityClassType gathererType = g_Game->Self()->TechTree()->GetWorkerType();
 	vector<Expression*> m_terms;
 
 	m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1, true));
@@ -155,7 +156,7 @@ void GatherResourceAction::OnFailure(RtsGame& game, const WorldClock& p_clock)
 //////////////////////////////////////////////////////////////////////////
 bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
-	EntityClassType gathererType = game.Self()->GetWorkerType();
+	EntityClassType gathererType = game.Self()->TechTree()->GetWorkerType();
 	ResourceType resourceType;
 	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 	bool bOK = false;

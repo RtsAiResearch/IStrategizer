@@ -19,7 +19,6 @@
 namespace IStrategizer
 {
     class PlanStepEx;
-    class GameStateEx;
     class ConditionEx;
     class GoalEx;
 

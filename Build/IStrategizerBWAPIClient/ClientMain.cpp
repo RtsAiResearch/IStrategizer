@@ -26,7 +26,6 @@
 #include "PlanGraphView.h"
 
 using namespace IStrategizer;
-using namespace StarCraftModel;
 using namespace BWAPI;
 using namespace std;
 
@@ -81,21 +80,27 @@ void ClientMain::InitIStrategizer()
 
         m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
         _ASSERTE(m_pIStrategizer);
+
+        m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
+        m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+
+        // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
+        // and the engine Enums[*] table is fully initialized
+        InitIdLookup();
+
+        if (!m_pIStrategizer->Init())
+        {
+            LogError("Failed to initialize IStrategizer");
+            return;
+        }
+
+        if (!m_isLearning)
+            m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
     }
     catch (IStrategizer::Exception& e)
     {
         e.To(cout);
     }
-
-    m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
-    m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
-
-    // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
-    // and the engine Enums[*] table is fully initialized
-    InitIdLookup();
-
-    if (!m_isLearning)
-        m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()

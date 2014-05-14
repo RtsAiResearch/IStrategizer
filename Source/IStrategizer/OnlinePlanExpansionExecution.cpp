@@ -301,7 +301,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                 }
 
                 currentGoalNode->AdaptParameters(*g_Game);
-                CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve(currentGoalNode, g_Game->Self()->State(), exclusions);
+                CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve(currentGoalNode, g_Game, exclusions);
                 // Retriever should always retrieve a non tried case for that specific node
                 _ASSERTE(!IsCaseTried(currentNode, caseEx));
 

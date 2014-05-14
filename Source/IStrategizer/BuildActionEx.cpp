@@ -16,8 +16,10 @@
 #include "AdapterEx.h"
 #include "EntityClassExist.h"
 #include "PlayerResources.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 const unsigned MaxPrepTime = 300000;
 const unsigned MaxExecTrialTime = 120000;
@@ -50,7 +52,7 @@ void BuildActionEx::FreeResources(RtsGame &game)
     if (!_buildArea.IsNull() && _buildArea.IsLocked())
     {
         // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
-        _ASSERTE(game.Self()->IsSpecialBuilding((EntityClassType)_params[PARAM_EntityClassId]) || !_buildArea.IsNull());
+        _ASSERTE(game.GetEntityType((EntityClassType)_params[PARAM_EntityClassId])->Attr(ECATTR_IsSpecialBuilding) || !_buildArea.IsNull());
         _buildArea.Unlock(this);
     }
 
@@ -95,7 +97,7 @@ void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
 
         if (pGameBuilding->Type() == _params[PARAM_EntityClassId] &&
             ((msgBuildPosition.X == _buildArea.Pos().X && msgBuildPosition.Y == _buildArea.Pos().Y) ||
-            game.Self()->IsSpecialBuilding(pGameBuilding->Type())))
+            game.GetEntityType(pGameBuilding->Type())->Attr(ECATTR_IsSpecialBuilding)))
         {
             _buildingId = pGameBuilding->Id();
             _buildStarted = true;
@@ -152,7 +154,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
     {
         ConditionEx* failedCondition = new EntityClassExist(
             PLAYER_Self,
-            game.Self()->GetWorkerType(),
+            game.Self()->TechTree()->GetWorkerType(),
             1,
             true);
         m_history.Add(ESTATE_Failed, failedCondition);
@@ -189,7 +191,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     bool bOk = false;
 
     // Adapt builder
-    _builderId = pAdapter->GetEntityObjectId(game.Self()->GetBuilderType(buildingType), AdapterEx::WorkerStatesRankVector);
+    _builderId = pAdapter->GetEntityObjectId(game.Self()->TechTree()->GetBuilderType(buildingType), AdapterEx::WorkerStatesRankVector);
 
     if (_builderId != INVALID_TID)
     {
@@ -208,7 +210,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 
         pGameBuilder->Lock(this);
         // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
-        _ASSERTE(game.Self()->IsSpecialBuilding(buildingType) || !_buildArea.IsNull());
+        _ASSERTE(game.GetEntityType(buildingType)->Attr(ECATTR_IsSpecialBuilding) || !_buildArea.IsNull());
         _buildArea.Lock(this);
         _ASSERTE(!_requiredResources.IsNull());
         _requiredResources.Lock(this);
@@ -230,7 +232,7 @@ void BuildActionEx::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 void BuildActionEx::InitializePreConditions()
 {
-    EntityClassType builderType = g_Game->Self()->GetWorkerType();
+    EntityClassType builderType = g_Game->Self()->TechTree()->GetWorkerType();
     EntityClassType buildingType = (EntityClassType)_params[PARAM_EntityClassId];
     _requiredResources = WorldResources::FromEntity(buildingType);
     vector<Expression*> m_terms;

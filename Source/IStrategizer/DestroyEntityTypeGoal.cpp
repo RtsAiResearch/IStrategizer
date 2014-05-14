@@ -9,6 +9,7 @@
 #include "GamePlayer.h"
 #include "GameEntity.h"
 #include "DataMessage.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
 using namespace std;

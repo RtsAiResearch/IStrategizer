@@ -5,9 +5,10 @@
 #include "StaticComponent.h"
 #endif
 
+#include "EngineData.h"
+
 namespace IStrategizer
 {
-    enum ResearchType;
     class WorldResources;
     class GameDependency;
 

@@ -2,7 +2,6 @@
 #include "CaseBaseEx.h"
 #include "ActionFactory.h"
 #include "CaseLearningHelper.h"
-#include "Diagraph.h"
 #include "Action.h"
 #include "GoalFactory.h"
 #include "GoalEx.h"

@@ -77,7 +77,7 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_world
 //////////////////////////////////////////////////////////////////////////
 MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
 {
-    if (!g_Game->Self()->IsSpecialBuilding(p_buildingType))
+    if (!g_Game->GetEntityType(p_buildingType)->Attr(ECATTR_IsSpecialBuilding))
     {
         /*
         Position Adaptation Algorithm Outline:
@@ -211,7 +211,7 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
 //////////////////////////////////////////////////////////////////////////
 Vector2 AdapterEx::AdaptEnemyBorder()
 {
-    g_Game->Map()->UpdateAux();
+    g_Game->Map()->Update();
     return g_Game->Map()->GetNearestEnemyBorders(1).at(0);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -229,7 +229,7 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
 
     pPlayer->Entities(g_Game->GetResourceSource(p_resourceType), entityIds);
 
-    g_Game->Map()->UpdateAux();
+    g_Game->Map()->Update();
 	
 	for (size_t i = 0, size = entityIds.size(); i < size; ++i)
 	{	
@@ -311,7 +311,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
     _ASSERTE(pPlayer);
 
     pPlayer->Entities(entityIds);
-    g_Game->Map()->UpdateAux();
+    g_Game->Map()->Update();
     for (size_t i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);
@@ -335,7 +335,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 //////////////////////////////////////////////////////////////////////////
 Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
 {
-    g_Game->Map()->UpdateAux();
+    g_Game->Map()->Update();
     return g_Game->Map()->GetNearestCell(new CellFeature(p_parameters));
 }
 //////////////////////////////////////////////////////////////////////////

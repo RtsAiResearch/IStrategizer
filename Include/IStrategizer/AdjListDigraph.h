@@ -9,8 +9,6 @@
 #include "SSet.h"
 #include "UserObject.h"
 
-using namespace std;
-
 namespace IStrategizer
 {
     template<class T>

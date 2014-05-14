@@ -14,8 +14,10 @@
 #include "GameType.h"
 #include "GameEntity.h"
 #include "EntityClassExist.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 const unsigned MaxPrepTime = 0;
 const unsigned MaxExecTrialTime = 60000;

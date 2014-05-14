@@ -6,7 +6,7 @@
 #include "EntityClassExist.h"
 #include "And.h"
 #include "Not.h"
-#include <cassert>
+#include "Logger.h"
 
 using namespace IStrategizer;
 

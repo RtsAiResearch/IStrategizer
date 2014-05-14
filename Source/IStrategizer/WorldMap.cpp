@@ -53,7 +53,7 @@ void WorldMap::Initialize()
     m_initialized = true;
 }
 //----------------------------------------------------------------------------------------------
-void WorldMap::UpdateAux()
+void WorldMap::Update()
 {
     vector<PlayerType> players;
     vector<TID>         currPlayerEntites;

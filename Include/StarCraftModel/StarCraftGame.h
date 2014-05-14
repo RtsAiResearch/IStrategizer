@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef STARCRAFTGAME_H
 #define STARCRAFTGAME_H
 
@@ -5,21 +6,13 @@
 #include "RtsGame.h"
 #endif
 
-namespace StarCraftModel
+namespace IStrategizer
 {
-    using namespace IStrategizer;
-
+    ///> class=StarCraftGame
+    ///> parent=RtsGame
     class StarCraftGame : public RtsGame
     {
-    protected:
-        void EnumeratePlayers();
-        void EnumerateEntityTypes();
-        void EnumerateResearches();
-        void InitializeMap();
-        GamePlayer* FetchPlayer(IStrategizer::PlayerType p_id);
-        IStrategizer::GameType* FetchEntityType(EntityClassType p_id);
-        GameResearch* FetchResearch(ResearchType p_id);
-        int GetMaxForceSize() const;
+        OBJECT_SERIALIZABLE(StarCraftGame);
 
     public:
         StarCraftGame();
@@ -29,6 +22,20 @@ namespace StarCraftModel
         int BaseSupplyAmount() const;
         int SupplyBuildingSupplyAmount() const;
         EntityClassType GetResourceSource(ResourceType p_type) const;
+        float GetResourceConsumbtionRatePerWorker(ResourceType p_id);
+
+    protected:
+        void EnumeratePlayers();
+        void EnumerateEntityTypes();
+        void EnumerateResearches();
+        void InitMap();
+        GamePlayer* FetchPlayer(IStrategizer::PlayerType p_id);
+        GameType* FetchEntityType(EntityClassType p_id);
+        GameResearch* FetchResearch(ResearchType p_id);
+        int GetMaxForceSize() const;
+
+        static const float MineralsPerWorkerPerFrame; 
+        static const float GasPerWorkerPerFrame;
     };
 }
 

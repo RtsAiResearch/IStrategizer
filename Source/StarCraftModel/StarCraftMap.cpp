@@ -7,7 +7,6 @@
 #include "DefinitionCrossMapping.h"
 #include "StarCraftEntity.h"
 
-using namespace StarCraftModel;
 using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;

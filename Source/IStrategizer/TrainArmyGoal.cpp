@@ -8,6 +8,7 @@
 #include "GameEntity.h"
 #include "GamePlayer.h"
 #include "GameType.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -100,7 +101,7 @@ vector<GoalEx*> TrainArmyGoal::GetSucceededInstances(RtsGame &game)
             GameEntity* gameEntity = game.Self()->GetEntity(entities[i]);
 
             if (!game.GetEntityType(gameEntity->Type())->Attr(ECATTR_IsBuilding) &&
-                 game.Self()->GetWorkerType() != gameEntity->Type())
+                 game.Self()->TechTree()->GetWorkerType() != gameEntity->Type())
             {
                 newForces[game.Self()->GetEntity(entities[i])->Type()]++;
                 m_usedUnits.push_back(gameEntity->Id());

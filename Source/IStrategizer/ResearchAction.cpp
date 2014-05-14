@@ -17,6 +17,7 @@
 #include "ResearchDone.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 ResearchAction::ResearchAction() : Action(ACTIONEX_Research)
 {

@@ -16,9 +16,6 @@
 #ifndef CASEEX_H
 #include "CaseEx.h"
 #endif
-#ifndef GAMESTATEEX_H
-#include "GameStateEx.h"
-#endif
 #ifndef DESTROYENTITYTYPEGOAL_H
 #include "DestroyEntityTypeGoal.h"
 #endif
@@ -92,7 +89,6 @@ void SerializationEssentials::Init()
         return;
 
     g_ObjectFactory.AddPrototype(new CaseEx);
-    g_ObjectFactory.AddPrototype(new GameStateEx);
 
     g_ObjectFactory.AddPrototype(new CollectResourceGoal);
     g_ObjectFactory.AddPrototype(new TrainArmyGoal);

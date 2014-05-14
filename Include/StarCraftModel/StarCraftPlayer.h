@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef STARCRAFTPLAYER_H
 #define STARCRAFTPLAYER_H
 
@@ -10,31 +11,23 @@
 namespace IStrategizer
 {
     enum EntityClassType;
-}
 
-namespace StarCraftModel
-{
-    using namespace IStrategizer;
-    using namespace BWAPI;
-
+    ///> class=StarCraftPlayer
+    ///> parent=GamePlayer
     class StarCraftPlayer : public GamePlayer
     {
+        OBJECT_SERIALIZABLE(StarCraftPlayer);
+
     public:
-        StarCraftPlayer(Player p_pPlayer);
-        const GameStateEx* State();
-        EntityClassType GetWorkerType() const { return m_workerTypeId; }
-        EntityClassType GetBuilderType(EntityClassType p_buildingType) const;
-        EntityClassType GetBaseType() const { return m_baseTypeId; }
-        bool IsSpecialBuilding(EntityClassType p_buildingType) const;
+        StarCraftPlayer() : m_pPlayer(nullptr) {}
+        StarCraftPlayer(BWAPI::Player p_pPlayer);
 
     protected:
         void EnumerateEntities();
         GameEntity* FetchEntity(TID p_id);
 
     private:
-        Player m_pPlayer;
-        EntityClassType m_workerTypeId;
-        EntityClassType m_baseTypeId;
+        BWAPI::Player m_pPlayer;
     };
 }
 

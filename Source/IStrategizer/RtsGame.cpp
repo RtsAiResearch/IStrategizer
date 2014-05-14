@@ -1,44 +1,26 @@
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-#ifndef METADATA_H
-#include "MetaData.h"
-#endif
-#ifndef GAMEPLAYER_H
-#include "GamePlayer.h"
-#endif
-#ifndef GAMEENTITY_H
-#include "GameEntity.h"
-#endif
-#ifndef ENGINEDATA_H
-#include "EngineData.h"
-#endif
-#ifndef WORLDMAP_H
-#include "WorldMap.h"
-#endif
-#ifndef TOOLBOX_H
-#include "Toolbox.h"
-#endif
-#ifndef ENGINEASSIST_H
-#include "EngineAssist.h"
-#endif
-#ifndef GAMETYPE_H
-#include "GameType.h"
-#endif
-#include "GameResearch.h"
-
-using namespace IStrategizer;
 
 #include <vector>
 #include <cassert>
+
+#include "GamePlayer.h"
+#include "GameEntity.h"
+#include "WorldMap.h"
+#include "Toolbox.h"
+#include "EngineAssist.h"
+#include "GameType.h"
+#include "GameResearch.h"
+#include "ObjectSerializer.h"
+#include "Logger.h"
+
+using namespace IStrategizer;
+using namespace Serialization;
 using namespace std;
 
 IStrategizer::RtsGame* g_Game = nullptr;
-const float RtsGame::MineralsPerWorkerPerFrame = 0.045f;
-const float RtsGame::GasPerWorkerPerFrame = 0.07f;
 
-MapEx<EntityClassType, GameType*> RtsGame::sm_entityTypes;
-MapEx<ResearchType, GameResearch*> RtsGame::sm_researches;
+SMap<EntityClassType, GameType*> RtsGame::sm_entityTypes;
+SMap<ResearchType, GameResearch*> RtsGame::sm_researches;
 bool RtsGame::sm_gameTypesInitialized = false;
 
 RtsGame::~RtsGame()
@@ -50,60 +32,64 @@ void RtsGame::Init()
 {
     if (!sm_gameTypesInitialized)
     {
-        InitializeTypes();
-        InitializeResearches();
+        LogInfo("Initializing RTS Game model types");
+        InitTypes();
+        InitResearches();
         sm_gameTypesInitialized = true;
     }
 
-    _ASSERTE(!m_initialized);
-    if (!m_initialized)
+    // We initialize player and map IFF we are in the online mode
+    // If we are offline, then the player and map data was already
+    // deserialized and no need to fetch it from somewhere
+    if (m_isOnline)
     {
-        InitializePlayers();
-        InitializeMap();
+        LogInfo("Initializing Online RTS Game model");
+
+        _ASSERTE(!m_initialized);
+        InitPlayers();
+        InitMap();
         m_initialized = true;
+    }
+    else
+    {
+        _ASSERTE(!m_initialized);
+        LogInfo("RTS Game model is in Offline mode, nothing to initialize");
     }
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::Finalize()
 {
-    for (MapEx<PlayerType, GamePlayer*>::iterator itr = m_players.begin();
-        itr != m_players.end(); ++itr)
-        Toolbox::MemoryClean(itr->second);
+    for (auto& playerEntry : m_players)
+        Toolbox::MemoryClean(playerEntry.second);
     m_players.clear();
 
     Toolbox::MemoryClean(m_pMap);
 }
 //----------------------------------------------------------------------------------------------
-void RtsGame::InitializeTypes()
+void RtsGame::InitTypes()
 {
     EnumerateEntityTypes();
-    for(MapEx<EntityClassType, GameType*>::iterator itr = sm_entityTypes.begin();
-        itr != sm_entityTypes.end();
-        ++itr)
+    for(auto& typeEntry : sm_entityTypes)
     {
-        itr->second = FetchEntityType(itr->first);
+        typeEntry.second = FetchEntityType(typeEntry.first);
     }
 }
 //----------------------------------------------------------------------------------------------
-void RtsGame::InitializeResearches() 
+void RtsGame::InitResearches() 
 {
     EnumerateResearches();
-    for(MapEx<ResearchType, GameResearch*>::iterator itr = sm_researches.begin();
-        itr != sm_researches.end();
-        ++itr)
+    for(auto& researchEntry : sm_researches)
     {
-        itr->second = FetchResearch(itr->first);
+        researchEntry.second = FetchResearch(researchEntry.first);
     }
 }
 //----------------------------------------------------------------------------------------------
-void RtsGame::InitializePlayers() 
+void RtsGame::InitPlayers() 
 {
     EnumeratePlayers();
-    for(MapEx<PlayerType, GamePlayer*>::iterator itr = m_players.begin();
-        itr != m_players.end();
-        ++itr)
+    for(auto& playerEntry : m_players)
     {
-        itr->second = FetchPlayer(itr->first);
+        playerEntry.second = FetchPlayer(playerEntry.first);
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -126,7 +112,7 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 {
     _ASSERTE(m_initialized);
 
-    if (m_players.Contains(p_id))
+    if (m_players.count(p_id) > 0)
         return m_players[p_id];
     else
         DEBUG_THROW(ItemNotFoundException(XcptHere));
@@ -135,8 +121,8 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
     _ASSERTE(m_initialized);
-    
-    if (sm_entityTypes.Contains(p_id))
+
+    if (sm_entityTypes.count(p_id) > 0)
         return sm_entityTypes[p_id];
 
     return nullptr;
@@ -155,7 +141,7 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
 WorldMap* RtsGame::Map()
 {
     _ASSERTE(m_initialized);
-    
+
     return m_pMap;
 }
 //----------------------------------------------------------------------------------------------
@@ -185,18 +171,6 @@ int RtsGame::GetForceSizeCount(ForceSizeType p_forceSizeType)
 
     _ASSERTE(!"Not Supported Force Size");
     return 0;
-}//----------------------------------------------------------------------------------------------
-float IStrategizer::RtsGame::GetResourceConsumbtionRatePerWorker(ResourceType p_id)
-{
-	switch(p_id)
-	{
-	case RESOURCE_Primary:
-		return MineralsPerWorkerPerFrame;
-	case RESOURCE_Secondary:
-		return GasPerWorkerPerFrame;
-	default:
-		throw InvalidParameterException(XcptHere);
-	}
 }
 //----------------------------------------------------------------------------------------------
 ForceSizeType RtsGame::GetForceSizeType(int forceCount)
@@ -209,4 +183,26 @@ ForceSizeType RtsGame::GetForceSizeType(int forceCount)
 
     else
         return FORCESIZE_LargeForce;
+}
+//----------------------------------------------------------------------------------------------
+RtsGame* RtsGame::Clone() const
+{
+    RtsGame* pClone = static_cast<RtsGame*>(Prototype());
+
+    string tempFilename = "temp";
+    tempFilename += to_string((int)time(nullptr));
+
+    g_ObjectSerializer.Serialize(this, tempFilename);
+
+    g_ObjectSerializer.Deserialize(pClone, tempFilename);
+    pClone->m_isOnline = false;
+    pClone->m_initialized = false;
+    
+    ifstream file(tempFilename.c_str());
+    if (file.is_open())
+    {
+        file.close();
+    }
+
+    return pClone;
 }

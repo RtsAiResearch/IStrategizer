@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include "EngineData.h"
-#include "RtsGame.h"
 
 namespace IStrategizer
 {

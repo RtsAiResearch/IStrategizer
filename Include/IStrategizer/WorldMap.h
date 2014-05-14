@@ -39,13 +39,12 @@ namespace IStrategizer
         virtual Vector2 Size() const = 0;
         virtual bool CanBuildHere(Vector2 p_position, EntityClassType p_buildingType) const = 0;
         virtual MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const = 0;
-        void UpdateAux();
+        void Update();
         Vector2 CellMatrixSize() const;
         Vector2 CellSize() const;
         Vector2 GetNearestCell(CellFeature* p_cell) const;
         CellFeature* GetCellFeatureFromWorldPosition(Vector2 p_position) const;
         std::vector<Vector2> GetNearestEnemyBorders(int p_numberOfBorders);
-
     };
 }
 

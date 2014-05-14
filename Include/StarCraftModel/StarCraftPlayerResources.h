@@ -7,9 +7,8 @@
 
 #include "BWAPI.h"
 
-namespace StarCraftModel
+namespace IStrategizer
 {
-  using namespace IStrategizer;
   using namespace BWAPI;
 
   class StarCraftPlayerResources : public PlayerResources

@@ -11,7 +11,6 @@
 #include "BWAPI.h"
 
 using namespace IStrategizer;
-using namespace StarCraftModel;
 using namespace BWAPI;
 
 void StarCraftType::InitializeAux()
@@ -69,4 +68,5 @@ void StarCraftType::InitializeAux()
     Attr(ECATTR_AirRange, airWeapon.maxRange());
     Attr(ECATTR_GroundRange, groundWeapon.maxRange());
     Attr(ECATTR_Attack, totalDmg);
+    Attr(ECATTR_IsSpecialBuilding, m_type.isRefinery() || m_type.isAddon());
 }

@@ -5,7 +5,7 @@
 #include "TypesMetaData.h"
 #include "MapArea.h"
 
-namespace StarCraftModel
+namespace IStrategizer
 {
     class StarCraftMap : public IStrategizer::WorldMap
     {

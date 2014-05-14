@@ -33,9 +33,6 @@
     <Filter Include="Header Files\Utilities\Data Structures">
       <UniqueIdentifier>{d701fb88-d430-4731-9b37-e3313bf376d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Utilities\Data Structures\Diagraph">
-      <UniqueIdentifier>{d70d2f0c-630c-4ca5-9a41-e514558874c2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Utilities\Data Structures\MultiIndexContainer">
       <UniqueIdentifier>{5e5b310e-3f59-4bad-8f3b-a00b9b652295}</UniqueIdentifier>
     </Filter>
@@ -127,6 +124,9 @@
     <Filter Include="Header Files\World Model">
       <UniqueIdentifier>{62a17142-b9ac-4be5-a867-7b9bacbd1a08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Utilities\Data Structures\Digraph">
+      <UniqueIdentifier>{d70d2f0c-630c-4ca5-9a41-e514558874c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp">
@@ -180,14 +180,8 @@
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\Persist.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp">
       <Filter>Source Files\Engine Components\CaseBaseLearner</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\GameStateEx.cpp">
-      <Filter>Source Files\CaseBase</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\PlanStepEx.cpp">
       <Filter>Source Files\CaseBase</Filter>
@@ -380,9 +374,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\MathHelper.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\Persist.h">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Predicate.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
@@ -391,12 +382,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h">
       <Filter>Header Files\Utilities\Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\MapEx.h">
-      <Filter>Header Files\Utilities\Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\Diagraph.h">
-      <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Collection.h">
       <Filter>Header Files\Utilities\Data Structures\MultiIndexContainer</Filter>
@@ -420,9 +405,6 @@
       <Filter>Header Files\CaseBase</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\CaseEx.h">
-      <Filter>Header Files\CaseBase</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameStateEx.h">
       <Filter>Header Files\CaseBase</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\PlanStepEx.h">
@@ -645,10 +627,10 @@
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\IDigraph.h">
-      <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
+      <Filter>Header Files\Utilities\Data Structures\Digraph</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\AdjListDigraph.h">
-      <Filter>Header Files\Utilities\Data Structures\Diagraph</Filter>
+      <Filter>Header Files\Utilities\Data Structures\Digraph</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>

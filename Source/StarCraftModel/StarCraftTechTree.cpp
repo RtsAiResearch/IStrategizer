@@ -7,9 +7,6 @@
 #ifndef DEFINITIONCROSSMAPPING_H
 #include "DefinitionCrossMapping.h"
 #endif
-#ifndef MAPEX_H
-#include "MapEx.h"
-#endif
 #include <cassert>
 #include <string>
 #include <map>
@@ -17,11 +14,20 @@
 #include <Windows.h>
 
 using namespace IStrategizer;
-using namespace StarCraftModel;
-using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
+StarCraftTechTree::StarCraftTechTree(BWAPI::Player pPlayer) :
+    m_pPlayer(pPlayer)
+{
+    TID typeId;
+
+    typeId = m_pPlayer->getRace().getWorker().getID();
+    m_workerTypeId = g_Database.EntityMapping.GetByFirst(typeId);
+
+    typeId = m_pPlayer->getRace().getCenter().getID();
+    m_baseTypeId = g_Database.EntityMapping.GetByFirst(typeId);
+}
 //----------------------------------------------------------------------------------------------
 bool StarCraftTechTree::ResearchAvailable(ResearchType p_researchId) const
 {
@@ -40,7 +46,7 @@ bool StarCraftTechTree::ResearchAvailable(ResearchType p_researchId) const
         researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
         bwapiTech = TechType::getType(researchIdent);
 
-        return m_player->isResearchAvailable(bwapiTech);
+        return m_pPlayer->isResearchAvailable(bwapiTech);
     }
     // Is Upgrade
     else
@@ -49,7 +55,7 @@ bool StarCraftTechTree::ResearchAvailable(ResearchType p_researchId) const
         researchIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
         bwapiUpgrade = UpgradeType::getType(researchIdent);
 
-        return (m_player->getMaxUpgradeLevel(bwapiUpgrade) > 0);
+        return (m_pPlayer->getMaxUpgradeLevel(bwapiUpgrade) > 0);
     }
 }   
 //----------------------------------------------------------------------------------------------
@@ -70,7 +76,7 @@ bool StarCraftTechTree::ResearchDone(ResearchType p_researchId) const
         researchIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
         tech = TechType::getType(researchIdent);
 
-        return m_player->hasResearched(tech);
+        return m_pPlayer->hasResearched(tech);
     }
     // Is Upgrade
     else
@@ -80,7 +86,7 @@ bool StarCraftTechTree::ResearchDone(ResearchType p_researchId) const
         upgrade = UpgradeType::getType(researchIdent);
 
         // FIXME: we restrict upgrade levels to be 1 level only
-        return m_player->getUpgradeLevel(upgrade) > 0;
+        return m_pPlayer->getUpgradeLevel(upgrade) > 0;
     }
 }   
 //----------------------------------------------------------------------------------------------
@@ -161,50 +167,6 @@ void StarCraftTechTree::GetRequirements(int p_typeOrResearchId, vector<ResearchT
     }
 }
 //----------------------------------------------------------------------------------------------
-void StarCraftTechTree::GetDependents(int p_typeOrResearchId, vector<ResearchType>& p_researches, vector<EntityClassType>& p_entityTypes)
-{
-    UNREFERENCED_PARAMETER(p_typeOrResearchId);
-    UNREFERENCED_PARAMETER(p_researches);
-    UNREFERENCED_PARAMETER(p_entityTypes);
-    _ASSERTE(0);
-    /*if(m_dependentsCache.Contains(p_typeOrResearchId))
-    {
-        Dependency& dependents = m_dependentsCache[p_typeOrResearchId];
-        p_researches    = dependents.second;
-        p_entityTypes   = dependents.first;
-    }
-    else
-    {
-        vector<CUnitType*>  gameTypes;
-        vector<CUpgrade*>   gameResearches;
-        std::string         ident;
-
-        if(BELONG(ResearchType, p_typeOrResearchId))
-            ident = g_Database.UpgradeMapping.GetBySecond((ResearchType)p_typeOrResearchId);
-        else if(BELONG(EntityClassType, p_typeOrResearchId))
-            ident = g_Database.EntityMapping.GetBySecond((EntityClassType)p_typeOrResearchId);
-
-        if(p_typeOrResearchId == RESEARCH_Stronghold || p_typeOrResearchId == RESEARCH_Fortress)
-        {
-            p_researches.push_back((ResearchType)p_typeOrResearchId);
-        }
-        else if(GetDependentsAux(m_player, ident, gameResearches, gameTypes))
-        {
-            p_researches.resize(gameResearches.size());
-            for(int i = 0, size = gameResearches.size(); i < size; ++i)
-                p_researches[i] = g_Database.UpgradeMapping.GetByFirst(gameResearches[i]->Ident);
-
-            p_entityTypes.resize(gameTypes.size());
-            for(int i = 0, size = gameTypes.size(); i < size; ++i)
-                p_entityTypes[i] = g_Database.EntityMapping.GetByFirst(gameTypes[i]->Ident);
-        }
-
-        Dependency& dependents = m_dependentsCache[p_typeOrResearchId];
-        dependents.first  = p_entityTypes;
-        dependents.second = p_researches;
-    }*/
-}
-//----------------------------------------------------------------------------------------------
 EntityClassType StarCraftTechTree::TireBaseBuilding(BaseType p_tireId) const
 {
     BWAPI::UnitType baseType;
@@ -212,7 +174,7 @@ EntityClassType StarCraftTechTree::TireBaseBuilding(BaseType p_tireId) const
     if (p_tireId == BASETYPE_END)
         return ECLASS_END;
 
-    baseType = m_player->getRace().getCenter();
+    baseType = m_pPlayer->getRace().getCenter();
 
     return g_Database.EntityMapping.GetByFirst(baseType.getID());
 }
@@ -260,4 +222,25 @@ EntityClassType StarCraftTechTree::SourceEntity(int p_typeOrResearchId) const
     }
 
     return ECLASS_END;
+}
+//----------------------------------------------------------------------------------------------
+EntityClassType StarCraftTechTree::GetBuilderType(EntityClassType p_buildingType) const
+{
+    UnitType type;
+    TID unitTypeId;
+    string typeName;
+
+    unitTypeId = g_Database.EntityMapping.GetBySecond(p_buildingType);
+    typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
+    type = BWAPI::UnitType::getType(typeName);
+
+    if (type.isAddon())
+    {
+        return g_Database.EntityMapping.GetByFirst(type.whatBuilds().first.getID());
+    }
+    else
+    {
+        _ASSERTE(type.isBuilding());
+        return GetWorkerType();
+    }
 }

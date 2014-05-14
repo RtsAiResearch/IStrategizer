@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef GAMEPLAYER_H
 #define GAMEPLAYER_H
 
@@ -7,16 +8,12 @@
 #ifndef WORLDCOMPONENT_H
 #include "WorldComponent.h"
 #endif
-#ifndef DYNAMICMAP_H
-#include "DynamicMap.h"
-#endif
-#ifndef DYNAMICSET_H
-#include "DynamicSet.h"
-#endif
 #ifndef MESSAGEPUMPOBSERVER_H
 #include "MessagePumpObserver.h"
 #endif
 #include "MapArea.h"
+#include "UserObject.h"
+#include "GameTechTree.h"
 
 #include <vector>
 
@@ -27,22 +24,19 @@ namespace IStrategizer
     class GameEntity;
     class PlayerResources;
     class GameTechTree;
-    class GameStateEx;
     class Message;
 
-    typedef MapEx<TID, GameEntity*> EntitiesMap;
+    typedef Serialization::SMap<TID, GameEntity*> EntitiesMap;
 
-    class GamePlayer : MessagePumpObserver
+    ///> class=GamePlayer
+    class GamePlayer : public Serialization::UserObject, public MessagePumpObserver
     {
+        OBJECT_MEMBERS(1, &m_id);
+
     public:
         GamePlayer();
         virtual ~GamePlayer();
         virtual PlayerType Id() { return m_id; }
-        virtual bool IsSpecialBuilding(EntityClassType p_buildingType) const = 0;
-        virtual const GameStateEx* State() = 0;
-        virtual EntityClassType GetWorkerType() const = 0;
-        virtual EntityClassType GetBaseType() const = 0;
-        virtual EntityClassType GetBuilderType(EntityClassType p_buildingType) const = 0;
         void Entities(std::vector<TID>& p_entityIds);
         void Entities(EntityClassType p_typeId, std::vector<TID> &p_entityIds);
         void GetBases(std::vector<TID> &p_basesIds);
@@ -59,13 +53,11 @@ namespace IStrategizer
         virtual void OnEntityCreate(Message* p_pMessage);
         virtual void OnEntityDestroy(Message* p_pMessage);
 
+        ///> type=int
         PlayerType m_id;
         EntitiesMap m_entities;
         PlayerResources *m_pResources;
         GameTechTree *m_pTechTree;
-        GameStateEx *m_pState;
-        
-    private:
         MapArea m_colonyCenter;
     };
 }
