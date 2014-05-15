@@ -1,5 +1,5 @@
 #include "WinGameGoal.h"
-
+#include "GoalFactory.h"
 #include "RtsGame.h"
 #include "TypesMetaData.h"
 #include "GamePlayer.h"
@@ -43,7 +43,7 @@ vector<GoalEx*> WinGameGoal::GetSucceededInstances(RtsGame &game)
     {
         PlanStepParameters params;
         params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
-        succeededGoals.push_back(new WinGameGoal(params));
+        succeededGoals.push_back(g_GoalFactory.GetGoal(GOALEX_WinGame, params, true));
         LogInfo("WinGameGoal succeeded with strategt type='%s'", Enums[params[PARAM_StrategyTypeId]]);
     }
 

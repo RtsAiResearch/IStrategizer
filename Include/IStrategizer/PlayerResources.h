@@ -1,9 +1,6 @@
 #ifndef PLAYERRESOURCES_H
 #define PLAYERRESOURCES_H
 
-#ifndef WORLDCOMPONENT_H
-#include "WorldComponent.h"
-#endif
 #ifndef WORLDRESOURCES_H
 #include "WorldResources.h"
 #endif

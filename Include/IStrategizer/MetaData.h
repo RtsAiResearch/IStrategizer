@@ -15,9 +15,8 @@ namespace IStrategizer
     struct ForceDescriptionEx
     { 
         ForceDescriptionEx() {};
-        ForceDescriptionEx(ForceSizeType p_size, PercentageType p_rangedPercentage,PercentageType p_goldPercentage,PercentageType p_lightPercentage,PercentageType p_airResistancePercentage,PercentageType p_buildingsPercentage,PercentageType p_flyingUnitsPercentage)
+        ForceDescriptionEx(PercentageType p_rangedPercentage,PercentageType p_goldPercentage,PercentageType p_lightPercentage,PercentageType p_airResistancePercentage,PercentageType p_buildingsPercentage,PercentageType p_flyingUnitsPercentage)
         {
-            Size = p_size;
             RangedPercentage = p_rangedPercentage;
             GoldPercentage = p_goldPercentage;
             LightPercentage = p_lightPercentage;
@@ -25,9 +24,6 @@ namespace IStrategizer
             BuildingsPercentage = p_buildingsPercentage;
             FlyingUnitsPercentage = p_flyingUnitsPercentage;
         }
-
-        //Size of the force
-        ForceSizeType Size;
 
         //Ranged or Non-Ranged Percentage?
         //Ranged : Archer,Catapult,Dragon

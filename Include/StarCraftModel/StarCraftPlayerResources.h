@@ -20,9 +20,6 @@ namespace IStrategizer
     int Supply();
     int Secondary();
     int Primary();
-
-    EntityClassType GetResourceSource(ResourceType p_type) const;
-
   };
 }
 

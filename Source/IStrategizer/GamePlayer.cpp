@@ -21,6 +21,7 @@
 #include "Logger.h"
 #include "AttributesMetaData.h"
 #include "GameType.h"
+#include "IStrategizerException.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -50,87 +51,73 @@ void GamePlayer::Finalize()
     Toolbox::MemoryClean(m_pTechTree);
 }
 //////////////////////////////////////////////////////////////////////////
-PlayerResources* GamePlayer::Resources()
+void GamePlayer::Entities(vector<TID>& entityIds)
 {
-    _ASSERTE(m_pResources != nullptr);
-    return m_pResources;
+    m_entities.Keys(entityIds);
 }
 //////////////////////////////////////////////////////////////////////////
-GameTechTree* GamePlayer::TechTree() const
+GameEntity* GamePlayer::GetEntity(TID id)
 {
-    _ASSERTE(m_pTechTree != nullptr);
-    return m_pTechTree;
-}
-//////////////////////////////////////////////////////////////////////////
-void GamePlayer::Entities(vector<TID>& p_entityIds)
-{
-    m_entities.Keys(p_entityIds);
-}
-//////////////////////////////////////////////////////////////////////////
-GameEntity* GamePlayer::GetEntity(TID p_id)
-{
-    GameEntity* pEntity = nullptr;
-
-    if(m_entities.count(p_id) > 0)
+    if(m_entities.count(id) == 0)
     {
-        pEntity = m_entities[p_id];
-        _ASSERTE(pEntity);
+        return nullptr;
     }
 
-    return pEntity;
+    _ASSERTE(m_entities[id] != nullptr);
+    return m_entities[id];
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::GetBases(vector<TID> &p_basesIds)
+void GamePlayer::GetBases(vector<TID> &basesIds)
 {
     EntityClassType typeId;
 
     typeId = TechTree()->GetBaseType();
 
-    p_basesIds.clear();
+    basesIds.clear();
 
     for(EntitiesMap::iterator itr = m_entities.begin();
         itr != m_entities.end(); ++itr)
     {
         if (itr->second->Type() == typeId)
-            p_basesIds.push_back(itr->first);
+            basesIds.push_back(itr->first);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::Entities(EntityClassType p_typeId, vector<TID> &p_entityIds)
+void GamePlayer::Entities(EntityClassType typeId, vector<TID> &entityIds)
 {
-    p_entityIds.clear();
+    entityIds.clear();
     for(EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
     {
-        if (itr->second->Type() == p_typeId)
-            p_entityIds.push_back(itr->first);
+        if (itr->second->Type() == typeId)
+            entityIds.push_back(itr->first);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::NotifyMessegeSent(Message* p_pMessage)
+void GamePlayer::NotifyMessegeSent(Message* pMsg)
 {
-    switch (p_pMessage->MessageTypeID())
+    switch (pMsg->MessageTypeID())
     {
     case MSG_EntityRenegade:
-        OnEntityRenegade(p_pMessage);
+        OnEntityRenegade(pMsg);
         break;
 
     case MSG_EntityCreate:
-        OnEntityCreate(p_pMessage);
+        OnEntityCreate(pMsg);
         break;
 
     case MSG_EntityDestroy:
-        OnEntityDestroy(p_pMessage);
+        OnEntityDestroy(pMsg);
         break;
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityCreate(Message* p_pMessage)
+void GamePlayer::OnEntityCreate(Message* pMsg)
 {
     GameEntity *pEntity = nullptr;
     TID entityId;
     EntityCreateMessage *pCreateMsg = nullptr;
 
-    pCreateMsg = (EntityCreateMessage*)p_pMessage;
+    pCreateMsg = (EntityCreateMessage*)pMsg;
 
     if (pCreateMsg->Data()->OwnerId == m_id)
     {
@@ -144,7 +131,7 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
 
         pEntity = FetchEntity(entityId);
         _ASSERTE(pEntity);
-        
+
         m_entities[entityId] = pEntity;
 
         LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
@@ -155,13 +142,13 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
 
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityDestroy(Message* p_pMessage)
+void GamePlayer::OnEntityDestroy(Message* pMsg)
 {
     EntityDestroyMessage *pDestroyMsg = nullptr;
     GameEntity *pEntity = nullptr;
     TID entityId;
 
-    pDestroyMsg = (EntityDestroyMessage*)p_pMessage;
+    pDestroyMsg = (EntityDestroyMessage*)pMsg;
 
     if (pDestroyMsg->Data()->OwnerId == m_id)
     {
@@ -181,13 +168,13 @@ void GamePlayer::OnEntityDestroy(Message* p_pMessage)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityRenegade(Message* p_pMessage)
+void GamePlayer::OnEntityRenegade(Message* pMsg)
 {
     EntityRenegadeMessage *pRenMsg = nullptr;
     GameEntity *pEntity = nullptr;
     TID entityId;
 
-    pRenMsg = (EntityRenegadeMessage*)p_pMessage;
+    pRenMsg = (EntityRenegadeMessage*)pMsg;
 
     entityId = pRenMsg->Data()->EntityId;
 

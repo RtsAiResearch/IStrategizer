@@ -1,20 +1,20 @@
 ///> [Serializable]
-#ifndef TRAINARMYGOAL_H
-#define TRAINARMYGOAL_H
+#ifndef TRAINFORCEGOAL_H
+#define TRAINFORCEGOAL_H
 
 #include "GoalEx.h"
 
 namespace IStrategizer
 {
-    ///> class=TrainArmyGoal
+    ///> class=TrainForceGoal
     ///> parent=GoalEx
-    class TrainArmyGoal : public GoalEx
+    class TrainForceGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(TrainArmyGoal);
+        OBJECT_SERIALIZABLE(TrainForceGoal);
 
     public:
-        TrainArmyGoal();
-        TrainArmyGoal(const PlanStepParameters& p_parameters);
+        TrainForceGoal();
+        TrainForceGoal(const PlanStepParameters& p_parameters);
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
 
@@ -27,4 +27,4 @@ namespace IStrategizer
         std::vector<GoalEx*> m_succeededInstances;
     };
 }
-#endif // TRAINARMYGOAL_H
+#endif // TRAINFORCEGOAL_H

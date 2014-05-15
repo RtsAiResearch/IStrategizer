@@ -5,9 +5,6 @@
 #ifndef ENGINEDATA_H
 #include "EngineData.h"
 #endif
-#ifndef WORLDCOMPONENT_H
-#include "WorldComponent.h"
-#endif
 #ifndef MESSAGEPUMPOBSERVER_H
 #include "MessagePumpObserver.h"
 #endif
@@ -25,6 +22,7 @@ namespace IStrategizer
     class PlayerResources;
     class GameTechTree;
     class Message;
+    class RtsGame;
 
     typedef Serialization::SMap<TID, GameEntity*> EntitiesMap;
 
@@ -41,10 +39,11 @@ namespace IStrategizer
         void Entities(EntityClassType p_typeId, std::vector<TID> &p_entityIds);
         void GetBases(std::vector<TID> &p_basesIds);
         void NotifyMessegeSent(Message* p_pMessage);
-        PlayerResources* Resources();
-        GameTechTree* TechTree() const;
+        PlayerResources* Resources() { _ASSERTE(m_pResources != nullptr); return m_pResources;}
+        GameTechTree* TechTree() const { _ASSERTE(m_pTechTree != nullptr); return m_pTechTree; }
         GameEntity* GetEntity(TID p_id);
         MapArea GetColonyMapArea();
+        void SetOffline(RtsGame* pBelongingGame) {}
 
     protected:
         virtual GameEntity* FetchEntity(TID p_id) = 0;
@@ -58,6 +57,7 @@ namespace IStrategizer
         EntitiesMap m_entities;
         PlayerResources *m_pResources;
         GameTechTree *m_pTechTree;
+
         MapArea m_colonyCenter;
     };
 }

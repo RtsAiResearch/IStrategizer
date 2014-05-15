@@ -1,9 +1,8 @@
+///> [Serializable]
 #ifndef WORLDMAP_H
 #define WORLDMAP_H
 
-#ifndef STATICCOMPONENT_H
-#include "WorldComponent.h"
-#endif
+#include <vector>
 #ifndef VECTOR2_H
 #include "Vector2.h"
 #endif
@@ -11,13 +10,29 @@
 namespace IStrategizer
 {
     enum TileFlagType;
+    enum EntityClassType;
     class CellFeature;
     class MapArea;
+    class RtsGame;
 
+    ///> class=WorldMap
     class WorldMap
     {
-    private:
-        void Initialize();
+    public:
+        WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight);
+        ~WorldMap();
+
+        void Init();
+        virtual Vector2 Size() const = 0;
+        virtual bool CanBuildHere(Vector2 p_position, EntityClassType p_buildingType) const = 0;
+        virtual MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const = 0;
+        void Update();
+        Vector2 CellMatrixSize() const;
+        Vector2 CellSize() const;
+        Vector2 GetNearestCell(CellFeature* p_cell) const;
+        CellFeature* GetCellFeatureFromWorldPosition(Vector2 p_position) const;
+        std::vector<Vector2> GetNearestEnemyBorders(int p_numberOfBorders);
+        void SetOffline(RtsGame* pBelongingGame) {}
 
     protected:
         CellFeature** m_cellFeatureMatrix;
@@ -31,20 +46,6 @@ namespace IStrategizer
 
         Vector2 FromGridToWorld(const Vector2 &p_gridPosition) const;
         Vector2 FromWorldToGrid(const Vector2 &p_worldPosition) const;
-
-    public:
-        WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight);
-        ~WorldMap();
-
-        virtual Vector2 Size() const = 0;
-        virtual bool CanBuildHere(Vector2 p_position, EntityClassType p_buildingType) const = 0;
-        virtual MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const = 0;
-        void Update();
-        Vector2 CellMatrixSize() const;
-        Vector2 CellSize() const;
-        Vector2 GetNearestCell(CellFeature* p_cell) const;
-        CellFeature* GetCellFeatureFromWorldPosition(Vector2 p_position) const;
-        std::vector<Vector2> GetNearestEnemyBorders(int p_numberOfBorders);
     };
 }
 

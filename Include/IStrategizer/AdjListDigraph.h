@@ -48,6 +48,26 @@ namespace IStrategizer
         }
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::AddNode
+        // Description:	Add a new node to the Digraph without connecting it and identify it using
+        // the passed in id instead of auto generating a new id
+        // Parameter: 	NodeValue val: A data value that is associated with the added node
+        // Parameter:   NodeID:  A unique ID used to reference the added node
+        // in further Digraph methods
+        //************************************
+        NodeID AddNode(const _In_ NodeValue& val, NodeID id)
+            throw(ItemAlreadyExistsException)
+        {
+            if (m_adjList.count(id) > 0)
+                DEBUG_THROW(ItemAlreadyExistsException(XcptHere));
+
+            m_adjList.insert(make_pair(id, MakePair(val, NodeSet())));
+            m_lastNodeId = id;
+
+            return id;
+        }
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::RemoveNode
         // Description:	Disconnect a node from the digraph and removes it
         // Parameter: 	NodeID id: Unique ID to identify the node
@@ -190,12 +210,12 @@ namespace IStrategizer
         // Parameter: 	NodeList p_subGraphIndexes: The indexes describing the sub-part to replace.
         // Parameter:   TNodeValue p_substitute: The TNodeValue to replace the sub-part with.
         //************************************      
-        void SubGraphSubstitution(NodeList p_subGraphIndexes, TNodeValue p_substitute)
+        void SubGraphSubstitution(NodeList subGraphIndexes, TNodeValue substitute)
         {
             NodeList    m_parents;
             NodeList    m_children;
 
-            for each(NodeID m_subGraphIndex in p_subGraphIndexes)
+            for each(NodeID m_subGraphIndex in subGraphIndexes)
             {
                 NodeSet m_tempParents = GetParents(m_subGraphIndex, m_parents);
                 m_parents.insert(m_parents.end(), m_tempParents.begin(), m_tempParents.end());
@@ -204,11 +224,11 @@ namespace IStrategizer
                 m_children.insert(m_children.end(), m_tempChildren.begin(), m_tempChildren.end());
             }
 
-            NodeID m_nodeID = AddNode(p_substitute);
+            NodeID m_nodeID = AddNode(substitute, substitute->Id());
 
             for each(NodeID m_parent in m_parents) AddEdge(m_parent, m_nodeID);
             for each(NodeID m_child in m_children) AddEdge(m_nodeID, m_child);
-            for each(NodeID m_subGraphIndex in p_subGraphIndexes) RemoveNode(m_subGraphIndex);
+            for each(NodeID m_subGraphIndex in subGraphIndexes) RemoveNode(m_subGraphIndex);
         }
 
         //************************************

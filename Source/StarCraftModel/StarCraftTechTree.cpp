@@ -17,6 +17,11 @@ using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
+// Been determined empirically by analyzing professional games. 
+// Refer to paper "Build Order Optimization in StarCraft" page 3
+const float StarCraftTechTree::MineralsPerWorkerPerFrame = 0.045f;
+const float StarCraftTechTree::GasPerWorkerPerFrame = 0.07f;
+
 StarCraftTechTree::StarCraftTechTree(BWAPI::Player pPlayer) :
     m_pPlayer(pPlayer)
 {
@@ -242,5 +247,47 @@ EntityClassType StarCraftTechTree::GetBuilderType(EntityClassType p_buildingType
     {
         _ASSERTE(type.isBuilding());
         return GetWorkerType();
+    }
+}
+int StarCraftTechTree::BaseSupplyAmount() const
+{
+    return 10;
+}
+//----------------------------------------------------------------------------------------------
+int StarCraftTechTree::SupplyBuildingSupplyAmount() const
+{
+    return 8;
+}
+//----------------------------------------------------------------------------------------------
+float StarCraftTechTree::GetResourceConsumbtionRatePerWorker(ResourceType p_id) const
+{
+    switch(p_id)
+    {
+    case RESOURCE_Primary:
+        return MineralsPerWorkerPerFrame;
+    case RESOURCE_Secondary:
+        return GasPerWorkerPerFrame;
+    default:
+        throw InvalidParameterException(XcptHere);
+    }
+}
+//----------------------------------------------------------------------------------------------
+EntityClassType StarCraftTechTree::GetResourceSource(ResourceType p_type) const
+{
+    // This method is hard-coded for Terran, ideally it should take race type.
+
+    switch(p_type)
+    {
+    case RESOURCE_Primary:
+        return g_Database.EntityMapping.GetByFirst(UnitTypes::Resource_Mineral_Field.getID());
+
+    case RESOURCE_Secondary:
+        return g_Database.EntityMapping.GetByFirst(UnitTypes::Terran_Refinery.getID());
+
+    case RESOURCE_Supply:
+        return g_Database.EntityMapping.GetByFirst(UnitTypes::Terran_Supply_Depot.getID());
+
+    default:
+        DEBUG_THROW(InvalidParameterException(XcptHere));
     }
 }

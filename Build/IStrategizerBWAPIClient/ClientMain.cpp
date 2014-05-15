@@ -68,15 +68,21 @@ void ClientMain::InitIStrategizer()
 
         if (Broodwar->isReplay())
         {
-            Playerset players = Broodwar->getPlayers();
-            TID playerToObserveID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
+            LogInfo("Learning from replay map: %s", Broodwar->mapFileName().c_str());
 
-            m_pTraceCollector = new GameTraceCollector(playerToObserveID);
+            Playerset players = Broodwar->getPlayers();
+            for (auto player : players)
+            {
+                LogInfo("Replay Player[%d]: %s", player->getID(), player->getName().c_str());
+            }
+
             param.Phase = PHASE_Offline;
             m_isLearning = true;
         }
         else
+        {
             param.Phase = PHASE_Online;
+        }
 
         m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
         _ASSERTE(m_pIStrategizer);
@@ -92,6 +98,13 @@ void ClientMain::InitIStrategizer()
         {
             LogError("Failed to initialize IStrategizer");
             return;
+        }
+
+        if (param.Phase == PHASE_Offline)
+        {
+            TID selfPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
+            LogInfo("Will learn demonstrations from self Player[%d]", );
+            m_pTraceCollector = new GameTraceCollector(selfPlayerID);
         }
 
         if (!m_isLearning)

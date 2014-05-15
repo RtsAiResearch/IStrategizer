@@ -43,7 +43,7 @@ WorldMap::WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_world
     m_initialized = false;
 }
 //----------------------------------------------------------------------------------------------
-void WorldMap::Initialize()
+void WorldMap::Init()
 {
     m_cellFeatureMatrix = new CellFeature* [m_gridHeight];
     for (unsigned i = 0 ; i < m_gridHeight ; i++)
@@ -63,7 +63,7 @@ void WorldMap::Update()
 
     if (!m_initialized)
     {
-        Initialize();
+        Init();
     }
     for (unsigned i = 0; i < m_gridHeight; i++)
     {

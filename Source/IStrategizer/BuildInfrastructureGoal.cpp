@@ -1,5 +1,6 @@
 #include "BuildInfrastructureGoal.h"
 #include "EntityClassExist.h"
+#include "GoalFactory.h"
 #include "And.h"
 #include "Message.h"
 #include "GameEntity.h"
@@ -45,18 +46,11 @@ void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool&
         if (game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding))
         {
             PlanStepParameters params;
-            //if (m_createdBuildings[entityType] == 0)
-            //{
-            //    // Special case, learn for goals with zero amount.
-            //    params[PARAM_EntityClassId] = entityType;
-            //    params[PARAM_Amount] = 0;
-            //    m_succeededInstaces.push_back(new BuildInfrastructureGoal(params));
-            //}
 
             m_createdBuildings[entityType]++;
             params[PARAM_EntityClassId] = entityType;
             params[PARAM_Amount] = m_createdBuildings[entityType];
-            m_succeededInstaces.push_back(new BuildInfrastructureGoal(params));
+            m_succeededInstaces.push_back(g_GoalFactory.GetGoal(GOALEX_BuildInfrastructure, params, true));
         }
     }
 }
@@ -74,7 +68,7 @@ bool BuildInfrastructureGoal::SuccessConditionsSatisfied(RtsGame& game)
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
     int count = 0;
 
-    if (game.GetResourceSource(RESOURCE_Supply) == entityClassType)
+    if (game.Self()->TechTree()->GetResourceSource(RESOURCE_Supply) == entityClassType)
     {
         count = GetAvailableSupplyBuildingsCount(game);
     }
@@ -98,7 +92,7 @@ void BuildInfrastructureGoal::AdaptParameters(RtsGame& game)
     vector<TID> entities;
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
 
-    if (game.GetResourceSource(RESOURCE_Supply) == entityClassType)
+    if (game.Self()->TechTree()->GetResourceSource(RESOURCE_Supply) == entityClassType)
     {
         m_existingAmount = GetAvailableSupplyBuildingsCount(game);
     }
@@ -114,6 +108,6 @@ void BuildInfrastructureGoal::AdaptParameters(RtsGame& game)
 int BuildInfrastructureGoal::GetAvailableSupplyBuildingsCount(RtsGame &game) const
 {
     // The availableSupplyBuildings won't match the exact number of supply buildings in the game
-    int availableSupplyBuildings = game.Self()->Resources()->AvailableSupply() / game.SupplyBuildingSupplyAmount();
+    int availableSupplyBuildings = game.Self()->Resources()->AvailableSupply() / game.Self()->TechTree()->SupplyBuildingSupplyAmount();
     return availableSupplyBuildings;
 }

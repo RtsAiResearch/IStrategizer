@@ -235,6 +235,13 @@ void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
 //////////////////////////////////////////////////////////////////////////
 void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit trainee, const BWAPI::Unit trainer)
 {
+    if (!trainer)
+    {
+        LogInfo("Unable to find trainee %s trainer, will use normal trace collector", trainee->getPlayer()->getName().c_str());
+        CollectGameTraceForUnitOrder(trainee);
+        return;
+    }
+
     ActionType action;
 
     UNREFERENCED_PARAMETER(trainee);
@@ -273,14 +280,12 @@ bool GameTraceCollector::IsAutoGathering(const Unit unit)
     if (!unit->getType().isWorker())
         return false;
 
-    isAutoGatheringMinerals = unit->isGatheringMinerals() &&
-        (unit->getOrder() == Orders::MoveToMinerals ||
+    isAutoGatheringMinerals = (unit->getOrder() == Orders::MoveToMinerals ||
         unit->getOrder() == Orders::MiningMinerals ||
         unit->getOrder() == Orders::WaitForMinerals ||
         unit->getOrder() == Orders::ReturnMinerals);
 
-    isAutoGatheringGas = unit->isGatheringGas() &&
-        (unit->getOrder() == Orders::MoveToGas ||
+    isAutoGatheringGas = (unit->getOrder() == Orders::MoveToGas ||
         unit->getOrder() == Orders::HarvestGas ||
         unit->getOrder() == Orders::WaitForGas ||
         unit->getOrder() == Orders::ReturnGas);

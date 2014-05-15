@@ -16,6 +16,7 @@ namespace IStrategizer
     private:
         int m_demandTargetSize;
         std::map<EntityClassType, int> m_destroyed;
+        std::vector<GoalEx*> m_succededInstances;
 
     public:
         DestroyEntityTypeGoal();

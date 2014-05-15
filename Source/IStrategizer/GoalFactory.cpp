@@ -3,6 +3,7 @@
 #include "DestroyEntityTypeGoal.h"
 #include "CollectResourceGoal.h"
 #include "TrainArmyGoal.h"
+#include "TrainForceGoal.h"
 #include "GoalFactory.h"
 #include "BuildInfrastructureGoal.h"
 
@@ -27,6 +28,10 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_paramete
         goal = new TrainArmyGoal(p_parameters);
         break;
 
+    case GOALEX_TrainForce:
+        goal = new TrainForceGoal(p_parameters);
+        break;
+
     case GOALEX_DeployArmy:
         goal = new DeployArmyGoal(p_parameters);
         break;
@@ -43,8 +48,11 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_paramete
         DEBUG_THROW(InvalidParameterException(XcptHere));
     }
 
-    if(p_initConditions)
+    if (p_initConditions)
+    {
         goal->InitializeConditions();
+        _ASSERTE(goal->PostCondition());
+    }
 
     return goal;
 }
@@ -67,6 +75,10 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
         goal = new TrainArmyGoal();
         break;
 
+    case GOALEX_TrainForce:
+        goal = new TrainForceGoal();
+        break;
+
     case GOALEX_DeployArmy:
         goal = new DeployArmyGoal();
         break;
@@ -83,8 +95,11 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
         DEBUG_THROW(InvalidParameterException(XcptHere));
     }
 
-    if(p_initConditions)
+    if (p_initConditions)
+    {
         goal->InitializeConditions();
+        _ASSERTE(goal->PostCondition());
+    }
 
     return goal;
 }

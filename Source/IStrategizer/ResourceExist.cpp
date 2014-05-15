@@ -37,8 +37,14 @@ bool ResourceExist::Consume(int p_amount)
     {
         return true;
     }
+    else if (p_amount == 0)
+    {
+        // The required amount is 0, no need to consume anything.
+        return false;
+    }
     else
     {
+        _ASSERTE(p_amount > 0);
         if (_conditionParameters[PARAM_Amount] >= p_amount)
         {
             _conditionParameters[PARAM_Amount] -= p_amount;

@@ -7,7 +7,7 @@
 
 namespace IStrategizer
 {
-    class StarCraftMap : public IStrategizer::WorldMap
+    class StarCraftMap : public WorldMap
     {
     public:
         StarCraftMap(unsigned cellSize) : WorldMap(cellSize, cellSize, Size().X, Size().Y) { }

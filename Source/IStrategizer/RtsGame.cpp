@@ -33,8 +33,8 @@ void RtsGame::Init()
     if (!sm_gameTypesInitialized)
     {
         LogInfo("Initializing RTS Game model types");
-        InitTypes();
-        InitResearches();
+        InitEntityTypes();
+        InitResearchTypes();
         sm_gameTypesInitialized = true;
     }
 
@@ -52,7 +52,6 @@ void RtsGame::Init()
     }
     else
     {
-        _ASSERTE(!m_initialized);
         LogInfo("RTS Game model is in Offline mode, nothing to initialize");
     }
 }
@@ -66,142 +65,63 @@ void RtsGame::Finalize()
     Toolbox::MemoryClean(m_pMap);
 }
 //----------------------------------------------------------------------------------------------
-void RtsGame::InitTypes()
-{
-    EnumerateEntityTypes();
-    for(auto& typeEntry : sm_entityTypes)
-    {
-        typeEntry.second = FetchEntityType(typeEntry.first);
-    }
-}
-//----------------------------------------------------------------------------------------------
-void RtsGame::InitResearches() 
-{
-    EnumerateResearches();
-    for(auto& researchEntry : sm_researches)
-    {
-        researchEntry.second = FetchResearch(researchEntry.first);
-    }
-}
-//----------------------------------------------------------------------------------------------
-void RtsGame::InitPlayers() 
-{
-    EnumeratePlayers();
-    for(auto& playerEntry : m_players)
-    {
-        playerEntry.second = FetchPlayer(playerEntry.first);
-    }
-}
-//----------------------------------------------------------------------------------------------
-void RtsGame::Players(vector<PlayerType>& p_playerIds)
-{
-    m_players.Keys(p_playerIds);
-}
-//----------------------------------------------------------------------------------------------
-void RtsGame::EntityTypes(vector<EntityClassType>& p_entityTypeIds)
-{
-    sm_entityTypes.Keys(p_entityTypeIds);
-}
-//----------------------------------------------------------------------------------------------
-void RtsGame::Researches(vector<ResearchType>& p_researchTypeIds)
-{
-    sm_researches.Keys(p_researchTypeIds);
-}
-//----------------------------------------------------------------------------------------------
 GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 {
     _ASSERTE(m_initialized);
 
-    if (m_players.count(p_id) > 0)
-        return m_players[p_id];
-    else
+    if (!m_players.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
+
+    return m_players[p_id];
 }
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
     _ASSERTE(m_initialized);
 
-    if (sm_entityTypes.count(p_id) > 0)
-        return sm_entityTypes[p_id];
+    if (!sm_entityTypes.Contains(p_id))
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return nullptr;
+    return sm_entityTypes[p_id];
 }
 //----------------------------------------------------------------------------------------------
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
     _ASSERTE(m_initialized);
+    if (!sm_researches.Contains(p_id))
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    if (sm_researches.Contains(p_id))
-        return sm_researches[p_id];
-
-    return nullptr;
+    return sm_researches[p_id];
 }
 //----------------------------------------------------------------------------------------------
-WorldMap* RtsGame::Map()
+void RtsGame::SetOffline()
 {
-    _ASSERTE(m_initialized);
+    // Currently, once an RTS game instance is brought offline, it can't come online again
 
-    return m_pMap;
-}
-//----------------------------------------------------------------------------------------------
-GamePlayer* RtsGame::Self()
-{
-    return GetPlayer(PLAYER_Self);
-}
-//----------------------------------------------------------------------------------------------
-GamePlayer* RtsGame::Enemy()
-{
-    return GetPlayer(PLAYER_Enemy);
-}
-//----------------------------------------------------------------------------------------------
-int RtsGame::GetForceSizeCount(ForceSizeType p_forceSizeType)
-{
-    switch (p_forceSizeType)
-    {
-    case FORCESIZE_SmallForce:
-        return 1;
+    for (auto pPlayer : m_players)
+        pPlayer.second->SetOffline(this);
 
-    case FORCESIZE_MediumForce:
-        return GetMaxForceSize() / 2;
-
-    case FORCESIZE_LargeForce: 
-        return GetMaxForceSize();
-    }
-
-    _ASSERTE(!"Not Supported Force Size");
-    return 0;
-}
-//----------------------------------------------------------------------------------------------
-ForceSizeType RtsGame::GetForceSizeType(int forceCount)
-{
-    if (forceCount == 1)
-        return FORCESIZE_SmallForce;
-
-    else if (forceCount <= GetMaxForceSize() / 2)
-        return FORCESIZE_MediumForce;
-
-    else
-        return FORCESIZE_LargeForce;
+    m_pMap->SetOffline(this);
 }
 //----------------------------------------------------------------------------------------------
 RtsGame* RtsGame::Clone() const
 {
-    RtsGame* pClone = static_cast<RtsGame*>(Prototype());
-
     string tempFilename = "temp";
     tempFilename += to_string((int)time(nullptr));
 
+    // The Copy/Paste trick is to serialize and deserialize the same object
     g_ObjectSerializer.Serialize(this, tempFilename);
 
+    RtsGame* pClone = static_cast<RtsGame*>(Prototype());
     g_ObjectSerializer.Deserialize(pClone, tempFilename);
-    pClone->m_isOnline = false;
-    pClone->m_initialized = false;
-    
+
+    pClone->SetOffline();
+
     ifstream file(tempFilename.c_str());
     if (file.is_open())
     {
         file.close();
+        LogWarning("LEAK: A temp file was created and was not deleted");
     }
 
     return pClone;

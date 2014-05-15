@@ -15,27 +15,21 @@ namespace IStrategizer
         OBJECT_SERIALIZABLE(StarCraftGame);
 
     public:
-        StarCraftGame();
+        void Init();
         void ExecuteCommand(const char *p_cmd);
         void DisplayMessage(const char *p_msg);
-        size_t GetMaxTrainingQueueCount() const;
-        int BaseSupplyAmount() const;
-        int SupplyBuildingSupplyAmount() const;
-        EntityClassType GetResourceSource(ResourceType p_type) const;
-        float GetResourceConsumbtionRatePerWorker(ResourceType p_id);
+        int GetMaxForceSize() const { return 12; }
+        size_t GetMaxTrainingQueueCount() const { return 5; }
 
     protected:
-        void EnumeratePlayers();
-        void EnumerateEntityTypes();
-        void EnumerateResearches();
+        void InitPlayers();
         void InitMap();
-        GamePlayer* FetchPlayer(IStrategizer::PlayerType p_id);
-        GameType* FetchEntityType(EntityClassType p_id);
-        GameResearch* FetchResearch(ResearchType p_id);
-        int GetMaxForceSize() const;
+        void InitEntityTypes();
+        void InitResearchTypes();
 
-        static const float MineralsPerWorkerPerFrame; 
-        static const float GasPerWorkerPerFrame;
+        GamePlayer* FetchPlayer(PlayerType p_id);
+        IStrategizer::GameType* FetchEntityType(EntityClassType p_id);
+        GameResearch* FetchResearch(ResearchType p_id);
     };
 }
 

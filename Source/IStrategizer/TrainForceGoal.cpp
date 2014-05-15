@@ -1,4 +1,4 @@
-#include "TrainArmyGoal.h"
+#include "TrainForceGoal.h"
 #include "EntityClassExist.h"
 #include "And.h"
 #include "Message.h"
@@ -13,32 +13,30 @@
 using namespace IStrategizer;
 using namespace std;
 
-TrainArmyGoal::TrainArmyGoal() : GoalEx(GOALEX_TrainArmy)
+TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce)
 {
-    _ASSERTE("Do not use this goal it is not ready yet");
     _params[PARAM_Amount] = DONT_CARE;
     _params[PARAM_EntityClassId] = ECLASS_START;
 }
 //----------------------------------------------------------------------------------------------
-TrainArmyGoal::TrainArmyGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainArmy, p_parameters)
+TrainForceGoal::TrainForceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainForce, p_parameters)
 {
-    _ASSERTE("Do not use this goal it is not ready yet");
 }
 //----------------------------------------------------------------------------------------------
-void TrainArmyGoal::InitializePostConditions()
+void TrainForceGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], DONT_CARE));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], _params[PARAM_Amount]));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-bool TrainArmyGoal::SuccessConditionsSatisfied(RtsGame& game)
+bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
     vector<TID> entities;
     game.Self()->Entities((EntityClassType)_params[PARAM_EntityClassId], entities);
     int entitiesCount = 0;
     int requiredCount = _params[PARAM_Amount];
-    
+
     for (TID unitId : entities)
     {
         GameEntity *pEntity = game.Self()->GetEntity(unitId);
@@ -49,7 +47,7 @@ bool TrainArmyGoal::SuccessConditionsSatisfied(RtsGame& game)
     return entitiesCount >= requiredCount;
 }
 //----------------------------------------------------------------------------------------------
-void TrainArmyGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
+void TrainForceGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
     if (p_msg->MessageTypeID() == MSG_EntityCreate)
     {
@@ -64,23 +62,20 @@ void TrainArmyGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
         _ASSERTE(pEntity);
         EntityClassType entityType = pEntity->Type();
 
-        if (!game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding))
+        if (!game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding) && m_trainedUnits[entityType] <= 6)
         {
             PlanStepParameters params;
             m_trainedUnits[entityType]++;
             params[PARAM_EntityClassId] = entityType;
-            // TODO: the above code is just a hint it wont work, add LFHD code here
-            // after adding ForceDescription parameter
+            params[PARAM_Amount] = m_trainedUnits[entityType];
+            m_succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_TrainForce, params, true));
         }
     }
 }
 //----------------------------------------------------------------------------------------------
-vector<GoalEx*> TrainArmyGoal::GetSucceededInstances(RtsGame &game)
+vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
 {
-    /* Learning this goal is not useful until we add ForceDescription parameter
     vector<GoalEx*> succeededInstances(m_succeededInstances);
     m_succeededInstances.clear();
-    return succeededInstances;*/
-
-    return vector<GoalEx*>();
+    return succeededInstances;
 }

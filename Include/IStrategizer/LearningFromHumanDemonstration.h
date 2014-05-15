@@ -78,6 +78,7 @@ namespace IStrategizer
         LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy);
         virtual ~LearningFromHumanDemonstration();
         void Learn();
+        void Init() { _helper->Init(); }
     };
 }
 

@@ -1,15 +1,16 @@
 #include "DestroyEntityTypeGoal.h"
-#include "Not.h"
-#include "And.h"
-#include "EntityClassExist.h"
 #include <cstdlib>
 #include <ctime>
 #include <cassert>
-#include "RtsGame.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
 #include "DataMessage.h"
 #include "Logger.h"
+#include "GoalFactory.h"
+#include "Not.h"
+#include "And.h"
+#include "EntityClassExist.h"
+#include "RtsGame.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -28,11 +29,7 @@ DestroyEntityTypeGoal::DestroyEntityTypeGoal(const PlanStepParameters& p_paramet
 void DestroyEntityTypeGoal::InitializePostConditions()
 {
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    
-    std::vector<Expression*> expressions;
-    expressions.push_back(new EntityClassExist(PLAYER_Enemy, targetType, 0, true));
-
-    _postCondition = new And(expressions);
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, targetType, DONT_CARE));
 }   
 //----------------------------------------------------------------------------------------------
 void DestroyEntityTypeGoal::Copy(IClonable* p_dest)
@@ -58,6 +55,14 @@ void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p
             return;
 
         m_destroyed[pMsg->Data()->EntityType]++;
+        if (m_destroyed[pMsg->Data()->EntityType] <= 6)
+        {
+            PlanStepParameters params;
+            params[PARAM_TargetEntityClassId] = pMsg->Data()->EntityType;
+            params[PARAM_Amount] = m_destroyed[pMsg->Data()->EntityType];
+            m_succededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_DestroyEntityType, params, true));
+            LogInfo("DestroyEntityTypeGoal succeeded for entity type='%s' with amount='%d'", Enums[params[PARAM_TargetEntityClassId]], params[PARAM_Amount]);
+        }
 
         if (pMsg->Data()->EntityType == (EntityClassType)_params[PARAM_TargetEntityClassId])
         {
@@ -69,21 +74,7 @@ void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p
 //----------------------------------------------------------------------------------------------
 vector<GoalEx*> DestroyEntityTypeGoal::GetSucceededInstances(RtsGame &game)
 {
-    vector<GoalEx*> succeededGoals;
-    PlanStepParameters params;
-
-    for (map<EntityClassType, int>::iterator itr = m_destroyed.begin(); itr != m_destroyed.end(); itr++)
-    {
-        params[PARAM_TargetEntityClassId] = (*itr).first;
-        params[PARAM_Amount] = (*itr).second;
-        succeededGoals.push_back(new DestroyEntityTypeGoal(params));
-
-        LogInfo("DestroyEntityTypeGoal succeeded for entity type='%s' with amount='%d'",
-            Enums[params[PARAM_TargetEntityClassId]],
-            params[PARAM_Amount]);
-    }
-
-    m_destroyed.clear();
-
+    vector<GoalEx*> succeededGoals(m_succededInstances);
+    m_succededInstances.clear();
     return succeededGoals;
 }

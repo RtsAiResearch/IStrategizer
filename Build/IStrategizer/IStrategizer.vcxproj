@@ -94,6 +94,7 @@
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\EntityClassNearArea.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ExecutionHistory.cpp" />
+    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldResources.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GatherResourceAction.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\IStrategizerEx.cpp" />
@@ -102,7 +103,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\SerializationEssentials.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\BuildingDescription.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CellFeature.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\DynamicComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ForceDescription.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GamePlayer.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GameType.cpp" />
@@ -113,7 +113,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\SharedResource.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\StaticComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldClock.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\WorldComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\CaseLearningHelper.cpp" />
@@ -185,6 +184,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\MathHelper.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Predicate.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Vector2.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Collection.h" />
@@ -244,12 +244,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\TypesMetaData.h" />
     <ClInclude Include="..\..\Include\IStrategizer\BuildingDescription.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CellFeature.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicComponent.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicMap.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicSet.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicVector.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ForceDescription.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\GameDependency.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GameEntity.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GamePlayer.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GameResearch.h" />
@@ -262,7 +257,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\SharedResource.h" />
     <ClInclude Include="..\..\Include\IStrategizer\StaticComponent.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WorldClock.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\WorldComponent.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WorldMap.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WorldResources.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GroundControlIM.h" />

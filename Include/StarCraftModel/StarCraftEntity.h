@@ -30,6 +30,7 @@ namespace IStrategizer
         bool IsNull();
         bool IsGatheringResource(IStrategizer::ResourceType resourceType) const;
         bool CanTrain(IStrategizer::EntityClassType p_entityClassId) const;
+        bool CanGather(IStrategizer::TID resourceObjectId) const;
         bool Research(IStrategizer::ResearchType p_researchId);
         bool Build(IStrategizer::EntityClassType p_buildingClassId, IStrategizer::Vector2 p_position);
         bool AttackGround(IStrategizer::Vector2 p_position);

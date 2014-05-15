@@ -61,20 +61,6 @@ namespace IStrategizer
 #define Define_AttackType \
     Enums[ATTACK_Defeat] = "Defeat";
     //---------------------------------------------------------------------------
-#define Prefix_ForceSizeType FORCESIZE
-    enum ForceSizeType
-    {
-        FORCESIZE_SmallForce    = 0x20500,
-        FORCESIZE_START         = 0x20500,
-        FORCESIZE_MediumForce,
-        FORCESIZE_LargeForce,
-        FORCESIZE_END
-    };
-#define Define_ForceSizeType \
-    Enums[FORCESIZE_SmallForce] = "Unary Force"; \
-    Enums[FORCESIZE_MediumForce] = "Medium Force"; \
-    Enums[FORCESIZE_LargeForce] = "Large Force";
-    //---------------------------------------------------------------------------
 #define Prefix_FilterType FILTER
     enum FilterType
     {
@@ -93,6 +79,7 @@ namespace IStrategizer
         GOALEX_START   = 0x20700,
         GOALEX_CollectResource,
         GOALEX_TrainArmy,
+        GOALEX_TrainForce,
         GOALEX_BuildInfrastructure,
         GOALEX_DestroyEntityType,
         GOALEX_DeployArmy,
@@ -102,6 +89,7 @@ namespace IStrategizer
     Enums[GOALEX_WinGame] = "Win Game"; \
     Enums[GOALEX_CollectResource] = "Collect Resource"; \
     Enums[GOALEX_TrainArmy] = "Train Army"; \
+    Enums[GOALEX_TrainForce] = "Train Force"; \
     Enums[GOALEX_DestroyEntityType] = "Destroy Entity Type"; \
     Enums[GOALEX_DeployArmy] = "Deploy Army"; \
     Enums[GOALEX_BuildInfrastructure] = "Build Infrastructure";
@@ -181,7 +169,6 @@ namespace IStrategizer
         PARAM_TargetPlayerId,
         PARAM_StrategyTypeId,
         PARAM_BaseTypeId,
-        PARAM_ForceSizeId,
         PARAM_AttackTypeId,
         PARAM_PlayerId,
         PARAM_MessageTypeId,
@@ -230,7 +217,6 @@ namespace IStrategizer
     Enums[PARAM_TargetPlayerId] = "Target Player"; \
     Enums[PARAM_StrategyTypeId] = "Strategy"; \
     Enums[PARAM_BaseTypeId] = "Base Type"; \
-    Enums[PARAM_ForceSizeId] = "Force Size"; \
     Enums[PARAM_AttackTypeId] = "Attack Type"; \
     Enums[PARAM_PlayerId] = "Player"; \
     Enums[PARAM_MessageTypeId] = "Message"; \

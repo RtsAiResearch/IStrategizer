@@ -12,7 +12,6 @@
 namespace IStrategizer
 {
     class WorldResources;
-    class GameDependency;
 
     class GameType : public StaticComponent
     {

@@ -40,6 +40,7 @@ namespace IStrategizer
         virtual bool AttackEntity(TID p_targetEntityObjectId) = 0;
         virtual bool Train(EntityClassType p_entityClassId) = 0;
         virtual bool GatherResourceEntity(TID p_resourceEntityObjectId) = 0;
+        virtual bool CanGather(TID resourceObjectId) const = 0;
         bool Acquire() { return true; }
         bool Release() { return true; }
         PlayerType GetPlayer() const { return m_ownerId; }

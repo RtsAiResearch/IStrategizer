@@ -90,10 +90,7 @@ void  AttackGroundAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePostConditions()
 {
-    std::vector<Expression*> expressions;
-    expressions.push_back(new EntityClassExist(PLAYER_Enemy, 0, true));
-
-    _postCondition = new And(expressions);
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1, true));
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePreConditions()

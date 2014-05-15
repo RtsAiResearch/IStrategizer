@@ -18,9 +18,6 @@
 #ifndef RTSGAME_H
 #include "RtsGame.h"
 #endif
-#ifndef DYNAMICCOMPONENT_H
-#include "DynamicComponent.h"
-#endif
 #ifndef TOOLBOX_H
 #include "Toolbox.h"
 #endif
@@ -38,24 +35,6 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame) :
     m_isFirstUpdate(true)
 {
     g_Game = pGame;
-
-    switch(param.Phase)
-    {
-    case PHASE_Online:
-        m_pPlanner = new OnlineCaseBasedPlannerEx();
-        g_OnlineCaseBasedPlanner = m_pPlanner;
-        break;
-
-    case PHASE_Offline:
-        m_pCaseLearning = new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy);
-        g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
-        break;
-    }
-
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
-
-    DynamicComponent::RealTime(true);
 }
 //---------------------------------------------------------------------------------------------
 void IStrategizerEx::NotifyMessegeSent(Message* p_message)
@@ -111,24 +90,38 @@ IStrategizerEx::~IStrategizerEx()
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
 {
+    // Note that the order of the engine components initialization is intended
+    // and any change in the order can result in unexpected behavior
+    //
     g_Game->Init();
 
     IMSysManagerParam imSysMgrParam;
     imSysMgrParam.BuildingDataIMCellSize = m_param.BuildingDataIMCellSize;
     imSysMgrParam.GroundControlIMCellSize = m_param.GrndCtrlIMCellSize;
 
-    g_IMSysMgr.Init(imSysMgrParam);
-
     PlanStepParameters params;
     params[PARAM_PlayerId] = PLAYER_Self;
     params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
 
+    g_IMSysMgr.Init(imSysMgrParam);
+
     switch(m_param.Phase)
     {
+    case  PHASE_Offline:
+        m_pCaseLearning = new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy);
+        m_pCaseLearning->Init();
+        g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
+        break;
+
     case PHASE_Online:
+        m_pPlanner = new OnlineCaseBasedPlannerEx();
         m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_WinGame, params));
+        g_OnlineCaseBasedPlanner = m_pPlanner;
         break;
     }
+
+    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
 
     return true;
 }

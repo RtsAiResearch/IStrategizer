@@ -141,9 +141,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\CellFeature.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\DynamicComponent.cpp">
-      <Filter>Source Files\World Model</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\ForceDescription.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
@@ -172,9 +169,6 @@
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\WorldClock.cpp">
-      <Filter>Source Files\World Model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\WorldComponent.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp">
@@ -338,6 +332,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\BuildInfrastructureGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -530,22 +527,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\CellFeature.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicComponent.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicMap.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicSet.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\DynamicVector.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\ForceDescription.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameDependency.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\GameEntity.h">
@@ -582,9 +564,6 @@
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldClock.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\WorldComponent.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldMap.h">
@@ -654,6 +633,9 @@
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\BuildInfrastructureGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
   </ItemGroup>

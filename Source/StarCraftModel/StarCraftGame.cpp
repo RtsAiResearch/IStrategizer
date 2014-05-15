@@ -38,23 +38,22 @@ using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
-// Been determined empirically by analyzing professional games. 
-// Refer to paper "Build Order Optimization in StarCraft" page 3
-const float StarCraftGame::MineralsPerWorkerPerFrame = 0.045f;
-const float StarCraftGame::GasPerWorkerPerFrame = 0.07f;
-
-StarCraftGame::StarCraftGame()
+//----------------------------------------------------------------------------------------------
+void StarCraftGame::Init()
 {
     g_Database.Init();
+
+    RtsGame::Init();
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitMap()
 {
     // Set the world map grid cell size to be a square of size 8 build tiles
     m_pMap = new StarCraftMap(TILE_SIZE * 8);
+    m_pMap->Init();
 }
 //----------------------------------------------------------------------------------------------
-void StarCraftGame::EnumeratePlayers()
+void StarCraftGame::InitPlayers()
 {
     vector<GamePlayer*> oldPlayers;
     vector<TID> gamePlayerIds;
@@ -70,11 +69,11 @@ void StarCraftGame::EnumeratePlayers()
     for (int i = 0, size = gamePlayerIds.size(); i < size; ++i)
     {
         typeId = g_Database.PlayerMapping.GetByFirst(gamePlayerIds[i]);
-        m_players[typeId] = nullptr;
+        m_players[typeId] = FetchPlayer(typeId);
     }
 }
 //----------------------------------------------------------------------------------------------
-void StarCraftGame::EnumerateEntityTypes()
+void StarCraftGame::InitEntityTypes()
 {
     vector<IStrategizer::GameType*> oldEntityTypes;
     vector<EntityClassType> newEntityTypes;
@@ -87,11 +86,11 @@ void StarCraftGame::EnumerateEntityTypes()
 
     for(unsigned i = 0, size = newEntityTypes.size(); i < size; ++i)
     {
-        sm_entityTypes[(EntityClassType)newEntityTypes[i]] = nullptr;
+        sm_entityTypes[newEntityTypes[i]] = FetchEntityType(newEntityTypes[i]);
     }
 }
 //----------------------------------------------------------------------------------------------
-void StarCraftGame::EnumerateResearches()
+void StarCraftGame::InitResearchTypes()
 {
     vector<GameResearch*> oldResearchTypes;
     vector<ResearchType> newResearchTypes;
@@ -104,7 +103,7 @@ void StarCraftGame::EnumerateResearches()
 
     for(unsigned i = 0, size = newResearchTypes.size(); i < size; ++i)
     {
-        sm_researches[(ResearchType)newResearchTypes[i]] = nullptr;
+        sm_researches[newResearchTypes[i]] = FetchResearch(newResearchTypes[i]);
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -197,57 +196,4 @@ void StarCraftGame::ExecuteCommand(const char *p_cmd)
 void StarCraftGame::DisplayMessage(const char* p_msg)
 {
     BroodwarPtr->sendText(p_msg);
-}
-//----------------------------------------------------------------------------------------------
-int StarCraftGame::GetMaxForceSize() const
-{
-    return 12;
-}
-//----------------------------------------------------------------------------------------------
-size_t StarCraftGame::GetMaxTrainingQueueCount() const
-{
-    return 5;
-}
-//----------------------------------------------------------------------------------------------
-EntityClassType StarCraftGame::GetResourceSource(ResourceType p_type) const
-{
-    // This method is hard-coded for Terran, ideally it should take race type.
-
-    switch(p_type)
-    {
-    case RESOURCE_Primary:
-        return g_Database.EntityMapping.GetByFirst(UnitTypes::Resource_Mineral_Field.getID());
-
-    case RESOURCE_Secondary:
-        return g_Database.EntityMapping.GetByFirst(UnitTypes::Terran_Refinery.getID());
-    
-    case RESOURCE_Supply:
-        return g_Database.EntityMapping.GetByFirst(UnitTypes::Terran_Supply_Depot.getID());
-    
-    default:
-        DEBUG_THROW(InvalidParameterException(XcptHere));
-    }
-}
-//----------------------------------------------------------------------------------------------
-int StarCraftGame::BaseSupplyAmount() const
-{
-    return 10;
-}
-//----------------------------------------------------------------------------------------------
-int StarCraftGame::SupplyBuildingSupplyAmount() const
-{
-    return 8;
-}
-//----------------------------------------------------------------------------------------------
-float StarCraftGame::GetResourceConsumbtionRatePerWorker(ResourceType p_id)
-{
-    switch(p_id)
-    {
-    case RESOURCE_Primary:
-        return MineralsPerWorkerPerFrame;
-    case RESOURCE_Secondary:
-        return GasPerWorkerPerFrame;
-    default:
-        throw InvalidParameterException(XcptHere);
-    }
 }

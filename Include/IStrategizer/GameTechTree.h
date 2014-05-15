@@ -9,6 +9,7 @@ namespace IStrategizer
     enum ResearchType;
     enum EntityClassType;
     enum BaseType;
+    enum ResourceType;
 
     class GameTechTree
     {
@@ -23,6 +24,10 @@ namespace IStrategizer
         virtual EntityClassType GetWorkerType() const = 0;
         virtual EntityClassType GetBuilderType(EntityClassType p_buildingType) const = 0;
         virtual EntityClassType GetBaseType() const = 0;
+        virtual EntityClassType GetResourceSource(ResourceType p_type) const = 0;
+        virtual float GetResourceConsumbtionRatePerWorker(ResourceType p_id) const = 0;
+        virtual int BaseSupplyAmount() const = 0;
+        virtual int SupplyBuildingSupplyAmount() const = 0;
     };
 }
 
