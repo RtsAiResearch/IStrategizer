@@ -7,9 +7,6 @@
 #ifndef GOALEX_H
 #include "GoalEx.h"
 #endif
-#ifndef GAMESTATEEX_H
-#include "GameStateEx.h"
-#endif
 #ifndef MATHHELPER_H
 #include "MathHelper.h"
 #endif
@@ -28,6 +25,7 @@
 #include "AbstractRetainer.h"
 #include "CaseBaseEx.h"
 #include "Logger.h"
+#include "RtsGame.h"
 #include <map>
 #include <functional>
 
@@ -95,7 +93,7 @@ float RetrieverEx::GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2)
     }
 }
 //----------------------------------------------------------------------------------------------
-float RetrieverEx::StateSimilarity(const GameStateEx *p_gs1, const GameStateEx *p_gs2)
+float RetrieverEx::StateSimilarity(const RtsGame *p_gs1, const RtsGame *p_gs2)
 {
     // STATE-SIMILARITY(gs1, gs2)
     // distance = 0
@@ -103,7 +101,7 @@ float RetrieverEx::StateSimilarity(const GameStateEx *p_gs1, const GameStateEx *
     // // distance += ((gs1[i] - gs2[i]) /  (1 + max(gs1[i], gs2[i]))) ^ 2
     // 
     // return 1 / (sqrt(distance) + 1.0)
-    float distance = 0;
+    /*float distance = 0;
     float diff;
     float maxDiff;
     ShallowFeaturesEx& v1 = const_cast<GameStateEx*>(p_gs1)->ShallowFeatures();
@@ -111,15 +109,17 @@ float RetrieverEx::StateSimilarity(const GameStateEx *p_gs1, const GameStateEx *
 
     for(int i = 0, size = v1.size(); i < size; ++i)
     {
-        diff = v1[i] - v2[i];
-        maxDiff = 1.0f + max(v1[i], v2[i]);
-        distance += pow(diff / maxDiff, 2);
+    diff = v1[i] - v2[i];
+    maxDiff = 1.0f + max(v1[i], v2[i]);
+    distance += pow(diff / maxDiff, 2);
     }
 
-    return 1.0f / (sqrt(distance + 1.0f));
+    return 1.0f / (sqrt(distance + 1.0f));*/
+
+    return 0.0;
 }
 //----------------------------------------------------------------------------------------------
-float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const GameStateEx* p_gameState)
+float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const RtsGame* p_gameState)
 {
     float alpha = 0.95f;
     float goalSimilarity = GoalSimilarity(p_case->Goal(), p_goal);
@@ -129,7 +129,7 @@ float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, con
     return (alpha * goalSimilarity) + (float)((1.0 - alpha) * stateSimilarity);
 }
 //----------------------------------------------------------------------------------------------
-CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const GameStateEx* pGameState, const set<CaseEx*>& exclusion)
+CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const RtsGame* pGameState, const set<CaseEx*>& exclusion)
 {
     SVector<CaseEx*>& cases = m_pRetainer->CaseBase()->CaseContainer;
     multimap<float, CaseEx*, greater<float> > caseRelevanceTable;

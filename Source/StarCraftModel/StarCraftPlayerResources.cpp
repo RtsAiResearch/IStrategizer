@@ -6,7 +6,7 @@
 #include "DefinitionCrossMapping.h"
 #include "IStrategizerException.h"
 
-using namespace StarCraftModel;
+using namespace IStrategizer;
 using namespace BWAPI;
 
 int StarCraftPlayerResources::Supply() 

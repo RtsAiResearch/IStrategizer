@@ -4,6 +4,7 @@
 #include "GameTrace.h"
 #include "Logger.h"
 #include "DefinitionCrossMapping.h"
+#include "RtsGame.h"
 
 #include <Windows.h>
 #include <set>

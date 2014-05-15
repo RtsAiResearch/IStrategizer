@@ -4,7 +4,6 @@
 
 #include <map>
 #include "MetaData.h"
-#include "ErrorCode.h"
 #include "EngineAssist.h"
 #include "Comparer.h"
 #include "Expression.h"

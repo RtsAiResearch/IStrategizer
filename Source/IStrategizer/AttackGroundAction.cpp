@@ -20,6 +20,7 @@
 
 using namespace IStrategizer;
 using namespace Serialization;
+using namespace std;
 
 //----------------------------------------------------------------------------------------------
 AttackGroundAction::AttackGroundAction() : Action(ACTIONEX_AttackGround)

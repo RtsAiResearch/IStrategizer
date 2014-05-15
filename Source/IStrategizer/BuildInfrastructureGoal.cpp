@@ -16,7 +16,7 @@ using namespace std;
 BuildInfrastructureGoal::BuildInfrastructureGoal() : GoalEx(GOALEX_BuildInfrastructure)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
-    _params[PARAM_Amount] = 0;
+    _params[PARAM_Amount] = DONT_CARE;
     m_existingAmount = 0;
 }
 //----------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool&
 void BuildInfrastructureGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], DONT_CARE));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], _params[PARAM_Amount]));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ bool BuildInfrastructureGoal::SuccessConditionsSatisfied(RtsGame& game)
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
     int count = 0;
 
-    if (game.GetResourceSource(RESOURCE_Supply) == entityClassType)
+    if (game.Self()->TechTree()->GetResourceSource(RESOURCE_Supply) == entityClassType)
     {
         count = GetAvailableSupplyBuildingsCount(game);
     }
@@ -92,7 +92,7 @@ void BuildInfrastructureGoal::AdaptParameters(RtsGame& game)
     vector<TID> entities;
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
 
-    if (game.GetResourceSource(RESOURCE_Supply) == entityClassType)
+    if (game.Self()->TechTree()->GetResourceSource(RESOURCE_Supply) == entityClassType)
     {
         m_existingAmount = GetAvailableSupplyBuildingsCount(game);
     }
@@ -108,6 +108,6 @@ void BuildInfrastructureGoal::AdaptParameters(RtsGame& game)
 int BuildInfrastructureGoal::GetAvailableSupplyBuildingsCount(RtsGame &game) const
 {
     // The availableSupplyBuildings won't match the exact number of supply buildings in the game
-    int availableSupplyBuildings = game.Self()->Resources()->AvailableSupply() / game.SupplyBuildingSupplyAmount();
+    int availableSupplyBuildings = game.Self()->Resources()->AvailableSupply() / game.Self()->TechTree()->SupplyBuildingSupplyAmount();
     return availableSupplyBuildings;
 }

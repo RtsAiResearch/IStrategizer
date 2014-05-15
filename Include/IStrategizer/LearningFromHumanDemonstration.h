@@ -68,7 +68,7 @@ namespace IStrategizer
         void UnnecessaryStepsElimination(CookedCase* p_case);
         void HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans);
         void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans);
-        bool Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode);
+        bool Depends(CompositeExpression* p_candidateParent, CompositeExpression* p_candidateChild);
         bool IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right);
         CookedPlan* PlanParallelization(OlcbpPlan* p_graph, RawPlanEx* p_steps);
         CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
@@ -78,6 +78,7 @@ namespace IStrategizer
         LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy);
         virtual ~LearningFromHumanDemonstration();
         void Learn();
+        void Init() { _helper->Init(); }
     };
 }
 

@@ -1,13 +1,13 @@
 #include "StarCraftMap.h"
+#include <string>
+
 #include "BWAPI.h"
 #include "MapArea.h"
 #include "GamePlayer.h"
-
-#include <string>
 #include "DefinitionCrossMapping.h"
 #include "StarCraftEntity.h"
+#include "RtsGame.h"
 
-using namespace StarCraftModel;
 using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;

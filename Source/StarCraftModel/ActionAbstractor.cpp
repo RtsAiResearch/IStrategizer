@@ -9,7 +9,7 @@
 
 using namespace BWAPI;
 using namespace IStrategizer;
-using namespace StarCraftModel;
+using namespace IStrategizer;
 
 PlanStepParameters ActionAbstractor::GetAbstractedParameter(const Unit trainee, const Unit trainer) const
 {
@@ -40,7 +40,7 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
         position.Y = unit->getPosition().y;
     }
     
-    g_Game->Map()->UpdateAux();
+    g_Game->Map()->Update();
     g_Game->Map()->GetCellFeatureFromWorldPosition(position)->To(actionParameters);
     
     if (actionParameters.count(PARAM_EntityClassId) > 0)

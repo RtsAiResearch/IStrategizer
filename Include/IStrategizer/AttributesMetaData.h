@@ -51,6 +51,7 @@ namespace IStrategizer
         ECATTR_AirRange,
         ECATTR_GroundRange,
         ECATTR_LineOfSight,
+        ECATTR_IsSpecialBuilding,
         ECATTR_END
     };
 #define Define_EntityClassAttribute \
@@ -68,7 +69,8 @@ namespace IStrategizer
     Enums[ECATTR_Height] = "Tile Height"; \
     Enums[ECATTR_AirRange] = "Air Weapon Range"; \
     Enums[ECATTR_GroundRange] = "Ground Weapon Range"; \
-    Enums[ECATTR_LineOfSight] = "Line of Sight";
+    Enums[ECATTR_LineOfSight] = "Line of Sight"; \
+    Enums[ECATTR_IsSpecialBuilding] = "Is Special Building";
     //---------------------------------------------------------------------------
 #define Prefix_PlayerAttribute PATTRIBUTE
     enum PlayerAttribute

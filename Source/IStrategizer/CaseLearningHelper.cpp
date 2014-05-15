@@ -1,16 +1,16 @@
 #include "CaseLearningHelper.h"
 #include "DataMessage.h"
-#include "GameStateEx.h"
 #include "MessagePump.h"
 #include "IStrategizerException.h"
 #include "RtsGame.h"
 #include "SVector.h"
 #include "GoalFactory.h"
+#include "Logger.h"
 
 using namespace IStrategizer;
 using namespace std;
 
-CaseLearningHelper::CaseLearningHelper()
+void CaseLearningHelper::Init()
 {
     g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
     g_MessagePump.RegisterForMessage(MSG_GameEnd, this);

@@ -7,9 +7,8 @@
 
 #include "BWAPI.h"
 
-namespace StarCraftModel
+namespace IStrategizer
 {
-  using namespace IStrategizer;
   using namespace BWAPI;
 
   class StarCraftPlayerResources : public PlayerResources
@@ -21,9 +20,6 @@ namespace StarCraftModel
     int Supply();
     int Secondary();
     int Primary();
-
-    EntityClassType GetResourceSource(ResourceType p_type) const;
-
   };
 }
 

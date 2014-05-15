@@ -26,7 +26,6 @@
 #include "PlanGraphView.h"
 
 using namespace IStrategizer;
-using namespace StarCraftModel;
 using namespace BWAPI;
 using namespace std;
 
@@ -69,33 +68,52 @@ void ClientMain::InitIStrategizer()
 
         if (Broodwar->isReplay())
         {
-            Playerset players = Broodwar->getPlayers();
-            TID playerToObserveID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
+            LogInfo("Learning from replay map: %s", Broodwar->mapFileName().c_str());
 
-            m_pTraceCollector = new GameTraceCollector(playerToObserveID);
+            Playerset players = Broodwar->getPlayers();
+            for (auto player : players)
+            {
+                LogInfo("Replay Player[%d]: %s", player->getID(), player->getName().c_str());
+            }
+
             param.Phase = PHASE_Offline;
             m_isLearning = true;
         }
         else
+        {
             param.Phase = PHASE_Online;
+        }
 
         m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
         _ASSERTE(m_pIStrategizer);
+
+        m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
+        m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+
+        // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
+        // and the engine Enums[*] table is fully initialized
+        InitIdLookup();
+
+        if (!m_pIStrategizer->Init())
+        {
+            LogError("Failed to initialize IStrategizer");
+            return;
+        }
+
+        if (param.Phase == PHASE_Offline)
+        {
+            TID selfPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
+            LogInfo("Will learn demonstrations from self Player[%d]", );
+            m_pTraceCollector = new GameTraceCollector(selfPlayerID);
+        }
+
+        if (!m_isLearning)
+            m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
     }
     catch (IStrategizer::Exception& e)
     {
         e.To(cout);
     }
-
-    m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
-    m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
-
-    // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
-    // and the engine Enums[*] table is fully initialized
-    InitIdLookup();
-
-    if (!m_isLearning)
-        m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()

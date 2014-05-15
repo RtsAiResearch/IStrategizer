@@ -11,25 +11,24 @@
 #ifndef ENGINEASSIST_H
 #include "EngineAssist.h"
 #endif
-#ifndef GAMESTATEEX_H
-#include "GameStateEx.h"
-#endif
 #ifndef TOOLBOX_H
 #include "Toolbox.h"
 #endif
 #include "GameTechTree.h"
 #include "IMSystemManager.h"
 #include "DataMessage.h"
-#include "GameStateEx.h"
 #include "MessagePump.h"
 #include "Logger.h"
 #include "AttributesMetaData.h"
 #include "GameType.h"
+#include "IStrategizerException.h"
 
 using namespace IStrategizer;
 using namespace std;
 
-GamePlayer::GamePlayer() : m_pState(new GameStateEx()), m_pResources(nullptr), m_pTechTree(nullptr)
+GamePlayer::GamePlayer() :
+    m_pResources(nullptr),
+    m_pTechTree(nullptr)
 {
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
@@ -44,102 +43,81 @@ GamePlayer::~GamePlayer()
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::Finalize()
 {
-    for (MapEx<TID, GameEntity*>::iterator itr = m_entities.begin();
-        itr != m_entities.end(); ++itr)
-        Toolbox::MemoryClean(itr->second);
+    for (auto entityEntry : m_entities)
+        Toolbox::MemoryClean(entityEntry.second);
     m_entities.clear();
 
     Toolbox::MemoryClean(m_pResources);
     Toolbox::MemoryClean(m_pTechTree);
-    Toolbox::MemoryClean(m_pState);
 }
 //////////////////////////////////////////////////////////////////////////
-PlayerResources* GamePlayer::Resources()
+void GamePlayer::Entities(vector<TID>& entityIds)
 {
-    _ASSERTE(m_pResources != nullptr);
-    return m_pResources;
+    m_entities.Keys(entityIds);
 }
 //////////////////////////////////////////////////////////////////////////
-GameTechTree* GamePlayer::TechTree() const
+GameEntity* GamePlayer::GetEntity(TID id)
 {
-    _ASSERTE(m_pTechTree != nullptr);
-    return m_pTechTree;
-}
-//////////////////////////////////////////////////////////////////////////
-void GamePlayer::Entities(vector<TID>& p_entityIds)
-{
-    m_entities.Keys(p_entityIds);
-}
-//////////////////////////////////////////////////////////////////////////
-GameEntity* GamePlayer::GetEntity(TID p_id)
-{
-    GameEntity* pEntity = nullptr;
-
-    if(m_entities.Contains(p_id))
+    if(m_entities.count(id) == 0)
     {
-        pEntity = m_entities[p_id];
-        _ASSERTE(pEntity);
+        return nullptr;
     }
 
-    return pEntity;
+    _ASSERTE(m_entities[id] != nullptr);
+    return m_entities[id];
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::GetBases(vector<TID> &p_basesIds)
+void GamePlayer::GetBases(vector<TID> &basesIds)
 {
     EntityClassType typeId;
 
-    typeId = GetBaseType();
+    typeId = TechTree()->GetBaseType();
 
-    p_basesIds.clear();
+    basesIds.clear();
 
     for(EntitiesMap::iterator itr = m_entities.begin();
         itr != m_entities.end(); ++itr)
     {
         if (itr->second->Type() == typeId)
-            p_basesIds.push_back(itr->first);
+            basesIds.push_back(itr->first);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::Entities(EntityClassType p_typeId, vector<TID> &p_entityIds)
+void GamePlayer::Entities(EntityClassType typeId, vector<TID> &entityIds)
 {
-    p_entityIds.clear();
+    entityIds.clear();
     for(EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
     {
-        if (itr->second->Type() == p_typeId)
-            p_entityIds.push_back(itr->first);
+        if (itr->second->Type() == typeId)
+            entityIds.push_back(itr->first);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-const GameStateEx* GamePlayer::State()
+void GamePlayer::NotifyMessegeSent(Message* pMsg)
 {
-    return m_pState;
-}
-//////////////////////////////////////////////////////////////////////////
-void GamePlayer::NotifyMessegeSent(Message* p_pMessage)
-{
-    switch (p_pMessage->MessageTypeID())
+    switch (pMsg->MessageTypeID())
     {
     case MSG_EntityRenegade:
-        OnEntityRenegade(p_pMessage);
+        OnEntityRenegade(pMsg);
         break;
 
     case MSG_EntityCreate:
-        OnEntityCreate(p_pMessage);
+        OnEntityCreate(pMsg);
         break;
 
     case MSG_EntityDestroy:
-        OnEntityDestroy(p_pMessage);
+        OnEntityDestroy(pMsg);
         break;
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityCreate(Message* p_pMessage)
+void GamePlayer::OnEntityCreate(Message* pMsg)
 {
     GameEntity *pEntity = nullptr;
     TID entityId;
     EntityCreateMessage *pCreateMsg = nullptr;
 
-    pCreateMsg = (EntityCreateMessage*)p_pMessage;
+    pCreateMsg = (EntityCreateMessage*)pMsg;
 
     if (pCreateMsg->Data()->OwnerId == m_id)
     {
@@ -153,7 +131,7 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
 
         pEntity = FetchEntity(entityId);
         _ASSERTE(pEntity);
-        
+
         m_entities[entityId] = pEntity;
 
         LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
@@ -164,13 +142,13 @@ void GamePlayer::OnEntityCreate(Message* p_pMessage)
 
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityDestroy(Message* p_pMessage)
+void GamePlayer::OnEntityDestroy(Message* pMsg)
 {
     EntityDestroyMessage *pDestroyMsg = nullptr;
     GameEntity *pEntity = nullptr;
     TID entityId;
 
-    pDestroyMsg = (EntityDestroyMessage*)p_pMessage;
+    pDestroyMsg = (EntityDestroyMessage*)pMsg;
 
     if (pDestroyMsg->Data()->OwnerId == m_id)
     {
@@ -190,13 +168,13 @@ void GamePlayer::OnEntityDestroy(Message* p_pMessage)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::OnEntityRenegade(Message* p_pMessage)
+void GamePlayer::OnEntityRenegade(Message* pMsg)
 {
     EntityRenegadeMessage *pRenMsg = nullptr;
     GameEntity *pEntity = nullptr;
     TID entityId;
 
-    pRenMsg = (EntityRenegadeMessage*)p_pMessage;
+    pRenMsg = (EntityRenegadeMessage*)pMsg;
 
     entityId = pRenMsg->Data()->EntityId;
 
@@ -258,7 +236,7 @@ MapArea GamePlayer::GetColonyMapArea()
             pPlayerBase = GetEntity(playerEntities[0]);
         }
 
-        GameType *pGameType = g_Game->GetEntityType(GetBaseType());
+        GameType *pGameType = g_Game->GetEntityType(TechTree()->GetBaseType());
         _ASSERTE(pGameType);
 
         m_colonyCenter = MapArea(

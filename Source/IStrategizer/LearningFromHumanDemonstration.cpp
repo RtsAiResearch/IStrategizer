@@ -2,7 +2,6 @@
 #include "CaseBaseEx.h"
 #include "ActionFactory.h"
 #include "CaseLearningHelper.h"
-#include "Diagraph.h"
 #include "Action.h"
 #include "GoalFactory.h"
 #include "GoalEx.h"
@@ -159,9 +158,11 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
                 CompositeExpression* preConditions = ((Action*)m_olcpbPlan->GetNode(j))->PreCondition();
                 _ASSERTE(preConditions);
 
+                LogInfo("Checking dependency between node %s and %s", m_olcpbPlan->GetNode(i)->ToString(true).c_str(), m_olcpbPlan->GetNode(j)->ToString(true).c_str());
                 if(Depends(m_olcpbPlan->GetNode(i)->PostCondition(), ((Action*)m_olcpbPlan->GetNode(j))->PreCondition()) &&
                    !m_olcpbPlan->IsAdjacent(j, i))
                 {
+                    LogInfo("Adding edge from node %s to node %s, as dependency matches", m_olcpbPlan->GetNode(i)->ToString(true).c_str(), m_olcpbPlan->GetNode(j)->ToString(true).c_str());
                     m_olcpbPlan->AddEdge(i, j);
                 }
             }
@@ -171,27 +172,37 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
     return new CookedCase(p_rawCase, m_olcpbPlan);
 }
 //--------------------------------------------------------------------------------------------------------------
-bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNode, CompositeExpression* p_dependentNode)
+bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateParent, CompositeExpression* p_candidateChild)
 {
-    assert(p_candidateNode);
-    assert(p_dependentNode);
+    assert(p_candidateParent);
+    assert(p_candidateChild);
 
     vector<pair<Expression*,Expression*>> m_candidateConditions;
-    p_candidateNode->PartiallyEquals(p_dependentNode, m_candidateConditions);
+    p_candidateParent->PartiallyEquals(p_candidateChild, m_candidateConditions);
 
     for (auto m_candidateCondition : m_candidateConditions)
     {
-        ConditionEx* m_precondition = (ConditionEx*)m_candidateCondition.second;
-        ConditionEx* m_postCondition = (ConditionEx*)m_candidateCondition.first;
-        bool preconditionHasAmount = m_precondition->ContainsParameter(PARAM_Amount);
-        bool postconditionHasAmount = m_postCondition->ContainsParameter(PARAM_Amount);
+        ConditionEx* consumer = (ConditionEx*)m_candidateCondition.first;
+        ConditionEx* source = (ConditionEx*)m_candidateCondition.second;
+        LogInfo("Found candidate matched condition %s", Enums[source->Type()]);
+        bool preconditionHasAmount = consumer->ContainsParameter(PARAM_Amount);
+        bool postconditionHasAmount = source->ContainsParameter(PARAM_Amount);
         _ASSERTE(preconditionHasAmount == postconditionHasAmount);
-        int requiredAmount = preconditionHasAmount ? m_precondition->Parameter(PARAM_Amount) : 0;
-        int availableAmount = postconditionHasAmount ? m_postCondition->Parameter(PARAM_Amount) : 0;
-        int amountToConsume = min(requiredAmount, availableAmount);
-        if (m_postCondition->Consume(amountToConsume))
+        if (preconditionHasAmount && postconditionHasAmount)
         {
-            m_precondition->Consume(amountToConsume);
+            int requiredAmount = consumer->Parameter(PARAM_Amount);
+            int availableAmount = source->Parameter(PARAM_Amount);
+            int amountToConsume = min(requiredAmount, availableAmount);
+            LogInfo("The consumer amount is %d and the source amount is %d", requiredAmount, availableAmount);
+            
+            if (requiredAmount != 0 && source->Consume(amountToConsume))
+            {
+                _ASSERTE(consumer->Consume(amountToConsume));
+                return true;
+            }
+        }
+        else
+        {
             return true;
         }
     }
@@ -205,12 +216,13 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     OlcbpPlan::NodeSet m_necessarySteps;
     OlcbpPlan::NodeSet m_finalSteps;
 
+    LogInfo("Finding necessary steps for goal node %s", p_case->rawCase->rawPlan.Goal->ToString(true).c_str());
     for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
     {
-        // The order of depends is important keep goal on left side and action on right side
+        // The order of depends is important keep goal on right side and action on left side
         // that's because if the goal depends on the action we'll consume the action's resources
         // and assign the goals requirements as well.
-        if (Depends(p_case->rawCase->rawPlan.Goal->PostCondition(), p_case->plan->GetNode(*it)->PostCondition()))
+        if (Depends(p_case->plan->GetNode(*it)->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition()))
         {
             m_necessarySteps.insert(*it);
             m_unprocessedSteps.erase(it++);
@@ -221,34 +233,40 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         }
     }
 
-    _ASSERTE(m_necessarySteps.size() > 0);
-
-    while(m_necessarySteps.size())
+    if (m_necessarySteps.size() > 0)
     {
-        OlcbpPlan::NodeID current = *m_necessarySteps.begin();
-        m_necessarySteps.erase(current);
-        m_finalSteps.insert(current);
-
-        for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
+        while(m_necessarySteps.size())
         {
-            if(p_case->plan->IsAdjacent(*it, current))
+            OlcbpPlan::NodeID current = *m_necessarySteps.begin();
+            m_necessarySteps.erase(current);
+            m_finalSteps.insert(current);
+
+            for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
             {
-                m_necessarySteps.insert(*it);
-                m_unprocessedSteps.erase(it++);
+                if(p_case->plan->IsAdjacent(*it, current))
+                {
+                    m_necessarySteps.insert(*it);
+                    m_unprocessedSteps.erase(it++);
+                }
+                else
+                {
+                    ++it;
+                }
             }
-            else
+        }
+
+        for (OlcbpPlan::NodeID i : p_case->plan->GetNodes())
+        {
+            if(m_finalSteps.find(i) == m_finalSteps.end())
             {
-                ++it;
+                p_case->plan->RemoveNode(i);
             }
         }
     }
-
-    for (OlcbpPlan::NodeID i : p_case->plan->GetNodes())
+    else
     {
-        if(m_finalSteps.find(i) == m_finalSteps.end())
-        {
-            p_case->plan->RemoveNode(i);
-        }
+        LogInfo("Didn't find any necessary steps for the goal");
+        p_case->plan->Clear();
     }
 }
 //--------------------------------------------------------------------------------------------------------------

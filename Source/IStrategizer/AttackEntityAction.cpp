@@ -20,6 +20,7 @@
 
 using namespace IStrategizer;
 using namespace Serialization;
+using namespace std;
 
 AttackEntityAction::AttackEntityAction() :
     Action(ACTIONEX_AttackEntity)

@@ -1,26 +1,23 @@
 #ifndef GAMERESEARCH_H
 #define GAMERESEARCH_H
 
-#ifndef STATICCOMPONENT_H
-#include "StaticComponent.h"
-#endif
+#include "EngineData.h"
 
 namespace IStrategizer
 {
-    enum ResearchType;
     class WorldResources;
-    class GameDependency;
 
-    class GameResearch : public StaticComponent
+    class GameResearch
     {
-    protected:
-        ResearchType    m_id;
-        WorldResources* m_requiredResources;
-
     public:
-        GameResearch() : m_requiredResources(nullptr) {}
-        int             Id() const { return m_id; }
-        WorldResources* RequiredResources() const { return m_requiredResources; }
+        GameResearch() : m_pRequiredResources(nullptr) {}
+        ResearchType Id() const { return m_id; }
+        WorldResources* RequiredResources() const { return m_pRequiredResources; }
+        virtual void Init() = 0;
+
+    protected:
+        ResearchType m_id;
+        WorldResources* m_pRequiredResources;
     };
 }
 

@@ -4,42 +4,46 @@
 #ifndef GAMETECHTREE_H
 #include "GameTechTree.h"
 #endif
-#ifndef MAPEX_H
-#include "MapEx.h"
-#endif
 
 #include "BWAPI.h"
 
 namespace IStrategizer
 {
-  enum PlayerType;
-  enum ResearchType;
-  enum EntityClassType;
-}
+    enum PlayerType;
+    enum ResearchType;
+    enum EntityClassType;
 
-namespace StarCraftModel
-{
-  using namespace IStrategizer;
-  using namespace std;
-  using namespace BWAPI;
-  using namespace IStrategizer;
+    class StarCraftTechTree : public GameTechTree
+    {
+    public:
+        StarCraftTechTree() : m_pPlayer(nullptr) {}
+        StarCraftTechTree(BWAPI::Player pPlayer);
 
-  class StarCraftTechTree : public IStrategizer::GameTechTree
-  {
-    typedef std::vector<IStrategizer::EntityClassType> Entities;
-    typedef std::vector<IStrategizer::ResearchType> Researches;
-    typedef std::pair<Entities, Researches> Dependency;
+        bool ResearchAvailable(ResearchType p_researchId) const;
+        bool ResearchDone(ResearchType p_researchId) const ;
+        EntityClassType TireBaseBuilding(BaseType p_tireId) const;
+        EntityClassType SourceEntity(int p_typeOrResearchId) const;
+        void GetRequirements(int p_typeOrResearchId, std::vector<ResearchType>& p_researches, std::map<EntityClassType, unsigned>& p_buildings);
+        EntityClassType GetWorkerType() const { return m_workerTypeId; }
+        EntityClassType GetBuilderType(EntityClassType p_buildingType) const;
+        EntityClassType GetBaseType() const { return m_baseTypeId; }
+        EntityClassType GetResourceSource(ResourceType p_type) const;
+        float GetResourceConsumbtionRatePerWorker(ResourceType p_id) const;
+        int BaseSupplyAmount() const;
+        int SupplyBuildingSupplyAmount() const;
 
-    Player m_player;
+    protected:
+        typedef std::vector<EntityClassType> Entities;
+        typedef std::vector<ResearchType> Researches;
+        typedef std::pair<Entities, Researches> Dependency;
 
-  public:
-    StarCraftTechTree(Player p_player) : m_player(p_player) {}
-    bool ResearchAvailable(ResearchType p_researchId) const;
-    bool ResearchDone(ResearchType p_researchId) const ;
-    EntityClassType TireBaseBuilding(BaseType p_tireId) const;
-    EntityClassType SourceEntity(int p_typeOrResearchId) const;
-    void            GetRequirements(int p_typeOrResearchId, vector<ResearchType>& p_researches, map<EntityClassType, unsigned>& p_buildings);
-    void            GetDependents(int p_typeOrResearchId, vector<ResearchType>& p_researches, vector<EntityClassType>& p_entityTypes);
-  };  
+        BWAPI::Player m_pPlayer;
+        EntityClassType m_workerTypeId;
+        EntityClassType m_baseTypeId;
+
+        static const float MineralsPerWorkerPerFrame;
+        static const float GasPerWorkerPerFrame;
+    };  
 }
 #endif // STARCRAFTTECHTREE_H
+

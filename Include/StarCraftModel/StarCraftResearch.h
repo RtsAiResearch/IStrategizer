@@ -7,23 +7,19 @@
 
 #include "BWAPI.h"
 
-namespace StarCraftModel
+namespace IStrategizer
 {
-    using namespace IStrategizer;
-    using namespace BWAPI;
     class StarCraftResearch : public GameResearch
     {
     public:
-        StarCraftResearch(UpgradeType p_research) : m_upgrade(p_research), m_isTech(false) {}
-        StarCraftResearch(TechType p_research) : m_tech(p_research), m_isTech(true) {}
-
-    protected:
-        void    InitializeAux();
+        StarCraftResearch(BWAPI::UpgradeType p_research) : m_upgrade(p_research), m_isTech(false) {}
+        StarCraftResearch(BWAPI::TechType p_research) : m_tech(p_research), m_isTech(true) {}
+        void Init();
 
     private:
         bool m_isTech;
-        UpgradeType m_upgrade;
-        TechType m_tech;
+        BWAPI::UpgradeType m_upgrade;
+        BWAPI::TechType m_tech;
     };
 }
 

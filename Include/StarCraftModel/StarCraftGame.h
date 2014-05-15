@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef STARCRAFTGAME_H
 #define STARCRAFTGAME_H
 
@@ -5,30 +6,30 @@
 #include "RtsGame.h"
 #endif
 
-namespace StarCraftModel
+namespace IStrategizer
 {
-    using namespace IStrategizer;
-
+    ///> class=StarCraftGame
+    ///> parent=RtsGame
     class StarCraftGame : public RtsGame
     {
-    protected:
-        void EnumeratePlayers();
-        void EnumerateEntityTypes();
-        void EnumerateResearches();
-        void InitializeMap();
-        GamePlayer* FetchPlayer(IStrategizer::PlayerType p_id);
-        IStrategizer::GameType* FetchEntityType(EntityClassType p_id);
-        GameResearch* FetchResearch(ResearchType p_id);
+        OBJECT_SERIALIZABLE(StarCraftGame);
 
     public:
-        StarCraftGame();
+        void Init();
         void ExecuteCommand(const char *p_cmd);
         void DisplayMessage(const char *p_msg);
-        int BaseSupplyAmount() const;
-        int SupplyBuildingSupplyAmount() const;
-        int GetMaxForceSize() const;
-        size_t GetMaxTrainingQueueCount() const;
-        EntityClassType GetResourceSource(ResourceType p_type) const;
+        int GetMaxForceSize() const { return 12; }
+        size_t GetMaxTrainingQueueCount() const { return 5; }
+
+    protected:
+        void InitPlayers();
+        void InitMap();
+        void InitEntityTypes();
+        void InitResearchTypes();
+
+        GamePlayer* FetchPlayer(PlayerType p_id);
+        IStrategizer::GameType* FetchEntityType(EntityClassType p_id);
+        GameResearch* FetchResearch(ResearchType p_id);
     };
 }
 

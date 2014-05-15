@@ -7,14 +7,10 @@
 #ifndef DEFINITIONCROSSMAPPING_H
 #include "DefinitionCrossMapping.h"
 #endif
-#ifndef ERRORCODE_H
-#include "ErrorCode.h"
-#endif
 #include "IStrategizerException.h"
 #include "MathHelper.h"
 #include "RtsGame.h"
 
-using namespace StarCraftModel;
 using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;

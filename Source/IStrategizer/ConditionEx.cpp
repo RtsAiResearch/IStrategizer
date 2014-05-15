@@ -94,7 +94,7 @@ void ConditionEx::Copy(IClonable* p_dest)
 
     ConditionEx* m_dest = static_cast<ConditionEx*>(p_dest);
 
-    m_dest->_conditionType        = _conditionType;
-    m_dest->_conditionParameters  = _conditionParameters;
-    m_dest->_playerType           = _playerType;
+    m_dest->_conditionType = _conditionType;
+    m_dest->_conditionParameters.insert(_conditionParameters.begin(), _conditionParameters.end());
+    m_dest->_playerType = _playerType;
 }
