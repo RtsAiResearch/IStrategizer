@@ -17,7 +17,7 @@ namespace IStrategizer
             LOG_Info,
         };
 
-        const static unsigned LogBufferMax  = 4096;
+        const static unsigned LogBufferMax  = 262144;
         const static unsigned FlushRate     = 4;
 
         void Log(LogType p_type, const char* p_pFunc, const char* p_pFormat, ...);

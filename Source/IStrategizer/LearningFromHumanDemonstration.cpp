@@ -37,6 +37,12 @@ void LearningFromHumanDemonstration::Learn()
     for (auto m_rawCase : m_rawCases)
     {
         IStrategizer::CookedCase* m_cookedCase = DependencyGraphGeneration(m_rawCase);
+        LogInfo("The initial plan for case %d/%d for goal %s is:\n%s",
+            count,
+            m_rawCases.size(),
+            m_cookedCase->rawCase->rawPlan.Goal->ToString(true).c_str(),
+            m_cookedCase->plan->ToString().c_str());
+        
         UnnecessaryStepsElimination(m_cookedCase);
 
         if (m_cookedCase->plan->Size() > 0)
@@ -45,9 +51,17 @@ void LearningFromHumanDemonstration::Learn()
                 m_cookedCase->rawCase->rawPlan.Goal,
                 m_cookedCase->plan,
                 m_cookedCase->rawCase->gameState));
+            
+            LogInfo("Finished learning case %d/%d for goal %s. The final plan is:\n%s",
+                count++,
+                m_rawCases.size(),
+                m_cookedCase->rawCase->rawPlan.Goal->ToString(true).c_str(),
+                m_cookedCase->plan->ToString().c_str());
         }
-
-        LogInfo("Finished learning case %d/%d", count++, m_rawCases.size());
+        else
+        {
+            LogInfo("Finished learning case %d/%d and the case does not have any steps so it will not be included.", count++, m_rawCases.size());
+        }
     }
 
     HierarchicalComposition(m_cookedPlans);
@@ -169,10 +183,15 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateNod
     {
         ConditionEx* m_precondition = (ConditionEx*)m_candidateCondition.second;
         ConditionEx* m_postCondition = (ConditionEx*)m_candidateCondition.first;
-        int requiredAmount = m_precondition->ContainsParameter(PARAM_Amount) ? m_precondition->Parameter(PARAM_Amount) : 0;
-        if (m_postCondition->Consume(m_precondition->ContainsParameter(PARAM_Amount) ? m_precondition->Parameter(PARAM_Amount) : 0))
+        bool preconditionHasAmount = m_precondition->ContainsParameter(PARAM_Amount);
+        bool postconditionHasAmount = m_postCondition->ContainsParameter(PARAM_Amount);
+        _ASSERTE(preconditionHasAmount == postconditionHasAmount);
+        int requiredAmount = preconditionHasAmount ? m_precondition->Parameter(PARAM_Amount) : 0;
+        int availableAmount = postconditionHasAmount ? m_postCondition->Parameter(PARAM_Amount) : 0;
+        int amountToConsume = min(requiredAmount, availableAmount);
+        if (m_postCondition->Consume(amountToConsume))
         {
-            m_precondition->Consume(requiredAmount);
+            m_precondition->Consume(amountToConsume);
             return true;
         }
     }
@@ -201,6 +220,8 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
             ++it;
         }
     }
+
+    _ASSERTE(m_necessarySteps.size() > 0);
 
     while(m_necessarySteps.size())
     {
@@ -240,7 +261,7 @@ void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedP
             if (i != j)
             {
                 OlcbpPlan::NodeList m_matchedIndexes;
-
+                
                 if (p_cookedPlans[i]->pPlan->IsSubGraphOf((*p_cookedPlans[j]->pPlan), m_matchedIndexes))
                 {
                     p_cookedPlans[j]->pPlan->SubGraphSubstitution(m_matchedIndexes, p_cookedPlans[i]->Goal);

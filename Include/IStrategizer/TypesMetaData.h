@@ -78,7 +78,6 @@ namespace IStrategizer
         GOALEX_WinGame = 0x20700,                                
         GOALEX_START   = 0x20700,
         GOALEX_CollectResource,
-        GOALEX_TrainArmy,
         GOALEX_TrainForce,
         GOALEX_BuildInfrastructure,
         GOALEX_DestroyEntityType,
@@ -88,7 +87,6 @@ namespace IStrategizer
 #define Define_GoalType \
     Enums[GOALEX_WinGame] = "Win Game"; \
     Enums[GOALEX_CollectResource] = "Collect Resource"; \
-    Enums[GOALEX_TrainArmy] = "Train Army"; \
     Enums[GOALEX_TrainForce] = "Train Force"; \
     Enums[GOALEX_DestroyEntityType] = "Destroy Entity Type"; \
     Enums[GOALEX_DeployArmy] = "Deploy Army"; \

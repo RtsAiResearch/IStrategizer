@@ -58,7 +58,7 @@ void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool&
 void BuildInfrastructureGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], DONT_CARE, false));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], DONT_CARE));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------

@@ -67,11 +67,7 @@ bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& game)
 
     if (!attackerExists)
     {
-        ConditionEx* failedCondition = new EntityClassExist(
-            PLAYER_Self,
-            (EntityClassType)_params[PARAM_EntityClassId],
-            1,
-            true);
+        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1);
         m_history.Add(ESTATE_Failed, failedCondition);
     }
 
@@ -114,8 +110,8 @@ void AttackEntityAction::InitializePreConditions()
     EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
     EntityClassType target = (EntityClassType)_params[PARAM_TargetEntityClassId];
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, attacker, 1, true));
-    m_terms.push_back(new EntityClassExist(PLAYER_Enemy, target, 1, false));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, attacker, 1));
+    m_terms.push_back(new EntityClassExist(PLAYER_Enemy, target, 1));
     _preCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------

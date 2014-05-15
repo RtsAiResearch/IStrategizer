@@ -61,11 +61,7 @@ bool AttackGroundAction::AliveConditionsSatisfied(RtsGame& game)
 
     if (!attackerExists)
     {
-        ConditionEx* failedCondition = new EntityClassExist(
-            PLAYER_Self,
-            (EntityClassType)_params[PARAM_EntityClassId],
-            1,
-            true);
+        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1);
         m_history.Add(ESTATE_Failed, failedCondition);
     }
 
@@ -89,13 +85,13 @@ void  AttackGroundAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePostConditions()
 {
-    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1, true));
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1));
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePreConditions()
 {
     vector<Expression*> m_terms;
     EntityClassType attacker = (EntityClassType)_params[PARAM_EntityClassId];
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, attacker, 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, attacker, 1));
     _preCondition = new And(m_terms);
 }

@@ -28,9 +28,6 @@
 #ifndef WINGAMEGOAL_H
 #include "WinGameGoal.h"
 #endif
-#ifndef TRAINARMYGOAL_H
-#include "TrainArmyGoal.h"
-#endif
 #ifndef TRAINFORCEGOAL_H
 #include "TrainForceGoal.h"
 #endif
@@ -98,7 +95,6 @@ void SerializationEssentials::Init()
     g_ObjectFactory.AddPrototype(new GameStateEx);
 
     g_ObjectFactory.AddPrototype(new CollectResourceGoal);
-    g_ObjectFactory.AddPrototype(new TrainArmyGoal);
     g_ObjectFactory.AddPrototype(new TrainForceGoal);
     g_ObjectFactory.AddPrototype(new DeployArmyGoal);
     g_ObjectFactory.AddPrototype(new DestroyEntityTypeGoal);

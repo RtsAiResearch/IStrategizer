@@ -23,7 +23,7 @@ CollectResourceGoal::CollectResourceGoal(const PlanStepParameters& p_parameters)
 void CollectResourceGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new ResourceExist(PLAYER_Self, (ResourceType)_params[PARAM_ResourceId], _params[PARAM_Amount]));
+    m_terms.push_back(new ResourceExist(PLAYER_Self, (ResourceType)_params[PARAM_ResourceId], DONT_CARE));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
