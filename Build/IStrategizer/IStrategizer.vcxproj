@@ -111,7 +111,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\ResourceDescription.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\RtsGame.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\SharedResource.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\StaticComponent.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldClock.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\WorldMap.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\Logger.cpp" />
@@ -255,7 +254,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\ResourceDescription.h" />
     <ClInclude Include="..\..\Include\IStrategizer\RtsGame.h" />
     <ClInclude Include="..\..\Include\IStrategizer\SharedResource.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\StaticComponent.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WorldClock.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WorldMap.h" />
     <ClInclude Include="..\..\Include\IStrategizer\WorldResources.h" />

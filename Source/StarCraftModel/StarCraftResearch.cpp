@@ -13,16 +13,16 @@
 using namespace IStrategizer;
 using namespace BWAPI;
 
-void StarCraftResearch::InitializeAux()
+void StarCraftResearch::Init()
 {
     if (m_isTech)
     {
         m_id = g_Database.TechMapping.GetByFirst(m_tech.getID());
-        m_requiredResources = new WorldResources(0, m_tech.gasPrice(), m_tech.mineralPrice());
+        m_pRequiredResources = new WorldResources(0, m_tech.gasPrice(), m_tech.mineralPrice());
     }
     else
     {
         m_id = g_Database.UpgradeMapping.GetByFirst(m_upgrade.getID());
-        m_requiredResources = new WorldResources(0, m_upgrade.gasPrice(), m_upgrade.mineralPrice());
+        m_pRequiredResources = new WorldResources(0, m_upgrade.gasPrice(), m_upgrade.mineralPrice());
     }
 }

@@ -165,9 +165,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\SharedResource.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\StaticComponent.cpp">
-      <Filter>Source Files\World Model</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\WorldClock.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
@@ -558,9 +555,6 @@
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\SharedResource.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\StaticComponent.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldClock.h">

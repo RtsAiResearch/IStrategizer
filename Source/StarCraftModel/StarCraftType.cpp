@@ -13,7 +13,7 @@
 using namespace IStrategizer;
 using namespace BWAPI;
 
-void StarCraftType::InitializeAux()
+void StarCraftType::Init()
 {
     // Positions are measured in pixels and are the highest resolution
     // Walk Tiles - each walk tile is an 8x8 square of pixels. These are called walk tiles because walkability data is available at this resolution.

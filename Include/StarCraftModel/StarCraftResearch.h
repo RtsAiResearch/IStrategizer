@@ -14,9 +14,7 @@ namespace IStrategizer
     public:
         StarCraftResearch(BWAPI::UpgradeType p_research) : m_upgrade(p_research), m_isTech(false) {}
         StarCraftResearch(BWAPI::TechType p_research) : m_tech(p_research), m_isTech(true) {}
-
-    protected:
-        void    InitializeAux();
+        void Init();
 
     private:
         bool m_isTech;

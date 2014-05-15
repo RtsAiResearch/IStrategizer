@@ -127,7 +127,7 @@ IStrategizer::GameType* StarCraftGame::FetchEntityType(EntityClassType p_id)
 
     unitType = UnitType::getType(typeIdent);
     entityType = new StarCraftType(unitType);
-    entityType->Initialize();
+    entityType->Init();
 
     return entityType;
 }
@@ -156,7 +156,7 @@ GameResearch* StarCraftGame::FetchResearch(ResearchType p_id)
     }
 
     _ASSERTE(research);
-    research->Initialize();
+    research->Init();
 
     return research;
 }
