@@ -44,8 +44,8 @@ GatherResourceAction::GatherResourceAction(const PlanStepParameters& p_parameter
 //////////////////////////////////////////////////////////////////////////
 void GatherResourceAction::InitializePreConditions()
 {
-	EntityClassType gathererType = g_Game->Self()->TechTree()->GetWorkerType();
-    EntityClassType baseType = g_Game->Self()->TechTree()->GetBaseType();
+	EntityClassType gathererType = g_Game->Self()->Race()->GetWorkerType();
+    EntityClassType baseType = g_Game->Self()->Race()->GetBaseType();
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1));
@@ -84,7 +84,7 @@ bool GatherResourceAction::AliveConditionsSatisfied(RtsGame& game)
         if(gathererState == OBJSTATE_Gathering)
         {
             // 3. There is still remaining resource to be gathered
-            resourceEntityExist = g_Assist.DoesEntityObjectExist(m_resourceId, PLAYER_Neutral);
+            resourceEntityExist = g_Assist.DoesEntityObjectExist(m_resourceId, PLAYER_Self);
 
             if (!resourceEntityExist)
                 LogInfo("%s resource[%d] does not exist", ToString().c_str(), m_gathererId);
@@ -125,7 +125,7 @@ bool GatherResourceAction::SuccessConditionsSatisfied(RtsGame& game)
             if (_params[PARAM_Amount] == DONT_CARE)
                 return true;
 
-            m_gatheredAmount += game.Self()->TechTree()->GetResourceConsumbtionRatePerWorker((ResourceType)_params[PARAM_ResourceId]);
+            m_gatheredAmount += game.Self()->Race()->GetResourceConsumbtionRatePerWorker((ResourceType)_params[PARAM_ResourceId]);
         }
     }
 
@@ -158,7 +158,7 @@ void GatherResourceAction::OnFailure(RtsGame& game, const WorldClock& p_clock)
 //////////////////////////////////////////////////////////////////////////
 bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
-	EntityClassType gathererType = game.Self()->TechTree()->GetWorkerType();
+	EntityClassType gathererType = game.Self()->Race()->GetWorkerType();
 	ResourceType resourceType;
 	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 	bool bOK = false;

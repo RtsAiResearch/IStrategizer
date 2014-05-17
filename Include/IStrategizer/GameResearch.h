@@ -2,6 +2,7 @@
 #define GAMERESEARCH_H
 
 #include "EngineData.h"
+#include "WorldResources.h"
 
 namespace IStrategizer
 {
@@ -10,14 +11,17 @@ namespace IStrategizer
     class GameResearch
     {
     public:
-        GameResearch() : m_pRequiredResources(nullptr) {}
         ResearchType Id() const { return m_id; }
-        WorldResources* RequiredResources() const { return m_pRequiredResources; }
+        virtual ~GameResearch() {}
+        const WorldResources* RequiredResources() const { return &m_pRequiredResources; }
+
         virtual void Init() = 0;
+        virtual EntityClassType SourceEntity() const = 0;
+        virtual void GetRequirements(std::vector<ResearchType>& researches, std::map<EntityClassType, unsigned>& buildings) const = 0;
 
     protected:
         ResearchType m_id;
-        WorldResources* m_pRequiredResources;
+        WorldResources m_pRequiredResources;
     };
 }
 

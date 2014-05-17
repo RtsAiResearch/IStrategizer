@@ -207,20 +207,15 @@ bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector
 //------------------------------------------------------------------------------------------------------------------------------------------------
 void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_playerType, vector<Expression*>& p_prerequisites)
 {
-    GamePlayer *pPlayer = nullptr;
-    GameTechTree *pTechTree = nullptr;
     WorldResources pReqResources;
     EntityClassType sourceEntity;
     vector<ResearchType> reqResearches;
     map<EntityClassType, unsigned> reqEntities;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
-    _ASSERTE(pPlayer);
-
-    pTechTree = pPlayer->TechTree();
-    _ASSERTE(pTechTree);
-    
-    pTechTree->GetRequirements(p_entityOrResearchType, reqResearches, reqEntities);
+    if (BELONG(EntityClassType, p_entityOrResearchType))
+        g_Game->GetEntityType((EntityClassType)p_entityOrResearchType)->GetRequirements(reqResearches, reqEntities);
+    else
+        g_Game->GetResearch((ResearchType)p_entityOrResearchType)->GetRequirements(reqResearches, reqEntities);
 
     // 1. Required researches done
     for (size_t i = 0, size = reqResearches.size(); i < size; ++i)
@@ -235,7 +230,11 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
     }
 
     // 3. Source building exist
-    sourceEntity = pTechTree->SourceEntity(p_entityOrResearchType);
+    if (BELONG(EntityClassType, p_entityOrResearchType))
+        sourceEntity = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType)->SourceEntity();
+    else
+        sourceEntity = g_Game->GetResearch((ResearchType)p_entityOrResearchType)->SourceEntity();
+
     _ASSERTE(sourceEntity != ECLASS_END);
         
     p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1));

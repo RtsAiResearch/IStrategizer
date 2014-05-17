@@ -155,7 +155,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
     {
         ConditionEx* failedCondition = new EntityClassExist(
             PLAYER_Self,
-            game.Self()->TechTree()->GetWorkerType(),
+            game.Self()->Race()->GetWorkerType(),
             1);
         m_history.Add(ESTATE_Failed, failedCondition);
 
@@ -191,7 +191,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     bool bOk = false;
 
     // Adapt builder
-    _builderId = pAdapter->GetEntityObjectId(game.Self()->TechTree()->GetBuilderType(buildingType), AdapterEx::WorkerStatesRankVector);
+    _builderId = pAdapter->GetEntityObjectId(game.GetEntityType(buildingType)->GetBuilderType(), AdapterEx::WorkerStatesRankVector);
 
     if (_builderId != INVALID_TID)
     {
@@ -228,9 +228,9 @@ void BuildActionEx::InitializePostConditions()
     vector<Expression*> m_terms;
     m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], true));
 
-    if (g_Game->Self()->TechTree()->GetResourceSource(RESOURCE_Supply) == (EntityClassType)_params[PARAM_EntityClassId])
+    if (g_Game->Self()->Race()->GetResourceSource(RESOURCE_Supply) == (EntityClassType)_params[PARAM_EntityClassId])
     {
-        m_terms.push_back(new ResourceExist(PLAYER_Self, RESOURCE_Supply, g_Game->Self()->TechTree()->SupplyBuildingSupplyAmount()));
+        m_terms.push_back(new ResourceExist(PLAYER_Self, RESOURCE_Supply, g_Game->Self()->Race()->SupplyBuildingSupplyAmount()));
     }
 
     _postCondition = new And(m_terms);
@@ -238,7 +238,7 @@ void BuildActionEx::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 void BuildActionEx::InitializePreConditions()
 {
-    EntityClassType builderType = g_Game->Self()->TechTree()->GetWorkerType();
+    EntityClassType builderType = g_Game->Self()->Race()->GetWorkerType();
     EntityClassType buildingType = (EntityClassType)_params[PARAM_EntityClassId];
     _requiredResources = WorldResources::FromEntity(buildingType);
     vector<Expression*> m_terms;

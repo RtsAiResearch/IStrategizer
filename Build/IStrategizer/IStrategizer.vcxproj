@@ -105,7 +105,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\CellFeature.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ForceDescription.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\GamePlayer.cpp" />
-    <ClCompile Include="..\..\Source\IStrategizer\GameType.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\MapArea.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\PlayerResources.cpp" />
     <ClCompile Include="..\..\Source\IStrategizer\ResourceDescription.cpp" />
@@ -165,6 +164,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ExecutionHistory.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ExecutionTrial.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\GameRace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IDigraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GatherResourceAction.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IStrategizerEx.h" />

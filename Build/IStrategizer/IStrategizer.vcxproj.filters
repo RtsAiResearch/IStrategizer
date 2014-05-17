@@ -147,9 +147,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\GamePlayer.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\GameType.cpp">
-      <Filter>Source Files\World Model</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\MapArea.cpp">
       <Filter>Source Files\World Model</Filter>
     </ClCompile>
@@ -625,6 +622,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GameRace.h">
+      <Filter>Header Files\World Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

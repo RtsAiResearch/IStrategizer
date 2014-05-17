@@ -155,7 +155,8 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 {
     m_pOlcbpPlan->Lock();
 
-    LogInfo("### START PLAN UPDATE ###");
+    // LogInfo("### START PLAN UPDATE ###");
+
     // We have exhausted all possible plans. We have surrendered, nothing to do
     if (m_pOlcbpPlan->Size() > 0)
     {
@@ -184,7 +185,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         }
     }
 
-    LogInfo("### END PLAN UPDATE ###");
+    // LogInfo("### END PLAN UPDATE ###");
 
     m_pOlcbpPlan->Unlock();
 
@@ -259,9 +260,14 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
     PlanStepEx* pCurrentPlanStep = m_pOlcbpPlan->GetNode(currentNode);
     bool hasPreviousPlan = false;
 
-    if (IsNodeDone(currentNode) &&
-        pCurrentPlanStep->State() == ESTATE_Succeeded)
+    // A done node that reached a dead end of succeed or failure should be
+    // bypassed
+    // A goal node that exhausted all possible cases is a failed closed node
+    if (IsNodeDone(currentNode))
     {
+        _ASSERTE(pCurrentPlanStep->State() == ESTATE_Succeeded ||
+            pCurrentPlanStep->State() == ESTATE_Failed);
+
         AddReadyChildrenToUpdateQueue(currentNode, updateQ);
     }
     else if (IsNodeOpen(currentNode))
@@ -337,6 +343,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                     {
                         LogInfo("Goal=%s with NodeID=%d exhausted all possible cases, failing it", pCurrentPlanStep->ToString().c_str(), currentNode);
                         pCurrentPlanStep->State(ESTATE_Failed, *g_Game, clock);
+                        CloseNode(currentNode);
                         MarkNodeAsDone(currentNode);
                         // OpenNode(GetNodeData(currentNode).SatisfyingGoal);
                     }
@@ -349,6 +356,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
         if (pCurrentPlanStep->State() == ESTATE_Failed)
         {
             LogInfo("GoalNodeID=%d Goal=%s failed, opening it", currentNode, pCurrentPlanStep->ToString().c_str());
+            m_pOlcbpPlan->GetNode(currentNode)->Reset(*g_Game, clock);
             OpenNode(currentNode);
         }
         else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
@@ -364,9 +372,9 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             }
             else
             {
-                 LogInfo("GoalNodeID=%d Goal=%s suceeded, and no case was expaneded for it, and no need to revise it", currentNode, pCurrentPlanStep->ToString().c_str());
+                LogInfo("GoalNodeID=%d Goal=%s suceeded, and no case was expaneded for it, and no need to revise it", currentNode, pCurrentPlanStep->ToString().c_str());
             }
-            
+
             MarkNodeAsDone(currentNode);
             UpdateBelongingSubplanChildrenWithParentReadiness(currentNode);
             AddReadyChildrenToUpdateQueue(currentNode, updateQ);
@@ -533,7 +541,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
         //auto currNode = m_pOlcbpPlan->GetNode(visitedNodeId);
         m_pOlcbpPlan->RemoveNode(visitedNodeId);
         m_nodeData.erase(visitedNodeId);
-        
+
         LogWarning("MEMORY LEAK detected, should delete plan node[%d]", visitedNodeId);
         // deleting currNode crashes the execution history logic, should fix
         // delete currNode;
@@ -567,7 +575,7 @@ void OnlinePlanExpansionExecution::AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan
                 updateQ._Get_container().end(),
                 childNodeId) == updateQ._Get_container().end())
             {
-                LogInfo("node[%d] is adding node[%d] to update Q", nodeId, childNodeId);
+                // LogInfo("node[%d] is adding node[%d] to update Q", nodeId, childNodeId);
                 updateQ.push(childNodeId);
             }
         }

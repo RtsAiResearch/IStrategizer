@@ -8,10 +8,12 @@
 #include "WorldResources.h"
 #endif
 
+#include <string>
 #include "BWAPI.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
+using namespace std;
 
 void StarCraftType::Init()
 {
@@ -25,7 +27,7 @@ void StarCraftType::Init()
 
     m_id                = g_Database.EntityMapping.GetByFirst(m_type.getID());
     // The supply amount is doubled, divide over two.
-    m_requiredResources = new WorldResources(m_type.supplyRequired() / 2, m_type.gasPrice(), m_type.mineralPrice());
+    m_requiredResources = WorldResources(m_type.supplyRequired() / 2, m_type.gasPrice(), m_type.mineralPrice());
 
     Attr(ECATTR_CanAttack, m_type.canAttack());
     Attr(ECATTR_CanBuild, m_type.isWorker());
@@ -69,4 +71,37 @@ void StarCraftType::Init()
     Attr(ECATTR_GroundRange, groundWeapon.maxRange());
     Attr(ECATTR_Attack, totalDmg);
     Attr(ECATTR_IsSpecialBuilding, m_type.isRefinery() || m_type.isAddon());
+}
+
+EntityClassType StarCraftType::GetBuilderType() const
+{
+    if (m_type.isAddon())
+    {
+        return g_Database.EntityMapping.GetByFirst(m_type.whatBuilds().first.getID());
+    }
+    else
+    {
+        _ASSERTE(m_type.isBuilding());
+        return g_Database.EntityMapping.GetByFirst(m_type.getRace().getWorker().getID());
+    }
+}
+
+void StarCraftType::GetRequirements(vector<ResearchType>& researches, map<EntityClassType, unsigned>& buildings) const
+{
+    if (m_type.requiredTech().getID() != TechTypes::None.getID())
+    {
+        ResearchType requiredResearch = g_Database.TechMapping.GetByFirst(m_type.requiredTech().getID());
+        researches.push_back(requiredResearch);
+    }
+
+    for (auto& requiredUnit : m_type.requiredUnits())
+    {
+        EntityClassType requiredEntity = g_Database.EntityMapping.GetByFirst(requiredUnit.first.getID());
+        buildings[requiredEntity] = requiredUnit.second;
+    }
+}
+
+EntityClassType StarCraftType::SourceEntity() const
+{
+    return g_Database.EntityMapping.GetByFirst(m_type.whatBuilds().first.getID());
 }

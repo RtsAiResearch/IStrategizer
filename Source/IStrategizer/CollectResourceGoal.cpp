@@ -30,7 +30,7 @@ void CollectResourceGoal::InitializePostConditions()
 bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
     vector<TID> entities;
-    game.Self()->Entities(game.Self()->TechTree()->GetWorkerType(), entities);
+    game.Self()->Entities(game.Self()->Race()->GetWorkerType(), entities);
     int gatherersCount = GetNumberOfGatherers(game, (ResourceType)_params[PARAM_ResourceId]);
     int minGatherersCount = _params[PARAM_Amount];
 
@@ -41,7 +41,7 @@ int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resour
 {
     int count = 0;
     vector<TID> workers;
-    game.Self()->Entities(game.Self()->TechTree()->GetWorkerType(), workers);
+    game.Self()->Entities(game.Self()->Race()->GetWorkerType(), workers);
 
     for (auto workerId : workers)
     {
@@ -61,7 +61,7 @@ int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resour
 void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, vector<GoalEx*>& succeededInstances)
 {
     vector<TID> workers;
-    game.Self()->Entities(game.Self()->TechTree()->GetWorkerType(), workers);
+    game.Self()->Entities(game.Self()->Race()->GetWorkerType(), workers);
 
     int gatherersCount = GetNumberOfGatherers(game, resourceType);
 

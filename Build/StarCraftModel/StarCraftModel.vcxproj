@@ -98,6 +98,7 @@
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftMap.cpp" />
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftPlayer.cpp" />
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftPlayerResources.cpp" />
+    <ClCompile Include="..\..\Source\StarCraftModel\StarCraftRace.cpp" />
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftResearch.cpp" />
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftTechTree.cpp" />
     <ClCompile Include="..\..\Source\StarCraftModel\StarCraftType.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="..\..\Include\StarCraftModel\StarCraftMap.h" />
     <ClInclude Include="..\..\Include\StarCraftModel\StarCraftPlayer.h" />
     <ClInclude Include="..\..\Include\StarCraftModel\StarCraftPlayerResources.h" />
+    <ClInclude Include="..\..\Include\StarCraftModel\StarCraftRace.h" />
     <ClInclude Include="..\..\Include\StarCraftModel\StarCraftResearch.h" />
     <ClInclude Include="..\..\Include\StarCraftModel\StarCraftTechTree.h" />
     <ClInclude Include="..\..\Include\StarCraftModel\StarCraftType.h" />

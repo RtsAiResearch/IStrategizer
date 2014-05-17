@@ -1,9 +1,9 @@
 #ifndef GAMETYPE_H
 #define GAMETYPE_H
 
-#ifndef METADATA_H
-#include "MetaData.h"
-#endif
+#include "EngineData.h"
+#include "WorldResources.h"
+#include <map>
 
 namespace IStrategizer
 {
@@ -12,18 +12,21 @@ namespace IStrategizer
     class GameType
     {
     public:
-        GameType() : m_requiredResources(nullptr) {}
-        ~GameType();
+        virtual ~GameType() {}
         EntityClassType Id() const { return m_id; }
-        WorldResources* RequiredResources() const { return m_requiredResources; }
-        int Attr(EntityClassAttribute p_attrId) const { return m_attributes[INDEX(p_attrId, EntityClassAttribute)]; }
+        const WorldResources* RequiredResources() const { return &m_requiredResources; }
+        int Attr(EntityClassAttribute attrId) const { return m_attributes[INDEX(attrId, EntityClassAttribute)]; }
+
         virtual void Init() = 0;
+        virtual EntityClassType SourceEntity() const = 0;
+        virtual void GetRequirements(std::vector<ResearchType>& researches, std::map<EntityClassType, unsigned>& buildings) const = 0;
+        virtual EntityClassType GetBuilderType() const = 0;
 
     protected:
-        void Attr(EntityClassAttribute p_attrId, int p_val) { m_attributes[INDEX(p_attrId, EntityClassAttribute)] = p_val; }
+        void Attr(EntityClassAttribute attrId, int val) { m_attributes[INDEX(attrId, EntityClassAttribute)] = val; }
 
         EntityClassType m_id;
-        WorldResources* m_requiredResources;
+        WorldResources m_requiredResources;
         int m_attributes[COUNT(EntityClassAttribute)];
     };
 }

@@ -228,7 +228,7 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
     pPlayer = p_resourceType == RESOURCE_Primary ? g_Game->GetPlayer(PLAYER_Neutral) : g_Game->GetPlayer(PLAYER_Self);
     _ASSERTE(pPlayer);
 
-    pPlayer->Entities(g_Game->Self()->TechTree()->GetResourceSource(p_resourceType), entityIds);
+    pPlayer->Entities(g_Game->Self()->Race()->GetResourceSource(p_resourceType), entityIds);
 
     g_Game->Map()->Update();
     
@@ -261,7 +261,7 @@ TID AdapterEx::GetSourceEntity(EntityClassType p_entityType, ActionType actionTy
     EntityClassType trainerType;
     TID id = INVALID_TID;
 
-    trainerType = g_Game->Self()->TechTree()->SourceEntity(p_entityType);
+    trainerType = g_Game->GetEntityType(p_entityType)->SourceEntity();
     pPlayer = g_Game->Self();
     _ASSERTE(pPlayer);
 

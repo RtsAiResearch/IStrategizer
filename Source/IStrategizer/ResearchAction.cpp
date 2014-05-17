@@ -15,6 +15,7 @@
 #include "GameEntity.h"
 #include "EntityClassExist.h"
 #include "ResearchDone.h"
+#include "GameResearch.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -75,7 +76,7 @@ void ResearchAction::InitializePostConditions()
 void ResearchAction::InitializePreConditions()
 {
     ResearchType researchType =(ResearchType)_params[PARAM_ResearchId];
-    m_researcherType = g_Game->Self()->TechTree()->SourceEntity(researchType);
+    m_researcherType = g_Game->GetResearch(researchType)->SourceEntity();
     vector<Expression*> m_terms;
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, m_researcherType, 1));

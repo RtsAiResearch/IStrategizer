@@ -27,7 +27,7 @@ WorldResources WorldResources::FromEntity(int p_entityOrResearchType)
     return worldResources;
 }
 //////////////////////////////////////////////////////////////////////////
-void WorldResources::Set(WorldResources* pOther)
+void WorldResources::Set(const WorldResources* pOther)
 {
     m_supply = pOther->m_supply;
     m_secondary = pOther->m_secondary;
