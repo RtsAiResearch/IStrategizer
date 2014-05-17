@@ -68,7 +68,7 @@ bool BuildInfrastructureGoal::SuccessConditionsSatisfied(RtsGame& game)
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
     int count = 0;
 
-    if (game.Self()->TechTree()->GetResourceSource(RESOURCE_Supply) == entityClassType)
+    if (game.Self()->Race()->GetResourceSource(RESOURCE_Supply) == entityClassType)
     {
         count = GetAvailableSupplyBuildingsCount(game);
     }
@@ -92,7 +92,7 @@ void BuildInfrastructureGoal::AdaptParameters(RtsGame& game)
     vector<TID> entities;
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
 
-    if (game.Self()->TechTree()->GetResourceSource(RESOURCE_Supply) == entityClassType)
+    if (game.Self()->Race()->GetResourceSource(RESOURCE_Supply) == entityClassType)
     {
         m_existingAmount = GetAvailableSupplyBuildingsCount(game);
     }
@@ -108,6 +108,6 @@ void BuildInfrastructureGoal::AdaptParameters(RtsGame& game)
 int BuildInfrastructureGoal::GetAvailableSupplyBuildingsCount(RtsGame &game) const
 {
     // The availableSupplyBuildings won't match the exact number of supply buildings in the game
-    int availableSupplyBuildings = game.Self()->Resources()->AvailableSupply() / game.Self()->TechTree()->SupplyBuildingSupplyAmount();
+    int availableSupplyBuildings = game.Self()->Resources()->AvailableSupply() / game.Self()->Race()->SupplyBuildingSupplyAmount();
     return availableSupplyBuildings;
 }

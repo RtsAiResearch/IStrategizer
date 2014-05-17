@@ -13,7 +13,7 @@ namespace IStrategizer
         static WorldResources FromEntity(int p_entityOrResearchType);
         WorldResources() : m_supply(0), m_secondary(0), m_primary(0) { }
         WorldResources(int p_supply, int p_secondary, int p_primary) : m_supply(p_supply), m_secondary(p_secondary), m_primary(p_primary) { }
-        void Set(WorldResources* pOther);
+        void Set(const WorldResources* pOther);
         void Supply (int supply) { m_supply = supply; }
         void Secondary (int secondary) { m_secondary = secondary; }
         void Primary (int primary) { m_primary = primary; }

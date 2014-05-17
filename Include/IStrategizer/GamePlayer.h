@@ -11,6 +11,7 @@
 #include "MapArea.h"
 #include "UserObject.h"
 #include "GameTechTree.h"
+#include "GameRace.h"
 
 #include <vector>
 
@@ -20,7 +21,6 @@ namespace IStrategizer
     enum ResearchType;
     class GameEntity;
     class PlayerResources;
-    class GameTechTree;
     class Message;
     class RtsGame;
 
@@ -44,6 +44,7 @@ namespace IStrategizer
         GameEntity* GetEntity(TID p_id);
         MapArea GetColonyMapArea();
         void SetOffline(RtsGame* pBelongingGame) {}
+        const GameRace* Race() const { return m_pRace; }
 
     protected:
         virtual GameEntity* FetchEntity(TID p_id) = 0;
@@ -57,6 +58,7 @@ namespace IStrategizer
         EntitiesMap m_entities;
         PlayerResources *m_pResources;
         GameTechTree *m_pTechTree;
+        GameRace* m_pRace;
 
         MapArea m_colonyCenter;
     };

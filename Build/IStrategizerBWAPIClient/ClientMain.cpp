@@ -90,10 +90,6 @@ void ClientMain::InitIStrategizer()
         m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
         m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
 
-        // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
-        // and the engine Enums[*] table is fully initialized
-        InitIdLookup();
-
         if (!m_pIStrategizer->Init())
         {
             LogError("Failed to initialize IStrategizer");
@@ -106,6 +102,10 @@ void ClientMain::InitIStrategizer()
             LogInfo("Will learn demonstrations from self Player[%d]", );
             m_pTraceCollector = new GameTraceCollector(selfPlayerID);
         }
+
+        // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
+        // and the engine Enums[*] table is fully initialized
+        InitIdLookup();
 
         if (!m_isLearning)
             m_pPlanGraphView->View(m_pIStrategizer->Planner()->ExpansionExecution()->Plan());

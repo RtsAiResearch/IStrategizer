@@ -202,7 +202,7 @@ void TrainAction::InitializePostConditions()
 void TrainAction::InitializePreConditions()
 {
     EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
-    m_trainerType = g_Game->Self()->TechTree()->SourceEntity(traineeType);
+    m_trainerType = g_Game->GetEntityType (traineeType)->SourceEntity();
     vector<Expression*> m_terms;
     WorldResources completeRequiredRespurces = WorldResources::FromEntity(traineeType);
 

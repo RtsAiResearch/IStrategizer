@@ -28,7 +28,8 @@ using namespace std;
 
 GamePlayer::GamePlayer() :
     m_pResources(nullptr),
-    m_pTechTree(nullptr)
+    m_pTechTree(nullptr),
+    m_pRace(nullptr)
 {
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
@@ -49,6 +50,7 @@ void GamePlayer::Finalize()
 
     Toolbox::MemoryClean(m_pResources);
     Toolbox::MemoryClean(m_pTechTree);
+    Toolbox::MemoryClean(m_pRace);
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::Entities(vector<TID>& entityIds)
@@ -71,7 +73,7 @@ void GamePlayer::GetBases(vector<TID> &basesIds)
 {
     EntityClassType typeId;
 
-    typeId = TechTree()->GetBaseType();
+    typeId = Race()->GetBaseType();
 
     basesIds.clear();
 
@@ -236,7 +238,7 @@ MapArea GamePlayer::GetColonyMapArea()
             pPlayerBase = GetEntity(playerEntities[0]);
         }
 
-        GameType *pGameType = g_Game->GetEntityType(TechTree()->GetBaseType());
+        GameType *pGameType = g_Game->GetEntityType(Race()->GetBaseType());
         _ASSERTE(pGameType);
 
         m_colonyCenter = MapArea(

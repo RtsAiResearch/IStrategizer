@@ -77,6 +77,8 @@ void PlanStepEx::Copy(IClonable* p_dest)
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)
 {
+    _ASSERTE(p_state != _state);
+
     string stepName = ToString();
     const char* oldStateName = Enums[_state];
     const char* newStateName = Enums[p_state];

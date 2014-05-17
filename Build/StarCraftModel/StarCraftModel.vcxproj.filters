@@ -48,6 +48,9 @@
     <ClCompile Include="..\..\Source\StarCraftModel\ActionAbstractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\StarCraftModel\StarCraftRace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\StarCraftModel\DefinitionCrossMapping.h">
@@ -81,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\StarCraftModel\ActionAbstractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\StarCraftModel\StarCraftRace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

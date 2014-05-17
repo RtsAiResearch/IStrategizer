@@ -15,6 +15,8 @@ namespace IStrategizer
         StarCraftResearch(BWAPI::UpgradeType p_research) : m_upgrade(p_research), m_isTech(false) {}
         StarCraftResearch(BWAPI::TechType p_research) : m_tech(p_research), m_isTech(true) {}
         void Init();
+        EntityClassType SourceEntity() const;
+        void GetRequirements(std::vector<ResearchType>& researches, std::map<EntityClassType, unsigned>& buildings) const;
 
     private:
         bool m_isTech;

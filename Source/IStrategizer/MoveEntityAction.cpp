@@ -87,7 +87,7 @@ bool MoveEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
-    _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->TechTree()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
+    _entityId = pAdapter->GetEntityObjectId(g_Game->Self()->Race()->GetWorkerType(),AdapterEx::WorkerStatesRankVector);
     _ASSERTE(_entityId != INVALID_TID);
 
     _position = pAdapter->AdaptPosition(Parameters());
