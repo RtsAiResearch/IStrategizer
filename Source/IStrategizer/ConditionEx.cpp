@@ -40,7 +40,7 @@ bool ConditionEx::Equals(const Expression* p_rhs) const
         }
         else
         {
-            if ((*i).second == DONT_CARE || (*j).second == DONT_CARE)
+            if (((*i).first == (*j).first) && ((*i).second == DONT_CARE || (*j).second == DONT_CARE))
             {
                 m_equal &= true;
             }

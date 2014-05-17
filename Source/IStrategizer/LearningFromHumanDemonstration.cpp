@@ -235,7 +235,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
 
     if (m_necessarySteps.size() > 0)
     {
-        while(m_necessarySteps.size())
+        while (m_necessarySteps.size())
         {
             OlcbpPlan::NodeID current = *m_necessarySteps.begin();
             m_necessarySteps.erase(current);
