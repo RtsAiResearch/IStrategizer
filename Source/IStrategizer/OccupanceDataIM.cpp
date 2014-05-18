@@ -20,8 +20,8 @@ void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 
     pGameObj = p_pCaller->GetObj(p_pObjEntry);
     _ASSERTE(pGameObj);
-    currentPosition.X = pGameObj->Attr(EOATTR_PosX);
-    currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
+    currentPosition.X = pGameObj->Attr(EOATTR_Left);
+    currentPosition.Y = pGameObj->Attr(EOATTR_Top);
     
     // If not dirty, then skip
     if (currentPosition == p_pObjEntry->LastPosition)
@@ -39,8 +39,8 @@ void StampNonDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 
     pGameObj = p_pCaller->GetObj(p_pObjEntry);
     _ASSERTE(pGameObj);
-    currentPosition.X = pGameObj->Attr(EOATTR_PosX);
-    currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
+    currentPosition.X = pGameObj->Attr(EOATTR_Left);
+    currentPosition.Y = pGameObj->Attr(EOATTR_Top);
 
     // If not dirty, then skip
     // Note that objects added for the first time will have an invalid position and is considered as dirty

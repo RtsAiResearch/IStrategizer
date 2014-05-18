@@ -9,23 +9,20 @@ namespace IStrategizer
     class StarCraftRace : public GameRace
     {
     public:
-        StarCraftRace() : m_pPlayer(nullptr) {}
-        StarCraftRace(BWAPI::Player pPlayer);
-        EntityClassType GetWorkerType() const { return m_workerTypeId; }
-        EntityClassType GetBaseType() const { return m_baseTypeId; }
+        StarCraftRace(BWAPI::Race race) :
+            m_race(race) {}
+        EntityClassType GetWorkerType() const;
+        EntityClassType GetBaseType() const;
         EntityClassType GetResourceSource(ResourceType p_type) const;
         float GetResourceConsumbtionRatePerWorker(ResourceType p_id) const;
         int BaseSupplyAmount() const;
         int SupplyBuildingSupplyAmount() const;
-        std::string Name() const;
+        const std::string& ToString() const;
 
     private:
         static const float MineralsPerWorkerPerFrame;
         static const float GasPerWorkerPerFrame;
-
-        EntityClassType m_workerTypeId;
-        EntityClassType m_baseTypeId;
-        BWAPI::Player m_pPlayer;
+        BWAPI::Race m_race;
     };
 }
 #endif // STARCRAFTRACE_H

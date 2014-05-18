@@ -76,7 +76,7 @@ bool MoveAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];
 
     //Adapt Entity
-    _entityId = pAdapter->GetEntityObjectId(entityType, AdapterEx::EntityToMoveStatesRankVector);
+    _entityId = pAdapter->GetEntityObjectId(entityType, AdapterEx::EntityToMoveStatesRank);
     bool executed = false;
 
     if(_entityId != INVALID_TID)

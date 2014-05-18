@@ -19,12 +19,13 @@ namespace IStrategizer
         OBJECT_SERIALIZABLE(StarCraftPlayer);
 
     public:
-        StarCraftPlayer() : m_pPlayer(nullptr) {}
+        StarCraftPlayer() : GamePlayer(0), m_pPlayer(nullptr) {}
         StarCraftPlayer(BWAPI::Player p_pPlayer);
+        void SetOffline(RtsGame* pBelongingGame);
 
     protected:
-        void EnumerateEntities();
         GameEntity* FetchEntity(TID p_id);
+        const GameRace* Race() const;
 
     private:
         BWAPI::Player m_pPlayer;

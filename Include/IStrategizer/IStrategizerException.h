@@ -69,6 +69,13 @@ If DEBUG_ISTRATEGIZER_EXCEPTION is defined, DEBUG_THROW replaces the throw call 
             : Exception(p_location, "InvalidParameterException") {}
     };
 
+    class InvalidOperationException : public Exception
+    {
+    public:
+        InvalidOperationException(ExceptionLocation p_location)
+            : Exception(p_location, "InvalidOperationException") {}
+    };
+
     class NotImplementedException : public Exception
     {
     public:

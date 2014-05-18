@@ -31,20 +31,16 @@
 #ifndef STARCRAFTRESEARCH_H
 #include "StarCraftResearch.h"
 #endif
-
+#include "StarCraftRace.h"
+#include "ObjectFactory.h"
 #include "BWAPI.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
-//----------------------------------------------------------------------------------------------
-void StarCraftGame::Init()
-{
-    g_Database.Init();
+DECL_SERIALIZABLE(StarCraftGame);
 
-    RtsGame::Init();
-}
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitMap()
 {
@@ -95,15 +91,15 @@ void StarCraftGame::InitResearchTypes()
     vector<GameResearch*> oldResearchTypes;
     vector<ResearchType> newResearchTypes;
 
-    sm_researches.Values(oldResearchTypes);
+    sm_researchTypes.Values(oldResearchTypes);
     Toolbox::MemoryClean(oldResearchTypes);
-    sm_researches.clear();
+    sm_researchTypes.clear();
 
     g_Database.ResearchTypes(newResearchTypes);
 
     for(unsigned i = 0, size = newResearchTypes.size(); i < size; ++i)
     {
-        sm_researches[newResearchTypes[i]] = FetchResearch(newResearchTypes[i]);
+        sm_researchTypes[newResearchTypes[i]] = FetchResearch(newResearchTypes[i]);
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -159,6 +155,14 @@ GameResearch* StarCraftGame::FetchResearch(ResearchType p_id)
     research->Init();
 
     return research;
+}
+//----------------------------------------------------------------------------------------------
+void StarCraftGame::InitRaceTypes()
+{
+    for (Race& race : Races::allRaces())
+    {
+        sm_raceTypes[race.getID()] = new StarCraftRace(race);
+    }
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::ExecuteCommand(const char *p_cmd)

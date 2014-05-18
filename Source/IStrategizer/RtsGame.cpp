@@ -19,8 +19,9 @@ using namespace std;
 
 IStrategizer::RtsGame* g_Game = nullptr;
 
-SMap<EntityClassType, GameType*> RtsGame::sm_entityTypes;
-SMap<ResearchType, GameResearch*> RtsGame::sm_researches;
+EntiyTypesMap RtsGame::sm_entityTypes;
+ResearchTypesMap RtsGame::sm_researchTypes;
+RaceTypesMap RtsGame::sm_raceTypes;
 bool RtsGame::sm_gameTypesInitialized = false;
 
 RtsGame::~RtsGame()
@@ -35,6 +36,7 @@ void RtsGame::Init()
         LogInfo("Initializing RTS Game model types");
         InitEntityTypes();
         InitResearchTypes();
+        InitRaceTypes();
         sm_gameTypesInitialized = true;
     }
 
@@ -88,10 +90,19 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
     _ASSERTE(m_initialized);
-    if (!sm_researches.Contains(p_id))
+    if (!sm_researchTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return sm_researches[p_id];
+    return sm_researchTypes[p_id];
+}
+//----------------------------------------------------------------------------------------------
+GameRace* RtsGame::GetRace(TID id)
+{
+    _ASSERTE(m_initialized);
+    if (!sm_raceTypes.Contains(id))
+        DEBUG_THROW(ItemNotFoundException(XcptHere));
+
+    return sm_raceTypes[id];
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::SetOffline()
@@ -104,25 +115,12 @@ void RtsGame::SetOffline()
     m_pMap->SetOffline(this);
 }
 //----------------------------------------------------------------------------------------------
-RtsGame* RtsGame::Clone() const
+RtsGame* RtsGame::Snapshot() const
 {
-    string tempFilename = "temp";
-    tempFilename += to_string((int)time(nullptr));
+    RtsGame* pSnapshot = dynamic_cast<RtsGame*>(Prototype());
 
-    // The Copy/Paste trick is to serialize and deserialize the same object
-    g_ObjectSerializer.Serialize(this, tempFilename);
+    pSnapshot->Init();
+    pSnapshot->SetOffline();
 
-    RtsGame* pClone = static_cast<RtsGame*>(Prototype());
-    g_ObjectSerializer.Deserialize(pClone, tempFilename);
-
-    pClone->SetOffline();
-
-    ifstream file(tempFilename.c_str());
-    if (file.is_open())
-    {
-        file.close();
-        LogWarning("LEAK: A temp file was created and was not deleted");
-    }
-
-    return pClone;
+    return pSnapshot;
 }

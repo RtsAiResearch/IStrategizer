@@ -626,6 +626,9 @@
     <ClInclude Include="..\..\Include\IStrategizer\GameRace.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GameObject.h">
+      <Filter>Header Files\World Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Documents\2011-2012 Plan.txt">

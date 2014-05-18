@@ -43,7 +43,7 @@ bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     bool executed = false;
 
     // Adapt attacker
-    m_attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRankVector);
+    m_attackerId = pAdapter->GetEntityObjectId(attackerType,AdapterEx::AttackerStatesRank);
 
     if (m_attackerId != INVALID_TID)
     {

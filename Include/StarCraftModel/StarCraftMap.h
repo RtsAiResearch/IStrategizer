@@ -10,10 +10,9 @@ namespace IStrategizer
     class StarCraftMap : public WorldMap
     {
     public:
-        StarCraftMap(unsigned cellSize) : WorldMap(cellSize, cellSize, Size().X, Size().Y) { }
-        IStrategizer::Vector2 Size() const;
-        bool CanBuildHere(IStrategizer::Vector2 p_position, IStrategizer::EntityClassType p_buildingType) const;
-        IStrategizer::MapArea GetSpecialBuildingPosition(IStrategizer::EntityClassType p_buildingType) const;
+        StarCraftMap(unsigned cellSize);
+        bool CanBuildHere(Vector2 p_position, EntityClassType p_buildingType) const;
+        MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const;
     };
 }
 

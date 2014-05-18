@@ -12,13 +12,15 @@ using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
-Vector2 StarCraftMap::Size() const
-{
-    return Vector2(Broodwar->mapWidth() * TILE_SIZE, Broodwar->mapHeight() * TILE_SIZE);
-}
+StarCraftMap::StarCraftMap(unsigned cellSize) :
+    WorldMap(cellSize, cellSize, Broodwar->mapWidth() * TILE_SIZE, Broodwar->mapHeight() * TILE_SIZE)
+{ }
 //----------------------------------------------------------------------------------------------
 MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType) const
 {
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
     MapArea candidatePosition = MapArea::Null();
 
     // Get the player base tile position
@@ -64,6 +66,9 @@ MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType)
 //----------------------------------------------------------------------------------------------
 bool StarCraftMap::CanBuildHere(Vector2 p_worldPosition, EntityClassType p_buildingType) const
 {
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
     UnitType type;
     TID unitTypeId;
     string typeName;

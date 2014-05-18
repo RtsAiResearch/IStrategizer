@@ -14,24 +14,49 @@
 #ifndef STARCRAFTTECHTREE_H
 #include "StarCraftTechTree.h"
 #endif
+#include "ObjectFactory.h"
 #include "StarCraftRace.h"
+#include "RtsGame.h"
+#include "BWAPI.h"
 
 using namespace IStrategizer;
+using namespace BWAPI;
 
-StarCraftPlayer::StarCraftPlayer(Player p_pPlayer)  : m_pPlayer(p_pPlayer)
+DECL_SERIALIZABLE(StarCraftPlayer);
+
+StarCraftPlayer::StarCraftPlayer(Player pPlayer) :
+    GamePlayer(pPlayer->getRace().getID()),
+    m_pPlayer(pPlayer)
 {
-    m_id = g_Database.PlayerMapping.GetByFirst( p_pPlayer->getID());
+    m_type = g_Database.PlayerMapping.GetByFirst(pPlayer->getID());
     m_pResources = new StarCraftPlayerResources(m_pPlayer);
     m_pTechTree = new StarCraftTechTree(m_pPlayer);
-    m_pRace = new StarCraftRace(m_pPlayer);
 }
-//----------------------------------------------------------------------------------------------
-GameEntity* StarCraftPlayer::FetchEntity(TID p_id)
-{
-    BWAPI::Unit pUnit = Broodwar->getUnit(p_id);
 
-    if (pUnit)
-        return new StarCraftEntity(pUnit);
-    else
-        return nullptr;
+const GameRace* StarCraftPlayer::Race() const
+{
+    return g_Game->GetRace(m_raceId);
+}
+
+GameEntity* StarCraftPlayer::FetchEntity(TID id)
+{
+    BWAPI::Unit pUnit = Broodwar->getUnit(id);
+    _ASSERTE(pUnit);
+
+    return new StarCraftEntity(pUnit);
+}
+
+void StarCraftPlayer::SetOffline(RtsGame* pBelongingGame)
+{
+    for (auto entityEntry : m_entities)
+        Toolbox::MemoryClean(entityEntry.second);
+    m_entities.clear();
+
+    for (auto pUnit : m_pPlayer->getUnits())
+    {
+        m_entities[pUnit->getID()] = new StarCraftEntity(pUnit);
+        m_entities[pUnit->getID()]->SetOffline(pBelongingGame);
+    }
+
+    GamePlayer::SetOffline(pBelongingGame);
 }

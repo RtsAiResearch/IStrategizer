@@ -12,33 +12,33 @@ const float StarCraftRace::MineralsPerWorkerPerFrame = 0.045f;
 const float StarCraftRace::GasPerWorkerPerFrame = 0.07f;
 
 //----------------------------------------------------------------------------------------------
-StarCraftRace::StarCraftRace(BWAPI::Player pPlayer) :
-    m_pPlayer(pPlayer)
+EntityClassType StarCraftRace::GetWorkerType() const
 {
-    TID typeId = m_pPlayer->getRace().getWorker().getID();
-    m_workerTypeId = g_Database.EntityMapping.GetByFirst(typeId);
-
-    typeId = m_pPlayer->getRace().getCenter().getID();
-    m_baseTypeId = g_Database.EntityMapping.GetByFirst(typeId);
+    return g_Database.EntityMapping.GetByFirst(m_race.getWorker().getID());
 }
 //----------------------------------------------------------------------------------------------
-std::string StarCraftRace::Name() const { return m_pPlayer->getRace().getName(); }
+EntityClassType StarCraftRace::GetBaseType() const
+{
+    return g_Database.EntityMapping.GetByFirst(m_race.getCenter().getID());
+}
+//----------------------------------------------------------------------------------------------
+const std::string& StarCraftRace::ToString() const { return m_race.getName(); }
 //----------------------------------------------------------------------------------------------
 int StarCraftRace::BaseSupplyAmount() const
 {
-    _ASSERTE(m_pPlayer->getRace() == Races::Terran);
+    _ASSERTE(m_race == Races::Terran);
     return 10;
 }
 //----------------------------------------------------------------------------------------------
 int StarCraftRace::SupplyBuildingSupplyAmount() const
 {
-    _ASSERTE(m_pPlayer->getRace() == Races::Terran);
+    _ASSERTE(m_race == Races::Terran);
     return 8;
 }
 //----------------------------------------------------------------------------------------------
 float StarCraftRace::GetResourceConsumbtionRatePerWorker(ResourceType p_id) const
 {
-    _ASSERTE(m_pPlayer->getRace() == Races::Terran);
+    _ASSERTE(m_race == Races::Terran);
 
     switch(p_id)
     {
@@ -54,7 +54,7 @@ float StarCraftRace::GetResourceConsumbtionRatePerWorker(ResourceType p_id) cons
 EntityClassType StarCraftRace::GetResourceSource(ResourceType p_type) const
 {
     // This method is hard-coded for Terran, ideally it should take race type.
-    _ASSERTE(m_pPlayer->getRace() == Races::Terran);
+    _ASSERTE(m_race == Races::Terran);
 
     switch(p_type)
     {

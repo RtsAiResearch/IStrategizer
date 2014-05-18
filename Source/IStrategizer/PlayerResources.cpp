@@ -4,50 +4,50 @@
 
 using namespace IStrategizer;
 
-bool PlayerResources::HasEnough(const WorldResources* p_resources)
+bool PlayerResources::HasEnough(const WorldResources* pResources)
 {
     int availablePrimary = this->AvailablePrimary();
     int availableSecondary = this->AvailableSecondary();
     int availableSupply = this->AvailableSupply();
 
-    int requiredPrimary = p_resources->Primary();
-    int requiredSecondary = p_resources->Secondary();
-    int requiredSupply = p_resources->Supply();
+    int requiredPrimary = pResources->Primary();
+    int requiredSecondary = pResources->Secondary();
+    int requiredSupply = pResources->Supply();
 
     return availablePrimary >= requiredPrimary &&
            availableSecondary >= requiredSecondary &&
            availableSupply >= requiredSupply;
 }
 //////////////////////////////////////////////////////////////////////////
-bool PlayerResources::Lock(WorldResources* resources)
+bool PlayerResources::Lock(WorldResources* pResources)
 {
-    bool amountAvailable = HasEnough(resources);
+    bool amountAvailable = HasEnough(pResources);
 
-    LogInfo("An action is trying to lock supply=%d, primary=%d, secondary=%d", resources->Supply(), resources->Primary(), resources->Secondary());
+    LogInfo("An action is trying to lock supply=%d, primary=%d, secondary=%d", pResources->Supply(), pResources->Primary(), pResources->Secondary());
 
     if (amountAvailable)
     {
-        if (resources->Supply() > 0)
+        if (pResources->Supply() > 0)
         {
-            _ASSERTE(_lockedSupply + resources->Supply() <= Supply());
-            _lockedSupply += resources->Supply();
+            _ASSERTE(m_lockedSupply + pResources->Supply() <= Supply());
+            m_lockedSupply += pResources->Supply();
         }
 
-        if (resources->Secondary() > 0)
+        if (pResources->Secondary() > 0)
         {
-            _ASSERTE(_lockedSecondary + resources->Secondary() <= Secondary());
-            _lockedSecondary += resources->Secondary();
+            _ASSERTE(m_lockedSecondary + pResources->Secondary() <= Secondary());
+            m_lockedSecondary += pResources->Secondary();
         }
 
-        if (resources->Primary() > 0)
+        if (pResources->Primary() > 0)
         {
-            _ASSERTE(_lockedPrimary + resources->Primary() <= Primary());
-            _lockedPrimary += resources->Primary();
+            _ASSERTE(m_lockedPrimary + pResources->Primary() <= Primary());
+            m_lockedPrimary += pResources->Primary();
         }
 
         LogInfo("Action succeeded to lock requested resources");
         LogInfo("Total locked supply=%d, primary=%d, secondary=%d | Available supply=%d, primary=%d, secondary=%d",
-            _lockedSupply, _lockedPrimary, _lockedSecondary, Supply(), Primary(), Secondary());
+            m_lockedSupply, m_lockedPrimary, m_lockedSecondary, Supply(), Primary(), Secondary());
     }
     else
     {
@@ -57,20 +57,31 @@ bool PlayerResources::Lock(WorldResources* resources)
     return amountAvailable;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlayerResources::Unlock(WorldResources* resources)
+void PlayerResources::Unlock(WorldResources* pResources)
 {
-    if (resources->Supply() > 0)
+    if (pResources->Supply() > 0)
     {
-        _lockedSupply -= resources->Supply();
+        m_lockedSupply -= pResources->Supply();
     }
 
-    if (resources->Secondary() > 0)
+    if (pResources->Secondary() > 0)
     {
-        _lockedSecondary -= resources->Secondary();
+        m_lockedSecondary -= pResources->Secondary();
     }
 
-    if (resources->Primary() > 0)
+    if (pResources->Primary() > 0)
     {
-        _lockedPrimary -= resources->Primary();
+        m_lockedPrimary -= pResources->Primary();
     }
+}
+//////////////////////////////////////////////////////////////////////////
+void PlayerResources::SetOffline(RtsGame* pBelongingGame)
+{
+    _ASSERTE(m_isOnline);
+
+    m_cachedPrimary = Primary();
+    m_cachedSecondary = Secondary();
+    m_cachedSupply = Supply();
+
+    m_isOnline = false;
 }

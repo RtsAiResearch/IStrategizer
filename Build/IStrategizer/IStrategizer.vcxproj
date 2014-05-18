@@ -46,6 +46,9 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Message>Building TypeInfo database</Message>
@@ -164,6 +167,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ExecutionHistory.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ExecutionTrial.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\GameObject.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GameRace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IDigraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GatherResourceAction.h" />

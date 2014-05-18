@@ -15,7 +15,6 @@ namespace IStrategizer
         OBJECT_SERIALIZABLE(StarCraftGame);
 
     public:
-        void Init();
         void ExecuteCommand(const char *p_cmd);
         void DisplayMessage(const char *p_msg);
         int GetMaxForceSize() const { return 12; }
@@ -26,6 +25,7 @@ namespace IStrategizer
         void InitMap();
         void InitEntityTypes();
         void InitResearchTypes();
+        void InitRaceTypes();
 
         GamePlayer* FetchPlayer(PlayerType p_id);
         IStrategizer::GameType* FetchEntityType(EntityClassType p_id);

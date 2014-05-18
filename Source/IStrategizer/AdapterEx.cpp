@@ -16,20 +16,18 @@
 #include <algorithm>
 #include <vector>
 #include "PlayerResources.h"
+#include "GameResearch.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
 using namespace std;
 
-typedef vector<ObjectStateType> RankedStates;
-
 typedef pair<TID, ObjectStateType> UnitEntry;
 
-RankedStates AdapterEx::WorkerStatesRankVector;
-
-RankedStates AdapterEx::AttackerStatesRankVector;
-
-RankedStates AdapterEx::EntityToMoveStatesRankVector;
+RankedStates AdapterEx::WorkerStatesRank;
+RankedStates AdapterEx::AttackerStatesRank;
+RankedStates AdapterEx::EntityToMoveStatesRank;
+ObjectStateStackRankMap AdapterEx::ProducingBuildingStatesRank;
 
 // Minimum number of build cells to be between colony buildings
 const int AdapterEx::DefaultBuildingSpacing = 64;
@@ -46,16 +44,19 @@ void IStrategizer::AdapterEx::InitializePredefinedRankedStates()
 {
     IsRankedStatesInitialized = true;
 
-    WorkerStatesRankVector.push_back(OBJSTATE_Idle);
-    WorkerStatesRankVector.push_back(OBJSTATE_Gathering);
+    WorkerStatesRank.push_back(OBJSTATE_Idle);
+    WorkerStatesRank.push_back(OBJSTATE_Gathering);
 
-    AttackerStatesRankVector.push_back(OBJSTATE_Idle);
+    AttackerStatesRank.push_back(OBJSTATE_Idle);
 
-    EntityToMoveStatesRankVector.push_back(OBJSTATE_Idle);
-    EntityToMoveStatesRankVector.push_back(OBJSTATE_UnderAttack);
-    EntityToMoveStatesRankVector.push_back(OBJSTATE_Attacking);
-    EntityToMoveStatesRankVector.push_back(OBJSTATE_Gathering);
-    EntityToMoveStatesRankVector.push_back(OBJSTATE_Moving);
+    EntityToMoveStatesRank.push_back(OBJSTATE_Idle);
+    EntityToMoveStatesRank.push_back(OBJSTATE_UnderAttack);
+    EntityToMoveStatesRank.push_back(OBJSTATE_Attacking);
+    EntityToMoveStatesRank.push_back(OBJSTATE_Gathering);
+    EntityToMoveStatesRank.push_back(OBJSTATE_Moving);
+
+    ProducingBuildingStatesRank[OBJSTATE_Idle] = 0;
+    ProducingBuildingStatesRank[OBJSTATE_Training] = 1;
 }
 //////////////////////////////////////////////////////////////////////////
 bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_worldY, const TCell* p_pCell, void *p_pParam)
@@ -85,11 +86,11 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         - 1st Pass using Ground Control Map: The area with the highest control with regard to the player is selected for building
         - 2nd Pass using occupancy Data Map: Select the nearest available place to the center of the control to build in
         - Notes:
-            1. The city shape will be spiral, and may not be the optimal build shape
-            2. Building in a circle requires to choose the best place on the circle edge to build:
-            1. Take into consideration the visibility and coverability of the position to build in
-            2. The direction of growth should be taken into consideration, and the base main buildings should be well covered
-            3. Critical buildings should be built in the back
+        1. The city shape will be spiral, and may not be the optimal build shape
+        2. Building in a circle requires to choose the best place on the circle edge to build:
+        1. Take into consideration the visibility and coverability of the position to build in
+        2. The direction of growth should be taken into consideration, and the base main buildings should be well covered
+        3. Critical buildings should be built in the back
         */
         Vector2 mapeSize = g_Game->Map()->Size();
         OccupanceDataIM *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
@@ -215,26 +216,26 @@ Vector2 AdapterEx::AdaptEnemyBorder()
     return g_Game->Map()->GetNearestEnemyBorders(1).at(0);
 }
 //////////////////////////////////////////////////////////////////////////
-IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID)
+IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceType resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID)
 {
     GamePlayer	*pPlayer;
     GameEntity	*pEntity;
-    vector<TID>	entityIds;
+    vector<TID>	resourceSourceIds;
     TID	adaptedResourceId = INVALID_TID;
     double bestDistance = numeric_limits<double>::max();
     CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
     GameEntity *pGatherer = g_Game->Self()->GetEntity(p_gathererID);
 
-    pPlayer = p_resourceType == RESOURCE_Primary ? g_Game->GetPlayer(PLAYER_Neutral) : g_Game->GetPlayer(PLAYER_Self);
+    pPlayer = (resourceType == RESOURCE_Primary ? g_Game->GetPlayer(PLAYER_Neutral) : g_Game->GetPlayer(PLAYER_Self));
     _ASSERTE(pPlayer);
 
-    pPlayer->Entities(g_Game->Self()->Race()->GetResourceSource(p_resourceType), entityIds);
+    pPlayer->Entities(g_Game->Self()->Race()->GetResourceSource(resourceType), resourceSourceIds);
 
     g_Game->Map()->Update();
-    
-    for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+
+    for (size_t i = 0, size = resourceSourceIds.size(); i < size; ++i)
     {	
-        pEntity = pPlayer->GetEntity(entityIds[i]);
+        pEntity = pPlayer->GetEntity(resourceSourceIds[i]);
         _ASSERTE(pEntity);
 
         //now we can depend on the cell feature for comparison to get the resource that matches the required cell feature.
@@ -251,51 +252,62 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
     return adaptedResourceId;
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::GetSourceEntity(EntityClassType p_entityType, ActionType actionType) const
-{
-    // Gets first building to train entity from type p_entityType
-    // If no empty building is found, first non-idle building will be returned
-    GamePlayer *pPlayer;
-    GameEntity *pEntity;
-    vector<TID> entityIds;
-    EntityClassType trainerType;
-    TID id = INVALID_TID;
-
-    trainerType = g_Game->GetEntityType(p_entityType)->SourceEntity();
-    pPlayer = g_Game->Self();
-    _ASSERTE(pPlayer);
-
-    pPlayer->Entities(entityIds);
-
-    for (size_t i = 0, size = entityIds.size(); i < size; ++i)
-    {
-        pEntity = pPlayer->GetEntity(entityIds[i]);
-        _ASSERTE(pEntity);
-
-        if (trainerType == pEntity->Type() &&
-            (actionType == ACTIONEX_Research ||
-            (actionType == ACTIONEX_Train && pEntity->CanTrain(p_entityType))))
-        {
-            id = pEntity->Id();
-            if (pEntity->Attr(EOATTR_State) == OBJSTATE_Idle)
-            {
-                break;
-            }
-        }
-    }
-
-    return id;
-}
-//////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
 {
-    // The entity search algorithm should be moved to GamePlayer class
-    return GetSourceEntity((EntityClassType)p_researchType, ACTIONEX_Research);
+    EntityClassType researchedType = g_Game->GetResearch(p_researchType)->SourceEntity();
+
+    vector<TID> candidateResearchers;
+    g_Game->Self()->Entities(researchedType, candidateResearchers);
+
+    if (candidateResearchers.empty())
+        return INVALID_TID;
+
+    multimap<unsigned, GameEntity*> reseacherClusters; 
+
+    for (auto researcherId : candidateResearchers)
+    {
+        GameEntity* pResearcher = g_Game->Self()->GetEntity(researcherId);
+        ObjectStateType state = (ObjectStateType)pResearcher->Attr(EOATTR_State);
+
+        // If state is not ranked - which means it is not favored, then we don't consider it at all
+        if (ProducingBuildingStatesRank.count(state) > 0)
+            reseacherClusters.insert(make_pair(ProducingBuildingStatesRank[state], pResearcher));
+    }
+
+    if (reseacherClusters.empty())
+        return INVALID_TID;
+
+    GameEntity* pAdaptedResearcher = reseacherClusters.begin()->second;
+    return pAdaptedResearcher->Id();
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptBuildingForTraining(EntityClassType p_traineeType)
+TID AdapterEx::AdaptBuildingForTraining(EntityClassType traineeType)
 {
-    return GetSourceEntity(p_traineeType, ACTIONEX_Train);
+    EntityClassType trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
+
+    vector<TID> candidateTrainer;
+    g_Game->Self()->Entities(trainerType, candidateTrainer);
+
+    if (candidateTrainer.empty())
+        return INVALID_TID;
+
+    multimap<unsigned, GameEntity*> trainerClusters; 
+
+    for (auto researcherId : candidateTrainer)
+    {
+        GameEntity* pResearcher = g_Game->Self()->GetEntity(researcherId);
+        ObjectStateType state = (ObjectStateType)pResearcher->Attr(EOATTR_State);
+
+        // If state is not ranked - which means it is not favored, then we don't consider it at all
+        if (ProducingBuildingStatesRank.count(state) > 0)
+            trainerClusters.insert(make_pair(ProducingBuildingStatesRank[state], pResearcher));
+    }
+
+    if (trainerClusters.empty())
+        return INVALID_TID;
+
+    GameEntity* pAdaptedTrainer = trainerClusters.begin()->second;
+    return pAdaptedTrainer->Id();
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)

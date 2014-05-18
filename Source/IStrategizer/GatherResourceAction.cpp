@@ -168,7 +168,7 @@ bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 	bool bOK = false;
 
     // Adapt gatherer
-    m_gathererId = pAdapter->GetEntityObjectId(gathererType, AdapterEx::WorkerStatesRankVector);
+    m_gathererId = pAdapter->GetEntityObjectId(gathererType, AdapterEx::WorkerStatesRank);
 
     if(m_gathererId != INVALID_TID)
     {
