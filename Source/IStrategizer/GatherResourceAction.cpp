@@ -50,6 +50,10 @@ void GatherResourceAction::InitializePreConditions()
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1));
     m_terms.push_back(new EntityClassExist(PLAYER_Self, baseType, 1));
+    if (_params[PARAM_ResourceId] == RESOURCE_Supply)
+    {
+        m_terms.push_back(new EntityClassExist(PLAYER_Self, g_Game->Self()->Race()->GetResourceSource(RESOURCE_Supply), 1, true));
+    }
     _preCondition = new And(m_terms);
 }
 //////////////////////////////////////////////////////////////////////////
