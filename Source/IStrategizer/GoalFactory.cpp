@@ -2,7 +2,6 @@
 #include "DeployArmyGoal.h"
 #include "DestroyEntityTypeGoal.h"
 #include "CollectResourceGoal.h"
-#include "TrainArmyGoal.h"
 #include "TrainForceGoal.h"
 #include "GoalFactory.h"
 #include "BuildInfrastructureGoal.h"
@@ -22,10 +21,6 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_paramete
 
     case GOALEX_WinGame:
         goal = new WinGameGoal(p_parameters);
-        break;
-
-    case GOALEX_TrainArmy:
-        goal = new TrainArmyGoal(p_parameters);
         break;
 
     case GOALEX_TrainForce:
@@ -69,10 +64,6 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
 
     case GOALEX_WinGame:
         goal = new WinGameGoal();
-        break;
-
-    case GOALEX_TrainArmy:
-        goal = new TrainArmyGoal();
         break;
 
     case GOALEX_TrainForce:

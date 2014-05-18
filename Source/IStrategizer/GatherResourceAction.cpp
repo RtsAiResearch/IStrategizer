@@ -48,8 +48,8 @@ void GatherResourceAction::InitializePreConditions()
     EntityClassType baseType = g_Game->Self()->Race()->GetBaseType();
     vector<Expression*> m_terms;
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1, true));
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, baseType, 1, false));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, baseType, 1));
     _preCondition = new And(m_terms);
 }
 //////////////////////////////////////////////////////////////////////////

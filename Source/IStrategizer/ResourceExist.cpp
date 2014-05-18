@@ -33,25 +33,34 @@ void ResourceExist::Copy(IClonable* p_dest)
 //----------------------------------------------------------------------------------------------
 bool ResourceExist::Consume(int p_amount)
 {
-    if (_conditionParameters[PARAM_Amount] == DONT_CARE || p_amount == DONT_CARE)
+    if (p_amount == 0 || _conditionParameters[PARAM_Amount] == 0)
     {
+        // The required amount is 0, return false as there's nothing to consume
+        // The current available amount is 0 so can not consume anything.
+        return false;
+    }
+    else if (_conditionParameters[PARAM_Amount] == DONT_CARE)
+    {
+        // I am infinite source so always return true.
         return true;
     }
-    else if (p_amount == 0)
+    else if (p_amount == DONT_CARE)
     {
-        // The required amount is 0, no need to consume anything.
-        return false;
+        // DONT_CARE amount means infinite required amount, so return true and consume all amount the condition has.
+        _conditionParameters[PARAM_Amount] = 0;
+        return true;
     }
     else
     {
-        _ASSERTE(p_amount > 0);
-        if (_conditionParameters[PARAM_Amount] >= p_amount)
+        _ASSERTE(p_amount > 0 && _conditionParameters[PARAM_Amount] > 0);
+        // Consider consuming supply resources only as for primary and secondary
+        // we don't use exact numbers.
+        if (_conditionParameters[PARAM_ResourceId] == RESOURCE_Supply)
         {
             _conditionParameters[PARAM_Amount] -= p_amount;
-            return true;
         }
 
-        return false;
+        return true;
     }
 }
 //----------------------------------------------------------------------------------------------

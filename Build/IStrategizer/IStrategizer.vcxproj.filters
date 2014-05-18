@@ -300,9 +300,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\TrainArmyGoal.cpp">
-      <Filter>Source Files\CaseBase\Goal</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
@@ -601,9 +598,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\AdjListDigraph.h">
       <Filter>Header Files\Utilities\Data Structures\Digraph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h">
-      <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>

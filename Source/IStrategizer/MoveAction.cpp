@@ -53,8 +53,7 @@ bool MoveAction::AliveConditionsSatisfied(RtsGame& game)
         ConditionEx* failedCondition = new EntityClassExist(
             PLAYER_Self,
             (EntityClassType)_params[PARAM_EntityClassId],
-            1,
-            true);
+            1);
         m_history.Add(ESTATE_Failed, failedCondition);
     }
 
@@ -105,6 +104,6 @@ void MoveAction::InitializePreConditions()
     EntityClassType entity = (EntityClassType)_params[PARAM_EntityClassId];
     vector<Expression*> m_terms;
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, entity, 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, entity, 1));
     _preCondition = new And(m_terms);
 }

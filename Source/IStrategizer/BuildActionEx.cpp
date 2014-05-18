@@ -156,8 +156,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
         ConditionEx* failedCondition = new EntityClassExist(
             PLAYER_Self,
             game.Self()->Race()->GetWorkerType(),
-            1,
-            true);
+            1);
         m_history.Add(ESTATE_Failed, failedCondition);
 
         LogInfo("Builder with ID=%d of action %s does not exist", _builderId, ToString().c_str());
@@ -227,7 +226,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 void BuildActionEx::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], true));
 
     if (g_Game->Self()->Race()->GetResourceSource(RESOURCE_Supply) == (EntityClassType)_params[PARAM_EntityClassId])
     {
@@ -244,7 +243,7 @@ void BuildActionEx::InitializePreConditions()
     _requiredResources = WorldResources::FromEntity(buildingType);
     vector<Expression*> m_terms;
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, 1));
     g_Assist.GetPrerequisites(buildingType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

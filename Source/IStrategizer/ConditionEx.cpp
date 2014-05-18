@@ -25,18 +25,22 @@ bool ConditionEx::Equals(const Expression* p_rhs) const
     {
         if ((*i).first == PARAM_Amount && (*j).first == PARAM_Amount)
         {
-            if ((*i).second == DONT_CARE || (*j).second == DONT_CARE)
+            // Always return true if the amount of the parameter is amount as
+            // amount can be consumed and does not require exact match.
+            m_equal &= true;
+
+            /*if ((*i).second == DONT_CARE || (*j).second == DONT_CARE)
             {
                 m_equal &= true;
             }
             else
             {
                 m_equal &= ((*i).first == (*j).first) && ((*i).second <= (*j).second);
-            }
+            }*/
         }
         else
         {
-            if ((*i).second == DONT_CARE || (*j).second == DONT_CARE)
+            if (((*i).first == (*j).first) && ((*i).second == DONT_CARE || (*j).second == DONT_CARE))
             {
                 m_equal &= true;
             }
@@ -90,7 +94,7 @@ void ConditionEx::Copy(IClonable* p_dest)
 
     ConditionEx* m_dest = static_cast<ConditionEx*>(p_dest);
 
-    m_dest->_conditionType        = _conditionType;
-    m_dest->_conditionParameters  = _conditionParameters;
-    m_dest->_playerType           = _playerType;
+    m_dest->_conditionType = _conditionType;
+    m_dest->_conditionParameters.insert(_conditionParameters.begin(), _conditionParameters.end());
+    m_dest->_playerType = _playerType;
 }

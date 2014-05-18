@@ -17,14 +17,14 @@ namespace IStrategizer
 
     private:
         int _similarityThreshold;
-        bool _oneUse;
-        bool _used;
+        bool _reusable;
 
     public:
-        EntityClassExist() {}
+        EntityClassExist() : _reusable(false), _similarityThreshold(DONT_CARE) {}
         EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, std::map<EntityObjectAttribute,int> p_entityObjectAttributes, int p_similarityThreshold = ExactSimilarity);
-        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, bool p_oneUse = false);
-        EntityClassExist(PlayerType p_player, int p_amount, bool p_oneUse = false);
+        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, bool reusable);
+        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount);
+        EntityClassExist(PlayerType p_player, int p_amount);
         EntityClassExist(PlayerType p_player);
         bool Evaluate(RtsGame& game);
         void Copy(IClonable* p_dest);

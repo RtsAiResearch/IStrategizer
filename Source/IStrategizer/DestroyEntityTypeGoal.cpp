@@ -18,7 +18,7 @@ using namespace std;
 DestroyEntityTypeGoal::DestroyEntityTypeGoal() : GoalEx(GOALEX_DestroyEntityType)
 {
     _params[PARAM_TargetEntityClassId] = ECLASS_START;
-    _params[PARAM_Amount] = 0;
+    _params[PARAM_Amount] = DONT_CARE;
     m_demandTargetSize = 0;
 }
 //----------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ DestroyEntityTypeGoal::DestroyEntityTypeGoal(const PlanStepParameters& p_paramet
 void DestroyEntityTypeGoal::InitializePostConditions()
 {
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, targetType, DONT_CARE));
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, targetType, _params[PARAM_Amount]));
 }   
 //----------------------------------------------------------------------------------------------
 void DestroyEntityTypeGoal::Copy(IClonable* p_dest)

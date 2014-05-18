@@ -226,7 +226,7 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
     // 2. Additional required entities exist
     for (map<EntityClassType, unsigned>::const_iterator i = reqEntities.begin(); i != reqEntities.end(); ++i)
     {
-        p_prerequisites.push_back(new EntityClassExist(p_playerType, (*i).first, 1, true));
+        p_prerequisites.push_back(new EntityClassExist(p_playerType, (*i).first, 1));
     }
 
     // 3. Source building exist
@@ -237,7 +237,7 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
 
     _ASSERTE(sourceEntity != ECLASS_END);
         
-    p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1, true));
+    p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1));
 
     // 4. Required resources exist
     GetPrerequisiteResources(p_entityOrResearchType, p_playerType, pReqResources);

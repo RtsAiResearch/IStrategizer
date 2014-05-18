@@ -38,7 +38,7 @@ bool ResearchAction::AliveConditionsSatisfied(RtsGame& game)
 
     if (!researcherExists)
     {
-        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, m_researcherType, 1, false);
+        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, m_researcherType, 1);
         m_history.Add(ESTATE_Failed, failedCondition);
     }
     
@@ -79,7 +79,7 @@ void ResearchAction::InitializePreConditions()
     m_researcherType = g_Game->GetResearch(researchType)->SourceEntity();
     vector<Expression*> m_terms;
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, m_researcherType, 1, false));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, m_researcherType, 1));
     g_Assist.GetPrerequisites(researchType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

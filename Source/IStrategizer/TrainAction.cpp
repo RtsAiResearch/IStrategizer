@@ -132,7 +132,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
     }
     else
     {
-        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, m_trainerType, 1, false);
+        ConditionEx* failedCondition = new EntityClassExist(PLAYER_Self, m_trainerType, 1);
         m_history.Add(ESTATE_Failed, failedCondition);
     }
 
@@ -195,7 +195,7 @@ bool TrainAction::ExecuteAux(RtsGame& game, const WorldClock& clock)
 void TrainAction::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], 1));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ void TrainAction::InitializePreConditions()
     // consumed upon executing the action
     m_requiredResources = WorldResources(completeRequiredRespurces.Supply(), 0, 0);
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, 1, true));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, 1));
     g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }

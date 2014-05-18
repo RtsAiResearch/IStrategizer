@@ -16,7 +16,7 @@ using namespace std;
 BuildInfrastructureGoal::BuildInfrastructureGoal() : GoalEx(GOALEX_BuildInfrastructure)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
-    _params[PARAM_Amount] = 0;
+    _params[PARAM_Amount] = DONT_CARE;
     m_existingAmount = 0;
 }
 //----------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool&
 void BuildInfrastructureGoal::InitializePostConditions()
 {
     vector<Expression*> m_terms;
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], DONT_CARE, false));
+    m_terms.push_back(new EntityClassExist(PLAYER_Self, (EntityClassType)_params[PARAM_EntityClassId], _params[PARAM_Amount]));
     _postCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------

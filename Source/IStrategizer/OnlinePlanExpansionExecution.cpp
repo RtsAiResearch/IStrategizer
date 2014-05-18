@@ -462,7 +462,6 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
     IOlcbpPlan::NodeQueue Q;
     IOlcbpPlan::NodeID currentPlanStepID;
     bool msgConsumedByAction = false;
-    bool msgConsumedByGoal = false;
 
     if (m_pOlcbpPlan->Size() == 0 ||
         m_planRootNodeId == IOlcbpPlan::NullNodeID)
@@ -484,15 +483,8 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
             if (msgConsumedByAction)
                 LogInfo("Message with ID=%d consumed by action node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
         }
-        else if (IsGoalNode(currentPlanStepID) && !msgConsumedByGoal)
-        {
-            pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByGoal);
 
-            if (msgConsumedByGoal)
-                LogInfo("Message with ID=%d consumed by goal node with ID=%d, planstep=%s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
-        }
-
-        if (msgConsumedByAction && msgConsumedByGoal)
+        if (msgConsumedByAction)
         {
             break;
         }
