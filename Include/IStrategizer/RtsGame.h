@@ -16,7 +16,12 @@ namespace IStrategizer
     class GameType;
     class GameEntity;
     class GameResearch;
+    class GameRace;
     class WorldMap;
+
+    typedef Serialization::SMap<EntityClassType, GameType*> EntiyTypesMap;
+    typedef Serialization::SMap<ResearchType, GameResearch*> ResearchTypesMap;
+    typedef Serialization::SMap<TID, GameRace*> RaceTypesMap;
 
     ///> class=RtsGame
     class RtsGame : public Serialization::UserObject
@@ -36,21 +41,28 @@ namespace IStrategizer
 
         void Players(std::vector<PlayerType>& p_playerIds) { m_players.Keys(p_playerIds); }
         void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds) { sm_entityTypes.Keys(p_entityTypeIds); }
-        void Researches(std::vector<ResearchType>& p_researchTypeIds) { sm_researches.Keys(p_researchTypeIds); }
+        void Researches(std::vector<ResearchType>& p_researchTypeIds) { sm_researchTypes.Keys(p_researchTypeIds); }
+
+        const EntiyTypesMap& EntityTypes() const { return sm_entityTypes; }
+        const ResearchTypesMap& ResearchTypes() const { return sm_researchTypes; }
+        const RaceTypesMap& RaceTypes() const { return sm_raceTypes; }
+
         GamePlayer* GetPlayer(PlayerType p_id);
         GameType* GetEntityType(EntityClassType p_id);
         GameResearch* GetResearch(ResearchType p_id);
+        GameRace* GetRace(TID raceID);
         GamePlayer* Self() { return GetPlayer(PLAYER_Self); }
         GamePlayer* Enemy() { return GetPlayer(PLAYER_Enemy); }
         WorldMap* Map() { _ASSERTE(m_initialized); return m_pMap; }
         bool IsOnline() const { return m_isOnline; }
-        RtsGame* Clone() const;
+        RtsGame* Snapshot() const;
         virtual size_t GetMaxTrainingQueueCount() const = 0;
 
     protected:
         void SetOffline();
         virtual void InitEntityTypes() = 0;
         virtual void InitResearchTypes() = 0;
+        virtual void InitRaceTypes() = 0;
         virtual void InitPlayers() = 0;
         virtual void InitMap() = 0;
         virtual GameType* FetchEntityType(EntityClassType p_id) = 0;
@@ -60,8 +72,9 @@ namespace IStrategizer
         virtual void Finalize();
 
         // Game types are shared across all RtsGame instances
-        static Serialization::SMap<EntityClassType, GameType*> sm_entityTypes;
-        static Serialization::SMap<ResearchType, GameResearch*> sm_researches;
+        static EntiyTypesMap sm_entityTypes;
+        static ResearchTypesMap sm_researchTypes;
+        static RaceTypesMap sm_raceTypes;
         static bool sm_gameTypesInitialized;
 
         ///> type=map(pair(int,GamePlayer*))

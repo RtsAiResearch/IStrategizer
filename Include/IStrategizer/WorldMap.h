@@ -23,7 +23,7 @@ namespace IStrategizer
         ~WorldMap();
 
         void Init();
-        virtual Vector2 Size() const = 0;
+        virtual Vector2 Size() const { return Vector2(m_worldWidth, m_worldHeight); }
         virtual bool CanBuildHere(Vector2 p_position, EntityClassType p_buildingType) const = 0;
         virtual MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const = 0;
         void Update();
@@ -32,7 +32,7 @@ namespace IStrategizer
         Vector2 GetNearestCell(CellFeature* p_cell) const;
         CellFeature* GetCellFeatureFromWorldPosition(Vector2 p_position) const;
         std::vector<Vector2> GetNearestEnemyBorders(int p_numberOfBorders);
-        void SetOffline(RtsGame* pBelongingGame) {}
+        void SetOffline(RtsGame* pBelongingGame);
 
     protected:
         CellFeature** m_cellFeatureMatrix;
@@ -43,6 +43,8 @@ namespace IStrategizer
         unsigned m_gridWidth;
         unsigned m_gridHeight;
         bool m_initialized;
+        RtsGame* m_pGame;
+        bool m_isOnline;
 
         Vector2 FromGridToWorld(const Vector2 &p_gridPosition) const;
         Vector2 FromWorldToGrid(const Vector2 &p_worldPosition) const;

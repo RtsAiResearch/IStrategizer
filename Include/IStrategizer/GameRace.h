@@ -1,6 +1,8 @@
 #ifndef GAMERACE_H
 #define GAMERACE_H
 
+#include <string>
+
 namespace IStrategizer
 {
     enum EntityClassType;
@@ -17,6 +19,7 @@ namespace IStrategizer
         virtual float GetResourceConsumbtionRatePerWorker(ResourceType p_id) const = 0;
         virtual int BaseSupplyAmount() const = 0;
         virtual int SupplyBuildingSupplyAmount() const = 0;
+        virtual const std::string& ToString() const = 0;
     };
 }
 #endif // GAMERACE_H

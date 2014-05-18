@@ -29,22 +29,22 @@ namespace IStrategizer
     ///> class=GamePlayer
     class GamePlayer : public Serialization::UserObject, public MessagePumpObserver
     {
-        OBJECT_MEMBERS(1, &m_id);
+        OBJECT_MEMBERS(4, &m_type, &m_raceId, &m_pResources, &m_pTechTree);
 
     public:
-        GamePlayer();
+        GamePlayer(TID raceId);
         virtual ~GamePlayer();
-        virtual PlayerType Id() { return m_id; }
         void Entities(std::vector<TID>& p_entityIds);
         void Entities(EntityClassType p_typeId, std::vector<TID> &p_entityIds);
         void GetBases(std::vector<TID> &p_basesIds);
-        void NotifyMessegeSent(Message* p_pMessage);
-        PlayerResources* Resources() { _ASSERTE(m_pResources != nullptr); return m_pResources;}
-        GameTechTree* TechTree() const { _ASSERTE(m_pTechTree != nullptr); return m_pTechTree; }
         GameEntity* GetEntity(TID p_id);
         MapArea GetColonyMapArea();
-        void SetOffline(RtsGame* pBelongingGame) {}
-        const GameRace* Race() const { return m_pRace; }
+        virtual void SetOffline(RtsGame* pBelongingGame) = 0;
+        virtual const GameRace* Race() const = 0;
+        void NotifyMessegeSent(Message* p_pMessage);
+
+        PlayerResources* Resources() { _ASSERTE(m_pResources != nullptr); return m_pResources;}
+        GameTechTree* TechTree() const { _ASSERTE(m_pTechTree != nullptr); return m_pTechTree; }
 
     protected:
         virtual GameEntity* FetchEntity(TID p_id) = 0;
@@ -54,12 +54,15 @@ namespace IStrategizer
         virtual void OnEntityDestroy(Message* p_pMessage);
 
         ///> type=int
-        PlayerType m_id;
-        EntitiesMap m_entities;
+        PlayerType m_type;
+        ///> type=int
+        TID m_raceId;
+        ///> type=PlayerResources*
         PlayerResources *m_pResources;
+        ///> type=GameTechTree*
         GameTechTree *m_pTechTree;
-        GameRace* m_pRace;
 
+        EntitiesMap m_entities;
         MapArea m_colonyCenter;
     };
 }

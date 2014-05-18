@@ -1,16 +1,10 @@
 #ifndef GAMEENTITY_H
 #define GAMEENTITY_H
 
-#ifndef ENGINEDATA_H
 #include "EngineData.h"
-#endif
-#ifndef SHAREDRESOURCE_H
 #include "SharedResource.h"
-#endif
-
-#ifndef VECTOR2_H
 #include "Vector2.h"
-#endif
+#include "UserObject.h"
 
 class Action;
 
@@ -19,36 +13,41 @@ namespace IStrategizer
     enum EntityClassType;
     enum EntityObjectAttribute;
     enum PlayerType;
+    class RtsGame;
 
-    class GameEntity : public SharedResource
+    class GameEntity : public Serialization::UserObject, public SharedResource
     {
     public:
-        GameEntity(TID p_id) : m_id(p_id) {}
+        GameEntity(TID id) :
+            m_id(id)
+        {}
         virtual ~GameEntity() {}
+
+        // Game Properties
         TID Id() const { return m_id; }
-        EntityClassType Type() const { return m_type; }
-        virtual std::string ToString() const = 0;
+        EntityClassType Type() const { return (EntityClassType)Attr(EOATTR_Type); }
+        PlayerType GetPlayer() const { return (PlayerType)Attr(EOATTR_OwnerId); }
         virtual Vector2 GetPosition() const = 0;
-        virtual int Attr(EntityObjectAttribute p_attrId) const = 0;
-        virtual bool IsTraining(TID p_traineeId) const = 0;
-        virtual bool IsGatheringResource(ResourceType resourceType) const = 0;
-        virtual bool CanTrain(EntityClassType p_entityClassId) const = 0;
-        virtual bool Research(ResearchType p_researchId) = 0;
-        virtual bool Build(EntityClassType p_buildingClassId, Vector2 p_position) = 0;
-        virtual bool AttackGround(Vector2 p_position) = 0;
-        virtual bool Move(Vector2 p_position) = 0;
-        virtual bool AttackEntity(TID p_targetEntityObjectId) = 0;
-        virtual bool Train(EntityClassType p_entityClassId) = 0;
-        virtual bool GatherResourceEntity(TID p_resourceEntityObjectId) = 0;
+        virtual int Attr(EntityObjectAttribute attrId) const = 0;
+        virtual bool IsTraining(TID traineeId) const = 0;
         virtual bool CanGather(TID resourceObjectId) const = 0;
+        virtual std::string ToString() const = 0;
+
+        // Game Commands
+        virtual bool Research(ResearchType researchId) = 0;
+        virtual bool Build(EntityClassType buildingClassId, Vector2 position) = 0;
+        virtual bool AttackGround(Vector2 position) = 0;
+        virtual bool Move(Vector2 position) = 0;
+        virtual bool AttackEntity(TID targetEntityObjectId) = 0;
+        virtual bool Train(EntityClassType entityClassId) = 0;
+        virtual bool GatherResourceEntity(TID resourceEntityObjectId) = 0;
+
         bool Acquire() { return true; }
         bool Release() { return true; }
-        PlayerType GetPlayer() const { return m_ownerId; }
+        void SetOffline(RtsGame* pBelongingGame) {}
 
     protected:
         TID m_id;
-        EntityClassType m_type;
-        PlayerType m_ownerId;
     };
 }
 

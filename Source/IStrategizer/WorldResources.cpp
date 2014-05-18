@@ -21,8 +21,7 @@ bool WorldResources::Release()
 WorldResources WorldResources::FromEntity(int p_entityOrResearchType)
 {
     WorldResources worldResources;
-    PlayerType playerId = g_Game->Self()->Id();
-    g_Assist.GetPrerequisiteResources(p_entityOrResearchType, playerId, worldResources);
+    g_Assist.GetPrerequisiteResources(p_entityOrResearchType, PLAYER_Self, worldResources);
 
     return worldResources;
 }

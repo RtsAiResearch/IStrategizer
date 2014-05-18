@@ -26,10 +26,10 @@
 using namespace IStrategizer;
 using namespace std;
 
-GamePlayer::GamePlayer() :
+GamePlayer::GamePlayer(TID raceId) :
     m_pResources(nullptr),
     m_pTechTree(nullptr),
-    m_pRace(nullptr)
+    m_raceId(raceId)
 {
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
@@ -50,7 +50,6 @@ void GamePlayer::Finalize()
 
     Toolbox::MemoryClean(m_pResources);
     Toolbox::MemoryClean(m_pTechTree);
-    Toolbox::MemoryClean(m_pRace);
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::Entities(vector<TID>& entityIds)
@@ -121,13 +120,13 @@ void GamePlayer::OnEntityCreate(Message* pMsg)
 
     pCreateMsg = (EntityCreateMessage*)pMsg;
 
-    if (pCreateMsg->Data()->OwnerId == m_id)
+    if (pCreateMsg->Data()->OwnerId == m_type)
     {
         entityId = pCreateMsg->Data()->EntityId;
 
         if (m_entities.Contains(entityId))
         {
-            LogError("Entity %d already exist in Player %s units", entityId, Enums[m_id]);
+            LogError("Entity %d already exist in Player %s units", entityId, Enums[m_type]);
             return;
         }
 
@@ -137,7 +136,7 @@ void GamePlayer::OnEntityCreate(Message* pMsg)
         m_entities[entityId] = pEntity;
 
         LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
-            Enums[m_id], Enums[pEntity->Type()], pEntity->Id(), pEntity->Attr(EOATTR_PosX), pEntity->Attr(EOATTR_PosY));
+            Enums[m_type], Enums[pEntity->Type()], pEntity->Id(), pEntity->Attr(EOATTR_Left), pEntity->Attr(EOATTR_Top));
 
         g_IMSysMgr.RegisterGameObj(entityId, pCreateMsg->Data()->OwnerId);
     }
@@ -152,7 +151,7 @@ void GamePlayer::OnEntityDestroy(Message* pMsg)
 
     pDestroyMsg = (EntityDestroyMessage*)pMsg;
 
-    if (pDestroyMsg->Data()->OwnerId == m_id)
+    if (pDestroyMsg->Data()->OwnerId == m_type)
     {
         entityId = pDestroyMsg->Data()->EntityId;
         _ASSERTE(m_entities.Contains(entityId));
@@ -164,7 +163,7 @@ void GamePlayer::OnEntityDestroy(Message* pMsg)
         g_IMSysMgr.UnregisterGameObj(entityId);
 
         LogInfo("[%s] Unit '%s':%d destroyed",
-            Enums[m_id], Enums[pEntity->Type()], pEntity->Id());
+            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
 
         Toolbox::MemoryClean(pEntity);
     }
@@ -181,7 +180,7 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
     entityId = pRenMsg->Data()->EntityId;
 
     // I am the unit new owner
-    if (pRenMsg->Data()->OwnerId == m_id)
+    if (pRenMsg->Data()->OwnerId == m_type)
     {
         _ASSERTE(!m_entities.Contains(entityId));
 
@@ -191,12 +190,12 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
         m_entities[entityId] = pEntity;
 
         LogInfo("[%s] Unit '%s':%d renegaded TO me",
-            Enums[m_id], Enums[pEntity->Type()], pEntity->Id());
+            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
 
         g_IMSysMgr.RegisterGameObj(entityId, pRenMsg->Data()->OwnerId);
     }
     // Used to be my unit, but it is not anymore
-    else if (pRenMsg->Data()->OwnerId != m_id && m_entities.Contains(entityId))
+    else if (pRenMsg->Data()->OwnerId != m_type && m_entities.Contains(entityId))
     {
         pEntity = GetEntity(entityId);
         _ASSERTE(pEntity);
@@ -206,7 +205,7 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
         g_IMSysMgr.UnregisterGameObj(entityId);
 
         LogInfo("[%s] Unit '%s':%d renegaded from me",
-            Enums[m_id], Enums[pEntity->Type()], pEntity->Id());
+            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
 
         Toolbox::MemoryClean(pEntity);
     }
@@ -242,10 +241,18 @@ MapArea GamePlayer::GetColonyMapArea()
         _ASSERTE(pGameType);
 
         m_colonyCenter = MapArea(
-            Vector2(pPlayerBase->Attr(EOATTR_PosX), pPlayerBase->Attr(EOATTR_PosY)),
+            Vector2(pPlayerBase->Attr(EOATTR_Left), pPlayerBase->Attr(EOATTR_Top)),
             pGameType->Attr(ECATTR_Width),
             pGameType->Attr(ECATTR_Height));
     }
 
     return m_colonyCenter;
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::SetOffline(RtsGame* pBelongingGame)
+{
+    g_MessagePump.UnregisterForAllMessages(this);
+
+    m_pResources->SetOffline(pBelongingGame);
+    m_pTechTree->SetOffline(pBelongingGame);
 }

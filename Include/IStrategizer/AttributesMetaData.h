@@ -14,23 +14,33 @@ namespace IStrategizer
         EOATTR_State = 0x30000,
         EOATTR_START = 0x30000,
         EOATTR_Health,
-        EOATTR_PosX,
-        EOATTR_PosY,
+        EOATTR_Left,
+        EOATTR_Top,
         EOATTR_OwnerId,
         EOATTR_PosCenterX,
         EOATTR_PosCenterY,
         EOATTR_IsMoving,
+        EOATTR_Right,
+        EOATTR_Bottom,
+        EOATTR_Type,
+        EOATTR_IsGatheringPrimaryResource,
+        EOATTR_IsGatheringSecondaryResource,
         EOATTR_END
     };
 #define Define_EntityObjectAttribute \
     Enums[EOATTR_State] = "State"; \
     Enums[EOATTR_Health] = "Health"; \
-    Enums[EOATTR_PosX] = "X Position"; \
-    Enums[EOATTR_PosY] = "Y Position"; \
+    Enums[EOATTR_Left] = "Left X Position"; \
+    Enums[EOATTR_Top] = "Top Y Position"; \
     Enums[EOATTR_OwnerId] = "Owner"; \
     Enums[EOATTR_PosCenterX] = "Center X Position"; \
     Enums[EOATTR_PosCenterY] = "Center Y Position"; \
-    Enums[EOATTR_IsMoving] = "Is Moving";
+    Enums[EOATTR_IsMoving] = "Is Moving"; \
+    Enums[EOATTR_Right] = "Right X Position"; \
+    Enums[EOATTR_Bottom] = "Bottom Y Position"; \
+    Enums[EOATTR_Type] = "Type"; \
+    Enums[EOATTR_IsGatheringPrimaryResource] = "Is Gathering Primary Rresource"; \
+    Enums[EOATTR_IsGatheringSecondaryResource] = "Is Gathering Secondary Resource"; \
     //---------------------------------------------------------------------------
 #define Prefix_EntityClassAttribute ECATTR
     enum EntityClassAttribute

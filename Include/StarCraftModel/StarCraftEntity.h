@@ -15,35 +15,43 @@ namespace IStrategizer
     enum ObjectStateType;
     enum EntityClassType;
     enum PlayerType;
-}
+    class RtsGame;
 
-namespace IStrategizer
-{
-    class StarCraftEntity: public IStrategizer::GameEntity
+    class StarCraftEntity: public GameEntity
     {
+        OBJECT_SERIALIZABLE(StarCraftEntity);
+        OBJECT_MEMBERS_P(GameEntity, 2, &m_isOnline, &m_cachedAttr);
+
     public:
+        StarCraftEntity() : GameEntity(INVALID_TID), m_pUnit(nullptr) {}
         StarCraftEntity(BWAPI::Unit p_unit);
-        std::string ToString() const;
+
+        // Game Properties
         IStrategizer::Vector2 GetPosition() const;
-        int Attr(IStrategizer::EntityObjectAttribute p_attrId) const;
-        bool IsTraining(IStrategizer::TID p_traineeId) const;
-        bool IsNull();
-        bool IsGatheringResource(IStrategizer::ResourceType resourceType) const;
-        bool CanTrain(IStrategizer::EntityClassType p_entityClassId) const;
-        bool CanGather(IStrategizer::TID resourceObjectId) const;
+        int Attr(EntityObjectAttribute p_attrId) const;
+        bool IsTraining(TID p_traineeId) const;
+        bool IsNull() { return m_isOnline && m_pUnit == nullptr; }
+        bool CanGather(TID resourceObjectId) const;
+        std::string ToString() const;
+
+        // Game Commands
         bool Research(IStrategizer::ResearchType p_researchId);
-        bool Build(IStrategizer::EntityClassType p_buildingClassId, IStrategizer::Vector2 p_position);
-        bool AttackGround(IStrategizer::Vector2 p_position);
-        bool AttackEntity(IStrategizer::TID p_targetEntityObjectId);
-        bool Train(IStrategizer::EntityClassType p_entityClassId);
-        bool Move(IStrategizer::Vector2 p_position);
-		bool GatherResourceEntity(IStrategizer::TID p_resourceEntityObjectId);
+        bool Build(EntityClassType p_buildingClassId, Vector2 p_position);
+        bool AttackGround(Vector2 p_position);
+        bool AttackEntity(TID p_targetEntityObjectId);
+        bool Train(EntityClassType p_entityClassId);
+        bool Move(Vector2 p_position);
+		bool GatherResourceEntity(TID p_resourceEntityObjectId);
+
+        void SetOffline(RtsGame* pBelongingGame);
 
     protected:
-        IStrategizer::ObjectStateType FetchState() const;
-
-    private:
-        BWAPI::Unit m_unit;
+        ObjectStateType FetchState() const;
+        ///> type=int
+        bool m_isOnline;
+        ///> type=map(pair(int, int))
+        Serialization::SMap<EntityObjectAttribute, int> m_cachedAttr;
+        BWAPI::Unit m_pUnit;
     };
 }
 

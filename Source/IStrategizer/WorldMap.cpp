@@ -17,7 +17,7 @@ using namespace std;
 
 struct Record
 {
-   Vector2 gridPosition;
+    Vector2 gridPosition;
     int distance;
     Record(Vector2 p_gridPosition, int p_Distance): gridPosition(p_gridPosition), distance(p_Distance) { };
 };
@@ -30,7 +30,9 @@ struct RecordComparator
     }
 };
 
-WorldMap::WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight)
+WorldMap::WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight) :
+    m_isOnline(true),
+    m_pGame(g_Game)
 {
     m_cellSide = p_cellWidth;
     m_cellSide = p_cellHeight;
@@ -56,15 +58,14 @@ void WorldMap::Init()
 void WorldMap::Update()
 {
     vector<PlayerType> players;
-    vector<TID>         currPlayerEntites;
+    vector<TID> currPlayerEntites;
     GameEntity *currentEntity;
     unsigned cellX, cellY;
     GroundControlIM* IM =  dynamic_cast<GroundControlIM*>(g_IMSysMgr.GetIM(IM_GroundControl));
 
     if (!m_initialized)
-    {
         Init();
-    }
+
     for (unsigned i = 0; i < m_gridHeight; i++)
     {
         for (unsigned j = 0; j < m_gridWidth; j++)
@@ -75,7 +76,7 @@ void WorldMap::Update()
         }
     }   
 
-    g_Game->Players(players);
+    m_pGame->Players(players);
 
     for (size_t i = 0 ; i < players.size(); i++)
     {
@@ -84,14 +85,14 @@ void WorldMap::Update()
             continue;
 
         currPlayerEntites.clear();
-        g_Game->GetPlayer(players[i])->Entities(currPlayerEntites); 
-        
+        m_pGame->GetPlayer(players[i])->Entities(currPlayerEntites); 
+
         for (size_t j = 0 ; j < currPlayerEntites.size(); j++)
         {
-            currentEntity = g_Game->GetPlayer(players[i])->GetEntity(currPlayerEntites[j]);
+            currentEntity = m_pGame->GetPlayer(players[i])->GetEntity(currPlayerEntites[j]);
 
-            cellX = currentEntity->Attr(EOATTR_PosX) / m_cellSide;
-            cellY = currentEntity->Attr(EOATTR_PosY) / m_cellSide;
+            cellX = currentEntity->Attr(EOATTR_Left) / m_cellSide;
+            cellY = currentEntity->Attr(EOATTR_Top) / m_cellSide;
 
             m_cellFeatureMatrix[cellY][cellX].AddEntity(currentEntity, players[i] == PLAYER_Self);
         }
@@ -176,14 +177,14 @@ Vector2 WorldMap::FromWorldToGrid(const Vector2 &p_worldPosition) const
 //----------------------------------------------------------------------------------------------
 vector<Vector2> WorldMap::GetNearestEnemyBorders(int p_numberOfBorders)
 {
- std::priority_queue<Record, std::vector<Record>, RecordComparator> minDistanceQueue;
+    std::priority_queue<Record, std::vector<Record>, RecordComparator> minDistanceQueue;
     for (unsigned i = 0 ; i < m_gridHeight ; i++)
     {
         for (unsigned j = 0 ; j < m_gridWidth ; j++)
         {
             if ( m_cellFeatureMatrix[i][j].m_influnce == 0)
             {
-              minDistanceQueue.push(Record(Vector2(j,i),m_cellFeatureMatrix[i][j].m_distanceFromEnemyBase));
+                minDistanceQueue.push(Record(Vector2(j,i),m_cellFeatureMatrix[i][j].m_distanceFromEnemyBase));
             }
         } 
     }
@@ -196,4 +197,10 @@ vector<Vector2> WorldMap::GetNearestEnemyBorders(int p_numberOfBorders)
         minDistanceQueue.pop();
     }
     return result;
+}
+
+void WorldMap::SetOffline(RtsGame* pBelongingGame)
+{
+    m_isOnline = false;
+    m_pGame = pBelongingGame;
 }

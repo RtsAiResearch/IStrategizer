@@ -56,8 +56,8 @@ void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 
     pGameObj = p_pCaller->GetObj(p_pObjEntry);
     _ASSERTE(pGameObj);
-    currentPosition.X = pGameObj->Attr(EOATTR_PosX);
-    currentPosition.Y = pGameObj->Attr(EOATTR_PosY);
+    currentPosition.X = pGameObj->Attr(EOATTR_Left);
+    currentPosition.Y = pGameObj->Attr(EOATTR_Top);
 
     // Optimization: we skip neutral units because they don't have influence
     if (p_pObjEntry->OwnerId == PLAYER_Neutral)

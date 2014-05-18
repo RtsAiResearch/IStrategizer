@@ -1,20 +1,36 @@
+///> [Serializable]
+
 #ifndef GAMETECHTREE_H
 #define GAMETECHTREE_H
 
 #include <vector>
 #include <map>
+#include "UserObject.h"
 
 namespace IStrategizer
 {
     enum ResearchType;
+    class RtsGame;
 
-    class GameTechTree
+    ///> class=GameTechTree
+    class GameTechTree : public Serialization::UserObject
     {
-    public:
-        virtual ~GameTechTree() {}
+        OBJECT_MEMBERS(1, &m_isOnline);
 
-        virtual bool ResearchDone(ResearchType p_researchId) const = 0;
-        virtual bool ResearchAvailable(ResearchType p_researchId) const = 0;
+    public:
+        GameTechTree() :
+            m_isOnline(true)
+        {}
+
+        virtual ~GameTechTree() {}
+        virtual bool ResearchDone(ResearchType researchId) const = 0;
+        virtual bool ResearchAvailable(ResearchType researchId) const = 0;
+        virtual void SetOffline(RtsGame* pBelongingGame) = 0;
+        bool IsOnline() const { return m_isOnline; }
+
+    protected:
+        ///> type=bool
+        bool m_isOnline;
     };
 }
 
