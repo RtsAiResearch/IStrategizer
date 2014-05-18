@@ -135,11 +135,14 @@ bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left
 CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx* p_rawCase)
 {
     OlcbpPlan* m_olcpbPlan = new OlcbpPlan();
+    OlcbpPlan* m_tempOlcpbPlan = new OlcbpPlan();
 
     for (size_t i = 0; i < p_rawCase->rawPlan.sPlan.size(); ++i)
     {
         PlanStepEx* pClone = (PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone();
+        PlanStepEx* pTempClone = (PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone();
         m_olcpbPlan->AddNode(pClone, pClone->Id());
+        m_tempOlcpbPlan->AddNode(pTempClone, pClone->Id());
     }
 
     for (int i : m_olcpbPlan->GetNodes())
@@ -148,19 +151,10 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
         {
             if(i != j)
             {
-                PlanStepEx* postConditionsNode = (PlanStepEx*)m_olcpbPlan->GetNode(i);
-                _ASSERTE(postConditionsNode);
-                CompositeExpression* postConditions = m_olcpbPlan->GetNode(i)->PostCondition();
-                _ASSERTE(postConditions);
-                
-                PlanStepEx* preConditionsNode = (PlanStepEx*)m_olcpbPlan->GetNode(j);
-                _ASSERTE(preConditionsNode);
-                CompositeExpression* preConditions = ((Action*)m_olcpbPlan->GetNode(j))->PreCondition();
-                _ASSERTE(preConditions);
-
                 LogInfo("Checking dependency between node %s and %s", m_olcpbPlan->GetNode(i)->ToString(true).c_str(), m_olcpbPlan->GetNode(j)->ToString(true).c_str());
-                if(Depends(m_olcpbPlan->GetNode(i)->PostCondition(), ((Action*)m_olcpbPlan->GetNode(j))->PreCondition()) &&
-                   !m_olcpbPlan->IsAdjacent(j, i))
+
+                if(!m_olcpbPlan->IsAdjacent(j, i) &&
+                    Depends(m_tempOlcpbPlan->GetNode(i)->PostCondition(), ((Action*)m_tempOlcpbPlan->GetNode(j))->PreCondition()))
                 {
                     LogInfo("Adding edge from node %s to node %s, as dependency matches", m_olcpbPlan->GetNode(i)->ToString(true).c_str(), m_olcpbPlan->GetNode(j)->ToString(true).c_str());
                     m_olcpbPlan->AddEdge(i, j);
@@ -182,8 +176,8 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidatePar
 
     for (auto m_candidateCondition : m_candidateConditions)
     {
-        ConditionEx* consumer = (ConditionEx*)m_candidateCondition.first;
-        ConditionEx* source = (ConditionEx*)m_candidateCondition.second;
+        ConditionEx* consumer = (ConditionEx*)m_candidateCondition.second;
+        ConditionEx* source = (ConditionEx*)m_candidateCondition.first;
         LogInfo("Found candidate matched condition %s", Enums[source->Type()]);
         bool preconditionHasAmount = consumer->ContainsParameter(PARAM_Amount);
         bool postconditionHasAmount = source->ContainsParameter(PARAM_Amount);
@@ -192,12 +186,11 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidatePar
         {
             int requiredAmount = consumer->Parameter(PARAM_Amount);
             int availableAmount = source->Parameter(PARAM_Amount);
-            int amountToConsume = min(requiredAmount, availableAmount);
             LogInfo("The consumer amount is %d and the source amount is %d", requiredAmount, availableAmount);
             
-            if (requiredAmount != 0 && source->Consume(amountToConsume))
+            if (requiredAmount != 0 && source->Consume(requiredAmount))
             {
-                _ASSERTE(consumer->Consume(amountToConsume));
+                _ASSERTE(consumer->Consume(requiredAmount));
                 return true;
             }
         }
@@ -233,40 +226,35 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         }
     }
 
-    if (m_necessarySteps.size() > 0)
+    _ASSERTE(m_necessarySteps.size() > 0);
+
+    while (m_necessarySteps.size())
     {
-        while (m_necessarySteps.size())
-        {
-            OlcbpPlan::NodeID current = *m_necessarySteps.begin();
-            m_necessarySteps.erase(current);
-            m_finalSteps.insert(current);
+        OlcbpPlan::NodeID current = *m_necessarySteps.begin();
+        m_necessarySteps.erase(current);
+        m_finalSteps.insert(current);
 
-            for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
+        for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
+        {
+            if(p_case->plan->IsAdjacent(*it, current))
             {
-                if(p_case->plan->IsAdjacent(*it, current))
-                {
-                    m_necessarySteps.insert(*it);
-                    m_unprocessedSteps.erase(it++);
-                }
-                else
-                {
-                    ++it;
-                }
+                m_necessarySteps.insert(*it);
+                m_unprocessedSteps.erase(it++);
             }
-        }
-
-        for (OlcbpPlan::NodeID i : p_case->plan->GetNodes())
-        {
-            if(m_finalSteps.find(i) == m_finalSteps.end())
+            else
             {
-                p_case->plan->RemoveNode(i);
+                ++it;
             }
         }
     }
-    else
+
+    // Removing unnecessary steps
+    for (OlcbpPlan::NodeID i : p_case->plan->GetNodes())
     {
-        LogInfo("Didn't find any necessary steps for the goal");
-        p_case->plan->Clear();
+        if(m_finalSteps.find(i) == m_finalSteps.end())
+        {
+            p_case->plan->RemoveNode(i);
+        }
     }
 }
 //--------------------------------------------------------------------------------------------------------------

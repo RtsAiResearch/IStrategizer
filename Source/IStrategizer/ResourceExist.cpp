@@ -53,7 +53,12 @@ bool ResourceExist::Consume(int p_amount)
     else
     {
         _ASSERTE(p_amount > 0 && _conditionParameters[PARAM_Amount] > 0);
-        _conditionParameters[PARAM_Amount] -= p_amount;
+        // Consider consuming supply resources only as for primary and secondary
+        // we don't use exact numbers.
+        if (_conditionParameters[PARAM_ResourceId] == RESOURCE_Supply)
+        {
+            _conditionParameters[PARAM_Amount] -= p_amount;
+        }
 
         return true;
     }
