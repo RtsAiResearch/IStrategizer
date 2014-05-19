@@ -50,9 +50,9 @@ void GatherResourceAction::InitializePreConditions()
 
     m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1));
     m_terms.push_back(new EntityClassExist(PLAYER_Self, baseType, 1));
-    if (_params[PARAM_ResourceId] == RESOURCE_Supply)
+    if (_params[PARAM_ResourceId] == RESOURCE_Secondary)
     {
-        m_terms.push_back(new EntityClassExist(PLAYER_Self, g_Game->Self()->Race()->GetResourceSource(RESOURCE_Supply), 1, true));
+        m_terms.push_back(new EntityClassExist(PLAYER_Self, g_Game->Self()->Race()->GetResourceSource(RESOURCE_Secondary), 1, true));
     }
     _preCondition = new And(m_terms);
 }
@@ -88,7 +88,18 @@ bool GatherResourceAction::AliveConditionsSatisfied(RtsGame& game)
         if(gathererState == OBJSTATE_Gathering)
         {
             // 3. There is still remaining resource to be gathered
-            resourceEntityExist = g_Assist.DoesEntityObjectExist(m_resourceId, PLAYER_Self);
+            if (_params[PARAM_ResourceId] == RESOURCE_Primary)
+            {
+                resourceEntityExist = g_Assist.DoesEntityObjectExist(m_resourceId, PLAYER_Neutral);
+            }
+            else if (_params[PARAM_ResourceId] == RESOURCE_Secondary)
+            {
+                resourceEntityExist = g_Assist.DoesEntityObjectExist(m_resourceId, PLAYER_Self);
+            }
+            else
+            {
+                _ASSERTE(!"Invalid resource id");
+            }
 
             if (!resourceEntityExist)
                 LogInfo("%s resource[%d] does not exist", ToString().c_str(), m_gathererId);

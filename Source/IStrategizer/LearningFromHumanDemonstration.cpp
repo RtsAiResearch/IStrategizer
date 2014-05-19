@@ -63,7 +63,7 @@ void LearningFromHumanDemonstration::Learn()
         }
     }
 
-    HierarchicalComposition(m_cookedPlans);
+    // HierarchicalComposition(m_cookedPlans);
     RetainLearntCases(m_cookedPlans);
 }
 //------------------------------------------------------------------------------------------------
