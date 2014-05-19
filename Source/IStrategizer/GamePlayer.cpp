@@ -29,17 +29,26 @@ using namespace std;
 GamePlayer::GamePlayer(TID raceId) :
     m_pResources(nullptr),
     m_pTechTree(nullptr),
-    m_raceId(raceId)
+    m_raceId(raceId),
+    m_isOnline(true)
 {
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+
     m_colonyCenter = MapArea::Null();
 }
 //////////////////////////////////////////////////////////////////////////
 GamePlayer::~GamePlayer()
 {
     Finalize();
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::Init()
+{
+    if (m_isOnline)
+    {
+        g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
+        g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+        g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::Finalize()
@@ -255,4 +264,6 @@ void GamePlayer::SetOffline(RtsGame* pBelongingGame)
 
     m_pResources->SetOffline(pBelongingGame);
     m_pTechTree->SetOffline(pBelongingGame);
+
+    m_isOnline = false;
 }

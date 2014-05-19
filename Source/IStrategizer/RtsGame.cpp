@@ -45,8 +45,6 @@ void RtsGame::Init()
     // deserialized and no need to fetch it from somewhere
     if (m_isOnline)
     {
-        LogInfo("Initializing Online RTS Game model");
-
         _ASSERTE(!m_isInitialized);
         InitPlayers();
         InitMap();
@@ -54,8 +52,9 @@ void RtsGame::Init()
     }
     else
     {
+        _ASSERTE(!m_isInitialized);
+        InitMap();
         m_isInitialized = true;
-        LogInfo("RTS Game model is in Offline mode, should be already initialized");
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -114,6 +113,8 @@ void RtsGame::SetOffline()
         pPlayer.second->SetOffline(this);
 
     m_pMap->SetOffline(this);
+
+    m_isOnline = false;
 }
 //----------------------------------------------------------------------------------------------
 RtsGame* RtsGame::Snapshot() const

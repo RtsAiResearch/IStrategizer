@@ -8,8 +8,8 @@
 
 #include "BWAPI.h"
 
-#define TilePositionFromUnitPosition(UnitPos) (UnitPos / 32)
-#define UnitPositionFromTilePosition(TilePos) (TilePos * 32)
+#define TilePositionFromUnitPosition(UnitPos) ((UnitPos) / 32)
+#define UnitPositionFromTilePosition(TilePos) ((TilePos) * 32)
 
 namespace IStrategizer
 {

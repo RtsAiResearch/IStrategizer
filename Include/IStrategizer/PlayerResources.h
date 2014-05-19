@@ -14,7 +14,7 @@ namespace IStrategizer
     ///> class=PlayerResources
     class PlayerResources : public Serialization::UserObject
     {
-        OBJECT_MEMBERS(7, m_lockedPrimary, &m_lockedSecondary, &m_lockedSupply,
+        OBJECT_MEMBERS(7, &m_lockedPrimary, &m_lockedSecondary, &m_lockedSupply,
             &m_isOnline, &m_cachedPrimary, &m_cachedSecondary, &m_cachedSupply);
 
     public:

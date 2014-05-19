@@ -3,24 +3,32 @@
 #include <algorithm>
 #include "Logger.h"
 #include <Windows.h>
+#include <Rpc.h>
+#pragma comment(lib, "Rpcrt4.lib")
 
 using namespace std;
 using namespace IStrategizer;
 
 unsigned PlanStepEx::s_lastPlanstepID = 0;
 
-//////////////////////////////////////////////////////////////////////////
-void PlanStepEx::InitializeAddressesAux()
+unsigned GenerateID()
 {
-    AddMemberAddress(1, &_params);
+    UUID uuid;
+    ::ZeroMemory(&uuid, sizeof(UUID));
+
+    // Create uuid or load from a string by UuidFromString() function
+    ::UuidCreate(&uuid);
+
+    return uuid.Data1;
 }
+
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) 
     : _stepTypeId(p_stepTypeId),
     _state(p_state), 
     _postCondition(nullptr), 
     _firstUpdate(true),
-    _id(++s_lastPlanstepID)
+    _id(GenerateID())
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
@@ -32,7 +40,7 @@ PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanS
     _params(p_parameters),
     _postCondition(nullptr),
     _firstUpdate(true),
-    _id(++s_lastPlanstepID)
+    _id(GenerateID())
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
@@ -128,12 +136,16 @@ std::string PlanStepEx::ToString(bool minimal) const
     string stepDescription;
     // INT_MAX is 10 digits, reserve array of 16 for performance
     char paramRealVal[16];
+    char strID[32];
 
     const char* stepName = Enums[_stepTypeId];
     unsigned    paramIdx = 0;
+
+    sprintf_s(strID, "%x", _id);
+
     stepDescription += stepName;
     stepDescription += "[";
-    stepDescription += to_string((_ULonglong)_id);
+    stepDescription += strID;
     stepDescription += "]";
 
     if (!minimal)

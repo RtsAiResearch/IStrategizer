@@ -36,14 +36,14 @@ namespace IStrategizer
 
         virtual ~IDigraph() {};
 
-        //************************************
-        // IStrategizer::IDigraph<TNodeValue>::AddNode
-        // Description:	Add a new node to the Digraph without connecting it
-        // Parameter: 	NodeValue val: A data value that is associated with the added node
-        // Returns:   	NodeID:  A unique ID used to reference the added node
-        // in further Digraph methods
-        //************************************
-        virtual NodeID AddNode(const _In_ NodeValue& val) = 0;
+        ////************************************
+        //// IStrategizer::IDigraph<TNodeValue>::AddNode
+        //// Description:	Add a new node to the Digraph without connecting it
+        //// Parameter: 	NodeValue val: A data value that is associated with the added node
+        //// Returns:   	NodeID:  A unique ID used to reference the added node
+        //// in further Digraph methods
+        ////************************************
+        //virtual NodeID AddNode(const _In_ NodeValue& val) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::AddNode
@@ -136,10 +136,11 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
         // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
-        // Parameter: 	NodeList p_subGraphIndexes: The indexes describing the sub-part to replace.
-        // Parameter:   TNodeValue p_substitute: The TNodeValue to replace the sub-part with.
+        // Parameter: 	NodeList subGraphIds: The ids describing the sub-part to replace.
+        // Parameter:   TNodeValue substitute: The TNodeValue to replace the sub-part with.
+        // Parameter:   NodeID substituteId: The id to set for the newly added substitute 
         //************************************      
-        virtual void SubGraphSubstitution(NodeList p_subGraphIndexes, TNodeValue p_substitute) = 0;
+        virtual void SubGraphSubstitution(_In_ NodeList subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetOrphanNodes

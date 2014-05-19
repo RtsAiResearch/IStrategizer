@@ -66,6 +66,7 @@ void StarCraftGame::InitPlayers()
     {
         typeId = g_Database.PlayerMapping.GetByFirst(gamePlayerIds[i]);
         m_players[typeId] = FetchPlayer(typeId);
+        m_players[typeId]->Init();
     }
 }
 //----------------------------------------------------------------------------------------------

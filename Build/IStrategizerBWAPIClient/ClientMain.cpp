@@ -25,6 +25,7 @@
 #include "GraphScene.h"
 #include "PlanGraphView.h"
 #include "ObjectSerializer.h"
+#include "WorldMap.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
@@ -404,6 +405,8 @@ void ClientMain::OnClientUpdate()
 
             StarCraftGame* pCopy = new StarCraftGame();
             g_ObjectSerializer.Deserialize(pCopy, "rts.bin");
+            pCopy->Init();
+            pCopy->Map()->Update();
             m_snapshots[Broodwar->getFrameCount()].second = pCopy;
         }
         
