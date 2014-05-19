@@ -167,7 +167,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassNearArea.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ExecutionHistory.h" />
     <ClInclude Include="..\..\Include\IStrategizer\ExecutionTrial.h" />
-    <ClInclude Include="..\..\Include\IStrategizer\GameObject.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GameRace.h" />
     <ClInclude Include="..\..\Include\IStrategizer\IDigraph.h" />
     <ClInclude Include="..\..\Include\IStrategizer\GatherResourceAction.h" />

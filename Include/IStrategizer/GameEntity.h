@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef GAMEENTITY_H
 #define GAMEENTITY_H
 
@@ -15,8 +16,11 @@ namespace IStrategizer
     enum PlayerType;
     class RtsGame;
 
+    ///> class=GameEntity
     class GameEntity : public Serialization::UserObject, public SharedResource
     {
+        OBJECT_MEMBERS(1, &m_id);
+
     public:
         GameEntity(TID id) :
             m_id(id)
@@ -42,11 +46,12 @@ namespace IStrategizer
         virtual bool Train(EntityClassType entityClassId) = 0;
         virtual bool GatherResourceEntity(TID resourceEntityObjectId) = 0;
 
+        virtual void SetOffline(RtsGame* pBelongingGame) = 0;
         bool Acquire() { return true; }
         bool Release() { return true; }
-        void SetOffline(RtsGame* pBelongingGame) {}
 
     protected:
+        ///> type=int
         TID m_id;
     };
 }

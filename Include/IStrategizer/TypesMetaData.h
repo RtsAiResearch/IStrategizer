@@ -174,9 +174,9 @@ namespace IStrategizer
         PARAM_TrainerClassId,
         PARAM_WorkerObjectId,
         PARAM_BuildingObjectId,
-        PARAM_NumberOfPrimaryResources,
         PARAM_ObjectStateType,
         PARAM_DeployType,
+        PARAM_NumberOfPrimaryResources,
         PARAM_REALVALSTART = PARAM_NumberOfPrimaryResources,
         PARAM_NumberOfSecondaryResources,
         PARAM_NumberOfSupplyResources,
@@ -239,6 +239,7 @@ namespace IStrategizer
     Enums[PARAM_DistanceToBase] = "Distance To Base"; \
     Enums[PARAM_Influnce] = "Influence"; \
     Enums[PARAM_ObjectStateType] = "Object State Type"; \
+    Enums[PARAM_DeployType] = "Deploy Type";
     //---------------------------------------------------------------------------
 #define Prefix_ExecutionStateType ESTATE
     enum ExecutionStateType

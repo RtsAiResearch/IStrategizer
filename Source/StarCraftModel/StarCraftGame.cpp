@@ -45,7 +45,7 @@ DECL_SERIALIZABLE(StarCraftGame);
 void StarCraftGame::InitMap()
 {
     // Set the world map grid cell size to be a square of size 8 build tiles
-    m_pMap = new StarCraftMap(TILE_SIZE * 8);
+    m_pMap = new StarCraftMap(this, TILE_SIZE * 8);
     m_pMap->Init();
 }
 //----------------------------------------------------------------------------------------------
@@ -66,6 +66,7 @@ void StarCraftGame::InitPlayers()
     {
         typeId = g_Database.PlayerMapping.GetByFirst(gamePlayerIds[i]);
         m_players[typeId] = FetchPlayer(typeId);
+        m_players[typeId]->Init();
     }
 }
 //----------------------------------------------------------------------------------------------

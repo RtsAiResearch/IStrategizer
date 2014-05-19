@@ -36,14 +36,14 @@ namespace IStrategizer
 
         virtual ~IDigraph() {};
 
-        //************************************
-        // IStrategizer::IDigraph<TNodeValue>::AddNode
-        // Description:	Add a new node to the Digraph without connecting it
-        // Parameter: 	NodeValue val: A data value that is associated with the added node
-        // Returns:   	NodeID:  A unique ID used to reference the added node
-        // in further Digraph methods
-        //************************************
-        virtual NodeID AddNode(const _In_ NodeValue& val) = 0;
+        ////************************************
+        //// IStrategizer::IDigraph<TNodeValue>::AddNode
+        //// Description:	Add a new node to the Digraph without connecting it
+        //// Parameter: 	NodeValue val: A data value that is associated with the added node
+        //// Returns:   	NodeID:  A unique ID used to reference the added node
+        //// in further Digraph methods
+        ////************************************
+        //virtual NodeID AddNode(const _In_ NodeValue& val) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::AddNode

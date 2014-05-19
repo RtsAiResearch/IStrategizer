@@ -127,6 +127,15 @@
     <Filter Include="Header Files\Utilities\Data Structures\Digraph">
       <UniqueIdentifier>{d70d2f0c-630c-4ca5-9a41-e514558874c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\World Model\Realtime">
+      <UniqueIdentifier>{d83bd7b3-a5c8-41e4-80b7-1cc81094c8f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\World Model\Static">
+      <UniqueIdentifier>{8714c723-99c7-4456-8517-b6a8ef9f1932}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\World Model\Realtime\Map">
+      <UniqueIdentifier>{88df2454-dc24-4a9a-9d4f-c3e6b84ccf1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp">
@@ -512,49 +521,10 @@
     <ClInclude Include="..\..\Include\IStrategizer\TypesMetaData.h">
       <Filter>Header Files\EngineData\Metadata</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\BuildingDescription.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\CellFeature.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\ForceDescription.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameEntity.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GamePlayer.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameResearch.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameTechTree.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameType.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\MapArea.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\PlayerResources.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\ResourceDescription.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\RtsGame.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\SharedResource.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldClock.h">
-      <Filter>Header Files\World Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\WorldMap.h">
       <Filter>Header Files\World Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\WorldResources.h">
@@ -623,11 +593,47 @@
     <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h">
       <Filter>Header Files\CaseBase\Goal</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameRace.h">
-      <Filter>Header Files\World Model</Filter>
+    <ClInclude Include="..\..\Include\IStrategizer\GameEntity.h">
+      <Filter>Header Files\World Model\Realtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\GameObject.h">
-      <Filter>Header Files\World Model</Filter>
+    <ClInclude Include="..\..\Include\IStrategizer\GamePlayer.h">
+      <Filter>Header Files\World Model\Realtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GameType.h">
+      <Filter>Header Files\World Model\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GameRace.h">
+      <Filter>Header Files\World Model\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GameResearch.h">
+      <Filter>Header Files\World Model\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\GameTechTree.h">
+      <Filter>Header Files\World Model\Realtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\PlayerResources.h">
+      <Filter>Header Files\World Model\Realtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\RtsGame.h">
+      <Filter>Header Files\World Model\Realtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\ResourceDescription.h">
+      <Filter>Header Files\World Model\Realtime\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\BuildingDescription.h">
+      <Filter>Header Files\World Model\Realtime\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\WorldMap.h">
+      <Filter>Header Files\World Model\Realtime\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\ForceDescription.h">
+      <Filter>Header Files\World Model\Realtime\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\CellFeature.h">
+      <Filter>Header Files\World Model\Realtime\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\MapArea.h">
+      <Filter>Header Files\World Model\Realtime\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

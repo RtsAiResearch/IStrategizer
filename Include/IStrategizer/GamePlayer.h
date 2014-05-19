@@ -29,7 +29,7 @@ namespace IStrategizer
     ///> class=GamePlayer
     class GamePlayer : public Serialization::UserObject, public MessagePumpObserver
     {
-        OBJECT_MEMBERS(4, &m_type, &m_raceId, &m_pResources, &m_pTechTree);
+        OBJECT_MEMBERS(6, &m_isOnline, &m_type, &m_raceId, &m_pResources, &m_pTechTree, &m_entities);
 
     public:
         GamePlayer(TID raceId);
@@ -42,6 +42,7 @@ namespace IStrategizer
         virtual void SetOffline(RtsGame* pBelongingGame) = 0;
         virtual const GameRace* Race() const = 0;
         void NotifyMessegeSent(Message* p_pMessage);
+        void Init();
 
         PlayerResources* Resources() { _ASSERTE(m_pResources != nullptr); return m_pResources;}
         GameTechTree* TechTree() const { _ASSERTE(m_pTechTree != nullptr); return m_pTechTree; }
@@ -53,6 +54,8 @@ namespace IStrategizer
         virtual void OnEntityCreate(Message* p_pMessage);
         virtual void OnEntityDestroy(Message* p_pMessage);
 
+        ///> type=bool
+        bool m_isOnline;
         ///> type=int
         PlayerType m_type;
         ///> type=int
@@ -61,8 +64,9 @@ namespace IStrategizer
         PlayerResources *m_pResources;
         ///> type=GameTechTree*
         GameTechTree *m_pTechTree;
-
+        ///> type=map(pair(int,GameEntity*))
         EntitiesMap m_entities;
+
         MapArea m_colonyCenter;
     };
 }

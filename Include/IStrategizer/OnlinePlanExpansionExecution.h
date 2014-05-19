@@ -50,10 +50,10 @@ namespace IStrategizer
                 IsOpen(false)
             { }
 
-            void DecWaitOnParentsCount() { LogInfo("Dec WaitOnParentsCount=%d for node[%d]", WaitOnParentsCount, ID); --WaitOnParentsCount; }
-            void IncWaitOnParentsCount() { LogInfo("Inc WaitOnParentsCount=%d for node[%d]", WaitOnParentsCount, ID); ++WaitOnParentsCount; }
+            void DecWaitOnParentsCount() { LogInfo("Dec WaitOnParentsCount=%d for node[%x]", WaitOnParentsCount, ID); --WaitOnParentsCount; }
+            void IncWaitOnParentsCount() { LogInfo("Inc WaitOnParentsCount=%d for node[%x]", WaitOnParentsCount, ID); ++WaitOnParentsCount; }
             void SetWaitOnParentsCount(unsigned val) { WaitOnParentsCount = val; }
-            void DecWaitOnChildrenCount() { LogInfo("Dec WaitOnChildrenCount=%d for node[%d]", WaitOnChildrenCount, ID); --WaitOnChildrenCount; }
+            void DecWaitOnChildrenCount() { LogInfo("Dec WaitOnChildrenCount=%d for node[%x]", WaitOnChildrenCount, ID); --WaitOnChildrenCount; }
             void SetWaitOnChildrenCount(unsigned val) { WaitOnChildrenCount = val; }
         };
 

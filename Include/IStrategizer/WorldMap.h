@@ -19,7 +19,7 @@ namespace IStrategizer
     class WorldMap
     {
     public:
-        WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight);
+        WorldMap(RtsGame* pGame, unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight);
         ~WorldMap();
 
         void Init();

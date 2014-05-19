@@ -54,17 +54,18 @@ private:
     void InitIdLookup();
     void NotifyMessegeSent(IStrategizer::Message* p_pMessage);
 
-    Ui::ClientMainClass ui;
-    IStrategizer::IStrategizerEx *m_pIStrategizer;
-    IStrategizer::RtsGame *m_pGameModel;
-    IMViewWidget *m_pBldngDataIMWdgt;
-    IMViewWidget *m_pGrndCtrlIMWdgt;
-    std::vector<IMViewWidget*> m_IMViews;
-    bool m_isLearning;
+    Ui::ClientMainClass                ui;
+    IStrategizer::IStrategizerEx    *m_pIStrategizer;
+    IStrategizer::RtsGame            *m_pGameModel;
+    IMViewWidget                    *m_pBldngDataIMWdgt;
+    IMViewWidget                    *m_pGrndCtrlIMWdgt;
+    std::vector<IMViewWidget*>        m_IMViews;
+    bool                            m_isLearning;
     IStrategizer::GameTraceCollector *m_pTraceCollector;
-    IStrategizer::CrossMap<unsigned, std::string> m_idLookup;
+    IStrategizer::CrossMap<unsigned, std::string>    m_idLookup;
     IStrategizer::PlanGraphView *m_pPlanGraphView;
     bool m_enemyPlayerUnitsCollected;
+    std::map<int, std::pair<IStrategizer::RtsGame*, IStrategizer::RtsGame*>> m_snapshots;
 };
 
 #endif // CLIENTMAIN_H

@@ -40,6 +40,7 @@ namespace IStrategizer
         DEFINE(StepLevelType);
         DEFINE(StrategyType);
         DEFINE(ExecutionStateType);
+        DEFINE(DeployType);
     };
     //---------------------------------------------------------------------------
     void InitAttributesMetaData()

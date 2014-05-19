@@ -30,9 +30,9 @@ struct RecordComparator
     }
 };
 
-WorldMap::WorldMap(unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight) :
+WorldMap::WorldMap(RtsGame* pGame, unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight) :
     m_isOnline(true),
-    m_pGame(g_Game)
+    m_pGame(pGame)
 {
     m_cellSide = p_cellWidth;
     m_cellSide = p_cellHeight;

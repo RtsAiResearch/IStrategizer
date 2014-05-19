@@ -26,12 +26,12 @@ namespace IStrategizer
     ///> class=RtsGame
     class RtsGame : public Serialization::UserObject
     {
-        OBJECT_MEMBERS(1, &m_players);
+        OBJECT_MEMBERS(2, &m_isOnline, &m_players);
 
     public:
         RtsGame() :
             m_pMap(nullptr),
-            m_initialized(false),
+            m_isInitialized(false),
             m_isOnline(true)
         {}
 
@@ -53,8 +53,7 @@ namespace IStrategizer
         GameRace* GetRace(TID raceID);
         GamePlayer* Self() { return GetPlayer(PLAYER_Self); }
         GamePlayer* Enemy() { return GetPlayer(PLAYER_Enemy); }
-        WorldMap* Map() { _ASSERTE(m_initialized); return m_pMap; }
-        bool IsOnline() const { return m_isOnline; }
+        WorldMap* Map() { _ASSERTE(m_isInitialized); return m_pMap; }
         RtsGame* Snapshot() const;
         virtual size_t GetMaxTrainingQueueCount() const = 0;
 
@@ -77,13 +76,13 @@ namespace IStrategizer
         static RaceTypesMap sm_raceTypes;
         static bool sm_gameTypesInitialized;
 
+        ///> type=bool
+        bool m_isOnline;
         ///> type=map(pair(int,GamePlayer*))
         Serialization::SMap<PlayerType, GamePlayer*> m_players;
-        ///> type=WorldMap*
-        WorldMap* m_pMap;
 
-        bool m_initialized;
-        bool m_isOnline;
+        bool m_isInitialized;
+        WorldMap* m_pMap;
     };
 }
 

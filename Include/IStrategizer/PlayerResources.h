@@ -14,7 +14,7 @@ namespace IStrategizer
     ///> class=PlayerResources
     class PlayerResources : public Serialization::UserObject
     {
-        OBJECT_MEMBERS(7, m_lockedPrimary, &m_lockedSecondary, &m_lockedSupply,
+        OBJECT_MEMBERS(7, &m_lockedPrimary, &m_lockedSecondary, &m_lockedSupply,
             &m_isOnline, &m_cachedPrimary, &m_cachedSecondary, &m_cachedSupply);
 
     public:
@@ -37,7 +37,6 @@ namespace IStrategizer
         virtual int Secondary() = 0;
         virtual int Primary() = 0;
         void SetOffline(RtsGame* pBelongingGame);
-        bool IsOnline() const { return m_isOnline; }
 
     protected:
         ///> type=int

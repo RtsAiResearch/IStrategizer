@@ -57,7 +57,11 @@ int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
 
         case EOATTR_Right:
             if (m_pUnit->getType().isBuilding())
-                return UnitPositionFromTilePosition(m_pUnit->getTilePosition().x + m_pUnit->getType().tileWidth());
+            {
+                int w = m_pUnit->getType().tileWidth();
+                int x = m_pUnit->getTilePosition().x;
+                return UnitPositionFromTilePosition(x + w);
+            }
             else
                 return m_pUnit->getRight();
 

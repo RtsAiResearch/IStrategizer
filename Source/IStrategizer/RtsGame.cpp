@@ -45,16 +45,16 @@ void RtsGame::Init()
     // deserialized and no need to fetch it from somewhere
     if (m_isOnline)
     {
-        LogInfo("Initializing Online RTS Game model");
-
-        _ASSERTE(!m_initialized);
+        _ASSERTE(!m_isInitialized);
         InitPlayers();
         InitMap();
-        m_initialized = true;
+        m_isInitialized = true;
     }
     else
     {
-        LogInfo("RTS Game model is in Offline mode, nothing to initialize");
+        _ASSERTE(!m_isInitialized);
+        InitMap();
+        m_isInitialized = true;
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ void RtsGame::Finalize()
 //----------------------------------------------------------------------------------------------
 GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 {
-    _ASSERTE(m_initialized);
+    _ASSERTE(m_isInitialized);
 
     if (!m_players.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
@@ -79,7 +79,7 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
-    _ASSERTE(m_initialized);
+    _ASSERTE(m_isInitialized);
 
     if (!sm_entityTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
@@ -89,7 +89,7 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
 //----------------------------------------------------------------------------------------------
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
-    _ASSERTE(m_initialized);
+    _ASSERTE(m_isInitialized);
     if (!sm_researchTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
@@ -98,7 +98,7 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
 //----------------------------------------------------------------------------------------------
 GameRace* RtsGame::GetRace(TID id)
 {
-    _ASSERTE(m_initialized);
+    _ASSERTE(m_isInitialized);
     if (!sm_raceTypes.Contains(id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
@@ -113,6 +113,8 @@ void RtsGame::SetOffline()
         pPlayer.second->SetOffline(this);
 
     m_pMap->SetOffline(this);
+
+    m_isOnline = false;
 }
 //----------------------------------------------------------------------------------------------
 RtsGame* RtsGame::Snapshot() const

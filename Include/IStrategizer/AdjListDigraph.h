@@ -41,12 +41,12 @@ namespace IStrategizer
         // Returns:   	NodeID:  A unique ID used to reference the added node
         // in further Digraph methods
         //************************************
-        NodeID AddNode(const _In_ NodeValue& val)
+        /*NodeID AddNode(const _In_ NodeValue& val)
         {
         m_adjList.insert(make_pair(++m_lastNodeId, MakePair(val, NodeSet())));
 
         return m_lastNodeId;
-        }
+        }*/
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::AddNode
