@@ -39,26 +39,7 @@ namespace IStrategizer
     ///> class=PlanStepEx
     class PlanStepEx : public Serialization::UserObject, public IComparable, public IClonable
     {
-    private:
-        ExecutionStateType _state;
-
-    protected:
-        ///> type=PlanStepParameters
-        PlanStepParameters _params;
-        int _stepTypeId;
-        StepLevelType _stepLevelType;
-        CompositeExpression* _postCondition;
-        unsigned _stateStartTime[COUNT(ExecutionStateType)];
-        unsigned _stateTimeout[COUNT(ExecutionStateType)];
-        bool _firstUpdate;
-        unsigned _id;
-        static unsigned s_lastPlanstepID;
-
-        PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
-        PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
-        void InitializeAddressesAux();
-        bool IsCurrentStateTimeout(const WorldClock& p_clock);
-        virtual void InitializePostConditions() = 0;
+        OBJECT_MEMBERS(2, &_params, &_id);
 
     public:
         void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()) ; }
@@ -84,6 +65,27 @@ namespace IStrategizer
         IClonable* Clone();
         unsigned Id() const { return _id; }
         void Id(unsigned id) { _id = id; }
+
+    protected:
+        ///> type=PlanStepParameters
+        PlanStepParameters _params;
+        ///> type=int
+        unsigned _id;
+        int _stepTypeId;
+        StepLevelType _stepLevelType;
+        CompositeExpression* _postCondition;
+        unsigned _stateStartTime[COUNT(ExecutionStateType)];
+        unsigned _stateTimeout[COUNT(ExecutionStateType)];
+        bool _firstUpdate;
+        static unsigned s_lastPlanstepID;
+
+        PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
+        PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
+        bool IsCurrentStateTimeout(const WorldClock& p_clock);
+        virtual void InitializePostConditions() = 0;
+
+    private:
+        ExecutionStateType _state;
     };
 }
 

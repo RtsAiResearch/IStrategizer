@@ -266,11 +266,11 @@ void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedP
         {
             if (i != j)
             {
-                OlcbpPlan::NodeList m_matchedIndexes;
+                OlcbpPlan::NodeList matchedIds;
                 
-                if (p_cookedPlans[i]->pPlan->IsSubGraphOf((*p_cookedPlans[j]->pPlan), m_matchedIndexes))
+                if (p_cookedPlans[i]->pPlan->IsSubGraphOf((*p_cookedPlans[j]->pPlan), matchedIds))
                 {
-                    p_cookedPlans[j]->pPlan->SubGraphSubstitution(m_matchedIndexes, p_cookedPlans[i]->Goal);
+                    p_cookedPlans[j]->pPlan->SubGraphSubstitution(matchedIds, p_cookedPlans[i]->Goal, p_cookedPlans[i]->Goal->Id());
                 }
             }
         }

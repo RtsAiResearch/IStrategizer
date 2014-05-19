@@ -48,7 +48,8 @@ int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resour
         GameEntity* worker = game.Self()->GetEntity(workerId);
         if (worker->Attr(EOATTR_State) == OBJSTATE_Gathering)
         {
-            if (resourceType == resourceType && worker->Attr(EOATTR_IsGatheringPrimaryResource))
+            if ((resourceType == RESOURCE_Primary && worker->Attr(EOATTR_IsGatheringPrimaryResource)) ||
+                (resourceType == RESOURCE_Secondary && worker->Attr(EOATTR_IsGatheringSecondaryResource)))
             {
                 ++count;
             }

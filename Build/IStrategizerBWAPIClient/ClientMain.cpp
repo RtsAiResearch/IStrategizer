@@ -393,8 +393,6 @@ void ClientMain::OnClientUpdate()
     try
     {
         m_pIStrategizer->Update(Broodwar->getFrameCount());
-        RtsGame* pSnapshot = g_Game->Snapshot();
-        m_snapshots[Broodwar->getFrameCount()] = pSnapshot;
     }
     catch (IStrategizer::Exception &e)
     {

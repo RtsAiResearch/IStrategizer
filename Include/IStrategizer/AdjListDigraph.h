@@ -8,6 +8,7 @@
 #include "SPair.h"
 #include "SSet.h"
 #include "UserObject.h"
+#include "Logger.h"
 
 namespace IStrategizer
 {
@@ -42,9 +43,9 @@ namespace IStrategizer
         //************************************
         NodeID AddNode(const _In_ NodeValue& val)
         {
-            m_adjList.insert(make_pair(++m_lastNodeId, MakePair(val, NodeSet())));
+        m_adjList.insert(make_pair(++m_lastNodeId, MakePair(val, NodeSet())));
 
-            return m_lastNodeId;
+        return m_lastNodeId;
         }
 
         //************************************
@@ -207,28 +208,44 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
         // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
-        // Parameter: 	NodeList p_subGraphIndexes: The indexes describing the sub-part to replace.
-        // Parameter:   TNodeValue p_substitute: The TNodeValue to replace the sub-part with.
+        // Parameter: 	NodeList subGraphIds: The ids describing the sub-part to replace.
+        // Parameter:   TNodeValue substitute: The TNodeValue to replace the sub-part with.
         //************************************      
-        void SubGraphSubstitution(NodeList subGraphIndexes, TNodeValue substitute)
+        void SubGraphSubstitution(_In_ NodeList subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId)
         {
-            NodeList    m_parents;
-            NodeList    m_children;
+            std::string subGraphIdSet = "{";
 
-            for each(NodeID m_subGraphIndex in subGraphIndexes)
+
+            LogInfo("Substituting %d with %s", substituteId, ToString(subGraphIds).c_str());
+            LogInfo("Pre-process graph state:\n%s\n", ToString().c_str());
+
+            AddNode(substitute, substituteId);
+
+            NodeSet parents;
+            NodeSet children;
+
+            for (NodeID subGraphNodeId : subGraphIds)
             {
-                NodeSet m_tempParents = GetParents(m_subGraphIndex, m_parents);
-                m_parents.insert(m_parents.end(), m_tempParents.begin(), m_tempParents.end());
+                NodeSet tempParents = GetParents(subGraphNodeId);
 
-                NodeSet m_tempChildren = GetChildren(m_subGraphIndex, m_children);
-                m_children.insert(m_children.end(), m_tempChildren.begin(), m_tempChildren.end());
+                parents.insert(tempParents.begin(), tempParents.end());
+
+                NodeSet tempChildren = GetAdjacentNodes(subGraphNodeId);
+                children.insert(tempChildren.begin(), tempChildren.end());
             }
 
-            NodeID m_nodeID = AddNode(substitute, substitute->Id());
+            for (auto id : subGraphIds)
+            {
+                parents.erase(id);
+                children.erase(id);
+            }
 
-            for each(NodeID m_parent in m_parents) AddEdge(m_parent, m_nodeID);
-            for each(NodeID m_child in m_children) AddEdge(m_nodeID, m_child);
-            for each(NodeID m_subGraphIndex in subGraphIndexes) RemoveNode(m_subGraphIndex);
+            for (NodeID subGraphNodeId : subGraphIds) RemoveNode(subGraphNodeId);
+
+            for (NodeID parent : parents) AddEdge(parent, substituteId);
+            for (NodeID child : children) AddEdge(substituteId, child);
+
+            LogInfo("Post-process graph state:\n%s\n", ToString().c_str());
         }
 
         //************************************
@@ -291,6 +308,8 @@ namespace IStrategizer
 
             NodeSet roots = GetOrphanNodes();
 
+            LogInfo("Checking if graph %s is subgraph of graph %s", ToString().c_str(), p_parentGraph.ToString().c_str());
+
             bool result = MatchNodesAndChildren(roots, m_parentNodes, p_parentGraph, m_matchedNodes);
             p_matchedIndexes.insert(p_matchedIndexes.begin(), m_matchedNodes.begin(), m_matchedNodes.end());
             return result;
@@ -319,15 +338,12 @@ namespace IStrategizer
         std::string ToString() const
         {
             std::string str;
+            char strID[32];
 
             NodeSet roots = GetOrphanNodes();
-            str = "R = {";
-            for (auto rootID : roots)
-            {
-                str += to_string(rootID);
-                str += ',';
-            }
-            str += "}\n";
+            str = "R = ";
+            str += ToString(roots);
+            str += "\n";
 
             for (auto nodeEntry : m_adjList)
             {
@@ -337,7 +353,8 @@ namespace IStrategizer
                 AdjListDigraphNodeValueTraits<TNodeValue>::ConstType nodeVal = m_adjList.at(nodeEntry.first).first;
                 str += TNodeValueTraits::ToString(nodeVal);
                 str += '[';
-                str += to_string(nodeEntry.first);
+                sprintf_s(strID, "%x", nodeEntry.first);
+                str += strID;
                 str += ']';
                 str += " -> ";
 
@@ -352,7 +369,8 @@ namespace IStrategizer
 
                     str += TNodeValueTraits::ToString(adjNodeVal);
                     str += '[';
-                    str += to_string(nodeEntry.first);
+                    sprintf_s(strID, "%x", adjNodeID);
+                    str += strID;
                     str += ']';
                     str += ',';
                 }
@@ -373,42 +391,67 @@ namespace IStrategizer
 
         std::mutex m_lock;
 
-        bool MatchNodesAndChildren(
-            NodeSet& p_candidateNodes,
-            NodeSet& p_parentNodes,
-            AdjListDigraph<TNodeValue, TNodeValueTraits>& p_parentGraph,
-            UnorderedNodeSet& p_matchedIndexes)
+        template<class T>
+        std::string ToString(const T& s) const
         {
-            for each(NodeID m_candidateNodeId in p_candidateNodes)
+            char strID[32];
+            std::string strIdSet;
+
+            strIdSet += "{";
+
+            for (NodeID id : s)
+            {
+                sprintf_s(strID, "%x", id);
+                strIdSet += strID;
+                strIdSet += ",";
+            }
+
+            strIdSet += "}";
+
+            return strIdSet;
+        }
+
+        bool MatchNodesAndChildren(
+            _In_ const NodeSet& childGraphNodes,
+            _In_ const NodeSet& parentGraphNodes,
+            _In_ AdjListDigraph<TNodeValue, TNodeValueTraits>& pParentGraph,
+            _Out_ UnorderedNodeSet& matchedIds)
+        {
+
+            LogInfo("Child Graph Nodes: %s", ToString(childGraphNodes).c_str());
+            LogInfo("Parent Graph Nodes: %s", ToString(parentGraphNodes).c_str());
+            LogInfo("Matched Ids: %s\n", ToString(parentGraphNodes).c_str());
+
+            for each(NodeID childGraphNodeId in childGraphNodes)
             {
                 bool m_foundMatch = false;
 
-                for each(NodeID m_parentNodeId in p_parentNodes)
+                for each(NodeID parentGraphNodeId in parentGraphNodes)
                 {
-                    if (p_matchedIndexes.find(m_parentNodeId) != p_matchedIndexes.end())
+                    if (matchedIds.find(parentGraphNodeId) != matchedIds.end())
                     {
                         continue;
                     }
 
-                    IComparable* m_candidateNode = dynamic_cast<IComparable*>(GetNode(m_candidateNodeId));
-                    IComparable* m_parentNode = dynamic_cast<IComparable*>(p_parentGraph.GetNode(m_parentNodeId));
+                    IComparable* pChildGraphNode = dynamic_cast<IComparable*>(GetNode(childGraphNodeId));
+                    IComparable* pParentGraphNode = dynamic_cast<IComparable*>(pParentGraph.GetNode(parentGraphNodeId));
 
-                    if (m_candidateNode->Compare(m_parentNode) == 0)
+                    if (pChildGraphNode->Compare(pParentGraphNode) == 0)
                     {
                         UnorderedNodeSet m_currentMatchedSubNodes;
 
-                        NodeSet candidateNodeChildren = GetChildren(m_candidateNodeId);
-                        NodeSet parentNodeChildren = p_parentGraph.GetChildren(m_parentNodeId);
+                        NodeSet candidateNodeChildren = GetAdjacentNodes(childGraphNodeId);
+                        NodeSet parentNodeChildren = pParentGraph.GetAdjacentNodes(parentGraphNodeId);
 
-                        if (MatchNodesAndChildren(candidateNodeChildren, parentNodeChildren, p_parentGraph, m_currentMatchedSubNodes))
+                        if (MatchNodesAndChildren(candidateNodeChildren, parentNodeChildren, pParentGraph, m_currentMatchedSubNodes))
                         {
-                            m_currentMatchedSubNodes.insert(m_parentNodeId);
+                            m_currentMatchedSubNodes.insert(parentGraphNodeId);
 
                             for each (NodeID m_matchedSubNode in m_currentMatchedSubNodes)
                             {
-                                if (p_matchedIndexes.find(m_matchedSubNode) == p_matchedIndexes.end())
+                                if (matchedIds.find(m_matchedSubNode) == matchedIds.end())
                                 {
-                                    p_matchedIndexes.insert(m_matchedSubNode);
+                                    matchedIds.insert(m_matchedSubNode);
                                 }
                             }
 
@@ -427,32 +470,16 @@ namespace IStrategizer
             return true;
         }
 
-        NodeSet GetChildren(NodeID p_nodeIndex, NodeList p_execluded = NodeList()) const
+        NodeSet GetParents(NodeID nodeId) const
         {
-            NodeSet m_children;
-
-            for each(auto child in GetAdjacentNodes(p_nodeIndex))
-            {
-                if(find(p_execluded.begin(), p_execluded.end(), child) == p_execluded.end())
-                {
-                    m_children.insert(child);
-                }
-            }
-
-            return m_children;
-        }
-
-        NodeSet GetParents(NodeID p_nodeIndex, NodeList p_execluded = NodeList()) const
-        {
-            if (m_adjList.count(p_nodeIndex) == 0)
+            if (m_adjList.count(nodeId) == 0)
                 throw ItemNotFoundException(XcptHere);
 
             NodeSet m_parents;
 
             for each(auto parent in m_adjList)
             {
-                if(find(p_execluded.begin(), p_execluded.end(), parent.first) == p_execluded.end()
-                    && find(parent.second.second.begin(), parent.second.second.end(), p_nodeIndex) != parent.second.second.end())
+                if(parent.second.second.count(nodeId) > 0)
                 {
                     m_parents.insert(parent.first);
                 }

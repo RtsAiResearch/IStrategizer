@@ -85,15 +85,25 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
     }
     if (actionParameters.count(PARAM_ResourceId)> 0)
     {
-        if (unit->isGatheringMinerals())
+        if (unit->getOrder() == Orders::MoveToMinerals || 
+            unit->getOrder() == Orders::MiningMinerals || 
+            unit->getOrder() == Orders::WaitForMinerals || 
+            unit->getOrder() == Orders::ReturnMinerals)
         {
             actionParameters[PARAM_ResourceId] = RESOURCE_Primary;
             actionParameters[PARAM_Amount] = DONT_CARE;
         }
-        else if (unit->isGatheringGas())
+        else if (unit->getOrder() == Orders::MoveToGas || 
+                 unit->getOrder() == Orders::HarvestGas || 
+                 unit->getOrder() == Orders::WaitForGas || 
+                 unit->getOrder() == Orders::ReturnGas)
         {
             actionParameters[PARAM_ResourceId] = RESOURCE_Secondary;
             actionParameters[PARAM_Amount] = DONT_CARE;
+        }
+        else
+        {
+            _ASSERTE(!"Invalid unit state");
         }
     }
 
