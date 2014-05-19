@@ -139,7 +139,7 @@ namespace IStrategizer
         // Parameter: 	NodeList subGraphIds: The ids describing the sub-part to replace.
         // Parameter:   TNodeValue substitute: The TNodeValue to replace the sub-part with.
         // Parameter:   NodeID substituteId: The id to set for the newly added substitute 
-        //************************************      
+        //************************************
         virtual void SubGraphSubstitution(_In_ NodeList subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId) = 0;
 
         //************************************

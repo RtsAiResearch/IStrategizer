@@ -63,7 +63,7 @@ void LearningFromHumanDemonstration::Learn()
         }
     }
 
-    // HierarchicalComposition(m_cookedPlans);
+    HierarchicalComposition(m_cookedPlans);
     RetainLearntCases(m_cookedPlans);
 }
 //------------------------------------------------------------------------------------------------
@@ -262,17 +262,39 @@ void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedP
 {
     for (size_t i = 0; i < p_cookedPlans.size(); ++i)
     {
+        int largestSubplanIndex;
+        int largestSubplanSize = DONT_CARE;
+        OlcbpPlan::NodeSet largestSubplanMatchedIds;
+
+        LogInfo("Superset Plan Graph:\n%s", p_cookedPlans[i]->pPlan->ToString());
+
         for (size_t j = 0; j < p_cookedPlans.size(); ++j)
         {
+            // Make sure not to match with the same plan.
             if (i != j)
             {
-                OlcbpPlan::NodeList matchedIds;
-                
-                if (p_cookedPlans[i]->pPlan->IsSubGraphOf((*p_cookedPlans[j]->pPlan), matchedIds))
+                OlcbpPlan::NodeSet matchedIds;
+                LogInfo("Candidate subplan Plan Graph:\n%s", p_cookedPlans[j]->pPlan->ToString());
+                if (p_cookedPlans[i]->pPlan->IsSuperGraphOf((*p_cookedPlans[j]->pPlan), matchedIds))
                 {
-                    p_cookedPlans[j]->pPlan->SubGraphSubstitution(matchedIds, p_cookedPlans[i]->Goal, p_cookedPlans[i]->Goal->Id());
+                    if ((int)p_cookedPlans[j]->pPlan->Size() >= largestSubplanSize)
+                    {
+                        largestSubplanIndex = j;
+                        largestSubplanSize = p_cookedPlans[j]->pPlan->Size();
+                        largestSubplanMatchedIds.clear();
+                        largestSubplanMatchedIds.insert(matchedIds.begin(), matchedIds.end());
+                    }
                 }
             }
+        }
+
+        if (largestSubplanSize != DONT_CARE)
+        {
+            LogInfo("Best subplan Plan Graph:\n%s", p_cookedPlans[largestSubplanIndex]->pPlan->ToString());
+            p_cookedPlans[i]->pPlan->SubGraphSubstitution(
+                largestSubplanMatchedIds,
+                p_cookedPlans[largestSubplanIndex]->Goal,
+                p_cookedPlans[largestSubplanIndex]->Goal->Id());
         }
     }
 }
