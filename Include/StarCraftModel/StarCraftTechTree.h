@@ -18,11 +18,12 @@ namespace IStrategizer
     class StarCraftTechTree : public GameTechTree
     {
         OBJECT_SERIALIZABLE(StarCraftTechTree);
-        OBJECT_MEMBERS_P(GameTechTree, 2, &m_cachedAvailResearches, &m_cachedDoneResearches);
+        OBJECT_MEMBERS_P(GameTechTree, 3, &m_isOnline, &m_cachedAvailResearches, &m_cachedDoneResearches);
 
     public:
-        StarCraftTechTree() : m_pPlayer(nullptr) {}
+        StarCraftTechTree() : m_isOnline(true), m_pPlayer(nullptr) {}
         StarCraftTechTree(BWAPI::Player pPlayer) :
+            m_isOnline(true),
             m_pPlayer(pPlayer)
         {}
 
@@ -33,9 +34,11 @@ namespace IStrategizer
     protected:
         BWAPI::Player m_pPlayer;
 
+        ///> type=bool
+        bool m_isOnline;
         ///> type=set(int)
         Serialization::SSet<ResearchType> m_cachedAvailResearches;
-        ///> types=set(int)
+        ///> type=set(int)
         Serialization::SSet<ResearchType> m_cachedDoneResearches;
     };  
 }

@@ -29,7 +29,7 @@ namespace IStrategizer
     ///> class=GamePlayer
     class GamePlayer : public Serialization::UserObject, public MessagePumpObserver
     {
-        OBJECT_MEMBERS(4, &m_type, &m_raceId, &m_pResources, &m_pTechTree);
+        OBJECT_MEMBERS(5, &m_type, &m_raceId, &m_pResources, &m_pTechTree, &m_entities);
 
     public:
         GamePlayer(TID raceId);
@@ -61,8 +61,9 @@ namespace IStrategizer
         PlayerResources *m_pResources;
         ///> type=GameTechTree*
         GameTechTree *m_pTechTree;
-
+        ///> type=map(pair(int,GameEntity*))
         EntitiesMap m_entities;
+
         MapArea m_colonyCenter;
     };
 }

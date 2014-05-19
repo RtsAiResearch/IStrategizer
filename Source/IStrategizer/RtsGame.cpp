@@ -47,14 +47,15 @@ void RtsGame::Init()
     {
         LogInfo("Initializing Online RTS Game model");
 
-        _ASSERTE(!m_initialized);
+        _ASSERTE(!m_isInitialized);
         InitPlayers();
         InitMap();
-        m_initialized = true;
+        m_isInitialized = true;
     }
     else
     {
-        LogInfo("RTS Game model is in Offline mode, nothing to initialize");
+        m_isInitialized = true;
+        LogInfo("RTS Game model is in Offline mode, should be already initialized");
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -69,7 +70,7 @@ void RtsGame::Finalize()
 //----------------------------------------------------------------------------------------------
 GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 {
-    _ASSERTE(m_initialized);
+    _ASSERTE(m_isInitialized);
 
     if (!m_players.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
@@ -79,7 +80,7 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
-    _ASSERTE(m_initialized);
+    _ASSERTE(m_isInitialized);
 
     if (!sm_entityTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
@@ -89,7 +90,7 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
 //----------------------------------------------------------------------------------------------
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
-    _ASSERTE(m_initialized);
+    _ASSERTE(m_isInitialized);
     if (!sm_researchTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
@@ -98,7 +99,7 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
 //----------------------------------------------------------------------------------------------
 GameRace* RtsGame::GetRace(TID id)
 {
-    _ASSERTE(m_initialized);
+    _ASSERTE(m_isInitialized);
     if (!sm_raceTypes.Contains(id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 

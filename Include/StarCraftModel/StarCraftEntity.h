@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef STARCRAFTENTITY_H
 #define STARCRAFTENTITY_H
 
@@ -17,6 +18,8 @@ namespace IStrategizer
     enum PlayerType;
     class RtsGame;
 
+    ///> class=StarCraftEntity
+    ///> parent=GameEntity
     class StarCraftEntity: public GameEntity
     {
         OBJECT_SERIALIZABLE(StarCraftEntity);
@@ -49,7 +52,7 @@ namespace IStrategizer
         ObjectStateType FetchState() const;
         ///> type=int
         bool m_isOnline;
-        ///> type=map(pair(int, int))
+        ///> type=map(pair(int,int))
         Serialization::SMap<EntityObjectAttribute, int> m_cachedAttr;
         BWAPI::Unit m_pUnit;
     };

@@ -65,7 +65,7 @@ private:
     IStrategizer::CrossMap<unsigned, std::string>    m_idLookup;
     IStrategizer::PlanGraphView *m_pPlanGraphView;
     bool m_enemyPlayerUnitsCollected;
-    std::map<int, IStrategizer::RtsGame*> m_snapshots;
+    std::map<int, std::pair<IStrategizer::RtsGame*, IStrategizer::RtsGame*>> m_snapshots;
 };
 
 #endif // CLIENTMAIN_H

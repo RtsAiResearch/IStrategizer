@@ -24,6 +24,7 @@
 #include "GameTraceCollector.h"
 #include "GraphScene.h"
 #include "PlanGraphView.h"
+#include "ObjectSerializer.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
@@ -393,8 +394,19 @@ void ClientMain::OnClientUpdate()
     try
     {
         m_pIStrategizer->Update(Broodwar->getFrameCount());
-        RtsGame* pSnapshot = g_Game->Snapshot();
-        m_snapshots[Broodwar->getFrameCount()] = pSnapshot;
+
+        if (Broodwar->getFrameCount() % 10 == 0)
+        {
+            RtsGame* pSnapshot = g_Game->Snapshot();
+            m_snapshots[Broodwar->getFrameCount()].first = pSnapshot;
+
+            g_ObjectSerializer.Serialize(pSnapshot, "rts.bin");
+
+            StarCraftGame* pCopy = new StarCraftGame();
+            g_ObjectSerializer.Deserialize(pCopy, "rts.bin");
+            m_snapshots[Broodwar->getFrameCount()].second = pCopy;
+        }
+        
     }
     catch (IStrategizer::Exception &e)
     {

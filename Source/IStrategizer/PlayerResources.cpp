@@ -21,6 +21,9 @@ bool PlayerResources::HasEnough(const WorldResources* pResources)
 //////////////////////////////////////////////////////////////////////////
 bool PlayerResources::Lock(WorldResources* pResources)
 {
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
     bool amountAvailable = HasEnough(pResources);
 
     LogInfo("An action is trying to lock supply=%d, primary=%d, secondary=%d", pResources->Supply(), pResources->Primary(), pResources->Secondary());
@@ -59,6 +62,9 @@ bool PlayerResources::Lock(WorldResources* pResources)
 //////////////////////////////////////////////////////////////////////////
 void PlayerResources::Unlock(WorldResources* pResources)
 {
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
     if (pResources->Supply() > 0)
     {
         m_lockedSupply -= pResources->Supply();

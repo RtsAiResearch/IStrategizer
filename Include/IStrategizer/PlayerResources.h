@@ -37,7 +37,6 @@ namespace IStrategizer
         virtual int Secondary() = 0;
         virtual int Primary() = 0;
         void SetOffline(RtsGame* pBelongingGame);
-        bool IsOnline() const { return m_isOnline; }
 
     protected:
         ///> type=int

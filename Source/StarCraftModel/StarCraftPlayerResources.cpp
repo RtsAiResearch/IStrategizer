@@ -1,7 +1,4 @@
-#ifndef WARGUSPLAYERRESOURCES_H
 #include "StarCraftPlayerResources.h"
-#endif
-
 #include "BWAPI.h"
 #include "DefinitionCrossMapping.h"
 #include "IStrategizerException.h"
