@@ -24,6 +24,18 @@ namespace IStrategizer
         const GameTrace::List& ObservedTraces() const { return m_observedTraces; }
         GoalMatrix& GetGoalSatisfacionMatrix() { return m_goalMatrix; }
         void Init();
+        RtsGame* GetGameState(unsigned gameCycle)
+        {
+            for (GameTrace trace : m_observedTraces)
+            {
+                if (trace.GameCycle() == gameCycle)
+                {
+                    return trace.GameState(); 
+                }
+            }
+
+            return nullptr;
+        }
 
     private:
         GameTrace::List m_observedTraces;

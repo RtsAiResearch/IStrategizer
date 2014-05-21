@@ -481,7 +481,7 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
             pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
 
             if (msgConsumedByAction)
-                LogInfo("Message with ID=%x consumed by action node %s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
+                LogInfo("Message with ID=%d consumed by action node %s", pMessage->MessageTypeID(), pCurreNode->ToString().c_str());
         }
 
         if (msgConsumedByAction)

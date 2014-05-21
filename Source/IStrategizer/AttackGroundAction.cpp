@@ -96,3 +96,9 @@ void AttackGroundAction::InitializePreConditions()
     m_terms.push_back(new EntityClassExist(PLAYER_Self, attacker, 1));
     _preCondition = new And(m_terms);
 }
+//----------------------------------------------------------------------------------------------
+bool AttackGroundAction::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId);
+}

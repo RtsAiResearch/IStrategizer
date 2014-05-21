@@ -20,6 +20,7 @@ namespace IStrategizer
         MoveEntityAction(const PlanStepParameters& p_parameters);
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
+        bool Equals(PlanStepEx* p_planStep) { return true; }
 
     protected:
         void OnSucccess(RtsGame& game, const WorldClock& p_clock);

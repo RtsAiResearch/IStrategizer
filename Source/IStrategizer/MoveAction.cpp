@@ -107,3 +107,10 @@ void MoveAction::InitializePreConditions()
     m_terms.push_back(new EntityClassExist(PLAYER_Self, entity, 1));
     _preCondition = new And(m_terms);
 }
+//----------------------------------------------------------------------------------------------
+bool MoveAction::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
+        _params[PARAM_ObjectStateType] == p_planStep->Parameter(PARAM_ObjectStateType);
+}

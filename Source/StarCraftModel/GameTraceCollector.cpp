@@ -223,7 +223,7 @@ void GameTraceCollector::CollectGameTraceForUnitOrder(const Unit unit)
     GameTrace *pTrace = nullptr;
     PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(action, unit);
 
-    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game, m_playerToObserve);
+    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game->Snapshot(), m_playerToObserve);
 
     if (action == ACTIONEX_AttackEntity || action == ACTIONEX_AttackGround)
     {
@@ -256,7 +256,7 @@ void GameTraceCollector::CollectGameTraceForTrainedUnit(const BWAPI::Unit traine
     GameTrace *pTrace = nullptr;
     PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(trainee, trainer);
 
-    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game, m_playerToObserve);
+    pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game->Snapshot(), m_playerToObserve);
 
     SendGameTrace(pTrace);
 }
@@ -310,7 +310,7 @@ void GameTraceCollector::CollectGameTraceForBuildAddon(const Unit unit)
     action = g_Database.ActionMapping.GetByFirst(Orders::PlaceAddon.getID());
 
     PlanStepParameters actionParams = m_abstractor.GetAbstractedParameter(action, unit);
-    GameTrace *pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game, m_playerToObserve);
+    GameTrace *pTrace = new GameTrace(Broodwar->getFrameCount(), action, actionParams, g_Game->Snapshot(), m_playerToObserve);
 
     SendGameTrace(pTrace);
 }

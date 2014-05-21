@@ -17,6 +17,7 @@ namespace IStrategizer
         TrainForceGoal(const PlanStepParameters& p_parameters);
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
+        bool Equals(PlanStepEx* p_planStep);
 
     protected:
         void InitializePostConditions();

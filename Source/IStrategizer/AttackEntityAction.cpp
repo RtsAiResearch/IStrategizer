@@ -131,3 +131,10 @@ void AttackEntityAction::OnFailure(RtsGame& game, const WorldClock& p_clock)
     if (pAttacker && pAttacker->IsLocked() && pAttacker->Owner() == this)
         pAttacker->Unlock(this);
 }
+//----------------------------------------------------------------------------------------------
+bool AttackEntityAction::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId) &&
+        _params[PARAM_TargetEntityClassId] == p_planStep->Parameter(PARAM_TargetEntityClassId);
+}

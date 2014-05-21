@@ -46,3 +46,10 @@ vector<GoalEx*> DeployArmyGoal::GetSucceededInstances(RtsGame &game)
 {
     return vector<GoalEx*>();
 }
+//----------------------------------------------------------------------------------------------
+bool DeployArmyGoal::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_DeployType] == p_planStep->Parameter(PARAM_DeployType) &&
+        _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId);
+}

@@ -42,7 +42,7 @@ EntityClassExist::EntityClassExist(PlayerType p_player, int p_amount) : Conditio
 EntityClassExist::EntityClassExist(PlayerType p_player) : ConditionEx(p_player, CONDEX_EntityClassExist), _reusable(false)
 {
     _conditionParameters[PARAM_EntityClassId] = DONT_CARE;
-    _conditionParameters[PARAM_Amount] = 0;
+    _conditionParameters[PARAM_Amount] = DONT_CARE;
 }
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Evaluate(RtsGame& game)
@@ -70,17 +70,25 @@ void EntityClassExist::Copy(IClonable* p_dest)
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Consume(int p_amount)
 {
-    _ASSERTE(p_amount != DONT_CARE && _conditionParameters[PARAM_Amount] != DONT_CARE);
-    if (_reusable && p_amount > 0)
+    if ((_reusable && p_amount > 0) || _conditionParameters[PARAM_Amount] == DONT_CARE)
     {
-        // The entity is reusable so return true
+        // (1) The entity is reusable so return true
         // There is no required amount to so return true.
+        // (2) The source is infinite so always return true
         return true;
     }
     else if (p_amount == 0 || _conditionParameters[PARAM_Amount] == 0)
     {
         // The current available amount is 0 so can not consume anything.
         return false;
+    }
+    else if (p_amount == DONT_CARE && _conditionParameters[PARAM_Amount] != DONT_CARE)
+    {
+        // The request is infinite source, consume all available amount
+        _ASSERTE(_conditionParameters[PARAM_Amount] > 0);
+        _conditionParameters[PARAM_Amount] = 0;
+
+        return true;
     }
     else
     {

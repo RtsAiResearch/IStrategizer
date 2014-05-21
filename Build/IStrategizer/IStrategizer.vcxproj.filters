@@ -334,7 +334,7 @@
       <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

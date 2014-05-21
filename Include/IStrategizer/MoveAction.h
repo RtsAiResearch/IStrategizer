@@ -21,6 +21,7 @@ namespace IStrategizer
         void Copy(IClonable* p_dest);
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
+        bool Equals(PlanStepEx* p_planStep);
 
     protected:
         bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);

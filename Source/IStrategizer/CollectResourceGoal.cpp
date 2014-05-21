@@ -86,3 +86,10 @@ vector<GoalEx*> CollectResourceGoal::GetSucceededInstances(RtsGame &game)
 
     return succeededInstances;
 }
+//----------------------------------------------------------------------------------------------
+bool CollectResourceGoal::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
+        _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+}

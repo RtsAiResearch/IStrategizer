@@ -18,13 +18,13 @@ namespace IStrategizer
         };
 
         const static unsigned LogBufferMax  = 262144;
-        const static unsigned FlushRate     = 4;
 
         void Log(LogType p_type, const char* p_pFunc, const char* p_pFormat, ...);
         void InitLogFile();
         void FinalizeLogFile();
 
         static Logger& Instance() { static Logger inst; return inst; }
+        static bool LogEnabled() { return true; }
 
     private:
         Logger()

@@ -136,6 +136,7 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
 {
     OlcbpPlan* m_olcpbPlan = new OlcbpPlan();
     OlcbpPlan* m_tempOlcpbPlan = new OlcbpPlan();
+    vector<OlcbpPlan::NodeID> nodeIds;
 
     for (size_t i = 0; i < p_rawCase->rawPlan.sPlan.size(); ++i)
     {
@@ -143,17 +144,18 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
         PlanStepEx* pTempClone = (PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone();
         m_olcpbPlan->AddNode(pClone, pClone->Id());
         m_tempOlcpbPlan->AddNode(pTempClone, pClone->Id());
+        nodeIds.push_back(pClone->Id());
     }
 
-    for (int i : m_olcpbPlan->GetNodes())
+    for (OlcbpPlan::NodeID i : nodeIds)
     {
-        for (int j : m_olcpbPlan->GetNodes())
+        for (OlcbpPlan::NodeID j : nodeIds)
         {
             if(i != j)
             {
                 LogInfo("Checking dependency between node %s and %s", m_olcpbPlan->GetNode(i)->ToString(true).c_str(), m_olcpbPlan->GetNode(j)->ToString(true).c_str());
 
-                if(!m_olcpbPlan->IsAdjacent(j, i) &&
+                if(!m_olcpbPlan->PathExists(j, i) &&
                     Depends(m_tempOlcpbPlan->GetNode(i)->PostCondition(), ((Action*)m_tempOlcpbPlan->GetNode(j))->PreCondition()))
                 {
                     LogInfo("Adding edge from node %s to node %s, as dependency matches", m_olcpbPlan->GetNode(i)->ToString(true).c_str(), m_olcpbPlan->GetNode(j)->ToString(true).c_str());
@@ -260,42 +262,50 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
 //--------------------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans)
 {
+    int largestSubplanIndex;
+    int largestSubplanSize;
+    OlcbpPlan::NodeSet largestSubplanMatchedIds;
+
     for (size_t i = 0; i < p_cookedPlans.size(); ++i)
     {
-        int largestSubplanIndex;
-        int largestSubplanSize = DONT_CARE;
-        OlcbpPlan::NodeSet largestSubplanMatchedIds;
-
-        LogInfo("Superset Plan Graph:\n%s", p_cookedPlans[i]->pPlan->ToString());
-
-        for (size_t j = 0; j < p_cookedPlans.size(); ++j)
+        do 
         {
-            // Make sure not to match with the same plan.
-            if (i != j)
+            largestSubplanIndex = DONT_CARE;
+            largestSubplanSize = DONT_CARE;
+            largestSubplanMatchedIds.clear();
+
+            LogInfo("Superset Plan Graph:\n%s", p_cookedPlans[i]->pPlan->ToString().c_str());
+
+            for (size_t j = 0; j < p_cookedPlans.size(); ++j)
             {
-                OlcbpPlan::NodeSet matchedIds;
-                LogInfo("Candidate subplan Plan Graph:\n%s", p_cookedPlans[j]->pPlan->ToString());
-                if (p_cookedPlans[i]->pPlan->IsSuperGraphOf((*p_cookedPlans[j]->pPlan), matchedIds))
+                // Make sure not to match with the same plan.
+                if (i != j)
                 {
-                    if ((int)p_cookedPlans[j]->pPlan->Size() >= largestSubplanSize)
+                    OlcbpPlan::NodeSet matchedIds;
+                    LogInfo("Candidate subplan Plan Graph:\n%s", p_cookedPlans[j]->pPlan->ToString().c_str());
+
+                    if (p_cookedPlans[i]->pPlan->IsSuperGraphOf(p_cookedPlans[j]->pPlan, matchedIds))
                     {
-                        largestSubplanIndex = j;
-                        largestSubplanSize = p_cookedPlans[j]->pPlan->Size();
-                        largestSubplanMatchedIds.clear();
-                        largestSubplanMatchedIds.insert(matchedIds.begin(), matchedIds.end());
+                        if ((int)p_cookedPlans[j]->pPlan->Size() >= largestSubplanSize)
+                        {
+                            largestSubplanIndex = j;
+                            largestSubplanSize = p_cookedPlans[j]->pPlan->Size();
+                            largestSubplanMatchedIds.clear();
+                            largestSubplanMatchedIds.insert(matchedIds.begin(), matchedIds.end());
+                        }
                     }
                 }
             }
-        }
 
-        if (largestSubplanSize != DONT_CARE)
-        {
-            LogInfo("Best subplan Plan Graph:\n%s", p_cookedPlans[largestSubplanIndex]->pPlan->ToString());
-            p_cookedPlans[i]->pPlan->SubGraphSubstitution(
-                largestSubplanMatchedIds,
-                p_cookedPlans[largestSubplanIndex]->Goal,
-                p_cookedPlans[largestSubplanIndex]->Goal->Id());
-        }
+            if (largestSubplanSize != DONT_CARE)
+            {
+                LogInfo("Best subplan Plan Graph:\n%s", p_cookedPlans[largestSubplanIndex]->pPlan->ToString().c_str());
+                p_cookedPlans[i]->pPlan->SubGraphSubstitution(
+                    largestSubplanMatchedIds,
+                    p_cookedPlans[largestSubplanIndex]->Goal,
+                    p_cookedPlans[largestSubplanIndex]->Goal->Id());
+            }
+        } while (largestSubplanIndex != DONT_CARE);
     }
 }
 //----------------------------------------------------------------------------------------------

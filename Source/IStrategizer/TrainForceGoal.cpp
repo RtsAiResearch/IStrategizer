@@ -79,3 +79,10 @@ vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
     m_succeededInstances.clear();
     return succeededInstances;
 }
+//----------------------------------------------------------------------------------------------
+bool TrainForceGoal::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId) &&
+        _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+}
