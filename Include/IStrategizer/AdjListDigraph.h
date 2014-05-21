@@ -312,9 +312,15 @@ namespace IStrategizer
             return false;
         }
 
-        bool IsSuperGraphOf(AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph, NodeSet& matchedIds)
+        bool IsSuperGraphOf(AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph, NodeSet& superGraphMatchedIds)
         {
-            return IsSuperGraph(pCandidateSubGraph->GetOrphanNodes(), GetNodes(), pCandidateSubGraph, matchedIds);
+            if (Size() <= pCandidateSubGraph->Size())
+            {
+                return false;
+            }
+
+            NodeSet subGraphMatchedIds;
+            return IsSuperGraph(pCandidateSubGraph->GetOrphanNodes(), GetNodes(), subGraphMatchedIds, superGraphMatchedIds, pCandidateSubGraph);
         }
 
         //************************************
@@ -434,8 +440,9 @@ namespace IStrategizer
         bool IsSuperGraph(
             const NodeSet& subGraphChildren,
             const NodeSet& superGraphChildren,
-            AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph,
-            NodeSet& matchedIds)
+            NodeSet& subGraphMatchedIds,
+            NodeSet& superGraphMatchedIds,
+            AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph)
         {
             if (subGraphChildren.empty())
             {
@@ -453,22 +460,32 @@ namespace IStrategizer
             for (NodeID supGraphNodeId : subGraphChildren)
             {
                 bool nodeMatched = false;
+                
+                if (subGraphMatchedIds.count(supGraphNodeId) != 0)
+                {
+                    // If we matched this subGraphNode before then no need to get into its children
+                    // and try matching them again, just skip this node.
+                    continue;
+                }
+
                 for (NodeID superGraphNodeId : superGraphChildren)
                 {
                     IComparable* pLeft = dynamic_cast<IComparable*>(pCandidateSubGraph->GetNode(supGraphNodeId));
                     IComparable* pRight = dynamic_cast<IComparable*>(GetNode(superGraphNodeId));
 
-                    if (pLeft->Compare(pRight) == 0 && matchedIds.count(superGraphNodeId) == 0)
+                    if (pLeft->Compare(pRight) == 0 && superGraphMatchedIds.count(superGraphNodeId) == 0)
                     {
                         bool childrenMatched = IsSuperGraph(
                             pCandidateSubGraph->GetAdjacentNodes(supGraphNodeId),
                             GetAdjacentNodes(superGraphNodeId),
-                            pCandidateSubGraph,
-                            matchedIds);
+                            subGraphMatchedIds,
+                            superGraphMatchedIds,
+                            pCandidateSubGraph);
 
                         if (childrenMatched)
                         {
-                            matchedIds.insert(superGraphNodeId);
+                            superGraphMatchedIds.insert(superGraphNodeId);
+                            subGraphMatchedIds.insert(supGraphNodeId);
                             nodeMatched = true;
                             break;
                         }

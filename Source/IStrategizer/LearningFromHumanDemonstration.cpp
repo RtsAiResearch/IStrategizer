@@ -188,11 +188,12 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidatePar
         {
             int requiredAmount = consumer->Parameter(PARAM_Amount);
             int availableAmount = source->Parameter(PARAM_Amount);
+            int consumedAmount = min(requiredAmount, availableAmount);
             LogInfo("The consumer amount is %d and the source amount is %d", requiredAmount, availableAmount);
             
-            if (requiredAmount != 0 && source->Consume(requiredAmount))
+            if (source->Consume(requiredAmount))
             {
-                _ASSERTE(consumer->Consume(requiredAmount));
+                _ASSERTE(consumer->Consume(consumedAmount));
                 return true;
             }
         }
@@ -210,6 +211,13 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     OlcbpPlan::NodeSet m_unprocessedSteps = p_case->plan->GetNodes();
     OlcbpPlan::NodeSet m_necessarySteps;
     OlcbpPlan::NodeSet m_finalSteps;
+    map<OlcbpPlan::NodeID, OlcbpPlan::NodeValue> m_tempNodes;
+    CompositeExpression* goalPostConditionCopy = (CompositeExpression*)p_case->rawCase->rawPlan.Goal->PostCondition()->Clone();
+
+    for (OlcbpPlan::NodeID nodeId : m_unprocessedSteps)
+    {
+        m_tempNodes[nodeId] = (PlanStepEx*)p_case->plan->GetNode(nodeId)->Clone();
+    }
 
     LogInfo("Finding necessary steps for goal node %s", p_case->rawCase->rawPlan.Goal->ToString(true).c_str());
     for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
@@ -217,7 +225,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         // The order of depends is important keep goal on right side and action on left side
         // that's because if the goal depends on the action we'll consume the action's resources
         // and assign the goals requirements as well.
-        if (Depends(p_case->plan->GetNode(*it)->PostCondition(), p_case->rawCase->rawPlan.Goal->PostCondition()))
+        if (Depends(m_tempNodes[(*it)]->PostCondition(), goalPostConditionCopy))
         {
             m_necessarySteps.insert(*it);
             m_unprocessedSteps.erase(it++);
@@ -262,50 +270,53 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
 //--------------------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans)
 {
-    int largestSubplanIndex;
-    int largestSubplanSize;
-    OlcbpPlan::NodeSet largestSubplanMatchedIds;
+    map<int, vector<int>> subplansIndex;
+    map<int, vector<OlcbpPlan::NodeSet>> matchedSubplansNodeIds;
+    OlcbpPlan::NodeSet totalMatchedNodeIds;
 
     for (size_t i = 0; i < p_cookedPlans.size(); ++i)
     {
-        do 
+        LogInfo("Superset Plan Graph:\n%s", p_cookedPlans[i]->pPlan->ToString().c_str());
+        
+        totalMatchedNodeIds.clear();
+
+        for (size_t j = 0; j < p_cookedPlans.size(); ++j)
         {
-            largestSubplanIndex = DONT_CARE;
-            largestSubplanSize = DONT_CARE;
-            largestSubplanMatchedIds.clear();
-
-            LogInfo("Superset Plan Graph:\n%s", p_cookedPlans[i]->pPlan->ToString().c_str());
-
-            for (size_t j = 0; j < p_cookedPlans.size(); ++j)
+            // Make sure not to match with the same plan.
+            if (i != j)
             {
-                // Make sure not to match with the same plan.
-                if (i != j)
-                {
-                    OlcbpPlan::NodeSet matchedIds;
-                    LogInfo("Candidate subplan Plan Graph:\n%s", p_cookedPlans[j]->pPlan->ToString().c_str());
+                OlcbpPlan::NodeSet matchedIds;
+                LogInfo("Candidate subplan Plan Graph:\n%s", p_cookedPlans[j]->pPlan->ToString().c_str());
 
-                    if (p_cookedPlans[i]->pPlan->IsSuperGraphOf(p_cookedPlans[j]->pPlan, matchedIds))
+                if (p_cookedPlans[i]->pPlan->IsSuperGraphOf(p_cookedPlans[j]->pPlan, matchedIds))
+                {
+                    OlcbpPlan::NodeSet newMatchedNodeIds;
+                    set_difference(matchedIds.begin(), matchedIds.end(), totalMatchedNodeIds.begin(), totalMatchedNodeIds.end(), inserter(newMatchedNodeIds, newMatchedNodeIds.end()));
+                    totalMatchedNodeIds.insert(newMatchedNodeIds.begin(), newMatchedNodeIds.end());
+                    if (!newMatchedNodeIds.empty())
                     {
-                        if ((int)p_cookedPlans[j]->pPlan->Size() >= largestSubplanSize)
-                        {
-                            largestSubplanIndex = j;
-                            largestSubplanSize = p_cookedPlans[j]->pPlan->Size();
-                            largestSubplanMatchedIds.clear();
-                            largestSubplanMatchedIds.insert(matchedIds.begin(), matchedIds.end());
-                        }
+                        matchedSubplansNodeIds[i].push_back(newMatchedNodeIds);
+                        subplansIndex[i].push_back(j);
                     }
                 }
             }
+        }
+    }
 
-            if (largestSubplanSize != DONT_CARE)
+    for (size_t i = 0; i < p_cookedPlans.size(); ++i)
+    {
+        if (!subplansIndex[i].empty())
+        {
+            int subplanMatchedIdsIndex = 0;
+            for (int subplanIndex : subplansIndex[i])
             {
-                LogInfo("Best subplan Plan Graph:\n%s", p_cookedPlans[largestSubplanIndex]->pPlan->ToString().c_str());
+                LogInfo("First subplan Plan Graph:\n%s", p_cookedPlans[subplanIndex]->pPlan->ToString().c_str());
                 p_cookedPlans[i]->pPlan->SubGraphSubstitution(
-                    largestSubplanMatchedIds,
-                    p_cookedPlans[largestSubplanIndex]->Goal,
-                    p_cookedPlans[largestSubplanIndex]->Goal->Id());
+                    matchedSubplansNodeIds[i][subplanMatchedIdsIndex++],
+                    p_cookedPlans[subplanIndex]->Goal,
+                    p_cookedPlans[subplanIndex]->Goal->Id());
             }
-        } while (largestSubplanIndex != DONT_CARE);
+        }
     }
 }
 //----------------------------------------------------------------------------------------------
