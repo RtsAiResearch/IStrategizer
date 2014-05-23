@@ -18,6 +18,7 @@ namespace IStrategizer
     class GameResearch;
     class GameRace;
     class WorldMap;
+    class SimilarityWeightModel;
 
     typedef Serialization::SMap<EntityClassType, GameType*> EntiyTypesMap;
     typedef Serialization::SMap<ResearchType, GameResearch*> ResearchTypesMap;
@@ -26,13 +27,14 @@ namespace IStrategizer
     ///> class=RtsGame
     class RtsGame : public Serialization::UserObject
     {
-        OBJECT_MEMBERS(2, &m_isOnline, &m_players);
+        OBJECT_MEMBERS(3, &m_isOnline, &m_players, &m_cachedGameFrame);
 
     public:
         RtsGame() :
             m_pMap(nullptr),
             m_isInitialized(false),
-            m_isOnline(true)
+            m_isOnline(true),
+            m_cachedGameFrame(0)
         {}
 
         virtual ~RtsGame();
@@ -47,15 +49,19 @@ namespace IStrategizer
         const ResearchTypesMap& ResearchTypes() const { return sm_researchTypes; }
         const RaceTypesMap& RaceTypes() const { return sm_raceTypes; }
 
-        GamePlayer* GetPlayer(PlayerType p_id);
+        GamePlayer* GetPlayer(PlayerType p_id) const;
         GameType* GetEntityType(EntityClassType p_id);
         GameResearch* GetResearch(ResearchType p_id);
         GameRace* GetRace(TID raceID);
         GamePlayer* Self() { return GetPlayer(PLAYER_Self); }
+        const GamePlayer* Self() const { return GetPlayer(PLAYER_Self); }
         GamePlayer* Enemy() { return GetPlayer(PLAYER_Enemy); }
         WorldMap* Map() { _ASSERTE(m_isInitialized); return m_pMap; }
+        const WorldMap* Map() const { _ASSERTE(m_isInitialized); return m_pMap; }
         RtsGame* Snapshot() const;
         virtual size_t GetMaxTrainingQueueCount() const = 0;
+        virtual unsigned GameFrame() const = 0;
+        float Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const;
 
     protected:
         void SetOffline();
@@ -75,11 +81,14 @@ namespace IStrategizer
         static ResearchTypesMap sm_researchTypes;
         static RaceTypesMap sm_raceTypes;
         static bool sm_gameTypesInitialized;
+        static SimilarityWeightModel DefaultWeightModel;
 
         ///> type=bool
         bool m_isOnline;
         ///> type=map(pair(int,GamePlayer*))
         Serialization::SMap<PlayerType, GamePlayer*> m_players;
+        ///> type=unsigned
+        unsigned m_cachedGameFrame;
 
         bool m_isInitialized;
         WorldMap* m_pMap;

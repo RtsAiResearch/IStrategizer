@@ -24,6 +24,7 @@ namespace IStrategizer
 
         void Init();
         virtual Vector2 Size() const { return Vector2(m_worldWidth, m_worldHeight); }
+        virtual unsigned Area() const { return m_worldWidth * m_worldHeight; }
         virtual bool CanBuildHere(Vector2 p_position, EntityClassType p_buildingType) const = 0;
         virtual MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const = 0;
         void Update();

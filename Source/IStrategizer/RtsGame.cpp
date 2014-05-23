@@ -12,6 +12,7 @@
 #include "GameResearch.h"
 #include "ObjectSerializer.h"
 #include "Logger.h"
+#include "SimilarityWeightModel.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -23,6 +24,26 @@ EntiyTypesMap RtsGame::sm_entityTypes;
 ResearchTypesMap RtsGame::sm_researchTypes;
 RaceTypesMap RtsGame::sm_raceTypes;
 bool RtsGame::sm_gameTypesInitialized = false;
+
+static SimilarityWeightModel GetDefaultWeightModel()
+{
+    SimilarityWeightModel model;
+
+    model.GameFrame = 0.2f;
+    model.MapArea = 0.2f;
+    model.Player.W = 0.6f;
+        model.Player.NumBuildings.W = 0.6f;
+            model.Player.Entities.NumEntities = 1.0f;
+        model.Player.Resources.W = 0.4f;
+            model.Player.Resources.Primary = 0.3f;
+            model.Player.Resources.Secondary = 0.3f;
+            model.Player.Resources.Supply = 0.4f;
+
+
+    return model;
+}
+
+SimilarityWeightModel RtsGame::DefaultWeightModel = GetDefaultWeightModel();
 
 RtsGame::~RtsGame()
 {
@@ -67,14 +88,14 @@ void RtsGame::Finalize()
     Toolbox::MemoryClean(m_pMap);
 }
 //----------------------------------------------------------------------------------------------
-GamePlayer* RtsGame::GetPlayer(PlayerType p_id)
+GamePlayer* RtsGame::GetPlayer(PlayerType p_id) const
 {
     _ASSERTE(m_isInitialized);
 
     if (!m_players.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return m_players[p_id];
+    return m_players.at(p_id);
 }
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
@@ -114,6 +135,8 @@ void RtsGame::SetOffline()
 
     m_pMap->SetOffline(this);
 
+    m_cachedGameFrame = GameFrame();
+
     m_isOnline = false;
 }
 //----------------------------------------------------------------------------------------------
@@ -125,4 +148,19 @@ RtsGame* RtsGame::Snapshot() const
     pSnapshot->SetOffline();
 
     return pSnapshot;
+}
+//----------------------------------------------------------------------------------------------
+float RtsGame::Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const
+{
+    float distance = 0;
+
+    distance += pModel->GameFrame * abs(
+        int(GameFrame()) - int(pOther->GameFrame()));
+
+    distance += pModel->MapArea * abs(
+        int(Map()->Area()) - int(pOther->Map()->Area()));
+
+    distance += Self()->Distance(pOther->Self(), pModel);
+
+    return distance;
 }

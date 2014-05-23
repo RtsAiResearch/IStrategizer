@@ -22,6 +22,7 @@
 #include "AttributesMetaData.h"
 #include "GameType.h"
 #include "IStrategizerException.h"
+#include "SimilarityWeightModel.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -266,4 +267,9 @@ void GamePlayer::SetOffline(RtsGame* pBelongingGame)
     m_pTechTree->SetOffline(pBelongingGame);
 
     m_isOnline = false;
+}
+//////////////////////////////////////////////////////////////////////////
+float GamePlayer::Distance(const GamePlayer* pOther, const SimilarityWeightModel* model) const
+{
+    return 0.0f;
 }

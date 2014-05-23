@@ -635,6 +635,9 @@
     <ClInclude Include="..\..\Include\IStrategizer\MapArea.h">
       <Filter>Header Files\World Model\Realtime\Map</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\SimilarityWeightModel.h">
+      <Filter>Header Files\World Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Documents\2011-2012 Plan.txt">

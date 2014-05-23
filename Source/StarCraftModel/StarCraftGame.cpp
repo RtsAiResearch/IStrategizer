@@ -202,3 +202,12 @@ void StarCraftGame::DisplayMessage(const char* p_msg)
 {
     BroodwarPtr->sendText(p_msg);
 }
+//----------------------------------------------------------------------------------------------
+unsigned StarCraftGame::GameFrame() const
+{
+    if (m_isOnline)
+        return Broodwar->getFrameCount();
+    else
+        return m_cachedGameFrame;
+
+}

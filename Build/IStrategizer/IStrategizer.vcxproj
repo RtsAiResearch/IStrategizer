@@ -185,6 +185,7 @@
     <ClInclude Include="..\..\Include\IStrategizer\MathHelper.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Predicate.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Logger.h" />
+    <ClInclude Include="..\..\Include\IStrategizer\SimilarityWeightModel.h" />
     <ClInclude Include="..\..\Include\IStrategizer\TrainForceGoal.h" />
     <ClInclude Include="..\..\Include\IStrategizer\Vector2.h" />
     <ClInclude Include="..\..\Include\IStrategizer\CrossMap.h" />
