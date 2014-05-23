@@ -52,9 +52,9 @@ namespace IStrategizer
 
             void DecWaitOnParentsCount() { LogInfo("Dec WaitOnParentsCount=%d for node[%x]", WaitOnParentsCount, ID); --WaitOnParentsCount; }
             void IncWaitOnParentsCount() { LogInfo("Inc WaitOnParentsCount=%d for node[%x]", WaitOnParentsCount, ID); ++WaitOnParentsCount; }
-            void SetWaitOnParentsCount(unsigned val) { WaitOnParentsCount = val; }
+            void SetWaitOnParentsCount(unsigned val) { LogInfo("Set WaitOnParentsCount= %d -> %d for node[%x]", WaitOnParentsCount, val, ID); WaitOnParentsCount = val; }
             void DecWaitOnChildrenCount() { LogInfo("Dec WaitOnChildrenCount=%d for node[%x]", WaitOnChildrenCount, ID); --WaitOnChildrenCount; }
-            void SetWaitOnChildrenCount(unsigned val) { WaitOnChildrenCount = val; }
+            void SetWaitOnChildrenCount(unsigned val) { LogInfo("Set WaitOnChildrenCount= %d -> %d for node[%x]", WaitOnChildrenCount, val, ID); WaitOnChildrenCount = val; }
         };
 
         void ExpandGoal(IOlcbpPlan::NodeID goalNode, CaseEx* pCase);

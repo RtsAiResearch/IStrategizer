@@ -94,6 +94,14 @@ namespace IStrategizer
             throw(ItemNotFoundException) = 0;
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Contains
+        // Description:	Check for a certain node existence in the graph
+        // Parameter: 	NodeID id: Unique ID to identify the node
+        // Returns:   	true if the node exists, false otherwise
+        //************************************
+        virtual bool Contains(_In_ NodeID id) const = 0;
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetNodes
         // Description:	Returns a set of all node ids inside the digraph
         // Returns:   	NodeSet

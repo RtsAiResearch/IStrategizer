@@ -131,6 +131,17 @@ namespace IStrategizer
         }
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Contains
+        // Description:	Check for a certain node existence in the graph
+        // Parameter: 	NodeID id: Unique ID to identify the node
+        // Returns:   	true if the node exists, false otherwise
+        //************************************
+        bool Contains(_In_ NodeID id) const
+        {
+            return m_adjList.count(id) > 0;
+        }
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetNodes
         // Description:	Returns a set of all node ids inside the digraph
         // Returns:   	NodeSet

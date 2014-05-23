@@ -67,6 +67,7 @@ namespace IStrategizer
         void Id(unsigned id) { _id = id; }
 
     protected:
+        PlanStepEx();
         ///> type=PlanStepParameters
         PlanStepParameters _params;
         ///> type=int

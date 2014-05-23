@@ -22,6 +22,15 @@ unsigned GenerateID()
     return uuid.Data1;
 }
 
+PlanStepEx::PlanStepEx() :
+    _state(ESTATE_NotPrepared),
+    _postCondition(nullptr),
+    _firstUpdate(true),
+    _id(GenerateID())
+{
+    memset(_stateStartTime, 0, sizeof(_stateStartTime));
+    memset(_stateTimeout, 0, sizeof(_stateTimeout));
+}
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) 
     : _stepTypeId(p_stepTypeId),
