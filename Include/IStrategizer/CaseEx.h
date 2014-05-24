@@ -35,8 +35,7 @@ namespace IStrategizer
         
         CaseEx(OlcbpPlan* pPlan, GoalEx* pGoal, RtsGame* pGameState, int trialCount, int successCount)
             : m_pGoal(pGoal),
-            // FIXME: set to the actual RtsGame object when serializing RtsGame code is ready
-            m_pGameState(nullptr),
+            m_pGameState(pGameState),
             m_trialCount(trialCount),
             m_successCount(successCount),
             m_pPlan(pPlan) {}

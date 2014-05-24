@@ -80,12 +80,11 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
 
         for (size_t i = 0; i < traces.size() && goalPair.first >= traces[i].GameCycle(); ++i)
         {
-            // Set the action id to use it in the future to reference the trace game state.
             Action* action = g_ActionFactory.GetAction(traces[i].Action(), traces[i].ActionParams(), true);
             _ASSERTE(action->PostCondition());
             _ASSERTE(action->PreCondition());
-            action->Id(i);
 
+            _gameStateMapping[action->Id()] = traces[i].GameState();
             plan.push_back(action);
         }
 
@@ -145,6 +144,9 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
         m_olcpbPlan->AddNode(pClone, pClone->Id());
         m_tempOlcpbPlan->AddNode(pTempClone, pClone->Id());
         nodeIds.push_back(pClone->Id());
+
+        // Update the game state mapping with the new Id
+        _gameStateMapping[pClone->Id()] = _gameStateMapping[p_rawCase->rawPlan.sPlan[i]->Id()];
     }
 
     for (OlcbpPlan::NodeID i : nodeIds)
@@ -228,6 +230,10 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         if (Depends(m_tempNodes[(*it)]->PostCondition(), goalPostConditionCopy))
         {
             m_necessarySteps.insert(*it);
+
+            // Set the game state to the latest dependent action in the plan
+            p_case->rawCase->gameState = _gameStateMapping[p_case->plan->GetNode(*it)->Id()];
+
             m_unprocessedSteps.erase(it++);
         }
         else

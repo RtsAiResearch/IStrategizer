@@ -63,6 +63,7 @@ namespace IStrategizer
     private:
         CaseLearningHelper* _helper;
         RetainerEx* _retainer;
+        std::map<unsigned, RtsGame*> _gameStateMapping;
 
         void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
         void UnnecessaryStepsElimination(CookedCase* p_case);
