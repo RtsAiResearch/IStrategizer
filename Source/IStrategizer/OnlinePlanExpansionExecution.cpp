@@ -171,8 +171,11 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             currentNode = Q.front();
             Q.pop();
 
-            if (m_pOlcbpPlan->GetNode(currentNode) == nullptr)
+            if (!m_pOlcbpPlan->Contains(currentNode))
+            {
                 LogWarning("A non existing node was there in the update queue, skipping it");
+                continue;
+            }
 
             if (IsGoalNode(currentNode))
             {
@@ -218,10 +221,12 @@ void OnlinePlanExpansionExecution::UpdateBelongingSubplanChildrenWithParentReadi
         {
             if (GetNodeData(childId).SatisfyingGoal != nodeId)
             {
-                _ASSERTE(GetNodeData(childId).WaitOnParentsCount > 0);
-
-                LogInfo("Update node '%s' with parent readiness", m_pOlcbpPlan->GetNode(childId)->ToString().c_str());
-                GetNodeData(childId).DecWaitOnParentsCount();
+                // _ASSERTE(GetNodeData(childId).WaitOnParentsCount > 0);
+                if (GetNodeData(childId).WaitOnParentsCount > 0)
+                {
+                    LogInfo("Update node '%s' with parent readiness", m_pOlcbpPlan->GetNode(childId)->ToString().c_str());
+                    GetNodeData(childId).DecWaitOnParentsCount();
+                }
             }
         }
     }
@@ -293,8 +298,8 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
             GoalEx* currentGoalNode = (GoalEx*)pCurrentPlanStep;
             if (clock.ElapsedGameCycles() > 1 && currentGoalNode->SuccessConditionsSatisfied(*g_Game))
             {
+                LogInfo("Goal %s already satisfied, no need to expand it, closing the node", pCurrentPlanStep->ToString().c_str());
                 CloseNode(currentNode);
-                LogInfo("Goal already satisfied, no need to expand it, closing the node");
             }
             else
             {
@@ -481,7 +486,7 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
             pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
 
             if (msgConsumedByAction)
-                LogInfo("Message with ID=%x consumed by action node %s", pMessage->MessageTypeID(), currentPlanStepID, pCurreNode->ToString().c_str());
+                LogInfo("Message with ID=%d consumed by action node %s", pMessage->MessageTypeID(), pCurreNode->ToString().c_str());
         }
 
         if (msgConsumedByAction)
@@ -645,6 +650,8 @@ void OnlinePlanExpansionExecution::UnlinkNodeChildren(_In_ IOlcbpPlan::NodeID no
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
 {
+    LogInfo("Computing graph nodes WaitOnParentsCount property");
+
     IOlcbpPlan::NodeQueue Q;
     IOlcbpPlan::NodeSet visitedNodes;
 
@@ -674,6 +681,8 @@ void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
 
         const IOlcbpPlan::NodeSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
 
+        LogInfo("Computing WaitOnParentsCount for node[%x] children", currNodeId);
+
         //bool waitOnCurrNode = m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded;
         /*(IsActionNode(currNodeId) && m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded) ||
         (IsGoalNode(currNodeId) && IsNodeOpen(currNodeId));*/
@@ -686,13 +695,21 @@ void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
             {
                 if (GetNodeData(currChildNodeId).SatisfyingGoal == currNodeId)
                 {
+                    LogInfo("Node[%x] is from Node[%x] expanded case", currChildNodeId, currNodeId);
+
                     if (IsNodeOpen(currNodeId))
                         GetNodeData(currChildNodeId).IncWaitOnParentsCount();
+                    else
+                        LogInfo("Node[%x] was not considered since it is closed", currNodeId);
                 }
                 else
                 {
+                    LogInfo("Node[%x] is from the original plan Node[%x] belong to", currChildNodeId, currNodeId);
+
                     if (m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded)
                         GetNodeData(currChildNodeId).IncWaitOnParentsCount();
+                    else
+                        LogInfo("Node[%x] was not considered since its parent Node[%x] is already succeeded", currChildNodeId, currNodeId);
                 }
             }
 

@@ -16,6 +16,7 @@ namespace IStrategizer
         WinGameGoal();
         WinGameGoal(const PlanStepParameters& p_parameters);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
+        bool Equals(PlanStepEx* p_planStep);
         
     protected:
         void InitializePostConditions();

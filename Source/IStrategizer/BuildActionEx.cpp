@@ -222,7 +222,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 
     return bOk;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void BuildActionEx::InitializePostConditions()
 {
     vector<Expression*> m_terms;
@@ -235,7 +235,7 @@ void BuildActionEx::InitializePostConditions()
 
     _postCondition = new And(m_terms);
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void BuildActionEx::InitializePreConditions()
 {
     EntityClassType builderType = g_Game->Self()->Race()->GetWorkerType();
@@ -246,4 +246,10 @@ void BuildActionEx::InitializePreConditions()
     m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, 1));
     g_Assist.GetPrerequisites(buildingType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
+}
+//////////////////////////////////////////////////////////////////////////
+bool BuildActionEx::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId);
 }

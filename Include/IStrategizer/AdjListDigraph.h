@@ -3,6 +3,7 @@
 #define ADJLISTDIGRAPH_H
 
 #include <mutex>
+#include <stack>
 #include "IDigraph.h"
 #include "SMap.h"
 #include "SPair.h"
@@ -33,20 +34,6 @@ namespace IStrategizer
             : m_lastNodeId(0)
         {
         }
-
-        //************************************
-        // IStrategizer::IDigraph<TNodeValue>::AddNode
-        // Description:	Add a new node to the Digraph without connecting it
-        // Parameter: 	NodeValue val: A data value that is associated with the added node
-        // Returns:   	NodeID:  A unique ID used to reference the added node
-        // in further Digraph methods
-        //************************************
-        /*NodeID AddNode(const _In_ NodeValue& val)
-        {
-        m_adjList.insert(make_pair(++m_lastNodeId, MakePair(val, NodeSet())));
-
-        return m_lastNodeId;
-        }*/
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::AddNode
@@ -144,6 +131,17 @@ namespace IStrategizer
         }
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Contains
+        // Description:	Check for a certain node existence in the graph
+        // Parameter: 	NodeID id: Unique ID to identify the node
+        // Returns:   	true if the node exists, false otherwise
+        //************************************
+        bool Contains(_In_ NodeID id) const
+        {
+            return m_adjList.count(id) > 0;
+        }
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetNodes
         // Description:	Returns a set of all node ids inside the digraph
         // Returns:   	NodeSet
@@ -208,13 +206,12 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
         // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
-        // Parameter: 	NodeList subGraphIds: The ids describing the sub-part to replace.
+        // Parameter: 	NodeSet subGraphIds: The ids describing the sub-part to replace.
         // Parameter:   TNodeValue substitute: The TNodeValue to replace the sub-part with.
         //************************************      
-        void SubGraphSubstitution(_In_ NodeList subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId)
+        void SubGraphSubstitution(_In_ NodeSet subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId)
         {
             std::string subGraphIdSet = "{";
-
 
             LogInfo("Substituting %d with %s", substituteId, ToString(subGraphIds).c_str());
             LogInfo("Pre-process graph state:\n%s\n", ToString().c_str());
@@ -296,23 +293,45 @@ namespace IStrategizer
             return leaves;
         }
 
-        bool IsSubGraphOf(AdjListDigraph<TNodeValue, TNodeValueTraits>& p_parentGraph, NodeList& p_matchedIndexes)
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::PathExists
+        // Description:	Checks if there's a path from start node to the end node.
+        // Parameter: 	NodeID start: The start node ID
+        // Parameter:   NodeID end: the end node id
+        //// Returns:   bool: True if path exists, false otherwise.
+        //************************************
+        bool PathExists(const NodeID start, const NodeID end) const
         {
-            NodeSet m_parentNodes;
-            UnorderedNodeSet m_matchedNodes;
+            stack<NodeID> nodes;
 
-            for each (NodeID nodeID in p_parentGraph.GetNodes())
+            for (NodeID childId : GetAdjacentNodes(start)) nodes.push(childId);
+
+            while (!nodes.empty())
             {
-                m_parentNodes.insert(nodeID);
+                NodeID currentNode = nodes.top();
+                if (currentNode == end)
+                {
+                    return true;
+                }
+                else
+                {
+                    nodes.pop();
+                    for (NodeID childId : GetAdjacentNodes(currentNode)) nodes.push(childId);
+                }
             }
 
-            NodeSet roots = GetOrphanNodes();
+            return false;
+        }
 
-            LogInfo("Checking if graph %s is subgraph of graph %s", ToString().c_str(), p_parentGraph.ToString().c_str());
+        bool IsSuperGraphOf(AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph, NodeSet& superGraphMatchedIds)
+        {
+            if (Size() <= pCandidateSubGraph->Size())
+            {
+                return false;
+            }
 
-            bool result = MatchNodesAndChildren(roots, m_parentNodes, p_parentGraph, m_matchedNodes);
-            p_matchedIndexes.insert(p_matchedIndexes.begin(), m_matchedNodes.begin(), m_matchedNodes.end());
-            return result;
+            NodeSet subGraphMatchedIds;
+            return IsSuperGraph(pCandidateSubGraph->GetOrphanNodes(), GetNodes(), subGraphMatchedIds, superGraphMatchedIds, pCandidateSubGraph);
         }
 
         //************************************
@@ -411,65 +430,6 @@ namespace IStrategizer
             return strIdSet;
         }
 
-        bool MatchNodesAndChildren(
-            _In_ const NodeSet& childGraphNodes,
-            _In_ const NodeSet& parentGraphNodes,
-            _In_ AdjListDigraph<TNodeValue, TNodeValueTraits>& pParentGraph,
-            _Out_ UnorderedNodeSet& matchedIds)
-        {
-
-            LogInfo("Child Graph Nodes: %s", ToString(childGraphNodes).c_str());
-            LogInfo("Parent Graph Nodes: %s", ToString(parentGraphNodes).c_str());
-            LogInfo("Matched Ids: %s\n", ToString(parentGraphNodes).c_str());
-
-            for each(NodeID childGraphNodeId in childGraphNodes)
-            {
-                bool m_foundMatch = false;
-
-                for each(NodeID parentGraphNodeId in parentGraphNodes)
-                {
-                    if (matchedIds.find(parentGraphNodeId) != matchedIds.end())
-                    {
-                        continue;
-                    }
-
-                    IComparable* pChildGraphNode = dynamic_cast<IComparable*>(GetNode(childGraphNodeId));
-                    IComparable* pParentGraphNode = dynamic_cast<IComparable*>(pParentGraph.GetNode(parentGraphNodeId));
-
-                    if (pChildGraphNode->Compare(pParentGraphNode) == 0)
-                    {
-                        UnorderedNodeSet m_currentMatchedSubNodes;
-
-                        NodeSet candidateNodeChildren = GetAdjacentNodes(childGraphNodeId);
-                        NodeSet parentNodeChildren = pParentGraph.GetAdjacentNodes(parentGraphNodeId);
-
-                        if (MatchNodesAndChildren(candidateNodeChildren, parentNodeChildren, pParentGraph, m_currentMatchedSubNodes))
-                        {
-                            m_currentMatchedSubNodes.insert(parentGraphNodeId);
-
-                            for each (NodeID m_matchedSubNode in m_currentMatchedSubNodes)
-                            {
-                                if (matchedIds.find(m_matchedSubNode) == matchedIds.end())
-                                {
-                                    matchedIds.insert(m_matchedSubNode);
-                                }
-                            }
-
-                            m_foundMatch = true;
-                            break;
-                        }
-                    }
-                }
-
-                if(m_foundMatch == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         NodeSet GetParents(NodeID nodeId) const
         {
             if (m_adjList.count(nodeId) == 0)
@@ -486,6 +446,70 @@ namespace IStrategizer
             }
 
             return m_parents;
+        }
+
+        bool IsSuperGraph(
+            const NodeSet& subGraphChildren,
+            const NodeSet& superGraphChildren,
+            NodeSet& subGraphMatchedIds,
+            NodeSet& superGraphMatchedIds,
+            AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph)
+        {
+            if (subGraphChildren.empty())
+            {
+                // Base case, that the there are no children to match
+                // and everything previously matched, then return true.
+                return true;
+            }
+            else if (superGraphChildren.empty())
+            {
+                // The subgraph still have nodes to match but
+                // the supergraph does not have any.
+                return false;
+            }
+
+            for (NodeID supGraphNodeId : subGraphChildren)
+            {
+                bool nodeMatched = false;
+                
+                if (subGraphMatchedIds.count(supGraphNodeId) != 0)
+                {
+                    // If we matched this subGraphNode before then no need to get into its children
+                    // and try matching them again, just skip this node.
+                    continue;
+                }
+
+                for (NodeID superGraphNodeId : superGraphChildren)
+                {
+                    IComparable* pLeft = dynamic_cast<IComparable*>(pCandidateSubGraph->GetNode(supGraphNodeId));
+                    IComparable* pRight = dynamic_cast<IComparable*>(GetNode(superGraphNodeId));
+
+                    if (pLeft->Compare(pRight) == 0 && superGraphMatchedIds.count(superGraphNodeId) == 0)
+                    {
+                        bool childrenMatched = IsSuperGraph(
+                            pCandidateSubGraph->GetAdjacentNodes(supGraphNodeId),
+                            GetAdjacentNodes(superGraphNodeId),
+                            subGraphMatchedIds,
+                            superGraphMatchedIds,
+                            pCandidateSubGraph);
+
+                        if (childrenMatched)
+                        {
+                            superGraphMatchedIds.insert(superGraphNodeId);
+                            subGraphMatchedIds.insert(supGraphNodeId);
+                            nodeMatched = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!nodeMatched)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     };
 }

@@ -22,6 +22,15 @@ unsigned GenerateID()
     return uuid.Data1;
 }
 
+PlanStepEx::PlanStepEx() :
+    _state(ESTATE_NotPrepared),
+    _postCondition(nullptr),
+    _firstUpdate(true),
+    _id(GenerateID())
+{
+    memset(_stateStartTime, 0, sizeof(_stateStartTime));
+    memset(_stateTimeout, 0, sizeof(_stateTimeout));
+}
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) 
     : _stepTypeId(p_stepTypeId),
@@ -44,19 +53,6 @@ PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanS
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
-}
-//////////////////////////////////////////////////////////////////////////
-bool PlanStepEx::Equals(PlanStepEx* p_planStep)
-{
-    bool m_equals = _stepTypeId == p_planStep->_stepTypeId;
-
-    for (PlanStepParameters::const_iterator i = _params.begin(), j = p_planStep->_params.begin();
-        m_equals && i != _params.end(); ++i, ++j)
-    {
-        m_equals &= ((*i).first == (*j).first) && ((*i).second == (*j).second);
-    }
-
-    return m_equals;
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeConditions()

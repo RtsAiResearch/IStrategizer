@@ -236,3 +236,9 @@ void TrainAction::FreeResources(RtsGame& game)
     if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
         m_requiredResources.Unlock(this);
 }
+//----------------------------------------------------------------------------------------------
+bool TrainAction::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId);
+}

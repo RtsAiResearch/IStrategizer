@@ -12,10 +12,10 @@ using namespace std;
 
 void CaseLearningHelper::Init()
 {
-    g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
     g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
 
     for(unsigned i = START(GoalType); i < END(GoalType); ++i)
     {
@@ -57,6 +57,15 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
         m_goals[i]->HandleMessage(*g_Game, p_message, dummy);
     }
 
+    if (p_message->GameCycle() > 0)
+    {
+        succeededGoals = GetSatisfiedGoals();
+        for (size_t i = 0; i < succeededGoals.size(); ++i)
+        {
+            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
+        }
+    }
+
     switch(p_message->MessageTypeID())
     {
     case MSG_GameActionLog:
@@ -68,20 +77,13 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
         trace = *pTraceMsg->Data();
         m_observedTraces.push_back(trace);
 
-        succeededGoals = GetSatisfiedGoals();
-        
-        for (size_t i = 0; i < succeededGoals.size(); ++i)
-        {
-            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
-        }
-
         LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
 
         break;
 
     case MSG_GameEnd:
         LogInfo("Received game end mmessage");
-        
+        succeededGoals.clear();
         succeededGoals = GetSatisfiedGoals();
         
         for (size_t i = 0; i < succeededGoals.size(); ++i)

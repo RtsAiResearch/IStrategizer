@@ -83,3 +83,9 @@ void ResearchAction::InitializePreConditions()
     g_Assist.GetPrerequisites(researchType, PLAYER_Self, m_terms);
     _preCondition = new And(m_terms);
 }
+//----------------------------------------------------------------------------------------------
+bool ResearchAction::Equals(PlanStepEx* p_planStep)
+{
+    return StepTypeId() == p_planStep->StepTypeId() &&
+        _params[PARAM_ResearchId] == p_planStep->Parameter(PARAM_ResearchId);
+}

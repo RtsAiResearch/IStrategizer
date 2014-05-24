@@ -21,6 +21,7 @@ namespace IStrategizer
         void AddRange(ExecutionHistory other);
         ConditionEx* GetMostVulnerableAliveCondition() const;
         bool IsEmpty() const { return m_history.empty(); }
+        int TrialCount () const { return (int)m_history.size(); }
 
     private:
         ExecutionTrial::List FailedTrials() const;

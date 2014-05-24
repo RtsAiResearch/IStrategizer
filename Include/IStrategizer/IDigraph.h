@@ -36,24 +36,24 @@ namespace IStrategizer
 
         virtual ~IDigraph() {};
 
-        ////************************************
-        //// IStrategizer::IDigraph<TNodeValue>::AddNode
-        //// Description:	Add a new node to the Digraph without connecting it
-        //// Parameter: 	NodeValue val: A data value that is associated with the added node
-        //// Returns:   	NodeID:  A unique ID used to reference the added node
-        //// in further Digraph methods
-        ////************************************
-        //virtual NodeID AddNode(const _In_ NodeValue& val) = 0;
-
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::AddNode
         // Description:	Add a new node to the Digraph without connecting it and identify it using
         // the passed in id instead of auto generating a new id
         // Parameter: 	NodeValue val: A data value that is associated with the added node
-        // Parameter:   NodeID:  A unique ID used to reference the added node
+        // Parameter:   NodeID id: A unique ID used to reference the added node
         // in further Digraph methods
         //************************************
         virtual NodeID AddNode(const _In_ NodeValue& val, NodeID id) throw(ItemAlreadyExistsException) = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::PathExists
+        // Description:	Checks if there's a path from start node to the end node.
+        // Parameter: 	NodeID start: The start node ID
+        // Parameter:   NodeID end: the end node id
+        //// Returns:   bool: True if path exists, false otherwise.
+        //************************************
+        virtual bool PathExists(const NodeID start, const NodeID end) const = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::RemoveNode
@@ -92,6 +92,14 @@ namespace IStrategizer
         //************************************
         virtual NodeValue& GetNode(_In_ NodeID id)
             throw(ItemNotFoundException) = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Contains
+        // Description:	Check for a certain node existence in the graph
+        // Parameter: 	NodeID id: Unique ID to identify the node
+        // Returns:   	true if the node exists, false otherwise
+        //************************************
+        virtual bool Contains(_In_ NodeID id) const = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetNodes
@@ -139,8 +147,8 @@ namespace IStrategizer
         // Parameter: 	NodeList subGraphIds: The ids describing the sub-part to replace.
         // Parameter:   TNodeValue substitute: The TNodeValue to replace the sub-part with.
         // Parameter:   NodeID substituteId: The id to set for the newly added substitute 
-        //************************************      
-        virtual void SubGraphSubstitution(_In_ NodeList subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId) = 0;
+        //************************************
+        virtual void SubGraphSubstitution(_In_ NodeSet subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetOrphanNodes
