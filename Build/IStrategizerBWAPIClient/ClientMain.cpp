@@ -396,7 +396,7 @@ void ClientMain::OnClientUpdate()
     {
         m_pIStrategizer->Update(Broodwar->getFrameCount());
 
-        if (Broodwar->getFrameCount() % 10 == 0)
+        /*if (Broodwar->getFrameCount() % 10 == 0)
         {
             RtsGame* pSnapshot = g_Game->Snapshot();
             m_snapshots[Broodwar->getFrameCount()].first = pSnapshot;
@@ -408,7 +408,7 @@ void ClientMain::OnClientUpdate()
             pCopy->Init();
             pCopy->Map()->Update();
             m_snapshots[Broodwar->getFrameCount()].second = pCopy;
-        }
+        }*/
         
     }
     catch (IStrategizer::Exception &e)
