@@ -72,19 +72,19 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
     vector<RawCaseEx*> learntRawCases;
     vector<RawCaseEx*> candidateRawCases;
     CaseLearningHelper::GoalMatrix goalMatrix = _helper->GetGoalSatisfacionMatrix();
+    SequentialPlan plan;
+    size_t currentTraceInx = 0;
 
     // Learn the succeeded goals
     for (auto goalPair : goalMatrix)
     {
-        SequentialPlan plan;
-
-        for (size_t i = 0; i < traces.size() && goalPair.first >= traces[i].GameCycle(); ++i)
+        for (; currentTraceInx < traces.size() && goalPair.first >= traces[currentTraceInx].GameCycle(); ++currentTraceInx)
         {
-            Action* action = g_ActionFactory.GetAction(traces[i].Action(), traces[i].ActionParams(), true);
+            Action* action = g_ActionFactory.GetAction(traces[currentTraceInx].Action(), traces[currentTraceInx].ActionParams(), true);
             _ASSERTE(action->PostCondition());
             _ASSERTE(action->PreCondition());
 
-            _gameStateMapping[action->Id()] = traces[i].GameState();
+            _gameStateMapping[action->Id()] = traces[currentTraceInx].GameState();
             plan.push_back(action);
         }
 
@@ -101,8 +101,10 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
 
         for (size_t j = 0; j < learntRawCases.size(); ++j)
         {
-            if (candidateRawCases[i]->rawPlan.Goal == learntRawCases[j]->rawPlan.Goal &&
-                IdenticalSequentialPlan(candidateRawCases[i]->rawPlan.sPlan, learntRawCases[j]->rawPlan.sPlan))
+            bool identicalGoal = candidateRawCases[i]->rawPlan.Goal->Equals(learntRawCases[j]->rawPlan.Goal);
+            bool identicalPlan = IdenticalSequentialPlan(candidateRawCases[i]->rawPlan.sPlan, learntRawCases[j]->rawPlan.sPlan);
+            
+            if (identicalGoal && identicalPlan)
             {
                 duplicate = true;
                 break;
@@ -123,9 +125,9 @@ bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left
     bool identical = left.size() == right.size();
     size_t i = 0;
 
-    while (identical && i < left.size())
+    while (identical && ++i < left.size())
     {
-        identical = left[i]->Id() == right[i++]->Id();
+        identical = left[i]->Equals(right[i]);
     }
 
     return identical;

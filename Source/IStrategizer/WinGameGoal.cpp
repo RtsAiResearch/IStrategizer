@@ -53,6 +53,5 @@ vector<GoalEx*> WinGameGoal::GetSucceededInstances(RtsGame &game)
 bool WinGameGoal::Equals(PlanStepEx* p_planStep)
 {
     return StepTypeId() == p_planStep->StepTypeId() &&
-        _params[PARAM_TargetEntityClassId] == p_planStep->Parameter(PARAM_TargetEntityClassId) &&
-        _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+        _params[PARAM_StrategyTypeId] == p_planStep->Parameter(PARAM_StrategyTypeId);
 }
