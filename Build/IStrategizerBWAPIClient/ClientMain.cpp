@@ -180,7 +180,7 @@ void ClientMain::FinalizeIStrategizer()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeViews()
 {
-    for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
+    for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->SetIM(nullptr);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -422,7 +422,7 @@ void ClientMain::OnClientUpdate()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateViews()
 {
-    for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
+    for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->update();
 
     // m_pPlanGraphView->update();

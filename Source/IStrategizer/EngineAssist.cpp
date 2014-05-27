@@ -123,7 +123,7 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
     {
         matches = 0;
 
-        for (size_t i = 0, size = entities.size(); i < size; ++i)
+        for (unsigned i = 0, size = entities.size(); i < size; ++i)
         {
             pEntity = pPlayer->GetEntity(entities[i]);
             _ASSERTE(pEntity);
@@ -178,7 +178,7 @@ bool EngineAssist::DoesEntityObjectExist(const vector<TID> &p_entityObjects, Pla
     pPlayer = g_Game->GetPlayer(p_playerType);
     _ASSERTE(pPlayer);
 
-    for (size_t i = 0, size = p_entityObjects.size(); i < size; ++i)
+    for (unsigned i = 0, size = p_entityObjects.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(p_entityObjects[i]);
 
@@ -218,7 +218,7 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
         g_Game->GetResearch((ResearchType)p_entityOrResearchType)->GetRequirements(reqResearches, reqEntities);
 
     // 1. Required researches done
-    for (size_t i = 0, size = reqResearches.size(); i < size; ++i)
+    for (unsigned i = 0, size = reqResearches.size(); i < size; ++i)
     {
         p_prerequisites.push_back(new IStrategizer::ResearchDone(p_playerType, reqResearches[i]));
     }

@@ -55,7 +55,7 @@ namespace IStrategizer
         GamePlayer* Enemy() { return GetPlayer(PLAYER_Enemy); }
         WorldMap* Map() { _ASSERTE(m_isInitialized); return m_pMap; }
         RtsGame* Snapshot() const;
-        virtual size_t GetMaxTrainingQueueCount() const = 0;
+        virtual unsigned GetMaxTrainingQueueCount() const = 0;
 
     protected:
         void SetOffline();

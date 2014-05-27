@@ -111,9 +111,9 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::Size
         // Description:	Returns the number of nodes inside the digraph
-        // Returns:   	size_t
+        // Returns:   	unsigned
         //************************************
-        virtual size_t Size() const = 0;
+        virtual unsigned Size() const = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::Clear

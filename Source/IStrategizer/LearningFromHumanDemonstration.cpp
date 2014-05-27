@@ -73,7 +73,7 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
     vector<RawCaseEx*> candidateRawCases;
     CaseLearningHelper::GoalMatrix goalMatrix = _helper->GetGoalSatisfacionMatrix();
     SequentialPlan plan;
-    size_t currentTraceInx = 0;
+    unsigned currentTraceInx = 0;
 
     // Learn the succeeded goals
     for (auto goalPair : goalMatrix)
@@ -88,18 +88,18 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
             plan.push_back(action);
         }
 
-        for (size_t j = 0; j < goalPair.second.size(); ++j)
+        for (unsigned j = 0; j < goalPair.second.size(); ++j)
         {
             candidateRawCases.push_back(new RawCaseEx(RawPlanEx(goalPair.second[j], plan), nullptr));
         }
     }
 
     // Remove duplicate cases
-    for (size_t i = 0; i < candidateRawCases.size(); ++i)
+    for (unsigned i = 0; i < candidateRawCases.size(); ++i)
     {
         bool duplicate = false;
 
-        for (size_t j = 0; j < learntRawCases.size(); ++j)
+        for (unsigned j = 0; j < learntRawCases.size(); ++j)
         {
             bool identicalGoal = candidateRawCases[i]->rawPlan.Goal->Equals(learntRawCases[j]->rawPlan.Goal);
             bool identicalPlan = IdenticalSequentialPlan(candidateRawCases[i]->rawPlan.sPlan, learntRawCases[j]->rawPlan.sPlan);
@@ -123,7 +123,7 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
 bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right)
 {
     bool identical = left.size() == right.size();
-    size_t i = 0;
+    unsigned i = 0;
 
     while (identical && ++i < left.size())
     {
@@ -137,34 +137,39 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
 {
     OlcbpPlan* m_olcpbPlan = new OlcbpPlan();
     OlcbpPlan* m_tempOlcpbPlan = new OlcbpPlan();
-    vector<OlcbpPlan::NodeID> nodeIds;
+    OlcbpPlan::NodeList nodeIds;
 
-    for (size_t i = 0; i < p_rawCase->rawPlan.sPlan.size(); ++i)
+    for (unsigned i = 0; i < p_rawCase->rawPlan.sPlan.size(); ++i)
     {
-        PlanStepEx* pClone = (PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone();
-        PlanStepEx* pTempClone = (PlanStepEx*)p_rawCase->rawPlan.sPlan[i]->Clone();
-        m_olcpbPlan->AddNode(pClone, pClone->Id());
-        m_tempOlcpbPlan->AddNode(pTempClone, pClone->Id());
-        nodeIds.push_back(pClone->Id());
+        PlanStepEx* pPlanStep = p_rawCase->rawPlan.sPlan[i];
+        PlanStepEx* pTempClone = (PlanStepEx*)pPlanStep->Clone();
+        m_olcpbPlan->AddNode(pPlanStep, pPlanStep->Id());
+        m_tempOlcpbPlan->AddNode(pTempClone, pPlanStep->Id());
+        nodeIds.push_back(pPlanStep->Id());
 
         // Update the game state mapping with the new Id
-        _gameStateMapping[pClone->Id()] = _gameStateMapping[p_rawCase->rawPlan.sPlan[i]->Id()];
+        _gameStateMapping[pPlanStep->Id()] = _gameStateMapping[p_rawCase->rawPlan.sPlan[i]->Id()];
     }
-
-    for (OlcbpPlan::NodeID i : nodeIds)
+    
+    for (unsigned i = nodeIds.size(); i-- > 0; )
     {
-        for (OlcbpPlan::NodeID j : nodeIds)
+        for (unsigned j = i + 1; j < nodeIds.size(); ++j)
         {
-            if(i != j)
-            {
-                LogInfo("Checking dependency between node %s and %s", m_olcpbPlan->GetNode(i)->ToString(true).c_str(), m_olcpbPlan->GetNode(j)->ToString(true).c_str());
+            _ASSERTE(j > i);
+            OlcbpPlan::NodeID candidateParent = nodeIds[i];
+            OlcbpPlan::NodeID candidateChild = nodeIds[j];
 
-                if(!m_olcpbPlan->PathExists(j, i) &&
-                    Depends(m_tempOlcpbPlan->GetNode(i)->PostCondition(), ((Action*)m_tempOlcpbPlan->GetNode(j))->PreCondition()))
-                {
-                    LogInfo("Adding edge from node %s to node %s, as dependency matches", m_olcpbPlan->GetNode(i)->ToString(true).c_str(), m_olcpbPlan->GetNode(j)->ToString(true).c_str());
-                    m_olcpbPlan->AddEdge(i, j);
-                }
+            LogInfo("Checking dependency between node %s and %s",
+                m_olcpbPlan->GetNode(candidateParent)->ToString(true).c_str(),
+                m_olcpbPlan->GetNode(candidateChild)->ToString(true).c_str());
+            
+            if (Depends(m_tempOlcpbPlan->GetNode(candidateParent)->PostCondition(), ((Action*)m_tempOlcpbPlan->GetNode(candidateChild))->PreCondition()))
+            {
+                LogInfo("Adding edge from node %s to node %s, as dependency matches",
+                    m_olcpbPlan->GetNode(candidateParent)->ToString(true).c_str(),
+                    m_olcpbPlan->GetNode(candidateChild)->ToString(true).c_str());
+                
+                m_olcpbPlan->AddEdge(candidateParent, candidateChild);
             }
         }
     }
@@ -254,7 +259,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
 
         for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
         {
-            if(p_case->plan->IsAdjacent(*it, current))
+            if (p_case->plan->IsAdjacent(*it, current))
             {
                 m_necessarySteps.insert(*it);
                 m_unprocessedSteps.erase(it++);
@@ -269,7 +274,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     // Removing unnecessary steps
     for (OlcbpPlan::NodeID i : p_case->plan->GetNodes())
     {
-        if(m_finalSteps.find(i) == m_finalSteps.end())
+        if (m_finalSteps.find(i) == m_finalSteps.end())
         {
             p_case->plan->RemoveNode(i);
         }
@@ -282,13 +287,13 @@ void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedP
     map<int, vector<OlcbpPlan::NodeSet>> matchedSubplansNodeIds;
     OlcbpPlan::NodeSet totalMatchedNodeIds;
 
-    for (size_t i = 0; i < p_cookedPlans.size(); ++i)
+    for (unsigned i = 0; i < p_cookedPlans.size(); ++i)
     {
         LogInfo("Superset Plan Graph:\n%s", p_cookedPlans[i]->pPlan->ToString().c_str());
         
         totalMatchedNodeIds.clear();
 
-        for (size_t j = 0; j < p_cookedPlans.size(); ++j)
+        for (unsigned j = 0; j < p_cookedPlans.size(); ++j)
         {
             // Make sure not to match with the same plan.
             if (i != j)
@@ -311,7 +316,7 @@ void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedP
         }
     }
 
-    for (size_t i = 0; i < p_cookedPlans.size(); ++i)
+    for (unsigned i = 0; i < p_cookedPlans.size(); ++i)
     {
         if (!subplansIndex[i].empty())
         {
@@ -334,7 +339,7 @@ void LearningFromHumanDemonstration::RetainLearntCases(vector<CookedPlan*>& p_co
 
     _retainer->ReadCaseBase();
 
-    for (size_t i = 0, size = p_cookedPlans.size(); i < size; ++i)
+    for (unsigned i = 0, size = p_cookedPlans.size(); i < size; ++i)
     {
         CookedPlan* currCookedPlan = p_cookedPlans[i];
         pLearntCase = new CaseEx(currCookedPlan->pPlan, currCookedPlan->Goal, currCookedPlan->gameState, 1, 1);

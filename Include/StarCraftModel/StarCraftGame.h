@@ -18,7 +18,7 @@ namespace IStrategizer
         void ExecuteCommand(const char *p_cmd);
         void DisplayMessage(const char *p_msg);
         int GetMaxForceSize() const { return 12; }
-        size_t GetMaxTrainingQueueCount() const { return 5; }
+        unsigned GetMaxTrainingQueueCount() const { return 5; }
 
     protected:
         void InitPlayers();

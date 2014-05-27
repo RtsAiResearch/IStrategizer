@@ -35,7 +35,7 @@ using namespace Serialization;
 
 // The number of samples the KNN algorithm should use to calculate the most similar case to the
 // case to be retrieved
-const size_t KNeighbours = 4;
+const unsigned KNeighbours = 4;
 
 RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pRetainer, "Retriever")
 {
@@ -145,7 +145,7 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const RtsGame* pGameState, co
 
     // Calculate the relevance between each case in the case-base and
     // the current situation using the goal and game-state params
-    for(size_t i = 0, size = cases.size(); i < size; ++i)
+    for(unsigned i = 0, size = cases.size(); i < size; ++i)
     {
         // Ignore all cases with different goal type because it does not
         // make sense to retrieve a WinGame case for TrainArmy goal for example

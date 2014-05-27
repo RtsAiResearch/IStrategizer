@@ -27,11 +27,11 @@ std::vector<GoalEx*> CaseLearningHelper::GetSatisfiedGoals() const
 {
     vector<GoalEx*> satisfiedGoals;
 
-    for (size_t i = 0; i < m_goals.size(); ++i)
+    for (unsigned i = 0; i < m_goals.size(); ++i)
     {
         vector<GoalEx*> newGoals = m_goals[i]->GetSucceededInstances(*g_Game);
 
-        for (size_t j = 0; j < newGoals.size(); ++j)
+        for (unsigned j = 0; j < newGoals.size(); ++j)
         {
             satisfiedGoals.push_back((GoalEx*)newGoals[j]->Clone());
         }
@@ -52,7 +52,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     if (p_message == nullptr)
         DEBUG_THROW(InvalidParameterException(XcptHere));
 
-    for (size_t i = 0; i < m_goals.size() && p_message->GameCycle() > 0; ++i)
+    for (unsigned i = 0; i < m_goals.size() && p_message->GameCycle() > 0; ++i)
     {
         m_goals[i]->HandleMessage(*g_Game, p_message, dummy);
     }
@@ -60,7 +60,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     if (p_message->GameCycle() > 0)
     {
         succeededGoals = GetSatisfiedGoals();
-        for (size_t i = 0; i < succeededGoals.size(); ++i)
+        for (unsigned i = 0; i < succeededGoals.size(); ++i)
         {
             m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
         }
@@ -86,7 +86,7 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
         succeededGoals.clear();
         succeededGoals = GetSatisfiedGoals();
         
-        for (size_t i = 0; i < succeededGoals.size(); ++i)
+        for (unsigned i = 0; i < succeededGoals.size(); ++i)
         {
             m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
         }
