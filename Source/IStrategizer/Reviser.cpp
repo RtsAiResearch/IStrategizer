@@ -13,7 +13,7 @@ using namespace IStrategizer;
 void Reviser::Revise(CaseEx* pCase, bool succeeded)
 {
     // Revise case usage
-    LogWarning("Pretending to revise case %s, but case revision is not functional actually", pCase->Goal()->ToString().c_str());
+    //LogWarning("Pretending to revise case %s, but case revision is not functional actually", pCase->Goal()->ToString().c_str());
     // pCase->TrialCount(pCase->TrialCount() + 1);
     // pCase->SuccessCount(pCase->SuccessCount() + (succeeded ? 1 : 0));
 

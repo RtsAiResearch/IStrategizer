@@ -23,14 +23,22 @@ namespace IStrategizer
         typedef unsigned NodeID;
         ///> alias=NodeValue(TNodeValue)
         typedef TNodeValue NodeValue;
-        ///> alias=NodeSet(set(NodeID))
-        typedef Serialization::SSet<NodeID> NodeSet;
-        
-        typedef std::unordered_set<NodeID> UnorderedNodeSet;
+        ///> alias=NodeSerializedSet(set(NodeID))
+        typedef Serialization::SSet<NodeID> NodeSerializedSet;
+
+        typedef std::set<NodeID> NodeSet;
 
         typedef std::vector<NodeID> NodeList;
 
         typedef std::queue<NodeID> NodeQueue;
+
+        typedef std::map<NodeID, std::set<NodeID>> NodeMap;
+
+        typedef std::vector<NodeSet> NodeSetList;
+
+        typedef unsigned NodeHash;
+
+        typedef std::map<NodeHash, NodeSet> PlanHashMap;
 
         static const NodeID NullNodeID = 0;
 
@@ -104,16 +112,23 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetNodes
         // Description:	Returns a set of all node ids inside the digraph
-        // Returns:   	NodeSet
+        // Returns:   	NodeSerializedSet
         //************************************
-        virtual NodeSet GetNodes() const = 0;
+        virtual NodeSerializedSet GetNodes() const = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetNodeValues
+        // Description:	Returns a set of all node values inside the digraph
+        // Returns:   	std::set<NodeValue>
+        //************************************
+        virtual std::set<NodeValue> GetNodeValues() const = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::Size
         // Description:	Returns the number of nodes inside the digraph
-        // Returns:   	unsigned
+        // Returns:   	size_t
         //************************************
-        virtual unsigned Size() const = 0;
+        virtual size_t Size() const = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::Clear
@@ -136,9 +151,9 @@ namespace IStrategizer
         // IStrategizer::IDigraph<TNodeValue>::GetAdjacentNodes
         // Description:	Get all nodes that has an edge going from sourceNode to it
         // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
-        // Returns:   	NodeSet: A set of all node ids adjacent to sourceNode
+        // Returns:   	NodeSerializedSet: A set of all node ids adjacent to sourceNode
         //************************************
-        virtual const NodeSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
+        virtual const NodeSerializedSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
             throw(ItemNotFoundException) = 0;
         
         //************************************
@@ -153,16 +168,16 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetOrphanNodes
         // Description:	Get all nodes that do not have an edge going from any node to them
-        // Returns:   	NodeSet: A set of all orphan node ids
+        // Returns:   	NodeSerializedSet: A set of all orphan node ids
         //************************************
-        virtual NodeSet GetOrphanNodes() const = 0;
+        virtual NodeSerializedSet GetOrphanNodes() const = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetLeafNodes
         // Description:	Get all nodes that do not have an edge going from them to any node
-        // Returns:   	NodeSet
+        // Returns:   	NodeSerializedSet
         //************************************
-        virtual NodeSet GetLeafNodes() const = 0;
+        virtual NodeSerializedSet GetLeafNodes() const = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::Lock
@@ -185,6 +200,15 @@ namespace IStrategizer
         // Returns:   	std::string
         //************************************
         virtual std::string ToString() const = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Reachable
+        // Description:	Detects if source node can reach the dest node.
+        // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
+        // Parameter: 	NodeID destNodeId: Unique ID to identify destNode
+        // Returns:   	bool: True if the dest node is reachable, false otherwise.
+        //************************************
+        virtual bool Reachable(const _In_ NodeID sourceNodeId, const _In_ NodeID destNodeId) = 0;
     };
 }
 

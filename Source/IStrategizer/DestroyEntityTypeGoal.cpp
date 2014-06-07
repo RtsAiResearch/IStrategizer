@@ -55,14 +55,11 @@ void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p
             return;
 
         m_destroyed[pMsg->Data()->EntityType]++;
-        if (m_destroyed[pMsg->Data()->EntityType] <= 6)
-        {
-            PlanStepParameters params;
-            params[PARAM_TargetEntityClassId] = pMsg->Data()->EntityType;
-            params[PARAM_Amount] = m_destroyed[pMsg->Data()->EntityType];
-            m_succededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_DestroyEntityType, params, true));
-            LogInfo("DestroyEntityTypeGoal succeeded for entity type='%s' with amount='%d'", Enums[params[PARAM_TargetEntityClassId]], params[PARAM_Amount]);
-        }
+        PlanStepParameters params;
+        params[PARAM_TargetEntityClassId] = pMsg->Data()->EntityType;
+        params[PARAM_Amount] = m_destroyed[pMsg->Data()->EntityType];
+        m_succededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_DestroyEntityType, params, true));
+        LogInfo("DestroyEntityTypeGoal succeeded for entity type='%s' with amount='%d'", Enums[params[PARAM_TargetEntityClassId]], params[PARAM_Amount]);
 
         if (pMsg->Data()->EntityType == (EntityClassType)_params[PARAM_TargetEntityClassId])
         {
@@ -84,4 +81,9 @@ bool DestroyEntityTypeGoal::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_TargetEntityClassId] == p_planStep->Parameter(PARAM_TargetEntityClassId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+}
+//----------------------------------------------------------------------------------------------
+unsigned DestroyEntityTypeGoal::Hash()
+{
+    return StepTypeId() + _params[PARAM_TargetEntityClassId] + _params[PARAM_Amount];
 }

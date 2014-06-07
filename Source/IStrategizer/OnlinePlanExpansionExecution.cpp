@@ -38,10 +38,10 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
 void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionGoalNodeId, _In_ CaseEx *pExpansionCase)
 {
     IOlcbpPlan *pCasePlan = pExpansionCase->Plan();
-    IOlcbpPlan::NodeSet casePlanRoots = pCasePlan->GetOrphanNodes();
-    IOlcbpPlan::NodeSet casePlanNodes = pCasePlan->GetNodes();
-    IOlcbpPlan::NodeSet newExpansionPlanRoots;
-    IOlcbpPlan::NodeSet preExpansionGoalChildren;
+    IOlcbpPlan::NodeSerializedSet casePlanRoots = pCasePlan->GetOrphanNodes();
+    IOlcbpPlan::NodeSerializedSet casePlanNodes = pCasePlan->GetNodes();
+    IOlcbpPlan::NodeSerializedSet newExpansionPlanRoots;
+    IOlcbpPlan::NodeSerializedSet preExpansionGoalChildren;
 
     GetNodeChildrenInBelongingSubplan(expansionGoalNodeId, preExpansionGoalChildren);
 
@@ -86,7 +86,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
 
     // 3. Link the goal node with the roots of the expansion plan
     IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeSet visitedNodes;
+    IOlcbpPlan::NodeSerializedSet visitedNodes;
 
     for(auto rootNodeId : newExpansionPlanRoots)
     {
@@ -104,7 +104,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
         IOlcbpPlan::NodeID currPlannerNodeId = Q.front();
         Q.pop();
 
-        IOlcbpPlan::NodeSet currCaseChildren = pCasePlan->GetAdjacentNodes(plannerToCasePlanNodeIdMap[currPlannerNodeId]);
+        IOlcbpPlan::NodeSerializedSet currCaseChildren = pCasePlan->GetAdjacentNodes(plannerToCasePlanNodeIdMap[currPlannerNodeId]);
 
         for (auto currCaseChildNodeId : currCaseChildren)
         {
@@ -126,7 +126,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     // If the goal had no children before expansion, then there is nothing to link and we are done
     //if(!preExpansionGoalChildren.empty())
     //{
-    //    IOlcbpPlan::NodeSet casePlanLeaves = pCasePlan->GetLeafNodes();
+    //    IOlcbpPlan::NodeSerializedSet casePlanLeaves = pCasePlan->GetLeafNodes();
 
     //    for (auto preExpansionNodeId : preExpansionGoalChildren)
     //    {
@@ -162,7 +162,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
     {
         IOlcbpPlan::NodeQueue Q;
         IOlcbpPlan::NodeID currentNode;
-        IOlcbpPlan::NodeSet planRoots;
+        IOlcbpPlan::NodeSerializedSet planRoots;
 
         Q.push(m_planRootNodeId);
 
@@ -203,7 +203,7 @@ void OnlinePlanExpansionExecution::UpdateBelongingSubplanChildrenWithParentReadi
 {
     LogInfo("Updating node '%s' children with their parent readiness", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
 
-    const IOlcbpPlan::NodeSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
+    const IOlcbpPlan::NodeSerializedSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
 
     if (IsActionNode(nodeId))
     {
@@ -237,7 +237,7 @@ void OnlinePlanExpansionExecution::UpdateGoalPlanChildrenWithParentReadiness(_In
     _ASSERTE(IsGoalNode(nodeId));
     LogInfo("Updating node '%s' children with their parent readiness", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
 
-    const IOlcbpPlan::NodeSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
+    const IOlcbpPlan::NodeSerializedSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
 
     for (auto childId : children)
     {
@@ -447,7 +447,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
 void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
 {
     IOlcbpPlan *pCasePlan = pCase->Plan();
-    IOlcbpPlan::NodeSet casePlanNodes = pCasePlan->GetNodes();
+    IOlcbpPlan::NodeSerializedSet casePlanNodes = pCasePlan->GetNodes();
 
     for (auto caseNodeId : casePlanNodes)
     {
@@ -501,8 +501,8 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeID planGoalNodeId)
 {
     IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeSet visitedNodes;
-    IOlcbpPlan::NodeSet preExpansionChildren;
+    IOlcbpPlan::NodeSerializedSet visitedNodes;
+    IOlcbpPlan::NodeSerializedSet preExpansionChildren;
     //IOlcbpPlan::NodeID goalSatisfyingGoal;
 
     // 1. Do a BFS to collect the pre-expansion children and the goal subplan nodes
@@ -522,7 +522,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
         IOlcbpPlan::NodeID currNodeId = Q.front();
         Q.pop();
 
-        const IOlcbpPlan::NodeSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
+        const IOlcbpPlan::NodeSerializedSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
 
         for (auto currChildNodeId : currChildren)
         {
@@ -569,7 +569,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan::NodeID nodeId, _Inout_ IOlcbpPlan::NodeQueue& updateQ)
 {
-    const IOlcbpPlan::NodeSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
+    const IOlcbpPlan::NodeSerializedSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
 
     for (auto childNodeId : children)
     {
@@ -609,10 +609,10 @@ void OnlinePlanExpansionExecution::UnlinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId
     m_pOlcbpPlan->AddEdge(srcNodeId, dstNodeId);
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::GetNodeChildrenInBelongingSubplan(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSet& children) const
+void OnlinePlanExpansionExecution::GetNodeChildrenInBelongingSubplan(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSerializedSet& children) const
 {
     IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeSet visitedNodes;
+    IOlcbpPlan::NodeSerializedSet visitedNodes;
     IOlcbpPlan::NodeID nodeSatisfyingGoal = GetNodeData(nodeId).SatisfyingGoal;
 
     Q.push(nodeId);
@@ -623,7 +623,7 @@ void OnlinePlanExpansionExecution::GetNodeChildrenInBelongingSubplan(_In_ IOlcbp
         IOlcbpPlan::NodeID currNodeId = Q.front();
         Q.pop();
 
-        const IOlcbpPlan::NodeSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
+        const IOlcbpPlan::NodeSerializedSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
 
         for (auto currChildNodeId : currChildren)
         {
@@ -640,7 +640,7 @@ void OnlinePlanExpansionExecution::GetNodeChildrenInBelongingSubplan(_In_ IOlcbp
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::UnlinkNodeChildren(_In_ IOlcbpPlan::NodeID nodeId)
 {
-    IOlcbpPlan::NodeSet currChildren = m_pOlcbpPlan->GetAdjacentNodes(nodeId);
+    IOlcbpPlan::NodeSerializedSet currChildren = m_pOlcbpPlan->GetAdjacentNodes(nodeId);
 
     for (auto currChild : currChildren)
     {
@@ -653,14 +653,14 @@ void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
     LogInfo("Computing graph nodes WaitOnParentsCount property");
 
     IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeSet visitedNodes;
+    IOlcbpPlan::NodeSerializedSet visitedNodes;
 
     _ASSERTE(m_pOlcbpPlan->Size() > 0);
     _ASSERTE(m_planRootNodeId != IOlcbpPlan::NullNodeID);
 
     // 1. Reset the NotReadyParentsCount field of each node
     //
-    IOlcbpPlan::NodeSet planNodes;
+    IOlcbpPlan::NodeSerializedSet planNodes;
 
     planNodes = m_pOlcbpPlan->GetNodes();
     for (auto nodeId : planNodes)
@@ -679,7 +679,7 @@ void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
         IOlcbpPlan::NodeID currNodeId = Q.front();
         Q.pop();
 
-        const IOlcbpPlan::NodeSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
+        const IOlcbpPlan::NodeSerializedSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
 
         LogInfo("Computing WaitOnParentsCount for node[%x] children", currNodeId);
 

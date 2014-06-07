@@ -21,6 +21,7 @@
 
 using namespace std;
 using namespace IStrategizer;
+using namespace Serialization;
 
 LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy)
 {
@@ -36,11 +37,11 @@ void LearningFromHumanDemonstration::Learn()
     for (auto m_rawCase : m_rawCases)
     {
         IStrategizer::CookedCase* m_cookedCase = DependencyGraphGeneration(m_rawCase);
-        LogInfo("The initial plan for case %d/%d for goal %s is:\n%s",
+        /*LogInfo("The initial plan for case %d/%d for goal %s is:\n%s",
             count,
             m_rawCases.size(),
             m_cookedCase->rawCase->rawPlan.Goal->ToString(true).c_str(),
-            m_cookedCase->plan->ToString().c_str());
+            m_cookedCase->plan->ToString().c_str());*/
         
         UnnecessaryStepsElimination(m_cookedCase);
 
@@ -50,16 +51,17 @@ void LearningFromHumanDemonstration::Learn()
                 m_cookedCase->rawCase->rawPlan.Goal,
                 m_cookedCase->plan,
                 m_cookedCase->rawCase->gameState));
-            
-            LogInfo("Finished learning case %d/%d for goal %s. The final plan is:\n%s",
+
+            LogInfo("Finished learning case %d/%d", count++, m_rawCases.size());
+            /*LogInfo("Finished learning case %d/%d for goal %s. The final plan is:\n%s",
                 count++,
                 m_rawCases.size(),
                 m_cookedCase->rawCase->rawPlan.Goal->ToString(true).c_str(),
-                m_cookedCase->plan->ToString().c_str());
+                m_cookedCase->plan->ToString().c_str());*/
         }
         else
         {
-            LogInfo("Finished learning case %d/%d and the case does not have any steps so it will not be included.", count++, m_rawCases.size());
+            // LogInfo("Finished learning case %d/%d and the case does not have any steps so it will not be included.", count++, m_rawCases.size());
         }
     }
 
@@ -159,15 +161,16 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
             OlcbpPlan::NodeID candidateParent = nodeIds[i];
             OlcbpPlan::NodeID candidateChild = nodeIds[j];
 
-            LogInfo("Checking dependency between node %s and %s",
-                m_olcpbPlan->GetNode(candidateParent)->ToString(true).c_str(),
-                m_olcpbPlan->GetNode(candidateChild)->ToString(true).c_str());
+            /*LogInfo("Checking dependency between node %s and %s",
+            m_olcpbPlan->GetNode(candidateParent)->ToString(true).c_str(),
+            m_olcpbPlan->GetNode(candidateChild)->ToString(true).c_str());*/
             
-            if (Depends(m_tempOlcpbPlan->GetNode(candidateParent)->PostCondition(), ((Action*)m_tempOlcpbPlan->GetNode(candidateChild))->PreCondition()))
+            if (!m_olcpbPlan->Reachable(candidateParent, candidateChild) &&
+                Depends(m_tempOlcpbPlan->GetNode(candidateParent)->PostCondition(), ((Action*)m_tempOlcpbPlan->GetNode(candidateChild))->PreCondition()))
             {
-                LogInfo("Adding edge from node %s to node %s, as dependency matches",
+                /*LogInfo("Adding edge from node %s to node %s, as dependency matches",
                     m_olcpbPlan->GetNode(candidateParent)->ToString(true).c_str(),
-                    m_olcpbPlan->GetNode(candidateChild)->ToString(true).c_str());
+                    m_olcpbPlan->GetNode(candidateChild)->ToString(true).c_str());*/
                 
                 m_olcpbPlan->AddEdge(candidateParent, candidateChild);
             }
@@ -189,7 +192,7 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidatePar
     {
         ConditionEx* consumer = (ConditionEx*)m_candidateCondition.second;
         ConditionEx* source = (ConditionEx*)m_candidateCondition.first;
-        LogInfo("Found candidate matched condition %s", Enums[source->Type()]);
+        // LogInfo("Found candidate matched condition %s", Enums[source->Type()]);
         bool preconditionHasAmount = consumer->ContainsParameter(PARAM_Amount);
         bool postconditionHasAmount = source->ContainsParameter(PARAM_Amount);
         _ASSERTE(preconditionHasAmount == postconditionHasAmount);
@@ -198,12 +201,13 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidatePar
             int requiredAmount = consumer->Parameter(PARAM_Amount);
             int availableAmount = source->Parameter(PARAM_Amount);
             int consumedAmount = min(requiredAmount, availableAmount);
-            LogInfo("The consumer amount is %d and the source amount is %d", requiredAmount, availableAmount);
+            // LogInfo("The consumer amount is %d and the source amount is %d", requiredAmount, availableAmount);
             
             if (source->Consume(requiredAmount))
             {
-                _ASSERTE(consumer->Consume(consumedAmount));
-                return true;
+                bool isConsumed = consumer->Consume(consumedAmount);
+                _ASSERTE(isConsumed);
+                return isConsumed;
             }
         }
         else
@@ -228,7 +232,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         m_tempNodes[nodeId] = (PlanStepEx*)p_case->plan->GetNode(nodeId)->Clone();
     }
 
-    LogInfo("Finding necessary steps for goal node %s", p_case->rawCase->rawPlan.Goal->ToString(true).c_str());
+    // LogInfo("Finding necessary steps for goal node %s", p_case->rawCase->rawPlan.Goal->ToString(true).c_str());
     for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
     {
         // The order of depends is important keep goal on right side and action on left side
@@ -283,54 +287,42 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
 //--------------------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans)
 {
-    map<int, vector<int>> subplansIndex;
-    map<int, vector<OlcbpPlan::NodeSet>> matchedSubplansNodeIds;
-    OlcbpPlan::NodeSet totalMatchedNodeIds;
+    bool composePlans = false;
 
-    for (unsigned i = 0; i < p_cookedPlans.size(); ++i)
+    do
     {
-        LogInfo("Superset Plan Graph:\n%s", p_cookedPlans[i]->pPlan->ToString().c_str());
-        
-        totalMatchedNodeIds.clear();
+        IdenticalPlanDetection(p_cookedPlans);
+        composePlans = SubplansDetection(p_cookedPlans);
+    } while (composePlans);
+}
+//----------------------------------------------------------------------------------------------
+bool LearningFromHumanDemonstration::IsSuperGraph(OlcbpPlan *pSuperGraph, OlcbpPlan *pSubGraph, OlcbpPlan::NodeSet& superGraphMatchedIds) const
+{
+    if (pSuperGraph->Size() <= pSubGraph->Size() || pSubGraph->Size() == 1)
+    {
+        return false;
+    }
 
-        for (unsigned j = 0; j < p_cookedPlans.size(); ++j)
+    OlcbpPlan::NodeSet subgraphNodes = pSubGraph->GetNodes();
+    OlcbpPlan::PlanHashMap superGraphPlanHash = pSuperGraph->PlanHash;
+    
+    for (OlcbpPlan::NodeID subGraphNodeId : subgraphNodes)
+    {
+        unsigned nodeHash = ((PlanStepEx*)pSubGraph->GetNode(subGraphNodeId))->Hash();
+        if (!superGraphPlanHash[nodeHash].empty())
         {
-            // Make sure not to match with the same plan.
-            if (i != j)
-            {
-                OlcbpPlan::NodeSet matchedIds;
-                LogInfo("Candidate subplan Plan Graph:\n%s", p_cookedPlans[j]->pPlan->ToString().c_str());
-
-                if (p_cookedPlans[i]->pPlan->IsSuperGraphOf(p_cookedPlans[j]->pPlan, matchedIds))
-                {
-                    OlcbpPlan::NodeSet newMatchedNodeIds;
-                    set_difference(matchedIds.begin(), matchedIds.end(), totalMatchedNodeIds.begin(), totalMatchedNodeIds.end(), inserter(newMatchedNodeIds, newMatchedNodeIds.end()));
-                    totalMatchedNodeIds.insert(newMatchedNodeIds.begin(), newMatchedNodeIds.end());
-                    if (!newMatchedNodeIds.empty())
-                    {
-                        matchedSubplansNodeIds[i].push_back(newMatchedNodeIds);
-                        subplansIndex[i].push_back(j);
-                    }
-                }
-            }
+            unsigned superGraphNodeId = *superGraphPlanHash[nodeHash].begin();
+            _ASSERTE(pSuperGraph->GetNode(superGraphNodeId));
+            superGraphMatchedIds.insert(superGraphNodeId);
+            superGraphPlanHash[nodeHash].erase(superGraphNodeId);
+        }
+        else
+        {
+            return false;
         }
     }
 
-    for (unsigned i = 0; i < p_cookedPlans.size(); ++i)
-    {
-        if (!subplansIndex[i].empty())
-        {
-            int subplanMatchedIdsIndex = 0;
-            for (int subplanIndex : subplansIndex[i])
-            {
-                LogInfo("First subplan Plan Graph:\n%s", p_cookedPlans[subplanIndex]->pPlan->ToString().c_str());
-                p_cookedPlans[i]->pPlan->SubGraphSubstitution(
-                    matchedSubplansNodeIds[i][subplanMatchedIdsIndex++],
-                    p_cookedPlans[subplanIndex]->Goal,
-                    p_cookedPlans[subplanIndex]->Goal->Id());
-            }
-        }
-    }
+    return true;
 }
 //----------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::RetainLearntCases(vector<CookedPlan*>& p_cookedPlans)
@@ -353,4 +345,111 @@ LearningFromHumanDemonstration::~LearningFromHumanDemonstration()
 {
     Toolbox::MemoryClean(_helper);
     Toolbox::MemoryClean(_retainer);
+}
+//--------------------------------------------------------------------------------------------------------------
+bool LearningFromHumanDemonstration::IsIdenticalPlan(OlcbpPlan* leftPlan, OlcbpPlan* rightPlan) const
+{
+    size_t leftSize = leftPlan->Size();
+    size_t rightSize = rightPlan->Size();
+    if ((leftSize != rightSize) || leftSize == 1)
+    {
+        // If the plans sizes does not match or,
+        // if the plan size is 1 step then they are not identical
+        return false;
+    }
+
+    OlcbpPlan::NodeSet leftNodes = leftPlan->GetNodes();
+    OlcbpPlan::NodeSet rightNodes = rightPlan->GetNodes();
+    OlcbpPlan::NodeSet diff;
+
+    set_difference(leftNodes.begin(), leftNodes.end(), rightNodes.begin(), rightNodes.end(), inserter(diff, diff.end()));
+
+    return diff.empty();
+}
+//--------------------------------------------------------------------------------------------------------------
+void LearningFromHumanDemonstration::IdenticalPlanDetection(vector<CookedPlan*> &p_cookedPlans) const
+{
+    for (unsigned i = 0; i < p_cookedPlans.size(); ++i)
+    {
+        for (unsigned j = i + 1; j < p_cookedPlans.size(); ++j)
+        {
+            LogInfo("Checking if plan %d is identical to %d", i, j);
+            if (IsIdenticalPlan(p_cookedPlans[i]->pPlan, p_cookedPlans[j]->pPlan))
+            {
+                p_cookedPlans[j]->pPlan->Clear();
+                p_cookedPlans[j]->pPlan->AddNode(p_cookedPlans[i]->Goal, p_cookedPlans[i]->Goal->Id());
+            }
+        }
+    }
+}
+//--------------------------------------------------------------------------------------------------------------
+bool IStrategizer::LearningFromHumanDemonstration::SubplansDetection(vector<CookedPlan*>& p_cookedPlans) const
+{
+    SubplansMap subplans;
+
+    // Detecting the subplans and the matched nodes
+    for (unsigned i = 0; i < p_cookedPlans.size(); ++i)
+    {
+        for (unsigned j = 0; j < i; ++j)
+        {
+            LogInfo("Checking if %d is supergraph of %d", i, j);
+            OlcbpPlan::NodeSet matchedIds;
+
+            if (IsSuperGraph(p_cookedPlans[i]->pPlan, p_cookedPlans[j]->pPlan, matchedIds))
+            {
+                subplans[i].push_back(SubsetPlanData(j, matchedIds));
+            }
+        }
+    }
+
+    if (subplans.empty())
+    {
+        return false;
+    }
+
+    for (unsigned i = 0; i < p_cookedPlans.size(); ++i)
+    {
+        // Remove duplicated nodes between subplans
+        for (unsigned j = 0; j < subplans[i].size(); ++j)
+        {
+            for (unsigned k = j + 1; k < subplans[i].size(); ++k)
+            {
+                for (OlcbpPlan::NodeID nodeId : subplans[i][j].Nodes)
+                {
+                    subplans[i][k].Nodes.erase(nodeId);
+                }
+            }
+        }
+
+        for (SubsetPlanData subplanData : subplans[i])
+        {
+            if (subplanData.Nodes.empty())
+            {
+                continue;
+            }
+
+            unsigned subplanInx = subplanData.Index;
+            unsigned subplanId = p_cookedPlans[subplanInx]->Goal->Id();
+            OlcbpPlan::NodeSet matchedIds = subplanData.Nodes;
+
+            // Substitute the detected subplans in the super plan
+            p_cookedPlans[i]->pPlan->SubGraphSubstitution(matchedIds, p_cookedPlans[subplanInx]->Goal, subplanId);
+            LogInfo("Subistituting %d/%d", i, subplanInx);
+        }
+    }
+
+    return true;
+}
+//--------------------------------------------------------------------------------------------------------------
+bool LearningFromHumanDemonstration::IsSubset(const OlcbpPlan::NodeSet superset,  const OlcbpPlan::NodeSet candidateSubset) const
+{
+    if (superset.size() == 1 || candidateSubset.size() == 1)
+    {
+        return false;
+    }
+
+    OlcbpPlan::NodeSet intersect;
+    set_intersection(superset.begin(), superset.end(), candidateSubset.begin(), candidateSubset.end(), std::inserter(intersect, intersect.end()));
+
+    return intersect.size() == candidateSubset.size();
 }

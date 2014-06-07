@@ -19,6 +19,7 @@ namespace IStrategizer
         typedef T Type;
         typedef const T ConstType;
         static std::string ToString(ConstType& v) { return std::to_string(v); }
+        static unsigned Hash(Type& v) { return 0; }
     };
 
     ///> class=AdjListDigraph(TNodeValue)
@@ -27,8 +28,8 @@ namespace IStrategizer
     class AdjListDigraph :  public Serialization::UserObject, public IDigraph<TNodeValue>
     {
     public:
-        ///> alias=NodeEntry(pair(NodeValue,NodeSet))
-        typedef Serialization::SPair<NodeValue, NodeSet> NodeEntry;
+        ///> alias=NodeEntry(pair(NodeValue,NodeSerializedSet))
+        typedef Serialization::SPair<NodeValue, NodeSerializedSet> NodeEntry;
 
         AdjListDigraph()
             : m_lastNodeId(0)
@@ -49,8 +50,13 @@ namespace IStrategizer
             if (m_adjList.count(id) > 0)
                 DEBUG_THROW(ItemAlreadyExistsException(XcptHere));
 
-            m_adjList.insert(make_pair(id, MakePair(val, NodeSet())));
+            m_adjList.insert(make_pair(id, MakePair(val, NodeSerializedSet())));
             m_lastNodeId = id;
+            
+            // Update the plan hash
+            AdjListDigraphNodeValueTraits<TNodeValue>::Type nodeVal = m_adjList.at(id).first;
+            unsigned nodeHash = TNodeValueTraits::Hash(nodeVal);
+            PlanHash[nodeHash].insert(id);
 
             return id;
         }
@@ -71,12 +77,17 @@ namespace IStrategizer
             for (Serialization::SMap<NodeID, NodeEntry>::iterator nodeEntryItr = m_adjList.begin();
                 nodeEntryItr != m_adjList.end(); ++nodeEntryItr)
             {
-                NodeSet& adjNodes = nodeEntryItr->second.second;
+                NodeSerializedSet& adjNodes = nodeEntryItr->second.second;
                 if (adjNodes.count(id) > 0)
                 {
                     adjNodes.erase(id);
                 }
             }
+
+            // Update the plan hash
+            AdjListDigraphNodeValueTraits<TNodeValue>::Type nodeVal = m_adjList.at(id).first;
+            unsigned nodeHash = TNodeValueTraits::Hash(nodeVal);
+            PlanHash[nodeHash].erase(id);
 
             m_adjList.erase(id);
         }
@@ -96,6 +107,14 @@ namespace IStrategizer
                 DEBUG_THROW(ItemNotFoundException(XcptHere));
 
             m_adjList[sourceNodeId].second.insert(destNodeId);
+
+            // Update nodes reachability
+            m_nodesReachability[sourceNodeId].insert(destNodeId);
+
+            for (NodeID nodeId : m_nodesReachability[sourceNodeId])
+            {
+                m_nodesReachability[nodeId].insert(destNodeId);
+            }
         }
 
         //************************************
@@ -144,11 +163,11 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetNodes
         // Description:	Returns a set of all node ids inside the digraph
-        // Returns:   	NodeSet
+        // Returns:   	NodeSerializedSet
         //************************************
-        NodeSet GetNodes() const
+        NodeSerializedSet GetNodes() const
         {
-            NodeSet nodes;
+            NodeSerializedSet nodes;
 
             for (auto nodeEntry : m_adjList)
             {
@@ -159,11 +178,28 @@ namespace IStrategizer
         }
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetNodeValues
+        // Description:	Returns a set of all node values inside the digraph
+        // Returns:   	std::set<NodeValue>
+        //************************************
+        std::set<NodeValue> GetNodeValues() const
+        {
+            std::set<NodeValue> nodes;
+
+            for (auto nodeEntry : m_adjList)
+            {
+                nodes.insert(nodeEntry.second.first);
+            }
+
+            return nodes;
+        }
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::Size
         // Description:	Returns the number of nodes inside the digraph
-        // Returns:   	unsigned
+        // Returns:   	size_t
         //************************************
-        unsigned Size() const { return m_adjList.size(); }
+        size_t Size() const { return m_adjList.size(); }
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::Clear
@@ -192,9 +228,9 @@ namespace IStrategizer
         // IStrategizer::IDigraph<TNodeValue>::GetAdjacentNodes
         // Description:	Get all nodes that has an edge going from sourceNode to it
         // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
-        // Returns:   	NodeSet: A set of all node ids adjacent to sourceNode
+        // Returns:   	NodeSerializedSet: A set of all node ids adjacent to sourceNode
         //************************************
-        const NodeSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
+        const NodeSerializedSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
             throw(ItemNotFoundException)
         {
             if (m_adjList.count(sourceNodeId) == 0)
@@ -206,51 +242,61 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
         // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
-        // Parameter: 	NodeSet subGraphIds: The ids describing the sub-part to replace.
+        // Parameter: 	NodeSerializedSet subGraphIds: The ids describing the sub-part to replace.
         // Parameter:   TNodeValue substitute: The TNodeValue to replace the sub-part with.
         //************************************      
-        void SubGraphSubstitution(_In_ NodeSet subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId)
+        void SubGraphSubstitution(_In_ NodeSet matchedIds, _In_ NodeValue substitute, _In_ NodeID substituteId)
         {
-            std::string subGraphIdSet = "{";
-
-            LogInfo("Substituting %d with %s", substituteId, ToString(subGraphIds).c_str());
-            LogInfo("Pre-process graph state:\n%s\n", ToString().c_str());
-
-            AddNode(substitute, substituteId);
-
             NodeSet parents;
             NodeSet children;
 
-            for (NodeID subGraphNodeId : subGraphIds)
+            _ASSERT(!GetOrphanNodes().empty());
+
+            for (NodeID subGraphNodeId : matchedIds)
             {
-                NodeSet tempParents = GetParents(subGraphNodeId);
-
-                parents.insert(tempParents.begin(), tempParents.end());
-
-                NodeSet tempChildren = GetAdjacentNodes(subGraphNodeId);
+                parents = GetParents(subGraphNodeId);
+                
+                NodeSerializedSet tempChildren = GetAdjacentNodes(subGraphNodeId);
                 children.insert(tempChildren.begin(), tempChildren.end());
             }
 
-            for (auto id : subGraphIds)
+            for (NodeID subGraphNodeId : matchedIds)
             {
-                parents.erase(id);
-                children.erase(id);
+                parents.erase(subGraphNodeId);
+                children.erase(subGraphNodeId);
+                RemoveNode(subGraphNodeId);
             }
 
-            for (NodeID subGraphNodeId : subGraphIds) RemoveNode(subGraphNodeId);
+            // Sometimes we use the same node multiple times, in such cases we need to update the id manually
+            while (Contains(substituteId)) { ++substituteId; }
 
-            for (NodeID parent : parents) AddEdge(parent, substituteId);
-            for (NodeID child : children) AddEdge(substituteId, child);
+            AddNode(substitute, substituteId);
 
-            LogInfo("Post-process graph state:\n%s\n", ToString().c_str());
+            for (NodeID parent : parents)
+            {
+                if (parent < substituteId)
+                {
+                    AddEdge(parent, substituteId);
+                }
+            }
+
+            for (NodeID child : children)
+            {
+                if (child > substituteId)
+                {
+                    AddEdge(substituteId, child);
+                }
+            }
+
+            _ASSERT(!GetOrphanNodes().empty());
         }
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetOrphanNodes
         // Description:	Get all nodes that do not have an edge going from any node to them
-        // Returns:   	NodeSet: A set of all orphan node ids
+        // Returns:   	NodeSerializedSet: A set of all orphan node ids
         //************************************
-        NodeSet GetOrphanNodes() const
+        NodeSerializedSet GetOrphanNodes() const
         {
             // Algorithm:
             // Assume all nodes are orphans
@@ -258,11 +304,11 @@ namespace IStrategizer
             // ..For each node N in the graph G
             // ....For each adj node A in N adj nodes
             // ......Remove A from O
-            NodeSet orphans = GetNodes();
+            NodeSerializedSet orphans = GetNodes();
 
             for (auto nodeEntry : m_adjList)
             {
-                NodeSet& adjacents = nodeEntry.second.second;
+                NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 for (auto adjNodeId : adjacents)
                 {
@@ -276,15 +322,15 @@ namespace IStrategizer
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetLeafNodes
         // Description:	Get all nodes that do not have an edge going from them to any node
-        // Returns:   	NodeSet
+        // Returns:   	NodeSerializedSet
         //************************************
-        NodeSet GetLeafNodes() const
+        NodeSerializedSet GetLeafNodes() const
         {
-            NodeSet leaves;
+            NodeSerializedSet leaves;
 
             for (auto nodeEntry : m_adjList)
             {
-                NodeSet& adjacents = nodeEntry.second.second;
+                NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 if (adjacents.empty())
                     leaves.insert(nodeEntry.first);
@@ -323,15 +369,19 @@ namespace IStrategizer
             return false;
         }
 
-        bool IsSuperGraphOf(AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph, NodeSet& superGraphMatchedIds)
+        bool IsSuperGraphOf(AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph,
+            NodeSerializedSet& superGraphMatchedIds,
+            NodeMap isMatchingCached,
+            NodeMap matchingCache)
         {
-            if (Size() <= pCandidateSubGraph->Size())
-            {
-                return false;
-            }
-
-            NodeSet subGraphMatchedIds;
-            return IsSuperGraph(pCandidateSubGraph->GetOrphanNodes(), GetNodes(), subGraphMatchedIds, superGraphMatchedIds, pCandidateSubGraph);
+            NodeSerializedSet subGraphMatchedIds;
+            return IsSuperGraph(pCandidateSubGraph->GetOrphanNodes(),
+                GetNodes(),
+                subGraphMatchedIds,
+                superGraphMatchedIds,
+                pCandidateSubGraph,
+                isMatchingCached,
+                matchingCache);
         }
 
         //************************************
@@ -359,7 +409,7 @@ namespace IStrategizer
             std::string str;
             char strID[32];
 
-            NodeSet roots = GetOrphanNodes();
+            NodeSerializedSet roots = GetOrphanNodes();
             str = "R = ";
             str += ToString(roots);
             str += "\n";
@@ -377,7 +427,7 @@ namespace IStrategizer
                 str += ']';
                 str += " -> ";
 
-                NodeSet& adjacents = nodeEntry.second.second;
+                NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 for (auto adjNodeID : adjacents)
                 {
@@ -400,6 +450,22 @@ namespace IStrategizer
             return str;
         }
 
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Reachable
+        // Description:	Detects if source node can reach the dest node.
+        // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
+        // Parameter: 	NodeID destNodeId: Unique ID to identify destNode
+        // Returns:   	bool: True if the dest node is reachable, false otherwise.
+        //************************************
+        bool Reachable(const _In_ NodeID sourceNodeId, const _In_ NodeID destNodeId)
+        {
+            _ASSERTE(sourceNodeId != destNodeId);
+
+            return m_nodesReachability[sourceNodeId].count(destNodeId) != 0;
+        }
+
+        PlanHashMap PlanHash;
+
         OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
 
     private:
@@ -409,6 +475,8 @@ namespace IStrategizer
         Serialization::SMap<NodeID, NodeEntry> m_adjList;
 
         std::mutex m_lock;
+
+        NodeMap m_nodesReachability;
 
         template<class T>
         std::string ToString(const T& s) const
@@ -437,7 +505,7 @@ namespace IStrategizer
 
             NodeSet m_parents;
 
-            for each(auto parent in m_adjList)
+            for (auto parent : m_adjList)
             {
                 if(parent.second.second.count(nodeId) > 0)
                 {
@@ -448,12 +516,13 @@ namespace IStrategizer
             return m_parents;
         }
 
-        bool IsSuperGraph(
-            const NodeSet& subGraphChildren,
-            const NodeSet& superGraphChildren,
-            NodeSet& subGraphMatchedIds,
-            NodeSet& superGraphMatchedIds,
-            AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph)
+        bool IsSuperGraph(const NodeSerializedSet& subGraphChildren,
+            const NodeSerializedSet& superGraphChildren,
+            NodeSerializedSet& subGraphMatchedIds,
+            NodeSerializedSet& superGraphMatchedIds,
+            AdjListDigraph<TNodeValue, TNodeValueTraits> *pCandidateSubGraph,
+            NodeMap isMatchingCached,
+            NodeMap matchingCache)
         {
             if (subGraphChildren.empty())
             {
@@ -481,25 +550,33 @@ namespace IStrategizer
 
                 for (NodeID superGraphNodeId : superGraphChildren)
                 {
-                    IComparable* pLeft = dynamic_cast<IComparable*>(pCandidateSubGraph->GetNode(supGraphNodeId));
-                    IComparable* pRight = dynamic_cast<IComparable*>(GetNode(superGraphNodeId));
-
-                    if (pLeft->Compare(pRight) == 0 && superGraphMatchedIds.count(superGraphNodeId) == 0)
+                    if (IsMatchingCached(supGraphNodeId, superGraphNodeId, isMatchingCached))
                     {
-                        bool childrenMatched = IsSuperGraph(
-                            pCandidateSubGraph->GetAdjacentNodes(supGraphNodeId),
-                            GetAdjacentNodes(superGraphNodeId),
-                            subGraphMatchedIds,
-                            superGraphMatchedIds,
-                            pCandidateSubGraph);
+                        nodeMatched = GetCachedMatching(supGraphNodeId, superGraphNodeId, matchingCache);
+                    }
+                    else
+                    {
+                        IComparable* pLeft = dynamic_cast<IComparable*>(pCandidateSubGraph->GetNode(supGraphNodeId));
+                        IComparable* pRight = dynamic_cast<IComparable*>(GetNode(superGraphNodeId));
 
-                        if (childrenMatched)
+                        if (pLeft->Compare(pRight) == 0 && superGraphMatchedIds.count(superGraphNodeId) == 0)
                         {
-                            superGraphMatchedIds.insert(superGraphNodeId);
-                            subGraphMatchedIds.insert(supGraphNodeId);
-                            nodeMatched = true;
-                            break;
+                            nodeMatched = IsSuperGraph(pCandidateSubGraph->GetAdjacentNodes(supGraphNodeId),
+                                GetAdjacentNodes(superGraphNodeId),
+                                subGraphMatchedIds,
+                                superGraphMatchedIds,
+                                pCandidateSubGraph,
+                                isMatchingCached,
+                                matchingCache);
+                            CacheMatching(supGraphNodeId, superGraphNodeId, nodeMatched, isMatchingCached, matchingCache);
                         }
+                    }
+
+                    if (nodeMatched)
+                    {
+                        superGraphMatchedIds.insert(superGraphNodeId);
+                        subGraphMatchedIds.insert(supGraphNodeId);
+                        break;
                     }
                 }
 
@@ -510,6 +587,27 @@ namespace IStrategizer
             }
 
             return true;
+        }
+
+        void CacheMatching(NodeID supGraphNodeId, NodeID superGraphNodeId, bool matched, NodeMap& isMatchingCached, NodeMap& matchingCache)
+        {
+            isMatchingCached[superGraphNodeId][supGraphNodeId] = true;
+            isMatchingCached[supGraphNodeId][superGraphNodeId] = true;
+
+            matchingCache[superGraphNodeId][supGraphNodeId] = matched;
+            matchingCache[supGraphNodeId][superGraphNodeId] = matched;
+        }
+
+        bool GetCachedMatching(NodeID supGraphNodeId, NodeID superGraphNodeId, NodeMap& matchingCache)
+        {
+            _ASSERTE(matchingCache[supGraphNodeId][superGraphNodeId] == matchingCache[superGraphNodeId][supGraphNodeId]);
+            return matchingCache[supGraphNodeId][superGraphNodeId];
+        }
+
+        bool IsMatchingCached(NodeID supGraphNodeId, NodeID superGraphNodeId, NodeMap isMatchingCached)
+        {
+            _ASSERTE(isMatchingCached[supGraphNodeId][superGraphNodeId] == isMatchingCached[superGraphNodeId][supGraphNodeId]);
+            return isMatchingCached[supGraphNodeId][superGraphNodeId];
         }
     };
 }

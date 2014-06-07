@@ -17,6 +17,7 @@ namespace IStrategizer
         typedef PlanStepEx* Type;
         typedef const PlanStepEx* ConstType;
         static std::string ToString(const PlanStepEx* pStep) { return pStep->ToString(true); }
+        static unsigned Hash(PlanStepEx* pStep) { return pStep->Hash(); }
     };
 
     ///> alias=OlcbpPlan(AdjListDigraph(PlanStepEx*))

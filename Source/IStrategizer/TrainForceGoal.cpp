@@ -62,10 +62,12 @@ void TrainForceGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consum
         _ASSERTE(pEntity);
         EntityClassType entityType = pEntity->Type();
 
-        if (!game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding) && m_trainedUnits[entityType] <= 6)
+        if (!game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding))
         {
             PlanStepParameters params;
-            m_trainedUnits[entityType]++;
+            vector<TID> entities;
+            game.Self()->Entities(entityType, entities);
+            m_trainedUnits[entityType] = entities.size();
             params[PARAM_EntityClassId] = entityType;
             params[PARAM_Amount] = m_trainedUnits[entityType];
             m_succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_TrainForce, params, true));
@@ -85,4 +87,9 @@ bool TrainForceGoal::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+}
+//----------------------------------------------------------------------------------------------
+unsigned TrainForceGoal::Hash()
+{
+    return StepTypeId() + _params[PARAM_EntityClassId] + _params[PARAM_Amount];
 }

@@ -18,6 +18,7 @@ namespace IStrategizer
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
+        unsigned Hash();
 
     protected:
         void InitializePostConditions();

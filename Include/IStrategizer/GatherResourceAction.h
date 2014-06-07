@@ -20,6 +20,7 @@ namespace IStrategizer
         bool AliveConditionsSatisfied(RtsGame& pRtsGame);
         bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
         bool Equals(PlanStepEx* p_planStep);
+        unsigned Hash();
 
     protected:
         bool ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock);

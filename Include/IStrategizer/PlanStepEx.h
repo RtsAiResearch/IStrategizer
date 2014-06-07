@@ -51,15 +51,16 @@ namespace IStrategizer
         const PlanStepParameters& Parameters() const { return _params; }
         virtual void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed) {}
         virtual void InitializeConditions();
-        virtual bool Equals(PlanStepEx* p_planStep) = 0;
-        virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
         virtual void UpdateAux(RtsGame& game, const WorldClock& p_clock) = 0;
         virtual void Reset(RtsGame& game, const WorldClock& p_clock) = 0;
+        virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
+        virtual bool Equals(PlanStepEx* p_planStep) = 0;
+        virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
+        virtual unsigned Hash() = 0;
         virtual std::string ToString(bool minimal = false) const;
         virtual ~PlanStepEx() {}
         PlanStepParameters& Parameters() { return _params; }
         ExecutionStateType State() const { return _state; }
-        virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         StepLevelType LevelType() const { return _stepLevelType; }
         CompositeExpression* PostCondition() { _ASSERTE(_postCondition); return _postCondition; }
         IClonable* Clone();
@@ -86,6 +87,7 @@ namespace IStrategizer
         virtual void InitializePostConditions() = 0;
 
     private:
+        unsigned GenerateID();
         ExecutionStateType _state;
     };
 }

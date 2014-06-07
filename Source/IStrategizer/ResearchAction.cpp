@@ -89,3 +89,8 @@ bool ResearchAction::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_ResearchId] == p_planStep->Parameter(PARAM_ResearchId);
 }
+//----------------------------------------------------------------------------------------------
+unsigned ResearchAction::Hash()
+{
+    return StepTypeId() + _params[PARAM_ResearchId];
+}

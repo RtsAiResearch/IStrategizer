@@ -114,3 +114,8 @@ bool MoveAction::Equals(PlanStepEx* p_planStep)
         _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
         _params[PARAM_ObjectStateType] == p_planStep->Parameter(PARAM_ObjectStateType);
 }
+//----------------------------------------------------------------------------------------------
+unsigned MoveAction::Hash()
+{
+    return StepTypeId() + _params[PARAM_ResourceId] + _params[PARAM_ObjectStateType];
+}

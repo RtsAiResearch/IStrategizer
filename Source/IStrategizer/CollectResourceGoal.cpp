@@ -66,7 +66,7 @@ void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, Re
 
     int gatherersCount = GetNumberOfGatherers(game, resourceType);
 
-    if (gatherersCount != 0 && gatherersCount <= 6 && find(m_succeededGatherersCount.begin(), m_succeededGatherersCount.end(), gatherersCount) == m_succeededGatherersCount.end())
+    if (gatherersCount != 0 && find(m_succeededGatherersCount.begin(), m_succeededGatherersCount.end(), gatherersCount) == m_succeededGatherersCount.end())
     {
         PlanStepParameters params;
         params[PARAM_ResourceId] = resourceType;
@@ -92,4 +92,9 @@ bool CollectResourceGoal::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+}
+//----------------------------------------------------------------------------------------------
+unsigned CollectResourceGoal::Hash()
+{
+    return StepTypeId() + _params[PARAM_ResourceId] + _params[PARAM_Amount];
 }

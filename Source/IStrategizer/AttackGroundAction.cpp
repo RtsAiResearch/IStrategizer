@@ -102,3 +102,8 @@ bool AttackGroundAction::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId);
 }
+//----------------------------------------------------------------------------------------------
+unsigned AttackGroundAction::Hash()
+{
+    return StepTypeId() + _params[PARAM_EntityClassId];
+}
