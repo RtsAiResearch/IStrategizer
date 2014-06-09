@@ -17,7 +17,7 @@ namespace IStrategizer
         DeployArmyGoal(const PlanStepParameters& p_parameters);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash();
+        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_DeployType) + Parameter(PARAM_EntityClassId); }
         
     protected:
         void InitializePostConditions();

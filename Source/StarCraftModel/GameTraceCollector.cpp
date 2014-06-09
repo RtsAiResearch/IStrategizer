@@ -57,9 +57,25 @@ void GameTraceCollector::OnGameFrame()
 //////////////////////////////////////////////////////////////////////////
 bool GameTraceCollector::StartedGathering(const Unit unit)
 {
-    if (m_gatherers.count(unit->getID()) == 0 && IsAutoGathering(unit))
+    return StartedGatheringMinerals(unit) || StartedGatheringGas(unit);
+}
+//////////////////////////////////////////////////////////////////////////
+bool GameTraceCollector::StartedGatheringGas(const Unit unit)
+{
+    if (m_gasGatherers.count(unit->getID()) == 0 && IsAutoGatheringGas(unit))
     {
-        m_gatherers.insert(unit->getID());
+        m_gasGatherers.insert(unit->getID());
+        return true;
+    }
+
+    return false;
+}
+//////////////////////////////////////////////////////////////////////////
+bool GameTraceCollector::StartedGatheringMinerals(const Unit unit)
+{
+    if (m_mineralsGatherers.count(unit->getID()) == 0 && IsAutoGatheringMinerals(unit))
+    {
+        m_mineralsGatherers.insert(unit->getID());
         return true;
     }
 
@@ -118,9 +134,12 @@ bool GameTraceCollector::HasNewPlayerOrder(const Unit unit)
     // had gather action and now its still gathering,
     // don't include this order.
     if (m_attackers.count(unit->getID()) != 0 || 
-       (m_gatherers.count(unit->getID()) != 0 && IsAutoGathering(unit)))
+        (m_mineralsGatherers.count(unit->getID()) != 0 && IsAutoGatheringMinerals(unit)) ||
+        (m_gasGatherers.count(unit->getID()) != 0 && IsAutoGatheringGas(unit)))
     {
-        _ASSERTE(m_attackers.count(unit->getID()) == 1 || m_gatherers.count(unit->getID()) == 1);
+        _ASSERTE(m_attackers.count(unit->getID()) == 1 || 
+                m_mineralsGatherers.count(unit->getID()) == 1 ||
+                m_gasGatherers.count(unit->getID()) == 1);
         return false;
     }
 
@@ -271,10 +290,30 @@ void GameTraceCollector::SendGameTrace(GameTrace* pTrace) const
     g_MessagePump.Send(pTraceMsg, true);
 }
 //////////////////////////////////////////////////////////////////////////
+bool GameTraceCollector::IsAutoGatheringGas(const Unit unit)
+{
+    bool isAutoGatheringGas = false;
+
+    // fast return if unit not expected to gather any resources
+    if (!unit->getType().isWorker())
+        return false;
+
+    isAutoGatheringGas = (unit->getOrder() == Orders::MoveToGas ||
+        unit->getOrder() == Orders::HarvestGas ||
+        unit->getOrder() == Orders::WaitForGas ||
+        unit->getOrder() == Orders::ReturnGas);
+
+    return isAutoGatheringGas;
+}
+//////////////////////////////////////////////////////////////////////////
 bool GameTraceCollector::IsAutoGathering(const Unit unit)
 {
+    return IsAutoGatheringMinerals(unit) || IsAutoGatheringGas(unit);
+}
+//////////////////////////////////////////////////////////////////////////
+bool GameTraceCollector::IsAutoGatheringMinerals(const Unit unit)
+{
     bool isAutoGatheringMinerals = false;
-    bool isAutoGatheringGas = false;
 
     // fast return if unit not expected to gather any resources
     if (!unit->getType().isWorker())
@@ -285,12 +324,7 @@ bool GameTraceCollector::IsAutoGathering(const Unit unit)
         unit->getOrder() == Orders::WaitForMinerals ||
         unit->getOrder() == Orders::ReturnMinerals);
 
-    isAutoGatheringGas = (unit->getOrder() == Orders::MoveToGas ||
-        unit->getOrder() == Orders::HarvestGas ||
-        unit->getOrder() == Orders::WaitForGas ||
-        unit->getOrder() == Orders::ReturnGas);
-
-    return isAutoGatheringGas || isAutoGatheringMinerals;
+    return isAutoGatheringMinerals;
 }
 //////////////////////////////////////////////////////////////////////////
 void GameTraceCollector::CollectGameTraceForBuildAddon(const Unit unit)

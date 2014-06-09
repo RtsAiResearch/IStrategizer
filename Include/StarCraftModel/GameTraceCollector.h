@@ -37,7 +37,7 @@ namespace IStrategizer
         void CollectGameTraceForUnitOrder(const BWAPI::Unit unit);
 
         //************************************
-        // IStrategizer::GameTraceCollector::IsAutoGatheringResources
+        // IStrategizer::GameTraceCollector::StartedGathering
         // Description: Check whether the unit is already gathering resources and that his
         // current order is issued by the unit specialized micro-manager
         // For example: When a worker is ordered to gather minerals from a mine, the
@@ -49,11 +49,49 @@ namespace IStrategizer
         bool StartedGathering(const BWAPI::Unit unit);
 
         //************************************
+        // IStrategizer::GameTraceCollector::StartedGatheringMinerals
+        // Description: Check whether the unit is already gathering minerals and that his
+        // current order is issued by the unit specialized micro-manager
+        // For example: When a worker is ordered to gather minerals from a mine, the
+        // unit micro-manager auto control the unit to: 
+        // Move to mines, Mine minerals, Wait mine slot to mine, Return minerals, etc..
+        // Parameter:  BWAPI::Unit unit:
+        // Returns:    true if the unit is auto controlled, false otherwise
+        //************************************
+        bool StartedGatheringMinerals(const BWAPI::Unit unit);
+
+        //************************************
+        // IStrategizer::GameTraceCollector::StartedGatheringGas
+        // Description: Check whether the unit is already gathering gas and that his
+        // current order is issued by the unit specialized micro-manager
+        // For example: When a worker is ordered to gather gas from a geyser, the
+        // unit micro-manager auto control the unit to: 
+        // Move to geysers, harvest gas, Wait gas slot to harvest, Return geyser, etc..
+        // Parameter:  BWAPI::Unit unit:
+        // Returns:    true if the unit is auto controlled, false otherwise
+        //************************************
+        bool StartedGatheringGas(const BWAPI::Unit unit);
+
+        //************************************
         // IStrategizer::GameTraceCollector::IsAutoGathering
         // Description: 
         // Parameter:  BWAPI::Unit unit: the candidate gathering worker
         // Returns:    bool true if the given unit is auto-gathering
         bool IsAutoGathering(const BWAPI::Unit unit);
+
+        //************************************
+        // IStrategizer::GameTraceCollector::IsAutoGatheringMinerals
+        // Description: 
+        // Parameter:  BWAPI::Unit unit: the candidate gathering worker
+        // Returns:    bool true if the given unit is auto-gathering minerals
+        bool IsAutoGatheringMinerals(const BWAPI::Unit unit);
+
+        //************************************
+        // IStrategizer::GameTraceCollector::IsAutoGatheringGas
+        // Description: 
+        // Parameter:  BWAPI::Unit unit: the candidate gathering worker
+        // Returns:    bool true if the given unit is auto-gathering gas
+        bool IsAutoGatheringGas(const BWAPI::Unit unit);
 
         //************************************
         // IStrategizer::GameTraceCollector::IsOrderChanged
@@ -147,7 +185,8 @@ namespace IStrategizer
         std::map<BWAPI::Unit, BWAPI::Unit> m_unitOrderTarget;
         std::map<BWAPI::Unit, BWAPI::Position> m_unitOrderTargetPosition;
         std::map<BWAPI::Unit, std::set<BWAPI::Unit> > m_trainerToTraineesMap;
-        std::set<int> m_gatherers;
+        std::set<int> m_mineralsGatherers;
+        std::set<int> m_gasGatherers;
         std::set<int> m_trainedUnits;
         std::set<int> m_constructedAddons;
         std::set<int> m_playerIssuedOrderIDs;

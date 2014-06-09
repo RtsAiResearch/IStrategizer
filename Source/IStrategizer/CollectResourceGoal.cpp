@@ -66,14 +66,27 @@ void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, Re
 
     int gatherersCount = GetNumberOfGatherers(game, resourceType);
 
-    if (gatherersCount != 0 && find(m_succeededGatherersCount.begin(), m_succeededGatherersCount.end(), gatherersCount) == m_succeededGatherersCount.end())
+    if (gatherersCount > 0)
     {
-        PlanStepParameters params;
-        params[PARAM_ResourceId] = resourceType;
-        params[PARAM_Amount] = gatherersCount;
-        succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_CollectResource, params, true));
+        if (resourceType == RESOURCE_Primary && m_succeededPrimaryGatherersCount.count(gatherersCount) == 0)
+        {
+            PlanStepParameters params;
+            params[PARAM_ResourceId] = resourceType;
+            params[PARAM_Amount] = gatherersCount;
+            succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_CollectResource, params, true));
 
-        m_succeededGatherersCount.push_back(gatherersCount);
+            m_succeededPrimaryGatherersCount.insert(gatherersCount);
+        }
+        
+        if (resourceType == RESOURCE_Secondary && m_succeededSecondaryGatherersCount.count(gatherersCount) == 0)
+        {
+            PlanStepParameters params;
+            params[PARAM_ResourceId] = resourceType;
+            params[PARAM_Amount] = gatherersCount;
+            succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_CollectResource, params, true));
+
+            m_succeededSecondaryGatherersCount.insert(gatherersCount);
+        }
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -92,9 +105,4 @@ bool CollectResourceGoal::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
-}
-//----------------------------------------------------------------------------------------------
-unsigned CollectResourceGoal::Hash()
-{
-    return StepTypeId() + _params[PARAM_ResourceId] + _params[PARAM_Amount];
 }

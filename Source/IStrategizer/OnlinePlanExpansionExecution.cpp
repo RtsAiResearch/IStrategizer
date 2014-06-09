@@ -255,7 +255,7 @@ void IStrategizer::OnlinePlanExpansionExecution::MarkCaseAsTried(_In_ IOlcbpPlan
 {
     _ASSERTE(GetNodeData(nodeId).TriedCases.count(pCase) == 0);
 
-    LogInfo("Marking case '%s'@%p as tried case for node %x", pCase->Goal()->ToString().c_str(), (void*)pCase, nodeId);
+    LogInfo("Marking case '%s'@%p as tried case for node %d", pCase->Goal()->ToString().c_str(), (void*)pCase, nodeId);
 
     GetNodeData(nodeId).TriedCases.insert(pCase);
 }
@@ -313,11 +313,17 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                     _ASSERTE(GetNodeData(satisfyingGoalNode).BelongingCase != nullptr);
                     exclusions.insert(GetNodeData(satisfyingGoalNode).BelongingCase);
                 }
+                
+                CaseEx* caseEx = nullptr;
 
-                currentGoalNode->AdaptParameters(*g_Game);
-                CaseEx* caseEx = m_pCbReasoner->Retriever()->Retrieve(currentGoalNode, g_Game, exclusions);
-                // Retriever should always retrieve a non tried case for that specific node
-                _ASSERTE(!IsCaseTried(currentNode, caseEx));
+                if (!IsActiveGoal(currentGoalNode))
+                {
+                    currentGoalNode->AdaptParameters(*g_Game);
+                    caseEx = m_pCbReasoner->Retriever()->Retrieve(currentGoalNode, g_Game, exclusions);
+                    // Retriever should always retrieve a non tried case for that specific node
+                    _ASSERTE(!IsCaseTried(currentNode, caseEx));
+                    AddActiveGoal(currentGoalNode);
+                }
 
                 // We found a matching case and it was not tried for that goal before
                 if (caseEx != nullptr)
@@ -547,7 +553,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
         m_pOlcbpPlan->RemoveNode(visitedNodeId);
         m_nodeData.erase(visitedNodeId);
 
-        LogWarning("MEMORY LEAK detected, should delete plan node[%x]", visitedNodeId);
+        LogWarning("MEMORY LEAK detected, should delete plan node[%d]", visitedNodeId);
         // deleting currNode crashes the execution history logic, should fix
         // delete currNode;
     }
@@ -580,7 +586,7 @@ void OnlinePlanExpansionExecution::AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan
                 updateQ._Get_container().end(),
                 childNodeId) == updateQ._Get_container().end())
             {
-                // LogInfo("node[%x] is adding node[%x] to update Q", nodeId, childNodeId);
+                // LogInfo("node[%d] is adding node[%d] to update Q", nodeId, childNodeId);
                 updateQ.push(childNodeId);
             }
         }
@@ -681,7 +687,7 @@ void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
 
         const IOlcbpPlan::NodeSerializedSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
 
-        LogInfo("Computing WaitOnParentsCount for node[%x] children", currNodeId);
+        LogInfo("Computing WaitOnParentsCount for node[%d] children", currNodeId);
 
         //bool waitOnCurrNode = m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded;
         /*(IsActionNode(currNodeId) && m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded) ||
@@ -695,21 +701,21 @@ void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
             {
                 if (GetNodeData(currChildNodeId).SatisfyingGoal == currNodeId)
                 {
-                    LogInfo("Node[%x] is from Node[%x] expanded case", currChildNodeId, currNodeId);
+                    LogInfo("Node[%d] is from Node[%d] expanded case", currChildNodeId, currNodeId);
 
                     if (IsNodeOpen(currNodeId))
                         GetNodeData(currChildNodeId).IncWaitOnParentsCount();
                     else
-                        LogInfo("Node[%x] was not considered since it is closed", currNodeId);
+                        LogInfo("Node[%d] was not considered since it is closed", currNodeId);
                 }
                 else
                 {
-                    LogInfo("Node[%x] is from the original plan Node[%x] belong to", currChildNodeId, currNodeId);
+                    LogInfo("Node[%d] is from the original plan Node[%d] belong to", currChildNodeId, currNodeId);
 
                     if (m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded)
                         GetNodeData(currChildNodeId).IncWaitOnParentsCount();
                     else
-                        LogInfo("Node[%x] was not considered since its parent Node[%x] is already succeeded", currChildNodeId, currNodeId);
+                        LogInfo("Node[%d] was not considered since its parent Node[%d] is already succeeded", currChildNodeId, currNodeId);
                 }
             }
 
@@ -733,5 +739,11 @@ void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
 
         _ASSERTE(GetNodeData(satisfyingGoalNode).WaitOnChildrenCount > 0);
         GetNodeData(satisfyingGoalNode).DecWaitOnChildrenCount();
+    }
+
+    if (IsGoalNode(nodeId))
+    {
+        GoalEx* goal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
+        RemoveActiveGoal(goal);
     }
 }

@@ -260,8 +260,3 @@ bool GatherResourceAction::Equals(PlanStepEx* p_planStep)
         _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
 }
-//////////////////////////////////////////////////////////////////////////
-unsigned GatherResourceAction::Hash()
-{
-    return StepTypeId() + _params[PARAM_ResourceId] + _params[PARAM_Amount];
-}

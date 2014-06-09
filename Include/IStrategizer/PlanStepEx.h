@@ -46,7 +46,8 @@ namespace IStrategizer
         void Copy(IClonable* p_dest);
         void Update(RtsGame& game, const WorldClock& p_clock);
         int StepTypeId() const { return _stepTypeId; }
-        int Parameter(int p_parameterName) { return _params[(ParameterType)p_parameterName]; }
+        int Parameter(int p_parameterName) const { return ContainsParameter(p_parameterName) ? _params.at((ParameterType)p_parameterName) : 0; }
+        int ContainsParameter(int p_parameterName) const { return _params.find((ParameterType)p_parameterName) != _params.end(); }
         int Compare(IComparable* p_rhs) { return !Equals((PlanStepEx*)p_rhs); }
         const PlanStepParameters& Parameters() const { return _params; }
         virtual void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed) {}
@@ -56,7 +57,7 @@ namespace IStrategizer
         virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         virtual bool Equals(PlanStepEx* p_planStep) = 0;
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
-        virtual unsigned Hash() = 0;
+        virtual unsigned Hash() const = 0;
         virtual std::string ToString(bool minimal = false) const;
         virtual ~PlanStepEx() {}
         PlanStepParameters& Parameters() { return _params; }

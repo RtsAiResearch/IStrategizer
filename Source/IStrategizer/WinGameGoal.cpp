@@ -55,8 +55,3 @@ bool WinGameGoal::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_StrategyTypeId] == p_planStep->Parameter(PARAM_StrategyTypeId);
 }
-//----------------------------------------------------------------------------------------------
-unsigned WinGameGoal::Hash()
-{
-    return StepTypeId() + _params[PARAM_StrategyTypeId];
-}

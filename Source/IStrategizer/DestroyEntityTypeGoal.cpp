@@ -82,8 +82,3 @@ bool DestroyEntityTypeGoal::Equals(PlanStepEx* p_planStep)
         _params[PARAM_TargetEntityClassId] == p_planStep->Parameter(PARAM_TargetEntityClassId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
 }
-//----------------------------------------------------------------------------------------------
-unsigned DestroyEntityTypeGoal::Hash()
-{
-    return StepTypeId() + _params[PARAM_TargetEntityClassId] + _params[PARAM_Amount];
-}

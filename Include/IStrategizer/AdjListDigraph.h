@@ -422,7 +422,7 @@ namespace IStrategizer
                 AdjListDigraphNodeValueTraits<TNodeValue>::ConstType nodeVal = m_adjList.at(nodeEntry.first).first;
                 str += TNodeValueTraits::ToString(nodeVal);
                 str += '[';
-                sprintf_s(strID, "%x", nodeEntry.first);
+                sprintf_s(strID, "%d", nodeEntry.first);
                 str += strID;
                 str += ']';
                 str += " -> ";
@@ -438,7 +438,7 @@ namespace IStrategizer
 
                     str += TNodeValueTraits::ToString(adjNodeVal);
                     str += '[';
-                    sprintf_s(strID, "%x", adjNodeID);
+                    sprintf_s(strID, "%d", adjNodeID);
                     str += strID;
                     str += ']';
                     str += ',';
@@ -488,7 +488,7 @@ namespace IStrategizer
 
             for (NodeID id : s)
             {
-                sprintf_s(strID, "%x", id);
+                sprintf_s(strID, "%d", id);
                 strIdSet += strID;
                 strIdSet += ",";
             }

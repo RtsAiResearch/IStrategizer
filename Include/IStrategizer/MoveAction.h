@@ -22,7 +22,7 @@ namespace IStrategizer
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash();
+        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_ResourceId) + Parameter(PARAM_ObjectStateType); }
 
     protected:
         bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);

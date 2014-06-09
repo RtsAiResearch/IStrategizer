@@ -101,8 +101,7 @@ void AttackEntityAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePostConditions()
 {
-    EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, targetType, 1));
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1));
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePreConditions()
@@ -137,9 +136,4 @@ bool AttackEntityAction::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId) &&
         _params[PARAM_TargetEntityClassId] == p_planStep->Parameter(PARAM_TargetEntityClassId);
-}
-//----------------------------------------------------------------------------------------------
-unsigned AttackEntityAction::Hash()
-{
-    return StepTypeId() + _params[PARAM_EntityClassId] + _params[PARAM_TargetEntityClassId];
 }

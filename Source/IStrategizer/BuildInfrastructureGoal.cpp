@@ -118,8 +118,3 @@ bool BuildInfrastructureGoal::Equals(PlanStepEx* p_planStep)
         _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
 }
-//----------------------------------------------------------------------------------------------
-unsigned BuildInfrastructureGoal::Hash()
-{
-    return StepTypeId() + _params[PARAM_EntityClassId] + _params[PARAM_Amount];
-}

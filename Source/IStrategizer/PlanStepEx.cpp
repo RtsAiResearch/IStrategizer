@@ -139,7 +139,7 @@ std::string PlanStepEx::ToString(bool minimal) const
     const char* stepName = Enums[_stepTypeId];
     unsigned    paramIdx = 0;
 
-    sprintf_s(strID, "%x", _id);
+    sprintf_s(strID, "%d", _id);
 
     stepDescription += stepName;
     stepDescription += "[";
