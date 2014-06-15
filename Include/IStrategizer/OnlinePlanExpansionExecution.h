@@ -7,6 +7,8 @@
 #include "EngineComponent.h"
 #endif
 #include "WorldClock.h"
+#include "GoalEx.h"
+#include "CaseEx.h"
 
 namespace IStrategizer
 {
@@ -50,11 +52,11 @@ namespace IStrategizer
                 IsOpen(false)
             { }
 
-            void DecWaitOnParentsCount() { LogInfo("Dec WaitOnParentsCount=%d for node[%x]", WaitOnParentsCount, ID); --WaitOnParentsCount; }
-            void IncWaitOnParentsCount() { LogInfo("Inc WaitOnParentsCount=%d for node[%x]", WaitOnParentsCount, ID); ++WaitOnParentsCount; }
-            void SetWaitOnParentsCount(unsigned val) { LogInfo("Set WaitOnParentsCount= %d -> %d for node[%x]", WaitOnParentsCount, val, ID); WaitOnParentsCount = val; }
-            void DecWaitOnChildrenCount() { LogInfo("Dec WaitOnChildrenCount=%d for node[%x]", WaitOnChildrenCount, ID); --WaitOnChildrenCount; }
-            void SetWaitOnChildrenCount(unsigned val) { LogInfo("Set WaitOnChildrenCount= %d -> %d for node[%x]", WaitOnChildrenCount, val, ID); WaitOnChildrenCount = val; }
+            void DecWaitOnParentsCount() { LogInfo("Dec WaitOnParentsCount=%d for node[%d]", WaitOnParentsCount, ID); --WaitOnParentsCount; }
+            void IncWaitOnParentsCount() { LogInfo("Inc WaitOnParentsCount=%d for node[%d]", WaitOnParentsCount, ID); ++WaitOnParentsCount; }
+            void SetWaitOnParentsCount(unsigned val) { LogInfo("Set WaitOnParentsCount= %d -> %d for node[%d]", WaitOnParentsCount, val, ID); WaitOnParentsCount = val; }
+            void DecWaitOnChildrenCount() { LogInfo("Dec WaitOnChildrenCount=%d for node[%d]", WaitOnChildrenCount, ID); --WaitOnChildrenCount; }
+            void SetWaitOnChildrenCount(unsigned val) { LogInfo("Set WaitOnChildrenCount= %d -> %d for node[%d]", WaitOnChildrenCount, val, ID); WaitOnChildrenCount = val; }
         };
 
         void ExpandGoal(IOlcbpPlan::NodeID goalNode, CaseEx* pCase);
@@ -83,13 +85,16 @@ namespace IStrategizer
 
         bool IsGoalNode(_In_ IOlcbpPlan::NodeID nodeId) const;
         bool IsActionNode(_In_ IOlcbpPlan::NodeID nodeId) const;
+        bool IsActiveGoal(GoalEx* goal) const { return m_activeGoals.count(goal->Key()) != 0; }
+        void AddActiveGoal(GoalEx* goal) { _ASSERTE(!IsActiveGoal(goal)); m_activeGoals.insert(goal->Key()); }
+        void RemoveActiveGoal(GoalEx* goal) { /*_ASSERTE(IsActiveGoal(goal));*/ m_activeGoals.erase(goal->Key()); }
         void LinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId, _In_ IOlcbpPlan::NodeID dstNodeId);
         void UnlinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId, _In_ IOlcbpPlan::NodeID dstNodeId);
 
         NodeData& GetNodeData(_In_ IOlcbpPlan::NodeID nodeId) { _ASSERTE(m_nodeData.count(nodeId) > 0); return m_nodeData[nodeId]; }
         const NodeData& GetNodeData(_In_ IOlcbpPlan::NodeID nodeId) const { _ASSERTE(m_nodeData.count(nodeId) > 0); return m_nodeData.at(nodeId); }
 
-        void GetNodeChildrenInBelongingSubplan(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSet& children) const;
+        void GetNodeChildrenInBelongingSubplan(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSerializedSet& children) const;
         void UnlinkNodeChildren(_In_ IOlcbpPlan::NodeID nodeId);
         void ComputeNodesWaitOnParentsCount();
         void UpdateHistory(CaseEx* pCase);
@@ -102,6 +107,7 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue CaseNodeValue;
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
         std::map<CaseNodeValue, ClonedCaseNodeValue> m_clonedNodesMapping;
+        std::set<unsigned> m_activeGoals;
     };
 }
 

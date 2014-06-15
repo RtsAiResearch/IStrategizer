@@ -23,7 +23,7 @@ ConditionEx* ExecutionHistory::GetMostVulnerableAliveCondition() const
     map<ConditionEx*, int> vulnerableConditions;
     ExecutionTrial::List failedTrials = FailedTrials();
 
-    for (size_t i = 0; i < failedTrials.size(); ++i)
+    for (unsigned i = 0; i < failedTrials.size(); ++i)
     {
         if (m_history[i].FailedAliveCondition())
         {
@@ -64,7 +64,7 @@ ExecutionTrial::List ExecutionHistory::FailedTrials() const
 {
     ExecutionTrial::List failedTrials;
 
-    for (size_t i = 0; i < m_history.size(); ++i)
+    for (unsigned i = 0; i < m_history.size(); ++i)
     {
         if (m_history[i].ExecutionState() == ESTATE_Failed)
             failedTrials.push_back(m_history[i]);
@@ -75,7 +75,7 @@ ExecutionTrial::List ExecutionHistory::FailedTrials() const
 //////////////////////////////////////////////////////////////////////////
 void ExecutionHistory::AddRange(ExecutionHistory other)
 {
-    for (size_t i = 0; i < other.m_history.size(); ++i)
+    for (unsigned i = 0; i < other.m_history.size(); ++i)
     {
         this->m_history.push_back(other.m_history[i]);
     }

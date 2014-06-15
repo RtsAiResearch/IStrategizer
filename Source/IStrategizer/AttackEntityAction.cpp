@@ -101,8 +101,7 @@ void AttackEntityAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePostConditions()
 {
-    EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
-    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, targetType, 1));
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1));
 }
 //----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePreConditions()

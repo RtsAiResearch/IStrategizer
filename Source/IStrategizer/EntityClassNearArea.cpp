@@ -23,7 +23,7 @@ bool EntityClassNearArea::Evaluate(RtsGame& game)
     Vector2 position = Vector2::Null();
     int counter = 0;
     ConditionEx::Evaluate(game);
-    for (size_t i = 0; i < entityIds.size(); ++i)
+    for (unsigned i = 0; i < entityIds.size(); ++i)
     {
         position = game.Map()->GetNearestCell(new CellFeature(_conditionParameters));
 

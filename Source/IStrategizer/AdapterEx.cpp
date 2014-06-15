@@ -160,7 +160,7 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     _ASSERTE(pPlayer);
 
     pPlayer->Entities(entityIds);
-    for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+    for (unsigned i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);
         _ASSERTE(pEntity);
@@ -197,7 +197,7 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
     _ASSERTE(pPlayer);
 
     pPlayer->Entities(entityIds);
-    for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+    for (unsigned i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);
         _ASSERTE(pEntity);
@@ -233,7 +233,7 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
 
     g_Game->Map()->Update();
 
-    for (size_t i = 0, size = resourceSourceIds.size(); i < size; ++i)
+    for (unsigned i = 0, size = resourceSourceIds.size(); i < size; ++i)
     {	
         pEntity = pPlayer->GetEntity(resourceSourceIds[i]);
         _ASSERTE(pEntity);
@@ -325,7 +325,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 
     pPlayer->Entities(entityIds);
     g_Game->Map()->Update();
-    for (size_t i = 0, size = entityIds.size(); i < size; ++i)
+    for (unsigned i = 0, size = entityIds.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entityIds[i]);
         _ASSERTE(pEntity);

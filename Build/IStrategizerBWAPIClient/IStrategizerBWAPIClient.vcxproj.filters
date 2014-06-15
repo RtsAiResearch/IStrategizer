@@ -79,12 +79,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_IMViewWidget.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_PlannerViewWidget.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Template\moc_PlannerViewWidget.cpp">
-      <Filter>Generated Files\Template</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BwapiClient.h">

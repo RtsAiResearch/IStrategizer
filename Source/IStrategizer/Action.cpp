@@ -49,7 +49,9 @@ void Action::State(ExecutionStateType p_state, RtsGame& game, const WorldClock& 
 }
 bool Action::PreconditionsSatisfied(RtsGame& game)
 {
+    if (_preCondition == nullptr) { InitializeConditions(); }
     bool satisfied = _preCondition->Evaluate(game);
+
     return satisfied;
 }
 //////////////////////////////////////////////////////////////////////////

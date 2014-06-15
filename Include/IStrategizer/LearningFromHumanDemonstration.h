@@ -12,10 +12,24 @@ namespace IStrategizer
     class GameTrace;
     class Action;
     class RetainerEx;
+    class SubsetPlanData;
 
     const int TIME_STAMP_SIZE_EX = 1;
 
     typedef std::vector<PlanStepEx*> SequentialPlan;
+    
+    typedef std::vector<SubsetPlanData> SubsetPlanDataList;
+
+    typedef std::map<unsigned, SubsetPlanDataList> SubplansMap;
+
+    class SubsetPlanData
+    {
+    public:
+        SubsetPlanData(unsigned index, const OlcbpPlan::NodeSet& nodes) : Index(index), Nodes(nodes) {}
+        
+        unsigned Index;
+        OlcbpPlan::NodeSet Nodes;
+    };
 
     class RawPlanEx
     {
@@ -63,16 +77,22 @@ namespace IStrategizer
     private:
         CaseLearningHelper* _helper;
         RetainerEx* _retainer;
+        std::map<unsigned, RtsGame*> _gameStateMapping;
 
         void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
         void UnnecessaryStepsElimination(CookedCase* p_case);
         void HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans);
+        void IdenticalPlanDetection(std::vector<CookedPlan*> &p_cookedPlans) const;
         void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans);
         bool Depends(CompositeExpression* p_candidateParent, CompositeExpression* p_candidateChild);
         bool IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right);
         CookedPlan* PlanParallelization(OlcbpPlan* p_graph, RawPlanEx* p_steps);
         CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
         vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
+        bool IsIdenticalPlan(OlcbpPlan* leftPlan, OlcbpPlan* rightPlan) const;
+        bool IsSuperGraph(OlcbpPlan *pSuperGraph, OlcbpPlan *pSubGraph, OlcbpPlan::NodeSet& superGraphMatchedIds) const;
+        bool SubplansDetection(std::vector<CookedPlan*>& p_cookedPlans) const;
+        bool IsSubset(const OlcbpPlan::NodeSet superset,  const OlcbpPlan::NodeSet candidateSubset) const;
 
     public:
         LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy);

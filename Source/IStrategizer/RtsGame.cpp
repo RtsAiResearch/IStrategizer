@@ -32,13 +32,15 @@ static SimilarityWeightModel GetDefaultWeightModel()
     model.GameFrame = 0.2f;
     model.MapArea = 0.2f;
     model.Player.W = 0.6f;
-        model.Player.NumBuildings.W = 0.6f;
-            model.Player.Entities.NumEntities = 1.0f;
+        model.Player.Entities.W = 0.6f;
+            model.Player.Entities.NumAttackingUnits = 0.25;
+            model.Player.Entities.NumBuildings = 0.25;
+            model.Player.Entities.NumWorkers = 0.25;
+            model.Player.Entities.NumDoneResearches = 0.25;
         model.Player.Resources.W = 0.4f;
             model.Player.Resources.Primary = 0.3f;
             model.Player.Resources.Secondary = 0.3f;
             model.Player.Resources.Supply = 0.4f;
-
 
     return model;
 }

@@ -78,7 +78,7 @@ void WorldMap::Update()
 
     m_pGame->Players(players);
 
-    for (size_t i = 0 ; i < players.size(); i++)
+    for (unsigned i = 0 ; i < players.size(); i++)
     {
         // Neutral units are ignored
         if (players[i] == PLAYER_Neutral)
@@ -87,7 +87,7 @@ void WorldMap::Update()
         currPlayerEntites.clear();
         m_pGame->GetPlayer(players[i])->Entities(currPlayerEntites); 
 
-        for (size_t j = 0 ; j < currPlayerEntites.size(); j++)
+        for (unsigned j = 0 ; j < currPlayerEntites.size(); j++)
         {
             currentEntity = m_pGame->GetPlayer(players[i])->GetEntity(currPlayerEntites[j]);
 

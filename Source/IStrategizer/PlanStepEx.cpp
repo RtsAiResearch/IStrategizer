@@ -11,15 +11,17 @@ using namespace IStrategizer;
 
 unsigned PlanStepEx::s_lastPlanstepID = 0;
 
-unsigned GenerateID()
+unsigned PlanStepEx::GenerateID()
 {
-    UUID uuid;
-    ::ZeroMemory(&uuid, sizeof(UUID));
+    //UUID uuid;
+    //::ZeroMemory(&uuid, sizeof(UUID));
 
-    // Create uuid or load from a string by UuidFromString() function
-    ::UuidCreate(&uuid);
+    //// Create uuid or load from a string by UuidFromString() function
+    //::UuidCreate(&uuid);
 
-    return uuid.Data1;
+    //return uuid.Data1;
+
+    return ++s_lastPlanstepID;
 }
 
 PlanStepEx::PlanStepEx() :
@@ -137,7 +139,7 @@ std::string PlanStepEx::ToString(bool minimal) const
     const char* stepName = Enums[_stepTypeId];
     unsigned    paramIdx = 0;
 
-    sprintf_s(strID, "%x", _id);
+    sprintf_s(strID, "%d", _id);
 
     stepDescription += stepName;
     stepDescription += "[";

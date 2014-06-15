@@ -41,7 +41,7 @@ MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType)
         Unitset geysers = Broodwar->getGeysers();
         Unit currentGeyser;
 
-        for (size_t i = 0; i < geysers.size(); ++i)
+        for (unsigned i = 0; i < geysers.size(); ++i)
         {
             currentGeyser = geysers[i];
             Vector2 currentPosition = Vector2(

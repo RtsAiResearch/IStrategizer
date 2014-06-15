@@ -21,3 +21,15 @@ void GoalEx::UpdateAux(RtsGame& game, const WorldClock& p_clock)
         break;
     }
 }
+//----------------------------------------------------------------------------------------------
+unsigned GoalEx::Key() const
+{
+    unsigned key = Hash();
+
+    if (ContainsParameter(PARAM_Amount))
+    {
+        key -= Parameter(PARAM_Amount);
+    }
+
+    return key;
+}

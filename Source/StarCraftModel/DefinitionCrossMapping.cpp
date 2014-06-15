@@ -103,38 +103,49 @@ void DefinitionCrossMapping::InitTeches()
 //----------------------------------------------------------------------------------------------
 void DefinitionCrossMapping::InitPlayers()
 {
-    vector< pair<TID, IStrategizer::PlayerType> > m_players;
-    const Playerset &players = Broodwar->getPlayers();
-    BWAPI::Player pPlayer;
+    bool playerFound = false;
+    bool learnFromComputer = false;
     TID selfID = DONT_CARE;
-    bool isEnemy = false;
+    vector<pair<TID, IStrategizer::PlayerType>> m_players;
+    const Playerset &players = Broodwar->getPlayers();
 
-    for (Playerset::iterator i = players.begin();
-        i != players.end();
-        ++i)
+    // Finding PLAYER_Self
+    playerFound = false;
+    TID selfType = learnFromComputer ? PlayerTypes::Computer.getID() : PlayerTypes::Player.getID();
+    for (BWAPI::Player pPlayer : players)
     {
-        pPlayer = (*i);
-        
-        if (selfID != DONT_CARE)
-        {
-            isEnemy = pPlayer->isEnemy(Broodwar->getPlayer(selfID));
-        }
-        // FIXME: PLAYER_Self is not valid if there are more than 1 human player
-        // for example in replays or network game
-        // Player types should be removed from the engine and only Player IDs should be used
-        if (pPlayer->getType().getID() == PlayerTypes::Computer.getID() || isEnemy)
-        {
-            m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Enemy));
-        }
-        else if (pPlayer->getType().getID() == PlayerTypes::Player.getID())
+        if (pPlayer->getType().getID() == selfType)
         {
             m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Self));
             selfID = pPlayer->getID();
+            playerFound = true;
+            break;
         }
-        else if (pPlayer->isNeutral())
+    }
+    _ASSERTE(playerFound);
+
+    // Finding the enemy (PLAYER_Enemy)
+    playerFound = false;
+    for (BWAPI::Player pPlayer : players)
+    {
+        if (pPlayer->isEnemy(Broodwar->getPlayer(selfID)))
+        {
+            m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Enemy));
+            playerFound = true;
+            break;
+        }
+    }
+
+    // Finding PLAYER_Neutral
+    playerFound = false;
+    for (BWAPI::Player pPlayer : players)
+    {
+        if (pPlayer->isNeutral())
         {
             m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Neutral));
-        }
+            playerFound = true;
+            break;
+        } 
     }
 
     // We don't handle more that 3 players for now.

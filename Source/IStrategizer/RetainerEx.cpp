@@ -61,7 +61,7 @@ void RetainerEx::Retain(CaseEx* p_case)
 
     LogInfo("retaining case");
 
-    for (size_t i = 0; i < _caseBase->CaseContainer.size(); ++i)
+    for (unsigned i = 0; i < _caseBase->CaseContainer.size(); ++i)
     {
         if (_caseBase->CaseContainer[i] == p_case)
         {

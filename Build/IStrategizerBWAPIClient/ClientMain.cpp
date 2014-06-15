@@ -180,7 +180,7 @@ void ClientMain::FinalizeIStrategizer()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeViews()
 {
-    for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
+    for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->SetIM(nullptr);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -396,7 +396,7 @@ void ClientMain::OnClientUpdate()
     {
         m_pIStrategizer->Update(Broodwar->getFrameCount());
 
-        if (Broodwar->getFrameCount() % 10 == 0)
+        /*if (Broodwar->getFrameCount() % 10 == 0)
         {
             RtsGame* pSnapshot = g_Game->Snapshot();
             m_snapshots[Broodwar->getFrameCount()].first = pSnapshot;
@@ -408,7 +408,7 @@ void ClientMain::OnClientUpdate()
             pCopy->Init();
             pCopy->Map()->Update();
             m_snapshots[Broodwar->getFrameCount()].second = pCopy;
-        }
+        }*/
         
     }
     catch (IStrategizer::Exception &e)
@@ -422,7 +422,7 @@ void ClientMain::OnClientUpdate()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateViews()
 {
-    for (size_t i = 0, size = m_IMViews.size(); i < size; ++i)
+    for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->update();
 
     // m_pPlanGraphView->update();

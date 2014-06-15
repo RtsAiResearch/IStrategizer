@@ -17,6 +17,7 @@ namespace IStrategizer
         typedef PlanStepEx* Type;
         typedef const PlanStepEx* ConstType;
         static std::string ToString(const PlanStepEx* pStep) { return pStep->ToString(true); }
+        static unsigned Hash(PlanStepEx* pStep) { return pStep->Hash(); }
     };
 
     ///> alias=OlcbpPlan(AdjListDigraph(PlanStepEx*))
@@ -35,7 +36,6 @@ namespace IStrategizer
         
         CaseEx(OlcbpPlan* pPlan, GoalEx* pGoal, RtsGame* pGameState, int trialCount, int successCount)
             : m_pGoal(pGoal),
-            // FIXME: set to the actual RtsGame object when serializing RtsGame code is ready
             m_pGameState(nullptr),
             m_trialCount(trialCount),
             m_successCount(successCount),
