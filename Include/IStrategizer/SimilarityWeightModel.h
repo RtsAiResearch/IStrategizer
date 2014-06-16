@@ -37,4 +37,4 @@ namespace IStrategizer
     };
 }
 
-#endif // SIMILARITYWEIGHTMODEL_H
+#endif // SIM ILARITYWEIGHTMODEL_H

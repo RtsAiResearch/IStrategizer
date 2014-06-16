@@ -19,7 +19,7 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
 
     char buffer1[LogBufferMax];
     char buffer2[LogBufferMax];
-    const char* logTypeName[] = { "Warning", "Error", "Info" };
+    const char* logTypeName[] = { "Warning", "Error", "Info", "Activity-Start", "Activity-End" };
 
     va_list formatArgs;
     va_start(formatArgs, p_pFormat);

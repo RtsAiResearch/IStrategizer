@@ -136,6 +136,10 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const RtsGame* pGameState, co
     float caseRelevance;
 
     LogInfo("Retrieving case for goal={%s} and current game-state", pGoal->ToString().c_str());
+    for (auto pCase : exclusion)
+    {
+        LogInfo("Excluding case: %s", pCase->Goal()->ToString().c_str());
+    }
 
     if (cases.empty())
     {
