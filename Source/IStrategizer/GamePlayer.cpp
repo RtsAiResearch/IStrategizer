@@ -32,7 +32,6 @@ GamePlayer::GamePlayer(TID raceId) :
     m_raceId(raceId),
     m_isOnline(true)
 {
-
     m_colonyCenter = MapArea::Null();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -61,7 +60,7 @@ void GamePlayer::Finalize()
     Toolbox::MemoryClean(m_pTechTree);
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::Entities(vector<TID>& entityIds)
+void GamePlayer::Entities(EntityList& entityIds)
 {
     m_entities.Keys(entityIds);
 }
@@ -77,7 +76,7 @@ GameEntity* GamePlayer::GetEntity(TID id)
     return m_entities[id];
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::GetBases(vector<TID> &basesIds)
+void GamePlayer::GetBases(EntityList &basesIds)
 {
     EntityClassType typeId;
 
@@ -93,7 +92,7 @@ void GamePlayer::GetBases(vector<TID> &basesIds)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::Entities(EntityClassType typeId, vector<TID> &entityIds)
+void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds)
 {
     entityIds.clear();
     for(EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
@@ -226,7 +225,7 @@ MapArea GamePlayer::GetColonyMapArea()
     if (m_colonyCenter.IsNull())
     {
         GameEntity *pPlayerBase = nullptr;
-        vector<TID> playerBases;
+        EntityList playerBases;
 
         GetBases(playerBases);
 
@@ -237,7 +236,7 @@ MapArea GamePlayer::GetColonyMapArea()
         // No base! This is weird but for the case, we will select the first unit position as the player coloney center
         else
         {
-            vector<TID>    playerEntities;
+            EntityList    playerEntities;
 
             Entities(playerEntities);
             // This can't happen, If the player has no entities, then he must be losing
@@ -266,4 +265,41 @@ void GamePlayer::SetOffline(RtsGame* pBelongingGame)
     m_pTechTree->SetOffline(pBelongingGame);
 
     m_isOnline = false;
+}
+//////////////////////////////////////////////////////////////////////////
+int GamePlayer::Attr(PlayerAttribute attribute)
+{
+    int amount = 0;
+    EntityClassAttribute classAttribute;
+
+    switch (attribute)
+    {
+    case PATTR_AlliedUnitsTotalHP:
+        classAttribute = ECATTR_MaxHp;
+        break;
+    
+    case PATTR_AlliedUnitsTotalDamage:
+        classAttribute = ECATTR_Attack;
+        break;
+
+    default:
+        _ASSERTE(!"Inavlid player attribute!");
+        classAttribute = ECATTR_START;
+        break;    
+    }
+
+    for (auto pair : m_entities)
+    {
+        GameType* pGameType = g_Game->GetEntityType(pair.second->Type());
+
+        if (!pGameType->Attr(ECATTR_IsCowrad) &&
+            !pGameType->Attr(ECATTR_IsBuilding) &&
+            g_Assist.IsEntityObjectReady(pair.first))
+        {
+            amount += pGameType->Attr(classAttribute);
+        }
+
+    }
+
+    return amount;
 }

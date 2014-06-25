@@ -149,7 +149,7 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     */
     GamePlayer *pPlayer;
     GameEntity *pEntity;
-    vector<TID> entityIds;
+    EntityList entityIds;
     ObjectStateType curEntityState;
     TID adaptedEntityId = INVALID_TID;
     vector<UnitEntry> validEntities;
@@ -190,7 +190,7 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
 {
     GamePlayer            *pPlayer;
     GameEntity            *pEntity;
-    vector<TID>            entityIds;
+    EntityList            entityIds;
     TID                    adaptedEntityId = INVALID_TID;
 
     pPlayer = g_Game->Self();
@@ -220,7 +220,7 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
 {
     GamePlayer	*pPlayer;
     GameEntity	*pEntity;
-    vector<TID>	resourceSourceIds;
+    EntityList	resourceSourceIds;
     TID	adaptedResourceId = INVALID_TID;
     double bestDistance = numeric_limits<double>::max();
     CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
@@ -256,7 +256,7 @@ TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
 {
     EntityClassType researchedType = g_Game->GetResearch(p_researchType)->SourceEntity();
 
-    vector<TID> candidateResearchers;
+    EntityList candidateResearchers;
     g_Game->Self()->Entities(researchedType, candidateResearchers);
 
     if (candidateResearchers.empty())
@@ -285,7 +285,7 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType traineeType)
 {
     EntityClassType trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
 
-    vector<TID> candidateTrainer;
+    EntityList candidateTrainer;
     g_Game->Self()->Entities(trainerType, candidateTrainer);
 
     if (candidateTrainer.empty())
@@ -314,7 +314,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 {
     GamePlayer    *pPlayer;
     GameEntity    *pEntity;
-    vector<TID>    entityIds;
+    EntityList    entityIds;
     TID            adaptedTargetId = INVALID_TID;
     double        bestDistance = numeric_limits<double>::max();
 

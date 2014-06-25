@@ -102,6 +102,14 @@ namespace IStrategizer
             throw(ItemNotFoundException) = 0;
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetSiblings
+        // Description:	Gets all the siblings for the specified node id
+        // Parameter: 	NodeID id: Unique ID to identify the node
+        // Returns:   	IStrategizer::NodeSet
+        //************************************
+        virtual NodeSet GetSiblings(_In_ NodeID id) const = 0;
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::Contains
         // Description:	Check for a certain node existence in the graph
         // Parameter: 	NodeID id: Unique ID to identify the node
@@ -163,7 +171,7 @@ namespace IStrategizer
         // Parameter:   TNodeValue substitute: The TNodeValue to replace the sub-part with.
         // Parameter:   NodeID substituteId: The id to set for the newly added substitute 
         //************************************
-        virtual void SubGraphSubstitution(_In_ NodeSet subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId) = 0;
+        virtual void SubGraphSubstitution(_In_ NodeSet subGraphIds, _In_ NodeValue substitute, _In_ NodeID substituteId, _In_ NodeID substituteOrder) = 0;
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::GetOrphanNodes

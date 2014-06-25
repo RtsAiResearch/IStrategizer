@@ -6,6 +6,7 @@
 #endif
 
 #include <hash_map>
+#include "map"
 
 namespace IStrategizer
 {
@@ -20,16 +21,19 @@ namespace IStrategizer
     {
     public:
         RetrieverEx(AbstractRetainer *p_pRetainer);
-        CaseEx* Retrieve(const GoalEx* pGoal, const RtsGame* pGameState, const std::set<CaseEx*>& exclusion);
+        CaseEx* Retrieve(AbstractRetriever::RetrieveOptions options);
 
     protected:
-        float   GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2);
-        float   StateSimilarity(const RtsGame* p_gs1, const RtsGame* p_gs2);
-        float   CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const RtsGame* p_gameState);
-        void    ExecuteCommand(const char* p_cmd);
+        float GoalDistance(const GoalEx* pCaseGoal, AbstractRetriever::RetrieveOptions options);
+        float StateSimilarity(RtsGame* pCaseGameState, AbstractRetriever::RetrieveOptions options);
+        float CaseRelevance(const CaseEx* pCase, AbstractRetriever::RetrieveOptions options);
+        void ExecuteCommand(const char* p_cmd);
         void BuildCaseCluster();
 
         stdext::hash_map<GoalType, std::vector<CaseEx*>> _caseCluster;
+
+    private:
+        std::map<GoalType, int> m_lastGoalTypeInx;
     };
 }
 

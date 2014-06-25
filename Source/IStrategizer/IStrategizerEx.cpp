@@ -8,22 +8,17 @@
 #include "IMSystemManager.h"
 #include "DataMessage.h"
 #include "IStrategizerException.h"
-
-#ifndef SERIALIZATIONESSENTIALS_H
-#include "SerializationEssentials.h"
-#endif
-#ifndef WORLDCLOCK_H
 #include "WorldClock.h"
-#endif
-#ifndef RTSGAME_H
+#include "SerializationEssentials.h"
 #include "RtsGame.h"
-#endif
-#ifndef TOOLBOX_H
 #include "Toolbox.h"
-#endif
+#include "IMSystemManager.h"
+#include "GamePlayer.h"
+#include "GameType.h"
+#include "GameEntity.h"
+#include "EngineAssist.h"
 #include <cassert>
 #include <iostream>
-#include "IMSystemManager.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -67,7 +62,17 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
         g_IMSysMgr.Update(m_clock);
 
         if (m_param.Phase == PHASE_Online)
-            m_pPlanner->Update(m_clock);
+        {
+            if (m_attackManager.Active())
+            {
+                m_attackManager.Update(*g_Game, m_clock);
+            }
+            else
+            {
+                m_pPlanner->Update(m_clock);
+            }
+        }
+
     }
     catch (IStrategizer::Exception &e)
     {
@@ -99,10 +104,6 @@ bool IStrategizerEx::Init()
     imSysMgrParam.BuildingDataIMCellSize = m_param.BuildingDataIMCellSize;
     imSysMgrParam.GroundControlIMCellSize = m_param.GrndCtrlIMCellSize;
 
-    PlanStepParameters params;
-    params[PARAM_PlayerId] = PLAYER_Self;
-    params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
-
     g_IMSysMgr.Init(imSysMgrParam);
 
     switch(m_param.Phase)
@@ -115,7 +116,7 @@ bool IStrategizerEx::Init()
 
     case PHASE_Online:
         m_pPlanner = new OnlineCaseBasedPlannerEx();
-        m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_WinGame, params));
+        m_pPlanner->Init(GOALEX_TrainArmy);
         g_OnlineCaseBasedPlanner = m_pPlanner;
         break;
     }

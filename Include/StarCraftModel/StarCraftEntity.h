@@ -36,6 +36,21 @@ namespace IStrategizer
         bool IsNull() { return m_isOnline && m_pUnit == nullptr; }
         bool CanGather(TID resourceObjectId) const;
         std::string ToString() const;
+        TID GetTargetId() const
+        {
+            int id = DONT_CARE;
+            BWAPI::Unit target = m_pUnit->getTarget();
+            if (target == NULL)
+            {
+                target = m_pUnit->getOrderTarget();
+                if (target != NULL)
+                {
+                    id = target->getID();
+                }
+            }
+            
+            return id;
+        }
 
         // Game Commands
         bool Research(IStrategizer::ResearchType p_researchId);

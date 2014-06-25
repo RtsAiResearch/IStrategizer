@@ -1,21 +1,8 @@
 #include "Action.h"
-
-#ifndef AND_H
 #include "And.h"
-#endif
-#ifndef LOGGER_H
 #include "Logger.h"
-#endif
-#ifndef COMPOSITEEXPRESSION_H
 #include "CompositeExpression.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-#ifndef TURE_H
-#include "True.h"
-#endif
-#include <cassert>
 
 using namespace IStrategizer;
 

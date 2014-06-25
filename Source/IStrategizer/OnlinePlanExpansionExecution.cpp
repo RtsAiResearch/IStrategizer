@@ -14,6 +14,7 @@
 #include "Logger.h"
 #include "RetainerEx.h"
 #include "DataMessage.h"
+#include "GoalFactory.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -29,6 +30,19 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
 
     m_nodeData[m_planRootNodeId] = NodeData();
     OpenNode(m_planRootNodeId);
+
+    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+}
+//////////////////////////////////////////////////////////////////////////
+OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalType goalType, _In_ CaseBasedReasonerEx *pCasedBasedReasoner)
+    : EngineComponent("OnlinePlanner"),
+    m_planStructureChangedThisFrame(false),
+    m_pCbReasoner(pCasedBasedReasoner),
+    m_pOlcbpPlan(new OlcbpPlan)
+{
+    m_rootGoalType = goalType;
 
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
@@ -187,6 +201,25 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             }
         }
     }
+    else
+    {
+        // Clear the used data structures
+        m_nodeData.clear();
+        m_clonedNodesMapping.clear();
+        m_activeGoals.clear();
+
+        // Create the initial goal
+        AbstractRetriever::RetrieveOptions options;
+        options.GoalTypeId = m_rootGoalType;
+        options.pGameState = g_Game;
+        options.Exclusions = m_rootNodeExclusions;
+        CaseEx* pCandidateCase = m_pCbReasoner->Retriever()->Retrieve(options);
+        m_rootNodeExclusions.insert(pCandidateCase);
+        PlanStepEx* pRootNode = pCandidateCase->Goal();
+        m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
+        m_nodeData[m_planRootNodeId] = NodeData();
+        OpenNode(m_planRootNodeId);
+    }
 
     // LogInfo("### END PLAN UPDATE ###");
 
@@ -319,7 +352,12 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                 if (!IsActiveGoal(currentGoalNode))
                 {
                     currentGoalNode->AdaptParameters(*g_Game);
-                    caseEx = m_pCbReasoner->Retriever()->Retrieve(currentGoalNode, g_Game, exclusions);
+                    AbstractRetriever::RetrieveOptions options;
+                    options.Exclusions = exclusions;
+                    options.GoalTypeId = (GoalType)currentGoalNode->StepTypeId();
+                    options.Parameters = currentGoalNode->Parameters();
+                    options.pGameState = g_Game;
+                    caseEx = m_pCbReasoner->Retriever()->Retrieve(options);
                     // Retriever should always retrieve a non tried case for that specific node
                     _ASSERTE(!IsCaseTried(currentNode, caseEx));
                     AddActiveGoal(currentGoalNode);
@@ -380,6 +418,13 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan:
                 UpdateHistory(currentCase);
                 m_pCbReasoner->Retainer()->Retain(currentCase);
                 m_pCbReasoner->Retainer()->Flush();
+                
+                if (m_planRootNodeId == currentNode)
+                {
+                    g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanComplete, nullptr));
+                    m_pOlcbpPlan->Clear();
+                    return;
+                }
             }
             else
             {

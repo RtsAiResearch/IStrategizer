@@ -24,6 +24,7 @@ namespace IStrategizer
         void Reset(RtsGame& game, const WorldClock& p_clock);
         virtual std::vector<GoalEx*> GetSucceededInstances(RtsGame &game) = 0;
         virtual void AdaptParameters(RtsGame& game) { }
+        virtual bool Merge(PlanStepEx* planStep) = 0;
         unsigned Key() const;
     };
 }

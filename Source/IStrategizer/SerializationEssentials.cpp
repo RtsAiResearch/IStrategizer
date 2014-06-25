@@ -9,7 +9,6 @@
 #ifndef OBJECTSERIALIZER_H
 #include "ObjectSerializer.h"
 #endif
-
 #ifndef CASEBASEEX_H
 #include "CaseBaseEx.h"
 #endif
@@ -49,9 +48,6 @@
 #ifndef TRAINACTION_H
 #include "TrainAction.h"
 #endif
-#ifndef MOVEENTITYACTION_H
-#include "MoveEntityAction.h"
-#endif
 #ifndef MOVEACTION_H
 #include "MoveAction.h"
 #endif
@@ -78,6 +74,7 @@
 #endif
 #include "ExecutionHistory.h"
 #include "ExecutionTrial.h"
+#include "TrainArmyGoal.h"
 
 using namespace IStrategizer;
 
@@ -96,13 +93,13 @@ void SerializationEssentials::Init()
     g_ObjectFactory.AddPrototype(new DestroyEntityTypeGoal);
     g_ObjectFactory.AddPrototype(new WinGameGoal);
     g_ObjectFactory.AddPrototype(new BuildInfrastructureGoal);
+    g_ObjectFactory.AddPrototype(new TrainArmyGoal);
 
     g_ObjectFactory.AddPrototype(new AttackEntityAction);
     g_ObjectFactory.AddPrototype(new AttackGroundAction);
     g_ObjectFactory.AddPrototype(new ResearchAction);
     g_ObjectFactory.AddPrototype(new TrainAction);
     g_ObjectFactory.AddPrototype(new BuildActionEx);
-    g_ObjectFactory.AddPrototype(new MoveEntityAction);
     g_ObjectFactory.AddPrototype(new MoveAction);
 	g_ObjectFactory.AddPrototype(new GatherResourceAction);
 

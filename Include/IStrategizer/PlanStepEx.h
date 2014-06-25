@@ -42,6 +42,8 @@ namespace IStrategizer
         OBJECT_MEMBERS(2, &_params, &_id);
 
     public:
+        static unsigned GenerateID();
+        
         void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()) ; }
         void Copy(IClonable* p_dest);
         void Update(RtsGame& game, const WorldClock& p_clock);
@@ -88,7 +90,6 @@ namespace IStrategizer
         virtual void InitializePostConditions() = 0;
 
     private:
-        unsigned GenerateID();
         ExecutionStateType _state;
     };
 }

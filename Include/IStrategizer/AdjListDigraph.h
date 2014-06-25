@@ -109,11 +109,11 @@ namespace IStrategizer
             m_adjList[sourceNodeId].second.insert(destNodeId);
 
             // Update nodes reachability
-            m_nodesReachability[sourceNodeId].insert(destNodeId);
+            m_nodeReachability[sourceNodeId].insert(destNodeId);
 
-            for (NodeID nodeId : m_nodesReachability[sourceNodeId])
+            for (NodeID nodeId : m_nodeReachability[destNodeId])
             {
-                m_nodesReachability[nodeId].insert(destNodeId);
+                m_nodeReachability[sourceNodeId].insert(nodeId);
             }
         }
 
@@ -245,7 +245,7 @@ namespace IStrategizer
         // Parameter: 	NodeSerializedSet subGraphIds: The ids describing the sub-part to replace.
         // Parameter:   TNodeValue substitute: The TNodeValue to replace the sub-part with.
         //************************************      
-        void SubGraphSubstitution(_In_ NodeSet matchedIds, _In_ NodeValue substitute, _In_ NodeID substituteId)
+        void SubGraphSubstitution(_In_ NodeSet matchedIds, _In_ NodeValue substitute, _In_ NodeID substituteId, _In_ NodeID substituteOrder)
         {
             NodeSet parents;
             NodeSet children;
@@ -267,14 +267,13 @@ namespace IStrategizer
                 RemoveNode(subGraphNodeId);
             }
 
-            // Sometimes we use the same node multiple times, in such cases we need to update the id manually
-            while (Contains(substituteId)) { ++substituteId; }
+            _ASSERTE(!Contains(substituteId));
 
             AddNode(substitute, substituteId);
 
             for (NodeID parent : parents)
             {
-                if (parent < substituteId)
+                if (parent < substituteOrder)
                 {
                     AddEdge(parent, substituteId);
                 }
@@ -282,7 +281,7 @@ namespace IStrategizer
 
             for (NodeID child : children)
             {
-                if (child > substituteId)
+                if (child > substituteOrder)
                 {
                     AddEdge(substituteId, child);
                 }
@@ -451,6 +450,35 @@ namespace IStrategizer
         }
 
         //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetSiblings
+        // Description:	Gets all the siblings for the specified node id
+        // Parameter: 	NodeID id: Unique ID to identify the node
+        // Returns:   	IStrategizer::NodeSet
+        //************************************
+        NodeSet GetSiblings(_In_ NodeID id) const
+        {
+            NodeSet parents = GetParents(id);
+            NodeSet siblings;
+
+            if (parents.empty())
+            {
+                siblings = GetOrphanNodes();
+            }
+            else
+            {
+                for (NodeID parent : parents)
+                {
+                    NodeSet children = GetAdjacentNodes(parent);
+                    siblings.insert(children.begin(), children.end());
+                }
+            }
+
+            siblings.erase(id);
+
+            return siblings;
+        }
+
+        //************************************
         // IStrategizer::IDigraph<TNodeValue>::Reachable
         // Description:	Detects if source node can reach the dest node.
         // Parameter: 	NodeID sourceNodeId: Unique ID to identify sourceNode
@@ -461,7 +489,7 @@ namespace IStrategizer
         {
             _ASSERTE(sourceNodeId != destNodeId);
 
-            return m_nodesReachability[sourceNodeId].count(destNodeId) != 0;
+            return m_nodeReachability[sourceNodeId].count(destNodeId) != 0;
         }
 
         PlanHashMap PlanHash;
@@ -476,7 +504,7 @@ namespace IStrategizer
 
         std::mutex m_lock;
 
-        NodeMap m_nodesReachability;
+        NodeMap m_nodeReachability;
 
         template<class T>
         std::string ToString(const T& s) const
@@ -500,6 +528,7 @@ namespace IStrategizer
 
         NodeSet GetParents(NodeID nodeId) const
         {
+            _ASSERTE(m_adjList.count(nodeId) != 0);
             if (m_adjList.count(nodeId) == 0)
                 throw ItemNotFoundException(XcptHere);
 

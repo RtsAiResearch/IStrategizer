@@ -14,6 +14,7 @@ MessagePump::MessagePump()
     AddMessage(MSG_GameStart);
     AddMessage(MSG_GameEnd);
     AddMessage(MSG_PlanStructureChange);
+    AddMessage(MSG_PlanComplete);
 
     // Obsolete Messages
     AddMessage(MSG_GameActionLog);

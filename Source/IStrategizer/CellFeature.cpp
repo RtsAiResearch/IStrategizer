@@ -134,7 +134,7 @@ float CellFeature::GetDistance(CellFeature *p_other) const
 //----------------------------------------------------------------------------------------------
 void CellFeature::CalculateDistanceToBases(Vector2 cellWorldPosition)
 {
-    vector<TID> bases;
+    EntityList bases;
 
     g_Game->Enemy()->GetBases(bases);
     CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromEnemyBase);
@@ -142,7 +142,7 @@ void CellFeature::CalculateDistanceToBases(Vector2 cellWorldPosition)
     CalculateDistanceToBasesAux(cellWorldPosition, bases, m_distanceFromBase);
 }
 //----------------------------------------------------------------------------------------------
-void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, const vector<TID>& bases, int& distance) const
+void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, const EntityList& bases, int& distance) const
 {
     if (!bases.empty())
     {

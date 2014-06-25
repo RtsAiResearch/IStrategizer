@@ -257,7 +257,9 @@ bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
     if (!target)
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return attacker->attack(target->getPosition());
+    _ASSERTE(m_pUnit->canAttackUnit(target));
+    attacker->stop();
+    return attacker->attack(target);
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)

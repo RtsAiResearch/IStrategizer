@@ -15,19 +15,12 @@ namespace IStrategizer
     {
         OBJECT_SERIALIZABLE(EntityClassExist);
 
-    private:
-        int _similarityThreshold;
-        bool _reusable;
-
     public:
-        EntityClassExist() : _reusable(false), _similarityThreshold(DONT_CARE) {}
-        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, std::map<EntityObjectAttribute,int> p_entityObjectAttributes, int p_similarityThreshold = ExactSimilarity);
-        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, bool reusable);
-        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount);
-        EntityClassExist(PlayerType p_player, int p_amount);
+        EntityClassExist() {}
         EntityClassExist(PlayerType p_player);
+        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId);
+        EntityClassExist(PlayerType p_player, int p_unitClassId, int p_amount);
         bool Evaluate(RtsGame& game);
-        void Copy(IClonable* p_dest);
         bool Consume(int p_amount);
     };
 }

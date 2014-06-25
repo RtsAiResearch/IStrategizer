@@ -32,6 +32,7 @@ namespace IStrategizer
         EntityClassType Type() const { return (EntityClassType)Attr(EOATTR_Type); }
         PlayerType GetPlayer() const { return (PlayerType)Attr(EOATTR_OwnerId); }
         virtual Vector2 GetPosition() const = 0;
+        virtual TID GetTargetId() const = 0;
         virtual int Attr(EntityObjectAttribute attrId) const = 0;
         virtual bool IsTraining(TID traineeId) const = 0;
         virtual bool CanGather(TID resourceObjectId) const = 0;

@@ -36,7 +36,7 @@ namespace IStrategizer
         
         CaseEx(OlcbpPlan* pPlan, GoalEx* pGoal, RtsGame* pGameState, int trialCount, int successCount)
             : m_pGoal(pGoal),
-            m_pGameState(nullptr),
+            m_pGameState(pGameState),
             m_trialCount(trialCount),
             m_successCount(successCount),
             m_pPlan(pPlan) {}

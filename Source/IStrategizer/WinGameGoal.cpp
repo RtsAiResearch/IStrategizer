@@ -21,7 +21,7 @@ WinGameGoal::WinGameGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_
 //----------------------------------------------------------------------------------------------
 bool WinGameGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
-    vector<TID> enemyEntities;
+    EntityList enemyEntities;
     game.Enemy()->Entities(enemyEntities);
 
     // All enemy units are destroyed, win game!
@@ -36,7 +36,7 @@ void WinGameGoal::InitializePostConditions()
 vector<GoalEx*> WinGameGoal::GetSucceededInstances(RtsGame &game)
 {
     vector<GoalEx*> succeededGoals;
-    vector<TID> enemyEntities;
+    EntityList enemyEntities;
     game.Enemy()->Entities(enemyEntities);
 
     if (enemyEntities.empty())

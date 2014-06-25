@@ -34,15 +34,16 @@ namespace IStrategizer
     public:
         GamePlayer(TID raceId);
         virtual ~GamePlayer();
-        void Entities(std::vector<TID>& p_entityIds);
-        void Entities(EntityClassType p_typeId, std::vector<TID> &p_entityIds);
-        void GetBases(std::vector<TID> &p_basesIds);
+        void Entities(EntityList& p_entityIds);
+        void Entities(EntityClassType p_typeId, EntityList &p_entityIds);
+        void GetBases(EntityList &p_basesIds);
         GameEntity* GetEntity(TID p_id);
         MapArea GetColonyMapArea();
         virtual void SetOffline(RtsGame* pBelongingGame) = 0;
         virtual const GameRace* Race() const = 0;
         void NotifyMessegeSent(Message* p_pMessage);
         void Init();
+        int Attr(PlayerAttribute attribute);
 
         PlayerResources* Resources() { _ASSERTE(m_pResources != nullptr); return m_pResources;}
         GameTechTree* TechTree() const { _ASSERTE(m_pTechTree != nullptr); return m_pTechTree; }

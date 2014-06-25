@@ -1,33 +1,18 @@
-#ifndef RETRIEVEREX_H
 #include "RetrieverEx.h"
-#endif
-#ifndef CASEEX_H
 #include "CaseEx.h"
-#endif
-#ifndef GOALEX_H
 #include "GoalEx.h"
-#endif
-#ifndef MATHHELPER_H
 #include "MathHelper.h"
-#endif
-#ifndef CASEBASEEX_H
 #include "CaseBaseEx.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-#ifndef GAMEPLAYER_H
 #include "GamePlayer.h"
-#endif
-#ifndef GOALFACTORY_H
 #include "GoalFactory.h"
-#endif
 #include "AbstractRetainer.h"
 #include "CaseBaseEx.h"
 #include "Logger.h"
 #include "RtsGame.h"
 #include <map>
 #include <functional>
+#include <string>
 
 using namespace std;
 using namespace IStrategizer;
@@ -37,9 +22,7 @@ using namespace Serialization;
 // case to be retrieved
 const unsigned KNeighbours = 4;
 
-RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pRetainer, "Retriever")
-{
-}
+RetrieverEx::RetrieverEx(AbstractRetainer *p_pRetainer) : AbstractRetriever(p_pRetainer, "Retriever") {}
 //----------------------------------------------------------------------------------------------
 void RetrieverEx::BuildCaseCluster() 
 {
@@ -52,7 +35,7 @@ void RetrieverEx::BuildCaseCluster()
     }
 }
 //----------------------------------------------------------------------------------------------
-float RetrieverEx::GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2)
+float RetrieverEx::GoalDistance(const GoalEx* pCaseGoal, AbstractRetriever::RetrieveOptions options)
 {
     // returns a value between 0 and 1.0, where 1.0 means identical and 0.0 means totally different
     // GOAL-SIMILARITY GS(g1, g2)
@@ -67,33 +50,28 @@ float RetrieverEx::GoalSimilarity(const GoalEx* p_g1, const GoalEx* p_g2)
     //      similarity += p1 == p2
     //  return similarity / paramsCount
     //
-    if(p_g1->StepTypeId() != p_g2->StepTypeId())
+
+    _ASSERTE(pCaseGoal->StepTypeId() == options.GoalTypeId);
+    float distance = 0;
+    const PlanStepParameters& paramsG1 = pCaseGoal->Parameters();
+    const PlanStepParameters& paramsG2 = options.Parameters;
+
+    if (paramsG1.size() > 0 && paramsG2.size() > 0)
     {
-        return 0;
-    }
-    else
-    {
-        float alpha         = 0.5;
-        float similarity    = 0;
-        const PlanStepParameters& paramsG1 = p_g1->Parameters();
-        const PlanStepParameters& paramsG2 = p_g2->Parameters();
+        _ASSERTE(paramsG1.size() == paramsG2.size());
 
         for(PlanStepParameters::const_iterator itrG1 = paramsG1.begin(), itrG2 = paramsG2.begin();
-            itrG1 != p_g1->Parameters().end();
+            itrG1 != pCaseGoal->Parameters().end();
             ++itrG1, ++itrG2)
         {
-            similarity += (itrG1->second == itrG2->second);
+            distance += (itrG1->second != itrG2->second);
         }
-
-        similarity /= (float)paramsG1.size();
-        similarity *= (1 - alpha);
-        similarity += alpha;
-
-        return similarity;
     }
+
+    return distance;
 }
 //----------------------------------------------------------------------------------------------
-float RetrieverEx::StateSimilarity(const RtsGame *p_gs1, const RtsGame *p_gs2)
+float RetrieverEx::StateSimilarity(RtsGame* pCaseGameState, AbstractRetriever::RetrieveOptions options)
 {
     // STATE-SIMILARITY(gs1, gs2)
     // distance = 0
@@ -116,26 +94,38 @@ float RetrieverEx::StateSimilarity(const RtsGame *p_gs1, const RtsGame *p_gs2)
 
     return 1.0f / (sqrt(distance + 1.0f));*/
 
-    return 0.0;
+    pCaseGameState->Init();
+    return (float)options.pGameState->GetDistance(pCaseGameState);
 }
 //----------------------------------------------------------------------------------------------
-float RetrieverEx::CaseRelevance(const CaseEx* p_case, const GoalEx* p_goal, const RtsGame* p_gameState)
+float RetrieverEx::CaseRelevance(const CaseEx* pCase, AbstractRetriever::RetrieveOptions options)
 {
     float alpha = 0.95f;
-    float goalSimilarity = GoalSimilarity(p_case->Goal(), p_goal);
-    // To Do: fix to use RtsGame somehow instead of GameStateEx
-    float stateSimilarity = 0.0; //StateSimilarity(p_case->GameState(), p_gameState);
+    float goalDistance = GoalDistance(pCase->Goal(), options);
+    float stateDistance = StateSimilarity(pCase->GameState(), options);
 
-    return (alpha * goalSimilarity) + (float)((1.0 - alpha) * stateSimilarity);
+    return (alpha * goalDistance) + (float)((1.0 - alpha) * stateDistance);
 }
 //----------------------------------------------------------------------------------------------
-CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const RtsGame* pGameState, const set<CaseEx*>& exclusion)
+CaseEx* RetrieverEx::Retrieve(AbstractRetriever::RetrieveOptions options)
 {
+    std::set<CaseEx*> exclusion = options.Exclusions;
     SVector<CaseEx*>& cases = m_pRetainer->CaseBase()->CaseContainer;
-    multimap<float, CaseEx*, greater<float> > caseRelevanceTable;
+    multimap<float, CaseEx*, less<float>> caseRelevanceTable;
     float caseRelevance;
+    string goalString;
 
-    LogInfo("Retrieving case for goal={%s} and current game-state", pGoal->ToString().c_str());
+    if (!options.Parameters.empty())
+    {
+        GoalEx* pGoal = g_GoalFactory.GetGoal(options.GoalTypeId, options.Parameters, false);
+        goalString = pGoal->ToString();
+    }
+    else
+    {
+        goalString = Enums[options.GoalTypeId];
+    }
+
+    LogInfo("Retrieving case for goal={%s} and current game-state", goalString.c_str());
 
     if (cases.empty())
     {
@@ -149,7 +139,7 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const RtsGame* pGameState, co
     {
         // Ignore all cases with different goal type because it does not
         // make sense to retrieve a WinGame case for TrainArmy goal for example
-        if (pGoal->StepTypeId() != cases[i]->Goal()->StepTypeId())
+        if (options.GoalTypeId != cases[i]->Goal()->StepTypeId())
             continue;
 
         if (exclusion.count(cases[i]) > 0)
@@ -158,13 +148,13 @@ CaseEx* RetrieverEx::Retrieve(const GoalEx* pGoal, const RtsGame* pGameState, co
             continue;
         }
 
-        caseRelevance = CaseRelevance(cases[i], pGoal, pGameState);
+        caseRelevance = CaseRelevance(cases[i], options);
         caseRelevanceTable.insert(make_pair(caseRelevance, cases[i]));
     }
 
     if (caseRelevanceTable.empty())
     {
-        LogInfo("Failed to retrieve any matching case for %s", pGoal->ToString().c_str());
+        LogInfo("Failed to retrieve any matching case for %s", goalString);
         return nullptr;
     }
 

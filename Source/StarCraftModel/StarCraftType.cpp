@@ -29,9 +29,10 @@ void StarCraftType::Init()
     // The supply amount is doubled, divide over two.
     m_requiredResources = WorldResources(m_type.supplyRequired() / 2, m_type.gasPrice(), m_type.mineralPrice());
 
-    Attr(ECATTR_CanAttack, m_type.canAttack());
+    Attr(ECATTR_CanAttack, m_type.canAttack() && !m_type.isWorker());
     Attr(ECATTR_CanBuild, m_type.isWorker());
     Attr(ECATTR_IsBuilding, m_type.isBuilding());
+    Attr(ECATTR_IsCritical, m_type.canProduce());
     Attr(ECATTR_IsCowrad, m_type.isWorker());
     Attr(ECATTR_MaxHp, m_type.maxHitPoints());
     Attr(ECATTR_IsPrimaryResource, m_type.isMineralField());
@@ -39,7 +40,6 @@ void StarCraftType::Init()
     Attr(ECATTR_IsSecondaryResource, (m_type.getID() == UnitTypes::Resource_Vespene_Geyser.getID()));
     Attr(ECATTR_IsSupply, (m_type.supplyProvided() > 0));
     // FIXME: mention critical buildings
-    Attr(ECATTR_IsCritical, 0);
     Attr(ECATTR_LineOfSight, m_type.sightRange());
 
     // Convert build tiles to walk tiles

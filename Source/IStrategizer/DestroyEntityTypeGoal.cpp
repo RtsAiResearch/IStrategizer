@@ -82,3 +82,17 @@ bool DestroyEntityTypeGoal::Equals(PlanStepEx* p_planStep)
         _params[PARAM_TargetEntityClassId] == p_planStep->Parameter(PARAM_TargetEntityClassId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
 }
+//----------------------------------------------------------------------------------------------
+bool DestroyEntityTypeGoal::Merge(PlanStepEx* planStep)
+{
+    if (StepTypeId() == planStep->StepTypeId())
+    {
+        if (_params[PARAM_TargetEntityClassId] == planStep->Parameter(PARAM_TargetEntityClassId))
+        {
+            _params[PARAM_Amount] += planStep->Parameter(PARAM_Amount);
+            return true;
+        }
+    }
+
+    return false;
+}

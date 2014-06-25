@@ -5,6 +5,7 @@
 #include "TrainForceGoal.h"
 #include "GoalFactory.h"
 #include "BuildInfrastructureGoal.h"
+#include "TrainArmyGoal.h"
 
 using namespace IStrategizer;
 
@@ -37,6 +38,10 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_paramete
 
     case GOALEX_BuildInfrastructure:
         goal = new BuildInfrastructureGoal(p_parameters);
+        break;
+
+    case GOALEX_TrainArmy:
+        goal = new TrainArmyGoal(p_parameters);
         break;
 
     default:
@@ -80,6 +85,10 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
 
     case GOALEX_BuildInfrastructure:
         goal = new BuildInfrastructureGoal();
+        break;
+
+    case GOALEX_TrainArmy:
+        goal = new TrainArmyGoal();
         break;
 
     default:

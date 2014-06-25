@@ -74,7 +74,7 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
 {
     GamePlayer* pPlayer;
     GameEntity* pEntity;
-    vector<TID> entities;
+    EntityList entities;
     unsigned matches;
     bool exist;
     ObjectStateType state;
@@ -108,7 +108,7 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
     GamePlayer* pPlayer;
     GameEntity* pEntity;
     GameType* pType;
-    vector<TID> entities;
+    EntityList entities;
     unsigned matches;
     bool        exist = false;
 
@@ -154,6 +154,21 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
     return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
+bool EngineAssist::IsEntityObjectReady(TID p_entityObject, PlayerType p_playerType)
+{
+    GamePlayer *pPlayer;
+    GameEntity *pEntity;
+    bool exist;
+
+    pPlayer = g_Game->GetPlayer(p_playerType);
+    _ASSERTE(pPlayer);
+
+    pEntity = pPlayer->GetEntity(p_entityObject);
+    exist = (pEntity != nullptr) && (pEntity->Attr(EOATTR_State) != (int)OBJSTATE_BeingConstructed);
+
+    return exist;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::DoesEntityObjectExist(TID p_entityObject, PlayerType p_playerType)
 {
     GamePlayer *pPlayer;
@@ -169,7 +184,7 @@ bool EngineAssist::DoesEntityObjectExist(TID p_entityObject, PlayerType p_player
     return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-bool EngineAssist::DoesEntityObjectExist(const vector<TID> &p_entityObjects, PlayerType p_playerType)
+bool EngineAssist::DoesEntityObjectExist(const EntityList &p_entityObjects, PlayerType p_playerType)
 {
     GamePlayer *pPlayer;
     GameEntity *pEntity;

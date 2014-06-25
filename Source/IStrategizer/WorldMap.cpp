@@ -58,7 +58,7 @@ void WorldMap::Init()
 void WorldMap::Update()
 {
     vector<PlayerType> players;
-    vector<TID> currPlayerEntites;
+    EntityList currPlayerEntites;
     GameEntity *currentEntity;
     unsigned cellX, cellY;
     GroundControlIM* IM =  dynamic_cast<GroundControlIM*>(g_IMSysMgr.GetIM(IM_GroundControl));

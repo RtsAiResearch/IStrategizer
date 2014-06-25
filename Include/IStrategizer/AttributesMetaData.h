@@ -82,11 +82,16 @@ namespace IStrategizer
     Enums[ECATTR_LineOfSight] = "Line of Sight"; \
     Enums[ECATTR_IsSpecialBuilding] = "Is Special Building";
     //---------------------------------------------------------------------------
-#define Prefix_PlayerAttribute PATTRIBUTE
+#define Prefix_PlayerAttribute PATTR
     enum PlayerAttribute
     {
-        PATTRIBUTE_START = 0x30200,
-        PATTRIBUTE_END
+        PATTR_START = 0x30200,
+        PATTR_AlliedUnitsTotalHP,
+        PATTR_AlliedUnitsTotalDamage,
+        PATTR_END
     };
+#define Define_PlayerAttribute \
+    Enums[PATTR_AlliedUnitsTotalHP] = "Units Total HP"; \
+    Enums[PATTR_AlliedUnitsTotalDamage] = "Units Total Damage";
 }
 #endif // ATTRIBUTESMETADATA_H

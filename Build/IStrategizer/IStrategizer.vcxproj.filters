@@ -136,6 +136,15 @@
     <Filter Include="Header Files\World Model\Realtime\Map">
       <UniqueIdentifier>{88df2454-dc24-4a9a-9d4f-c3e6b84ccf1c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine Components\FSM">
+      <UniqueIdentifier>{b7c9640f-51d0-445b-8069-0b7f5c45bb96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine Components\AttackManager">
+      <UniqueIdentifier>{8967729d-3e1d-4959-abff-056fb271c0dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine Components\AttackManager">
+      <UniqueIdentifier>{84d533c6-0acf-44af-87d0-b9926b81665e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\IStrategizer\EngineAssist.cpp">
@@ -309,9 +318,6 @@
     <ClCompile Include="..\..\Source\IStrategizer\DeployArmyGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\IStrategizer\MoveEntityAction.cpp">
-      <Filter>Source Files\CaseBase\Action</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\MoveAction.cpp">
       <Filter>Source Files\CaseBase\Action</Filter>
     </ClCompile>
@@ -335,6 +341,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\IStrategizer\TrainForceGoal.cpp">
       <Filter>Source Files\CaseBase\Goal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\Battle.cpp">
+      <Filter>Source Files\Engine Components\AttackManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\TrainArmyGoal.cpp">
+      <Filter>Source Files\CaseBase\Goal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\IStrategizer\PlayerAttributeExist.cpp">
+      <Filter>Source Files\CaseBase\Condition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -363,9 +378,6 @@
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\Delegate.h">
-      <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\ErrorCode.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MathHelper.h">
@@ -431,16 +443,10 @@
     <ClInclude Include="..\..\Include\IStrategizer\EntityClassExist.h">
       <Filter>Header Files\CaseBase\Condition</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\False.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\ResearchDone.h">
       <Filter>Header Files\CaseBase\Condition</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\ResourceExist.h">
-      <Filter>Header Files\CaseBase\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\True.h">
       <Filter>Header Files\CaseBase\Condition</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\And.h">
@@ -569,9 +575,6 @@
     <ClInclude Include="..\..\Include\IStrategizer\AdjListDigraph.h">
       <Filter>Header Files\Utilities\Data Structures\Digraph</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\IStrategizer\MoveEntityAction.h">
-      <Filter>Header Files\CaseBase\Action</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\IStrategizer\MoveAction.h">
       <Filter>Header Files\CaseBase\Action</Filter>
     </ClInclude>
@@ -635,12 +638,39 @@
     <ClInclude Include="..\..\Include\IStrategizer\MapArea.h">
       <Filter>Header Files\World Model\Realtime\Map</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\FSMState.h">
+      <Filter>Header Files\Engine Components\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\FSMMachine.h">
+      <Filter>Header Files\Engine Components\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\Battle.h">
+      <Filter>Header Files\Engine Components\AttackManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\DeployFSMState.h">
+      <Filter>Header Files\Engine Components\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\AttackFSMState.h">
+      <Filter>Header Files\Engine Components\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\FinishedFSMState.h">
+      <Filter>Header Files\Engine Components\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\AttackManager.h">
+      <Filter>Header Files\Engine Components\AttackManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\TrainArmyGoal.h">
+      <Filter>Header Files\CaseBase\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\PlayerAttributeExist.h">
+      <Filter>Header Files\CaseBase\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\IStrategizer\False.h">
+      <Filter>Header Files\CaseBase\Condition</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Documents\2011-2012 Plan.txt">
-      <Filter>Documents</Filter>
-    </None>
-    <None Include="..\..\Documents\Shortlist.txt">
       <Filter>Documents</Filter>
     </None>
   </ItemGroup>

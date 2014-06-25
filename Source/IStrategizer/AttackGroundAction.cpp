@@ -86,7 +86,7 @@ void  AttackGroundAction::InitializeAddressesAux()
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePostConditions()
 {
-    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, 1));
+    _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, DONT_CARE, 1));
 }
 //----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePreConditions()

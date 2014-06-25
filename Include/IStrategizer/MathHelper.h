@@ -56,7 +56,13 @@ namespace IStrategizer
 
             return (int)sqrt((float)m_distance);
         }
-
+        
+        //////////////////////////////////////////////////////////////////////////
+        static double EuclideanDistance(int value1, int value2)
+        {
+            return sqrt(pow(value1 - value2, 2));
+            
+        }
         //////////////////////////////////////////////////////////////////////////
         static int WindowMembership(int p_centerXCoord, int p_centerYCoord, int p_testXCoord, int p_testYCoord, int p_windowSize)
         {

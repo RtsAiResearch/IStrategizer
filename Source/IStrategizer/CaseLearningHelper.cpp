@@ -12,14 +12,15 @@ using namespace std;
 
 void CaseLearningHelper::Init()
 {
-    g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
 
     for(unsigned i = START(GoalType); i < END(GoalType); ++i)
     {
-        m_goals.push_back(g_GoalFactory.GetGoal((GoalType)i, true));
+        if (i != GOALEX_DestroyEntityType && i != GOALEX_WinGame)
+        {
+            m_goals.push_back(g_GoalFactory.GetGoal((GoalType)i, true));
+        }
     }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,18 +79,6 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
         m_observedTraces.push_back(trace);
 
         LogInfo("Received game trace for action=%s", Enums[trace.Action()]);
-
-        break;
-
-    case MSG_GameEnd:
-        LogInfo("Received game end mmessage");
-        succeededGoals.clear();
-        succeededGoals = GetSatisfiedGoals();
-        
-        for (unsigned i = 0; i < succeededGoals.size(); ++i)
-        {
-            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
-        }
 
         break;
     }

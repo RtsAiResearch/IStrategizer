@@ -29,7 +29,7 @@ void CollectResourceGoal::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
-    vector<TID> entities;
+    EntityList entities;
     game.Self()->Entities(game.Self()->Race()->GetWorkerType(), entities);
     int gatherersCount = GetNumberOfGatherers(game, (ResourceType)_params[PARAM_ResourceId]);
     int minGatherersCount = _params[PARAM_Amount];
@@ -40,7 +40,7 @@ bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& game)
 int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) const
 {
     int count = 0;
-    vector<TID> workers;
+    EntityList workers;
     game.Self()->Entities(game.Self()->Race()->GetWorkerType(), workers);
 
     for (auto workerId : workers)
@@ -61,7 +61,7 @@ int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resour
 //----------------------------------------------------------------------------------------------
 void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, vector<GoalEx*>& succeededInstances)
 {
-    vector<TID> workers;
+    EntityList workers;
     game.Self()->Entities(game.Self()->Race()->GetWorkerType(), workers);
 
     int gatherersCount = GetNumberOfGatherers(game, resourceType);
@@ -105,4 +105,18 @@ bool CollectResourceGoal::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+}
+//----------------------------------------------------------------------------------------------
+bool CollectResourceGoal::Merge(PlanStepEx* planStep)
+{
+    if (StepTypeId() == planStep->StepTypeId())
+    {
+        if (_params[PARAM_ResourceId] == planStep->Parameter(PARAM_ResourceId))
+        {
+            _params[PARAM_Amount] += planStep->Parameter(PARAM_Amount);
+            return true;
+        }
+    }
+
+    return false;
 }

@@ -18,6 +18,7 @@ namespace IStrategizer
         CollectResourceGoal(const PlanStepParameters& p_parameters);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
+        bool Merge(PlanStepEx* planStep);
         unsigned Hash() const { return StepTypeId() + Parameter(PARAM_ResourceId) + Parameter(PARAM_Amount); }
         
     protected:

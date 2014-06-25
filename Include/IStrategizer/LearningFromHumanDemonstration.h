@@ -79,20 +79,18 @@ namespace IStrategizer
         RetainerEx* _retainer;
         std::map<unsigned, RtsGame*> _gameStateMapping;
 
-        void AddAction(RawCaseEx* p_case, ActionType p_action, const PlanStepParameters& p_params, int p_traceId);
         void UnnecessaryStepsElimination(CookedCase* p_case);
-        void HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans);
+        void HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans) const;
         void IdenticalPlanDetection(std::vector<CookedPlan*> &p_cookedPlans) const;
         void RetainLearntCases(std::vector<CookedPlan*>& p_cookedPlans);
-        bool Depends(CompositeExpression* p_candidateParent, CompositeExpression* p_candidateChild);
-        bool IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right);
-        CookedPlan* PlanParallelization(OlcbpPlan* p_graph, RawPlanEx* p_steps);
-        CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
-        vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
+        bool Depends(CompositeExpression* p_candidateParent, CompositeExpression* p_candidateChild) const;
+        bool IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right) const;
         bool IsIdenticalPlan(OlcbpPlan* leftPlan, OlcbpPlan* rightPlan) const;
         bool IsSuperGraph(OlcbpPlan *pSuperGraph, OlcbpPlan *pSubGraph, OlcbpPlan::NodeSet& superGraphMatchedIds) const;
         bool SubplansDetection(std::vector<CookedPlan*>& p_cookedPlans) const;
         bool IsSubset(const OlcbpPlan::NodeSet superset,  const OlcbpPlan::NodeSet candidateSubset) const;
+        CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
+        vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
 
     public:
         LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy);

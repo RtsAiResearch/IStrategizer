@@ -13,33 +13,19 @@ using namespace IStrategizer;
 using namespace Serialization;
 using namespace std;
 
-EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, map< EntityObjectAttribute,int > p_entityObjectAttributes, int p_similarityThreshold) 
-    : ConditionEx(p_player, CONDEX_EntityClassExist), _reusable(false)
-{
-    _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
-    _conditionParameters[PARAM_Amount] = p_amount;
-    _similarityThreshold = p_similarityThreshold;
-}
-//---------------------------------------------------------------------------------------------------
-EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, bool reusable) : ConditionEx(p_player, CONDEX_EntityClassExist), _reusable(false)
+EntityClassExist::EntityClassExist(PlayerType p_player, int p_unitClassId, int p_amount) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
     _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
     _conditionParameters[PARAM_Amount] = p_amount;
 }
 //---------------------------------------------------------------------------------------------------
-EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount) : ConditionEx(p_player, CONDEX_EntityClassExist), _reusable(false)
+EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
     _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
-    _conditionParameters[PARAM_Amount] = p_amount;
+    _conditionParameters[PARAM_Amount] = DONT_CARE;
 }
 //---------------------------------------------------------------------------------------------------
-EntityClassExist::EntityClassExist(PlayerType p_player, int p_amount) : ConditionEx(p_player, CONDEX_EntityClassExist), _reusable(false)
-{
-    _conditionParameters[PARAM_EntityClassId] = DONT_CARE;
-    _conditionParameters[PARAM_Amount] = p_amount;
-}
-//---------------------------------------------------------------------------------------------------
-EntityClassExist::EntityClassExist(PlayerType p_player) : ConditionEx(p_player, CONDEX_EntityClassExist), _reusable(false)
+EntityClassExist::EntityClassExist(PlayerType p_player) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
     _conditionParameters[PARAM_EntityClassId] = DONT_CARE;
     _conditionParameters[PARAM_Amount] = DONT_CARE;
@@ -60,17 +46,9 @@ bool EntityClassExist::Evaluate(RtsGame& game)
     return _isEvaluated && _isSatisfied;
 }
 //---------------------------------------------------------------------------------------------------
-void EntityClassExist::Copy(IClonable* p_dest)
-{
-    ConditionEx::Copy(p_dest);
-
-    EntityClassExist* m_dest = static_cast<EntityClassExist*>(p_dest);
-    m_dest->_similarityThreshold = _similarityThreshold;
-}
-//---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Consume(int p_amount)
 {
-    if ((_reusable && p_amount > 0) || _conditionParameters[PARAM_Amount] == DONT_CARE)
+    if (p_amount > 0 || _conditionParameters[PARAM_Amount] == DONT_CARE)
     {
         // (1) The entity is reusable so return true
         // There is no required amount to so return true.

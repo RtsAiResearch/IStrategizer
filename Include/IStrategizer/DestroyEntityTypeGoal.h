@@ -20,6 +20,7 @@ namespace IStrategizer
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
+        bool Merge(PlanStepEx* planStep);
         unsigned Hash() const { return StepTypeId() + Parameter(PARAM_TargetEntityClassId) + Parameter(PARAM_Amount); }
 
     protected:

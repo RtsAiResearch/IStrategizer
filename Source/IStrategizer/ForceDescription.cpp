@@ -11,23 +11,22 @@ void ForceDescription::AddEntity(GameEntity *p_entity)
     m_numberOfUnits++;
     m_totalHP += p_entity->Attr(EOATTR_Health);
     m_totalDamage += g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
-    
 }
-
+//////////////////////////////////////////////////////////////////////////
 void ForceDescription::RemoveEntity(GameEntity *p_entity)
 {
     m_numberOfUnits--;
     m_totalHP -= p_entity->Attr(EOATTR_Health);
     m_totalDamage -= g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
 }
-
+//////////////////////////////////////////////////////////////////////////
 void ForceDescription::Clear()
 {
     m_numberOfUnits = DONT_CARE;
     m_totalHP = DONT_CARE;
     m_totalDamage = DONT_CARE;
 }
-
+//////////////////////////////////////////////////////////////////////////
 float ForceDescription::GetDistance(ForceDescription *p_other) const
 {
     float dist = 0.0;

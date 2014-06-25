@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 #include "MetaData.h"
 
 #ifndef SVECTOR_H
@@ -18,6 +19,19 @@
 
 namespace IStrategizer
 {
+    enum BattleStateType
+    {
+        // State for targeting an enemy unit and deploying the units there.
+        Deploy,
+
+        // State for performing attack action on the targeted unit.
+        Attack,
+
+        // State indicating that the battle is finished. Either all army entities or 
+        // targeted enemy entities are destroyed
+        Finished
+    };
+
     class PlanStepEx;
     class ConditionEx;
     class GoalEx;
@@ -28,6 +42,9 @@ namespace IStrategizer
 
     typedef int TPlayer;
     typedef int TID;
+
+    typedef std::set<TID> EntitySet;
+    typedef std::vector<TID> EntityList;
 
     ///> alias=PlanStepParameters(map(pair(int,int)))
     typedef Serialization::SMap<ParameterType, int> PlanStepParameters;

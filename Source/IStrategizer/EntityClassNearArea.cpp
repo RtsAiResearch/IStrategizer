@@ -18,7 +18,7 @@ EntityClassNearArea::EntityClassNearArea(PlayerType p_player, EntityClassType p_
 //---------------------------------------------------------------------------
 bool EntityClassNearArea::Evaluate(RtsGame& game)
 {
-    vector<TID> entityIds;
+    EntityList entityIds;
     game.Self()->Entities((EntityClassType)_conditionParameters[PARAM_EntityClassId], entityIds);
     Vector2 position = Vector2::Null();
     int counter = 0;

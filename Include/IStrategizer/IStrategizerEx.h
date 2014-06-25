@@ -5,6 +5,7 @@
 #include "MetaData.h"
 #include "MessagePumpObserver.h"
 #include "WorldClock.h"
+#include "AttackManager.h"
 
 namespace IStrategizer
 {
@@ -32,6 +33,7 @@ namespace IStrategizer
         IStrategizerParam m_param;
         bool m_isFirstUpdate;
         WorldClock m_clock;
+        AttackManager m_attackManager;
 
     public:
         IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame);

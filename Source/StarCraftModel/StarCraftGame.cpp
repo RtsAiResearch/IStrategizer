@@ -52,7 +52,7 @@ void StarCraftGame::InitMap()
 void StarCraftGame::InitPlayers()
 {
     vector<GamePlayer*> oldPlayers;
-    vector<TID> gamePlayerIds;
+    EntityList gamePlayerIds;
     IStrategizer::PlayerType typeId;
 
     m_players.Values(oldPlayers);

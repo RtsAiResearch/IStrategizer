@@ -12,6 +12,9 @@
 #include "GameResearch.h"
 #include "ObjectSerializer.h"
 #include "Logger.h"
+#include "MathHelper.h"
+#include "PlayerResources.h"
+#include "GameRace.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -40,21 +43,27 @@ void RtsGame::Init()
         sm_gameTypesInitialized = true;
     }
 
+    if (m_isInitialized)
+    {
+        LogInfo("RtsGame object is already initialized, no need to initialize it again.");
+        return;
+    }
+
     // We initialize player and map IFF we are in the online mode
     // If we are offline, then the player and map data was already
     // deserialized and no need to fetch it from somewhere
     if (m_isOnline)
     {
-        _ASSERTE(!m_isInitialized);
         InitPlayers();
         InitMap();
         m_isInitialized = true;
+        LogInfo("Initializing online RtsGame object.");
     }
     else
     {
-        _ASSERTE(!m_isInitialized);
         InitMap();
         m_isInitialized = true;
+        LogInfo("Initializing offline RtsGame object.");
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -125,4 +134,24 @@ RtsGame* RtsGame::Snapshot() const
     pSnapshot->SetOffline();
 
     return pSnapshot;
+}
+//----------------------------------------------------------------------------------------------
+double RtsGame::GetDistance(RtsGame* pOther)
+{
+    GamePlayer* pCurrentPlayer = this->GetPlayer(PLAYER_Self);
+    GamePlayer* pOtherPlayer = pOther->GetPlayer(PLAYER_Self);
+
+    // Resources distance
+    double primaryResourceDistance = MathHelper::EuclideanDistance(pCurrentPlayer->Resources()->Primary(), pOtherPlayer->Resources()->Primary());
+    double secondaryResourceDistance = MathHelper::EuclideanDistance(pCurrentPlayer->Resources()->Secondary(), pOtherPlayer->Resources()->Secondary());
+    double supplyDistance = MathHelper::EuclideanDistance(pCurrentPlayer->Resources()->Supply(), pOtherPlayer->Resources()->Supply());
+    
+    // Entities distance
+    EntityList currentWorkers;
+    EntityList otherWorkers;
+    pCurrentPlayer->Entities(pCurrentPlayer->Race()->GetWorkerType(), currentWorkers);
+    pOtherPlayer->Entities(pOtherPlayer->Race()->GetWorkerType(), otherWorkers);
+    double workersDistance = MathHelper::EuclideanDistance(currentWorkers.size(), otherWorkers.size());
+    
+    return primaryResourceDistance + secondaryResourceDistance + supplyDistance + workersDistance;
 }

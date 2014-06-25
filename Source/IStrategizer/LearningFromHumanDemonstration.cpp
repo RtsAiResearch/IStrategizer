@@ -37,11 +37,6 @@ void LearningFromHumanDemonstration::Learn()
     for (auto m_rawCase : m_rawCases)
     {
         IStrategizer::CookedCase* m_cookedCase = DependencyGraphGeneration(m_rawCase);
-        /*LogInfo("The initial plan for case %d/%d for goal %s is:\n%s",
-            count,
-            m_rawCases.size(),
-            m_cookedCase->rawCase->rawPlan.Goal->ToString(true).c_str(),
-            m_cookedCase->plan->ToString().c_str());*/
         
         UnnecessaryStepsElimination(m_cookedCase);
 
@@ -53,15 +48,6 @@ void LearningFromHumanDemonstration::Learn()
                 m_cookedCase->rawCase->gameState));
 
             LogInfo("Finished learning case %d/%d", count++, m_rawCases.size());
-            /*LogInfo("Finished learning case %d/%d for goal %s. The final plan is:\n%s",
-                count++,
-                m_rawCases.size(),
-                m_cookedCase->rawCase->rawPlan.Goal->ToString(true).c_str(),
-                m_cookedCase->plan->ToString().c_str());*/
-        }
-        else
-        {
-            // LogInfo("Finished learning case %d/%d and the case does not have any steps so it will not be included.", count++, m_rawCases.size());
         }
     }
 
@@ -122,7 +108,7 @@ vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List
     return learntRawCases;
 }
 //------------------------------------------------------------------------------------------------
-bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right)
+bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left, SequentialPlan right) const
 {
     bool identical = left.size() == right.size();
     unsigned i = 0;
@@ -161,17 +147,9 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
             OlcbpPlan::NodeID candidateParent = nodeIds[i];
             OlcbpPlan::NodeID candidateChild = nodeIds[j];
 
-            /*LogInfo("Checking dependency between node %s and %s",
-            m_olcpbPlan->GetNode(candidateParent)->ToString(true).c_str(),
-            m_olcpbPlan->GetNode(candidateChild)->ToString(true).c_str());*/
-            
             if (!m_olcpbPlan->Reachable(candidateParent, candidateChild) &&
                 Depends(m_tempOlcpbPlan->GetNode(candidateParent)->PostCondition(), ((Action*)m_tempOlcpbPlan->GetNode(candidateChild))->PreCondition()))
             {
-                /*LogInfo("Adding edge from node %s to node %s, as dependency matches",
-                    m_olcpbPlan->GetNode(candidateParent)->ToString(true).c_str(),
-                    m_olcpbPlan->GetNode(candidateChild)->ToString(true).c_str());*/
-                
                 m_olcpbPlan->AddEdge(candidateParent, candidateChild);
             }
         }
@@ -180,7 +158,7 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
     return new CookedCase(p_rawCase, m_olcpbPlan);
 }
 //--------------------------------------------------------------------------------------------------------------
-bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateParent, CompositeExpression* p_candidateChild)
+bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidateParent, CompositeExpression* p_candidateChild) const
 {
     assert(p_candidateParent);
     assert(p_candidateChild);
@@ -188,11 +166,17 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidatePar
     vector<pair<Expression*,Expression*>> m_candidateConditions;
     p_candidateParent->PartiallyEquals(p_candidateChild, m_candidateConditions);
 
+    if (m_candidateConditions.empty())
+    {
+        return false;
+    }
+
+    bool depends = false;
+    
     for (auto m_candidateCondition : m_candidateConditions)
     {
         ConditionEx* consumer = (ConditionEx*)m_candidateCondition.second;
         ConditionEx* source = (ConditionEx*)m_candidateCondition.first;
-        // LogInfo("Found candidate matched condition %s", Enums[source->Type()]);
         bool preconditionHasAmount = consumer->ContainsParameter(PARAM_Amount);
         bool postconditionHasAmount = source->ContainsParameter(PARAM_Amount);
         _ASSERTE(preconditionHasAmount == postconditionHasAmount);
@@ -201,22 +185,16 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidatePar
             int requiredAmount = consumer->Parameter(PARAM_Amount);
             int availableAmount = source->Parameter(PARAM_Amount);
             int consumedAmount = min(requiredAmount, availableAmount);
-            // LogInfo("The consumer amount is %d and the source amount is %d", requiredAmount, availableAmount);
             
-            if (source->Consume(requiredAmount))
+            if (source->Consume(consumedAmount))
             {
-                bool isConsumed = consumer->Consume(consumedAmount);
-                _ASSERTE(isConsumed);
-                return isConsumed;
+                _ASSERTE(consumer->Consume(consumedAmount));
+                depends = true;
             }
-        }
-        else
-        {
-            return true;
         }
     }
 
-    return false;
+    return depends;
 }
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_case)
@@ -232,7 +210,6 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         m_tempNodes[nodeId] = (PlanStepEx*)p_case->plan->GetNode(nodeId)->Clone();
     }
 
-    // LogInfo("Finding necessary steps for goal node %s", p_case->rawCase->rawPlan.Goal->ToString(true).c_str());
     for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
     {
         // The order of depends is important keep goal on right side and action on left side
@@ -285,7 +262,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     }
 }
 //--------------------------------------------------------------------------------------------------------------
-void LearningFromHumanDemonstration::HierarchicalComposition(std::vector<CookedPlan*>& p_cookedPlans)
+void LearningFromHumanDemonstration::HierarchicalComposition(vector<CookedPlan*>& p_cookedPlans) const
 {
     bool composePlans = false;
 
@@ -390,7 +367,7 @@ bool IStrategizer::LearningFromHumanDemonstration::SubplansDetection(vector<Cook
     // Detecting the subplans and the matched nodes
     for (unsigned i = 0; i < p_cookedPlans.size(); ++i)
     {
-        for (unsigned j = 0; j < i; ++j)
+        for (int j = i - 1; j >= 0; --j)
         {
             LogInfo("Checking if %d is supergraph of %d", i, j);
             OlcbpPlan::NodeSet matchedIds;
@@ -430,10 +407,19 @@ bool IStrategizer::LearningFromHumanDemonstration::SubplansDetection(vector<Cook
 
             unsigned subplanInx = subplanData.Index;
             unsigned subplanId = p_cookedPlans[subplanInx]->Goal->Id();
+            unsigned nodeOrder = subplanId;
             OlcbpPlan::NodeSet matchedIds = subplanData.Nodes;
-
+            GoalEx* pGoalClone = (GoalEx*)p_cookedPlans[subplanInx]->Goal->Clone();
+            
+            if (p_cookedPlans[i]->pPlan->Contains(subplanId))
+            {
+                subplanId = PlanStepEx::GenerateID();
+                pGoalClone->Id(subplanId);
+            }
+            
             // Substitute the detected subplans in the super plan
-            p_cookedPlans[i]->pPlan->SubGraphSubstitution(matchedIds, p_cookedPlans[subplanInx]->Goal, subplanId);
+            p_cookedPlans[i]->pPlan->SubGraphSubstitution(matchedIds, pGoalClone, subplanId, nodeOrder);
+
             LogInfo("Subistituting %d/%d", i, subplanInx);
         }
     }

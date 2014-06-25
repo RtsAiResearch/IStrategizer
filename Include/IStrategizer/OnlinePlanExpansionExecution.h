@@ -23,6 +23,7 @@ namespace IStrategizer
         typedef std::set<CaseEx*> CaseSet;
 
         OnlinePlanExpansionExecution(GoalEx* pInitialGoal, CaseBasedReasonerEx* pCbReasoner);
+        OnlinePlanExpansionExecution(GoalType goalType, CaseBasedReasonerEx* pCbReasoner);
         void Update(const WorldClock& clock);
         void NotifyMessegeSent(Message* pMessage);
         const IOlcbpPlan* Plan() const { return m_pOlcbpPlan; }
@@ -108,6 +109,8 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
         std::map<CaseNodeValue, ClonedCaseNodeValue> m_clonedNodesMapping;
         std::set<unsigned> m_activeGoals;
+        GoalType m_rootGoalType;
+        std::set<CaseEx*> m_rootNodeExclusions;
     };
 }
 

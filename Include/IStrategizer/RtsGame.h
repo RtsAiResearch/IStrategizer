@@ -56,6 +56,7 @@ namespace IStrategizer
         WorldMap* Map() { _ASSERTE(m_isInitialized); return m_pMap; }
         RtsGame* Snapshot() const;
         virtual unsigned GetMaxTrainingQueueCount() const = 0;
+        double GetDistance(RtsGame* pOther);
 
     protected:
         void SetOffline();
