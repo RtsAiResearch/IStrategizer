@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\AbstractAdapter.h" />
+    <ClInclude Include="..\AbstractionMetaData.h" />
+    <ClInclude Include="..\AbstractRetainer.h" />
+    <ClInclude Include="..\AbstractRetriever.h" />
+    <ClInclude Include="..\AbstractReviser.h" />
+    <ClInclude Include="..\Action.h" />
+    <ClInclude Include="..\ActionFactory.h" />
+    <ClInclude Include="..\AdapterEx.h" />
+    <ClInclude Include="..\AdjListDigraph.h" />
+    <ClInclude Include="..\And.h" />
+    <ClInclude Include="..\AttackEntityAction.h" />
+    <ClInclude Include="..\AttackFSMState.h" />
+    <ClInclude Include="..\AttackGroundAction.h" />
+    <ClInclude Include="..\AttackManager.h" />
+    <ClInclude Include="..\AttributesMetaData.h" />
+    <ClInclude Include="..\Battle.h" />
+    <ClInclude Include="..\BuildActionEx.h" />
+    <ClInclude Include="..\BuildBaseGoal.h" />
+    <ClInclude Include="..\BuildInfrastructureGoal.h" />
+    <ClInclude Include="..\BuildingDescription.h" />
+    <ClInclude Include="..\CaseBasedReasonerEx.h" />
+    <ClInclude Include="..\CaseBaseEx.h" />
+    <ClInclude Include="..\CaseEx.h" />
+    <ClInclude Include="..\CaseLearningHelper.h" />
+    <ClInclude Include="..\CaseLearningLog.h" />
+    <ClInclude Include="..\CellFeature.h" />
+    <ClInclude Include="..\CheckColonyFilterCount.h" />
+    <ClInclude Include="..\Collection.h" />
+    <ClInclude Include="..\CollectResourceGoal.h" />
+    <ClInclude Include="..\Colony.h" />
+    <ClInclude Include="..\Comparer.h" />
+    <ClInclude Include="..\CompositeExpression.h" />
+    <ClInclude Include="..\ConditionEx.h" />
+    <ClInclude Include="..\CrossMap.h" />
+    <ClInclude Include="..\DataMessage.h" />
+    <ClInclude Include="..\Delegate.h" />
+    <ClInclude Include="..\DeployArmyGoal.h" />
+    <ClInclude Include="..\DeployFSMState.h" />
+    <ClInclude Include="..\DestroyEntityTypeGoal.h" />
+    <ClInclude Include="..\EngineAssist.h" />
+    <ClInclude Include="..\EngineComponent.h" />
+    <ClInclude Include="..\EngineData.h" />
+    <ClInclude Include="..\EntityClassExist.h" />
+    <ClInclude Include="..\EntityClassNearArea.h" />
+    <ClInclude Include="..\EventTriggered.h" />
+    <ClInclude Include="..\ExecutionHistory.h" />
+    <ClInclude Include="..\ExecutionTrial.h" />
+    <ClInclude Include="..\Expression.h" />
+    <ClInclude Include="..\False.h" />
+    <ClInclude Include="..\FinishedFSMState.h" />
+    <ClInclude Include="..\ForceDescription.h" />
+    <ClInclude Include="..\FSMMachine.h" />
+    <ClInclude Include="..\FSMState.h" />
+    <ClInclude Include="..\GameEntity.h" />
+    <ClInclude Include="..\GamePlayer.h" />
+    <ClInclude Include="..\GameRace.h" />
+    <ClInclude Include="..\GameResearch.h" />
+    <ClInclude Include="..\GameTechTree.h" />
+    <ClInclude Include="..\GameTrace.h" />
+    <ClInclude Include="..\GameType.h" />
+    <ClInclude Include="..\GatherResourceAction.h" />
+    <ClInclude Include="..\GoalEx.h" />
+    <ClInclude Include="..\GoalFactory.h" />
+    <ClInclude Include="..\GroundControlIM.h" />
+    <ClInclude Include="..\IClonable.h" />
+    <ClInclude Include="..\IComparable.h" />
+    <ClInclude Include="..\IDigraph.h" />
+    <ClInclude Include="..\IMSystemManager.h" />
+    <ClInclude Include="..\InfluenceMap.h" />
+    <ClInclude Include="..\IStrategizerEx.h" />
+    <ClInclude Include="..\IStrategizerException.h" />
+    <ClInclude Include="..\LearningFromHumanDemonstration.h" />
+    <ClInclude Include="..\Logger.h" />
+    <ClInclude Include="..\MapArea.h" />
+    <ClInclude Include="..\MathHelper.h" />
+    <ClInclude Include="..\Message.h" />
+    <ClInclude Include="..\MessagePump.h" />
+    <ClInclude Include="..\MessagePumpObserver.h" />
+    <ClInclude Include="..\MessagePumpSubject.h" />
+    <ClInclude Include="..\MetaData.h" />
+    <ClInclude Include="..\MoveAction.h" />
+    <ClInclude Include="..\MoveEntityAction.h" />
+    <ClInclude Include="..\MultiIndex.h" />
+    <ClInclude Include="..\MultiIndexContainer.h" />
+    <ClInclude Include="..\Not.h" />
+    <ClInclude Include="..\OccupanceDataIM.h" />
+    <ClInclude Include="..\OlcbpPlanNodeData.h" />
+    <ClInclude Include="..\OnlineCaseBasedPlannerEx.h" />
+    <ClInclude Include="..\OnlinePlanExpansionExecution.h" />
+    <ClInclude Include="..\Or.h" />
+    <ClInclude Include="..\PlanStepEx.h" />
+    <ClInclude Include="..\PlayerAttributeExist.h" />
+    <ClInclude Include="..\PlayerResources.h" />
+    <ClInclude Include="..\Predicate.h" />
+    <ClInclude Include="..\ResearchAction.h" />
+    <ClInclude Include="..\ResearchDone.h" />
+    <ClInclude Include="..\ResourceDescription.h" />
+    <ClInclude Include="..\ResourceExist.h" />
+    <ClInclude Include="..\RetainerEx.h" />
+    <ClInclude Include="..\RetrieverEx.h" />
+    <ClInclude Include="..\Reviser.h" />
+    <ClInclude Include="..\RootMetaData.h" />
+    <ClInclude Include="..\RtsGame.h" />
+    <ClInclude Include="..\SerializationEssentials.h" />
+    <ClInclude Include="..\SetOperator.h" />
+    <ClInclude Include="..\SharedResource.h" />
+    <ClInclude Include="..\SimilarityWeightModel.h" />
+    <ClInclude Include="..\TrainAction.h" />
+    <ClInclude Include="..\TrainArmyGoal.h" />
+    <ClInclude Include="..\TrainForceGoal.h" />
+    <ClInclude Include="..\True.h" />
+    <ClInclude Include="..\TypesMetaData.h" />
+    <ClInclude Include="..\Vector2.h" />
+    <ClInclude Include="..\WinGameGoal.h" />
+    <ClInclude Include="..\WorldClock.h" />
+    <ClInclude Include="..\WorldMap.h" />
+    <ClInclude Include="..\WorldResources.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Action.cpp" />
+    <ClCompile Include="..\ActionFactory.cpp" />
+    <ClCompile Include="..\AdapterEx.cpp" />
+    <ClCompile Include="..\And.cpp" />
+    <ClCompile Include="..\AttackEntityAction.cpp" />
+    <ClCompile Include="..\AttackGroundAction.cpp" />
+    <ClCompile Include="..\Battle.cpp" />
+    <ClCompile Include="..\BuildActionEx.cpp" />
+    <ClCompile Include="..\BuildInfrastructureGoal.cpp" />
+    <ClCompile Include="..\BuildingDescription.cpp" />
+    <ClCompile Include="..\CaseBasedReasonerEx.cpp" />
+    <ClCompile Include="..\CaseLearningHelper.cpp" />
+    <ClCompile Include="..\CaseLearningLog.cpp" />
+    <ClCompile Include="..\CellFeature.cpp" />
+    <ClCompile Include="..\CollectResourceGoal.cpp" />
+    <ClCompile Include="..\CompositeExpression.cpp" />
+    <ClCompile Include="..\ConditionEx.cpp" />
+    <ClCompile Include="..\DeployArmyGoal.cpp" />
+    <ClCompile Include="..\DestroyEntityTypeGoal.cpp" />
+    <ClCompile Include="..\EngineAssist.cpp" />
+    <ClCompile Include="..\EngineComponent.cpp" />
+    <ClCompile Include="..\EntityClassExist.cpp" />
+    <ClCompile Include="..\EntityClassNearArea.cpp" />
+    <ClCompile Include="..\EventTriggered.cpp" />
+    <ClCompile Include="..\ExecutionHistory.cpp" />
+    <ClCompile Include="..\Expression.cpp" />
+    <ClCompile Include="..\ForceDescription.cpp" />
+    <ClCompile Include="..\GamePlayer.cpp" />
+    <ClCompile Include="..\GameTrace.cpp" />
+    <ClCompile Include="..\GatherResourceAction.cpp" />
+    <ClCompile Include="..\GoalEx.cpp" />
+    <ClCompile Include="..\GoalFactory.cpp" />
+    <ClCompile Include="..\GroundControlIM.cpp" />
+    <ClCompile Include="..\IMSystemManager.cpp" />
+    <ClCompile Include="..\InfluenceMap.cpp" />
+    <ClCompile Include="..\IStrategizerEx.cpp" />
+    <ClCompile Include="..\IStrategizerException.cpp" />
+    <ClCompile Include="..\LearningFromHumanDemonstration.cpp" />
+    <ClCompile Include="..\Logger.cpp" />
+    <ClCompile Include="..\MapArea.cpp" />
+    <ClCompile Include="..\Message.cpp" />
+    <ClCompile Include="..\MessagePump.cpp" />
+    <ClCompile Include="..\MessagePumpObserver.cpp" />
+    <ClCompile Include="..\MessagePumpSubject.cpp" />
+    <ClCompile Include="..\MetaData.cpp" />
+    <ClCompile Include="..\MoveAction.cpp" />
+    <ClCompile Include="..\OccupanceDataIM.cpp" />
+    <ClCompile Include="..\OnlineCaseBasedPlannerEx.cpp" />
+    <ClCompile Include="..\OnlinePlanExpansionExecution.cpp" />
+    <ClCompile Include="..\Or.cpp" />
+    <ClCompile Include="..\PlanStepEx.cpp" />
+    <ClCompile Include="..\PlayerAttributeExist.cpp" />
+    <ClCompile Include="..\PlayerResources.cpp" />
+    <ClCompile Include="..\ResearchAction.cpp" />
+    <ClCompile Include="..\ResearchDone.cpp" />
+    <ClCompile Include="..\ResourceDescription.cpp" />
+    <ClCompile Include="..\ResourceExist.cpp" />
+    <ClCompile Include="..\RetainerEx.cpp" />
+    <ClCompile Include="..\RetrieverEx.cpp" />
+    <ClCompile Include="..\Reviser.cpp" />
+    <ClCompile Include="..\RtsGame.cpp" />
+    <ClCompile Include="..\SerializationEssentials.cpp" />
+    <ClCompile Include="..\SharedResource.cpp" />
+    <ClCompile Include="..\TrainAction.cpp" />
+    <ClCompile Include="..\TrainArmyGoal.cpp" />
+    <ClCompile Include="..\TrainForceGoal.cpp" />
+    <ClCompile Include="..\WinGameGoal.cpp" />
+    <ClCompile Include="..\WorldClock.cpp" />
+    <ClCompile Include="..\WorldMap.cpp" />
+    <ClCompile Include="..\WorldResources.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0E83C355-2FEB-4072-A99E-38882D5FBCBB}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>IStrategizer</RootNamespace>
+    <ProjectName>IStrategizer</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\props\IStrategizer.Lib.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\props\IStrategizer.Lib.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\Serialization\UnrealCompiler;$(SolutionDir)\3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PreBuildEvent>
+      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generating engine objects TypeInfo</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\Serialization\UnrealCompiler;$(SolutionDir)\3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PreBuildEvent>
+      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generating engine objects TypeInfo</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
