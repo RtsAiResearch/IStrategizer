@@ -53,7 +53,6 @@ namespace IStrategizer
             {
                 TControllerTraits::TargetEnemyEntity(battle, m_targetEntityId);
                 EntitySet army = TControllerTraits::Army(battle);
-                _ASSERTE(!army.empty());
 
                 if (oldTargetId != m_targetEntityId)
                 {

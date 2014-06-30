@@ -34,6 +34,7 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
     g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+    g_MessagePump.RegisterForMessage(MSG_AttackComplete, this);
 }
 //////////////////////////////////////////////////////////////////////////
 OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalType goalType, _In_ CaseBasedReasonerEx *pCasedBasedReasoner)
@@ -47,6 +48,7 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalType goalTyp
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
     g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+    g_MessagePump.RegisterForMessage(MSG_AttackComplete, this);
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionGoalNodeId, _In_ CaseEx *pExpansionCase)
@@ -263,37 +265,45 @@ void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 {
-    IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeID currentPlanStepID;
-    bool msgConsumedByAction = false;
-
-    if (m_pOlcbpPlan->Size() == 0 ||
-        m_planRootNodeId == IOlcbpPlan::NullNodeID)
-        return;
-
-    Q.push(m_planRootNodeId);
-
-    while(!Q.empty())
+    if (pMessage->MessageTypeID() == MSG_AttackComplete)
     {
-        currentPlanStepID = Q.front();
-        Q.pop();
+        m_pOlcbpPlan->Clear();
+        m_planStructureChangedThisFrame = true;
+    }
+    else
+    {
+        IOlcbpPlan::NodeQueue Q;
+        IOlcbpPlan::NodeID currentPlanStepID;
+        bool msgConsumedByAction = false;
 
-        IOlcbpPlan::NodeValue pCurreNode = m_pOlcbpPlan->GetNode(currentPlanStepID);
+        if (m_pOlcbpPlan->Size() == 0 ||
+            m_planRootNodeId == IOlcbpPlan::NullNodeID)
+            return;
 
-        if (IsActionNode(currentPlanStepID) && !msgConsumedByAction)
+        Q.push(m_planRootNodeId);
+
+        while(!Q.empty())
         {
-            pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
+            currentPlanStepID = Q.front();
+            Q.pop();
+
+            IOlcbpPlan::NodeValue pCurreNode = m_pOlcbpPlan->GetNode(currentPlanStepID);
+
+            if (IsActionNode(currentPlanStepID) && !msgConsumedByAction)
+            {
+                pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
+
+                if (msgConsumedByAction)
+                    LogInfo("Message with ID=%d consumed by action node %s", pMessage->MessageTypeID(), pCurreNode->ToString().c_str());
+            }
 
             if (msgConsumedByAction)
-                LogInfo("Message with ID=%d consumed by action node %s", pMessage->MessageTypeID(), pCurreNode->ToString().c_str());
-        }
+            {
+                break;
+            }
 
-        if (msgConsumedByAction)
-        {
-            break;
+            AddReadyChildrenToUpdateQueue(currentPlanStepID, Q);
         }
-
-        AddReadyChildrenToUpdateQueue(currentPlanStepID, Q);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -402,7 +412,6 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
     if (m_planRootNodeId == nodeId)
     {
         g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanComplete, nullptr));
-        m_pOlcbpPlan->Clear();
     }
 }
 //////////////////////////////////////////////////////////////////////////

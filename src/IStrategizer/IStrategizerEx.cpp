@@ -67,10 +67,8 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
             {
                 m_attackManager.Update(*g_Game, m_clock);
             }
-            else
-            {
-                m_pPlanner->Update(m_clock);
-            }
+
+            m_pPlanner->Update(m_clock);
         }
 
     }

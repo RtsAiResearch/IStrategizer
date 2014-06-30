@@ -45,26 +45,29 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             GoalEx* pCurrGoal = (GoalEx*)m_pOlcbpPlan->GetNode(goalQ.front());
             GoalKey typeKey = pCurrGoal->Key();
 
-            // First time goal type is seen, consider it as active
-            if (goalTable.count(typeKey) == 0)
+            if (!IsNodeDone(goalQ.front()))
             {
-                GoalEntry entry;
-                entry.first = goalQ.front();
-                entry.second = 0;
-
-                if (pCurrGoal->Parameters().Contains(PARAM_Amount))
-                    entry.second = pCurrGoal->Parameter(PARAM_Amount);
-
-                goalTable.insert(make_pair(typeKey, entry));
-            }
-            // Goal type is already bound to a node, then bind current node if 
-            // current node amount is less than the already bound node amount
-            else if(pCurrGoal->Parameters().Contains(PARAM_Amount))
-            {
-                if (pCurrGoal->Parameter(PARAM_Amount) <= goalTable[typeKey].second)
+                // First time goal type is seen, consider it as active
+                if (goalTable.count(typeKey) == 0)
                 {
-                    goalTable[typeKey].first = goalQ.front();
-                    goalTable[typeKey].second = pCurrGoal->Parameter(PARAM_Amount);
+                    GoalEntry entry;
+                    entry.first = goalQ.front();
+                    entry.second = 0;
+
+                    if (pCurrGoal->Parameters().Contains(PARAM_Amount))
+                        entry.second = pCurrGoal->Parameter(PARAM_Amount);
+
+                    goalTable.insert(make_pair(typeKey, entry));
+                }
+                // Goal type is already bound to a node, then bind current node if 
+                // current node amount is less than the already bound node amount
+                else if(pCurrGoal->Parameters().Contains(PARAM_Amount))
+                {
+                    if (pCurrGoal->Parameter(PARAM_Amount) <= goalTable[typeKey].second)
+                    {
+                        goalTable[typeKey].first = goalQ.front();
+                        goalTable[typeKey].second = pCurrGoal->Parameter(PARAM_Amount);
+                    }
                 }
             }
 
@@ -103,7 +106,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         options.GoalTypeId = m_rootGoalType;
         options.pGameState = g_Game;
         CaseEx* pCandidateCase = m_pCbReasoner->Retriever()->Retrieve(options);
-        PlanStepEx* pRootNode = pCandidateCase->Goal();
+        GoalEx* pRootNode = (GoalEx*)pCandidateCase->Goal()->Clone();
         m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
         m_nodeData[m_planRootNodeId] = OlcbpPlanNodeData();
         OpenNode(m_planRootNodeId);
@@ -176,8 +179,7 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
     GoalEx* pCurrentGoalNode = (GoalEx*)m_pOlcbpPlan->GetNode(currentNode);
 
     // fast return if node state reached a final state (i.e succeeded or failed)
-    if (IsNodeDone(currentNode))
-        return;
+    _ASSERTE(!IsNodeDone(currentNode));
 
 #pragma region Node Open
     if (IsNodeOpen(currentNode))

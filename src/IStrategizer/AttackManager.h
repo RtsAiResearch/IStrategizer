@@ -29,6 +29,7 @@ namespace IStrategizer
 
             if (!m_pCurrentBattle->Active())
             {
+                g_MessagePump.Send(new Message(0, MSG_AttackComplete));
                 m_pCurrentBattle = nullptr;
             }
         }
