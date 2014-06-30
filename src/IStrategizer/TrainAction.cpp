@@ -17,7 +17,6 @@
 #include "PlayerAttributeExist.h"
 #include "Logger.h"
 
-using namespace std;
 using namespace IStrategizer;
 using namespace std;
 

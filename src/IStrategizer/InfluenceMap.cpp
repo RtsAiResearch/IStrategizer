@@ -52,7 +52,7 @@ void InfluenceMap::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
 {
     RegObjEntry *pNewObj = new RegObjEntry;
     GameEntity *pGameObj = nullptr;
-    GameType* pObjType = nullptr;
+    GameType *pObjType = nullptr;
 
     pNewObj->ObjId = p_objId;
     pNewObj->OwnerId = p_ownerId;

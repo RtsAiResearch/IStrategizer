@@ -17,7 +17,6 @@
 #include "ResearchDone.h"
 #include "GameResearch.h"
 
-using namespace std;
 using namespace IStrategizer;
 using namespace std;
 
