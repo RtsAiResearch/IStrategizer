@@ -390,14 +390,13 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
         m_pCbReasoner->Reviser()->Revise(currentCase, true);
         UpdateHistory(currentCase);
         m_pCbReasoner->Retainer()->Retain(currentCase);
-        m_pCbReasoner->Retainer()->Flush();
     }
     else
     {
         LogInfo("Goal=%s succeeded without expansion, no case to revise", pGoal->ToString().c_str());
     }
 
-    UpdateBelongingSubplanChildrenWithParentReadiness(m_planRootNodeId);
+    UpdateBelongingSubplanChildrenWithParentReadiness(nodeId);
     OnNodeDone(nodeId);
 
     if (m_planRootNodeId == nodeId)
@@ -420,7 +419,6 @@ void OnlinePlanExpansionExecution::OnGoalNodeFailed(_In_ IOlcbpPlan::NodeID node
         m_pCbReasoner->Reviser()->Revise(currentCase, false);
         UpdateHistory(currentCase);
         m_pCbReasoner->Retainer()->Retain(currentCase);
-        m_pCbReasoner->Retainer()->Flush();
     }
 
     OnNodeDone(nodeId);
