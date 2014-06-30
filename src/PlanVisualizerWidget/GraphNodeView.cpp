@@ -119,7 +119,7 @@ void GraphNodeView::paint(QPainter *p_painter, const QStyleOptionGraphicsItem *p
 
     if (m_pOlcbpData != nullptr)
     {
-        char buff[256];
+        char buff[512];
         sprintf_s(buff, "%s: O?%d, SG:%d, PC:%d, CC:%d",
             m_pNodeModel->ToString().c_str(),
             m_pOlcbpData->IsOpen,
@@ -159,7 +159,18 @@ GraphNodeView::NodeStyle GraphNodeView::GetStyle()
         bgBrushColor = Qt::green;
         break;
     case ESTATE_NotPrepared:
-        bgBrushColor = Qt::lightGray;
+        if (BELONG(GoalType, m_pNodeModel->StepTypeId()))
+        {
+            if (m_pOlcbpData != nullptr && !m_pOlcbpData->IsOpen)
+            {
+                bgBrushColor = Qt::blue;
+                txtPenColor = Qt::white;
+            }
+            else
+                bgBrushColor = Qt::lightGray;
+        }
+        else
+            bgBrushColor = Qt::lightGray;
         break;
     case ESTATE_Pending:
         bgBrushColor = Qt::yellow;

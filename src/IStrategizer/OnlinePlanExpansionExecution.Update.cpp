@@ -45,26 +45,29 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             GoalEx* pCurrGoal = (GoalEx*)m_pOlcbpPlan->GetNode(goalQ.front());
             GoalKey typeKey = pCurrGoal->Key();
 
-            // First time goal type is seen, consider it as active
-            if (goalTable.count(typeKey) == 0)
+            if (!IsNodeDone(goalQ.front()))
             {
-                GoalEntry entry;
-                entry.first = goalQ.front();
-                entry.second = 0;
-
-                if (pCurrGoal->Parameters().Contains(PARAM_Amount))
-                    entry.second = pCurrGoal->Parameter(PARAM_Amount);
-
-                goalTable.insert(make_pair(typeKey, entry));
-            }
-            // Goal type is already bound to a node, then bind current node if 
-            // current node amount is less than the already bound node amount
-            else if(pCurrGoal->Parameters().Contains(PARAM_Amount))
-            {
-                if (pCurrGoal->Parameter(PARAM_Amount) <= goalTable[typeKey].second)
+                // First time goal type is seen, consider it as active
+                if (goalTable.count(typeKey) == 0)
                 {
-                    goalTable[typeKey].first = goalQ.front();
-                    goalTable[typeKey].second = pCurrGoal->Parameter(PARAM_Amount);
+                    GoalEntry entry;
+                    entry.first = goalQ.front();
+                    entry.second = 0;
+
+                    if (pCurrGoal->Parameters().Contains(PARAM_Amount))
+                        entry.second = pCurrGoal->Parameter(PARAM_Amount);
+
+                    goalTable.insert(make_pair(typeKey, entry));
+                }
+                // Goal type is already bound to a node, then bind current node if 
+                // current node amount is less than the already bound node amount
+                else if(pCurrGoal->Parameters().Contains(PARAM_Amount))
+                {
+                    if (pCurrGoal->Parameter(PARAM_Amount) <= goalTable[typeKey].second)
+                    {
+                        goalTable[typeKey].first = goalQ.front();
+                        goalTable[typeKey].second = pCurrGoal->Parameter(PARAM_Amount);
+                    }
                 }
             }
 
@@ -74,12 +77,21 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         // 3rd pass: actual node update
         for (auto goalEntry : goalTable)
         {
-            UpdateGoalNode(goalEntry.second.first, clock);
+            // Only update a goal node if it still exist
+            // It is normal that a previous updated goal node during this pass 
+            // failed and its snippet was destroyed, and as a result a node that
+            // was considered for update does not exist anymore
+            if (m_pOlcbpPlan->Contains(goalEntry.second.first))
+                UpdateGoalNode(goalEntry.second.first, clock);
         }
 
         while (!actionQ.empty())
         {
-            UpdateActionNode(actionQ.front(), clock);
+            // Only update an action node if it still exist
+            // What applies to a goal in the 3rd pass apply here
+            if (m_pOlcbpPlan->Contains(actionQ.front()))
+                UpdateActionNode(actionQ.front(), clock);
+
             actionQ.pop();
         }
     }
@@ -94,7 +106,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         options.GoalTypeId = m_rootGoalType;
         options.pGameState = g_Game;
         CaseEx* pCandidateCase = m_pCbReasoner->Retriever()->Retrieve(options);
-        PlanStepEx* pRootNode = pCandidateCase->Goal();
+        GoalEx* pRootNode = (GoalEx*)pCandidateCase->Goal()->Clone();
         m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
         m_nodeData[m_planRootNodeId] = OlcbpPlanNodeData();
         OpenNode(m_planRootNodeId);
@@ -166,6 +178,9 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 {
     GoalEx* pCurrentGoalNode = (GoalEx*)m_pOlcbpPlan->GetNode(currentNode);
 
+    // fast return if node state reached a final state (i.e succeeded or failed)
+    _ASSERTE(!IsNodeDone(currentNode));
+
 #pragma region Node Open
     if (IsNodeOpen(currentNode))
     {
@@ -185,7 +200,6 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
             m_pCbReasoner->Reviser()->Revise(currentCase, false);
             UpdateHistory(currentCase);
             m_pCbReasoner->Retainer()->Retain(currentCase);
-            m_pCbReasoner->Retainer()->Flush();
         }
 
         if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))
@@ -255,16 +269,15 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 #pragma region Node Closed
     else
     {
+        _ASSERTE(pCurrentGoalNode->State() == ESTATE_NotPrepared);
+
         if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))
         {
-            _ASSERTE(pCurrentGoalNode->State() == ESTATE_NotPrepared);
             pCurrentGoalNode->State(ESTATE_Succeeded, *g_Game, clock);
             OnGoalNodeSucceeded(currentNode);
         }
         else
         {
-            _ASSERTE(pCurrentGoalNode->State() == ESTATE_NotPrepared);
-
             // The goal is not done yet, and all of its children are done and
             // finished execution. It does not make sense for the goal to continue
             // this goal should fail, it has no future
@@ -272,7 +285,6 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
             {
                 LogInfo("Goal '%s' is still not done and all of its children are done execution, failing it", 
                     pCurrentGoalNode->ToString().c_str());
-                pCurrentGoalNode->State(ESTATE_NotPrepared, *g_Game, clock);
                 OpenNode(currentNode);
             }
         }

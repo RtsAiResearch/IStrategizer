@@ -55,7 +55,7 @@ namespace IStrategizer
             std::set<TID> army = TControllerTraits::Army(battle);
             bool armyEmpty = army.empty();
 
-            return m_targetDestroyed ? Deploy : armyEmpty ? Finished : Attack;
+            return armyEmpty ? Finished : m_targetDestroyed ? Deploy : Attack;
         }
 
         //////////////////////////////////////////////////////////////////////////
