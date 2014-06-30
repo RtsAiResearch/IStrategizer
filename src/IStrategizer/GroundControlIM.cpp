@@ -31,7 +31,7 @@ void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDi
 {
     TInfluence infSign = GetInfluenceSign((PlayerType)p_pGameObj->Attr(EOATTR_OwnerId));
     EntityClassType typeId;
-    GameTypeStrongPtr pObjType = nullptr;
+    GameType* pObjType = nullptr;
     
     typeId = p_pGameObj->Type();
     pObjType = g_Game->GetEntityType(typeId);

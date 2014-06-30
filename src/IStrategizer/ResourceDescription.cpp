@@ -19,7 +19,7 @@ void ResourceDescription::InitializeAddressesAux()
 void ResourceDescription::AddEntity(GameEntity *p_entity)
 {
     EntityClassType typeId = p_entity->Type();
-    GameTypeStrongPtr pType = g_Game->GetEntityType(typeId);
+    GameType* pType = g_Game->GetEntityType(typeId);
 
     if (!pType)
         return;
@@ -37,7 +37,7 @@ void ResourceDescription::AddEntity(GameEntity *p_entity)
 void ResourceDescription::RemoveEntity(GameEntity *p_entity)
 {
     EntityClassType typeId = p_entity->Type();
-    GameTypeStrongPtr pType = g_Game->GetEntityType(typeId);
+    GameType* pType = g_Game->GetEntityType(typeId);
 
     if (!pType)
         return;
