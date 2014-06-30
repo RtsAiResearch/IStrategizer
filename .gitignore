@@ -1,17 +1,11 @@
 ##IStrategizer Specific ignore
 GeneratedFiles/
-Build/IStrategizerBWAPIClient/include/
-Build/IStrategizerBWAPIClient/lib/
-Build/StarCraftModel/include/
+temp/
+assets/TypeInfo/*.list
+assets/TypeInfo/*.type
+engine/
 *.lib
 *.idb
-
-#Exclusions
-Build/Debug/*
-Build/Release/*
-!Build/Debug/TypeInfo/TypeLexer.dfa
-!Build/Debug/IStrategizerEx.cb
-!Build/Release/IStrategizerEx.cb
 
 # Windows image file caches
 Thumbs.db
@@ -28,6 +22,8 @@ Desktop.ini
 *.sln.docstates
 
 # Build results
+[Dd]ebug/
+[Rr]elease/
 *_i.c
 *_p.c
 *.ilk
@@ -44,9 +40,6 @@ Desktop.ini
 *.tlh
 *.tmp
 *.vspscc
-*.tlog
-*.log
-*.lastbuildstate
 .builds
 
 # Visual C++ cache files
