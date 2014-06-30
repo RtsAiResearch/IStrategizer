@@ -2,12 +2,11 @@
 #ifndef GOALEX_H
 #define GOALEX_H
 
-#include <vector>
 #include "PlanStepEx.h"
 #include "EngineData.h"
 #include "CompositeExpression.h"
-
-using namespace std;
+#include <vector>
+#include <map>
 
 namespace IStrategizer
 {
@@ -25,6 +24,7 @@ namespace IStrategizer
         virtual std::vector<GoalEx*> GetSucceededInstances(RtsGame &game) = 0;
         virtual void AdaptParameters(RtsGame& game) { }
         unsigned Key() const;
+        ParameterWeights GetWeights() const;
     };
 }
 

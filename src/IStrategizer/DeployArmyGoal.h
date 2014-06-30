@@ -3,6 +3,7 @@
 #define DEPLOYARMYGOAL_H
 
 #include "GoalEx.h"
+#include <vector>
 
 namespace IStrategizer
 {

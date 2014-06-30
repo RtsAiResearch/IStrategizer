@@ -45,6 +45,7 @@ namespace IStrategizer
 
     typedef std::set<TID> EntitySet;
     typedef std::vector<TID> EntityList;
+    typedef std::map<ParameterType, int> ParameterWeights;
 
     ///> alias=PlanStepParameters(map(pair(int,int)))
     typedef Serialization::SMap<ParameterType, int> PlanStepParameters;

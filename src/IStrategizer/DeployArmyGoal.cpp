@@ -10,6 +10,7 @@
 #include "CellFeature.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 DeployArmyGoal::DeployArmyGoal() : GoalEx(GOALEX_DeployArmy)
 {

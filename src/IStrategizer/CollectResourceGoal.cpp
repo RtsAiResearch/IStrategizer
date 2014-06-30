@@ -9,6 +9,7 @@
 #include "GoalFactory.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 CollectResourceGoal::CollectResourceGoal() : GoalEx(GOALEX_CollectResource)
 {

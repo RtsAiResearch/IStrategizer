@@ -35,7 +35,7 @@ void RetrieverEx::BuildCaseCluster()
     }
 }
 //----------------------------------------------------------------------------------------------
-float RetrieverEx::GoalDistance(const GoalEx* pCaseGoal, AbstractRetriever::RetrieveOptions options)
+float RetrieverEx::GoalDistance(const GoalEx* pCaseGoal, AbstractRetriever::RetrieveOptions options, map<ParameterType, int>& weights)
 {
     // returns a value between 0 and 1.0, where 1.0 means identical and 0.0 means totally different
     // GOAL-SIMILARITY GS(g1, g2)
@@ -64,14 +64,15 @@ float RetrieverEx::GoalDistance(const GoalEx* pCaseGoal, AbstractRetriever::Retr
             itrG1 != pCaseGoal->Parameters().end();
             ++itrG1, ++itrG2)
         {
-            distance += (itrG1->second != itrG2->second);
+            _ASSERTE(itrG1->first == itrG2->first);
+            distance += (itrG1->second != itrG2->second) * weights[itrG1->first];
         }
     }
 
     return distance;
 }
 //----------------------------------------------------------------------------------------------
-float RetrieverEx::StateSimilarity(RtsGame* pCaseGameState, AbstractRetriever::RetrieveOptions options)
+float RetrieverEx::StateDistance(RtsGame* pCaseGameState, AbstractRetriever::RetrieveOptions options)
 {
     // STATE-SIMILARITY(gs1, gs2)
     // distance = 0
@@ -101,8 +102,9 @@ float RetrieverEx::StateSimilarity(RtsGame* pCaseGameState, AbstractRetriever::R
 float RetrieverEx::CaseRelevance(const CaseEx* pCase, AbstractRetriever::RetrieveOptions options)
 {
     float alpha = 0.95f;
-    float goalDistance = GoalDistance(pCase->Goal(), options);
-    float stateDistance = StateSimilarity(pCase->GameState(), options);
+    ParameterWeights weights = g_GoalFactory.GetGoal(options.GoalTypeId, false)->GetWeights();
+    float goalDistance = GoalDistance(pCase->Goal(), options, weights);
+    float stateDistance = 0.0; // StateDistance(pCase->GameState(), options);
 
     return (alpha * goalDistance) + (float)((1.0 - alpha) * stateDistance);
 }

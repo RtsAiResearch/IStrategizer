@@ -3,6 +3,7 @@
 #define WINGAMEGOAL_H
 
 #include "GoalEx.h"
+#include <vector>
 
 namespace IStrategizer
 {
