@@ -105,7 +105,7 @@ void GraphScene::CreateSceneMenu()
 void GraphScene::View(IOlcbpPlan* pPlan, ConstOlcbpPlanNodeDataMapPtr pNodeData)
 {
     m_pGraph = pPlan;
-    m_pNodeData = pNodeData;
+    m_pGraphNodeData = pNodeData;
 }
 //----------------------------------------------------------------------------------------------
 void GraphScene::ReconstructScene()
@@ -134,7 +134,9 @@ void GraphScene::ConstructGraph()
     {
         for (NodeID nodeId : m_graphLevels[level])
         {
-            GraphNodeView* pNodeView = new GraphNodeView(m_pGraph->GetNode(nodeId), nodeId, m_pNodeMenu, nullptr);
+            ConstOlcbpPlanNodeDataPtr pNodeData = (m_pGraphNodeData != nullptr ? &m_pGraphNodeData->at(nodeId) : nullptr);
+
+            GraphNodeView* pNodeView = new GraphNodeView(m_pGraph->GetNode(nodeId), nodeId, pNodeData, m_pNodeMenu, nullptr);
             m_nodeIdToNodeViewMap[nodeId] = pNodeView;
             addItem(pNodeView);
         }
@@ -391,7 +393,9 @@ void GraphScene::NewNode()
 
         NodeID nodeId = m_pGraph->AddNode(pNodeModel, pNodeModel->Id());
 
-        GraphNodeView *pNodeView = new GraphNodeView(pNodeModel, nodeId, m_pNodeMenu, nullptr);
+        ConstOlcbpPlanNodeDataPtr pNodeData = (m_pGraphNodeData != nullptr ? &m_pGraphNodeData->at(nodeId) : nullptr);
+
+        GraphNodeView *pNodeView = new GraphNodeView(pNodeModel, nodeId, pNodeData, m_pNodeMenu, nullptr);
 
         pNodeView->setPos(m_lastCtxtMenuScreenPos.x(), m_lastCtxtMenuScreenPos.y());
 

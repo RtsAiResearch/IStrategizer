@@ -179,6 +179,7 @@
     <ClCompile Include="..\OccupanceDataIM.cpp" />
     <ClCompile Include="..\OnlineCaseBasedPlannerEx.cpp" />
     <ClCompile Include="..\OnlinePlanExpansionExecution.cpp" />
+    <ClCompile Include="..\OnlinePlanExpansionExecution.Update.cpp" />
     <ClCompile Include="..\Or.cpp" />
     <ClCompile Include="..\PlanStepEx.cpp" />
     <ClCompile Include="..\PlayerAttributeExist.cpp" />

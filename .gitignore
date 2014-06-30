@@ -4,13 +4,8 @@ temp/
 assets/TypeInfo/*.list
 assets/TypeInfo/*.type
 engine/
-IStrategizer.lib
-StarCraftModel.lib
-PlanVisualizerWidget.lib
+*.lib
 *.idb
-
-#Exclusions
-
 
 # Windows image file caches
 Thumbs.db

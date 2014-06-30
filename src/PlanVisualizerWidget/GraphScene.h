@@ -113,7 +113,7 @@ namespace IStrategizer
         IOlcbpPlan *m_pGraph;
         std::vector< std::vector<NodeID> > m_graphLevels;
         std::map<NodeID, GraphNodeView*> m_nodeIdToNodeViewMap;
-        ConstOlcbpPlanNodeDataMapPtr m_pNodeData;
+        ConstOlcbpPlanNodeDataMapPtr m_pGraphNodeData;
 
         void ConstructGraph();
         void ComputeGraphLevels();

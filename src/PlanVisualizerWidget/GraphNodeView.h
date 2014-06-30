@@ -21,6 +21,7 @@ namespace IStrategizer
 {
     class GraphEdgeView;
     class PlanStepEx;
+    class OlcbpPlanNodeData;
 
     class GraphNodeView : public QGraphicsRectItem
     {
@@ -35,7 +36,7 @@ namespace IStrategizer
             QFont TxtFont;
         };
 
-        GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, QMenu *pContextMenu, QGraphicsItem *pParent = 0);
+        GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, const OlcbpPlanNodeData* pOlcbpData, QMenu *pContextMenu, QGraphicsItem *pParent = 0);
         void RemoveEdge(GraphEdgeView* pEdge);
         QList<GraphEdgeView*> Disconnect();
         PlanStepEx* NodeModel() { return m_pNodeModel; }
@@ -60,6 +61,7 @@ namespace IStrategizer
         QString m_nodeTxt;
         QList<GraphEdgeView*> m_edges;
         NodeStyle m_style;
+        const OlcbpPlanNodeData* m_pOlcbpData;
     };
 }
 

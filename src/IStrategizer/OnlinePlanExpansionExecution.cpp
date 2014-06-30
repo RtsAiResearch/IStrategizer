@@ -134,9 +134,11 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
         }
     }
 
+    CloseNode(expansionGoalNodeId);
+
     // 4. Since the plan structure changed, recompute the NotReadyParentsCount
     // for plan graph node
-    ComputeNodesWaitOnParentsCount();
+    ComputeFreshSnippetWaitOnParentsCount(expansionGoalNodeId);
 
     // 5. Record that the expanded goal node is waiting for N number of open nodes
     // If the number of those open nodes = 0, and the goal node is not satisfied, then
@@ -148,72 +150,53 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     LogInfo("Plan after node[%d] expansion %s", expansionGoalNodeId, m_pOlcbpPlan->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
+void OnlinePlanExpansionExecution::ComputeFreshSnippetWaitOnParentsCount(_In_ IOlcbpPlan::NodeID snippetRootId)
 {
-    m_pOlcbpPlan->Lock();
+    _ASSERTE(m_pOlcbpPlan->Size() > 0);
+    _ASSERTE(m_planRootNodeId != IOlcbpPlan::NullNodeID);
+    _ASSERTE(!IsNodeOpen(snippetRootId));
 
-    // LogInfo("### START PLAN UPDATE ###");
+    // Root node is excluded from the computation, computation start from the subGraphRoot node adjacent nodes
+    LogInfo("Computing graph nodes WaitOnParentsCount property for subGraph with root Node[%d]", snippetRootId);
 
-    // We have exhausted all possible plans. We have surrendered, nothing to do
-    if (m_pOlcbpPlan->Size() > 0)
+    IOlcbpPlan::NodeQueue Q;
+    IOlcbpPlan::NodeSerializedSet visitedNodes;
+    IOlcbpPlan::NodeSerializedSet snippetRoots;
+
+    GetSnippetOrphanNodes(snippetRootId, snippetRoots);
+
+    for (auto nodeId : snippetRoots)
     {
-        IOlcbpPlan::NodeQueue Q;
-        IOlcbpPlan::NodeID currentNode;
-        IOlcbpPlan::NodeSerializedSet planRoots;
+        // By default a newly expanded nodes should have WaitOnParentsCount = 0
+        _ASSERTE(GetNodeData(nodeId).WaitOnParentsCount == 0);
+        Q.push(nodeId);
+        visitedNodes.insert(nodeId);
+    }
 
-        Q.push(m_planRootNodeId);
+    // 2. Do a BFS on the plan graph and for closed node
+    // increment the NotReadyParentsCount for child node
+    //
+    while (!Q.empty())
+    {
+        IOlcbpPlan::NodeID currNodeId = Q.front();
+        Q.pop();
 
-        while(!Q.empty())
+        const IOlcbpPlan::NodeSerializedSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
+
+        LogInfo("Computing WaitOnParentsCount for node[%d] children", currNodeId);
+
+        for (auto currChildNodeId : currChildren)
         {
-            currentNode = Q.front();
-            Q.pop();
-
-            if (!m_pOlcbpPlan->Contains(currentNode))
+            if (visitedNodes.count(currChildNodeId) == 0)
             {
-                LogWarning("A non existing node was there in the update queue, skipping it");
-                continue;
+                // By default a newly expanded nodes should have WaitOnParentsCount = 0
+                _ASSERTE(GetNodeData(currChildNodeId).WaitOnParentsCount == 0);
+                Q.push(currChildNodeId);
+                visitedNodes.insert(currChildNodeId);
             }
 
-            if (IsGoalNode(currentNode))
-            {
-                if (!IsNodeDone(currentNode))
-                    UpdateGoalNode(currentNode, clock);
-
-                AddReadyChildrenToUpdateQueue(currentNode, Q);
-            }
-            else if (IsActionNode(currentNode))
-            {
-                UpdateActionNode(currentNode, clock, Q);
-            }
+            GetNodeData(currChildNodeId).IncWaitOnParentsCount();
         }
-    }
-    else
-    {
-        // Clear the used data structures
-        m_nodeData.clear();
-        m_clonedNodesMapping.clear();
-
-        // Create the initial goal
-        AbstractRetriever::RetrieveOptions options;
-        options.GoalTypeId = m_rootGoalType;
-        options.pGameState = g_Game;
-        options.Exclusions = m_rootNodeExclusions;
-        CaseEx* pCandidateCase = m_pCbReasoner->Retriever()->Retrieve(options);
-        m_rootNodeExclusions.insert(pCandidateCase);
-        PlanStepEx* pRootNode = pCandidateCase->Goal();
-        m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
-        m_nodeData[m_planRootNodeId] = OlcbpPlanNodeData();
-        OpenNode(m_planRootNodeId);
-    }
-
-    // LogInfo("### END PLAN UPDATE ###");
-
-    m_pOlcbpPlan->Unlock();
-
-    if (m_planStructureChangedThisFrame)
-    {
-        g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanStructureChange, nullptr));
-        m_planStructureChangedThisFrame = false;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -239,32 +222,13 @@ void OnlinePlanExpansionExecution::UpdateBelongingSubplanChildrenWithParentReadi
         {
             if (GetNodeData(childId).SatisfyingGoal != nodeId)
             {
-                // _ASSERTE(GetNodeData(childId).WaitOnParentsCount > 0);
-                if (GetNodeData(childId).WaitOnParentsCount > 0)
+                _ASSERTE(GetNodeData(childId).WaitOnParentsCount > 0);
+                //if (GetNodeData(childId).WaitOnParentsCount > 0)
                 {
                     LogInfo("Update node '%s' with parent readiness", m_pOlcbpPlan->GetNode(childId)->ToString().c_str());
                     GetNodeData(childId).DecWaitOnParentsCount();
                 }
             }
-        }
-    }
-}
-//////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::UpdateGoalPlanChildrenWithParentReadiness(_In_ IOlcbpPlan::NodeID nodeId)
-{
-    _ASSERTE(IsGoalNode(nodeId));
-    LogInfo("Updating node '%s' children with their parent readiness", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
-
-    const IOlcbpPlan::NodeSerializedSet& children =  m_pOlcbpPlan->GetAdjacentNodes(nodeId);
-
-    for (auto childId : children)
-    {
-        _ASSERTE(GetNodeData(childId).WaitOnParentsCount > 0);
-
-        if (GetNodeData(childId).SatisfyingGoal == nodeId)
-        {
-            LogInfo("Update node '%s' with parent readiness", m_pOlcbpPlan->GetNode(childId)->ToString().c_str());
-            GetNodeData(childId).DecWaitOnParentsCount();
         }
     }
 }
@@ -277,156 +241,7 @@ void IStrategizer::OnlinePlanExpansionExecution::MarkCaseAsTried(_In_ IOlcbpPlan
 
     GetNodeData(nodeId).TriedCases.insert(pCase);
 }
-//////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock)
-{
-    GoalEx* pCurrentGoalNode = (GoalEx*)m_pOlcbpPlan->GetNode(currentNode);
 
-#pragma region Node Open
-    if (IsNodeOpen(currentNode))
-    {
-        _ASSERTE(pCurrentGoalNode->State() == ESTATE_NotPrepared);
-        _ASSERTE(IsNodeDone(currentNode) == false);
-
-        bool hasPreviousPlan = DestroyGoalPlanIfExist(currentNode);
-
-        // The goal was previously expanded with a plan, but it somehow failed
-        // Thats why it is now open
-        // Revise the node belonging case as failed case
-        if (hasPreviousPlan)
-        {
-            LogInfo("Node with plan-step '%s' is open and has children nodes, case is sent for revision and children have been destroyed", pCurrentGoalNode->ToString().c_str());
-
-            CaseEx* currentCase = GetLastCaseForGoalNode(currentNode);
-            m_pCbReasoner->Reviser()->Revise(currentCase, false);
-            UpdateHistory(currentCase);
-            m_pCbReasoner->Retainer()->Retain(currentCase);
-            m_pCbReasoner->Retainer()->Flush();
-        }
-
-        if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))
-        {
-            LogInfo("Goal %s already satisfied, no need to expand it, closing the node", pCurrentGoalNode->ToString().c_str());
-            pCurrentGoalNode->State(ESTATE_Succeeded, *g_Game, clock);
-            CloseNode(currentNode);
-            OnGoalNodeSucceeded(currentNode);
-        }
-        else
-        {
-            CaseSet exclusions = GetNodeData(currentNode).TriedCases;
-
-            IOlcbpPlan::NodeID satisfyingGoalNode = GetNodeData(currentNode).SatisfyingGoal;
-
-            if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
-            {
-                LogInfo("Excluding satisfying goal node %s to avoid recursive plan expansion", m_pOlcbpPlan->GetNode(satisfyingGoalNode)->ToString().c_str());
-                // Add belonging case to exclusion to avoid recursive expansion of plans
-                _ASSERTE(GetNodeData(satisfyingGoalNode).BelongingCase != nullptr);
-                exclusions.insert(GetNodeData(satisfyingGoalNode).BelongingCase);
-            }
-
-            pCurrentGoalNode->AdaptParameters(*g_Game);
-            AbstractRetriever::RetrieveOptions options;
-            options.GoalTypeId = (GoalType)pCurrentGoalNode->StepTypeId();
-            options.pGameState = g_Game;
-            options.Exclusions = exclusions;
-            CaseEx* pCandidateCase = m_pCbReasoner->Retriever()->Retrieve(options);
-
-            // We found a matching case and it was not tried for that goal before
-            if (pCandidateCase != nullptr)
-            {
-                // Retriever should always retrieve a non tried case for that specific node
-                _ASSERTE(!IsCaseTried(currentNode, pCandidateCase));
-
-                LogInfo("Retrieved case '%s' has not been tried before, and its goal is being sent for expansion",
-                    pCandidateCase->Goal()->ToString().c_str());
-
-                MarkCaseAsTried(currentNode, pCandidateCase);
-                ExpandGoal(currentNode, pCandidateCase);
-                CloseNode(currentNode);
-                UpdateGoalPlanChildrenWithParentReadiness(currentNode);
-            }
-            else
-            {
-                // The current failed goal node is the root goal and the planner exhausted all possible 
-                // plans form the case-base for that goal node and nothing succeeded so far
-                //
-                // WE SURRENDER!!
-                //
-                if (m_planRootNodeId == currentNode)
-                {
-                    LogWarning("Planner has exhausted all possible cases, WE SURRENDER!!");
-                    m_planRootNodeId = IOlcbpPlan::NullNodeID;
-                }
-                else
-                {
-                    LogInfo("Goal=%s exhausted all possible cases, failing it", pCurrentGoalNode->ToString().c_str());
-                    pCurrentGoalNode->State(ESTATE_Failed, *g_Game, clock);
-                    CloseNode(currentNode);
-                    OnGoalNodeFailed(currentNode);
-                }
-            }
-        }
-    }
-#pragma endregion
-#pragma region Node Closed
-    else
-    {
-        if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))
-        {
-            _ASSERTE(pCurrentGoalNode->State() == ESTATE_NotPrepared);
-            pCurrentGoalNode->State(ESTATE_Succeeded, *g_Game, clock);
-            OnGoalNodeSucceeded(currentNode);
-        }
-        else
-        {
-            _ASSERTE(pCurrentGoalNode->State() == ESTATE_NotPrepared);
-
-            // The goal is not done yet, and all of its children are done and
-            // finished execution. It does not make sense for the goal to continue
-            // this goal should fail, it has no future
-            if (GetNodeData(currentNode).WaitOnChildrenCount == 0)
-            {
-                LogInfo("Goal '%s' is still not done and all of its children are done execution, failing it", 
-                    pCurrentGoalNode->ToString().c_str());
-                pCurrentGoalNode->State(ESTATE_NotPrepared, *g_Game, clock);
-                OpenNode(currentNode);
-            }
-        }
-    }
-#pragma endregion
-}
-//////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock, _Inout_ IOlcbpPlan::NodeQueue& updateQ)
-{
-    PlanStepEx *pCurrentPlanStep  = m_pOlcbpPlan->GetNode(currentNode);
-    _ASSERTE(IsNodeReady(currentNode));
-
-    if (IsNodeDone(currentNode))
-    {
-        if (pCurrentPlanStep->State() == ESTATE_Succeeded)
-            AddReadyChildrenToUpdateQueue(currentNode, updateQ);
-    }
-    else if (pCurrentPlanStep->State() == ESTATE_Failed)
-    {
-        //    // We check to make sure that our parent is open before closing
-        //    // Our sub plan goal may be already open because any of our siblings may have failed and opened our sub plan goal
-        //    if (!IsNodeOpen(GetNodeData(currentNode).SatisfyingGoal))
-        //        OpenNode(GetNodeData(currentNode).SatisfyingGoal);
-    }
-    else if (pCurrentPlanStep->State() == ESTATE_Succeeded)
-    {
-        UpdateBelongingSubplanChildrenWithParentReadiness(currentNode);
-    }
-    else if (pCurrentPlanStep->State() != ESTATE_Failed)
-    {
-        _ASSERTE(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
-            pCurrentPlanStep->State() == ESTATE_Executing ||
-            pCurrentPlanStep->State() == ESTATE_END);
-
-        pCurrentPlanStep->Update(*g_Game, clock);
-    }
-}
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
 {
@@ -482,22 +297,26 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeID planGoalNodeId)
+bool OnlinePlanExpansionExecution::DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::NodeID snippetGoalId)
 {
     IOlcbpPlan::NodeQueue Q;
     IOlcbpPlan::NodeSerializedSet visitedNodes;
+    IOlcbpPlan::NodeSerializedSet snippetRoots;
 
-    // 1. Do a BFS to collect the pre-expansion children and the goal subplan nodes
-    // The visited nodes in the traversal are the goal subplan nodes
-    for (auto childNode : m_pOlcbpPlan->GetAdjacentNodes(planGoalNodeId))
+    _ASSERTE(IsNodeOpen(snippetGoalId));
+
+    // 1. Collect the snippet orphan nodes to start the BFS from
+    GetSnippetOrphanNodes(snippetGoalId, snippetRoots);
+    for (auto childNode : snippetRoots)
     {
-        if (GetNodeData(childNode).SatisfyingGoal == planGoalNodeId)
+        if (GetNodeData(childNode).SatisfyingGoal == snippetGoalId)
         {
             Q.push(childNode);
             visitedNodes.insert(childNode);
         }
     }
 
+    // 2. Do a BFS on the snippet to collect its nodes
     while (!Q.empty())
     {
         IOlcbpPlan::NodeID currNodeId = Q.front();
@@ -515,10 +334,9 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
         }
     }
 
-    // 2. Remove visited nodes from the plan
+    // 3. Remove visited nodes from the plan
     for (auto visitedNodeId : visitedNodes)
     {
-        //auto currNode = m_pOlcbpPlan->GetNode(visitedNodeId);
         m_pOlcbpPlan->RemoveNode(visitedNodeId);
         m_nodeData.erase(visitedNodeId);
 
@@ -532,11 +350,8 @@ bool OnlinePlanExpansionExecution::DestroyGoalPlanIfExist(_In_ IOlcbpPlan::NodeI
         return false;
     else
     {
-        // 4. Since the plan structure changed, recompute the WaitOnParentsCount
-        // for plan graph node
-        ComputeNodesWaitOnParentsCount();
+        // 4. Since the plan structure changed, raise the flag
         m_planStructureChangedThisFrame = true;
-
         return true;
     }
 }
@@ -561,139 +376,65 @@ void OnlinePlanExpansionExecution::AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool OnlinePlanExpansionExecution::IsGoalNode(_In_ IOlcbpPlan::NodeID nodeId) const
+void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID nodeId)
 {
-    IOlcbpPlan::NodeValue pNode = m_pOlcbpPlan->GetNode(nodeId);
-    return BELONG(GoalType, pNode->StepTypeId());
-}
-//////////////////////////////////////////////////////////////////////////
-bool OnlinePlanExpansionExecution::IsActionNode(_In_ IOlcbpPlan::NodeID nodeId) const
-{
-    IOlcbpPlan::NodeValue pNode = m_pOlcbpPlan->GetNode(nodeId);
-    return BELONG(ActionType, pNode->StepTypeId());
-}
-//////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::LinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId, _In_ IOlcbpPlan::NodeID dstNodeId)
-{
-    m_pOlcbpPlan->AddEdge(srcNodeId, dstNodeId);
-}
-//////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::UnlinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId, _In_ IOlcbpPlan::NodeID dstNodeId)
-{
-    m_pOlcbpPlan->AddEdge(srcNodeId, dstNodeId);
-}
-//////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::GetNodeChildrenInBelongingSubplan(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSerializedSet& children) const
-{
-    IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeSerializedSet visitedNodes;
-    IOlcbpPlan::NodeID nodeSatisfyingGoal = GetNodeData(nodeId).SatisfyingGoal;
+    GoalEx* pGoal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
+    _ASSERTE(pGoal->State() == ESTATE_Succeeded);
 
-    Q.push(nodeId);
-    visitedNodes.insert(nodeId);
 
-    while (!Q.empty())
+    if (GetNodeData(nodeId).BelongingCase != nullptr)
     {
-        IOlcbpPlan::NodeID currNodeId = Q.front();
-        Q.pop();
+        LogInfo("Goal=%s succeeded, revising its case and retaining it", pGoal->ToString().c_str());
 
-        const IOlcbpPlan::NodeSerializedSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
+        CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
+        m_pCbReasoner->Reviser()->Revise(currentCase, true);
+        UpdateHistory(currentCase);
+        m_pCbReasoner->Retainer()->Retain(currentCase);
+        m_pCbReasoner->Retainer()->Flush();
+    }
+    else
+    {
+        LogInfo("Goal=%s succeeded without expansion, no case to revise", pGoal->ToString().c_str());
+    }
 
-        for (auto currChildNodeId : currChildren)
-        {
-            if (GetNodeData(currChildNodeId).SatisfyingGoal == nodeSatisfyingGoal)
-                children.insert(currChildNodeId);
-            else if (visitedNodes.count(currChildNodeId) == 0)
-            {
-                Q.push(currChildNodeId);
-                visitedNodes.insert(currChildNodeId);
-            }
-        }
+    UpdateBelongingSubplanChildrenWithParentReadiness(m_planRootNodeId);
+    OnNodeDone(nodeId);
+
+    if (m_planRootNodeId == nodeId)
+    {
+        g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanComplete, nullptr));
+        m_pOlcbpPlan->Clear();
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::UnlinkNodeChildren(_In_ IOlcbpPlan::NodeID nodeId)
+void OnlinePlanExpansionExecution::OnGoalNodeFailed(_In_ IOlcbpPlan::NodeID nodeId)
 {
-    IOlcbpPlan::NodeSerializedSet currChildren = m_pOlcbpPlan->GetAdjacentNodes(nodeId);
+    GoalEx* pGoal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
+    _ASSERTE(pGoal->State() == ESTATE_Failed);
 
-    for (auto currChild : currChildren)
+    if (GetNodeData(nodeId).BelongingCase != nullptr)
     {
-        m_pOlcbpPlan->RemoveEdge(nodeId, currChild);
+        LogInfo("Goal=%s failed, revising and retaining it", pGoal->ToString().c_str());
+
+        CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
+        m_pCbReasoner->Reviser()->Revise(currentCase, false);
+        UpdateHistory(currentCase);
+        m_pCbReasoner->Retainer()->Retain(currentCase);
+        m_pCbReasoner->Retainer()->Flush();
     }
+
+    OnNodeDone(nodeId);
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::ComputeNodesWaitOnParentsCount()
+void OnlinePlanExpansionExecution::OnActionNodeSucceeded(_In_ IOlcbpPlan::NodeID nodeId)
 {
-    LogInfo("Computing graph nodes WaitOnParentsCount property");
-
-    IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeSerializedSet visitedNodes;
-
-    _ASSERTE(m_pOlcbpPlan->Size() > 0);
-    _ASSERTE(m_planRootNodeId != IOlcbpPlan::NullNodeID);
-
-    // 1. Reset the NotReadyParentsCount field of each node
-    //
-    IOlcbpPlan::NodeSerializedSet planNodes;
-
-    planNodes = m_pOlcbpPlan->GetNodes();
-    for (auto nodeId : planNodes)
-    {
-        GetNodeData(nodeId).SetWaitOnParentsCount(0);
-    }
-
-    Q.push(m_planRootNodeId);
-    visitedNodes.insert(m_planRootNodeId);
-
-    // 2. Do a BFS on the plan graph and for closed node
-    // increment the NotReadyParentsCount for child node
-    //
-    while (!Q.empty())
-    {
-        IOlcbpPlan::NodeID currNodeId = Q.front();
-        Q.pop();
-
-        const IOlcbpPlan::NodeSerializedSet& currChildren = m_pOlcbpPlan->GetAdjacentNodes(currNodeId);
-
-        LogInfo("Computing WaitOnParentsCount for node[%d] children", currNodeId);
-
-        //bool waitOnCurrNode = m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded;
-        /*(IsActionNode(currNodeId) && m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded) ||
-        (IsGoalNode(currNodeId) && IsNodeOpen(currNodeId));*/
-
-        for (auto currChildNodeId : currChildren)
-        {
-            if (IsActionNode(currNodeId) && m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded)
-                GetNodeData(currChildNodeId).IncWaitOnParentsCount();
-            else if (IsGoalNode(currNodeId))
-            {
-                if (GetNodeData(currChildNodeId).SatisfyingGoal == currNodeId)
-                {
-                    LogInfo("Node[%d] is from Node[%d] expanded case", currChildNodeId, currNodeId);
-
-                    if (IsNodeOpen(currNodeId))
-                        GetNodeData(currChildNodeId).IncWaitOnParentsCount();
-                    else
-                        LogInfo("Node[%d] was not considered since it is closed", currNodeId);
-                }
-                else
-                {
-                    LogInfo("Node[%d] is from the original plan Node[%d] belong to", currChildNodeId, currNodeId);
-
-                    if (m_pOlcbpPlan->GetNode(currNodeId)->State() != ESTATE_Succeeded)
-                        GetNodeData(currChildNodeId).IncWaitOnParentsCount();
-                    else
-                        LogInfo("Node[%d] was not considered since its parent Node[%d] is already succeeded", currChildNodeId, currNodeId);
-                }
-            }
-
-            if (visitedNodes.count(currChildNodeId) == 0)
-            {
-                Q.push(currChildNodeId);
-                visitedNodes.insert(currChildNodeId);
-            }
-        }
-    }
+    UpdateBelongingSubplanChildrenWithParentReadiness(nodeId);
+    OnNodeDone(nodeId);
+}
+//////////////////////////////////////////////////////////////////////////
+void OnlinePlanExpansionExecution::OnActionNodeFailed(_In_ IOlcbpPlan::NodeID nodeId)
+{
+    OnNodeDone(nodeId);
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
@@ -708,54 +449,14 @@ void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
         _ASSERTE(GetNodeData(satisfyingGoalNode).WaitOnChildrenCount > 0);
         GetNodeData(satisfyingGoalNode).DecWaitOnChildrenCount();
     }
-
-    if (IsGoalNode(nodeId))
-    {
-        GoalEx* pGoal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
-        UnassignGoalType(pGoal->Key());
-    }
 }
-
-void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID nodeId)
+//////////////////////////////////////////////////////////////////////////
+void OnlinePlanExpansionExecution::GetSnippetOrphanNodes(_In_ IOlcbpPlan::NodeID snippetGoalId, _Out_ IOlcbpPlan::NodeSerializedSet& orphans)
 {
-    GoalEx* pGoal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
-    _ASSERTE(pGoal->State() == ESTATE_Succeeded);
-
-    if (GetNodeData(nodeId).BelongingCase != nullptr)
+    _ASSERTE(orphans.empty());
+    for (auto nodeId : m_pOlcbpPlan->GetAdjacentNodes(snippetGoalId))
     {
-        LogInfo("Goal=%s succeeded, revising and retaining it", pGoal->ToString().c_str());
-        CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
-        m_pCbReasoner->Reviser()->Revise(currentCase, true);
-        UpdateHistory(currentCase);
-        m_pCbReasoner->Retainer()->Retain(currentCase);
-        m_pCbReasoner->Retainer()->Flush();
-    }
-    else
-    {
-        LogInfo("Goal=%s succeeded without the need to expand it, no need to revise it", pGoal->ToString().c_str());
-    }
-
-    UpdateBelongingSubplanChildrenWithParentReadiness(nodeId);
-
-    if (m_planRootNodeId == nodeId)
-    {
-		g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanComplete, nullptr));
-		m_pOlcbpPlan->Clear();
-	}
-}
-
-void OnlinePlanExpansionExecution::OnGoalNodeFailed(_In_ IOlcbpPlan::NodeID nodeId)
-{
-    GoalEx* pGoal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
-    _ASSERTE(pGoal->State() == ESTATE_Failed);
-
-    if (GetNodeData(nodeId).BelongingCase != nullptr)
-    {
-        LogInfo("Goal=%s failed, revising and retaining it", pGoal->ToString().c_str());
-        CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
-        m_pCbReasoner->Reviser()->Revise(currentCase, false);
-        UpdateHistory(currentCase);
-        m_pCbReasoner->Retainer()->Retain(currentCase);
-        m_pCbReasoner->Retainer()->Flush();
+        if (GetNodeData(nodeId).SatisfyingGoal == snippetGoalId)
+            orphans.insert(nodeId);
     }
 }

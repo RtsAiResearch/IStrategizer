@@ -35,6 +35,8 @@ namespace IStrategizer
         void SetWaitOnChildrenCount(unsigned val) { if (val != WaitOnChildrenCount) { LogInfo("Set WaitOnChildrenCount= %d -> %d for node[%d]", WaitOnChildrenCount, val, ID); WaitOnChildrenCount = val; } }
     };
 
+    typedef const OlcbpPlanNodeData* ConstOlcbpPlanNodeDataPtr;
+    typedef const OlcbpPlanNodeData& ConstOlcbpPlanNodeDataRef;
     typedef std::map<IOlcbpPlan::NodeID, OlcbpPlanNodeData> OlcbpPlanNodeDataMap;
     typedef const std::map<IOlcbpPlan::NodeID, OlcbpPlanNodeData>& ConstOlcbpPlanNodeDataMapRef;
     typedef const std::map<IOlcbpPlan::NodeID, OlcbpPlanNodeData>* ConstOlcbpPlanNodeDataMapPtr;

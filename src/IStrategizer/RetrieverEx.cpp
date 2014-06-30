@@ -158,14 +158,15 @@ CaseEx* RetrieverEx::Retrieve(AbstractRetriever::RetrieveOptions options)
         return nullptr;
     }
 
-    int i = 0;
-    float outcome;
-    float currCasePerformance;
-    CaseEx* currCase;
-    CaseEx* bestCase = nullptr;
+    //int i = 0;
+    //float outcome;
+    //float currCasePerformance;
+    //CaseEx* currCase;
     float bestCasePerformance = 0.0f;
+    CaseEx* bestCase = caseRelevanceTable.begin()->second;
 
-    for(multimap<float, CaseEx*, greater<float> >::iterator itr = caseRelevanceTable.begin();
+
+    /*for(multimap<float, CaseEx*, greater<float> >::iterator itr = caseRelevanceTable.begin();
         itr != caseRelevanceTable.end() && i < 5;
         ++itr, ++i)
     {
@@ -179,7 +180,7 @@ CaseEx* RetrieverEx::Retrieve(AbstractRetriever::RetrieveOptions options)
             bestCasePerformance = currCasePerformance;
             bestCase = currCase;
         }
-    }
+    }*/
 
     LogInfo("Retrieved case '%s' with max performance=%f",
         bestCase->Goal()->ToString().c_str(),

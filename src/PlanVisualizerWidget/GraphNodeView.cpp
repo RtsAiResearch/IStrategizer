@@ -10,27 +10,18 @@
 #ifndef PLANSTEPEX_H
 #include "PlanStepEx.h"
 #endif
+#include "OlcbpPlanNodeData.h"
 
 using namespace IStrategizer;
 using namespace std;
 
-GraphNodeView::GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, QMenu *pContextMeun, QGraphicsItem *pParent /* = 0 */) 
+GraphNodeView::GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, const OlcbpPlanNodeData* pOlcbpData, QMenu *pContextMeun, QGraphicsItem *pParent /* = 0 */) 
     : QGraphicsRectItem(pParent),
-    m_modelId(modelId)
+    m_modelId(modelId),
+    m_pOlcbpData(pOlcbpData)
 {
     m_pNodeModel = pPlanStep;
     m_pContextMenu = pContextMeun;
-
-    //string nodeName = m_pNodeModel->ToString();
-    //unsigned findLeftSqrParnPos = nodeName.find("[");
-
-    //if (findLeftSqrParnPos != string::npos)
-    //{
-    //    nodeName = nodeName.substr(0, findLeftSqrParnPos);
-    //}
-    //nodeName += '[';
-    //nodeName += to_string(modelId);
-    //nodeName += ']';
 
     m_nodeTxt = QString::fromStdString(pPlanStep->ToString(true));
 
@@ -42,13 +33,15 @@ GraphNodeView::GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, QMenu *pCont
     // Measure text width and set the node width accordingly with small padding
     QFontMetrics fontMetric(m_style.TxtFont);
 
-    m_nodeHeight    = fontMetric.height() + 40;
-    m_nodeWidth        = fontMetric.width(m_nodeTxt) + 20;
+    m_nodeHeight = fontMetric.height() + 40;
+    m_nodeWidth = fontMetric.width(m_nodeTxt) + 20;
 
-    setToolTip(QString::fromLocal8Bit(pPlanStep->TypeName().c_str()));
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+
+    if (m_pOlcbpData == nullptr)
+        setToolTip(QString::fromLocal8Bit(m_pNodeModel->ToString().c_str()));
 }
 //----------------------------------------------------------------------------------------------
 void GraphNodeView::AddEdge(GraphEdgeView* p_edge)
@@ -115,14 +108,27 @@ void GraphNodeView::paint(QPainter *p_painter, const QStyleOptionGraphicsItem *p
         // Measure text width and set the node width accordingly with small padding
     QFontMetrics fontMetric(m_style.TxtFont);
 
-    m_nodeHeight    = fontMetric.height() + 20;
-    m_nodeWidth        = fontMetric.width(m_nodeTxt) + 20;
+    m_nodeHeight = fontMetric.height() + 20;
+    m_nodeWidth = fontMetric.width(m_nodeTxt) + 20;
 
     // Call setRect ONLY in case the node dimensions changed, if it is called each paint
     // it will cause infinite loop (and lead to stack overflow) because setRect always
     // case the node to repaint
     if (rect().width() != m_nodeWidth || rect().height() != m_nodeHeight)
         setRect(0, 0, m_nodeWidth, m_nodeHeight);
+
+    if (m_pOlcbpData != nullptr)
+    {
+        char buff[256];
+        sprintf_s(buff, "%s: O?%d, SG:%d, PC:%d, CC:%d",
+            m_pNodeModel->ToString().c_str(),
+            m_pOlcbpData->IsOpen,
+            m_pOlcbpData->SatisfyingGoal,
+            m_pOlcbpData->WaitOnParentsCount,
+            m_pOlcbpData->WaitOnChildrenCount);
+
+        setToolTip(QString::fromLocal8Bit(buff));
+    }
 
     p_painter->drawText(this->rect(), m_nodeTxt, textOption);
 }

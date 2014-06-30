@@ -104,14 +104,14 @@ void DefinitionCrossMapping::InitTeches()
 void DefinitionCrossMapping::InitPlayers()
 {
     bool playerFound = false;
-    bool learnFromComputer = true;
+    bool selfPlayerIsComputer = false;
     TID selfID = DONT_CARE;
     vector<pair<TID, IStrategizer::PlayerType>> m_players;
     const Playerset &players = Broodwar->getPlayers();
 
     // Finding PLAYER_Self
     playerFound = false;
-    TID selfType = learnFromComputer ? PlayerTypes::Computer.getID() : PlayerTypes::Player.getID();
+    TID selfType = selfPlayerIsComputer ? PlayerTypes::Computer.getID() : PlayerTypes::Player.getID();
     for (BWAPI::Player pPlayer : players)
     {
         if (pPlayer->getType().getID() == selfType)
