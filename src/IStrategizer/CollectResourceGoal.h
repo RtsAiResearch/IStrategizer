@@ -4,6 +4,8 @@
 
 #include "GoalEx.h"
 #include "EntityClassExist.h"
+#include <vector>
+#include <set>
 
 namespace IStrategizer
 {
@@ -26,11 +28,11 @@ namespace IStrategizer
         bool SuccessConditionsSatisfied(RtsGame& game);
 
     private:
-        set<int> m_succeededPrimaryGatherersCount;
-        set<int> m_succeededSecondaryGatherersCount;
+        std::set<int> m_succeededPrimaryGatherersCount;
+        std::set<int> m_succeededSecondaryGatherersCount;
 
         int GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) const;
-        void AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, vector<GoalEx*>& succeededInstances);
+        void AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, std::vector<GoalEx*>& succeededInstances);
     };
 }
 #endif // COLLECTRESOURCEGOAL_H

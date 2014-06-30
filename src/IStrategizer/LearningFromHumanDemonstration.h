@@ -1,11 +1,11 @@
 #ifndef LEARNINGFROMHUMANDEMONSTRATION_H
 #define LEARNINGFROMHUMANDEMONSTRATION_H
 
-#include <vector>
-#include <map>
 #include "CompositeExpression.h"
 #include "CaseLearningHelper.h"
 #include "CaseEx.h"
+#include <vector>
+#include <map>
 
 namespace IStrategizer
 {
@@ -90,7 +90,7 @@ namespace IStrategizer
         bool SubplansDetection(std::vector<CookedPlan*>& p_cookedPlans) const;
         bool IsSubset(const OlcbpPlan::NodeSet superset,  const OlcbpPlan::NodeSet candidateSubset) const;
         CookedCase* DependencyGraphGeneration(RawCaseEx* p_rawCases);
-        vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
+        std::vector<RawCaseEx*> LearnRawCases(GameTrace::List p_traces);
 
     public:
         LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy);

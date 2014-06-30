@@ -9,6 +9,7 @@
 #include "Logger.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 WinGameGoal::WinGameGoal() : GoalEx(GOALEX_WinGame)
 {

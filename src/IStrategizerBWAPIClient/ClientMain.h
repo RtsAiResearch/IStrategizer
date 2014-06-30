@@ -43,7 +43,6 @@ protected:
     void OnGameFrame();
 
 private:
-    void InitResourceManager();
     void InitIStrategizer();
     void InitIMView();
     void UpdateViews();

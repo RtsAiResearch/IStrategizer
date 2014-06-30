@@ -1,11 +1,9 @@
 #ifndef RETRIEVEREX_H
 #define RETRIEVEREX_H
 
-#ifndef ABSTRACTRETRIEVER_H
 #include "AbstractRetriever.h"
-#endif
-
 #include <hash_map>
+#include <map>
 
 namespace IStrategizer
 {
@@ -23,8 +21,8 @@ namespace IStrategizer
         CaseEx* Retrieve(AbstractRetriever::RetrieveOptions options);
 
     protected:
-        float GoalDistance(const GoalEx* pCaseGoal, AbstractRetriever::RetrieveOptions options);
-        float StateSimilarity(RtsGame* pCaseGameState, AbstractRetriever::RetrieveOptions options);
+        float GoalDistance(const GoalEx* pCaseGoal, AbstractRetriever::RetrieveOptions options, std::map<ParameterType, int>& weights);
+        float StateDistance(RtsGame* pCaseGameState, AbstractRetriever::RetrieveOptions options);
         float CaseRelevance(const CaseEx* pCase, AbstractRetriever::RetrieveOptions options);
         void ExecuteCommand(const char* p_cmd);
         void BuildCaseCluster();

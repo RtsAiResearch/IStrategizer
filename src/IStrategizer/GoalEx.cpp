@@ -2,6 +2,7 @@
 #include <cassert>
 
 using namespace IStrategizer;
+using namespace std;
 
 void GoalEx::Update(RtsGame& game, const WorldClock& p_clock)
 {
@@ -24,4 +25,16 @@ unsigned GoalEx::Key() const
     }
 
     return key;
+}
+//----------------------------------------------------------------------------------------------
+ParameterWeights GoalEx::GetWeights() const
+{
+    map<ParameterType, int> weights;
+    for (auto parameter : _params)
+    {
+        int weight = parameter.first == PARAM_Amount ? 1 : INT_MAX;
+        weights[parameter.first] = weight;
+    }
+
+    return weights;
 }
