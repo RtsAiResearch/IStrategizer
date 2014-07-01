@@ -13,6 +13,7 @@
 #include "ObjectSerializer.h"
 #include "Logger.h"
 #include "SimilarityWeightModel.h"
+#include "PlayerResources.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -139,7 +140,8 @@ void RtsGame::SetOffline()
         pPlayer.second->SetOffline(this);
 
     m_pMap->SetOffline(this);
-
+    m_cachedWorldWidth = Map()->Width();
+    m_cachedWorldHeight = Map()->Height();
     m_cachedGameFrame = GameFrame();
 
     m_isOnline = false;
@@ -168,4 +170,57 @@ float RtsGame::Distance(const RtsGame* pOther, const SimilarityWeightModel* pMod
     distance += Self()->Distance(pOther->Self(), pModel);
 
     return distance;
+}
+
+float RtsGameModel::Distance(_In_ const RtsGameModel& other, _In_ const RtsGameModelAttributeWeights& weights) const
+{
+    return 0.0f;
+}
+
+int RtsGameModel::Attr(_In_ RtsGameModelAttribute attr) const
+{
+    int val = 0;
+
+    vector<ResearchType> researches;
+
+    switch (attr)
+    {
+    case RTSMODATTR_GameFrame:
+        val = m_game.GameFrame();
+        break;
+    case RTSMODATTR_MapArea:
+        val = m_game.Map()->Area();
+        break;
+        /*case RTSMODATTR_Player_Entities_NumBuildings:
+        val = m_game.Self()->CountEntityTypes(ECATTR_IsBuilding, 1);
+        break;
+        case RTSMODATTR_Player_Entities_NumWorkers:
+        val = m_game.Self()->CountEntityTypes(ECATTR_CanBuild, 1);
+        break;
+        case RTSMODATTR_Player_Entities_NumAttackers:
+        val = m_game.Self()->CountEntityTypes(ECATTR_IsAttacker, 1);
+        break;
+        case RTSMODATTR_Player_Entities_NumDoneResearches:
+        m_game.Researches(researches);
+        for (auto researchId : researches)
+        {
+        if (m_game.Self()->TechTree()->ResearchDone(researchId))
+        ++val;
+        }
+        break;*/
+    case RTSMODATTR_Player_Resources_Primary:
+        val = m_game.Self()->Resources()->Primary();
+        break;
+    case RTSMODATTR_Player_Resources_Secondary:
+        val = m_game.Self()->Resources()->Secondary();
+        break;
+    case RTSMODATTR_Player_Resources_Supply:
+        val = m_game.Self()->Resources()->Supply();
+        break;
+    default:
+        DEBUG_THROW(NotImplementedException(XcptHere));
+        break;
+    }
+
+    return val;
 }

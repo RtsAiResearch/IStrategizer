@@ -12,8 +12,8 @@ using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
 
-StarCraftMap::StarCraftMap(RtsGame* pGame, unsigned cellSize) :
-    WorldMap(pGame, cellSize, cellSize, Broodwar->mapWidth() * TILE_SIZE, Broodwar->mapHeight() * TILE_SIZE)
+StarCraftMap::StarCraftMap(RtsGame* pGame, unsigned cellSize, unsigned worldWidth, unsigned worldHeight) :
+    WorldMap(pGame, cellSize, worldWidth, worldHeight)
 { }
 //----------------------------------------------------------------------------------------------
 MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType) const

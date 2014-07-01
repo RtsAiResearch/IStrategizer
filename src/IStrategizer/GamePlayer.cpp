@@ -304,3 +304,16 @@ int GamePlayer::Attr(PlayerAttribute attribute)
 
     return amount;
 }
+
+int GamePlayer::CountEntityTypes(_In_ EntityClassAttribute attr, _In_ int val) const
+{
+    int count = 0;;
+
+    for (auto entityEntry : m_entities)
+    {
+        if (g_Game->GetEntityType(entityEntry.second->Type())->Attr(attr) == val)
+            ++count;
+    }
+
+    return count;
+}

@@ -44,8 +44,16 @@ DECL_SERIALIZABLE(StarCraftGame);
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitMap()
 {
-    // Set the world map grid cell size to be a square of size 8 build tiles
-    m_pMap = new StarCraftMap(this, TILE_SIZE * 8);
+    if (m_isOnline)
+    {
+        // Set the world map grid cell size to be a square of size 8 build tiles
+        m_pMap = new StarCraftMap(this, TILE_SIZE * 8, Broodwar->mapWidth() * TILE_SIZE, Broodwar->mapHeight() * TILE_SIZE);
+    }
+    else
+    {
+        // Set the world map grid cell size to be a square of size 8 build tiles
+        m_pMap = new StarCraftMap(this, TILE_SIZE * 8, m_cachedWorldWidth, m_cachedWorldHeight);
+    }
     m_pMap->Init();
 }
 //----------------------------------------------------------------------------------------------

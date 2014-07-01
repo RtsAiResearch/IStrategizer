@@ -33,9 +33,9 @@ namespace IStrategizer
 
         virtual ~PlayerResources() {}
         virtual bool HasEnough(const WorldResources* p_resources);
-        virtual int Supply() = 0;
-        virtual int Secondary() = 0;
-        virtual int Primary() = 0;
+        virtual int Supply() const = 0;
+        virtual int Secondary() const = 0;
+        virtual int Primary() const = 0;
         void SetOffline(RtsGame* pBelongingGame);
 
     protected:

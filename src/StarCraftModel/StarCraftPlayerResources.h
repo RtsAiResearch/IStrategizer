@@ -25,9 +25,9 @@ namespace IStrategizer
             m_player(p_player)
         {}
 
-        int Supply();
-        int Secondary();
-        int Primary();
+        int Supply() const;
+        int Secondary() const;
+        int Primary() const;
         void SetOffline(RtsGame* pBelongingGame);
 
     private:

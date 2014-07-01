@@ -51,6 +51,7 @@ namespace IStrategizer
         ECATTR_CanBuild,
         ECATTR_IsBuilding,
         ECATTR_IsCowrad,
+        ECATTR_IsAttacker,
         ECATTR_Attack,
         ECATTR_IsPrimaryResource,
         ECATTR_IsSecondaryResource,
@@ -70,6 +71,7 @@ namespace IStrategizer
     Enums[ECATTR_CanBuild] = "Can Build"; \
     Enums[ECATTR_IsBuilding] = "Is Building"; \
     Enums[ECATTR_IsCowrad] = "Is Coward"; \
+    Enums[ECATTR_IsAttacker] = "Is Attacker"; \
     Enums[ECATTR_Attack] = "Attack Damage"; \
     Enums[ECATTR_IsPrimaryResource] = "Is Primary Resource"; \
     Enums[ECATTR_IsSecondaryResource] = "Is Secondary Resource"; \
@@ -85,13 +87,61 @@ namespace IStrategizer
 #define Prefix_PlayerAttribute PATTR
     enum PlayerAttribute
     {
+        PATTR_AlliedUnitsTotalHP = 0x30200,
         PATTR_START = 0x30200,
-        PATTR_AlliedUnitsTotalHP,
         PATTR_AlliedUnitsTotalDamage,
         PATTR_END
     };
 #define Define_PlayerAttribute \
     Enums[PATTR_AlliedUnitsTotalHP] = "Units Total HP"; \
     Enums[PATTR_AlliedUnitsTotalDamage] = "Units Total Damage";
+    //---------------------------------------------------------------------------
+#define Prefix_RtsGameModelAttribute RTSMODATTR
+    enum RtsGameModelAttribute
+    {
+        RTSMODATTR_GameFrame = 0x30300,
+        RTSMODATTR_START = 0x30300,
+        RTSMODATTR_MapArea,
+        RTSMODATTR_Player_Resources_Primary,
+        RTSMODATTR_Player_Resources_Secondary,
+        RTSMODATTR_Player_Resources_Supply,
+        /*RTSMODATTR_Player_Entities_NumBuildings,
+        RTSMODATTR_Player_Entities_NumWorkers,
+        RTSMODATTR_Player_Entities_NumAttackers,
+        RTSMODATTR_Player_Entities_NumDoneResearches,*/
+        RTSMODATTR_END
+    };
+#define Define_RtsGameModelAttribute \
+    Enums[RTSMODATTR_GameFrame] = "GameFrame"; \
+    Enums[RTSMODATTR_MapArea] = "MapArea"; \
+    Enums[RTSMODATTR_Player_Resources_Primary] = "Player.Resources.Primary"; \
+    Enums[RTSMODATTR_Player_Resources_Secondary] = "Player.Resources.Secondry"; \
+    Enums[RTSMODATTR_Player_Resources_Supply] = "Player.Resources.Supply";
+    /*Enums[RTSMODATTR_Player_Entities_NumBuildings] = "Player.Entities.NumBuildings"; \
+    Enums[RTSMODATTR_Player_Entities_NumWorkers] = "Player.Entities.NumWorkers"; \
+    Enums[RTSMODATTR_Player_Entities_NumAttackers] = "Player.Entities.NumAttackers"; \
+    Enums[RTSMODATTR_Player_Entities_NumDoneResearches] = "Player.Entities.DoneResearches"; \*/
+
+
+    //---------------------------------------------------------------------------
+#define Prefix_RtsGameModelAttributeWeight RTSMODATTRWGHT
+    enum RtsGameModelAttributeWeight
+    {
+        RTSMODATTRWGHT_GameFrame = 0x30400,
+        RTSMODATTRWGHT_START = 0x30400,
+        RTSMODATTRWGHT_MapArea,
+        RTSMODATTRWGHT_Player,
+        RTSMODATTRWGHT_Player_Entities,
+        RTSMODATTRWGHT_Player_Entities_NumBuildings,
+        RTSMODATTRWGHT_Player_Entities_NumWorkers,
+        RTSMODATTRWGHT_Player_Entities_NumAttackers,
+        RTSMODATTRWGHT_Player_Entities_NumDoneResearches,
+        RTSMODATTRWGHT_Player_Resources,
+        RTSMODATTRWGHT_Player_Resources_Primary,
+        RTSMODATTRWGHT_Player_Resources_Secondary,
+        RTSMODATTRWGHT_Player_Resources_Supply,
+        RTSMODATTRWGHT_END
+    };
 }
+
 #endif // ATTRIBUTESMETADATA_H
