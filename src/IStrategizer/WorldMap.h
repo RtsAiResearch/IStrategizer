@@ -19,7 +19,7 @@ namespace IStrategizer
     class WorldMap
     {
     public:
-        WorldMap(RtsGame* pGame, unsigned p_cellWidth, unsigned p_cellHeight, unsigned p_worldWidth, unsigned p_worldHeight);
+        WorldMap(RtsGame* pGame, unsigned p_cellSide, unsigned p_worldWidth, unsigned p_worldHeight);
         ~WorldMap();
 
         void Init();
@@ -34,6 +34,8 @@ namespace IStrategizer
         CellFeature* GetCellFeatureFromWorldPosition(Vector2 p_position) const;
         std::vector<Vector2> GetNearestEnemyBorders(int p_numberOfBorders);
         void SetOffline(RtsGame* pBelongingGame);
+        unsigned Width() const { return m_worldWidth; }
+        unsigned Height() const { return m_worldHeight; }
 
     protected:
         CellFeature** m_cellFeatureMatrix;

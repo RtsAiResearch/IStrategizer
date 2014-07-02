@@ -27,7 +27,7 @@ namespace IStrategizer
     ///> class=RtsGame
     class RtsGame : public Serialization::UserObject
     {
-        OBJECT_MEMBERS(3, &m_isOnline, &m_players, &m_cachedGameFrame);
+        OBJECT_MEMBERS(5, &m_isOnline, &m_players, &m_cachedGameFrame, &m_cachedWorldWidth, &m_cachedWorldHeight);
 
     public:
         RtsGame() :
@@ -43,7 +43,7 @@ namespace IStrategizer
 
         void Players(std::vector<PlayerType>& p_playerIds) { m_players.Keys(p_playerIds); }
         void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds) { sm_entityTypes.Keys(p_entityTypeIds); }
-        void Researches(std::vector<ResearchType>& p_researchTypeIds) { sm_researchTypes.Keys(p_researchTypeIds); }
+        void Researches(std::vector<ResearchType>& p_researchTypeIds) const { sm_researchTypes.Keys(p_researchTypeIds); }
 
         const EntiyTypesMap& EntityTypes() const { return sm_entityTypes; }
         const ResearchTypesMap& ResearchTypes() const { return sm_researchTypes; }
@@ -90,9 +90,48 @@ namespace IStrategizer
         Serialization::SMap<PlayerType, GamePlayer*> m_players;
         ///> type=unsigned
         unsigned m_cachedGameFrame;
+        ///> type=unsigned
+        unsigned m_cachedWorldWidth;
+        ///> type=unsigned
+        unsigned m_cachedWorldHeight;
 
         bool m_isInitialized;
         WorldMap* m_pMap;
+    };
+
+    struct RtsGameModelAttributeWeights
+    {
+        int W[COUNT(RtsGameModelAttributeWeight)];
+    };
+
+    class RtsGameModel
+    {
+    public:
+        /*
+        Current Game Model Features:
+        GameFrame
+        MapArea
+        Player.Entities.NumAttackingUnits
+        Player.Entities.NumBuildings
+        Player.Entities.NumWorkers
+        Player.Entities.NumDoneResearches
+        Player.Resources.Primary
+        Player.Resources.Secondary
+        Player.Resources.Supply
+        */
+        RtsGameModel(_In_ const RtsGame& game) :
+            m_game(game)
+        {
+        }
+
+        int Attr(_In_ RtsGameModelAttribute attr) const;
+        float Distance(_In_ const RtsGameModel& other, _In_ const RtsGameModelAttributeWeights& weights) const;
+
+    private:
+        RtsGameModel(const RtsGameModel&);                 \
+        void operator=(const RtsGameModel&);
+
+        const RtsGame& m_game;
     };
 }
 
