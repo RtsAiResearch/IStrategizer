@@ -24,8 +24,6 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 {
     m_pOlcbpPlan->Lock();
 
-    // LogInfo("### START PLAN UPDATE ###");
-
     // We have exhausted all possible plans. We have surrendered, nothing to do
     if (m_pOlcbpPlan->Size() > 0)
     {
@@ -95,24 +93,6 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             actionQ.pop();
         }
     }
-    else
-    {
-        // Clear the used data structures
-        m_nodeData.clear();
-        m_clonedNodesMapping.clear();
-
-        // Create the initial goal
-        AbstractRetriever::RetrieveOptions options;
-        options.GoalTypeId = m_rootGoalType;
-        options.pGameState = g_Game;
-        CaseEx* pCandidateCase = m_pCbReasoner->Retriever()->Retrieve(options);
-        GoalEx* pRootNode = (GoalEx*)pCandidateCase->Goal()->Clone();
-        m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
-        m_nodeData[m_planRootNodeId] = OlcbpPlanNodeData();
-        OpenNode(m_planRootNodeId);
-    }
-
-    // LogInfo("### END PLAN UPDATE ###");
 
     m_pOlcbpPlan->Unlock();
 

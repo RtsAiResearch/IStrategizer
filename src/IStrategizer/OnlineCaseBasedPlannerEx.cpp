@@ -49,34 +49,21 @@ using namespace IStrategizer;
 
 OnlineCaseBasedPlannerEx *g_OnlineCaseBasedPlanner = nullptr;
 
-OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() : _caseBasedReasoner(nullptr), _onlineExpansionExecution(nullptr)
-{
-}
+OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() : 
+    _caseBasedReasoner(nullptr),
+    _onlineExpansionExecution(nullptr) {}
 //----------------------------------------------------------------------------------------------
 void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
 {
-    AbstractRetainer*   m_retainer  = new RetainerEx(g_CaseBasePath);
-    AbstractRetriever*  m_retriever = new RetrieverEx(m_retainer);
-    AbstractReviser*    m_revisor   = new Reviser();
-    AbstractAdapter*    m_adapter   = new AdapterEx();
+    AbstractRetainer* m_retainer = new RetainerEx(g_CaseBasePath);
+    AbstractRetriever* m_retriever = new RetrieverEx(m_retainer);
+    AbstractReviser* m_revisor = new Reviser();
+    AbstractAdapter* m_adapter = new AdapterEx();
     _caseBasedReasoner = new CaseBasedReasonerEx(m_retainer, m_revisor, m_retriever, m_adapter);
 
     _caseBasedReasoner->Initialize();
 
     _onlineExpansionExecution = new OnlinePlanExpansionExecution(p_initialGoal, _caseBasedReasoner);
-}
-//----------------------------------------------------------------------------------------------
-void OnlineCaseBasedPlannerEx::Init(GoalType p_goalType)
-{
-    AbstractRetainer*   m_retainer  = new RetainerEx(g_CaseBasePath);
-    AbstractRetriever*  m_retriever = new RetrieverEx(m_retainer);
-    AbstractReviser*    m_revisor   = new Reviser();
-    AbstractAdapter*    m_adapter   = new AdapterEx();
-    _caseBasedReasoner = new CaseBasedReasonerEx(m_retainer, m_revisor, m_retriever, m_adapter);
-
-    _caseBasedReasoner->Initialize();
-
-    _onlineExpansionExecution = new OnlinePlanExpansionExecution(p_goalType, _caseBasedReasoner);
 }
 //----------------------------------------------------------------------------------------------
 void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)

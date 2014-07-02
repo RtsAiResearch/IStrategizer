@@ -23,32 +23,25 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     : EngineComponent("OnlinePlanner"),
     m_planStructureChangedThisFrame(false),
     m_pCbReasoner(pCasedBasedReasoner),
-    m_pOlcbpPlan(new OlcbpPlan)
+    m_pOlcbpPlan(new OlcbpPlan),
+    m_pRootGoal(pInitialGoal),
+    m_rootGoalType((GoalType)pInitialGoal->StepTypeId())
 {
-    PlanStepEx* pRootNode = (PlanStepEx*)pInitialGoal;
+    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+}
+//////////////////////////////////////////////////////////////////////////
+void OnlinePlanExpansionExecution::StartPlanning()
+{
+    m_pOlcbpPlan->Clear();
+    m_planStructureChangedThisFrame = true;
+    
+    PlanStepEx* pRootNode = (PlanStepEx*)m_pRootGoal;
     m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
 
     m_nodeData[m_planRootNodeId] = OlcbpPlanNodeData();
     OpenNode(m_planRootNodeId);
-
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
-    g_MessagePump.RegisterForMessage(MSG_AttackComplete, this);
-}
-//////////////////////////////////////////////////////////////////////////
-OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalType goalType, _In_ CaseBasedReasonerEx *pCasedBasedReasoner)
-    : EngineComponent("OnlinePlanner"),
-    m_planStructureChangedThisFrame(false),
-    m_pCbReasoner(pCasedBasedReasoner),
-    m_pOlcbpPlan(new OlcbpPlan)
-{
-    m_rootGoalType = goalType;
-
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
-    g_MessagePump.RegisterForMessage(MSG_AttackComplete, this);
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionGoalNodeId, _In_ CaseEx *pExpansionCase)
@@ -265,45 +258,37 @@ void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 {
-    if (pMessage->MessageTypeID() == MSG_AttackComplete)
+    IOlcbpPlan::NodeQueue Q;
+    IOlcbpPlan::NodeID currentPlanStepID;
+    bool msgConsumedByAction = false;
+
+    if (m_pOlcbpPlan->Size() == 0 ||
+        m_planRootNodeId == IOlcbpPlan::NullNodeID)
+        return;
+
+    Q.push(m_planRootNodeId);
+
+    while(!Q.empty())
     {
-        m_pOlcbpPlan->Clear();
-        m_planStructureChangedThisFrame = true;
-    }
-    else
-    {
-        IOlcbpPlan::NodeQueue Q;
-        IOlcbpPlan::NodeID currentPlanStepID;
-        bool msgConsumedByAction = false;
+        currentPlanStepID = Q.front();
+        Q.pop();
 
-        if (m_pOlcbpPlan->Size() == 0 ||
-            m_planRootNodeId == IOlcbpPlan::NullNodeID)
-            return;
+        IOlcbpPlan::NodeValue pCurreNode = m_pOlcbpPlan->GetNode(currentPlanStepID);
 
-        Q.push(m_planRootNodeId);
-
-        while(!Q.empty())
+        if (IsActionNode(currentPlanStepID) && !msgConsumedByAction)
         {
-            currentPlanStepID = Q.front();
-            Q.pop();
-
-            IOlcbpPlan::NodeValue pCurreNode = m_pOlcbpPlan->GetNode(currentPlanStepID);
-
-            if (IsActionNode(currentPlanStepID) && !msgConsumedByAction)
-            {
-                pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
-
-                if (msgConsumedByAction)
-                    LogInfo("Message with ID=%d consumed by action node %s", pMessage->MessageTypeID(), pCurreNode->ToString().c_str());
-            }
+            pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
 
             if (msgConsumedByAction)
-            {
-                break;
-            }
-
-            AddReadyChildrenToUpdateQueue(currentPlanStepID, Q);
+                LogInfo("Message with ID=%d consumed by action node %s", pMessage->MessageTypeID(), pCurreNode->ToString().c_str());
         }
+
+        if (msgConsumedByAction)
+        {
+            break;
+        }
+
+        AddReadyChildrenToUpdateQueue(currentPlanStepID, Q);
     }
 }
 //////////////////////////////////////////////////////////////////////////

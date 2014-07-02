@@ -104,7 +104,7 @@ void DefinitionCrossMapping::InitTeches()
 void DefinitionCrossMapping::InitPlayers()
 {
     bool playerFound = false;
-    bool selfPlayerIsComputer = true;
+    bool selfPlayerIsComputer = false;
     TID selfID = DONT_CARE;
     vector<pair<TID, IStrategizer::PlayerType>> m_players;
     const Playerset &players = Broodwar->getPlayers();
