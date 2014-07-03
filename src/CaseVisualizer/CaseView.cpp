@@ -30,6 +30,8 @@
 #include "GraphScene.h"
 #include "GoalEx.h"
 #include "ParameterEdit.h"
+#include "StarCraftEntity.h"
+#include "WorldMap.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -195,18 +197,30 @@ void CaseView::ViewGameState(RtsGame* p_gameState)
         attr = RtsGameModelAttribute(int(attr) + 1))
     {
         cell = new QTableWidgetItem(QString::fromLocal8Bit(m_idLookup->GetByFirst(attr).c_str()));
-		cell->setFlags(Qt::NoItemFlags);
+		cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui.tblGameState->setItem(row, 0, cell);
 
         auto attrVal = model.Attr(attr);
-        cell = new QTableWidgetItem(tr("%1").arg(attrVal));
+
+        if (attr == RTSMODATTR_MapArea)
+        {
+            char buff[32];
+            sprintf_s(buff, "%dx%d", TilePositionFromUnitPosition(p_gameState->Map()->Width()),
+                TilePositionFromUnitPosition(p_gameState->Map()->Height()));
+            cell = new QTableWidgetItem(QString::fromLocal8Bit(buff));
+        }
+        else
+        {
+            cell = new QTableWidgetItem(tr("%1").arg(attrVal));
+        }
+
+        cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui.tblGameState->setItem(row, 1, cell);
 
         ui.tblGameState->setRowHeight(row, 20);
         ++row;
     }
 
-    ui.tblGameState->setSelectionMode(QAbstractItemView::NoSelection);
     ui.tblGameState->resizeColumnsToContents();
 }
 //----------------------------------------------------------------------------------------------

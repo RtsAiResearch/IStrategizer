@@ -220,11 +220,14 @@ void ClientMain::OnClientLoopEnd()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnSendText(const string& p_text)
 {
-    Broodwar->printf("[IStrategizer]You typed '%s'!",p_text.c_str());
+    Broodwar->printf("[IStrategizer] You typed '%s'!",p_text.c_str());
     TextMessage *pTxtMsg;
 
     pTxtMsg = new TextMessage(Broodwar->getFrameCount(), MSG_Input, new string(p_text));
     g_MessagePump.Send(pTxtMsg);
+
+    if (p_text == "export-statics")
+        m_pGameModel->ExportStaticData();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)

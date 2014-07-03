@@ -33,10 +33,12 @@
 #endif
 #include "StarCraftRace.h"
 #include "ObjectFactory.h"
+#include "ObjectSerializer.h"
 #include "BWAPI.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
+using namespace Serialization;
 using namespace std;
 
 DECL_SERIALIZABLE(StarCraftGame);
@@ -78,21 +80,53 @@ void StarCraftGame::InitPlayers()
     }
 }
 //----------------------------------------------------------------------------------------------
+bool StarCraftGame::InitStaticData()
+{
+    if (BroodwarPtr && Broodwar->isInGame())
+    {
+        LogInfo("Loading game static data from current Broodwar game instance ...");
+
+        InitEntityTypes();
+        InitResearchTypes();
+        InitRaceTypes();
+    }
+    else
+    {
+        LogInfo("Loading game static data from disk '%s' ...", GAME_STATIC_DATA_FILENAME);
+
+        ifstream f(GAME_STATIC_DATA_FILENAME);
+
+        if (f.is_open())
+        {
+            f.close();
+            g_ObjectSerializer.Deserialize(&sm_gameStatics, GAME_STATIC_DATA_FILENAME);
+        }
+        else
+        {
+            LogError("Failed to load game static data from disk. '%s does not exist or access denied");
+            return false;
+        }
+    }
+
+    return true;
+}
+//----------------------------------------------------------------------------------------------
 void StarCraftGame::InitEntityTypes()
 {
     vector<IStrategizer::GameType*> oldEntityTypes;
     vector<EntityClassType> newEntityTypes;
 
-    sm_entityTypes.Values(oldEntityTypes);
+    sm_gameStatics.EntityTypes.Values(oldEntityTypes);
     Toolbox::MemoryClean(oldEntityTypes);
-    sm_entityTypes.clear();
+    sm_gameStatics.EntityTypes.clear();
 
     g_Database.EntityTypes(newEntityTypes);
 
     for(unsigned i = 0, size = newEntityTypes.size(); i < size; ++i)
     {
-        sm_entityTypes[newEntityTypes[i]] = FetchEntityType(newEntityTypes[i]);
+        sm_gameStatics.EntityTypes[newEntityTypes[i]] = FetchEntityType(newEntityTypes[i]);
     }
+
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitResearchTypes()
@@ -100,15 +134,15 @@ void StarCraftGame::InitResearchTypes()
     vector<GameResearch*> oldResearchTypes;
     vector<ResearchType> newResearchTypes;
 
-    sm_researchTypes.Values(oldResearchTypes);
+    sm_gameStatics.ResearchTypes.Values(oldResearchTypes);
     Toolbox::MemoryClean(oldResearchTypes);
-    sm_researchTypes.clear();
+    sm_gameStatics.ResearchTypes.clear();
 
     g_Database.ResearchTypes(newResearchTypes);
 
     for(unsigned i = 0, size = newResearchTypes.size(); i < size; ++i)
     {
-        sm_researchTypes[newResearchTypes[i]] = FetchResearch(newResearchTypes[i]);
+        sm_gameStatics.ResearchTypes[newResearchTypes[i]] = FetchResearch(newResearchTypes[i]);
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -170,7 +204,7 @@ void StarCraftGame::InitRaceTypes()
 {
     for (Race& race : Races::allRaces())
     {
-        sm_raceTypes[race.getID()] = new StarCraftRace(race);
+        sm_gameStatics.RaceTypes[race.getID()] = new StarCraftRace(race);
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -178,7 +212,8 @@ void StarCraftGame::ExecuteCommand(const char *p_cmd)
 {
     static const char* commands[] = {
         "export-all-ids",
-        "export-game-ids"
+        "export-game-ids",
+        "export-statics"
     };
 
     unsigned cmdLen;
@@ -204,6 +239,7 @@ void StarCraftGame::ExecuteCommand(const char *p_cmd)
         else
             DisplayMessage("Failed to export game ids");
     }
+
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::DisplayMessage(const char* p_msg)
