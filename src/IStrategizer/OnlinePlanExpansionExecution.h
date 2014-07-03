@@ -24,10 +24,11 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
 
         OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx* pCbReasoner);
-        OnlinePlanExpansionExecution(_In_ GoalType goalType, _In_ CaseBasedReasonerEx *pCasedBasedReasoner);
 
         void Update(_In_ const WorldClock& clock);
         void NotifyMessegeSent(_In_ Message* pMessage);
+        void StartPlanning();
+        void RootGoal(GoalEx* pGoal) { _ASSERTE(pGoal); m_pRootGoal = pGoal; }
         const IOlcbpPlan* Plan() const { return m_pOlcbpPlan; }
         IOlcbpPlan* Plan() { return m_pOlcbpPlan; }
         ConstOlcbpPlanNodeDataMapRef NodeData() const { return m_nodeData; }
@@ -76,6 +77,7 @@ namespace IStrategizer
         std::map<CaseNodeValue, ClonedCaseNodeValue> m_clonedNodesMapping;
         std::map<GoalTypeID, IOlcbpPlan::NodeID> m_goalTypeAssignment;
         GoalType m_rootGoalType;
+        GoalEx* m_pRootGoal;
     };
 }
 

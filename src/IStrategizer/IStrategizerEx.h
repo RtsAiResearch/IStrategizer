@@ -1,11 +1,11 @@
 #ifndef ISTRATEGIZEREX_H
 #define ISTRATEGIZEREX_H
 
-#include <vector>
 #include "MetaData.h"
 #include "MessagePumpObserver.h"
 #include "WorldClock.h"
 #include "AttackManager.h"
+#include <vector>
 
 namespace IStrategizer
 {
@@ -27,23 +27,28 @@ namespace IStrategizer
 
     class IStrategizerEx : public MessagePumpObserver
     {
-    private:
-        OnlineCaseBasedPlannerEx* m_pPlanner;
-        LearningFromHumanDemonstration* m_pCaseLearning;
-        IStrategizerParam m_param;
-        bool m_isFirstUpdate;
-        WorldClock m_clock;
-        AttackManager m_attackManager;
-
     public:
         IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame);
         void Update(unsigned gameCycle);
+        void NotifyMessegeSent(Message* pMsg);
+        bool Init();
         const OnlineCaseBasedPlannerEx* Planner() const { return m_pPlanner; }
         OnlineCaseBasedPlannerEx* Planner() { return m_pPlanner; }
-        void NotifyMessegeSent(Message* pMsg);
         const WorldClock& Clock() const { return m_clock; }
-        bool Init();
         ~IStrategizerEx();
+
+    private:
+        void DefineArmyTrainOrder();
+        int GetTrainOrderInx();
+
+        bool m_isFirstUpdate;
+        unsigned m_armyTrainOrderInx;
+        OnlineCaseBasedPlannerEx* m_pPlanner;
+        LearningFromHumanDemonstration* m_pCaseLearning;
+        IStrategizerParam m_param;
+        WorldClock m_clock;
+        AttackManager m_attackManager;
+        std::vector<PlanStepParameters> m_armyTrainOrder;
     };
 }
 

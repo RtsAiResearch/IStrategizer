@@ -9,15 +9,10 @@
 #include "DataMessage.h"
 #include "IStrategizerException.h"
 #include "WorldClock.h"
-#include "SerializationEssentials.h"
 #include "RtsGame.h"
 #include "Toolbox.h"
 #include "IMSystemManager.h"
-#include "GamePlayer.h"
-#include "GameType.h"
-#include "GameEntity.h"
-#include "EngineAssist.h"
-#include <cassert>
+#include "OnlinePlanExpansionExecution.h"
 #include <iostream>
 
 using namespace IStrategizer;
@@ -27,7 +22,8 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame) :
     m_param(param),
     m_pCaseLearning(nullptr),
     m_pPlanner(nullptr),
-    m_isFirstUpdate(true)
+    m_isFirstUpdate(true),
+    m_armyTrainOrderInx(0)
 {
     g_Game = pGame;
 }
@@ -38,11 +34,22 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
     {
     case MSG_GameStart:
         m_clock.Reset();
+        break;
+
     case MSG_GameEnd:
         if (m_param.Phase == PHASE_Offline)
         {
             m_pCaseLearning->Learn();
         }
+        break;
+
+    case MSG_AttackComplete:
+        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();
+        break;
+
+    case MSG_PlanComplete:
+        m_attackManager.StartBattle();
         break;
     }
 }
@@ -114,8 +121,12 @@ bool IStrategizerEx::Init()
 
     case PHASE_Online:
         m_pPlanner = new OnlineCaseBasedPlannerEx();
-        m_pPlanner->Init(GOALEX_TrainArmy);
+        DefineArmyTrainOrder();
+        m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[m_armyTrainOrderInx]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();
         g_OnlineCaseBasedPlanner = m_pPlanner;
+        g_MessagePump.RegisterForMessage(MSG_AttackComplete, this);
+        g_MessagePump.RegisterForMessage(MSG_PlanComplete, this);
         break;
     }
 
@@ -123,4 +134,28 @@ bool IStrategizerEx::Init()
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
 
     return true;
+}
+//----------------------------------------------------------------------------------------------
+void IStrategizerEx::DefineArmyTrainOrder()
+{
+    PlanStepParameters params;
+    params[PARAM_AlliedUnitsTotalHP] = 1060;
+    params[PARAM_AlliedUnitsTotalDamage] = 470;
+    m_armyTrainOrder.push_back(params);
+
+    params[PARAM_AlliedUnitsTotalHP] = 1280;
+    params[PARAM_AlliedUnitsTotalDamage] = 957;
+    m_armyTrainOrder.push_back(params);
+}
+//----------------------------------------------------------------------------------------------
+int IStrategizerEx::GetTrainOrderInx()
+{
+    if (m_armyTrainOrderInx == m_armyTrainOrder.size() - 1)
+    {
+        return m_armyTrainOrderInx;
+    }
+    else
+    {
+        return ++m_armyTrainOrderInx;
+    }
 }

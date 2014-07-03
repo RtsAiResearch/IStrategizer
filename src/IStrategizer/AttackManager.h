@@ -15,10 +15,7 @@ namespace IStrategizer
     class AttackManager : public EngineComponent
     {
     public:
-        AttackManager() : m_pCurrentBattle(nullptr), EngineComponent("AttackManager")
-        {
-            g_MessagePump.RegisterForMessage(MSG_PlanComplete, this);
-        }
+        AttackManager() : m_pCurrentBattle(nullptr), EngineComponent("AttackManager") {}
 
         void Update(RtsGame& game, const WorldClock& clock)
         {
@@ -34,20 +31,14 @@ namespace IStrategizer
             }
         }
 
-        bool Active() const { return m_pCurrentBattle != nullptr; }
+        void StartBattle() { m_pCurrentBattle = new Battle(*g_Game); }
 
-        void NotifyMessegeSent(Message* p_message)
-        {
-            if (m_pCurrentBattle == nullptr && 
-                p_message->MessageTypeID() == MSG_PlanComplete)
-            {
-                m_pCurrentBattle = new Battle(*g_Game);
-            }
-        }
+        bool Active() const { return m_pCurrentBattle != nullptr; }
 
     private:
         std::vector<Battle*> m_battlesHistory;
         Battle* m_pCurrentBattle;
     };
 }
+
 #endif
