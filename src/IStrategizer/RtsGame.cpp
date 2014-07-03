@@ -14,6 +14,7 @@
 #include "Logger.h"
 #include "SimilarityWeightModel.h"
 #include "PlayerResources.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -21,10 +22,10 @@ using namespace std;
 
 IStrategizer::RtsGame* g_Game = nullptr;
 
-EntiyTypesMap RtsGame::sm_entityTypes;
-ResearchTypesMap RtsGame::sm_researchTypes;
-RaceTypesMap RtsGame::sm_raceTypes;
-bool RtsGame::sm_gameTypesInitialized = false;
+RtsGameStaticData RtsGame::sm_gameStatics;
+bool RtsGame::sm_gameStaticsInitialized = false;
+
+DECL_SERIALIZABLE(RtsGameStaticData);
 
 static SimilarityWeightModel GetDefaultWeightModel()
 {
@@ -33,15 +34,15 @@ static SimilarityWeightModel GetDefaultWeightModel()
     model.GameFrame = 0.2f;
     model.MapArea = 0.2f;
     model.Player.W = 0.6f;
-        model.Player.Entities.W = 0.6f;
-            model.Player.Entities.NumAttackingUnits = 0.25;
-            model.Player.Entities.NumBuildings = 0.25;
-            model.Player.Entities.NumWorkers = 0.25;
-            model.Player.Entities.NumDoneResearches = 0.25;
-        model.Player.Resources.W = 0.4f;
-            model.Player.Resources.Primary = 0.3f;
-            model.Player.Resources.Secondary = 0.3f;
-            model.Player.Resources.Supply = 0.4f;
+    model.Player.Entities.W = 0.6f;
+    model.Player.Entities.NumAttackingUnits = 0.25;
+    model.Player.Entities.NumBuildings = 0.25;
+    model.Player.Entities.NumWorkers = 0.25;
+    model.Player.Entities.NumDoneResearches = 0.25;
+    model.Player.Resources.W = 0.4f;
+    model.Player.Resources.Primary = 0.3f;
+    model.Player.Resources.Secondary = 0.3f;
+    model.Player.Resources.Supply = 0.4f;
 
     return model;
 }
@@ -55,13 +56,19 @@ RtsGame::~RtsGame()
 //----------------------------------------------------------------------------------------------
 void RtsGame::Init()
 {
-    if (!sm_gameTypesInitialized)
+    if (!sm_gameStaticsInitialized)
     {
-        LogInfo("Initializing RTS Game model types");
-        InitEntityTypes();
-        InitResearchTypes();
-        InitRaceTypes();
-        sm_gameTypesInitialized = true;
+        LogInfo("Initializing RTS game static data");
+
+        if (InitStaticData())
+        {
+            LogInfo("Game static data initialized successfully");
+            sm_gameStaticsInitialized = true;
+        }
+        else
+        {
+            LogError("Failed to initialize game static data");
+        }
     }
 
     if (m_isInitialized)
@@ -106,30 +113,30 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id) const
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
-    _ASSERTE(m_isInitialized);
+    _ASSERTE(sm_gameStaticsInitialized);
 
-    if (!sm_entityTypes.Contains(p_id))
+    if (!sm_gameStatics.EntityTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return sm_entityTypes[p_id];
+    return sm_gameStatics.EntityTypes[p_id];
 }
 //----------------------------------------------------------------------------------------------
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
-    _ASSERTE(m_isInitialized);
-    if (!sm_researchTypes.Contains(p_id))
+    _ASSERTE(sm_gameStaticsInitialized);
+    if (!sm_gameStatics.ResearchTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return sm_researchTypes[p_id];
+    return sm_gameStatics.ResearchTypes[p_id];
 }
 //----------------------------------------------------------------------------------------------
 GameRace* RtsGame::GetRace(TID id)
 {
-    _ASSERTE(m_isInitialized);
-    if (!sm_raceTypes.Contains(id))
+    _ASSERTE(sm_gameStaticsInitialized);
+    if (!sm_gameStatics.RaceTypes.Contains(id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return sm_raceTypes[id];
+    return sm_gameStatics.RaceTypes[id];
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::SetOffline()
@@ -189,25 +196,25 @@ int RtsGameModel::Attr(_In_ RtsGameModelAttribute attr) const
         val = m_game.GameFrame();
         break;
     case RTSMODATTR_MapArea:
-        val = m_game.Map()->Area();
+        val = (int)m_game.Map()->Area();
         break;
-        /*case RTSMODATTR_Player_Entities_NumBuildings:
+    case RTSMODATTR_Player_Entities_NumBuildings:
         val = m_game.Self()->CountEntityTypes(ECATTR_IsBuilding, 1);
         break;
-        case RTSMODATTR_Player_Entities_NumWorkers:
+    case RTSMODATTR_Player_Entities_NumWorkers:
         val = m_game.Self()->CountEntityTypes(ECATTR_CanBuild, 1);
         break;
-        case RTSMODATTR_Player_Entities_NumAttackers:
+    case RTSMODATTR_Player_Entities_NumAttackers:
         val = m_game.Self()->CountEntityTypes(ECATTR_IsAttacker, 1);
         break;
-        case RTSMODATTR_Player_Entities_NumDoneResearches:
+    case RTSMODATTR_Player_Entities_NumDoneResearches:
         m_game.Researches(researches);
         for (auto researchId : researches)
         {
-        if (m_game.Self()->TechTree()->ResearchDone(researchId))
-        ++val;
+            if (m_game.Self()->TechTree()->ResearchDone(researchId))
+                ++val;
         }
-        break;*/
+        break;
     case RTSMODATTR_Player_Resources_Primary:
         val = m_game.Self()->Resources()->Primary();
         break;
@@ -223,4 +230,10 @@ int RtsGameModel::Attr(_In_ RtsGameModelAttribute attr) const
     }
 
     return val;
+}
+//----------------------------------------------------------------------------------------------
+void RtsGame::ExportStaticData()
+{
+    LogInfo("Exporting game static data to disk '%s'", GAME_STATIC_DATA_FILENAME);
+    g_ObjectSerializer.Serialize(&sm_gameStatics, GAME_STATIC_DATA_FILENAME);
 }

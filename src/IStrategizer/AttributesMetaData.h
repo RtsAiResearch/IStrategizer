@@ -105,24 +105,22 @@ namespace IStrategizer
         RTSMODATTR_Player_Resources_Primary,
         RTSMODATTR_Player_Resources_Secondary,
         RTSMODATTR_Player_Resources_Supply,
-        /*RTSMODATTR_Player_Entities_NumBuildings,
+        RTSMODATTR_Player_Entities_NumBuildings,
         RTSMODATTR_Player_Entities_NumWorkers,
         RTSMODATTR_Player_Entities_NumAttackers,
-        RTSMODATTR_Player_Entities_NumDoneResearches,*/
+        RTSMODATTR_Player_Entities_NumDoneResearches,
         RTSMODATTR_END
     };
 #define Define_RtsGameModelAttribute \
     Enums[RTSMODATTR_GameFrame] = "GameFrame"; \
     Enums[RTSMODATTR_MapArea] = "MapArea"; \
     Enums[RTSMODATTR_Player_Resources_Primary] = "Player.Resources.Primary"; \
-    Enums[RTSMODATTR_Player_Resources_Secondary] = "Player.Resources.Secondry"; \
-    Enums[RTSMODATTR_Player_Resources_Supply] = "Player.Resources.Supply";
-    /*Enums[RTSMODATTR_Player_Entities_NumBuildings] = "Player.Entities.NumBuildings"; \
+    Enums[RTSMODATTR_Player_Resources_Secondary] = "Player.Resources.Secondary"; \
+    Enums[RTSMODATTR_Player_Resources_Supply] = "Player.Resources.Supply"; \
+    Enums[RTSMODATTR_Player_Entities_NumBuildings] = "Player.Entities.NumBuildings"; \
     Enums[RTSMODATTR_Player_Entities_NumWorkers] = "Player.Entities.NumWorkers"; \
     Enums[RTSMODATTR_Player_Entities_NumAttackers] = "Player.Entities.NumAttackers"; \
-    Enums[RTSMODATTR_Player_Entities_NumDoneResearches] = "Player.Entities.DoneResearches"; \*/
-
-
+    Enums[RTSMODATTR_Player_Entities_NumDoneResearches] = "Player.Entities.NumDoneResearches";
     //---------------------------------------------------------------------------
 #define Prefix_RtsGameModelAttributeWeight RTSMODATTRWGHT
     enum RtsGameModelAttributeWeight

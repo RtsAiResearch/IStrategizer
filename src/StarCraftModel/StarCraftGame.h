@@ -27,6 +27,7 @@ namespace IStrategizer
         void InitEntityTypes();
         void InitResearchTypes();
         void InitRaceTypes();
+        bool InitStaticData();
 
         GamePlayer* FetchPlayer(PlayerType p_id);
         IStrategizer::GameType* FetchEntityType(EntityClassType p_id);

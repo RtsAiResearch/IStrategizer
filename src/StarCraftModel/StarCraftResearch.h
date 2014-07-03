@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef STARCRAFTRESEARCH_H
 #define STARCRAFTRESEARCH_H
 
@@ -9,9 +10,14 @@
 
 namespace IStrategizer
 {
+    ///> class=StarCraftResearch
+    ///> parent=GameResearch
     class StarCraftResearch : public GameResearch
     {
+        OBJECT_SERIALIZABLE(StarCraftResearch);
+
     public:
+        StarCraftResearch() {}
         StarCraftResearch(BWAPI::UpgradeType p_research) : m_upgrade(p_research), m_isTech(false) {}
         StarCraftResearch(BWAPI::TechType p_research) : m_tech(p_research), m_isTech(true) {}
         void Init();

@@ -1,3 +1,4 @@
+///> [Serializable]
 #ifndef STARCRAFTTYPE_H
 #define STARCRAFTTYPE_H
 
@@ -9,10 +10,17 @@
 
 namespace IStrategizer
 {
+    ///> class=StarCraftType
+    ///> parent=GameType
     class StarCraftType : public GameType
     {
+        OBJECT_SERIALIZABLE(StarCraftType);
+
     public:
-        StarCraftType(BWAPI::UnitType p_entityType) : m_type(p_entityType) {}
+        StarCraftType() {}
+        StarCraftType(BWAPI::UnitType p_entityType) :
+            m_type(p_entityType) 
+        {}
         void Init();
         EntityClassType GetBuilderType() const;
         EntityClassType SourceEntity() const;
