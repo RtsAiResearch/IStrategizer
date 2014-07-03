@@ -55,6 +55,7 @@ namespace IStrategizer
     struct GameEndMessageData
     {
         bool IsWinner;
+        int Score;
     };
     typedef DataMessage<GameEndMessageData> GameEndMessage;
     //----------------------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 #ifndef BOTSTATISTICS_H
 #define BOTSTATISTICS_H
 
-#include "SVector.h"
 #include "GameStatistics.h"
+#include <vector>
 
 namespace IStrategizer
 {
@@ -13,10 +13,9 @@ namespace IStrategizer
     class BotStatistics
     {
     public:
-        void Read();
         void Add(GameEndMessageData* pData);
 
-        Serialization::SVector<GameStatistics*> Statistics;
+        std::vector<GameStatistics> Statistics;
     };
 }
 
