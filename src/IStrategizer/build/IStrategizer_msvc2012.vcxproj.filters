@@ -366,6 +366,12 @@
     <ClInclude Include="..\PlayerAttributeExist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\GameStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BotStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Action.cpp">
@@ -579,6 +585,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\OnlinePlanExpansionExecution.Update.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BotStatistics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

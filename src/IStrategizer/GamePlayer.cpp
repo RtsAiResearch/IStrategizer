@@ -180,11 +180,11 @@ void GamePlayer::OnEntityDestroy(Message* pMsg)
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityRenegade(Message* pMsg)
 {
-    EntityRenegadeMessage *pRenMsg = nullptr;
+    EntityCreateMessage *pRenMsg = nullptr;
     GameEntity *pEntity = nullptr;
     TID entityId;
 
-    pRenMsg = (EntityRenegadeMessage*)pMsg;
+    pRenMsg = (EntityCreateMessage*)pMsg;
 
     entityId = pRenMsg->Data()->EntityId;
 

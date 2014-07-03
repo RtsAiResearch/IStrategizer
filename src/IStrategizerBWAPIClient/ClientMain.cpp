@@ -293,7 +293,7 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
 {
     EntityMessageData *pData = nullptr;
-    EntityRenegadeMessage *pMsg = nullptr;
+    EntityCreateMessage *pMsg = nullptr;
 
     pData = new EntityMessageData;
     _ASSERTE(pData);
@@ -314,7 +314,7 @@ void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
         pData->Y = p_pUnit->getTop();
     }
 
-    pMsg = new EntityRenegadeMessage(Broodwar->getFrameCount(), MSG_EntityRenegade, pData);
+    pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityRenegade, pData);
     _ASSERTE(pMsg);
 
     g_MessagePump.Send(pMsg);

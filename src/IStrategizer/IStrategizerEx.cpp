@@ -1,5 +1,5 @@
 #include "IStrategizerEx.h"
-
+#include "BotStatistics.h"
 #include "MessagePump.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "LearningFromHumanDemonstration.h"
@@ -40,6 +40,11 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
         if (m_param.Phase == PHASE_Offline)
         {
             m_pCaseLearning->Learn();
+        }
+        else
+        {
+            GameEndMessage* pMsg = static_cast<GameEndMessage*>(p_message);
+            m_pStatistics->Add(pMsg->Data());
         }
         break;
 
@@ -116,7 +121,6 @@ bool IStrategizerEx::Init()
     case  PHASE_Offline:
         m_pCaseLearning = new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy);
         m_pCaseLearning->Init();
-        g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
         break;
 
     case PHASE_Online:
@@ -130,6 +134,7 @@ bool IStrategizerEx::Init()
         break;
     }
 
+    g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
 

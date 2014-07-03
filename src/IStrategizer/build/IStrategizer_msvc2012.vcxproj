@@ -27,6 +27,7 @@
     <ClInclude Include="..\AttackManager.h" />
     <ClInclude Include="..\AttributesMetaData.h" />
     <ClInclude Include="..\Battle.h" />
+    <ClInclude Include="..\BotStatistics.h" />
     <ClInclude Include="..\BuildActionEx.h" />
     <ClInclude Include="..\BuildBaseGoal.h" />
     <ClInclude Include="..\BuildInfrastructureGoal.h" />
@@ -68,6 +69,7 @@
     <ClInclude Include="..\GamePlayer.h" />
     <ClInclude Include="..\GameRace.h" />
     <ClInclude Include="..\GameResearch.h" />
+    <ClInclude Include="..\GameStatistics.h" />
     <ClInclude Include="..\GameTechTree.h" />
     <ClInclude Include="..\GameTrace.h" />
     <ClInclude Include="..\GameType.h" />
@@ -137,6 +139,7 @@
     <ClCompile Include="..\AttackEntityAction.cpp" />
     <ClCompile Include="..\AttackGroundAction.cpp" />
     <ClCompile Include="..\Battle.cpp" />
+    <ClCompile Include="..\BotStatistics.cpp" />
     <ClCompile Include="..\BuildActionEx.cpp" />
     <ClCompile Include="..\BuildInfrastructureGoal.cpp" />
     <ClCompile Include="..\BuildingDescription.cpp" />

@@ -15,6 +15,7 @@ namespace IStrategizer
     class LearningFromHumanDemonstration;
     class OnlineCaseBasedPlannerEx;
     class RtsGame;
+    class BotStatistics;
 
     struct IStrategizerParam
     {
@@ -49,6 +50,7 @@ namespace IStrategizer
         WorldClock m_clock;
         AttackManager m_attackManager;
         std::vector<PlanStepParameters> m_armyTrainOrder;
+        BotStatistics* m_pStatistics;
     };
 }
 
