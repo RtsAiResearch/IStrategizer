@@ -30,9 +30,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         IOlcbpPlan::NodeQueue actionQ;
         IOlcbpPlan::NodeQueue goalQ;
         typedef unsigned GoalKey;
-        typedef int Amount;
-        typedef pair<IOlcbpPlan::NodeID, Amount> GoalEntry;
-        map<GoalKey, GoalEntry> goalTable;
+        map<GoalKey, IOlcbpPlan::NodeID> goalTable;
 
         // 1st pass: get ready nodes only
         GetReachableReadyNodes(actionQ, goalQ);
@@ -45,28 +43,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 
             if (!IsNodeDone(goalQ.front()))
             {
-                // First time goal type is seen, consider it as active
-                if (goalTable.count(typeKey) == 0)
-                {
-                    GoalEntry entry;
-                    entry.first = goalQ.front();
-                    entry.second = 0;
-
-                    if (pCurrGoal->Parameters().Contains(PARAM_Amount))
-                        entry.second = pCurrGoal->Parameter(PARAM_Amount);
-
-                    goalTable.insert(make_pair(typeKey, entry));
-                }
-                // Goal type is already bound to a node, then bind current node if 
-                // current node amount is less than the already bound node amount
-                else if(pCurrGoal->Parameters().Contains(PARAM_Amount))
-                {
-                    if (pCurrGoal->Parameter(PARAM_Amount) <= goalTable[typeKey].second)
-                    {
-                        goalTable[typeKey].first = goalQ.front();
-                        goalTable[typeKey].second = pCurrGoal->Parameter(PARAM_Amount);
-                    }
-                }
+                goalTable[typeKey] = goalQ.front();
             }
 
             goalQ.pop();
@@ -79,8 +56,8 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             // It is normal that a previous updated goal node during this pass 
             // failed and its snippet was destroyed, and as a result a node that
             // was considered for update does not exist anymore
-            if (m_pOlcbpPlan->Contains(goalEntry.second.first))
-                UpdateGoalNode(goalEntry.second.first, clock);
+            if (m_pOlcbpPlan->Contains(goalEntry.second))
+                UpdateGoalNode(goalEntry.second, clock);
         }
 
         while (!actionQ.empty())
