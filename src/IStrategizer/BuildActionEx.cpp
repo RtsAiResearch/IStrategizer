@@ -209,9 +209,14 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
         LogInfo("Builder=%d was selected to execute build", _builderId);
 
         pGameBuilder->Lock(this);
+
+        _ASSERTE(!_buildArea.IsNull());
         // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
-        _ASSERTE(game.GetEntityType(buildingType)->Attr(ECATTR_IsSpecialBuilding) || !_buildArea.IsNull());
-        _buildArea.Lock(this);
+        if (!game.GetEntityType(buildingType)->Attr(ECATTR_IsSpecialBuilding))
+        {
+            _buildArea.Lock(this);
+        }
+
         _ASSERTE(!_requiredResources.IsNull());
         _requiredResources.Lock(this);
         bOk = pGameBuilder->Build(buildingType, _buildArea.Pos());
