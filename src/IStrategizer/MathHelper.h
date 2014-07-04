@@ -141,7 +141,7 @@ namespace IStrategizer
 #define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
     +(uint32_t)(((const uint8_t *)(d))[0]) )
 #endif
-        uint32_t SuperFastHash(_In_ const char* data, _In_ int len) 
+        static uint32_t SuperFastHash(_In_ const char* data, _In_ int len) 
         {
             uint32_t hash = len, tmp;
             int rem;

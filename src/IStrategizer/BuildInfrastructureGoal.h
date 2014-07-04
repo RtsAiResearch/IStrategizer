@@ -20,7 +20,6 @@ namespace IStrategizer
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         bool Merge(PlanStepEx* planStep);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_EntityClassId) + Parameter(PARAM_Amount); }
 
     protected:
         void InitializePostConditions();

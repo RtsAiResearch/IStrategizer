@@ -32,6 +32,7 @@ namespace IStrategizer
         virtual void InitializePreConditions() = 0;
         virtual void OnSucccess(RtsGame& game, const WorldClock& p_clock) {};
         virtual void OnFailure(RtsGame& game, const WorldClock& p_clock) {};
+        unsigned Hash(bool quantified /* = true */) const;
 
     public:
         int Type() const { return PlanStepEx::_stepTypeId; }

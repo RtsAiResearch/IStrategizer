@@ -1,4 +1,5 @@
 #include "PlanStepEx.h"
+#include "MathHelper.h"
 #include <cstdio>
 #include <algorithm>
 #include "Logger.h"
@@ -196,4 +197,24 @@ std::string PlanStepEx::ToString(bool minimal) const
     }
 
     return stepDescription;
+}
+//----------------------------------------------------------------------------------------------
+unsigned PlanStepEx::Hash(bool quantified) const
+{
+    auto& params = Parameters();
+    // + 1 to include the StepTypeId since it is used as well in the hashing
+    size_t numWords = (params.size() + 1);
+    vector<int> str(numWords);
+
+    str.push_back(StepTypeId());
+    for (auto& param : Parameters())
+    {
+        if (!quantified && param.first == PARAM_Amount)
+            continue;
+
+        str.push_back(param.second);
+    }
+
+    unsigned h = MathHelper::SuperFastHash((const char*)&*str.cbegin(), str.size() * sizeof(int));
+    return h;
 }

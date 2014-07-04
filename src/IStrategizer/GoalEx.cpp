@@ -1,4 +1,5 @@
 #include "GoalEx.h"
+#include "MathHelper.h"
 #include <cassert>
 
 using namespace IStrategizer;
@@ -15,11 +16,7 @@ void GoalEx::Reset(RtsGame& game, const WorldClock& p_clock)
         State(ESTATE_NotPrepared, game, p_clock);
 }
 //----------------------------------------------------------------------------------------------
-unsigned GoalEx::Hash() const
-{
-
-}
-//----------------------------------------------------------------------------------------------
 unsigned GoalEx::Key() const
 {
+    return Hash(false);
 }

@@ -3,7 +3,10 @@
 #include "Logger.h"
 #include "CompositeExpression.h"
 #include "RtsGame.h"
+#include "MathHelper.h"
+#include "CellFeature.h"
 
+using namespace std;
 using namespace IStrategizer;
 
 Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
@@ -112,4 +115,31 @@ void Action::Copy(IClonable* p_dest)
 
     Action* m_dest = static_cast<Action*>(p_dest);
     m_dest->_preCondition = _preCondition ? static_cast<CompositeExpression*>(_preCondition->Clone()) : nullptr;
+}
+//////////////////////////////////////////////////////////////////////////
+unsigned Action::Hash(bool quantified) const
+{
+    auto& params = Parameters();
+    // + 1 to include the StepTypeId since it is used as well in the hashing
+    size_t numWords = (params.size() + 1);
+    vector<int> str(numWords);
+
+    PlanStepParameters dummyParams;
+    CellFeature::Null().To(dummyParams);
+
+    str.push_back(StepTypeId());
+    for (auto& param : Parameters())
+    {
+        if (!quantified && param.first == PARAM_Amount)
+            continue;
+
+        // FIXME: for now we ignore cell features for simplicity
+        if (dummyParams.count(param.first) > 0)
+            continue;
+
+        str.push_back(param.second);
+    }
+
+    unsigned h = MathHelper::SuperFastHash((const char*)&*str.cbegin(), str.size() * sizeof(int));
+    return h;
 }

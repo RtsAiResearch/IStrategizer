@@ -59,7 +59,7 @@ namespace IStrategizer
         virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         virtual bool Equals(PlanStepEx* p_planStep) = 0;
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
-        virtual unsigned Hash() const = 0;
+        virtual unsigned Hash(bool quantified = true) const;
         virtual std::string ToString(bool minimal = false) const;
         virtual ~PlanStepEx() {}
         PlanStepParameters& Parameters() { return _params; }

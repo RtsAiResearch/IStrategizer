@@ -29,7 +29,6 @@
     <ClInclude Include="..\Battle.h" />
     <ClInclude Include="..\BotStatistics.h" />
     <ClInclude Include="..\BuildActionEx.h" />
-    <ClInclude Include="..\BuildBaseGoal.h" />
     <ClInclude Include="..\BuildInfrastructureGoal.h" />
     <ClInclude Include="..\BuildingDescription.h" />
     <ClInclude Include="..\CaseBasedReasonerEx.h" />
@@ -94,7 +93,6 @@
     <ClInclude Include="..\MessagePumpSubject.h" />
     <ClInclude Include="..\MetaData.h" />
     <ClInclude Include="..\MoveAction.h" />
-    <ClInclude Include="..\MoveEntityAction.h" />
     <ClInclude Include="..\MultiIndex.h" />
     <ClInclude Include="..\MultiIndexContainer.h" />
     <ClInclude Include="..\Not.h" />

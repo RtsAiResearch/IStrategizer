@@ -232,6 +232,26 @@ void CaseVisualizer::on_btnReloadCB_clicked()
     }
 }
 //----------------------------------------------------------------------------------------------
+void CaseVisualizer::VerifyHashCollisions()
+{
+    map<unsigned, vector<GoalEx*>> hashes;
+
+    for (auto pCase : m_pCaseBase->CaseContainer)
+    {
+        auto& r = hashes.operator[](pCase->Goal()->Hash());
+        
+        // Collision detected!
+        if (!r.empty() && !r.back()->Equals(pCase->Goal()))
+        {
+            QMessageBox::warning(this, tr("Goal Hash Collision"),
+                QString("'%1' collides with '%2'").arg(
+                QString(r.back()->ToString().c_str()), QString(pCase->Goal()->ToString().c_str())));
+        }
+
+        r.push_back(pCase->Goal());
+    }
+}
+//----------------------------------------------------------------------------------------------
 void CaseVisualizer::OpenCaseBase(QString cbFilename)
 {
     if (cbFilename.isEmpty())
@@ -254,6 +274,8 @@ void CaseVisualizer::OpenCaseBase(QString cbFilename)
         m_caseBasePath = cbFilename;
         m_pCaseBase = new CaseBaseEx();
         g_ObjectSerializer.Deserialize(m_pCaseBase, string(cbFilename.toLocal8Bit()));
+        VerifyHashCollisions();
+
         Refresh();
         SelectCase(0);
     }
@@ -371,8 +393,10 @@ void CaseVisualizer::DuplicateCase(CaseEx* pCase)
         g_ObjectSerializer.Serialize(pCase, temp.fileName().toStdString());
         CaseEx* pClonedCase = new CaseEx;
         g_ObjectSerializer.Deserialize(pClonedCase, temp.fileName().toStdString());
-
+        pClonedCase->Goal()->Id(GoalEx::GenerateID());
+        
         m_pCaseBase->CaseContainer.push_back(pClonedCase);
+
         Refresh();
     }
 }

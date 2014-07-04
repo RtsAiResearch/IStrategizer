@@ -57,9 +57,6 @@
     <ClInclude Include="..\BuildActionEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\BuildBaseGoal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\BuildInfrastructureGoal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -235,9 +232,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\MoveAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MoveEntityAction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\MultiIndex.h">

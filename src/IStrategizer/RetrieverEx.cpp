@@ -197,6 +197,7 @@ CaseEx* RetrieverEx::Retrieve(const AbstractRetriever::RetrieveOptions& options)
         if (options.ExcludedCases.count(pCase) > 0)
         {
             LogInfo("Case %s is excluded from retrieval, excluding by goal instance", pCase->Goal()->ToString().c_str());
+            continue;
         }
         else if (options.ExcludedGoalHashes.count(pCase->Goal()->Hash()))
         {

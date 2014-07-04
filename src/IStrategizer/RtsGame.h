@@ -115,7 +115,7 @@ namespace IStrategizer
 
     struct RtsGameModelAttributeWeights
     {
-        int W[COUNT(RtsGameModelAttributeWeight)];
+        float W[COUNT(RtsGameModelAttributeWeight)];
     };
 
     class RtsGameModel
@@ -142,7 +142,7 @@ namespace IStrategizer
         float Distance(_In_ const RtsGameModel& other, _In_ const RtsGameModelAttributeWeights& weights) const;
 
     private:
-        RtsGameModel(const RtsGameModel&);                 \
+        RtsGameModel(const RtsGameModel&);
         void operator=(const RtsGameModel&);
 
         const RtsGame& m_game;

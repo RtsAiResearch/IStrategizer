@@ -19,7 +19,6 @@ namespace IStrategizer
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
         bool Merge(PlanStepEx* planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_EntityClassId) + Parameter(PARAM_Amount); }
 
     protected:
         void InitializePostConditions();

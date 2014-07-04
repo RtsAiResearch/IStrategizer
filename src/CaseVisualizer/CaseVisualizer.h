@@ -56,6 +56,7 @@ namespace IStrategizer
         CrossMap<unsigned, std::string> m_idLookup;
         bool InitIdLookup();
         void CreateToolBox();
+        void VerifyHashCollisions();
 
         private slots:
             void on_actionSaveAs_triggered();
