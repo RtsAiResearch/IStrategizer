@@ -168,25 +168,21 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
         }
         else
         {
-            CaseSet exclusions = GetNodeData(currentNode).TriedCases;
-
             IOlcbpPlan::NodeID satisfyingGoalNode = GetNodeData(currentNode).SatisfyingGoal;
+            AbstractRetriever::RetrieveOptions options;
+            options.ExcludedCases = GetNodeData(currentNode).TriedCases;
 
             if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
             {
                 LogInfo("Excluding satisfying goal node %s to avoid recursive plan expansion", m_pOlcbpPlan->GetNode(satisfyingGoalNode)->ToString().c_str());
                 // Add belonging case to exclusion to avoid recursive expansion of plans
                 _ASSERTE(GetNodeData(satisfyingGoalNode).BelongingCase != nullptr);
-                exclusions.insert(GetNodeData(satisfyingGoalNode).BelongingCase);
+                options.ExcludedGoalHashes.insert(GetNodeData(satisfyingGoalNode).BelongingCase->Goal()->Hash());
             }
 
             pCurrentGoalNode->AdaptParameters(*g_Game);
-            AbstractRetriever::RetrieveOptions options;
             options.GoalTypeId = (GoalType)pCurrentGoalNode->StepTypeId();
             options.pGameState = g_Game;
-            options.ExcludedCases = exclusions;
-            for (auto pCase : exclusions)
-                options.ExcludedGoalHashes.insert(pCase->Goal()->Hash());
 
             options.Parameters = pCurrentGoalNode->Parameters();
             CaseEx* pCandidateCase = m_pCbReasoner->Retriever()->Retrieve(options);
