@@ -15,7 +15,6 @@ namespace IStrategizer
     public:
         TrainForceGoal();
         TrainForceGoal(const PlanStepParameters& p_parameters);
-        void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
         bool Merge(PlanStepEx* planStep);
@@ -26,7 +25,7 @@ namespace IStrategizer
 
     private:
         std::map<EntityClassType, int> m_trainedUnits;
-        std::vector<GoalEx*> m_succeededInstances;
+        EntitySet m_usedUnits;
     };
 }
 #endif // TRAINFORCEGOAL_H

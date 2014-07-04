@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <map>
-#include <set>
+#include <unordered_set>
 #include "MetaData.h"
 
 #ifndef SVECTOR_H
@@ -43,7 +43,7 @@ namespace IStrategizer
     typedef int TPlayer;
     typedef int TID;
 
-    typedef std::set<TID> EntitySet;
+    typedef std::unordered_set<TID> EntitySet;
     typedef std::vector<TID> EntityList;
     typedef std::map<ParameterType, int> ParameterWeights;
 

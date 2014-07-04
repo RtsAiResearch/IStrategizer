@@ -45,14 +45,14 @@ void IStrategizer::AdapterEx::InitializePredefinedRankedStates()
     IsRankedStatesInitialized = true;
 
     WorkerStatesRank.push_back(OBJSTATE_Idle);
-    WorkerStatesRank.push_back(OBJSTATE_Gathering);
+    WorkerStatesRank.push_back(OBJSTATE_GatheringPrimary);
+    WorkerStatesRank.push_back(OBJSTATE_GatheringSecondary);
 
     AttackerStatesRank.push_back(OBJSTATE_Idle);
 
     EntityToMoveStatesRank.push_back(OBJSTATE_Idle);
     EntityToMoveStatesRank.push_back(OBJSTATE_UnderAttack);
     EntityToMoveStatesRank.push_back(OBJSTATE_Attacking);
-    EntityToMoveStatesRank.push_back(OBJSTATE_Gathering);
     EntityToMoveStatesRank.push_back(OBJSTATE_Moving);
 
     ProducingBuildingStatesRank[OBJSTATE_Idle] = 0;

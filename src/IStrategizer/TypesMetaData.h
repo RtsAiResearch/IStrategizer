@@ -270,7 +270,8 @@ namespace IStrategizer
         OBJSTATE_Idle,
         OBJSTATE_Moving,
         OBJSTATE_Constructing,
-        OBJSTATE_Gathering,
+        OBJSTATE_GatheringPrimary,
+        OBJSTATE_GatheringSecondary,
         OBJSTATE_Training,
         OBJSTATE_Attacking,
         OBJSTATE_UnderAttack,
@@ -281,10 +282,12 @@ namespace IStrategizer
     Enums[OBJSTATE_Idle] =  "Idle"; \
     Enums[OBJSTATE_Moving] = "Moving"; \
     Enums[OBJSTATE_Constructing] = "Constructing"; \
-    Enums[OBJSTATE_Gathering] = "Gathering"; \
+    Enums[OBJSTATE_GatheringPrimary] = "Gathering Primary"; \
+    Enums[OBJSTATE_GatheringSecondary] = "Gathering Secondary"; \
     Enums[OBJSTATE_Training] = "Training"; \
     Enums[OBJSTATE_Attacking] = "Attacking"; \
-    Enums[OBJSTATE_UnderAttack] = "Under Attack";
+    Enums[OBJSTATE_UnderAttack] = "Under Attack"; \
+    Enums[OBJSTATE_END] = "Undefined";
     //---------------------------------------------------------------------------
 #define Prefix_StrategyType STRTYPE
     enum StrategyType

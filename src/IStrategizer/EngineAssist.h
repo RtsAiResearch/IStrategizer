@@ -27,6 +27,7 @@ namespace IStrategizer
         CheckReturn bool DoesEntityClassExist(IN std::pair<EntityClassType, unsigned> p_entityType, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool DoesEntityClassExist(IN const std::map<EntityClassType, unsigned> &p_entityTypes, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool IsEntityObjectReady(IN TID p_entityObject, IN PlayerType p_playerType = PLAYER_Self);
+        CheckReturn bool IsEntityInState(IN TID p_entityObject, IN ObjectStateType stateType, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool DoesEntityObjectExist(IN TID p_entityObject, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool DoesEntityObjectExist(IN const EntityList &p_entityObjects, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector2& p_point, IN const unsigned p_maxDistance);

@@ -70,7 +70,7 @@ namespace IStrategizer
         int CheckTransitions(RtsGame& game, const WorldClock& clock)
         {
             ControllerTraits<TController>::ConstType battle = m_controller;
-            std::set<TID> army = TControllerTraits::Army(battle);
+            EntitySet army = TControllerTraits::Army(battle);
             bool attackStarted = false;
 
             for (TID attackerId : army)

@@ -33,7 +33,7 @@ namespace IStrategizer
         void Update(RtsGame& game, const WorldClock& clock)
         {
             ControllerTraits<TController>::ConstType battle = m_controller;
-            std::set<TID> army = TControllerTraits::Army(battle);
+            EntitySet army = TControllerTraits::Army(battle);
             TID targetId = DONT_CARE;
 
             for (TID attackerId : army)
@@ -52,7 +52,7 @@ namespace IStrategizer
         int CheckTransitions(RtsGame& game, const WorldClock& clock)
         {
             ControllerTraits<TController>::ConstType battle = m_controller;
-            std::set<TID> army = TControllerTraits::Army(battle);
+            EntitySet army = TControllerTraits::Army(battle);
             bool armyEmpty = army.empty();
 
             return armyEmpty ? Finished : m_targetDestroyed ? Deploy : Attack;

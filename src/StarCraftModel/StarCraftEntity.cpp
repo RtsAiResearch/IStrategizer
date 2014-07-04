@@ -123,8 +123,10 @@ ObjectStateType StarCraftEntity::FetchState() const
         return OBJSTATE_Idle;
     else if (isBeingConstructed || (isIdle && !isCompleted))
         return OBJSTATE_BeingConstructed;
-    else if (isGatheringGas || isGatheringMinerals)
-        return OBJSTATE_Gathering;
+    else if (isGatheringMinerals)
+        return OBJSTATE_GatheringPrimary;
+    else if (isGatheringGas)
+        return OBJSTATE_GatheringSecondary;
     else if (isConstructing)
         return OBJSTATE_Constructing;
     else if (isMoving)
