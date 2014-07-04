@@ -10,7 +10,7 @@
 using namespace IStrategizer;
 
 //-------------------------------------------------------------------------------------------------------------------------
-GoalEx* GoalFactory::GetGoal(GoalType p_goalType, PlanStepParameters& p_parameters, bool p_initConditions)
+GoalEx* GoalFactory::GetGoal(GoalType p_goalType, const PlanStepParameters& p_parameters, bool p_initConditions)
 {
     GoalEx* goal;
 

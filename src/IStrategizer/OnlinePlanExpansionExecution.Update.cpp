@@ -184,7 +184,10 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
             AbstractRetriever::RetrieveOptions options;
             options.GoalTypeId = (GoalType)pCurrentGoalNode->StepTypeId();
             options.pGameState = g_Game;
-            options.Exclusions = exclusions;
+            options.ExcludedCases = exclusions;
+            for (auto pCase : exclusions)
+                options.ExcludedGoalHashes.insert(pCase->Goal()->Hash());
+
             options.Parameters = pCurrentGoalNode->Parameters();
             CaseEx* pCandidateCase = m_pCbReasoner->Retriever()->Retrieve(options);
 

@@ -25,7 +25,8 @@ namespace IStrategizer
         virtual void AdaptParameters(RtsGame& game) { }
         virtual bool Merge(PlanStepEx* planStep) = 0;
         unsigned Key() const;
-        ParameterWeights GetWeights() const;
+        unsigned Hash() const;
+
     };
 }
 

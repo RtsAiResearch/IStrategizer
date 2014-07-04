@@ -53,7 +53,7 @@ OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() :
     _caseBasedReasoner(nullptr),
     _onlineExpansionExecution(nullptr) {}
 //----------------------------------------------------------------------------------------------
-void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
+bool OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
 {
     AbstractRetainer* m_retainer = new RetainerEx(g_CaseBasePath);
     AbstractRetriever* m_retriever = new RetrieverEx(m_retainer);
@@ -61,9 +61,15 @@ void OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
     AbstractAdapter* m_adapter = new AdapterEx();
     _caseBasedReasoner = new CaseBasedReasonerEx(m_retainer, m_revisor, m_retriever, m_adapter);
 
-    _caseBasedReasoner->Initialize();
+    if (!_caseBasedReasoner->Init())
+    {
+        LogError("Casebased reasoner initialization failed");
+        return false;
+    }
 
     _onlineExpansionExecution = new OnlinePlanExpansionExecution(p_initialGoal, _caseBasedReasoner);
+
+    return true;
 }
 //----------------------------------------------------------------------------------------------
 void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)

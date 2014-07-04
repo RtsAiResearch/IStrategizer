@@ -24,7 +24,7 @@ namespace IStrategizer
         inline AbstractReviser* Reviser() const { return _reviser; }
         inline AbstractRetriever* Retriever() const { return _retriever; }
         inline AbstractAdapter* Adapter() const { return _adapter; }
-        void Initialize();
+        bool Init();
         virtual ~CaseBasedReasonerEx();
     };
 }

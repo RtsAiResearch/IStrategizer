@@ -18,17 +18,16 @@ namespace IStrategizer
         struct RetrieveOptions
         {
             GoalType GoalTypeId;
-            
             PlanStepParameters Parameters;
-
             RtsGame* pGameState;
-
-            std::set<CaseEx*> Exclusions;
+            std::set<CaseEx*> ExcludedCases;
+            std::set<unsigned> ExcludedGoalHashes;
         };
 
         AbstractRetriever(AbstractRetainer* p_pRetainer, const char* p_pName) : EngineComponent(p_pName), m_pRetainer(p_pRetainer) {}
-        virtual CaseEx* Retrieve(RetrieveOptions options) = 0;
-        
+        virtual CaseEx* Retrieve(const RetrieveOptions& options) = 0;
+        virtual bool Init() = 0;
+
     protected:
         AbstractRetainer *m_pRetainer;
     };
