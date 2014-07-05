@@ -106,6 +106,9 @@ void GraphScene::View(IOlcbpPlan* pPlan, ConstOlcbpPlanNodeDataMapPtr pNodeData)
 {
     m_pGraph = pPlan;
     m_pGraphNodeData = pNodeData;
+
+    if (pPlan == nullptr)
+        QApplication::postEvent(this, new QGraphStructureChangeEvent(nullptr));
 }
 //----------------------------------------------------------------------------------------------
 void GraphScene::ReconstructScene()

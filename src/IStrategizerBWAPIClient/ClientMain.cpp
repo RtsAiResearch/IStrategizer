@@ -43,13 +43,12 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     m_pGameModel(nullptr),
     m_isLearning(false),
     m_pTraceCollector(nullptr),
-    m_enemyPlayerUnitsCollected(false)
+    m_enemyPlayerUnitsCollected(false),
+    m_pPlanGraphView(nullptr)
 {
     ui.setupUi(this);
     IStrategizer::Init();
     g_MessagePump.RegisterForMessage(MSG_PlanStructureChange, this);
-
-    m_updateTimerId = startTimer(1000);
 }
 //////////////////////////////////////////////////////////////////////////
 ClientMain::~ClientMain()
@@ -94,9 +93,6 @@ void ClientMain::InitIStrategizer()
         m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
         _ASSERTE(m_pIStrategizer);
 
-        m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
-        m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
-
         g_Database.Init();
 
         if (!m_pIStrategizer->Init())
@@ -115,12 +111,6 @@ void ClientMain::InitIStrategizer()
         // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
         // and the engine Enums[*] table is fully initialized
         InitIdLookup();
-
-        if (!m_isLearning)
-        {
-            auto pPlanner = m_pIStrategizer->Planner()->ExpansionExecution();
-            m_pPlanGraphView->View(pPlanner->Plan(), &pPlanner->NodeData());
-        }
     }
     catch (IStrategizer::Exception& e)
     {
@@ -130,39 +120,54 @@ void ClientMain::InitIStrategizer()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
 {
-    IMViewWidget    *pIMView = nullptr;
-    QGridLayout        *gridLayout;
+    if (m_IMViews.empty())
+    {
+        IMViewWidget    *pIMView = nullptr;
+        QGridLayout        *gridLayout;
 
-    // 1. Init Building Data IM
-    pIMView = new IMViewWidget;
-    m_pBldngDataIMWdgt= pIMView;
-    m_IMViews.push_back(pIMView);
+        // 1. Init Building Data IM
+        pIMView = new IMViewWidget;
+        m_pBldngDataIMWdgt= pIMView;
+        m_IMViews.push_back(pIMView);
 
-    gridLayout = new QGridLayout;
-    ui.tbBuildingIM->setLayout(gridLayout);
-    ui.tbBuildingIM->layout()->setAlignment(Qt::AlignCenter);
-    ui.tbBuildingIM->layout()->addWidget(pIMView);
-    ui.tbBuildingIM->layout()->setMargin(0);
-    ui.tbBuildingIM->layout()->setSpacing(0);
+        gridLayout = new QGridLayout;
+        ui.tbBuildingIM->setLayout(gridLayout);
+        ui.tbBuildingIM->layout()->setAlignment(Qt::AlignCenter);
+        ui.tbBuildingIM->layout()->addWidget(pIMView);
+        ui.tbBuildingIM->layout()->setMargin(0);
+        ui.tbBuildingIM->layout()->setSpacing(0);
 
-    // 2. Init Ground Control IM
-    pIMView = new IMViewWidget;
-    m_pGrndCtrlIMWdgt = pIMView;
-    m_IMViews.push_back(pIMView);
+        // 2. Init Ground Control IM
+        pIMView = new IMViewWidget;
+        m_pGrndCtrlIMWdgt = pIMView;
+        m_IMViews.push_back(pIMView);
 
-    gridLayout = new QGridLayout;
-    ui.tbGrndCtrlIM->setLayout(gridLayout);
-    ui.tbGrndCtrlIM->layout()->setAlignment(Qt::AlignCenter);
-    ui.tbGrndCtrlIM->layout()->addWidget(pIMView);
-    ui.tbGrndCtrlIM->layout()->setMargin(0);
-    ui.tbGrndCtrlIM->layout()->setSpacing(0);
+        gridLayout = new QGridLayout;
+        ui.tbGrndCtrlIM->setLayout(gridLayout);
+        ui.tbGrndCtrlIM->layout()->setAlignment(Qt::AlignCenter);
+        ui.tbGrndCtrlIM->layout()->addWidget(pIMView);
+        ui.tbGrndCtrlIM->layout()->setMargin(0);
+        ui.tbGrndCtrlIM->layout()->setSpacing(0);
+    }
+
+    m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
+    m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitPlannerView()
 {
-    GraphScene *pGraphScene = new GraphScene(&m_idLookup);
-    m_pPlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
-    ui.tbPlanner->layout()->addWidget(m_pPlanGraphView);
+    if (m_pPlanGraphView == nullptr)
+    {
+        GraphScene *pGraphScene = new GraphScene(&m_idLookup);
+        m_pPlanGraphView = new PlanGraphView(pGraphScene, &m_idLookup);
+        ui.tbPlanner->layout()->addWidget(m_pPlanGraphView);
+    }
+
+    if (!m_isLearning)
+    {
+        auto pPlanner = m_pIStrategizer->Planner()->ExpansionExecution();
+        m_pPlanGraphView->View(pPlanner->Plan(), &pPlanner->NodeData());
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()
@@ -186,20 +191,11 @@ void ClientMain::FinalizeIStrategizer()
     m_pGameModel = nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::FinalizeViews()
-{
-    for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
-        m_IMViews[i]->SetIM(nullptr);
-}
-//////////////////////////////////////////////////////////////////////////
 void ClientMain::showEvent(QShowEvent *pEvent)
 {
     if (!ClientInitialized())
     {
         InitClient();
-        InitIMView();
-        InitPlannerView();
-        InitStatsView();
     }
 
     QMainWindow::showEvent(pEvent);
@@ -215,13 +211,16 @@ void ClientMain::OnClientLoopStart()
 {
     m_enemyPlayerUnitsCollected = false;
     InitIStrategizer();
+
+    QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiInit));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientLoopEnd()
 {
     FinalizeIStrategizer();
-    // Give IM widgets a chance to clear its buffer and redraw
-    UpdateViews();
+
+    QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiFinalize));
+
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnSendText(const string& p_text)
@@ -457,33 +456,37 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitStatsView()
 {
-    ui.tblWorkerState->clear();
-    ui.tblWorkerState->setColumnCount(2);
-    ui.tblWorkerState->setRowCount(COUNT(ObjectStateType));
-    ui.tblWorkerState->horizontalHeader()->hide();
-    ui.tblWorkerState->verticalHeader()->hide();
-
-    int row = 0;
-
-    for(auto workerState = START(ObjectStateType);
-        workerState != END(ObjectStateType);
-        workerState = (ObjectStateType)((int)workerState + 1))
+    if (ui.tblWorkerState->rowCount() == 0)
     {
-        QTableWidgetItem* cell = new QTableWidgetItem(QString::fromLocal8Bit(Enums[(int)workerState]));
-        cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        QVariant objStateType((int)workerState);
-        ui.tblWorkerState->setItem(row, 0, cell);
+        ui.tblWorkerState->clear();
 
-        cell = new QTableWidgetItem(tr("%1").arg(0));
-        cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        cell->setData(Qt::UserRole, objStateType);
-        ui.tblWorkerState->setItem(row, 1, cell);
+        ui.tblWorkerState->setColumnCount(2);
+        ui.tblWorkerState->setRowCount(COUNT(ObjectStateType));
+        ui.tblWorkerState->horizontalHeader()->hide();
+        ui.tblWorkerState->verticalHeader()->hide();
 
-        ui.tblWorkerState->setRowHeight(row, 20);
-        ++row;
+        int row = 0;
+
+        for(auto workerState = START(ObjectStateType);
+            workerState != END(ObjectStateType);
+            workerState = (ObjectStateType)((int)workerState + 1))
+        {
+            QTableWidgetItem* cell = new QTableWidgetItem(QString::fromLocal8Bit(Enums[(int)workerState]));
+            cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+            QVariant objStateType((int)workerState);
+            ui.tblWorkerState->setItem(row, 0, cell);
+
+            cell = new QTableWidgetItem(tr("%1").arg(0));
+            cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+            cell->setData(Qt::UserRole, objStateType);
+            ui.tblWorkerState->setItem(row, 1, cell);
+
+            ui.tblWorkerState->setRowHeight(row, 20);
+            ++row;
+        }
+
+        ui.tblWorkerState->resizeColumnsToContents();
     }
-
-    ui.tblWorkerState->resizeColumnsToContents();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::timerEvent(QTimerEvent *pEvt)
@@ -493,4 +496,47 @@ void ClientMain::timerEvent(QTimerEvent *pEvt)
         UpdateViews();
         UpdateStatsView();
     }
+}
+//////////////////////////////////////////////////////////////////////////
+bool ClientMain::event(QEvent * pEvt)
+{
+    _ASSERTE(pEvt);
+    ClientEvent evt = (ClientEvent)pEvt->type();
+
+    if (evt == CLNTEVT_UiInit)
+    {
+
+        OnUiInit();
+        return true;
+    }
+    else if (evt == CLNTEVT_UiFinalize)
+    {
+        OnUiFinalize();
+        return true;
+    }
+    else
+    {
+        return QMainWindow::event(pEvt);
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::OnUiInit()
+{
+    InitIMView();
+    InitPlannerView();
+    InitStatsView();
+    m_updateTimerId = startTimer(1000);
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::OnUiFinalize()
+{
+    // Give IM widgets a chance to clear its buffer and redraw
+    UpdateViews();
+
+    for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
+        m_IMViews[i]->SetIM(nullptr);
+
+    m_pPlanGraphView->View(nullptr, nullptr);
+
+    killTimer(m_updateTimerId);
 }

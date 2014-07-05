@@ -25,6 +25,12 @@ class ClientMain : public QMainWindow, public BwapiClient, public IStrategizer::
     Q_OBJECT
 
 public:
+    enum ClientEvent
+    {
+        CLNTEVT_UiInit = (int)(QEvent::User) + 1,
+        CLNTEVT_UiFinalize,
+    };
+
     ClientMain(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~ClientMain();
 
@@ -42,18 +48,20 @@ protected:
     void OnSendText(const std::string &p_text);
     void OnGameFrame();
     void timerEvent(QTimerEvent *pEvt);
+    bool event(QEvent * pEvt);
+    void OnUiInit();
+    void OnUiFinalize();
 
 private:
     void InitIStrategizer();
     void InitIMView();
+    void InitStatsView();
+    void InitPlannerView();
+    void FinalizeIStrategizer();
     void UpdateViews();
     void UpdateStatsView();
-    void FinalizeIStrategizer();
-    void InitPlannerView();
-    void FinalizeViews();
     void InitIdLookup();
     void NotifyMessegeSent(IStrategizer::Message* p_pMessage);
-    void InitStatsView();
     Ui::ClientMainClass                ui;
     IStrategizer::IStrategizerEx    *m_pIStrategizer;
     IStrategizer::RtsGame            *m_pGameModel;
