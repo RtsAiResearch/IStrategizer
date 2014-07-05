@@ -41,6 +41,7 @@ protected:
     void OnUnitRenegade(BWAPI::Unit p_pUnit);
     void OnSendText(const std::string &p_text);
     void OnGameFrame();
+    void timerEvent(QTimerEvent *pEvt);
 
 private:
     void InitIStrategizer();
@@ -52,7 +53,7 @@ private:
     void FinalizeViews();
     void InitIdLookup();
     void NotifyMessegeSent(IStrategizer::Message* p_pMessage);
-
+    void InitStatsView();
     Ui::ClientMainClass                ui;
     IStrategizer::IStrategizerEx    *m_pIStrategizer;
     IStrategizer::RtsGame            *m_pGameModel;
@@ -65,6 +66,7 @@ private:
     IStrategizer::PlanGraphView *m_pPlanGraphView;
     bool m_enemyPlayerUnitsCollected;
     std::map<int, std::pair<IStrategizer::RtsGame*, IStrategizer::RtsGame*>> m_snapshots;
+    int m_updateTimerId;
 };
 
 #endif // CLIENTMAIN_H

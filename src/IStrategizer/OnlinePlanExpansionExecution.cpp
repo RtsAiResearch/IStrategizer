@@ -130,7 +130,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
         }
     }
 
-    int nodeAddRemoveDelta = AdaptSnippet(expansionGoalNodeId);
+    int nodeAddRemoveDelta = 0; //AdaptSnippet(expansionGoalNodeId);
     // Adaptation should leave at least 1 node in the snippet
     _ASSERTE((int)pCasePlan->Size() + nodeAddRemoveDelta > 0);
     size_t adaptedSnippetSize = (size_t)((int)pCasePlan->Size() + nodeAddRemoveDelta);

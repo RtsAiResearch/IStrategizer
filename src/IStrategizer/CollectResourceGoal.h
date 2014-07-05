@@ -30,8 +30,10 @@ namespace IStrategizer
         std::set<int> m_succeededPrimaryGatherersCount;
         std::set<int> m_succeededSecondaryGatherersCount;
 
-        int GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) const;
+        int GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) ;
         void AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, std::vector<GoalEx*>& succeededInstances);
+
+        std::map<ResourceType, std::set<TID>> m_observedGatherers;
     };
 }
 #endif // COLLECTRESOURCEGOAL_H

@@ -26,6 +26,9 @@
 #include "PlanGraphView.h"
 #include "ObjectSerializer.h"
 #include "WorldMap.h"
+#include "GamePlayer.h"
+#include "GameEntity.h"
+#include <QTableWidget>
 
 using namespace IStrategizer;
 using namespace BWAPI;
@@ -45,6 +48,8 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     ui.setupUi(this);
     IStrategizer::Init();
     g_MessagePump.RegisterForMessage(MSG_PlanStructureChange, this);
+
+    m_updateTimerId = startTimer(1000);
 }
 //////////////////////////////////////////////////////////////////////////
 ClientMain::~ClientMain()
@@ -194,6 +199,7 @@ void ClientMain::showEvent(QShowEvent *pEvent)
         InitClient();
         InitIMView();
         InitPlannerView();
+        InitStatsView();
     }
 
     QMainWindow::showEvent(pEvent);
@@ -349,30 +355,31 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateStatsView()
 {
-    float engineRatio, gameRatio;
+    ui.lblGameCyclesData->setText(tr("%1").arg(m_pIStrategizer->Clock().ElapsedGameCycles()));
 
-    ui.lblEngineCycleData->setText(tr("%1").arg(m_pIStrategizer->Clock().ElapsedEngineCycles()));
-    ui.lblGameCyclesData->setText(tr("%1").arg(Broodwar->getFrameCount()));
+    EntityList workers;
+    map<ObjectStateType, set<TID>> workersState;
 
-    engineRatio = (float)m_pIStrategizer->Clock().ElapsedEngineCycles();
-    gameRatio = (float)Broodwar->getFrameCount();
+    m_pGameModel->Self()->Entities(m_pGameModel->Self()->Race()->GetWorkerType(), workers);
 
-    if (engineRatio > gameRatio)
+    ui.lblWorkersCountData->setText(QString("%1").arg(workers.size()));
+
+    for (auto workerId : workers)
     {
-        engineRatio /= gameRatio;
-        gameRatio = 1.0;
-    }
-    else
-    {
-        gameRatio /= engineRatio;
-        engineRatio = 1.0;
+        GameEntity* worker = m_pGameModel->Self()->GetEntity(workerId);
+        workersState[(ObjectStateType)worker->Attr(EOATTR_State)].insert(worker->Id());
     }
 
-    ui.lblEngineRatioData->setText(tr("%1").arg(engineRatio));
-    ui.lblGameRatioData->setText(tr("%1").arg(gameRatio));
-    ui.lblFrameDiffData->setText(tr("%1").arg(
-        abs((int)(m_pIStrategizer->Clock().ElapsedEngineCycles() - Broodwar->getFrameCount()))));
+    QTableWidgetItem* cell = NULL;
 
+    for(int row = 0; row < ui.tblWorkerState->rowCount(); ++row)
+    {
+        cell = ui.tblWorkerState->item(row, 1);
+        ObjectStateType state = (ObjectStateType)cell->data(Qt::UserRole).toInt();
+        cell->setText(QString("%1").arg(workersState[state].size()));
+    }
+
+    ui.tblWorkerState->update();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
@@ -399,26 +406,25 @@ void ClientMain::OnClientUpdate()
 
         /*if (Broodwar->getFrameCount() % 10 == 0)
         {
-            RtsGame* pSnapshot = g_Game->Snapshot();
-            m_snapshots[Broodwar->getFrameCount()].first = pSnapshot;
+        RtsGame* pSnapshot = g_Game->Snapshot();
+        m_snapshots[Broodwar->getFrameCount()].first = pSnapshot;
 
-            g_ObjectSerializer.Serialize(pSnapshot, "rts.bin");
+        g_ObjectSerializer.Serialize(pSnapshot, "rts.bin");
 
-            StarCraftGame* pCopy = new StarCraftGame();
-            g_ObjectSerializer.Deserialize(pCopy, "rts.bin");
-            pCopy->Init();
-            pCopy->Map()->Update();
-            m_snapshots[Broodwar->getFrameCount()].second = pCopy;
+        StarCraftGame* pCopy = new StarCraftGame();
+        g_ObjectSerializer.Deserialize(pCopy, "rts.bin");
+        pCopy->Init();
+        pCopy->Map()->Update();
+        m_snapshots[Broodwar->getFrameCount()].second = pCopy;
         }*/
-        
+
     }
     catch (IStrategizer::Exception &e)
     {
         e.To(cout);
     }
 
-    UpdateViews();
-    UpdateStatsView();
+
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateViews()
@@ -446,5 +452,45 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
     {
         DataMessage<IOlcbpPlan>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan>*>(p_pMessage);
         m_pPlanGraphView->OnPlanStructureChange(pPlanChangeMsg->Data());
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::InitStatsView()
+{
+    ui.tblWorkerState->clear();
+    ui.tblWorkerState->setColumnCount(2);
+    ui.tblWorkerState->setRowCount(COUNT(ObjectStateType));
+    ui.tblWorkerState->horizontalHeader()->hide();
+    ui.tblWorkerState->verticalHeader()->hide();
+
+    int row = 0;
+
+    for(auto workerState = START(ObjectStateType);
+        workerState != END(ObjectStateType);
+        workerState = (ObjectStateType)((int)workerState + 1))
+    {
+        QTableWidgetItem* cell = new QTableWidgetItem(QString::fromLocal8Bit(Enums[(int)workerState]));
+        cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        QVariant objStateType((int)workerState);
+        ui.tblWorkerState->setItem(row, 0, cell);
+
+        cell = new QTableWidgetItem(tr("%1").arg(0));
+        cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        cell->setData(Qt::UserRole, objStateType);
+        ui.tblWorkerState->setItem(row, 1, cell);
+
+        ui.tblWorkerState->setRowHeight(row, 20);
+        ++row;
+    }
+
+    ui.tblWorkerState->resizeColumnsToContents();
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::timerEvent(QTimerEvent *pEvt)
+{
+    if (BroodwarPtr && BroodwarPtr->isInGame())
+    {
+        UpdateViews();
+        UpdateStatsView();
     }
 }
