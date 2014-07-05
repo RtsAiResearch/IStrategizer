@@ -15,6 +15,7 @@
 #include "RetainerEx.h"
 #include "DataMessage.h"
 #include "GoalFactory.h"
+#include "PlayerResources.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -36,7 +37,7 @@ void OnlinePlanExpansionExecution::StartPlanning()
 {
     m_pOlcbpPlan->Clear();
     m_planStructureChangedThisFrame = true;
-    
+
     PlanStepEx* pRootNode = (PlanStepEx*)m_pRootGoal;
     m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
 
@@ -129,6 +130,11 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
         }
     }
 
+    int nodeAddRemoveDelta = AdaptSnippet(expansionGoalNodeId);
+    // Adaptation should leave at least 1 node in the snippet
+    _ASSERTE((int)pCasePlan->Size() + nodeAddRemoveDelta > 0);
+    size_t adaptedSnippetSize = (size_t)((int)pCasePlan->Size() + nodeAddRemoveDelta);
+
     CloseNode(expansionGoalNodeId);
 
     // 4. Since the plan structure changed, recompute the NotReadyParentsCount
@@ -138,7 +144,7 @@ void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionG
     // 5. Record that the expanded goal node is waiting for N number of open nodes
     // If the number of those open nodes = 0, and the goal node is not satisfied, then
     // there is no way for the goal to succeed, and the goal should fail
-    GetNodeData(expansionGoalNodeId).SetWaitOnChildrenCount(pExpansionCase->Plan()->Size());
+    GetNodeData(expansionGoalNodeId).SetWaitOnChildrenCount(adaptedSnippetSize);
 
     m_planStructureChangedThisFrame = true;
 
@@ -451,4 +457,123 @@ void OnlinePlanExpansionExecution::GetSnippetOrphanNodes(_In_ IOlcbpPlan::NodeID
         if (GetNodeData(nodeId).SatisfyingGoal == snippetGoalId)
             orphans.insert(nodeId);
     }
+}
+//////////////////////////////////////////////////////////////////////////
+void OnlinePlanExpansionExecution::GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ)
+{
+    IOlcbpPlan::NodeQueue Q;
+    IOlcbpPlan::NodeID currNodeId;
+    IOlcbpPlan::NodeSerializedSet planRoots;
+    IOlcbpPlan::NodeSet visitedNodes;
+
+    _ASSERTE(m_planRootNodeId != IOlcbpPlan::NullNodeID);
+
+    Q.push(m_planRootNodeId);
+    visitedNodes.insert(m_planRootNodeId);
+    goalQ.push(m_planRootNodeId);
+
+    // Do a BFS on the plan an collect only ready nodes (i.e nodes with WaitOnParentsCount = 0)
+    // Add ready action nodes to the action Q
+    // Add ready goal nodes to the goal Q
+    while(!Q.empty())
+    {
+        currNodeId = Q.front();
+        Q.pop();
+
+        if (!m_pOlcbpPlan->Contains(currNodeId))
+        {
+            LogWarning("A non existing node was there in the update queue, skipping it");
+            continue;
+        }
+
+        for (auto childNodeId : m_pOlcbpPlan->GetAdjacentNodes(currNodeId))
+        {
+            if (visitedNodes.count(childNodeId) == 0)
+            {
+                if (IsNodeReady(childNodeId))
+                {
+                    if (IsGoalNode(childNodeId))
+                    {
+                        goalQ.push(childNodeId);
+                    }
+                    else if (IsActionNode(childNodeId))
+                    {
+                        actionQ.push(childNodeId);
+                    }
+
+                    Q.push(childNodeId);
+                }
+
+                visitedNodes.insert(childNodeId);
+            }
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+int OnlinePlanExpansionExecution::AdaptSnippet(_In_ IOlcbpPlan::NodeID snippetRootGoalId)
+{
+    int nodeAddRemoveDelta = 0;
+    IOlcbpPlan::NodeQueue Q;
+    IOlcbpPlan::NodeSerializedSet planRoots;
+    IOlcbpPlan::NodeSet visitedNodes;
+    IOlcbpPlan::NodeID parentNodeId = snippetRootGoalId;
+
+    Q.push(parentNodeId);
+    visitedNodes.insert(parentNodeId);
+
+    // Do a BFS on the plan an collect only ready nodes (i.e nodes with WaitOnParentsCount = 0)
+    // Add ready action nodes to the action Q
+    // Add ready goal nodes to the goal Q
+    while(!Q.empty())
+    {
+        parentNodeId = Q.front();
+        Q.pop();
+
+        IOlcbpPlan::NodeSerializedSet originalSnippetNodes = m_pOlcbpPlan->GetAdjacentNodes(parentNodeId);
+        for (auto childNodeId : originalSnippetNodes)
+        {
+            if (visitedNodes.count(childNodeId) != 0)
+                continue;
+
+            if (IsActionNode(childNodeId))
+            {
+                ((Action*)m_pOlcbpPlan->GetNode(childNodeId))->InitializeConditions();
+                for (auto pExpression : ((Action*)m_pOlcbpPlan->GetNode(childNodeId))->PreCondition()->Expressions())
+                {
+                    _ASSERTE(pExpression->ExpressionType() == EXPRESSION_Leaf);
+                    if (((ConditionEx*)pExpression)->ContainsParameter(PARAM_ResourceId) &&
+                        ((ConditionEx*)pExpression)->Parameter(PARAM_ResourceId) == RESOURCE_Supply)
+                    {
+                        int requiredSupplyAmmount = ((ConditionEx*)pExpression)->Parameter(PARAM_Amount);
+
+                        if (g_Game->Self()->Resources()->AvailableSupply() >= requiredSupplyAmmount)
+                            continue;
+
+                        UnlinkNodes(parentNodeId, childNodeId);
+
+                        PlanStepParameters params;
+                        params[PARAM_EntityClassId] = g_Game->Self()->Race()->GetResourceSource(RESOURCE_Supply);
+                        params[PARAM_Amount] = 1;
+
+                        auto pBuildInfraGoal = g_GoalFactory.GetGoal(GOALEX_BuildInfrastructure, params, true);
+                        IOlcbpPlan::NodeID buildInfroNodeId = m_pOlcbpPlan->AddNode(pBuildInfraGoal, pBuildInfraGoal->Id());
+                        m_nodeData[pBuildInfraGoal->Id()] = OlcbpPlanNodeData();
+                        m_nodeData[pBuildInfraGoal->Id()].ID = pBuildInfraGoal->Id();
+
+                        // Add Data record for the new node
+                        SetNodeSatisfyingGoal(pBuildInfraGoal->Id(), snippetRootGoalId);
+
+                        LinkNodes(parentNodeId, buildInfroNodeId);
+                        LinkNodes(buildInfroNodeId, childNodeId);
+                        ++nodeAddRemoveDelta;
+                    }
+                }
+            }
+
+            Q.push(childNodeId);
+            visitedNodes.insert(childNodeId);
+        }
+    }
+
+    return nodeAddRemoveDelta;
 }

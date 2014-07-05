@@ -80,57 +80,6 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ)
-{
-    IOlcbpPlan::NodeQueue Q;
-    IOlcbpPlan::NodeID currNodeId;
-    IOlcbpPlan::NodeSerializedSet planRoots;
-    IOlcbpPlan::NodeSet visitedNodes;
-
-    _ASSERTE(m_planRootNodeId != IOlcbpPlan::NullNodeID);
-
-    Q.push(m_planRootNodeId);
-    visitedNodes.insert(m_planRootNodeId);
-    goalQ.push(m_planRootNodeId);
-
-    // Do a BFS on the plan an collect only ready nodes (i.e nodes with WaitOnParentsCount = 0)
-    // Add ready action nodes to the action Q
-    // Add ready goal nodes to the goal Q
-    while(!Q.empty())
-    {
-        currNodeId = Q.front();
-        Q.pop();
-
-        if (!m_pOlcbpPlan->Contains(currNodeId))
-        {
-            LogWarning("A non existing node was there in the update queue, skipping it");
-            continue;
-        }
-
-        for (auto childNodeId : m_pOlcbpPlan->GetAdjacentNodes(currNodeId))
-        {
-            if (visitedNodes.count(childNodeId) == 0)
-            {
-                if (IsNodeReady(childNodeId))
-                {
-                    if (IsGoalNode(childNodeId))
-                    {
-                        goalQ.push(childNodeId);
-                    }
-                    else if (IsActionNode(childNodeId))
-                    {
-                        actionQ.push(childNodeId);
-                    }
-
-                    Q.push(childNodeId);
-                }
-
-                visitedNodes.insert(childNodeId);
-            }
-        }
-    }
-}
-//////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock)
 {
     GoalEx* pCurrentGoalNode = (GoalEx*)m_pOlcbpPlan->GetNode(currentNode);
