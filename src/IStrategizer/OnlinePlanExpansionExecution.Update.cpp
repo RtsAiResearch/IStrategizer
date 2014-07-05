@@ -31,6 +31,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         IOlcbpPlan::NodeQueue goalQ;
         typedef unsigned GoalKey;
         map<GoalKey, IOlcbpPlan::NodeID> goalTable;
+        IOlcbpPlan::NodeSet activeGoalSet;
 
         // 1st pass: get ready nodes only
         GetReachableReadyNodes(actionQ, goalQ);
@@ -57,14 +58,18 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             // failed and its snippet was destroyed, and as a result a node that
             // was considered for update does not exist anymore
             if (m_pOlcbpPlan->Contains(goalEntry.second))
+            {
                 UpdateGoalNode(goalEntry.second, clock);
+                activeGoalSet.insert(goalEntry.second);
+            }
         }
 
         while (!actionQ.empty())
         {
             // Only update an action node if it still exist
             // What applies to a goal in the 3rd pass apply here
-            if (m_pOlcbpPlan->Contains(actionQ.front()))
+            if (m_pOlcbpPlan->Contains(actionQ.front()) &&
+                activeGoalSet.count(GetNodeData(actionQ.front()).SatisfyingGoal) > 0)
                 UpdateActionNode(actionQ.front(), clock);
 
             actionQ.pop();

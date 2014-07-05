@@ -160,16 +160,13 @@ bool StarCraftEntity::IsTraining(TID p_traineeId) const
 string StarCraftEntity::ToString() const
 {
     std::string asSharedResource = SharedResource::ToString();
-
+    char str[256];
     TID gameTypeId = g_Database.EntityMapping.GetBySecond((EntityClassType)Attr(EOATTR_Type));
     std::string description = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
-    description += "(";
-    description += to_string((long long)m_id);
-    description += ",";
-    description += asSharedResource;
-    description += ")";
 
-    return description;
+    sprintf_s(str, "%s[%d](Shared=%s, State=%s)", description.c_str(), m_id, asSharedResource.c_str(), Enums[Attr(EOATTR_State)]);
+
+    return str;
 }
 //----------------------------------------------------------------------------------------------
 Vector2 StarCraftEntity::GetPosition() const
@@ -275,9 +272,9 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
     UnitType type = BWAPI::UnitType::getType(typeName);
 
     _ASSERTE(building->canTrain(type));
-    bool success = building->train(type);
 
-    return success;
+    LogInfo("%s -> Train(Trainee=%s)", ToString().c_str(), type.toString().c_str());
+    return building->train(type);
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Move(Vector2 p_position)
@@ -301,6 +298,7 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
     _ASSERTE(resource);
 
     _ASSERTE(gatherer->canGather(resource));
+    LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
     return gatherer->gather(resource);
 }
 
