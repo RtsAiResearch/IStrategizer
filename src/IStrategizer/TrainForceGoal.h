@@ -26,6 +26,7 @@ namespace IStrategizer
     private:
         std::map<EntityClassType, int> m_trainedUnits;
         EntitySet m_usedUnits;
+        bool m_firstUpdate;
     };
 }
 #endif // TRAINFORCEGOAL_H

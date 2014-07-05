@@ -30,6 +30,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace IStrategizer
 {
@@ -92,6 +93,10 @@ namespace IStrategizer
     private:
         ExecutionStateType _state;
     };
+    
+    typedef std::shared_ptr<PlanStepEx> PlanStepStrongPtr;
+    typedef std::shared_ptr<const PlanStepEx> ConstPlanStepStrongPtr;
+    typedef std::weak_ptr<PlanStepEx> PlanStepWeakPtr;
 }
 
 #endif // PLANSTEPEX_H

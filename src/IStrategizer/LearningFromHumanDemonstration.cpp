@@ -18,6 +18,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <memory>
 
 using namespace std;
 using namespace IStrategizer;
@@ -57,6 +58,8 @@ void LearningFromHumanDemonstration::Learn()
 //------------------------------------------------------------------------------------------------
 vector<RawCaseEx*> LearningFromHumanDemonstration::LearnRawCases(GameTrace::List traces)
 {
+    LogActivity(LearnRawCases);
+
     vector<RawCaseEx*> learntRawCases;
     vector<RawCaseEx*> candidateRawCases;
     CaseLearningHelper::GoalMatrix goalMatrix = _helper->GetGoalSatisfacionMatrix();
@@ -123,16 +126,18 @@ bool LearningFromHumanDemonstration::IdenticalSequentialPlan(SequentialPlan left
 //------------------------------------------------------------------------------------------------
 CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx* p_rawCase)
 {
+    LogActivity(DependencyGraphGeneration);
+
     OlcbpPlan* m_olcpbPlan = new OlcbpPlan();
-    OlcbpPlan* m_tempOlcpbPlan = new OlcbpPlan();
+    OlcbpPlanMngd m_tempOlcpbPlan;
     OlcbpPlan::NodeList nodeIds;
 
     for (unsigned i = 0; i < p_rawCase->rawPlan.sPlan.size(); ++i)
     {
         PlanStepEx* pPlanStep = p_rawCase->rawPlan.sPlan[i];
-        PlanStepEx* pTempClone = (PlanStepEx*)pPlanStep->Clone();
+        PlanStepStrongPtr pTempClone = PlanStepStrongPtr((PlanStepEx*)pPlanStep->Clone());
         m_olcpbPlan->AddNode(pPlanStep, pPlanStep->Id());
-        m_tempOlcpbPlan->AddNode(pTempClone, pPlanStep->Id());
+        m_tempOlcpbPlan.AddNode(pTempClone, pPlanStep->Id());
         nodeIds.push_back(pPlanStep->Id());
 
         // Update the game state mapping with the new Id
@@ -148,7 +153,7 @@ CookedCase* LearningFromHumanDemonstration::DependencyGraphGeneration(RawCaseEx*
             OlcbpPlan::NodeID candidateChild = nodeIds[j];
 
             if (!m_olcpbPlan->Reachable(candidateParent, candidateChild) &&
-                Depends(m_tempOlcpbPlan->GetNode(candidateParent)->PostCondition(), ((Action*)m_tempOlcpbPlan->GetNode(candidateChild))->PreCondition()))
+                Depends(m_tempOlcpbPlan.GetNode(candidateParent)->PostCondition(), ((Action*)&*m_tempOlcpbPlan.GetNode(candidateChild))->PreCondition()))
             {
                 m_olcpbPlan->AddEdge(candidateParent, candidateChild);
             }
@@ -199,15 +204,17 @@ bool LearningFromHumanDemonstration::Depends(CompositeExpression* p_candidatePar
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_case)
 {
+    LogActivity(UnnecessaryStepsElimination);
+
     OlcbpPlan::NodeSet m_unprocessedSteps = p_case->plan->GetNodes();
     OlcbpPlan::NodeSet m_necessarySteps;
     OlcbpPlan::NodeSet m_finalSteps;
-    map<OlcbpPlan::NodeID, OlcbpPlan::NodeValue> m_tempNodes;
-    CompositeExpression* goalPostConditionCopy = (CompositeExpression*)p_case->rawCase->rawPlan.Goal->PostCondition()->Clone();
+    map<OlcbpPlan::NodeID, PlanStepStrongPtr> m_tempNodes;
+    shared_ptr<CompositeExpression> goalPostConditionCopy = shared_ptr<CompositeExpression>((CompositeExpression*)p_case->rawCase->rawPlan.Goal->PostCondition()->Clone());
 
     for (OlcbpPlan::NodeID nodeId : m_unprocessedSteps)
     {
-        m_tempNodes[nodeId] = (PlanStepEx*)p_case->plan->GetNode(nodeId)->Clone();
+        m_tempNodes[nodeId] = PlanStepStrongPtr((PlanStepEx*)p_case->plan->GetNode(nodeId)->Clone());
     }
 
     for (OlcbpPlan::NodeSet::iterator it = m_unprocessedSteps.begin(); it != m_unprocessedSteps.end();)
@@ -215,7 +222,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
         // The order of depends is important keep goal on right side and action on left side
         // that's because if the goal depends on the action we'll consume the action's resources
         // and assign the goals requirements as well.
-        if (Depends(m_tempNodes[(*it)]->PostCondition(), goalPostConditionCopy))
+        if (Depends(m_tempNodes[(*it)]->PostCondition(), &*goalPostConditionCopy))
         {
             m_necessarySteps.insert(*it);
 
@@ -264,6 +271,8 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
 //--------------------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::HierarchicalComposition(vector<CookedPlan*>& p_cookedPlans) const
 {
+    LogActivity(HierarchicalComposition);
+
     bool composePlans = false;
 
     do
@@ -304,6 +313,8 @@ bool LearningFromHumanDemonstration::IsSuperGraph(OlcbpPlan *pSuperGraph, OlcbpP
 //----------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::RetainLearntCases(vector<CookedPlan*>& p_cookedPlans)
 {
+    LogActivity(RetainLearntCases);
+
     CaseEx* pLearntCase = nullptr;
 
     _retainer->ReadCaseBase();

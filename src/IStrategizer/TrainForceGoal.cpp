@@ -13,14 +13,14 @@
 using namespace IStrategizer;
 using namespace std;
 
-TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce)
+TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce), m_firstUpdate(true)
 {
     _params[PARAM_Amount] = DONT_CARE;
     _params[PARAM_EntityClassId] = ECLASS_START;
     _params[PARAM_ObjectStateType] = OBJSTATE_START;
 }
 //----------------------------------------------------------------------------------------------
-TrainForceGoal::TrainForceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainForce, p_parameters)
+TrainForceGoal::TrainForceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainForce, p_parameters), m_firstUpdate(true)
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame& game)
 vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
 {
     vector<GoalEx*> succeededInstances;
-    
+
     EntityList entities;
     game.Self()->Entities(entities);
 
@@ -78,6 +78,12 @@ vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
             succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_TrainForce, params, true));
             m_usedUnits.insert(entityId);
         }
+    }
+
+    if (m_firstUpdate)
+    {
+        m_firstUpdate = false;
+        succeededInstances.clear();
     }
 
     return succeededInstances;
