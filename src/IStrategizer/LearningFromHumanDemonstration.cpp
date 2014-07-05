@@ -264,9 +264,7 @@ void LearningFromHumanDemonstration::UnnecessaryStepsElimination(CookedCase* p_c
     {
         if (m_finalSteps.find(i) == m_finalSteps.end())
         {
-            PlanStepEx* pStep = p_case->plan->GetNode(i);
             p_case->plan->RemoveNode(i);
-            delete pStep;
         }
     }
 }
