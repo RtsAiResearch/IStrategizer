@@ -21,8 +21,18 @@ namespace IStrategizer
         static unsigned Hash(PlanStepEx* pStep) { return pStep->Hash(); }
     };
 
+    template<>
+    struct AdjListDigraphNodeValueTraits<PlanStepStrongPtr>
+    {
+        typedef PlanStepStrongPtr Type;
+        typedef ConstPlanStepStrongPtr  ConstType;
+        static std::string ToString(ConstPlanStepStrongPtr pStep) { return pStep->ToString(true); }
+        static unsigned Hash(ConstPlanStepStrongPtr pStep) { return pStep->Hash(); }
+    };
+
     ///> alias=OlcbpPlan(AdjListDigraph(PlanStepEx*))
     typedef AdjListDigraph<PlanStepEx*> OlcbpPlan;
+    typedef AdjListDigraph<PlanStepStrongPtr> OlcbpPlanMngd;
 
     ///> class=CaseEx
     class CaseEx : public Serialization::UserObject

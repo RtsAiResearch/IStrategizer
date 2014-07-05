@@ -48,17 +48,23 @@ namespace IStrategizer
             m_pFunName(pFunName),
             m_pName(pName)
         {
-            g_Logger.Log(IStrategizer::Logger::LOG_ActivityStart, pFunName, pName);
+            FormatActivity();
+            g_Logger.Log(IStrategizer::Logger::LOG_ActivityStart, pFunName, m_txt);
         }
 
         virtual ~ActivityLogMarker()
         {
-            g_Logger.Log(IStrategizer::Logger::LOG_ActivityEnd, m_pFunName, m_pName);
+            FormatActivity();
+            g_Logger.Log(IStrategizer::Logger::LOG_ActivityEnd, m_pFunName, m_txt);
         }
+        
+        void FormatActivity();
 
     private:
+        static const size_t TxtSize = 512;
         const char* m_pName;
         const char* m_pFunName;
+        char m_txt[TxtSize];
     };
 #define LogActivity(Name) ActivityLogMarker __##Name##_Activity(__FUNCTION__, #Name)
 
