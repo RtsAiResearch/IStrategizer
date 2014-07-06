@@ -456,7 +456,7 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 {
     _ASSERTE(p_pMessage != nullptr);
 
-    if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange)
+    if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange && m_pPlanGraphView != nullptr )
     {
         DataMessage<IOlcbpPlan>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan>*>(p_pMessage);
         m_pPlanGraphView->OnPlanStructureChange(pPlanChangeMsg->Data());

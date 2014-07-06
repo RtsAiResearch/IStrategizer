@@ -228,13 +228,17 @@ void TrainAction::InitializePreConditions()
 //----------------------------------------------------------------------------------------------
 void TrainAction::FreeResources(RtsGame& game)
 {
-    GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
+    if (m_traineeId != DONT_CARE)
+    {
+        GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
 
-    if (pTrainee && pTrainee->IsLocked())
-        pTrainee->Unlock(this);
+        if (pTrainee && pTrainee->IsLocked())
+            pTrainee->Unlock(this);
 
-    if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
-        m_requiredResources.Unlock(this);
+        if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
+            m_requiredResources.Unlock(this);
+        m_traineeId = DONT_CARE;
+    }
 }
 //----------------------------------------------------------------------------------------------
 bool TrainAction::Equals(PlanStepEx* p_planStep)

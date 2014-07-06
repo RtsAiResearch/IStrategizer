@@ -144,12 +144,12 @@ bool IStrategizerEx::Init()
 void IStrategizerEx::DefineArmyTrainOrder()
 {
     PlanStepParameters params;
-    params[PARAM_AlliedUnitsTotalHP] = 80;
-    params[PARAM_AlliedUnitsTotalDamage] = 98;
-    m_armyTrainOrder.push_back(params);
-
     params[PARAM_AlliedUnitsTotalHP] = 1060;
     params[PARAM_AlliedUnitsTotalDamage] = 470;
+    m_armyTrainOrder.push_back(params);
+
+    params[PARAM_AlliedUnitsTotalHP] = 80;
+    params[PARAM_AlliedUnitsTotalDamage] = 98;
     m_armyTrainOrder.push_back(params);
 }
 //----------------------------------------------------------------------------------------------

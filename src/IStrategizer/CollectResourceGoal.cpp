@@ -44,7 +44,8 @@ int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resour
     for (auto workerId : workers)
     {
         GameEntity* worker = game.Self()->GetEntity(workerId);
-        if (worker->Attr(EOATTR_State) == OBJSTATE_GatheringPrimary || worker->Attr(EOATTR_State) == OBJSTATE_GatheringSecondary)
+        if ((resourceType == RESOURCE_Primary && worker->Attr(EOATTR_State) == OBJSTATE_GatheringPrimary) || 
+            (resourceType == RESOURCE_Secondary && worker->Attr(EOATTR_State) == OBJSTATE_GatheringSecondary))
         {
             m_observedGatherers[resourceType].insert(workerId);
         }

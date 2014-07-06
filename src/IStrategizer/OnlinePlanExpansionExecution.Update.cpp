@@ -122,8 +122,11 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             // Only update an action node if it still exist
             // What applies to a goal in the 3rd pass apply here
             if (m_pOlcbpPlan->Contains(actionQ.front()) &&
-                activeGoalSet.count(GetNodeData(actionQ.front()).SatisfyingGoal) > 0)
+                (activeGoalSet.count(GetNodeData(actionQ.front()).SatisfyingGoal) > 0 ||
+                IsNodeDone(GetNodeData(actionQ.front()).SatisfyingGoal)))
+            {
                 UpdateActionNode(actionQ.front(), clock);
+            }
 
             actionQ.pop();
         }
