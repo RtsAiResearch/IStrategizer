@@ -370,15 +370,20 @@ void ClientMain::UpdateStatsView()
     }
 
     QTableWidgetItem* cell = NULL;
-
     for(int row = 0; row < ui.tblWorkerState->rowCount(); ++row)
     {
         cell = ui.tblWorkerState->item(row, 1);
         ObjectStateType state = (ObjectStateType)cell->data(Qt::UserRole).toInt();
-        cell->setText(QString("%1").arg(workersState[state].size()));
+
+        QString txt =QString("[%1]{").arg(workersState[state].size());
+        for (auto workerId : workersState[state])
+            txt += QString("%1,").arg(workerId);
+        txt += "}";
+
+        cell->setText(txt);
     }
 
-    ui.tblWorkerState->update();
+    ui.tblWorkerState->resizeColumnsToContents();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
@@ -476,7 +481,7 @@ void ClientMain::InitStatsView()
             QVariant objStateType((int)workerState);
             ui.tblWorkerState->setItem(row, 0, cell);
 
-            cell = new QTableWidgetItem(tr("%1").arg(0));
+            cell = new QTableWidgetItem("-");
             cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             cell->setData(Qt::UserRole, objStateType);
             ui.tblWorkerState->setItem(row, 1, cell);

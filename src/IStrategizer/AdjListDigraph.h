@@ -483,6 +483,52 @@ namespace IStrategizer
             return m_nodeReachability[sourceNodeId].count(destNodeId) != 0;
         }
 
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetNodeAncestors
+        // Description:	Gets ancestor nodes for a certain node up to the root
+        // Parameter: 	NodeSet ancestors (OUT): A set to fill with the Ids of node ancestors
+        // Returns:   	void
+        //************************************
+        void GetNodeAncestors(_In_ NodeID nodeId, _Out_ NodeSet& ancestors) const
+        {
+            NodeSet directParents;
+            GetParents(nodeId, directParents);
+
+            if (directParents.empty())
+                return;
+            else
+            {
+                ancestors.insert(directParents.begin(), directParents.end());
+
+                for (auto directParentId : directParents)
+                {
+                    GetNodeAncestors(directParentId, ancestors);
+                }
+            }
+        }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetParents
+        // Description:	Gets direct parents to a certain node
+        // Parameter: 	NodeSet parents (OUT): A set to fill with the Ids of the direct node parents
+        // Returns:   	void
+        void GetParents(_In_ NodeID nodeId, _Out_ NodeSet& parents) const
+        {
+            _ASSERTE(m_adjList.count(nodeId) != 0);
+            if (m_adjList.count(nodeId) == 0)
+                throw ItemNotFoundException(XcptHere);
+
+            NodeSet m_parents;
+
+            for (auto parent : m_adjList)
+            {
+                if(parent.second.second.count(nodeId) > 0)
+                {
+                    parents.insert(parent.first);
+                }
+            }
+        }
+
         PlanHashMap PlanHash;
 
         OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
@@ -517,7 +563,7 @@ namespace IStrategizer
             return strIdSet;
         }
 
-        NodeSet GetParents(NodeID nodeId) const
+        NodeSet GetParents(_In_ NodeID nodeId) const
         {
             _ASSERTE(m_adjList.count(nodeId) != 0);
             if (m_adjList.count(nodeId) == 0)

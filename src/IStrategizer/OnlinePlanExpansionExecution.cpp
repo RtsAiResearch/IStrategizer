@@ -236,7 +236,7 @@ void OnlinePlanExpansionExecution::UpdateBelongingSubplanChildrenWithParentReadi
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::OnlinePlanExpansionExecution::MarkCaseAsTried(_In_ IOlcbpPlan::NodeID nodeId, _In_ CaseEx* pCase)
 {
-    _ASSERTE(GetNodeData(nodeId).TriedCases.count(pCase) == 0);
+    //_ASSERTE(GetNodeData(nodeId).TriedCases.count(pCase) == 0);
 
     LogInfo("Marking case '%s'@%p as tried case for node %d", pCase->Goal()->ToString().c_str(), (void*)pCase, nodeId);
 
@@ -576,4 +576,15 @@ int OnlinePlanExpansionExecution::AdaptSnippet(_In_ IOlcbpPlan::NodeID snippetRo
     }
 
     return nodeAddRemoveDelta;
+}
+//////////////////////////////////////////////////////////////////////////
+void OnlinePlanExpansionExecution::GetAncestorSatisfyingGoals(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSet& ancestors) const
+{
+    nodeId = GetNodeData(nodeId).SatisfyingGoal;
+
+    while (nodeId != IOlcbpPlan::NullNodeID)
+    {
+        ancestors.insert(nodeId);
+        nodeId = GetNodeData(nodeId).SatisfyingGoal;
+    }
 }

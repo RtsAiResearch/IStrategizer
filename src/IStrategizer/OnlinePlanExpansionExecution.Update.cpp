@@ -15,6 +15,7 @@
 #include "RetainerEx.h"
 #include "DataMessage.h"
 #include "GoalFactory.h"
+#include <stack>
 
 using namespace std;
 using namespace IStrategizer;
@@ -30,7 +31,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         IOlcbpPlan::NodeQueue actionQ;
         IOlcbpPlan::NodeQueue goalQ;
         typedef unsigned GoalKey;
-        map<GoalKey, IOlcbpPlan::NodeID> goalTable;
+        map<GoalKey, stack<IOlcbpPlan::NodeID>> goalTable;
         IOlcbpPlan::NodeSet activeGoalSet;
 
         // 1st pass: get ready nodes only
@@ -39,15 +40,67 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         // 2nd pass: prioritize and filter goal updates
         while (!goalQ.empty())
         {
-            GoalEx* pCurrGoal = (GoalEx*)m_pOlcbpPlan->GetNode(goalQ.front());
+            IOlcbpPlan::NodeID currentGoalId = goalQ.front();
+            goalQ.pop();
+
+            if (!m_pOlcbpPlan->Contains(currentGoalId))
+                continue;
+
+            GoalEx* pCurrGoal = (GoalEx*)m_pOlcbpPlan->GetNode(currentGoalId);
             GoalKey typeKey = pCurrGoal->Key();
 
-            if (!IsNodeDone(goalQ.front()))
+            if (!IsNodeDone(currentGoalId))
             {
-                goalTable[typeKey] = goalQ.front();
-            }
+                IOlcbpPlan::NodeID newActiveGoalId = currentGoalId;
 
-            goalQ.pop();
+                if (goalTable.count(typeKey) == 0)
+                    goalTable[typeKey].push(newActiveGoalId);
+                else
+                {
+                    auto& currentOverrideStack = goalTable[typeKey];
+                    IOlcbpPlan::NodeID currentActiveGoalId = currentOverrideStack.top();
+                    IOlcbpPlan::NodeSet ancestors;
+
+                    GetAncestorSatisfyingGoals(newActiveGoalId, ancestors);
+
+                    stack<IOlcbpPlan::NodeID> newOverrideStack;
+
+                    newOverrideStack.push(newActiveGoalId);
+
+                    while (!currentOverrideStack.empty())
+                    {
+                        currentActiveGoalId = currentOverrideStack.top();
+
+                        // Nodes belonging to my ancestors set should not be destroyed
+                        // and should be kept in order
+                        if (ancestors.count(currentActiveGoalId) != 0)
+                            newOverrideStack.push(currentActiveGoalId);
+                        else if (m_pOlcbpPlan->Contains(currentActiveGoalId) &&
+                            !IsNodeOpen(currentActiveGoalId))
+                        {
+                            LogInfo("Destroyed %s snippet since it was overriden by %s",
+                                m_pOlcbpPlan->GetNode(currentActiveGoalId)->ToString().c_str(),
+                                m_pOlcbpPlan->GetNode(newActiveGoalId)->ToString().c_str());
+
+                            OpenNode(currentActiveGoalId);
+                            bool planDestroyed = DestroyGoalSnippetIfExist(currentActiveGoalId);
+                            _ASSERTE(planDestroyed);
+
+                            _ASSERTE(GetNodeData(currentActiveGoalId).WaitOnChildrenCount != 0);
+                            GetNodeData(currentActiveGoalId).SetWaitOnChildrenCount(0);
+                        }
+
+                        currentOverrideStack.pop();
+                    }
+                    
+                    // Push back new stack into the current one in a LIFO order to reverse the original one
+                    while (!newOverrideStack.empty())
+                    {
+                        currentOverrideStack.push(newOverrideStack.top());
+                        newOverrideStack.pop();
+                    }
+                }
+            }
         }
 
         // 3rd pass: actual node update
@@ -57,10 +110,10 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             // It is normal that a previous updated goal node during this pass 
             // failed and its snippet was destroyed, and as a result a node that
             // was considered for update does not exist anymore
-            if (m_pOlcbpPlan->Contains(goalEntry.second))
+            if (m_pOlcbpPlan->Contains(goalEntry.second.top()))
             {
-                UpdateGoalNode(goalEntry.second, clock);
-                activeGoalSet.insert(goalEntry.second);
+                UpdateGoalNode(goalEntry.second.top(), clock);
+                activeGoalSet.insert(goalEntry.second.top());
             }
         }
 
@@ -145,7 +198,7 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
             if (pCandidateCase != nullptr)
             {
                 // Retriever should always retrieve a non tried case for that specific node
-                _ASSERTE(!IsCaseTried(currentNode, pCandidateCase));
+                // _ASSERTE(!IsCaseTried(currentNode, pCandidateCase));
 
                 LogInfo("Retrieved case '%s' has not been tried before, and its goal is being sent for expansion",
                     pCandidateCase->Goal()->ToString().c_str());

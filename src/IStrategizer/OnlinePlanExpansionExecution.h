@@ -64,6 +64,7 @@ namespace IStrategizer
         void CloseNode(_In_ IOlcbpPlan::NodeID nodeId) { LogInfo("Closing node %s", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str()); GetNodeData(nodeId).IsOpen = false; }
         void GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ);
         int AdaptSnippet(_In_ IOlcbpPlan::NodeID snippetRootGoalId);
+        void GetAncestorSatisfyingGoals(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSet& ancestors) const;
 
         void OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID nodeId);
         void OnGoalNodeFailed(_In_ IOlcbpPlan::NodeID nodeId);

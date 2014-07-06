@@ -194,16 +194,16 @@ CaseEx* RetrieverEx::Retrieve(const AbstractRetriever::RetrieveOptions& options)
         if (options.GoalTypeId != pCase->Goal()->StepTypeId())
             continue;
 
-        if (options.ExcludedCases.count(pCase) > 0)
-        {
-            LogInfo("Case %s is excluded from retrieval, excluding by goal instance", pCase->Goal()->ToString().c_str());
-            continue;
-        }
-        else if (options.ExcludedGoalHashes.count(pCase->Goal()->Hash()))
-        {
-            LogInfo("Case %s is excluded from retrieval, excluding by goal type hash", pCase->Goal()->ToString().c_str());
-            continue;
-        }
+        //if (options.ExcludedCases.count(pCase) > 0)
+        //{
+        //    LogInfo("Case %s is excluded from retrieval, excluding by goal instance", pCase->Goal()->ToString().c_str());
+        //    continue;
+        //}
+        //else if (options.ExcludedGoalHashes.count(pCase->Goal()->Hash()))
+        //{
+        //    LogInfo("Case %s is excluded from retrieval, excluding by goal type hash", pCase->Goal()->ToString().c_str());
+        //    continue;
+        //}
 
         float caseRelevance = CaseDistance(pCase, options);
         caseRelevanceTable.insert(make_pair(caseRelevance, pCase));
