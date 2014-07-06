@@ -12,6 +12,7 @@
 #include "RtsGame.h"
 #include "GamePlayer.h"
 #include "ObjectFactory.h"
+#include "Action.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
@@ -159,13 +160,11 @@ bool StarCraftEntity::IsTraining(TID p_traineeId) const
 //----------------------------------------------------------------------------------------------
 string StarCraftEntity::ToString() const
 {
-    std::string asSharedResource = SharedResource::ToString();
     char str[256];
     TID gameTypeId = g_Database.EntityMapping.GetBySecond((EntityClassType)Attr(EOATTR_Type));
     std::string description = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
 
-    sprintf_s(str, "%s[%d](Shared=%s, State=%s)", description.c_str(), m_id, asSharedResource.c_str(), Enums[Attr(EOATTR_State)]);
-
+    sprintf_s(str, "%s[%d](Owner=%s, State=%s)", description.c_str(), m_id, (m_pOwner != nullptr ? m_pOwner->ToString(true).c_str() : ""), Enums[Attr(EOATTR_State)]);
     return str;
 }
 //----------------------------------------------------------------------------------------------
@@ -301,7 +300,7 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
     return gatherer->gather(resource);
 }
-
+//----------------------------------------------------------------------------------------------
 void StarCraftEntity::SetOffline(RtsGame* pBelongingGame)
 {
     m_cachedAttr.clear();

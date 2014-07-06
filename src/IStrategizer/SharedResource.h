@@ -57,7 +57,7 @@ namespace IStrategizer
             RecursiveLockException,
             AlreadyLockedException);
 
-        virtual std::string ToString() const { return m_rescourceDescription; }
+        virtual std::string ToString() const = 0;
         void Unlock(Action *p_pOwner);
         bool IsLocked() { return m_pOwner != nullptr; }
         const Action* Owner() const { return m_pOwner; }
@@ -72,7 +72,6 @@ namespace IStrategizer
         virtual bool Release() = 0;
 
         Action *m_pOwner;
-        std::string m_rescourceDescription;
         static ResourceList s_resources;
     };
 }

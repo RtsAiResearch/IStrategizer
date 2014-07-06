@@ -18,6 +18,7 @@ namespace IStrategizer
         int Height() const { return m_height; }
         bool IsNull();
         static MapArea& Null();
+        std::string ToString() const;
 
     protected:
         bool Acquire();

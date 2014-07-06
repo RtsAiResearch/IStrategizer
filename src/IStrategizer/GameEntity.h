@@ -36,7 +36,6 @@ namespace IStrategizer
         virtual int Attr(EntityObjectAttribute attrId) const = 0;
         virtual bool IsTraining(TID traineeId) const = 0;
         virtual bool CanGather(TID resourceObjectId) const = 0;
-        virtual std::string ToString() const = 0;
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;

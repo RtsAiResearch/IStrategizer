@@ -2,6 +2,7 @@
 #include "OccupanceDataIM.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 MapArea& MapArea::Null()
 {
@@ -32,3 +33,11 @@ bool MapArea::Release()
 
     return pIM->FreeArea(m_pos, m_width, m_height);
 }
+//////////////////////////////////////////////////////////////////////////
+string MapArea::ToString() const
+{
+    char str[256];
+    sprintf_s(str, "MapArea(%dx%d,<%d,%d>)", m_width, m_height, m_pos.X, m_pos.Y);
+    return str;
+}
+
