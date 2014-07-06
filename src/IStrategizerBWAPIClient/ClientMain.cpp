@@ -183,6 +183,7 @@ void ClientMain::InitPlanHistoryView()
     }
 
     m_planHistory.clear();
+    m_pPlanHistoryView->View(nullptr, nullptr);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()

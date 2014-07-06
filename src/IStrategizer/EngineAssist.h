@@ -9,6 +9,18 @@
 
 #define ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE 64
 
+#ifndef IN
+#define IN __in
+#endif
+
+#ifndef OUT
+#define OUT __out
+#endif
+
+#ifndef CheckReturn
+#define CheckReturn __checkReturn
+#endif
+
 namespace IStrategizer
 {
 #define ERR_Success 0
