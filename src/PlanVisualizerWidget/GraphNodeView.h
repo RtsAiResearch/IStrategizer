@@ -45,7 +45,8 @@ namespace IStrategizer
         int ModelId() const { return m_modelId; }
         int NodeWidth() const { return m_nodeWidth; }
         int NodeHeight() const { return m_nodeHeight; }
-        void OnUpdate();
+        void MarkAsActive() { m_isActive = true; }
+        void MarkAsInactive() { m_isActive = false; }
 
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);

@@ -220,9 +220,3 @@ GraphNodeView::NodeStyle GraphNodeView::GetStyle()
 
     return style;
 } 
-//////////////////////////////////////////////////////////////////////////
-void GraphNodeView::OnUpdate()
-{
-    if (BELONG(GoalType, m_pNodeModel->StepTypeId()))
-        m_isActive = (m_pPlanContext->ActiveGoalSet.count(m_pNodeModel->Id()) != 0);
-}
