@@ -70,7 +70,7 @@ namespace IStrategizer
         enum PointerMode { PTRMODE_Move, MODE_Connect };
 
         GraphScene(CrossMap<unsigned, std::string>* p_idLookup, QObject *p_parent = 0);
-        void View(IOlcbpPlan* pGraph, ConstOlcbpPlanNodeDataMapPtr pNodeData);
+        void View(IOlcbpPlan* pGraph, ConstOlcbpPlanContextPtr pPlanContext);
         void Mode(PointerMode p_mode) { m_pointerMode = p_mode; }
         PointerMode Mode() const { return m_pointerMode; }
 
@@ -113,7 +113,7 @@ namespace IStrategizer
         IOlcbpPlan *m_pGraph;
         std::vector< std::vector<NodeID> > m_graphLevels;
         std::map<NodeID, GraphNodeView*> m_nodeIdToNodeViewMap;
-        ConstOlcbpPlanNodeDataMapPtr m_pGraphNodeData;
+        ConstOlcbpPlanContextPtr m_pPlanContext;
 
         void ConstructGraph();
         void ComputeGraphLevels();

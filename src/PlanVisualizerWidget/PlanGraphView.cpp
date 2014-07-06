@@ -51,9 +51,9 @@ void PlanGraphView::SetMode(GraphScene::PointerMode mode)
     m_pScene->Mode((GraphScene::PointerMode)mode); 
 }
 //----------------------------------------------------------------------------------------------
-void PlanGraphView::View(IOlcbpPlan* pPlanGraph, ConstOlcbpPlanNodeDataMapPtr pNodeData)
+void PlanGraphView::View(IOlcbpPlan* pPlanGraph, ConstOlcbpPlanContextPtr pPlanContext)
 {
-    m_pScene->View(pPlanGraph, pNodeData);
+    m_pScene->View(pPlanGraph, pPlanContext);
 }
 //----------------------------------------------------------------------------------------------
 void PlanGraphView::HandleNodeSelected(GraphNodeView* p_node)

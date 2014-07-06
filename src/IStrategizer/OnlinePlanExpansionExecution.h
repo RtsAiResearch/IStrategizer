@@ -31,12 +31,11 @@ namespace IStrategizer
         void RootGoal(GoalEx* pGoal) { _ASSERTE(pGoal); m_pRootGoal = pGoal; }
         const IOlcbpPlan* Plan() const { return m_pOlcbpPlan; }
         IOlcbpPlan* Plan() { return m_pOlcbpPlan; }
-        ConstOlcbpPlanNodeDataMapRef NodeData() const { return m_nodeData; }
+        ConstOlcbpPlanContextRef GetContext() const { return m_planContext; }
 
     private:
         bool IsGoalNode(_In_ IOlcbpPlan::NodeID nodeId) const { return BELONG(GoalType, m_pOlcbpPlan->GetNode(nodeId)->StepTypeId()); }
         bool IsActionNode(_In_ IOlcbpPlan::NodeID nodeId) const { return BELONG(ActionType, m_pOlcbpPlan->GetNode(nodeId)->StepTypeId()); }
-        bool IsGoalTypeAssigned(_In_ GoalTypeID typeId) const { return m_goalTypeAssignment.count(typeId) > 0 && m_goalTypeAssignment.at(typeId) != IOlcbpPlan::NullNodeID; }
         bool IsNodeOpen(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).IsOpen == true; }
         bool IsNodeReady(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).WaitOnParentsCount == 0; }
         bool IsNodeDone(_In_ IOlcbpPlan::NodeID nodeId) const { auto state = m_pOlcbpPlan->GetNode(nodeId)->State(); return state == ESTATE_Succeeded || state == ESTATE_Failed; }
@@ -52,6 +51,7 @@ namespace IStrategizer
         void ExpandGoal(IOlcbpPlan::NodeID goalNode, CaseEx* pCase);
         void UpdateBelongingSubplanChildrenWithParentReadiness(_In_ IOlcbpPlan::NodeID nodeId);
         bool DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::NodeID planGoalNodeId);
+        bool HasExecutingAction(IOlcbpPlan::NodeID nodeId);
         void AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan::NodeID nodeId, _Inout_ IOlcbpPlan::NodeQueue &updateQ);
         void UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
         void UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
@@ -71,16 +71,19 @@ namespace IStrategizer
         void OnActionNodeSucceeded(_In_ IOlcbpPlan::NodeID nodeId);
         void OnActionNodeFailed(_In_ IOlcbpPlan::NodeID nodeId);
         void OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId);
-
+        void RemoveExecutingNode(IOlcbpPlan::NodeID nodeId);
+        void AddExecutingNode(IOlcbpPlan::NodeID currentNode);
         CaseBasedReasonerEx *m_pCbReasoner;
         OlcbpPlanNodeDataMap m_nodeData;
         IOlcbpPlan::NodeID m_planRootNodeId;
         IOlcbpPlan *m_pOlcbpPlan;
         bool m_planStructureChangedThisFrame;
         std::map<CaseNodeValue, ClonedCaseNodeValue> m_clonedNodesMapping;
-        std::map<GoalTypeID, IOlcbpPlan::NodeID> m_goalTypeAssignment;
         GoalType m_rootGoalType;
         GoalEx* m_pRootGoal;
+        IOlcbpPlan::NodeSet m_activeGoalSet;
+        OlcbpPlanContext m_planContext;
+        std::map<IOlcbpPlan::NodeID, std::set<IOlcbpPlan::NodeID>> m_executingActions;
     };
 }
 

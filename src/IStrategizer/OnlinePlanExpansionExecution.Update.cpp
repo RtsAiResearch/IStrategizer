@@ -32,12 +32,14 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         IOlcbpPlan::NodeQueue goalQ;
         typedef unsigned GoalKey;
         map<GoalKey, stack<IOlcbpPlan::NodeID>> goalTable;
-        IOlcbpPlan::NodeSet activeGoalSet;
 
         // 1st pass: get ready nodes only
         GetReachableReadyNodes(actionQ, goalQ);
 
+
         // 2nd pass: prioritize and filter goal updates
+        m_activeGoalSet.clear();
+
         while (!goalQ.empty())
         {
             IOlcbpPlan::NodeID currentGoalId = goalQ.front();
@@ -59,24 +61,24 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
                 {
                     auto& currentOverrideStack = goalTable[typeKey];
                     IOlcbpPlan::NodeID currentActiveGoalId = currentOverrideStack.top();
+
                     IOlcbpPlan::NodeSet ancestors;
-
-                    GetAncestorSatisfyingGoals(newActiveGoalId, ancestors);
-
                     stack<IOlcbpPlan::NodeID> newOverrideStack;
 
+                    GetAncestorSatisfyingGoals(newActiveGoalId, ancestors);
                     newOverrideStack.push(newActiveGoalId);
 
                     while (!currentOverrideStack.empty())
                     {
                         currentActiveGoalId = currentOverrideStack.top();
-
+                        
                         // Nodes belonging to my ancestors set should not be destroyed
                         // and should be kept in order
                         if (ancestors.count(currentActiveGoalId) != 0)
                             newOverrideStack.push(currentActiveGoalId);
-                        else if (m_pOlcbpPlan->Contains(currentActiveGoalId) &&
-                            !IsNodeOpen(currentActiveGoalId))
+                        else if (m_pOlcbpPlan->Contains(currentActiveGoalId) && 
+                                 !IsNodeOpen(currentActiveGoalId) &&
+                                 !HasExecutingAction(currentActiveGoalId))
                         {
                             LogInfo("Destroyed %s snippet since it was overriden by %s",
                                 m_pOlcbpPlan->GetNode(currentActiveGoalId)->ToString().c_str(),
@@ -113,7 +115,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             if (m_pOlcbpPlan->Contains(goalEntry.second.top()))
             {
                 UpdateGoalNode(goalEntry.second.top(), clock);
-                activeGoalSet.insert(goalEntry.second.top());
+                m_activeGoalSet.insert(goalEntry.second.top());
             }
         }
 
@@ -121,11 +123,15 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         {
             // Only update an action node if it still exist
             // What applies to a goal in the 3rd pass apply here
-            if (m_pOlcbpPlan->Contains(actionQ.front()) &&
-                (activeGoalSet.count(GetNodeData(actionQ.front()).SatisfyingGoal) > 0 ||
-                IsNodeDone(GetNodeData(actionQ.front()).SatisfyingGoal)))
+            IOlcbpPlan::NodeID actionNodeId = actionQ.front();
+            if (m_pOlcbpPlan->Contains(actionNodeId))
             {
-                UpdateActionNode(actionQ.front(), clock);
+                bool satisfyingGoalActive = m_activeGoalSet.count(GetNodeData(actionNodeId).SatisfyingGoal) > 0;
+                bool satisfyingGoalDone = IsNodeDone(GetNodeData(actionNodeId).SatisfyingGoal);
+                if (satisfyingGoalActive || satisfyingGoalDone)
+                {
+                    UpdateActionNode(actionQ.front(), clock);
+                }
             }
 
             actionQ.pop();
@@ -270,6 +276,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
             pCurrentPlanStep->State() == ESTATE_END);
 
         pCurrentPlanStep->Update(*g_Game, clock);
+        AddExecutingNode(currentNode);
 
         if (pCurrentPlanStep->State() == ESTATE_Succeeded)
         {

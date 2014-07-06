@@ -10,6 +10,7 @@
 #pragma warning(pop)
 
 #include "EngineData.h"
+#include "OlcbpPlanNodeData.h"
 
 class QGraphicsItem;
 class QGraphicsScene;
@@ -21,7 +22,6 @@ namespace IStrategizer
 {
     class GraphEdgeView;
     class PlanStepEx;
-    class OlcbpPlanNodeData;
 
     class GraphNodeView : public QGraphicsRectItem
     {
@@ -36,7 +36,7 @@ namespace IStrategizer
             QFont TxtFont;
         };
 
-        GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, const OlcbpPlanNodeData* pOlcbpData, QMenu *pContextMenu, QGraphicsItem *pParent = 0);
+        GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, ConstOlcbpPlanContextPtr pPlanContext, QMenu *pContextMenu, QGraphicsItem *pParent = 0);
         void RemoveEdge(GraphEdgeView* pEdge);
         QList<GraphEdgeView*> Disconnect();
         PlanStepEx* NodeModel() { return m_pNodeModel; }
@@ -45,6 +45,7 @@ namespace IStrategizer
         int ModelId() const { return m_modelId; }
         int NodeWidth() const { return m_nodeWidth; }
         int NodeHeight() const { return m_nodeHeight; }
+        void OnUpdate();
 
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
@@ -61,7 +62,9 @@ namespace IStrategizer
         QString m_nodeTxt;
         QList<GraphEdgeView*> m_edges;
         NodeStyle m_style;
-        const OlcbpPlanNodeData* m_pOlcbpData;
+        ConstOlcbpPlanContextPtr m_pPlanContext;
+        ConstOlcbpPlanNodeDataPtr m_pNodeData;
+        bool m_isActive;
     };
 }
 

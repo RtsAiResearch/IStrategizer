@@ -16,6 +16,7 @@
 #include "DataMessage.h"
 #include "GoalFactory.h"
 #include "PlayerResources.h"
+#include <stack>
 
 using namespace std;
 using namespace IStrategizer;
@@ -26,7 +27,8 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     m_pCbReasoner(pCasedBasedReasoner),
     m_pOlcbpPlan(new OlcbpPlan),
     m_pRootGoal(pInitialGoal),
-    m_rootGoalType((GoalType)pInitialGoal->StepTypeId())
+    m_rootGoalType((GoalType)pInitialGoal->StepTypeId()),
+    m_planContext(m_nodeData, m_activeGoalSet)
 {
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
@@ -242,7 +244,49 @@ void IStrategizer::OnlinePlanExpansionExecution::MarkCaseAsTried(_In_ IOlcbpPlan
 
     GetNodeData(nodeId).TriedCases.insert(pCase);
 }
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::OnlinePlanExpansionExecution::RemoveExecutingNode(IOlcbpPlan::NodeID nodeId)
+{
+    IOlcbpPlan::NodeSet ancestors;
+    GetAncestorSatisfyingGoals(nodeId, ancestors);
+    for (IOlcbpPlan::NodeID ancestor : ancestors)
+        m_executingActions[ancestor].erase(nodeId);
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizer::OnlinePlanExpansionExecution::AddExecutingNode(IOlcbpPlan::NodeID nodeId)
+{
+    IOlcbpPlan::NodeSet ancestors;
+    GetAncestorSatisfyingGoals(nodeId, ancestors);
+    for (IOlcbpPlan::NodeID ancestor : ancestors)
+        m_executingActions[ancestor].insert(nodeId);
+}
+//////////////////////////////////////////////////////////////////////////
+bool OnlinePlanExpansionExecution::HasExecutingAction(IOlcbpPlan::NodeID nodeId)
+{
+    /*_ASSERTE(IsGoalNode(nodeId));
+    stack<IOlcbpPlan::NodeID> currentNodes;
+    for (auto childId : m_pOlcbpPlan->GetAdjacentNodes(nodeId)) currentNodes.push(childId);
 
+    while (!currentNodes.empty())
+    {
+        IOlcbpPlan::NodeID currentNode = currentNodes.top();
+        if (IsActionNode(currentNode))
+        {
+            PlanStepEx* actionNode = (PlanStepEx*)m_pOlcbpPlan->GetNode(currentNode);
+            if (actionNode->State() == ESTATE_Executing)
+            {
+                return true;
+            }
+        }
+
+        for (auto childId : m_pOlcbpPlan->GetAdjacentNodes(currentNode)) currentNodes.push(childId);
+        currentNodes.pop();
+    }
+
+    return false;*/
+
+    return !m_executingActions[nodeId].empty();
+}
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
 {
@@ -442,6 +486,7 @@ void OnlinePlanExpansionExecution::OnActionNodeFailed(_In_ IOlcbpPlan::NodeID no
 void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
 {
     IOlcbpPlan::NodeID satisfyingGoalNode = GetNodeData(nodeId).SatisfyingGoal;
+    RemoveExecutingNode(nodeId);
 
     if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
     {
