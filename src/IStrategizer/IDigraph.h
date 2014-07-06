@@ -27,6 +27,7 @@ namespace IStrategizer
         typedef Serialization::SSet<NodeID> NodeSerializedSet;
 
         typedef std::set<NodeID> NodeSet;
+        typedef const std::set<NodeID>& ConstNodeSetRef;
 
         typedef std::vector<NodeID> NodeList;
 

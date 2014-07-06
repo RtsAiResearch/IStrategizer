@@ -32,12 +32,14 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
         IOlcbpPlan::NodeQueue goalQ;
         typedef unsigned GoalKey;
         map<GoalKey, stack<IOlcbpPlan::NodeID>> goalTable;
-        IOlcbpPlan::NodeSet activeGoalSet;
 
         // 1st pass: get ready nodes only
         GetReachableReadyNodes(actionQ, goalQ);
 
+
         // 2nd pass: prioritize and filter goal updates
+        m_activeGoalSet.clear();
+
         while (!goalQ.empty())
         {
             IOlcbpPlan::NodeID currentGoalId = goalQ.front();
@@ -113,7 +115,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             if (m_pOlcbpPlan->Contains(goalEntry.second.top()))
             {
                 UpdateGoalNode(goalEntry.second.top(), clock);
-                activeGoalSet.insert(goalEntry.second.top());
+                m_activeGoalSet.insert(goalEntry.second.top());
             }
         }
 
@@ -122,7 +124,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             // Only update an action node if it still exist
             // What applies to a goal in the 3rd pass apply here
             if (m_pOlcbpPlan->Contains(actionQ.front()) &&
-                activeGoalSet.count(GetNodeData(actionQ.front()).SatisfyingGoal) > 0)
+                m_activeGoalSet.count(GetNodeData(actionQ.front()).SatisfyingGoal) > 0)
                 UpdateActionNode(actionQ.front(), clock);
 
             actionQ.pop();

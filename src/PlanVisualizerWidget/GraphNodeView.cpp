@@ -15,13 +15,17 @@
 using namespace IStrategizer;
 using namespace std;
 
-GraphNodeView::GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, const OlcbpPlanNodeData* pOlcbpData, QMenu *pContextMeun, QGraphicsItem *pParent /* = 0 */) 
+GraphNodeView::GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, ConstOlcbpPlanContextPtr pPlanContext, QMenu *pContextMeun, QGraphicsItem *pParent /* = 0 */) 
     : QGraphicsRectItem(pParent),
     m_modelId(modelId),
-    m_pOlcbpData(pOlcbpData)
+    m_pPlanContext(pPlanContext),
+    m_pNodeData(nullptr),
+    m_isActive(false),
+    m_pNodeModel(pPlanStep),
+    m_pContextMenu(pContextMeun)
 {
-    m_pNodeModel = pPlanStep;
-    m_pContextMenu = pContextMeun;
+    _ASSERTE(m_pNodeModel);
+    _ASSERTE(modelId != 0);
 
     m_nodeTxt = QString::fromStdString(pPlanStep->ToString(true));
 
@@ -40,7 +44,10 @@ GraphNodeView::GraphNodeView(PlanStepEx* pPlanStep, NodeID modelId, const OlcbpP
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
-    if (m_pOlcbpData == nullptr)
+    if (m_pPlanContext != nullptr)
+        m_pNodeData = &m_pPlanContext->Data.at(m_pNodeModel->Id());
+
+    if (m_pNodeData == nullptr)
         setToolTip(QString::fromLocal8Bit(m_pNodeModel->ToString().c_str()));
 }
 //----------------------------------------------------------------------------------------------
@@ -77,7 +84,7 @@ QList<GraphEdgeView*> GraphNodeView::Disconnect()
 }
 //----------------------------------------------------------------------------------------------
 QVariant GraphNodeView::itemChange(GraphicsItemChange change,
-                                 const QVariant &value)
+                                   const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionChange) 
     {
@@ -93,19 +100,19 @@ QVariant GraphNodeView::itemChange(GraphicsItemChange change,
 void GraphNodeView::paint(QPainter *p_painter, const QStyleOptionGraphicsItem *p_option, QWidget *p_widget)
 { 
     QGraphicsRectItem::paint(p_painter, p_option, p_widget);
-    
+
     m_style = GetStyle();
 
     setBrush(m_style.BackgroundBrush);
     setPen(m_style.BorderPen);
-    
+
     QTextOption textOption;
     textOption.setAlignment(Qt::AlignCenter);
 
     p_painter->setFont(m_style.TxtFont);
     p_painter->setPen(m_style.TxtPen);
 
-        // Measure text width and set the node width accordingly with small padding
+    // Measure text width and set the node width accordingly with small padding
     QFontMetrics fontMetric(m_style.TxtFont);
 
     m_nodeHeight = fontMetric.height() + 20;
@@ -117,15 +124,15 @@ void GraphNodeView::paint(QPainter *p_painter, const QStyleOptionGraphicsItem *p
     if (rect().width() != m_nodeWidth || rect().height() != m_nodeHeight)
         setRect(0, 0, m_nodeWidth, m_nodeHeight);
 
-    if (m_pOlcbpData != nullptr)
+    if (m_pNodeData != nullptr)
     {
         char buff[512];
         sprintf_s(buff, "%s: O?%d, SG:%d, PC:%d, CC:%d",
             m_pNodeModel->ToString().c_str(),
-            m_pOlcbpData->IsOpen,
-            m_pOlcbpData->SatisfyingGoal,
-            m_pOlcbpData->WaitOnParentsCount,
-            m_pOlcbpData->WaitOnChildrenCount);
+            m_pNodeData->IsOpen,
+            m_pNodeData->SatisfyingGoal,
+            m_pNodeData->WaitOnParentsCount,
+            m_pNodeData->WaitOnChildrenCount);
 
         setToolTip(QString::fromLocal8Bit(buff));
     }
@@ -146,9 +153,10 @@ GraphNodeView::NodeStyle GraphNodeView::GetStyle()
 {
     NodeStyle style;
 
-    Qt::GlobalColor bgBrushColor;
+    Qt::GlobalColor bgBrushColor = Qt::white;
     Qt::GlobalColor txtPenColor = Qt::black;
     Qt::GlobalColor borderColor = Qt::black;
+    auto fillPattern = Qt::SolidPattern;
 
     switch (m_pNodeModel->State())
     {
@@ -161,13 +169,17 @@ GraphNodeView::NodeStyle GraphNodeView::GetStyle()
     case ESTATE_NotPrepared:
         if (BELONG(GoalType, m_pNodeModel->StepTypeId()))
         {
-            if (m_pOlcbpData != nullptr && !m_pOlcbpData->IsOpen)
+            if (m_pNodeData != nullptr)
             {
-                bgBrushColor = Qt::blue;
-                txtPenColor = Qt::white;
+                if (!m_pNodeData->IsOpen)
+                {
+                    bgBrushColor = Qt::blue;
+                    txtPenColor = Qt::white;
+                }
             }
             else
                 bgBrushColor = Qt::lightGray;
+
         }
         else
             bgBrushColor = Qt::lightGray;
@@ -184,7 +196,7 @@ GraphNodeView::NodeStyle GraphNodeView::GetStyle()
         break;
     }
 
-    style.BackgroundBrush = QBrush(bgBrushColor, Qt::SolidPattern);
+    style.BackgroundBrush = QBrush(bgBrushColor, fillPattern);
     style.BorderPen = QPen(QColor(borderColor));
     style.TxtPen = QPen(QColor(txtPenColor));
 
@@ -193,13 +205,24 @@ GraphNodeView::NodeStyle GraphNodeView::GetStyle()
         style.TxtFont.setBold(true);
         style.TxtFont.setPixelSize(26);
         style.BorderPen.setWidth(2);
+
+        if (m_isActive)
+        {
+            style.TxtFont.setItalic(true);
+            style.TxtFont.setUnderline(true);
+        }
     }
     else
     {
-        //style.TxtFont.setBold(true);
         style.TxtFont.setPixelSize(22);
         style.BorderPen.setWidth(1);
     }
 
     return style;
 } 
+//////////////////////////////////////////////////////////////////////////
+void GraphNodeView::OnUpdate()
+{
+    if (BELONG(GoalType, m_pNodeModel->StepTypeId()))
+        m_isActive = (m_pPlanContext->ActiveGoalSet.count(m_pNodeModel->Id()) != 0);
+}

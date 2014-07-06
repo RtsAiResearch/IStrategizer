@@ -166,7 +166,7 @@ void ClientMain::InitPlannerView()
     if (!m_isLearning)
     {
         auto pPlanner = m_pIStrategizer->Planner()->ExpansionExecution();
-        m_pPlanGraphView->View(pPlanner->Plan(), &pPlanner->NodeData());
+        m_pPlanGraphView->View(pPlanner->Plan(), &pPlanner->GetContext());
     }
 }
 //////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,25 @@ namespace IStrategizer
     typedef std::map<IOlcbpPlan::NodeID, OlcbpPlanNodeData> OlcbpPlanNodeDataMap;
     typedef const std::map<IOlcbpPlan::NodeID, OlcbpPlanNodeData>& ConstOlcbpPlanNodeDataMapRef;
     typedef const std::map<IOlcbpPlan::NodeID, OlcbpPlanNodeData>* ConstOlcbpPlanNodeDataMapPtr;
+
+    class OlcbpPlanContext
+    {
+    public:
+        OlcbpPlanContext(ConstOlcbpPlanNodeDataMapRef data, IOlcbpPlan::ConstNodeSetRef activeGoalSet) :
+            Data(data),
+            ActiveGoalSet(activeGoalSet)
+        {}
+
+        ConstOlcbpPlanNodeDataMapRef Data;
+        IOlcbpPlan::ConstNodeSetRef ActiveGoalSet;
+
+    private:
+        OlcbpPlanContext(const OlcbpPlanContext&);                 \
+        void operator=(const OlcbpPlanContext&);
+    };
+
+    typedef const OlcbpPlanContext* ConstOlcbpPlanContextPtr;
+    typedef const OlcbpPlanContext& ConstOlcbpPlanContextRef;
 }
 
 #endif // OLCBPPLANNODEDATA_H

@@ -26,7 +26,8 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     m_pCbReasoner(pCasedBasedReasoner),
     m_pOlcbpPlan(new OlcbpPlan),
     m_pRootGoal(pInitialGoal),
-    m_rootGoalType((GoalType)pInitialGoal->StepTypeId())
+    m_rootGoalType((GoalType)pInitialGoal->StepTypeId()),
+    m_planContext(m_nodeData, m_activeGoalSet)
 {
     g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
