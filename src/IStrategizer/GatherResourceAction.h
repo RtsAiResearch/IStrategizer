@@ -25,8 +25,7 @@ namespace IStrategizer
         bool ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock);
         void InitializePreConditions();
         void InitializePostConditions();
-        void OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock);
-        void OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock);
+        void FreeResources(RtsGame &game);
         void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
 
     private:

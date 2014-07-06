@@ -149,28 +149,6 @@ bool GatherResourceAction::SuccessConditionsSatisfied(RtsGame& game)
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-void GatherResourceAction::OnSucccess(RtsGame& game, const WorldClock& p_clock )
-{
-    if(m_gatherIssued)
-    {
-        GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
-
-        if (pEntity)
-            pEntity->Unlock(this);
-    }
-}
-//////////////////////////////////////////////////////////////////////////
-void GatherResourceAction::OnFailure(RtsGame& game, const WorldClock& p_clock)
-{
-    if(m_gatherIssued)
-    {
-        GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
-
-        if (pEntity)
-            pEntity->Unlock(this);
-    }
-}
-//////////////////////////////////////////////////////////////////////////
 bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
 	EntityClassType gathererType = game.Self()->Race()->GetWorkerType();
@@ -259,4 +237,15 @@ bool GatherResourceAction::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+}
+//////////////////////////////////////////////////////////////////////////
+void GatherResourceAction::FreeResources(RtsGame &game)
+{
+    if(m_gatherIssued)
+    {
+        GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
+
+        if (pEntity && pEntity->IsLocked())
+            pEntity->Unlock(this);
+    }
 }

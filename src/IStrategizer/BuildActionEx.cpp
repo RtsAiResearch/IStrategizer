@@ -38,16 +38,6 @@ BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnSucccess(RtsGame& game, const WorldClock& p_clock)
-{
-    FreeResources(game);
-}
-//////////////////////////////////////////////////////////////////////////
-void BuildActionEx::OnFailure(RtsGame& game, const WorldClock& p_clock)
-{
-    FreeResources(game);
-}
-//////////////////////////////////////////////////////////////////////////
 void BuildActionEx::FreeResources(RtsGame &game)
 {
     if (!_buildArea.IsNull() && _buildArea.IsLocked())

@@ -226,16 +226,6 @@ void TrainAction::InitializePreConditions()
     _preCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void TrainAction::OnSucccess(RtsGame& game, const WorldClock& clock)
-{
-    FreeResources(game);
-}
-//----------------------------------------------------------------------------------------------
-void TrainAction::OnFailure(RtsGame& game, const WorldClock& clock)
-{
-    FreeResources(game);
-}
-//----------------------------------------------------------------------------------------------
 void TrainAction::FreeResources(RtsGame& game)
 {
     GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
