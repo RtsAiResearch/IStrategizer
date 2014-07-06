@@ -291,12 +291,12 @@ int IStrategizer::GraphScene::ComputeLevelHeight(int levelIdx)
     return levelHeight;
 }
 //----------------------------------------------------------------------------------------------
-void GraphScene::OnGraphStructureChange(IOlcbpPlan* pGraph)
+void GraphScene::NotifyGraphStructureChange(IOlcbpPlan* pGraph)
 {
     QApplication::postEvent(this, new QGraphStructureChangeEvent(pGraph));
 }
 //----------------------------------------------------------------------------------------------
-void GraphScene::OnGraphUpdate()
+void GraphScene::UpdateGraph()
 {
     QApplication::postEvent(this, new QEvent((QEvent::Type)SCENEEVT_GraphRedraw));
 }
@@ -532,20 +532,33 @@ bool GraphScene::event(QEvent * pEvt)
     }
     else if (evt == SCENEEVT_GraphRedraw)
     {
-        if (m_pGraph != nullptr && m_pGraph->Size() != 0)
-        {
-            for (auto& nodeRecord : m_nodeIdToNodeViewMap)
-            {
-                _ASSERTE(nodeRecord.second->NodeModel() != nullptr);
-                nodeRecord.second->OnUpdate();
-            }
-        }
-        update();
-
+        OnGraphUpdate();
         return true;
     }
     else
     {
         return QGraphicsScene::event(pEvt);
     }
+}
+//----------------------------------------------------------------------------------------------
+void GraphScene::OnGraphUpdate()
+{
+    if (m_pGraph != nullptr && m_pPlanContext != nullptr)
+    {
+        m_pGraph->Lock();
+
+        m_currActiveGoalSet = m_pPlanContext->ActiveGoalSet;
+
+        m_pGraph->Unlock();
+
+        for (auto& record : m_nodeIdToNodeViewMap)
+            record.second->MarkAsInactive();
+
+        for (auto goalId : m_currActiveGoalSet)
+        {
+            m_nodeIdToNodeViewMap[goalId]->MarkAsActive();
+        }
+    }
+
+    update();
 }

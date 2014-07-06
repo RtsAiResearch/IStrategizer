@@ -66,11 +66,11 @@ void PlanGraphView::HandleNodeSelected(GraphNodeView* p_node)
 //----------------------------------------------------------------------------------------------
 void PlanGraphView::OnPlanStructureChange(IOlcbpPlan* pPlan)
 {
-    m_pScene->OnGraphStructureChange(pPlan);
+    m_pScene->NotifyGraphStructureChange(pPlan);
 }
 //----------------------------------------------------------------------------------------------
 void PlanGraphView::timerEvent(QTimerEvent *pEvt)
 {
     if (pEvt->timerId() == m_updateTimerId)
-        m_pScene->OnGraphUpdate();
+        m_pScene->UpdateGraph();
 }

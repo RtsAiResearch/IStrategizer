@@ -80,14 +80,14 @@ namespace IStrategizer
         // scene a chance to redraw and layout the graph view
         // Returns:       void
         //************************************
-        virtual void OnGraphStructureChange(IOlcbpPlan* pGraph);
+        virtual void NotifyGraphStructureChange(IOlcbpPlan* pGraph);
 
         //************************************
         // IStrategizer::GraphScene::OnGraphUpdate
         // Description:	Called to redraw the current graph nodes without layouting the graph
         // Returns:   	void
         //************************************
-        virtual void OnGraphUpdate();
+        virtual void UpdateGraph();
 
     protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *pEvent);
@@ -114,6 +114,7 @@ namespace IStrategizer
         std::vector< std::vector<NodeID> > m_graphLevels;
         std::map<NodeID, GraphNodeView*> m_nodeIdToNodeViewMap;
         ConstOlcbpPlanContextPtr m_pPlanContext;
+        IOlcbpPlan::NodeSet m_currActiveGoalSet;
 
         void ConstructGraph();
         void ComputeGraphLevels();
@@ -128,6 +129,7 @@ namespace IStrategizer
         void LayoutGraphInHierarchy();
         int ComputeLevelWidth(int levelIdx);
         int ComputeLevelHeight(int levelIdx);
+        void OnGraphUpdate();
 
     private slots:
         void ReconstructScene();

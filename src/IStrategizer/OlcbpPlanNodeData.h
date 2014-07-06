@@ -53,10 +53,12 @@ namespace IStrategizer
         IOlcbpPlan::ConstNodeSetRef ActiveGoalSet;
 
     private:
-        OlcbpPlanContext(const OlcbpPlanContext&);                 \
+        OlcbpPlanContext(const OlcbpPlanContext&);
         void operator=(const OlcbpPlanContext&);
     };
 
+    typedef OlcbpPlanContext* OlcbpPlanContextPtr;
+    typedef OlcbpPlanContext& OlcbpPlanContextRef;
     typedef const OlcbpPlanContext* ConstOlcbpPlanContextPtr;
     typedef const OlcbpPlanContext& ConstOlcbpPlanContextRef;
 }
