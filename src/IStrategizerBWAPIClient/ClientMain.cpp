@@ -377,7 +377,11 @@ void ClientMain::UpdateStatsView()
 
         QString txt =QString("[%1]{").arg(workersState[state].size());
         for (auto workerId : workersState[state])
-            txt += QString("%1,").arg(workerId);
+        {
+            txt += QString("%1").arg(workerId);
+            txt += QString("[%2],").arg(m_pGameModel->Self()->GetEntity(workerId)->IsLocked() ? "L" : "F");
+        }
+
         txt += "}";
 
         cell->setText(txt);
