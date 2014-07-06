@@ -36,6 +36,10 @@ namespace IStrategizer
         {
         }
 
+        ~AdjListDigraph() 
+        {
+       
+        }
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::AddNode
         // Description:	Add a new node to the Digraph without connecting it and identify it using
@@ -169,7 +173,7 @@ namespace IStrategizer
         {
             NodeSerializedSet nodes;
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
                 nodes.insert(nodeEntry.first);
             }
@@ -186,7 +190,7 @@ namespace IStrategizer
         {
             std::set<NodeValue> nodes;
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
                 nodes.insert(nodeEntry.second.first);
             }
@@ -305,9 +309,9 @@ namespace IStrategizer
             // ......Remove A from O
             NodeSerializedSet orphans = GetNodes();
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
-                NodeSerializedSet& adjacents = nodeEntry.second.second;
+                const NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 for (auto adjNodeId : adjacents)
                 {
@@ -327,9 +331,9 @@ namespace IStrategizer
         {
             NodeSerializedSet leaves;
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
-                NodeSerializedSet& adjacents = nodeEntry.second.second;
+                const NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 if (adjacents.empty())
                     leaves.insert(nodeEntry.first);
@@ -412,7 +416,7 @@ namespace IStrategizer
             str += ToString(roots);
             str += "\n";
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
                 if (m_adjList.count(nodeEntry.first) == 0)
                     DEBUG_THROW(ItemNotFoundException(XcptHere));
@@ -421,7 +425,7 @@ namespace IStrategizer
                 str += TNodeValueTraits::ToString(nodeVal);
                 str += " -> ";
 
-                NodeSerializedSet& adjacents = nodeEntry.second.second;
+                const NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 for (auto adjNodeID : adjacents)
                 {
@@ -513,6 +517,7 @@ namespace IStrategizer
         // Parameter: 	NodeSet parents (OUT): A set to fill with the Ids of the direct node parents
         // Returns:   	void
         void GetParents(_In_ NodeID nodeId, _Out_ NodeSet& parents) const
+            throw(ItemNotFoundException)
         {
             _ASSERTE(m_adjList.count(nodeId) != 0);
             if (m_adjList.count(nodeId) == 0)
@@ -527,6 +532,26 @@ namespace IStrategizer
                     parents.insert(parent.first);
                 }
             }
+        }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Clone
+        // Description:	Make a deep clone of the existing digraph
+        // Returns:   	New digraph instance
+        IDigraph<TNodeValue>* Clone() const
+        {
+            auto pClone = new AdjListDigraph;
+            pClone->m_lastNodeId = m_lastNodeId;
+            pClone->m_adjList = m_adjList;
+
+            for (auto& nodeEntry : pClone->m_adjList)
+            {
+                auto originalId = nodeEntry.second.first->Id();
+                nodeEntry.second.first = AdjListDigraphNodeValueTraits<TNodeValue>::Clone(nodeEntry.second.first);
+                nodeEntry.second.first->Id(originalId);
+            }
+
+            return pClone;
         }
 
         PlanHashMap PlanHash;

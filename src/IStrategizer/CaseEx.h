@@ -17,8 +17,9 @@ namespace IStrategizer
     {
         typedef PlanStepEx* Type;
         typedef const PlanStepEx* ConstType;
-        static std::string ToString(const PlanStepEx* pStep) { return pStep->ToString(true); }
-        static unsigned Hash(PlanStepEx* pStep) { return pStep->Hash(); }
+        static std::string ToString(ConstType pStep) { return pStep->ToString(true); }
+        static unsigned Hash(ConstType pStep) { return pStep->Hash(); }
+        static Type Clone(Type pObj) { return (Type)pObj->Clone(); }
     };
 
     template<>
@@ -26,8 +27,9 @@ namespace IStrategizer
     {
         typedef PlanStepStrongPtr Type;
         typedef ConstPlanStepStrongPtr  ConstType;
-        static std::string ToString(ConstPlanStepStrongPtr pStep) { return pStep->ToString(true); }
-        static unsigned Hash(ConstPlanStepStrongPtr pStep) { return pStep->Hash(); }
+        static std::string ToString(ConstType pStep) { return pStep->ToString(true); }
+        static unsigned Hash(ConstType pStep) { return pStep->Hash(); }
+        static Type Clone(Type pObj) { return PlanStepStrongPtr((PlanStepEx*)pObj->Clone()); }
     };
 
     ///> alias=OlcbpPlan(AdjListDigraph(PlanStepEx*))
