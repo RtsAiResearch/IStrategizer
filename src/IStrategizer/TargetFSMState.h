@@ -34,12 +34,7 @@ namespace IStrategizer
         {
             SelectEnemyTarget(game);
             ControllerTraits<TController>::Type battle = m_controller;
-            if (m_targetId == DONT_CARE)
-            {
-                // Not having target means enemy has been eliminated.
-                _ASSERTE(m_enemyEntitiesCount == 0);
-            }
-            else
+            if (m_targetId != DONT_CARE)
             {
                 TControllerTraits::NextTarget(battle, m_targetId);
             }

@@ -444,7 +444,7 @@ namespace IStrategizer
         MSG_EntityComplete,
         MSG_PlanStructureChange,
         MSG_PlanComplete,
-        MSG_AttackComplete,
+        MSG_BattleComplete,
         MSG_END
     };
     //---------------------------------------------------------------------------

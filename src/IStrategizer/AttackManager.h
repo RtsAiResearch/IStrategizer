@@ -27,9 +27,14 @@ namespace IStrategizer
             for (auto battle : m_battles)
             {
                 if (battle->Active())
+                {
                     battle->Update(game, clock);
+                }
                 else
+                {
                     inactiveBattles.insert(battle);
+                    g_MessagePump.Send(new Message(0, MSG_BattleComplete));
+                }
             }
 
             for (auto battle : inactiveBattles)
