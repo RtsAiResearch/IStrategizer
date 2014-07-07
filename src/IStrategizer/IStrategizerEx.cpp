@@ -64,14 +64,14 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
         break;
 
     case MSG_BattleComplete:
-        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
-        m_pPlanner->ExpansionExecution()->StartPlanning();
+        /*m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();*/
         break;
 
     case MSG_PlanComplete:
         m_attackManager.AddBattle();
-        /*m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
-        m_pPlanner->ExpansionExecution()->StartPlanning();*/
+        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();
         break;
     }
 }
