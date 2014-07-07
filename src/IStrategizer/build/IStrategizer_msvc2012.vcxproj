@@ -154,6 +154,7 @@
     <ClCompile Include="..\DestroyEntityTypeGoal.cpp" />
     <ClCompile Include="..\EngineAssist.cpp" />
     <ClCompile Include="..\EngineComponent.cpp" />
+    <ClCompile Include="..\EngineObject.cpp" />
     <ClCompile Include="..\EntityClassExist.cpp" />
     <ClCompile Include="..\EntityClassNearArea.cpp" />
     <ClCompile Include="..\EventTriggered.cpp" />

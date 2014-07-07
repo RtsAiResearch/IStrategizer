@@ -10,6 +10,7 @@
 
 #include <string>
 #include <cassert>
+#include <Windows.h>
 
 using namespace IStrategizer;
 using namespace std;

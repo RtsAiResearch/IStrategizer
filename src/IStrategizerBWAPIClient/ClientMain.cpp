@@ -201,11 +201,10 @@ void ClientMain::InitIdLookup()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeIStrategizer()
 {
-    delete m_pIStrategizer;
-    m_pIStrategizer = nullptr;
-
-    delete m_pGameModel;
-    m_pGameModel = nullptr;
+    g_MessagePump.UnregisterAllObservers();
+    SAFE_DELETE(m_pIStrategizer);
+    SAFE_DELETE(m_pGameModel);
+    EngineObject::FreeMemoryPool();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::showEvent(QShowEvent *pEvent)
@@ -228,16 +227,13 @@ void ClientMain::OnClientLoopStart()
 {
     m_enemyPlayerUnitsCollected = false;
     InitIStrategizer();
-
     QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiInit));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientLoopEnd()
 {
-    FinalizeIStrategizer();
-
     QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiFinalize));
-
+    FinalizeIStrategizer();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnSendText(const string& p_text)
@@ -408,7 +404,12 @@ void ClientMain::UpdateStatsView()
     ui.tblWorkerState->resizeColumnsToContents();
 
     ui.lblFPSData->setText(tr("%1").arg(Broodwar->getFPS()));
-    ui.lblCurrUsedMemoryData->setText(QString("%1").arg(GetProcessUsedMemoryKB() / 1024));
+    int currMemoryUsage = (int)GetProcessUsedMemoryKB();
+    ui.lblCurrUsedMemoryData->setText(QString("%1").arg(currMemoryUsage));
+    int startMemoryUsage = ui.lblStartMemoryData->text().toInt();
+
+    int deltaMemoryUsage = abs((int)currMemoryUsage - startMemoryUsage);
+    ui.lblDeltaMemoryData->setText(QString("%1").arg(deltaMemoryUsage));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
@@ -538,7 +539,7 @@ void ClientMain::InitStatsView()
         ui.tblWorkerState->resizeColumnsToContents();
     }
 
-    ui.lblStartMemoryData->setText(QString("%1").arg(GetProcessUsedMemoryKB() / 1024));
+    ui.lblStartMemoryData->setText(QString("%1").arg(GetProcessUsedMemoryKB()));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::timerEvent(QTimerEvent *pEvt)
@@ -629,5 +630,5 @@ size_t ClientMain::GetProcessUsedMemoryKB()
 
     GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
 
-    return pmc.PrivateUsage;
+    return pmc.PrivateUsage / 1024;
 }

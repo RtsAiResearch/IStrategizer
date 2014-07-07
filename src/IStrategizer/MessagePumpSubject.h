@@ -25,6 +25,7 @@ namespace IStrategizer
         void UnregisterForAllMessages(MessagePumpObserver* p_observer);
         void AddMessage(MessageType p_messageTypeID);
         void OnMessageSent(Message* p_message);
+        void UnregisterAllObservers() { for (auto msgEntry : _messageObserversTable) msgEntry.second->clear(); }
         virtual ~MessagePumpSubject();
     };
 }

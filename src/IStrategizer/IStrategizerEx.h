@@ -6,6 +6,7 @@
 #include "WorldClock.h"
 #include "AttackManager.h"
 #include <vector>
+#include <memory>
 
 namespace IStrategizer
 {
@@ -33,8 +34,8 @@ namespace IStrategizer
         void Update(unsigned gameCycle);
         void NotifyMessegeSent(Message* pMsg);
         bool Init();
-        const OnlineCaseBasedPlannerEx* Planner() const { return m_pPlanner; }
-        OnlineCaseBasedPlannerEx* Planner() { return m_pPlanner; }
+        const OnlineCaseBasedPlannerEx* Planner() const { return &*m_pPlanner; }
+        OnlineCaseBasedPlannerEx* Planner() { return &*m_pPlanner; }
         const WorldClock& Clock() const { return m_clock; }
         ~IStrategizerEx();
 
@@ -44,13 +45,13 @@ namespace IStrategizer
 
         bool m_isFirstUpdate;
         unsigned m_armyTrainOrderInx;
-        OnlineCaseBasedPlannerEx* m_pPlanner;
-        LearningFromHumanDemonstration* m_pCaseLearning;
+        std::shared_ptr<OnlineCaseBasedPlannerEx> m_pPlanner;
+        std::shared_ptr<LearningFromHumanDemonstration> m_pCaseLearning;
         IStrategizerParam m_param;
         WorldClock m_clock;
         AttackManager m_attackManager;
         std::vector<PlanStepParameters> m_armyTrainOrder;
-        BotStatistics* m_pStatistics;
+        std::shared_ptr<BotStatistics> m_pStatistics;
     };
 }
 

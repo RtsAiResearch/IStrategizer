@@ -59,14 +59,14 @@ class ObjectFormatter
     void GetParentNode(Attributes& p_attributes,  TypeTable& p_typeTable, TypeNode*& p_lastTypeRoot);
     void GetAliasNode(Attributes& p_attributes, TypeTable& p_typeTable, TypeNode*& p_lastTypeRoot);
     bool IsFormatLine(string& p_line, string& p_format);
-    void CollectTemplateSpecialization(TypeTable& p_typeTable, ObjectTable& p_objectTable);
+    void CollectTemplateSpecialization(TypeTable& p_typeTable, Serialization::ObjectFactoryMap& p_objectTable);
 
 public:
     ~ObjectFormatter();
     ObjectFormatter();
     
     void WriteTypeTable(const string& p_sourceCodeDir);
-    void FinalizeTypeTable(TypeTable& p_typeTable, ObjectTable& p_objectTable);
+    void FinalizeTypeTable(TypeTable& p_typeTable, Serialization::ObjectFactoryMap& p_objectTable);
     void ReadTypeTable(TypeTable& p_typeTable);
     static ObjectFormatter& Instance() { static ObjectFormatter instance; return instance; }
 

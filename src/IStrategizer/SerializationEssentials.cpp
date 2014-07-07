@@ -78,45 +78,45 @@
 
 using namespace IStrategizer;
 
+DECL_SERIALIZABLE(CaseEx);
+
+DECL_SERIALIZABLE(CollectResourceGoal);
+DECL_SERIALIZABLE(TrainForceGoal);
+DECL_SERIALIZABLE(DeployArmyGoal);
+DECL_SERIALIZABLE(DestroyEntityTypeGoal);
+DECL_SERIALIZABLE(WinGameGoal);
+DECL_SERIALIZABLE(BuildInfrastructureGoal);
+DECL_SERIALIZABLE(TrainArmyGoal);
+
+DECL_SERIALIZABLE(AttackEntityAction);
+DECL_SERIALIZABLE(AttackGroundAction);
+DECL_SERIALIZABLE(ResearchAction);
+DECL_SERIALIZABLE(TrainAction);
+DECL_SERIALIZABLE(BuildActionEx);
+DECL_SERIALIZABLE(MoveAction);
+DECL_SERIALIZABLE(GatherResourceAction);
+
+DECL_SERIALIZABLE(ResourceExist);
+DECL_SERIALIZABLE(ResearchDone);
+DECL_SERIALIZABLE(EntityClassExist);
+DECL_SERIALIZABLE(EntityClassNearArea);
+DECL_SERIALIZABLE(And);
+DECL_SERIALIZABLE(Not);
+DECL_SERIALIZABLE(Or);
+
+DECL_SERIALIZABLE(CaseBaseEx);
+DECL_SERIALIZABLE_NAMED(OlcbpPlan, "AdjListDigraph(PlanStepEx*)");
+
+DECL_SERIALIZABLE(ExecutionHistory);
+DECL_SERIALIZABLE(ExecutionTrial);
+
 void SerializationEssentials::Init()
 {
     static bool initialized = false;
 
     if (initialized)
         return;
-
-    g_ObjectFactory.AddPrototype(new CaseEx);
-
-    g_ObjectFactory.AddPrototype(new CollectResourceGoal);
-    g_ObjectFactory.AddPrototype(new TrainForceGoal);
-    g_ObjectFactory.AddPrototype(new DeployArmyGoal);
-    g_ObjectFactory.AddPrototype(new DestroyEntityTypeGoal);
-    g_ObjectFactory.AddPrototype(new WinGameGoal);
-    g_ObjectFactory.AddPrototype(new BuildInfrastructureGoal);
-    g_ObjectFactory.AddPrototype(new TrainArmyGoal);
-
-    g_ObjectFactory.AddPrototype(new AttackEntityAction);
-    g_ObjectFactory.AddPrototype(new AttackGroundAction);
-    g_ObjectFactory.AddPrototype(new ResearchAction);
-    g_ObjectFactory.AddPrototype(new TrainAction);
-    g_ObjectFactory.AddPrototype(new BuildActionEx);
-    g_ObjectFactory.AddPrototype(new MoveAction);
-	g_ObjectFactory.AddPrototype(new GatherResourceAction);
-
-    g_ObjectFactory.AddPrototype(new ResourceExist);
-    g_ObjectFactory.AddPrototype(new ResearchDone);
-    g_ObjectFactory.AddPrototype(new EntityClassExist);
-    g_ObjectFactory.AddPrototype(new EntityClassNearArea);
-    g_ObjectFactory.AddPrototype(new And);
-    g_ObjectFactory.AddPrototype(new Not);
-    g_ObjectFactory.AddPrototype(new Or);
-
-    g_ObjectFactory.AddPrototype(new CaseBaseEx);
-    g_ObjectFactory.AddPrototype(new OlcbpPlan, "AdjListDigraph(PlanStepEx*)");
-
-    g_ObjectFactory.AddPrototype(new ExecutionHistory);
-    g_ObjectFactory.AddPrototype(new ExecutionTrial);
-
+    
     g_ObjectFormatter.FinalizeTypeTable(g_ObjectSerializer.TypeTable(), g_ObjectFactory.GetObjectTable());
     
     initialized = true;

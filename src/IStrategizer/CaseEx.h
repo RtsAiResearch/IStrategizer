@@ -60,10 +60,13 @@ namespace IStrategizer
             SAFE_DELETE(m_pGoal);
             SAFE_DELETE(m_pGameState);
          
-            auto nodes = m_pPlan->GetNodes();
-            for (auto nodeId : nodes)
-                SAFE_DELETE(m_pPlan->GetNode(nodeId));
-            SAFE_DELETE(m_pPlan);
+            if (m_pPlan)
+            {
+                auto nodes = m_pPlan->GetNodes();
+                for (auto nodeId : nodes)
+                    SAFE_DELETE(m_pPlan->GetNode(nodeId));
+                SAFE_DELETE(m_pPlan);
+            }
         }
 
         IOlcbpPlan* Plan() const { return m_pPlan; }

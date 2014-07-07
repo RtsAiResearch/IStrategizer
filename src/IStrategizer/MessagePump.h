@@ -19,6 +19,7 @@ namespace IStrategizer
         static MessagePump& Instance();
         void Update(const WorldClock& p_clock);
         void Send(Message* p_message, bool p_immediate = false);
+
     protected:
         MessagePump();
         void DeliverMessage(Message* p_message);

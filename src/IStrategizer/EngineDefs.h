@@ -50,6 +50,7 @@ typedef unsigned (__stdcall *PTHREAD_START) (void *);
     (unsigned)      (dwCreateFlags),               \
     (unsigned *)    (pdwThreadId)))
 
+
 #if defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>

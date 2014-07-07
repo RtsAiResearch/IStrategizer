@@ -113,8 +113,6 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 IStrategizerEx::~IStrategizerEx()
 {
     g_IMSysMgr.Finalize();
-    Toolbox::MemoryClean(m_pPlanner);
-    Toolbox::MemoryClean(m_pCaseLearning);
 }
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
@@ -134,16 +132,16 @@ bool IStrategizerEx::Init()
     switch(m_param.Phase)
     {
     case  PHASE_Offline:
-        m_pCaseLearning = new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy);
+        m_pCaseLearning = shared_ptr<LearningFromHumanDemonstration>(new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy));
         m_pCaseLearning->Init();
         break;
 
     case PHASE_Online:
-        m_pPlanner = new OnlineCaseBasedPlannerEx();
+        m_pPlanner = shared_ptr<OnlineCaseBasedPlannerEx>(new OnlineCaseBasedPlannerEx());
         DefineArmyTrainOrder();
         m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[m_armyTrainOrderInx]));
         m_pPlanner->ExpansionExecution()->StartPlanning();
-        g_OnlineCaseBasedPlanner = m_pPlanner;
+        g_OnlineCaseBasedPlanner = &*m_pPlanner;
         g_MessagePump.RegisterForMessage(MSG_AttackComplete, this);
         g_MessagePump.RegisterForMessage(MSG_PlanComplete, this);
         break;
