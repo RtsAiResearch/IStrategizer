@@ -241,11 +241,13 @@ bool GatherResourceAction::Equals(PlanStepEx* p_planStep)
 //////////////////////////////////////////////////////////////////////////
 void GatherResourceAction::FreeResources(RtsGame &game)
 {
-    if(m_gatherIssued)
+    if(m_gatherIssued && m_gathererId != DONT_CARE)
     {
         GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
 
         if (pEntity && pEntity->IsLocked())
             pEntity->Unlock(this);
+        
+        m_gathererId = DONT_CARE;
     }
 }

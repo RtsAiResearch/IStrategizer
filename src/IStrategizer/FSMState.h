@@ -16,8 +16,10 @@ namespace IStrategizer
         typedef T Type;
         typedef const T ConstType;
         static EntitySet Army(ConstType& v) { return set<TID>(); }
-        static void TargetEnemyEntity(Type v, TID targetEnemyEntity) { }
-        static TID TargetEnemyEntity(ConstType battle) { return default<TID>(); }
+        static void NextTarget(Type v, TID targetEnemyEntity) { }
+        static TID NextTarget(ConstType battle) { return default<TID>(); }
+        static void CurrentTarget(Type v, TID targetEnemyEntity) { }
+        static TID CurrentTarget(ConstType battle) { return default<TID>(); }
     };
 
     template<class TController, class TControllerTraits = ControllerTraits<TController>>

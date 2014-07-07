@@ -16,35 +16,25 @@ namespace IStrategizer
     class AttackFSMState : public FSMState<TController, ControllerTraits<TController>>
     {
     public:
-        AttackFSMState(TController controller) : 
-            m_targetEnemyEntity(DONT_CARE),
-            m_targetDestroyed(false),
-            FSMState(Attack, controller)
-        { g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this); }
+        AttackFSMState(TController controller) : FSMState(Attack, controller) {}
         
         void Enter(RtsGame& game, const WorldClock& clock)
         {
-            m_targetDestroyed = false;
-            
-            ControllerTraits<TController>::ConstType battle = m_controller;
-            m_targetEnemyEntity = TControllerTraits::TargetEnemyEntity(battle);
-        }
-
-        void Update(RtsGame& game, const WorldClock& clock)
-        {
-            ControllerTraits<TController>::ConstType battle = m_controller;
+            ControllerTraits<TController>::Type battle = m_controller;
             EntitySet army = TControllerTraits::Army(battle);
-            TID targetId = DONT_CARE;
+            TID nextTargetId = TControllerTraits::NextTarget(battle);
+            TID currentTargetId = TControllerTraits::CurrentTarget(battle);
 
-            for (TID attackerId : army)
+            if (currentTargetId != nextTargetId)
             {
-                GameEntity* pEntity = game.Self()->GetEntity(attackerId);
-                targetId = pEntity->GetTargetId();
-                if (targetId != DONT_CARE)
+                TControllerTraits::CurrentTarget(battle, nextTargetId);
+                
+                for (TID entityId : army)
                 {
-                    // This piece of code is to verify that the target is common between
-                    // all the attacking entities
-                    //_ASSERTE(m_targetEnemyEntity == targetId);
+                    GameEntity* pEntity = game.Self()->GetEntity(entityId);
+                    _ASSERTE(pEntity);
+
+                    pEntity->AttackEntity(nextTargetId);
                 }
             }
         }
@@ -55,30 +45,8 @@ namespace IStrategizer
             EntitySet army = TControllerTraits::Army(battle);
             bool armyEmpty = army.empty();
 
-            return armyEmpty ? Finished : m_targetDestroyed ? Deploy : Attack;
+            return armyEmpty ? Finished : Target;
         }
-
-        //////////////////////////////////////////////////////////////////////////
-        void NotifyMessegeSent(Message* p_msg)
-        {
-            if (p_msg->MessageTypeID() == MSG_EntityDestroy)
-            {
-                EntityDestroyMessage* pMsg = static_cast<EntityDestroyMessage*>(p_msg);
-                _ASSERTE(pMsg && pMsg->Data());
-
-                if (pMsg->Data()->OwnerId == PLAYER_Enemy)
-                {
-                    if (m_targetEnemyEntity == pMsg->Data()->EntityId)
-                    {
-                        m_targetDestroyed = true;
-                    }
-                }
-            }
-        }
-
-    private:
-        bool m_targetDestroyed;
-        TID m_targetEnemyEntity;
     };
 }
 

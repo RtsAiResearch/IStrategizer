@@ -40,26 +40,32 @@ BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::FreeResources(RtsGame &game)
 {
-    if (!_buildArea.IsNull() && _buildArea.IsLocked())
+    if (_builderId != DONT_CARE)
     {
-        // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
-        _ASSERTE(game.GetEntityType((EntityClassType)_params[PARAM_EntityClassId])->Attr(ECATTR_IsSpecialBuilding) || !_buildArea.IsNull());
-        _buildArea.Unlock(this);
-    }
-
-    if (!_requiredResources.IsNull() && _requiredResources.IsLocked())
-    {
-        _requiredResources.Unlock(this);
-    }
-
-    if (_builderId != INVALID_TID)
-    {
-        GameEntity *pEntity = game.Self()->GetEntity(_builderId);
-
-        if (pEntity && pEntity->IsLocked())
+        if (!_buildArea.IsNull() && _buildArea.IsLocked())
         {
-            pEntity->Unlock(this);
+            // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
+            _ASSERTE(game.GetEntityType((EntityClassType)_params[PARAM_EntityClassId])->Attr(ECATTR_IsSpecialBuilding) || !_buildArea.IsNull());
+            _buildArea.Unlock(this);
         }
+
+        if (!_requiredResources.IsNull() && _requiredResources.IsLocked())
+        {
+            _requiredResources.Unlock(this);
+        }
+
+        if (_builderId != INVALID_TID)
+        {
+            GameEntity *pEntity = game.Self()->GetEntity(_builderId);
+
+            if (pEntity && pEntity->IsLocked())
+            {
+                pEntity->Unlock(this);
+            }
+        }
+
+        _builderId = DONT_CARE;
+
     }
 }
 //////////////////////////////////////////////////////////////////////////

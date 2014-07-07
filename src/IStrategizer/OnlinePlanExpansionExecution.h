@@ -51,6 +51,7 @@ namespace IStrategizer
         void ExpandGoal(IOlcbpPlan::NodeID goalNode, CaseEx* pCase);
         void UpdateBelongingSubplanChildrenWithParentReadiness(_In_ IOlcbpPlan::NodeID nodeId);
         bool DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::NodeID planGoalNodeId);
+        bool HasExecutingAction(IOlcbpPlan::NodeID nodeId);
         void AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan::NodeID nodeId, _Inout_ IOlcbpPlan::NodeQueue &updateQ);
         void UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
         void UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
@@ -70,7 +71,8 @@ namespace IStrategizer
         void OnActionNodeSucceeded(_In_ IOlcbpPlan::NodeID nodeId);
         void OnActionNodeFailed(_In_ IOlcbpPlan::NodeID nodeId);
         void OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId);
-
+        void RemoveExecutingNode(IOlcbpPlan::NodeID nodeId);
+        void AddExecutingNode(IOlcbpPlan::NodeID currentNode);
         CaseBasedReasonerEx *m_pCbReasoner;
         OlcbpPlanNodeDataMap m_nodeData;
         IOlcbpPlan::NodeID m_planRootNodeId;
@@ -81,6 +83,7 @@ namespace IStrategizer
         GoalEx* m_pRootGoal;
         IOlcbpPlan::NodeSet m_activeGoalSet;
         OlcbpPlanContext m_planContext;
+        std::map<IOlcbpPlan::NodeID, std::set<IOlcbpPlan::NodeID>> m_executingActions;
     };
 }
 

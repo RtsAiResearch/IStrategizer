@@ -11,27 +11,40 @@ namespace IStrategizer
     class GameStatistics
     {
     public:
-        GameStatistics(bool win = false, bool draw = false, int score = 0) :
+        GameStatistics(bool win, std::string mapName, int mapWidth, int mapHeight, int gameCycle, int casebaseSize, int score) :
             Win(win),
-            Draw(draw),
+            MapWidth(mapWidth),
+            MapHeight(mapHeight),
+            GameCycle(gameCycle),
+            CasebaseSize(casebaseSize),
+            MapName(mapName),
             Score(score) {}
 
         std::string ToString()
         {
             char buffer[STAT_LINE_MAX_LENGTH];
-            sprintf_s(buffer, STAT_LINE_MAX_LENGTH, "%c %c %d\n",
-               BoolChar(Win),
-                BoolChar(Draw),
+            sprintf_s(buffer, STAT_LINE_MAX_LENGTH, "%s,%dx%d,%c,%d,%d,%d\n", 
+                MapName,
+                MapWidth,
+                MapHeight,
+                BoolChar(Win),
+                GameCycle,
+                CasebaseSize,
                 Score);
             return std::string(buffer);
         }
 
         bool Win;
-        bool Draw;
+        int MapWidth;
+        int MapHeight;
+        int GameCycle;
+        int CasebaseSize;
         int Score;
+        std::string MapName;
+
 
     private:
-        char BoolChar(bool val) { return val ? 'T' : 'F'; }
+        char BoolChar(bool val) { return val ? '1' : '0'; }
     };
 }
 
