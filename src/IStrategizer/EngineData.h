@@ -2,7 +2,6 @@
 #ifndef ENGINEDATA_H
 #define ENGINEDATA_H
 
-#include <vector>
 #include <map>
 #include <unordered_set>
 #include "MetaData.h"
@@ -57,10 +56,9 @@ namespace IStrategizer
 
     ///> alias=DeepFeaturesEx(vector(float))
     typedef Serialization::SVector<float> DeepFeaturesEx;
+}
 
 #define INVALID_TID -1
 #define DONT_CARE -1
-
-}
 
 #endif // ENGINEDATA_H

@@ -6,22 +6,22 @@
 
 namespace IStrategizer
 {
-    const std::string g_CaseBasePath = "IStrategizerEx.cb";
+#define  CASEBASE_FILENAME "IStrategizerEx.cb"
 
     class RetainerEx : public AbstractRetainer
     {
     private:
-        std::string _caseBasePath;
-        bool _caseBaseLoaded;
+        std::string m_caseBasePath;
+        bool m_caseBaseLoaded;
 
     protected:
         void ExecuteCommand(const char* p_cmd);
 
     public:
-        RetainerEx(std::string p_caseBasePath);
+        RetainerEx();
         void ReadCaseBase();
         void Flush();
-        void Retain(CaseEx* p_case);
+        void Retain(_In_ CaseEx* pCase);
         ~RetainerEx();
     };
 }

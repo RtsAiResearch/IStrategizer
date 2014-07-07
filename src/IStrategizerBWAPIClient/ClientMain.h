@@ -83,6 +83,7 @@ protected:
     bool event(QEvent * pEvt);
     void OnUiInit();
     void OnUiFinalize();
+    size_t GetProcessUsedMemoryKB();
 
 private:
     void InitIStrategizer();

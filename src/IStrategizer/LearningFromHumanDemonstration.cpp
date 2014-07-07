@@ -27,7 +27,7 @@ using namespace Serialization;
 LearningFromHumanDemonstration::LearningFromHumanDemonstration(PlayerType p_player, PlayerType p_enemy)
 {
     _helper = new CaseLearningHelper();
-    _retainer = new RetainerEx(g_CaseBasePath);
+    _retainer = new RetainerEx();
 }
 //------------------------------------------------------------------------------------------------
 void LearningFromHumanDemonstration::Learn()

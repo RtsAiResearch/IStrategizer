@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <cassert>
 #include <set>
-#include "CmnHdr.h"
+#include "EngineDefs.h"
 
 using namespace std;
 using namespace BWAPI;

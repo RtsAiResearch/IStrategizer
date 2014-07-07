@@ -366,6 +366,9 @@
     <ClInclude Include="..\TargetFSMState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\EngineDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Action.cpp">

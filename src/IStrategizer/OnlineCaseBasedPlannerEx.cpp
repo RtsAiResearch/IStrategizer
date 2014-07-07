@@ -55,7 +55,7 @@ OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() :
 //----------------------------------------------------------------------------------------------
 bool OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
 {
-    AbstractRetainer* m_retainer = new RetainerEx(g_CaseBasePath);
+    AbstractRetainer* m_retainer = new RetainerEx();
     AbstractRetriever* m_retriever = new RetrieverEx(m_retainer);
     AbstractReviser* m_revisor = new Reviser();
     AbstractAdapter* m_adapter = new AdapterEx();

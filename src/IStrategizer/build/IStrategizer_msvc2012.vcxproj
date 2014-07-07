@@ -48,6 +48,7 @@
     <ClInclude Include="..\DataMessage.h" />
     <ClInclude Include="..\Delegate.h" />
     <ClInclude Include="..\DeployArmyGoal.h" />
+    <ClInclude Include="..\EngineDefs.h" />
     <ClInclude Include="..\TargetFSMState.h" />
     <ClInclude Include="..\DestroyEntityTypeGoal.h" />
     <ClInclude Include="..\EngineAssist.h" />

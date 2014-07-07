@@ -5,12 +5,13 @@
 #include "UserObject.h"
 #include "PlanStepEx.h"
 #include <vector>
+#include "EngineDefs.h"
+#include "GoalEx.h"
 
 namespace IStrategizer
 {
     class GoalEx;
     class RtsGame;
-
 
     template<>
     struct AdjListDigraphNodeValueTraits<PlanStepEx*>
@@ -53,6 +54,17 @@ namespace IStrategizer
             m_trialCount(trialCount),
             m_successCount(successCount),
             m_pPlan(pPlan) {}
+
+        ~CaseEx()
+        {
+            SAFE_DELETE(m_pGoal);
+            SAFE_DELETE(m_pGameState);
+         
+            auto nodes = m_pPlan->GetNodes();
+            for (auto nodeId : nodes)
+                SAFE_DELETE(m_pPlan->GetNode(nodeId));
+            SAFE_DELETE(m_pPlan);
+        }
 
         IOlcbpPlan* Plan() const { return m_pPlan; }
         GoalEx* Goal() const { return m_pGoal; }
