@@ -164,7 +164,7 @@ namespace IStrategizer
         //************************************
         virtual const NodeSerializedSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
             throw(ItemNotFoundException) = 0;
-        
+
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
         // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
@@ -231,7 +231,14 @@ namespace IStrategizer
         // Description:	Gets direct parents to a certain node
         // Parameter: 	NodeSet parents (OUT): A set to fill with the Ids of the direct node parents
         // Returns:   	void
-        virtual void GetParents(_In_ NodeID nodeId, _Out_ NodeSet& parents) const = 0;
+        virtual void GetParents(_In_ NodeID nodeId, _Out_ NodeSet& parents) const 
+            throw(ItemNotFoundException) = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Clone
+        // Description:	Make a deep clone of the existing digraph
+        // Returns:   	New digraph instance
+        virtual IDigraph<TNodeValue>* Clone() const = 0;
     };
 }
 

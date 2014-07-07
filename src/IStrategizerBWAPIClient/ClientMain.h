@@ -8,6 +8,9 @@
 #include <Windows.h>
 #include <vector>
 #include "MessagePumpObserver.h"
+#include "EngineData.h"
+#include <memory>
+#include "OlcbpPlanNodeData.h"
 
 namespace IStrategizer
 {
@@ -19,6 +22,35 @@ namespace IStrategizer
 
 class IMViewWidget;
 class PlannerViewWidget;
+
+
+class PlanSnapshot
+{
+public:
+    PlanSnapshot(unsigned gameFrame,
+        std::shared_ptr<IStrategizer::IOlcbpPlan> pPlan,
+        IStrategizer::ConstOlcbpPlanNodeDataMapRef data, 
+        IStrategizer::IOlcbpPlan::NodeSet activeGoalSet) :
+    m_context(m_data, m_activeGoalSet),
+        m_gameFrame(gameFrame),
+        m_pPlan(pPlan),
+        m_data(data),
+        m_activeGoalSet(activeGoalSet)
+    {
+
+    }
+
+    unsigned GameFrame() const { return m_gameFrame; }
+    IStrategizer::ConstOlcbpPlanContextRef Context() const { return m_context; }
+    std::shared_ptr<IStrategizer::IOlcbpPlan> Plan() const { return m_pPlan; }
+
+private:
+    unsigned m_gameFrame;
+    IStrategizer::OlcbpPlanNodeDataMap m_data;
+    IStrategizer::IOlcbpPlan::NodeSet m_activeGoalSet;
+    IStrategizer::OlcbpPlanContext m_context;
+    std::shared_ptr<IStrategizer::IOlcbpPlan> m_pPlan;
+};
 
 class ClientMain : public QMainWindow, public BwapiClient, public IStrategizer::MessagePumpObserver
 {
@@ -57,11 +89,13 @@ private:
     void InitIMView();
     void InitStatsView();
     void InitPlannerView();
+    void InitPlanHistoryView();
     void FinalizeIStrategizer();
     void UpdateViews();
     void UpdateStatsView();
     void InitIdLookup();
     void NotifyMessegeSent(IStrategizer::Message* p_pMessage);
+    void OnPlanHistoryChanged();
     Ui::ClientMainClass                ui;
     IStrategizer::IStrategizerEx    *m_pIStrategizer;
     IStrategizer::RtsGame            *m_pGameModel;
@@ -72,9 +106,13 @@ private:
     IStrategizer::GameTraceCollector *m_pTraceCollector;
     IStrategizer::CrossMap<unsigned, std::string>    m_idLookup;
     IStrategizer::PlanGraphView *m_pPlanGraphView;
+    IStrategizer::PlanGraphView *m_pPlanHistoryView;
+    std::vector<std::shared_ptr<PlanSnapshot>> m_planHistory;
     bool m_enemyPlayerUnitsCollected;
-    std::map<int, std::pair<IStrategizer::RtsGame*, IStrategizer::RtsGame*>> m_snapshots;
     int m_updateTimerId;
+
+    private slots:
+        void OneHistorySliderValueChanged();
 };
 
 #endif // CLIENTMAIN_H

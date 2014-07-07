@@ -36,7 +36,6 @@ namespace IStrategizer
     template<class T>
     DataMessage<T>::~DataMessage()
     {
-        delete _data;
     }
     //----------------------------------------------------------------------------------------------
     typedef DataMessage<std::string> TextMessage;

@@ -44,11 +44,14 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     m_isLearning(false),
     m_pTraceCollector(nullptr),
     m_enemyPlayerUnitsCollected(false),
-    m_pPlanGraphView(nullptr)
+    m_pPlanGraphView(nullptr),
+    m_pPlanHistoryView(nullptr)
 {
     ui.setupUi(this);
     IStrategizer::Init();
     g_MessagePump.RegisterForMessage(MSG_PlanStructureChange, this);
+
+    connect(ui.sldHistoryFrame, SIGNAL(valueChanged(int)), SLOT(OneHistorySliderValueChanged()));
 }
 //////////////////////////////////////////////////////////////////////////
 ClientMain::~ClientMain()
@@ -169,6 +172,18 @@ void ClientMain::InitPlannerView()
         auto pPlanner = m_pIStrategizer->Planner()->ExpansionExecution();
         m_pPlanGraphView->View(pPlanner->Plan(), &pPlanner->GetContext());
     }
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::InitPlanHistoryView()
+{
+    if (m_pPlanHistoryView == nullptr)
+    {
+        GraphScene *pGraphScene = new GraphScene(&m_idLookup);
+        m_pPlanHistoryView = new PlanGraphView(pGraphScene, &m_idLookup);
+        ui.tbPlanHistory->layout()->addWidget(m_pPlanHistoryView);
+    }
+
+    m_planHistory.clear();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()
@@ -390,6 +405,8 @@ void ClientMain::UpdateStatsView()
     }
 
     ui.tblWorkerState->resizeColumnsToContents();
+
+    ui.lblFPSData->setText(tr("%1").arg(Broodwar->getFPS()));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
@@ -461,7 +478,27 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
     if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange && m_pPlanGraphView != nullptr )
     {
         DataMessage<IOlcbpPlan>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan>*>(p_pMessage);
-        m_pPlanGraphView->OnPlanStructureChange(pPlanChangeMsg->Data());
+
+        if (m_pPlanGraphView != nullptr)
+            m_pPlanGraphView->OnPlanStructureChange(pPlanChangeMsg->Data());
+
+        if (!m_isLearning && m_pPlanHistoryView != nullptr)
+        {
+            if (pPlanChangeMsg->Data() != nullptr)
+            {
+                auto pPlanner = m_pIStrategizer->Planner()->ExpansionExecution();
+
+                shared_ptr<PlanSnapshot> pSnapshot(new PlanSnapshot(pPlanChangeMsg->GameCycle(),
+                    shared_ptr<IOlcbpPlan>(pPlanChangeMsg->Data()->Clone()),
+                    pPlanner->GetContext().Data,
+                    pPlanner->GetContext().ActiveGoalSet));
+
+                m_planHistory.push_back(pSnapshot);
+                OnPlanHistoryChanged();
+            }
+
+            m_pPlanHistoryView->OnPlanStructureChange(pPlanChangeMsg->Data());
+        }
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -535,6 +572,7 @@ void ClientMain::OnUiInit()
 {
     InitIMView();
     InitPlannerView();
+    InitPlanHistoryView();
     InitStatsView();
     m_updateTimerId = startTimer(1000);
 }
@@ -548,6 +586,25 @@ void ClientMain::OnUiFinalize()
         m_IMViews[i]->SetIM(nullptr);
 
     m_pPlanGraphView->View(nullptr, nullptr);
+    m_pPlanHistoryView->View(nullptr, nullptr);
 
     killTimer(m_updateTimerId);
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::OnPlanHistoryChanged()
+{
+    _ASSERTE(m_pPlanHistoryView);
+
+    ui.sldHistoryFrame->setMaximum(m_planHistory.size() - 1);
+    ui.sldHistoryFrame->setValue(m_planHistory.size() - 1);
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::OneHistorySliderValueChanged()
+{
+    if (!m_planHistory.empty())
+    {
+        auto idx = ui.sldHistoryFrame->value();
+        auto history = m_planHistory[idx];
+        m_pPlanHistoryView->View(&*history->Plan(), &history->Context());
+    }
 }

@@ -94,7 +94,7 @@ void GraphScene::CreateSceneMenu()
 
     QAction *pLayoutGraph = new QAction(tr("L&ayout Plan"), this);
     pLayoutGraph->setStatusTip(tr("Layout plan graph in the scene"));
-    connect(pLayoutGraph, SIGNAL(triggered()), this, SLOT(ReconstructScene()));
+    connect(pLayoutGraph, SIGNAL(triggered()), this, SLOT(OnGraphStructureChange()));
 
     m_pSceneMenu = new QMenu(tr("Scene Menu"));
     m_pSceneMenu->setTearOffEnabled(true);
@@ -106,12 +106,10 @@ void GraphScene::View(IOlcbpPlan* pPlan, ConstOlcbpPlanContextPtr pPlanContext)
 {
     m_pGraph = pPlan;
     m_pPlanContext = pPlanContext;
-
-    if (pPlan == nullptr)
-        QApplication::postEvent(this, new QGraphStructureChangeEvent(nullptr));
+    QApplication::postEvent(this, new QGraphStructureChangeEvent(pPlan));
 }
 //----------------------------------------------------------------------------------------------
-void GraphScene::ReconstructScene()
+void GraphScene::OnGraphStructureChange()
 {
     clear();
 
@@ -527,7 +525,7 @@ bool GraphScene::event(QEvent * pEvt)
 
     if (evt == SCENEEVT_GraphStructureChange)
     {
-        ReconstructScene();
+        OnGraphStructureChange();
         return true;
     }
     else if (evt == SCENEEVT_GraphRedraw)
@@ -552,7 +550,10 @@ void GraphScene::OnGraphUpdate()
         m_pGraph->Unlock();
 
         for (auto& record : m_nodeIdToNodeViewMap)
-            record.second->MarkAsInactive();
+        {
+            if (m_nodeIdToNodeViewMap.count(record.first) > 0)
+                record.second->MarkAsInactive();
+        }
 
         for (auto goalId : m_currActiveGoalSet)
         {

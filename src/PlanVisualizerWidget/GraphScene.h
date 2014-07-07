@@ -130,9 +130,9 @@ namespace IStrategizer
         int ComputeLevelWidth(int levelIdx);
         int ComputeLevelHeight(int levelIdx);
         void OnGraphUpdate();
+        void OnGraphStructureChange();
 
     private slots:
-        void ReconstructScene();
         void NodeSelected();
         void NewNode();
         void DeleteNode();

@@ -50,7 +50,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="elideMode">
          <enum>Qt::ElideNone</enum>
@@ -72,21 +72,7 @@
            <property name="sizeConstraint">
             <enum>QLayout::SetMinimumSize</enum>
            </property>
-           <item row="5" column="0">
-            <widget class="QLabel" name="lblWorkersCount">
-             <property name="text">
-              <string>Workers Count</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="lblGameCycles">
-             <property name="text">
-              <string>Game Cycles</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0" colspan="5">
+           <item row="6" column="0" colspan="7">
             <widget class="QTableWidget" name="tblWorkerState">
              <property name="font">
               <font>
@@ -145,6 +131,37 @@
              </property>
             </widget>
            </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="lblWorkersCount">
+             <property name="text">
+              <string>Workers Count</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="lblGameCycles">
+             <property name="text">
+              <string>Game Cycles</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLabel" name="lblFPS">
+             <property name="text">
+              <string>FPS</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLabel" name="lblFPSData">
+             <property name="text">
+              <string>0</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </widget>
@@ -158,6 +175,42 @@
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
            <layout class="QGridLayout" name="plannerLayout"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tbPlanHistory">
+         <attribute name="title">
+          <string>Plan History</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="planHistoryLayout">
+            <item row="0" column="0">
+             <widget class="QSlider" name="sldHistoryFrame">
+              <property name="maximum">
+               <number>1</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="invertedAppearance">
+               <bool>false</bool>
+              </property>
+              <property name="invertedControls">
+               <bool>false</bool>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksBothSides</enum>
+              </property>
+              <property name="tickInterval">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
