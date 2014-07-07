@@ -227,7 +227,7 @@ void CaseView::ViewGameState(RtsGame* p_gameState)
 void CaseView::ViewPlanGraph(GoalEx* p_caseGoal, IOlcbpPlan* p_planGraph)
 {
     m_graphView->View(p_planGraph);
-    m_graphView->OnPlanStructureChange(p_planGraph);
+    m_graphView->NotifyGraphStructureChange(p_planGraph);
 }
 //----------------------------------------------------------------------------------------------
 void CaseView::ViewPerformance(CaseEx *p_pCase)

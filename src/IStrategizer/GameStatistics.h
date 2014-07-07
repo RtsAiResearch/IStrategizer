@@ -24,7 +24,7 @@ namespace IStrategizer
         {
             char buffer[STAT_LINE_MAX_LENGTH];
             sprintf_s(buffer, STAT_LINE_MAX_LENGTH, "%s,%dx%d,%c,%d,%d,%d\n", 
-                MapName,
+                MapName.c_str(),
                 MapWidth,
                 MapHeight,
                 BoolChar(Win),
