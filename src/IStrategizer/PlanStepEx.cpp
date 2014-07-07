@@ -14,14 +14,6 @@ unsigned PlanStepEx::s_lastPlanstepID = 0;
 
 unsigned PlanStepEx::GenerateID()
 {
-    //UUID uuid;
-    //::ZeroMemory(&uuid, sizeof(UUID));
-
-    //// Create uuid or load from a string by UuidFromString() function
-    //::UuidCreate(&uuid);
-
-    //return uuid.Data1;
-
     return ++s_lastPlanstepID;
 }
 

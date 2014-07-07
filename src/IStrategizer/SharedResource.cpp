@@ -1,5 +1,5 @@
 #include "SharedResource.h"
-#include "Action.h"
+#include "EngineObject.h"
 #include "Logger.h"
 
 using namespace IStrategizer;
@@ -30,7 +30,7 @@ void SharedResource::RemoveResource(SharedResource *p_pResource)
     s_resources.erase(itr);
 }
 //////////////////////////////////////////////////////////////////////////
-void SharedResource::Lock(Action *p_pOwner)
+void SharedResource::Lock(EngineObject *p_pOwner)
 {
     // Invalid owner
     if (p_pOwner == nullptr)
@@ -65,7 +65,7 @@ void SharedResource::Lock(Action *p_pOwner)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void SharedResource::Unlock(Action *p_pOwner)
+void SharedResource::Unlock(EngineObject *p_pOwner)
 {
     // Invalid owner
     if (p_pOwner == nullptr)

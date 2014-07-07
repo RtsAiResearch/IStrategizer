@@ -18,6 +18,7 @@ namespace IStrategizer
     {
     public:
         Battle(RtsGame& game);
+        ~Battle();
         void NotifyMessegeSent(Message* p_msg);
         void Update(RtsGame& game, const WorldClock& clock) { m_stateMachine.Update(game, clock); }
         bool Active() const { return !m_stateMachine.ReachedGoalState(); }

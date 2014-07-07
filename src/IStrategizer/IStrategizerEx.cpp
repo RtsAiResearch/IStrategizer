@@ -62,12 +62,13 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
         break;
 
     case MSG_AttackComplete:
-        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
-        m_pPlanner->ExpansionExecution()->StartPlanning();
+        // Do nothing when attacking complete
         break;
 
     case MSG_PlanComplete:
-        m_attackManager.StartBattle();
+        m_attackManager.AddBattle();
+        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();
         break;
     }
 }
@@ -95,7 +96,6 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 
             m_pPlanner->Update(m_clock);
         }
-
     }
     catch (IStrategizer::Exception &e)
     {

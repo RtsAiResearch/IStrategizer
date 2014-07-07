@@ -6,7 +6,7 @@
 #include "Battle.h"
 #include "MessagePump.h"
 #include "RtsGame.h"
-#include <vector>
+#include <set>
 
 namespace IStrategizer
 {
@@ -15,29 +15,35 @@ namespace IStrategizer
     class AttackManager : public EngineComponent
     {
     public:
-        AttackManager() : m_pCurrentBattle(nullptr), EngineComponent("AttackManager") {}
+        AttackManager() : EngineComponent("AttackManager") {}
 
         void Update(RtsGame& game, const WorldClock& clock)
         {
-            if (m_pCurrentBattle == nullptr)
+            if (m_battles.empty())
                 return;
 
-            m_pCurrentBattle->Update(game, clock);
+            std::set<Battle*> inactiveBattles;
 
-            if (!m_pCurrentBattle->Active())
+            for (auto battle : m_battles)
             {
-                g_MessagePump.Send(new Message(0, MSG_AttackComplete));
-                m_pCurrentBattle = nullptr;
+                if (battle->Active())
+                    battle->Update(game, clock);
+                else
+                    inactiveBattles.insert(battle);
+            }
+
+            for (auto battle : inactiveBattles)
+            {
+                m_battles.erase(battle);
+                delete battle;
             }
         }
 
-        void StartBattle() { m_pCurrentBattle = new Battle(*g_Game); }
-
-        bool Active() const { return m_pCurrentBattle != nullptr; }
+        void AddBattle() { m_battles.insert(new Battle(*g_Game)); }
+        bool Active() const { return !m_battles.empty(); }
 
     private:
-        std::vector<Battle*> m_battlesHistory;
-        Battle* m_pCurrentBattle;
+        std::set<Battle*> m_battles;
     };
 }
 

@@ -295,6 +295,7 @@ int GamePlayer::Attr(PlayerAttribute attribute)
 
         if (!pGameType->Attr(ECATTR_IsCowrad) &&
             !pGameType->Attr(ECATTR_IsBuilding) &&
+            !pair.second->IsLocked() &&
             g_Assist.IsEntityObjectReady(pair.first))
         {
             amount += pGameType->Attr(classAttribute);
