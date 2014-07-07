@@ -57,7 +57,8 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
                 g_Game->Map()->Height(),
                 m_clock.ElapsedGameCycles(),
                 m_pPlanner->Reasoner()->Retainer()->CaseBase()->CaseContainer.size(),
-                pMsg->Data()->Score);
+                pMsg->Data()->Score,
+                pMsg->Data()->EnemyRace);
             m_pStatistics->Add(stats);
         }
         break;
