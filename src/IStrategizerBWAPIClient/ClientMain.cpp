@@ -480,7 +480,7 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
         DataMessage<IOlcbpPlan>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan>*>(p_pMessage);
 
         if (m_pPlanGraphView != nullptr)
-            m_pPlanGraphView->OnPlanStructureChange(pPlanChangeMsg->Data());
+            m_pPlanGraphView->NotifyGraphStructureChange(pPlanChangeMsg->Data());
 
         if (!m_isLearning && m_pPlanHistoryView != nullptr)
         {
@@ -494,10 +494,10 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
                     pPlanner->GetContext().ActiveGoalSet));
 
                 m_planHistory.push_back(pSnapshot);
-                OnPlanHistoryChanged();
+                NotifyPlanHistoryChanged();
             }
 
-            m_pPlanHistoryView->OnPlanStructureChange(pPlanChangeMsg->Data());
+            m_pPlanHistoryView->NotifyGraphStructureChange(pPlanChangeMsg->Data());
         }
     }
 }
@@ -562,6 +562,11 @@ bool ClientMain::event(QEvent * pEvt)
         OnUiFinalize();
         return true;
     }
+    else if (evt == CLNTEVT_PlanHistoryChanged)
+    {
+        OnPlanHistoryChanged();
+        return true;
+    }
     else
     {
         return QMainWindow::event(pEvt);
@@ -589,6 +594,11 @@ void ClientMain::OnUiFinalize()
     m_pPlanHistoryView->View(nullptr, nullptr);
 
     killTimer(m_updateTimerId);
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::NotifyPlanHistoryChanged()
+{
+    QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_PlanHistoryChanged));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnPlanHistoryChanged()

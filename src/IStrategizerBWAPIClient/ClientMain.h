@@ -61,6 +61,7 @@ public:
     {
         CLNTEVT_UiInit = (int)(QEvent::User) + 1,
         CLNTEVT_UiFinalize,
+        CLNTEVT_PlanHistoryChanged
     };
 
     ClientMain(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -96,6 +97,7 @@ private:
     void InitIdLookup();
     void NotifyMessegeSent(IStrategizer::Message* p_pMessage);
     void OnPlanHistoryChanged();
+    void NotifyPlanHistoryChanged();
     Ui::ClientMainClass                ui;
     IStrategizer::IStrategizerEx    *m_pIStrategizer;
     IStrategizer::RtsGame            *m_pGameModel;
