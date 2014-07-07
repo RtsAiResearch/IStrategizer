@@ -2,31 +2,15 @@
 #ifndef PLANSTEPEX_H
 #define PLANSTEPEX_H
 
-#ifndef COMPOSITEEXPRESSION_H
 #include "CompositeExpression.h"
-#endif
-#ifndef ENGINEDATA_H
 #include "EngineData.h"
-#endif
-#ifndef ICOMPARABLE_H
 #include "IComparable.h"
-#endif
-#ifndef USEROBJECT_H
 #include "UserObject.h"
-#endif
-#ifndef ICLONABLE_H
+#include "EngineObject.h"
 #include "IClonable.h"
-#endif
-#ifndef CELLFEATURE_H
 #include "CellFeature.h"
-#endif
-#ifndef WORLDCLOCK_H
 #include "WorldClock.h"
-#endif
-#ifndef RTSGAME_H
 #include "RtsGame.h"
-#endif
-
 #include <map>
 #include <vector>
 #include <string>
@@ -38,7 +22,7 @@ namespace IStrategizer
     class Message;
 
     ///> class=PlanStepEx
-    class PlanStepEx : public Serialization::UserObject, public IComparable, public IClonable
+    class PlanStepEx : public Serialization::UserObject, public EngineObject, public IComparable, public IClonable
     {
         OBJECT_MEMBERS(2, &_params, &_id);
 

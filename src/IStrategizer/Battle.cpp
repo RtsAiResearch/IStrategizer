@@ -35,11 +35,15 @@ void Battle::SelectArmy(RtsGame &game)
     game.Self()->Entities(entities);
     for (TID entityId : entities)
     {
-        GameType* pEntityType = game.GetEntityType(game.Self()->GetEntity(entityId)->Type());
+        GameEntity* pAttacker = game.Self()->GetEntity(entityId);
+        GameType* pEntityType = game.GetEntityType(pAttacker->Type());
 
-        if (!pEntityType->Attr(ECATTR_IsCowrad) && pEntityType->Attr(ECATTR_CanAttack))
+        if (pEntityType->Attr(ECATTR_IsAttacker) &&
+            g_Assist.IsEntityObjectReady(entityId) &&
+            !pAttacker->IsLocked())
         {
             m_army.insert(entityId);
+            pAttacker->Lock(this);
         }
     }
 }
@@ -66,5 +70,14 @@ void Battle::NotifyMessegeSent(Message* p_msg)
                 m_destroyedEnemyEntities.push_back(pMsg->Data()->EntityId);
             }
         }
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+Battle::~Battle()
+{
+    for (auto attackerId : m_army)
+    {
+        GameEntity* pAttacker = g_Game->Self()->GetEntity(attackerId);
+        pAttacker->Unlock(this);
     }
 }

@@ -1,5 +1,5 @@
 #include "SharedResource.h"
-#include "Action.h"
+#include "EngineObject.h"
 #include "Logger.h"
 
 using namespace IStrategizer;
@@ -30,7 +30,16 @@ void SharedResource::RemoveResource(SharedResource *p_pResource)
     s_resources.erase(itr);
 }
 //////////////////////////////////////////////////////////////////////////
-void SharedResource::Lock(Action *p_pOwner)
+SharedResource::~SharedResource()
+{ 
+    if (IsLocked())
+    {
+        LogWarning("Resource 0x%x leaked, will remove it from resource list anyway", (void*)this);
+        RemoveResource(this);
+    }
+};
+//////////////////////////////////////////////////////////////////////////
+void SharedResource::Lock(EngineObject *p_pOwner)
 {
     // Invalid owner
     if (p_pOwner == nullptr)
@@ -50,7 +59,7 @@ void SharedResource::Lock(Action *p_pOwner)
             }
             else
                 DEBUG_THROW(AcquireException(XcptHere));
-            
+
         }
         // Recursive look
         else if (m_pOwner == p_pOwner)
@@ -65,7 +74,7 @@ void SharedResource::Lock(Action *p_pOwner)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void SharedResource::Unlock(Action *p_pOwner)
+void SharedResource::Unlock(EngineObject *p_pOwner)
 {
     // Invalid owner
     if (p_pOwner == nullptr)

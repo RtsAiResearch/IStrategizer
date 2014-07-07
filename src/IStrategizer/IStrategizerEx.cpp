@@ -18,6 +18,7 @@
 #include "CaseBaseEx.h"
 #include "GameStatistics.h"
 #include "CaseBasedReasonerEx.h"
+#include "SharedResource.h"
 #include <iostream>
 
 using namespace IStrategizer;
@@ -62,12 +63,13 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
         break;
 
     case MSG_AttackComplete:
-        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
-        m_pPlanner->ExpansionExecution()->StartPlanning();
+        // Do nothing when attacking complete
         break;
 
     case MSG_PlanComplete:
-        m_attackManager.StartBattle();
+        m_attackManager.AddBattle();
+        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();
         break;
     }
 }
@@ -95,7 +97,6 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 
             m_pPlanner->Update(m_clock);
         }
-
     }
     catch (IStrategizer::Exception &e)
     {
@@ -121,6 +122,7 @@ bool IStrategizerEx::Init()
     // Note that the order of the engine components initialization is intended
     // and any change in the order can result in unexpected behavior
     //
+    SharedResource::Init();
     g_Game->Init();
 
     IMSysManagerParam imSysMgrParam;

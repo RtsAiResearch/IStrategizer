@@ -6,7 +6,7 @@
 
 namespace IStrategizer
 {
-    class Action;
+    class EngineObject;
 
     class SharedResource
     {
@@ -49,29 +49,30 @@ namespace IStrategizer
         };
 
         SharedResource() : m_pOwner(0) {}
-        virtual ~SharedResource() {};
+        virtual ~SharedResource();
 
-        void Lock(Action *p_pOwner) throw(
+        void Lock(EngineObject *p_pOwner) throw(
             IStrategizer::InvalidParameterException,
             AcquireException,
             RecursiveLockException,
             AlreadyLockedException);
 
         virtual std::string ToString() const = 0;
-        void Unlock(Action *p_pOwner);
+        void Unlock(EngineObject *p_pOwner);
         bool IsLocked() { return m_pOwner != nullptr; }
-        const Action* Owner() const { return m_pOwner; }
+        const EngineObject* Owner() const { return m_pOwner; }
         virtual bool IsNull() = 0;
 
         static void AddResource(SharedResource *p_pResource) throw(IStrategizer::ItemAlreadyExistsException);
         static void RemoveResource(SharedResource *p_pResource) throw(IStrategizer::ItemNotFoundException);
         static const ResourceList& LockedResources() { return s_resources; }
+        static void Init() { s_resources.clear(); }
 
     protected:
         virtual bool Acquire() = 0;
         virtual bool Release() = 0;
 
-        Action *m_pOwner;
+        EngineObject *m_pOwner;
         static ResourceList s_resources;
     };
 }
