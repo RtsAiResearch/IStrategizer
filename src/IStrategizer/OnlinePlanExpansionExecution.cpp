@@ -438,7 +438,6 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
         CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
         m_pCbReasoner->Reviser()->Revise(currentCase, true);
         UpdateHistory(currentCase);
-        m_pCbReasoner->Retainer()->Retain(currentCase);
     }
     else
     {
@@ -466,7 +465,6 @@ void OnlinePlanExpansionExecution::OnGoalNodeFailed(_In_ IOlcbpPlan::NodeID node
         CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
         m_pCbReasoner->Reviser()->Revise(currentCase, false);
         UpdateHistory(currentCase);
-        m_pCbReasoner->Retainer()->Retain(currentCase);
     }
 
     OnNodeDone(nodeId);

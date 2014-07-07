@@ -18,6 +18,7 @@
 #include "CaseBaseEx.h"
 #include "GameStatistics.h"
 #include "CaseBasedReasonerEx.h"
+#include "SharedResource.h"
 #include <iostream>
 
 using namespace IStrategizer;
@@ -122,6 +123,7 @@ bool IStrategizerEx::Init()
     // Note that the order of the engine components initialization is intended
     // and any change in the order can result in unexpected behavior
     //
+    SharedResource::Init();
     g_Game->Init();
 
     IMSysManagerParam imSysMgrParam;

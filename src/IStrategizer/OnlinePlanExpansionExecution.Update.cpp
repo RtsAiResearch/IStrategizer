@@ -144,7 +144,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 
     if (m_planStructureChangedThisFrame)
     {
-        g_MessagePump.Send(new DataMessage<IOlcbpPlan>(clock.ElapsedGameCycles(), MSG_PlanStructureChange, m_pOlcbpPlan));
+        g_MessagePump.Send(new DataMessage<IOlcbpPlan*>(clock.ElapsedGameCycles(), MSG_PlanStructureChange, m_pOlcbpPlan));
         m_planStructureChangedThisFrame = false;
     }
 }
@@ -174,7 +174,6 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
             CaseEx* currentCase = GetLastCaseForGoalNode(currentNode);
             m_pCbReasoner->Reviser()->Revise(currentCase, false);
             UpdateHistory(currentCase);
-            m_pCbReasoner->Retainer()->Retain(currentCase);
         }
 
         if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))

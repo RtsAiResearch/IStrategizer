@@ -49,7 +49,7 @@ namespace IStrategizer
         };
 
         SharedResource() : m_pOwner(0) {}
-        virtual ~SharedResource() {};
+        virtual ~SharedResource();
 
         void Lock(EngineObject *p_pOwner) throw(
             IStrategizer::InvalidParameterException,
@@ -66,6 +66,7 @@ namespace IStrategizer
         static void AddResource(SharedResource *p_pResource) throw(IStrategizer::ItemAlreadyExistsException);
         static void RemoveResource(SharedResource *p_pResource) throw(IStrategizer::ItemNotFoundException);
         static const ResourceList& LockedResources() { return s_resources; }
+        static void Init() { s_resources.clear(); }
 
     protected:
         virtual bool Acquire() = 0;

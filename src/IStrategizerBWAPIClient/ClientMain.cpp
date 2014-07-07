@@ -7,7 +7,6 @@
 #include "IMView.h"
 #include "BWAPI.h"
 #include "BWAPI\Client.h"
-#include "CmnHdr.h"
 #include "IStrategizerEx.h"
 #include "DataMessage.h"
 #include "MessagePump.h"
@@ -29,6 +28,7 @@
 #include "GamePlayer.h"
 #include "GameEntity.h"
 #include <QTableWidget>
+#include <Psapi.h>
 
 using namespace IStrategizer;
 using namespace BWAPI;
@@ -184,6 +184,7 @@ void ClientMain::InitPlanHistoryView()
     }
 
     m_planHistory.clear();
+    m_pPlanHistoryView->View(nullptr, nullptr);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIdLookup()
@@ -407,6 +408,7 @@ void ClientMain::UpdateStatsView()
     ui.tblWorkerState->resizeColumnsToContents();
 
     ui.lblFPSData->setText(tr("%1").arg(Broodwar->getFPS()));
+    ui.lblCurrUsedMemoryData->setText(QString("%1").arg(GetProcessUsedMemoryKB() / 1024));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
@@ -535,6 +537,8 @@ void ClientMain::InitStatsView()
 
         ui.tblWorkerState->resizeColumnsToContents();
     }
+
+    ui.lblStartMemoryData->setText(QString("%1").arg(GetProcessUsedMemoryKB() / 1024));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::timerEvent(QTimerEvent *pEvt)
@@ -617,4 +621,13 @@ void ClientMain::OneHistorySliderValueChanged()
         auto history = m_planHistory[idx];
         m_pPlanHistoryView->View(&*history->Plan(), &history->Context());
     }
+}
+//////////////////////////////////////////////////////////////////////////
+size_t ClientMain::GetProcessUsedMemoryKB()
+{
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+
+    GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+
+    return pmc.PrivateUsage;
 }

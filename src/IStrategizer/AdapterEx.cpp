@@ -11,12 +11,13 @@
 #include "IMSystemManager.h"
 #include "InfluenceMap.h"
 #include "OccupanceDataIM.h"
+#include "PlayerResources.h"
+#include "GameResearch.h"
 
 #include <cassert>
 #include <algorithm>
 #include <vector>
-#include "PlayerResources.h"
-#include "GameResearch.h"
+#include <memory>
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -223,7 +224,7 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
     EntityList	resourceSourceIds;
     TID	adaptedResourceId = INVALID_TID;
     double bestDistance = numeric_limits<double>::max();
-    CellFeature	*pResourceCellFeatureFromWorldPosition = new CellFeature(p_parameters);
+    shared_ptr<CellFeature> pResourceCellFeatureFromWorldPosition(new CellFeature(p_parameters));
     GameEntity *pGatherer = g_Game->Self()->GetEntity(p_gathererID);
 
     pPlayer = (resourceType == RESOURCE_Primary ? g_Game->GetPlayer(PLAYER_Neutral) : g_Game->GetPlayer(PLAYER_Self));
@@ -318,7 +319,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
     TID            adaptedTargetId = INVALID_TID;
     double        bestDistance = numeric_limits<double>::max();
 
-    CellFeature    *pTarGetCellFeatureFromWorldPosition = new CellFeature(p_parameters);
+    shared_ptr<CellFeature> pTarGetCellFeatureFromWorldPosition(new CellFeature(p_parameters));
 
     pPlayer = g_Game->Enemy();
     _ASSERTE(pPlayer);
@@ -349,7 +350,8 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
 {
     g_Game->Map()->Update();
-    return g_Game->Map()->GetNearestCell(new CellFeature(p_parameters));
+    shared_ptr<CellFeature> pCell(new CellFeature(p_parameters));
+    return g_Game->Map()->GetNearestCell(&*pCell);
 }
 //////////////////////////////////////////////////////////////////////////
 bool AdapterEx::IsValidEntityState(ObjectStateType p_entityState, const RankedStates &p_rankedStates)
