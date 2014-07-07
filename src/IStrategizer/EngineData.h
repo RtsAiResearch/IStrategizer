@@ -21,8 +21,8 @@ namespace IStrategizer
 {
     enum BattleStateType
     {
-        // State for targeting an enemy unit and deploying the units there.
-        Deploy,
+        // State for targeting an enemy unit.
+        Target,
 
         // State for performing attack action on the targeted unit.
         Attack,

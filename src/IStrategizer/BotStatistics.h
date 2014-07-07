@@ -1,21 +1,18 @@
 #ifndef BOTSTATISTICS_H
 #define BOTSTATISTICS_H
 
-#include "GameStatistics.h"
 #include <vector>
 
 namespace IStrategizer
 {
     const std::string g_StatisticsPath = "IStrategizerEx.stat";
-
-    struct GameEndMessageData;
+    
+    class GameStatistics;
 
     class BotStatistics
     {
     public:
-        void Add(GameEndMessageData* pData);
-
-        std::vector<GameStatistics> Statistics;
+        void Add(GameStatistics gameStatistics);
     };
 }
 

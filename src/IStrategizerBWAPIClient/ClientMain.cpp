@@ -88,6 +88,7 @@ void ClientMain::InitIStrategizer()
         else
         {
             param.Phase = PHASE_Online;
+            Broodwar->setLocalSpeed(0);
         }
 
         m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
@@ -345,7 +346,8 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
 
     Player player = Broodwar->getPlayer(g_Database.PlayerMapping.GetBySecond(PLAYER_Self));
     pData->IsWinner = p_isWinner;
-    pData->Score = player->getBuildingScore() + player->getRazingScore() + player->getUnitScore();
+    pData->Score = player->getBuildingScore() + player->getRazingScore() + player->getUnitScore() + player->getCustomScore() + player->getKillScore();
+    pData->MapName = Broodwar->mapFileName();
     pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSG_GameEnd, pData);
     _ASSERTE(pMsg);
 

@@ -345,9 +345,6 @@
     <ClInclude Include="..\Battle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\DeployFSMState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\FinishedFSMState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -364,6 +361,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\BotStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TargetFSMState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

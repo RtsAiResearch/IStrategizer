@@ -13,6 +13,11 @@
 #include "Toolbox.h"
 #include "IMSystemManager.h"
 #include "OnlinePlanExpansionExecution.h"
+#include "WorldMap.h"
+#include "AbstractRetainer.h"
+#include "CaseBaseEx.h"
+#include "GameStatistics.h"
+#include "CaseBasedReasonerEx.h"
 #include <iostream>
 
 using namespace IStrategizer;
@@ -44,7 +49,15 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
         else
         {
             GameEndMessage* pMsg = static_cast<GameEndMessage*>(p_message);
-            m_pStatistics->Add(pMsg->Data());
+            
+            GameStatistics stats(pMsg->Data()->IsWinner,
+                pMsg->Data()->MapName,
+                g_Game->Map()->Width(), 
+                g_Game->Map()->Height(),
+                m_clock.ElapsedGameCycles(),
+                m_pPlanner->Reasoner()->Retainer()->CaseBase()->CaseContainer.size(),
+                pMsg->Data()->Score);
+            m_pStatistics->Add(stats);
         }
         break;
 
@@ -143,13 +156,10 @@ bool IStrategizerEx::Init()
 //----------------------------------------------------------------------------------------------
 void IStrategizerEx::DefineArmyTrainOrder()
 {
+    // Marrine - HP: 40, Damage: 49
     PlanStepParameters params;
-    params[PARAM_AlliedUnitsTotalHP] = 1060;
-    params[PARAM_AlliedUnitsTotalDamage] = 470;
-    m_armyTrainOrder.push_back(params);
-
-    params[PARAM_AlliedUnitsTotalHP] = 80;
-    params[PARAM_AlliedUnitsTotalDamage] = 98;
+    params[PARAM_AlliedUnitsTotalHP] = 160;
+    params[PARAM_AlliedUnitsTotalDamage] = 196;
     m_armyTrainOrder.push_back(params);
 }
 //----------------------------------------------------------------------------------------------

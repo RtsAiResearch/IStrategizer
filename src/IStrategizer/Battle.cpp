@@ -1,5 +1,5 @@
 #include "Battle.h"
-#include "DeployFSMState.h"
+#include "TargetFSMState.h"
 #include "AttackFSMState.h"
 #include "FinishedFSMState.h"
 #include "MessagePump.h"
@@ -14,12 +14,14 @@ using namespace std;
 
 Battle::Battle(RtsGame& game) :
     EngineComponent("Battle"),
-    m_stateMachine(Deploy, Finished)
+    m_stateMachine(Target, Finished),
+    m_currentTarget(DONT_CARE),
+    m_nextTarget(DONT_CARE)
 {
     SelectArmy(game);
 
     // Initialize the FSM
-    m_stateMachine.AddState(new DeployFSMState<Battle*>(this));
+    m_stateMachine.AddState(new TargetFSMState<Battle*>(this));
     m_stateMachine.AddState(new AttackFSMState<Battle*>(this));
     m_stateMachine.AddState(new FinishedFSMState<Battle*>(this));
 
@@ -59,7 +61,7 @@ void Battle::NotifyMessegeSent(Message* p_msg)
         }
         else if (pMsg->Data()->OwnerId == PLAYER_Enemy)
         {
-            if (m_targetEnemyEntity == pMsg->Data()->EntityId)
+            if (m_nextTarget == pMsg->Data()->EntityId)
             {
                 m_destroyedEnemyEntities.push_back(pMsg->Data()->EntityId);
             }

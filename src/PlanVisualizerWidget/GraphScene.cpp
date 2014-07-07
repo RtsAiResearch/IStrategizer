@@ -556,7 +556,8 @@ void GraphScene::OnGraphUpdate()
 
         for (auto goalId : m_currActiveGoalSet)
         {
-            m_nodeIdToNodeViewMap[goalId]->MarkAsActive();
+            if (m_nodeIdToNodeViewMap.count(goalId) > 0)
+                m_nodeIdToNodeViewMap[goalId]->MarkAsActive();
         }
     }
 

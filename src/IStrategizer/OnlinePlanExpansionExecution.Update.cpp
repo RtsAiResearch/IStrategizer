@@ -75,7 +75,9 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
                         // Nodes belonging to my ancestors set should not be destroyed
                         // and should be kept in order
                         if (ancestors.count(currentActiveGoalId) != 0)
+                        {
                             newOverrideStack.push(currentActiveGoalId);
+                        }
                         else if (m_pOlcbpPlan->Contains(currentActiveGoalId) && 
                                  !IsNodeOpen(currentActiveGoalId) &&
                                  !HasExecutingAction(currentActiveGoalId))
