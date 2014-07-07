@@ -233,6 +233,8 @@ void ClientMain::OnClientLoopStart()
 void ClientMain::OnClientLoopEnd()
 {
     QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiFinalize));
+    // Give the app time to finalize itself before finalizng the engine
+    Sleep(2000);
     FinalizeIStrategizer();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -355,11 +357,12 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
 
     pData = new GameEndMessageData;
     _ASSERTE(pData);
-
+    
     Player player = Broodwar->getPlayer(g_Database.PlayerMapping.GetBySecond(PLAYER_Self));
     pData->IsWinner = p_isWinner;
     pData->Score = player->getBuildingScore() + player->getRazingScore() + player->getUnitScore() + player->getCustomScore() + player->getKillScore();
     pData->MapName = Broodwar->mapFileName();
+    pData->EnemyRace = g_Game->GetRace(Broodwar->getPlayer(g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy))->getRace().getID())->ToString();
     pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSG_GameEnd, pData);
     _ASSERTE(pMsg);
 

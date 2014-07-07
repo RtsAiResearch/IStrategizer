@@ -62,6 +62,7 @@ namespace IStrategizer
         bool IsWinner;
         int Score;
         std::string MapName;
+        std::string EnemyRace;
     };
     typedef DataMessage<GameEndMessageData> GameEndMessage;
     //----------------------------------------------------------------------------------------------

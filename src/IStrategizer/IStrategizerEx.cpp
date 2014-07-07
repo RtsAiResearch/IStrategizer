@@ -57,13 +57,15 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
                 g_Game->Map()->Height(),
                 m_clock.ElapsedGameCycles(),
                 m_pPlanner->Reasoner()->Retainer()->CaseBase()->CaseContainer.size(),
-                pMsg->Data()->Score);
+                pMsg->Data()->Score,
+                pMsg->Data()->EnemyRace);
             m_pStatistics->Add(stats);
         }
         break;
 
-    case MSG_AttackComplete:
-        // Do nothing when attacking complete
+    case MSG_BattleComplete:
+        /*m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();*/
         break;
 
     case MSG_PlanComplete:
@@ -142,7 +144,7 @@ bool IStrategizerEx::Init()
         m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[m_armyTrainOrderInx]));
         m_pPlanner->ExpansionExecution()->StartPlanning();
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
-        g_MessagePump.RegisterForMessage(MSG_AttackComplete, this);
+        g_MessagePump.RegisterForMessage(MSG_BattleComplete, this);
         g_MessagePump.RegisterForMessage(MSG_PlanComplete, this);
         break;
     }
