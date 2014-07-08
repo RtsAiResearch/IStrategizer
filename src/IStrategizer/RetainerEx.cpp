@@ -10,7 +10,6 @@ using namespace std;
 using namespace IStrategizer;
 
 RetainerEx::RetainerEx() :
-    AbstractRetainer("Retainer"), 
     m_caseBasePath(CASEBASE_FILENAME), 
     m_caseBaseLoaded(false)
 {

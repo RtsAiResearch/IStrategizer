@@ -2,7 +2,7 @@
 #define FSMSTATE_H
 
 #include "EngineData.h"
-#include "EngineComponent.h"
+#include "EngineObject.h"
 #include <set>
 
 namespace IStrategizer
@@ -23,10 +23,10 @@ namespace IStrategizer
     };
 
     template<class TController, class TControllerTraits = ControllerTraits<TController>>
-    class FSMState : public EngineComponent
+    class FSMState : public EngineObject
     {
     public:
-        FSMState(int type, TController controller) : EngineComponent("FSMState"), m_type(type), m_controller(controller) {}
+        FSMState(int type, TController controller) : m_type(type), m_controller(controller) {}
         int StateType() { return m_type; }
         virtual void Enter(RtsGame& game, const WorldClock& clock) {}
         virtual void Exit(RtsGame& game, const WorldClock& clock) {}

@@ -120,9 +120,6 @@
     <ClInclude Include="..\EngineAssist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\EngineComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\EngineData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -429,9 +426,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\EngineAssist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\EngineComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\EntityClassExist.cpp">

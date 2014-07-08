@@ -6,7 +6,6 @@
 #include "EngineData.h"
 #include "UserObject.h"
 #include "SMap.h"
-#include "EngineComponent.h"
 
 namespace IStrategizer
 {

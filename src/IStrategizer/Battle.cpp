@@ -13,7 +13,6 @@ using namespace IStrategizer;
 using namespace std;
 
 Battle::Battle(RtsGame& game) :
-    EngineComponent("Battle"),
     m_stateMachine(Target, Finished),
     m_currentTarget(DONT_CARE),
     m_nextTarget(DONT_CARE)

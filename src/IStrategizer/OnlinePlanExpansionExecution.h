@@ -1,9 +1,7 @@
 #ifndef ONLINEPLANEXPANSIONEXECUTION_H
 #define ONLINEPLANEXPANSIONEXECUTION_H
 
-#ifndef ENGINECOMPONENT_H
-#include "EngineComponent.h"
-#endif
+#include "EngineObject.h"
 #include "WorldClock.h"
 #include "GoalEx.h"
 #include "OlcbpPlanNodeData.h"
@@ -16,7 +14,7 @@ namespace IStrategizer
     class GoalEx;
     class CaseBasedReasonerEx;
 
-    class OnlinePlanExpansionExecution : public EngineComponent
+    class OnlinePlanExpansionExecution : public EngineObject
     {
     public:
         typedef unsigned GoalTypeID;

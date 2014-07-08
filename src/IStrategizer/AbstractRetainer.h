@@ -1,19 +1,14 @@
 #ifndef ABSTRACTRETAINER_H
 #define ABSTRACTRETAINER_H
 
-#ifndef ENGINECOMPONENT_H
-#include "EngineComponent.h"
-#endif
+#include "EngineObject.h"
 #include "CaseBaseEx.h"
 
 namespace IStrategizer
 {
-    class AbstractRetainer : public EngineComponent
+    class AbstractRetainer : public EngineObject
     {
     public:
-        AbstractRetainer(const char* p_name) : 
-            EngineComponent(p_name) {}
-
         virtual void ReadCaseBase() = 0;
         virtual void Flush() = 0;
         void Retain(_In_ CaseEx* pCase);

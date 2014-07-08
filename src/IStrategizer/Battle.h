@@ -1,7 +1,7 @@
 #ifndef BATTLE_H
 #define BATTLE_H
 
-#include "EngineComponent.h"
+#include "EngineObject.h"
 #include "EngineData.h"
 #include "FSMMachine.h"
 #include <vector>
@@ -14,7 +14,7 @@ namespace IStrategizer
     template<class T>
     struct ControllerTraits<T*>;
 
-    class Battle : public EngineComponent
+    class Battle : public EngineObject
     {
     public:
         Battle(RtsGame& game);

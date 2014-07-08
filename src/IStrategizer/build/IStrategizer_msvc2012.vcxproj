@@ -53,7 +53,6 @@
     <ClInclude Include="..\TargetFSMState.h" />
     <ClInclude Include="..\DestroyEntityTypeGoal.h" />
     <ClInclude Include="..\EngineAssist.h" />
-    <ClInclude Include="..\EngineComponent.h" />
     <ClInclude Include="..\EngineData.h" />
     <ClInclude Include="..\EntityClassExist.h" />
     <ClInclude Include="..\EntityClassNearArea.h" />
@@ -153,7 +152,6 @@
     <ClCompile Include="..\DeployArmyGoal.cpp" />
     <ClCompile Include="..\DestroyEntityTypeGoal.cpp" />
     <ClCompile Include="..\EngineAssist.cpp" />
-    <ClCompile Include="..\EngineComponent.cpp" />
     <ClCompile Include="..\EngineObject.cpp" />
     <ClCompile Include="..\EntityClassExist.cpp" />
     <ClCompile Include="..\EntityClassNearArea.cpp" />

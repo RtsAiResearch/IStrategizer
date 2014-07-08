@@ -22,8 +22,7 @@
 using namespace std;
 using namespace IStrategizer;
 
-OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx *pCasedBasedReasoner)
-    : EngineComponent("OnlinePlanner"),
+OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx *pCasedBasedReasoner) :
     m_planStructureChangedThisFrame(false),
     m_pCbReasoner(pCasedBasedReasoner),
     m_pOlcbpPlan(new OlcbpPlan),

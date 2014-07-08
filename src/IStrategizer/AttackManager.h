@@ -1,7 +1,7 @@
 #ifndef ATTACKMANAGER_H
 #define ATTACKMANAGER_H
 
-#include "EngineComponent.h"
+#include "EngineObject.h"
 #include "EngineData.h"
 #include "Battle.h"
 #include "MessagePump.h"
@@ -12,11 +12,9 @@ namespace IStrategizer
 {
     class WorldClock;
 
-    class AttackManager : public EngineComponent
+    class AttackManager : public EngineObject
     {
     public:
-        AttackManager() : EngineComponent("AttackManager") {}
-
         void Update(RtsGame& game, const WorldClock& clock)
         {
             if (m_battles.empty())

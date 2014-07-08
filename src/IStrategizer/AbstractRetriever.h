@@ -1,7 +1,7 @@
 #ifndef ABSTRACTRETRIEVER_H
 #define ABSTRACTRETRIEVER_H
 
-#include "EngineComponent.h"
+#include "EngineObject.h"
 #include "EngineData.h"
 #include <set>
 
@@ -12,7 +12,7 @@ namespace IStrategizer
     class RtsGame;
     class AbstractRetainer;
 
-    class AbstractRetriever : public EngineComponent
+    class AbstractRetriever : public EngineObject
     {
     public:
         struct RetrieveOptions
@@ -24,7 +24,7 @@ namespace IStrategizer
             std::set<unsigned> ExcludedGoalHashes;
         };
 
-        AbstractRetriever(AbstractRetainer* p_pRetainer, const char* p_pName) : EngineComponent(p_pName), m_pRetainer(p_pRetainer) {}
+        AbstractRetriever(AbstractRetainer* p_pRetainer, const char* p_pName) : m_pRetainer(p_pRetainer) {}
         virtual CaseEx* Retrieve(const RetrieveOptions& options) = 0;
         virtual bool Init() = 0;
 
