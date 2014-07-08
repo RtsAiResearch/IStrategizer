@@ -138,6 +138,8 @@ std::string PlanStepEx::ToString(bool minimal) const
     stepDescription += "[";
     stepDescription += strID;
     stepDescription += "]";
+    sprintf_s(strID, "@0x%x", (void*)this);
+    stepDescription += strID;
 
     if (!minimal)
     {

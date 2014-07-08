@@ -24,13 +24,14 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
 
         OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx* pCbReasoner);
+        ~OnlinePlanExpansionExecution();
 
         void Update(_In_ const WorldClock& clock);
         void NotifyMessegeSent(_In_ Message* pMessage);
         void StartPlanning();
         void RootGoal(GoalEx* pGoal) { _ASSERTE(pGoal); m_pRootGoal = pGoal; }
-        const IOlcbpPlan* Plan() const { return m_pOlcbpPlan; }
-        IOlcbpPlan* Plan() { return m_pOlcbpPlan; }
+        const IOlcbpPlan* Plan() const { return &*m_pOlcbpPlan; }
+        IOlcbpPlan* Plan() { return &*m_pOlcbpPlan; }
         ConstOlcbpPlanContextRef GetContext() const { return m_planContext; }
 
     private:
@@ -73,10 +74,12 @@ namespace IStrategizer
         void OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId);
         void RemoveExecutingNode(IOlcbpPlan::NodeID nodeId);
         void AddExecutingNode(IOlcbpPlan::NodeID currentNode);
+        void ClearPlan();
+
         CaseBasedReasonerEx *m_pCbReasoner;
         OlcbpPlanNodeDataMap m_nodeData;
         IOlcbpPlan::NodeID m_planRootNodeId;
-        IOlcbpPlan *m_pOlcbpPlan;
+        std::shared_ptr<IOlcbpPlan> m_pOlcbpPlan;
         bool m_planStructureChangedThisFrame;
         std::map<CaseNodeValue, ClonedCaseNodeValue> m_clonedNodesMapping;
         GoalType m_rootGoalType;

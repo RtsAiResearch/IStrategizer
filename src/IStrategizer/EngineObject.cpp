@@ -88,10 +88,12 @@ void EngineObject::DumpAliveObjects()
 EngineObject::EngineObject()
 {
     g_pAliveObjects->insert(this);
+    LogInfo("EngineObject@0x%x created", (void*)this);
 }
 //////////////////////////////////////////////////////////////////////////
 EngineObject::~EngineObject()
 {
     g_pAliveObjects->erase(this);
+    LogInfo("EngineObject@0x%x destroyed", (void*)this);
 }
 //////////////////////////////////////////////////////////////////////////

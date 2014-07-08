@@ -144,7 +144,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 
     if (m_planStructureChangedThisFrame)
     {
-        g_MessagePump.Send(new DataMessage<IOlcbpPlan*>(clock.ElapsedGameCycles(), MSG_PlanStructureChange, m_pOlcbpPlan));
+        g_MessagePump.Send(new Message(clock.ElapsedGameCycles(), MSG_PlanStructureChange));
         m_planStructureChangedThisFrame = false;
     }
 }

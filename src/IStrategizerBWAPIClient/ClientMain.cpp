@@ -497,31 +497,28 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 
     if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange && m_pPlanGraphView != nullptr )
     {
-        DataMessage<IOlcbpPlan*>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan*>*>(p_pMessage);
+        Message* pPlanChangeMsg = static_cast<Message*>(p_pMessage);
+
+        auto pPlanner = m_pIStrategizer->Planner()->ExpansionExecution();
 
         if (m_pPlanGraphView != nullptr)
-            m_pPlanGraphView->NotifyGraphStructureChange(pPlanChangeMsg->Data());
+            m_pPlanGraphView->NotifyGraphStructureChange(pPlanner->Plan());
 
         if (!m_isLearning && m_pPlanHistoryView != nullptr)
         {
-            if (pPlanChangeMsg->Data() != nullptr)
-            {
-                auto pPlanner = m_pIStrategizer->Planner()->ExpansionExecution();
-                
-                pPlanner->Plan()->Lock();
+            pPlanner->Plan()->Lock();
 
-                shared_ptr<PlanSnapshot> pSnapshot(new PlanSnapshot(pPlanChangeMsg->GameCycle(),
-                    shared_ptr<IOlcbpPlan>(pPlanner->Plan()->Clone()),
-                    pPlanner->GetContext().Data,
-                    pPlanner->GetContext().ActiveGoalSet));
+            shared_ptr<PlanSnapshot> pSnapshot(new PlanSnapshot(pPlanChangeMsg->GameCycle(),
+                shared_ptr<IOlcbpPlan>(pPlanner->Plan()->Clone()),
+                pPlanner->GetContext().Data,
+                pPlanner->GetContext().ActiveGoalSet));
 
-                pPlanner->Plan()->Unlock();
+            pPlanner->Plan()->Unlock();
 
-                m_planHistory.push_back(pSnapshot);
-                NotifyPlanHistoryChanged();
-            }
+            m_planHistory.push_back(pSnapshot);
+            NotifyPlanHistoryChanged();
 
-            m_pPlanHistoryView->NotifyGraphStructureChange(pPlanChangeMsg->Data());
+            m_pPlanHistoryView->NotifyGraphStructureChange(pPlanner->Plan());
         }
     }
 }
@@ -612,6 +609,8 @@ void ClientMain::OnUiInit()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUiFinalize()
 {
+    killTimer(m_updateTimerId);
+
     // Give IM widgets a chance to clear its buffer and redraw
     UpdateViews();
 
@@ -624,9 +623,17 @@ void ClientMain::OnUiFinalize()
     if (m_pPlanHistoryView != nullptr)
         m_pPlanHistoryView->View(nullptr, nullptr);
 
+    for (auto& snapshot : m_planHistory)
+    {
+        auto nodes = snapshot->Plan()->GetNodes();
+        for (auto nodeId : nodes)
+        {
+            auto pNode = snapshot->Plan()->GetNode(nodeId);
+            snapshot->Plan()->RemoveNode(nodeId);
+            delete pNode;
+        }
+    }
     m_planHistory.clear();
-
-    killTimer(m_updateTimerId);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::NotifyPlanHistoryChanged()

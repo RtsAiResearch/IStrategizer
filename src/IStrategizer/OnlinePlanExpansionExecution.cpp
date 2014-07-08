@@ -7,6 +7,7 @@
 #include "MessagePump.h"
 #include "Message.h"
 #include <crtdbg.h>
+#include <stack>
 #include "AbstractReviser.h"
 #include "AbstractRetriever.h"
 #include "GamePlayer.h"
@@ -16,7 +17,7 @@
 #include "DataMessage.h"
 #include "GoalFactory.h"
 #include "PlayerResources.h"
-#include <stack>
+#include "EngineDefs.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -35,9 +36,26 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
 }
 //////////////////////////////////////////////////////////////////////////
+OnlinePlanExpansionExecution::~OnlinePlanExpansionExecution()
+{
+    ClearPlan();
+}
+//////////////////////////////////////////////////////////////////////////
+void OnlinePlanExpansionExecution::ClearPlan()
+{
+    auto nodes = m_pOlcbpPlan->GetNodes();
+    for (auto nodeId : nodes)
+    {
+        auto pNode = m_pOlcbpPlan->GetNode(nodeId);
+        delete pNode;
+    }
+    m_pOlcbpPlan->Clear();
+}
+//////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::StartPlanning()
 {
-    m_pOlcbpPlan->Clear();
+    ClearPlan();
+
     m_planStructureChangedThisFrame = true;
 
     PlanStepEx* pRootNode = (PlanStepEx*)m_pRootGoal;
@@ -382,16 +400,18 @@ bool OnlinePlanExpansionExecution::DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::No
     // 3. Remove visited nodes from the plan
     for (auto visitedNodeId : visitedNodes)
     {
+        auto pCurrNode = m_pOlcbpPlan->GetNode(visitedNodeId);
+
         if (IsActionNode(visitedNodeId))
         {
-            ((Action*)m_pOlcbpPlan->GetNode(visitedNodeId))->Abort(*g_Game);
+            ((Action*)pCurrNode)->Abort(*g_Game);
         }
 
-        m_pOlcbpPlan->RemoveNode(visitedNodeId);
-        m_nodeData.erase(visitedNodeId);
         LogWarning("MEMORY LEAK detected, should delete plan node[%d]", visitedNodeId);
         // deleting currNode crashes the execution history logic, should fix
-        // delete currNode;
+        m_pOlcbpPlan->RemoveNode(visitedNodeId);
+        m_nodeData.erase(visitedNodeId);
+        delete pCurrNode;
     }
 
     // 4. Since there is no plan destroyed, fast return with false
@@ -437,7 +457,7 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
 
         CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
         m_pCbReasoner->Reviser()->Revise(currentCase, true);
-        UpdateHistory(currentCase);
+        //UpdateHistory(currentCase);
     }
     else
     {
@@ -449,7 +469,7 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
 
     if (m_planRootNodeId == nodeId)
     {
-        g_MessagePump.Send(new DataMessage<IOlcbpPlan>(0, MSG_PlanComplete, nullptr));
+        g_MessagePump.Send(new Message(0, MSG_PlanComplete));
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -464,7 +484,7 @@ void OnlinePlanExpansionExecution::OnGoalNodeFailed(_In_ IOlcbpPlan::NodeID node
 
         CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
         m_pCbReasoner->Reviser()->Revise(currentCase, false);
-        UpdateHistory(currentCase);
+        //UpdateHistory(currentCase);
     }
 
     OnNodeDone(nodeId);
