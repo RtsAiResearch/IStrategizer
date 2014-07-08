@@ -75,9 +75,15 @@ void Battle::NotifyMessegeSent(Message* p_msg)
 //////////////////////////////////////////////////////////////////////////
 Battle::~Battle()
 {
-    for (auto attackerId : m_army)
+    if (g_Game != nullptr)
     {
-        GameEntity* pAttacker = g_Game->Self()->GetEntity(attackerId);
-        pAttacker->Unlock(this);
+        for (auto attackerId : m_army)
+        {
+            GameEntity* pAttacker = g_Game->Self()->GetEntity(attackerId);
+            if (pAttacker != nullptr)
+            {
+                pAttacker->Unlock(this);
+            }
+        }
     }
 }

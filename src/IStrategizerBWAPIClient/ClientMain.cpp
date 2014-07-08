@@ -201,10 +201,8 @@ void ClientMain::InitIdLookup()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::FinalizeIStrategizer()
 {
-    g_MessagePump.UnregisterAllObservers();
     SAFE_DELETE(m_pIStrategizer);
     SAFE_DELETE(m_pGameModel);
-    EngineObject::FreeMemoryPool();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::showEvent(QShowEvent *pEvent)
@@ -225,6 +223,17 @@ void ClientMain::closeEvent(QCloseEvent *pEvent)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientLoopStart()
 {
+    QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiFinalize));
+    // Give the app time to finalize itself before finalizing the engine
+    // FIXME: Replace the sleep with synchronization event for robustness
+    Sleep(2000);
+    FinalizeIStrategizer();
+
+    // Dump memory leaks if exist
+    EngineObject::DumpAliveObjects();
+    // Make sure that we start from a clean slate
+    EngineObject::FreeMemoryPool();
+
     m_enemyPlayerUnitsCollected = false;
     InitIStrategizer();
     QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiInit));
@@ -232,10 +241,6 @@ void ClientMain::OnClientLoopStart()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientLoopEnd()
 {
-    QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiFinalize));
-    // Give the app time to finalize itself before finalizng the engine
-    Sleep(2000);
-    FinalizeIStrategizer();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnSendText(const string& p_text)
@@ -357,7 +362,7 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
 
     pData = new GameEndMessageData;
     _ASSERTE(pData);
-    
+
     Player player = Broodwar->getPlayer(g_Database.PlayerMapping.GetBySecond(PLAYER_Self));
     pData->IsWinner = p_isWinner;
     pData->Score = player->getBuildingScore() + player->getRazingScore() + player->getUnitScore() + player->getCustomScore() + player->getKillScore();
@@ -395,8 +400,13 @@ void ClientMain::UpdateStatsView()
         QString txt =QString("[%1]{").arg(workersState[state].size());
         for (auto workerId : workersState[state])
         {
-            txt += QString("%1").arg(workerId);
-            txt += QString("[%2],").arg(m_pGameModel->Self()->GetEntity(workerId)->IsLocked() ? "L" : "F");
+            auto pEntity = m_pGameModel->Self()->GetEntity(workerId);
+            if (pEntity != nullptr)
+            {
+                bool isLocked = pEntity->IsLocked();
+                txt += QString("%1").arg(workerId);
+                txt += QString("[%2],").arg(isLocked ? "L" : "F");
+            }
         }
 
         txt += "}";
@@ -413,6 +423,9 @@ void ClientMain::UpdateStatsView()
 
     int deltaMemoryUsage = abs((int)currMemoryUsage - startMemoryUsage);
     ui.lblDeltaMemoryData->setText(QString("%1").arg(deltaMemoryUsage));
+
+    ui.lblObjectsMemoryData->setText(QString("%1").arg(EngineObject::AliveObjectsMemoryUsage() / 1024));
+    ui.lblObjectsCountData->setText(QString("%1").arg(EngineObject::AliveObjectsCount()));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
@@ -464,8 +477,6 @@ void ClientMain::UpdateViews()
 {
     for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->update();
-
-    // m_pPlanGraphView->update();
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnGameFrame()
@@ -483,7 +494,7 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 
     if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange && m_pPlanGraphView != nullptr )
     {
-        DataMessage<IOlcbpPlan>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan>*>(p_pMessage);
+        DataMessage<IOlcbpPlan*>* pPlanChangeMsg = static_cast<DataMessage<IOlcbpPlan*>*>(p_pMessage);
 
         if (m_pPlanGraphView != nullptr)
             m_pPlanGraphView->NotifyGraphStructureChange(pPlanChangeMsg->Data());
@@ -493,11 +504,15 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
             if (pPlanChangeMsg->Data() != nullptr)
             {
                 auto pPlanner = m_pIStrategizer->Planner()->ExpansionExecution();
+                
+                pPlanner->Plan()->Lock();
 
                 shared_ptr<PlanSnapshot> pSnapshot(new PlanSnapshot(pPlanChangeMsg->GameCycle(),
-                    shared_ptr<IOlcbpPlan>(pPlanChangeMsg->Data()->Clone()),
+                    shared_ptr<IOlcbpPlan>(pPlanner->Plan()->Clone()),
                     pPlanner->GetContext().Data,
                     pPlanner->GetContext().ActiveGoalSet));
+
+                pPlanner->Plan()->Unlock();
 
                 m_planHistory.push_back(pSnapshot);
                 NotifyPlanHistoryChanged();
@@ -598,8 +613,13 @@ void ClientMain::OnUiFinalize()
     for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->SetIM(nullptr);
 
-    m_pPlanGraphView->View(nullptr, nullptr);
-    m_pPlanHistoryView->View(nullptr, nullptr);
+    if (m_pPlanGraphView != nullptr)
+        m_pPlanGraphView->View(nullptr, nullptr);
+
+    if (m_pPlanHistoryView != nullptr)
+        m_pPlanHistoryView->View(nullptr, nullptr);
+
+    m_planHistory.clear();
 
     killTimer(m_updateTimerId);
 }

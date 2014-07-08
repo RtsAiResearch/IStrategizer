@@ -115,6 +115,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 IStrategizerEx::~IStrategizerEx()
 {
     g_IMSysMgr.Finalize();
+    g_Game = nullptr;
 }
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()

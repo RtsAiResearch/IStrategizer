@@ -27,7 +27,7 @@ namespace IStrategizer
         PhaseType Phase;
     };
 
-    class IStrategizerEx : public MessagePumpObserver
+    class IStrategizerEx : public EngineObject
     {
     public:
         IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame);

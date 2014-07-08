@@ -2,12 +2,11 @@
 #define ENGINECOMPONENT_H
 
 #include "Logger.h"
-#include "MessagePumpObserver.h"
 #include "EngineObject.h"
 
 namespace IStrategizer
 {
-    class EngineComponent : public EngineObject, public MessagePumpObserver
+    class EngineComponent : public EngineObject
     {
     public:
         EngineComponent(const char* p_name);
