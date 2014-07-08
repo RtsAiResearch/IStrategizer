@@ -11,6 +11,7 @@ namespace IStrategizer
     {
     public:
         FSMMachine(int defaultState, int goalState) : m_defaultState(defaultState), m_currentState(defaultState), m_goalState(goalState), m_firstUpdate(true) {}
+        ~FSMMachine() { for (auto statePair : m_states) delete statePair.second; }
         void AddState(FSMState<TController>* state) { _ASSERTE(m_states.count(state->StateType()) == 0); m_states[state->StateType()] = state; }
         bool ReachedGoalState() const { return m_currentState == m_goalState; }
         
