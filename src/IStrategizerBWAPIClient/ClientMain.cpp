@@ -45,7 +45,8 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     m_pTraceCollector(nullptr),
     m_enemyPlayerUnitsCollected(false),
     m_pPlanGraphView(nullptr),
-    m_pPlanHistoryView(nullptr)
+    m_pPlanHistoryView(nullptr),
+    m_numGamesPlayed(0)
 {
     ui.setupUi(this);
     IStrategizer::Init();
@@ -241,6 +242,7 @@ void ClientMain::OnClientLoopStart()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientLoopEnd()
 {
+    ++m_numGamesPlayed;
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnSendText(const string& p_text)
@@ -417,15 +419,16 @@ void ClientMain::UpdateStatsView()
     ui.tblWorkerState->resizeColumnsToContents();
 
     ui.lblFPSData->setText(tr("%1").arg(Broodwar->getFPS()));
+
     int currMemoryUsage = (int)GetProcessUsedMemoryKB();
     ui.lblCurrUsedMemoryData->setText(QString("%1").arg(currMemoryUsage));
-    int startMemoryUsage = ui.lblStartMemoryData->text().toInt();
 
-    int deltaMemoryUsage = abs((int)currMemoryUsage - startMemoryUsage);
+    int deltaMemoryUsage = abs((int)currMemoryUsage - (int)m_startMemoryUsage);
     ui.lblDeltaMemoryData->setText(QString("%1").arg(deltaMemoryUsage));
 
     ui.lblObjectsMemoryData->setText(QString("%1").arg(EngineObject::AliveObjectsMemoryUsage() / 1024));
     ui.lblObjectsCountData->setText(QString("%1").arg(EngineObject::AliveObjectsCount()));
+
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnClientUpdate()
@@ -557,7 +560,9 @@ void ClientMain::InitStatsView()
         ui.tblWorkerState->resizeColumnsToContents();
     }
 
-    ui.lblStartMemoryData->setText(QString("%1").arg(GetProcessUsedMemoryKB()));
+    m_startMemoryUsage = GetProcessUsedMemoryKB();
+    ui.lblStartMemoryData->setText(QString("%1").arg(m_startMemoryUsage));
+    ui.lblGamesPlayedData->setText(QString("%1").arg(m_numGamesPlayed));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::timerEvent(QTimerEvent *pEvt)

@@ -103,7 +103,6 @@ namespace IStrategizer
         ACTIONEX_Research,
         ACTIONEX_AttackGround,
         ACTIONEX_AttackEntity,
-        ACTIONEX_MoveEntity,
         ACTIONEX_Move,
         ACTIONEX_GatherResource,
         ACTIONEX_END

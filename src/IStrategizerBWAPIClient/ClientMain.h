@@ -113,6 +113,8 @@ private:
     std::vector<std::shared_ptr<PlanSnapshot>> m_planHistory;
     bool m_enemyPlayerUnitsCollected;
     int m_updateTimerId;
+    unsigned m_numGamesPlayed;
+    size_t m_startMemoryUsage;
 
     private slots:
         void OneHistorySliderValueChanged();
