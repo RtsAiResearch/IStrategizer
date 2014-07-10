@@ -10,7 +10,7 @@ namespace IStrategizer
     ///> parent=ConditionEx
     class PlayerAttributeExist : public ConditionEx
     {
-        OBJECT_SERIALIZABLE(PlayerAttributeExist);
+        OBJECT_SERIALIZABLE_P(PlayerAttributeExist, ConditionEx);
 
     public:
         PlayerAttributeExist() {}

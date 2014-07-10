@@ -2,14 +2,8 @@
 #define SMAP_H
 
 #include <map>
-
-#ifndef CONTAINER_H
 #include "Container.h"
-#endif
-
-#ifndef SPAIR_H
 #include "SPair.h"
-#endif
 
 namespace Serialization
 {
@@ -17,18 +11,17 @@ namespace Serialization
     class MapIterator;
 
     template<class TKey, class TValue>
-    class SMap : public Container, public std::map<TKey, TValue>
+    class SMap : public std::map<TKey, TValue>, public IContainer
     {
-        SPair<TKey, TValue> m_temp;
+		OBJECT_SERIALIZABLE_CONT(SMap);
     public:
-        Iterator*       GetIterator()   { return new MapIterator<TKey, TValue>(this); }
-        std::string          TypeName() const      { return "SMap"; }
-        int             TypeSize() const      { return sizeof(SMap<TKey, TValue>); }
-        ISerializable*  Prototype() const     { return new SMap<TKey, TValue>; }
-        int             ContainerCount(){ return size(); }
+		SMap() {}
+		SMap(const std::map<TKey, TValue>& p_other) : std::map<TKey, TValue>(p_other) {}
+        int             ContainerCount() const { return size(); }
         void            Clear()         { clear(); }
         char*           GetTemp()       { return reinterpret_cast<char*>(&m_temp); }
         void            AddTemp()       { insert(m_temp); }
+		Iterator*		CreateIterator() const { return new MapIterator<TKey, TValue>(this); }
 
         void Keys(std::vector<TKey>& keys) const 
         {
@@ -68,18 +61,21 @@ namespace Serialization
         }
 
         bool Contains(const TKey& key) const { return count(key) > 0; }
+
+	private:
+		SPair<TKey, TValue> m_temp;
     };
     //----------------------------------------------------------------------------------------------
     template<class TKey, class TValue>
     class MapIterator : public Iterator
     {
-        bool                                    m_initialized;
-        std::map<TKey, TValue>*                      m_map;  
-        typename std::map<TKey, TValue>::iterator    m_current;
-        SPair<TKey, TValue>                      m_pair;
+        bool m_initialized;
+        const std::map<TKey, TValue>* m_map;  
+        typename std::map<TKey, TValue>::const_iterator m_current;
+        SPair<TKey, TValue> m_pair;
 
     public:
-        MapIterator(std::map<TKey, TValue>* p_map) :  m_map(p_map), m_current(p_map->begin()), m_initialized(false) {}
+        MapIterator(const std::map<TKey, TValue>* p_map) :  m_map(p_map), m_current(p_map->cbegin()), m_initialized(false) {}
 
         virtual char* Current()
         {

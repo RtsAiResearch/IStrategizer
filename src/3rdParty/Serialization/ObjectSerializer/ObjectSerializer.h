@@ -1,21 +1,12 @@
 #ifndef OBJECTSERIALIZER_H
 #define OBJECTSERIALIZER_H
 
-//#ifndef OBJECTFORMATTER_H
-//    #include "ObjectFormatter.h"
-//#endif
-//
-//#ifndef USEROBJECT_H
-//    #include "UserObject.h"
-//#endif
 #include <fstream>
-
 #include "TypeTable.h"
+#include "ISerializable.h"
 
 namespace Serialization
 {
-    class UserObject;
-
     class ObjectSerializer
     {
         TypeTable m_typeTable;
@@ -25,33 +16,33 @@ namespace Serialization
         void InitializeDataTypes();
         void InitializeTypeTable();
 
-        int SerializeType(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_pen);
-        int SerializeBasicType(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_pen);
-        int SerializeUserDefinedType(char* p_fieldAddress, TypeNode* p_type, bool p_isPtr, std::fstream& p_pen);
-        int SerializeArray(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_pen);
-        int SerializeString(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_pen);
-        int SerializeContainerVector(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_pen);
-        int SerializeContainerMap(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_pen);
-        int SerializeContainerSet(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_pen);
-        int SerializePair(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_pen);
+        int SerializeType(char* pMem, TypeNode* pType, std::fstream& pen);
+        int SerializeBasicType(char* pMem, TypeNode* pType, std::fstream& pen);
+        int SerializeUserDefinedType(ISerializable* pObj, TypeNode* pType, bool p_isPtr, std::fstream& pen);
+        int SerializeArray(char* pMem, TypeNode* pType, std::fstream& pen);
+        int SerializeString(char* pMem, TypeNode* pType, std::fstream& pen);
+        int SerializeContainerVector(ISerializable* pObj ,TypeNode* pType, std::fstream& pen);
+        int SerializeContainerMap(ISerializable* pObj, TypeNode* pType, std::fstream& pen);
+        int SerializeContainerSet(ISerializable* pObj, TypeNode* pType, std::fstream& pen);
+        int SerializePair(ISerializable* pObj, TypeNode* pType, std::fstream& pen);
 
-        int DeserializeType(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_eye);
-        int DeserializeBasicType(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_eye);
-        int DeserializeUserDefinedType(char* p_fieldAddress, TypeNode* p_type, bool p_isPtr, std::fstream& p_eye);
-        int DeserializeArray(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_eye);
-        int DeserializeString(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_eye);
-        int DeserializeContainerVector(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_eye);
-        int DeserializeContainerMap(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_eye);
-        int DeserializeContainerSet(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_eye);
-        int DeserializePair(char* p_fieldAddress, TypeNode* p_type, std::fstream& p_eye);
+        int DeserializeType(char* pMem, TypeNode* pType, std::fstream& eye);
+        int DeserializeBasicType(char* pMem, TypeNode* pType, std::fstream& eye);
+        int DeserializeUserDefinedType(ISerializable* pObj, TypeNode* pType, bool p_isPtr, std::fstream& eye);
+        int DeserializeArray(char* pMem, TypeNode* pType, std::fstream& eye);
+        int DeserializeString(char* pMem, TypeNode* pType, std::fstream& eye);
+        int DeserializeContainerVector(ISerializable* pObj, TypeNode* pType, std::fstream& eye);
+        int DeserializeContainerMap(ISerializable* pObj, TypeNode* pType, std::fstream& eye);
+        int DeserializeContainerSet(ISerializable* pObj, TypeNode* pType, std::fstream& eye);
+        int DeserializePair(ISerializable* pObj, TypeNode* pType, std::fstream& eye);
 
     public:
         ObjectSerializer();
         TypeTable& TypeTable() { return m_typeTable; }
-        void Serialize(const UserObject* p_object, std::string p_objectFileName);
-        void Deserialize(UserObject* p_object, std::string p_objectFileName);
+        void Serialize(const ISerializable* p_object, std::string objectFileName);
+        void Deserialize(ISerializable* pObj, std::string objectFileName);
         static ObjectSerializer& Instance() { static ObjectSerializer instance; return instance; }
-        void PerformLateBinding( UserObject* p_object, TypeNode*& p_type );
+        void PerformLateBinding(ISerializable* pObj, TypeNode*& pType );
         bool IsAncestor( const std::string& candidateAncestor, const std::string& candidateChild );
     };
 }

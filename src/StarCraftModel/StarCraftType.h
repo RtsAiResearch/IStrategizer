@@ -14,7 +14,7 @@ namespace IStrategizer
     ///> parent=GameType
     class StarCraftType : public GameType
     {
-        OBJECT_SERIALIZABLE(StarCraftType);
+		OBJECT_SERIALIZABLE_P(StarCraftType, GameType);
 
     public:
         StarCraftType() {}

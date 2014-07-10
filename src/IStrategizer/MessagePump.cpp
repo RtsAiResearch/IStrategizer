@@ -26,9 +26,15 @@ MessagePump::MessagePump()
     AddMessage(MSG_BuildingBuilt);
 }
 //----------------------------------------------------------------------------------------------
-MessagePump& MessagePump::Instance()
+MessagePump* MessagePump::Instance()
 {
-    static MessagePump m_instance;
+    static MessagePump* m_instance = nullptr;
+
+	if (nullptr == m_instance)
+	{
+		m_instance = new MessagePump;
+	}
+
     return m_instance;
 }
 //----------------------------------------------------------------------------------------------

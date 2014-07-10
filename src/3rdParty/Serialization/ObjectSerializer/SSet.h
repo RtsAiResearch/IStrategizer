@@ -2,10 +2,8 @@
 #define SSET_H
 
 #include <set>
-
-#ifndef CONTAINER_H
 #include "Container.h"
-#endif
+#include "ISerializable.h"
 
 namespace Serialization
 {
@@ -13,29 +11,30 @@ namespace Serialization
     class SetIterator;
 
     template<class TKey>
-    class SSet : public Container, public std::set<TKey>
+    class SSet : public std::set<TKey>, public IContainer
     {
-        TKey    m_temp;
+		OBJECT_SERIALIZABLE_CONT(SSet);
     public:
-        Iterator*       GetIterator()   { return new SetIterator<TKey>(this); }
-        std::string     TypeName() const      { return "SSet"; }
-        int             TypeSize() const      { return sizeof(SSet<TKey>); }
-        ISerializable*  Prototype() const     { return new SSet<TKey>; }
-        int             ContainerCount(){ return size(); }
+		SSet() {}
+		SSet(const std::set<TKey>& p_other) : std::set<TKey>(p_other) {}
+        int             ContainerCount() const { return size(); }
         void            Clear()         { clear(); }
         char*           GetTemp()       { return reinterpret_cast<char*>(&m_temp); }
         void            AddTemp()       { insert(m_temp); }
+		Iterator*		CreateIterator() const { return new SetIterator<TKey>(this); }
+	private:
+        TKey    m_temp;
     };
     //----------------------------------------------------------------------------------------------
     template<class TKey>
     class SetIterator : public Iterator
     {
-        bool                            m_initialized;
-        std::set<TKey>*                      m_set;  
-        typename std::set<TKey>::iterator    m_current;
+        bool m_initialized;
+        const std::set<TKey>* m_set;  
+        typename std::set<TKey>::const_iterator m_current;
 
     public:
-        SetIterator(std::set<TKey>* p_set) :  m_set(p_set), m_current(p_set->begin()), m_initialized(false) {}
+        SetIterator(const std::set<TKey>* p_set) :  m_set(p_set), m_current(p_set->begin()), m_initialized(false) {}
 
         char* Current()
         {

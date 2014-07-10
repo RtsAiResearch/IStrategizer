@@ -13,7 +13,7 @@ namespace IStrategizer
     ///> parent=GoalEx
     class CollectResourceGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(CollectResourceGoal);
+        OBJECT_SERIALIZABLE_P(CollectResourceGoal, GoalEx);
 
     public:
         CollectResourceGoal();

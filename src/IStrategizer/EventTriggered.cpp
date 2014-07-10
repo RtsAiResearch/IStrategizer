@@ -15,7 +15,7 @@ using namespace IStrategizer;
 
 EventTriggered::EventTriggered(MessageType p_eventTypeId, const PlanStepParameters& p_eventArgs) : _triggered(false) 
 {
-    g_MessagePump.RegisterForMessage(p_eventTypeId, this);
+    g_MessagePump->RegisterForMessage(p_eventTypeId, this);
 
     _conditionParameters = p_eventArgs;
     _conditionParameters[PARAM_MessageTypeId] = (int)p_eventTypeId;
@@ -65,5 +65,5 @@ void EventTriggered::Copy(IClonable* p_dest)
 //----------------------------------------------------------------------------------------------
 EventTriggered::~EventTriggered()
 {
-    g_MessagePump.UnRegisterForMessage((MessageType)_conditionParameters[PARAM_MessageTypeId], this);
+    g_MessagePump->UnRegisterForMessage((MessageType)_conditionParameters[PARAM_MessageTypeId], this);
 }

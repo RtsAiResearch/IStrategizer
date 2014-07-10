@@ -1,10 +1,10 @@
 #include "PlanStepEx.h"
-#include "MathHelper.h"
 #include <cstdio>
 #include <algorithm>
-#include "Logger.h"
-#include <Windows.h>
 #include <Rpc.h>
+#include "MathHelper.h"
+#include "Logger.h"
+#include "ObjectFactory.h"
 #pragma comment(lib, "Rpcrt4.lib")
 
 using namespace std;
@@ -57,7 +57,7 @@ void PlanStepEx::InitializeConditions()
 //////////////////////////////////////////////////////////////////////////
 IClonable* PlanStepEx::Clone()
 {
-    PlanStepEx* clone = static_cast<PlanStepEx*>(Prototype());
+    PlanStepEx* clone = static_cast<PlanStepEx*>(g_ObjectFactory.Create(GetObjectLayout().TypeName()));
     Copy(clone);
 
     return clone;

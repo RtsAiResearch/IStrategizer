@@ -13,7 +13,7 @@ namespace IStrategizer
     ///> parent=ConditionEx
     class EntityClassExist : public ConditionEx
     {
-        OBJECT_SERIALIZABLE(EntityClassExist);
+		OBJECT_SERIALIZABLE_P(EntityClassExist, ConditionEx);
 
     public:
         EntityClassExist() {}

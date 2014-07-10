@@ -94,11 +94,6 @@ bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& game)
     }
 }
 //----------------------------------------------------------------------------------------------
-void AttackEntityAction::InitializeAddressesAux()
-{
-    Action::InitializeAddressesAux();
-}
-//----------------------------------------------------------------------------------------------
 void AttackEntityAction::InitializePostConditions()
 {
     _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, DONT_CARE, 1));

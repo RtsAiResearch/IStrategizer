@@ -30,9 +30,9 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     m_rootGoalType((GoalType)pInitialGoal->StepTypeId()),
     m_planContext(m_nodeData, m_activeGoalSet)
 {
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
 }
 //////////////////////////////////////////////////////////////////////////
 OnlinePlanExpansionExecution::~OnlinePlanExpansionExecution()
@@ -468,7 +468,7 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
 
     if (m_planRootNodeId == nodeId)
     {
-        g_MessagePump.Send(new Message(0, MSG_PlanComplete));
+        g_MessagePump->Send(new Message(0, MSG_PlanComplete));
     }
 }
 //////////////////////////////////////////////////////////////////////////

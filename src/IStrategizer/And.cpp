@@ -3,10 +3,6 @@
 using namespace std;
 using namespace IStrategizer;
 
-void And::InitializeAddressesAux()
-{
-    CompositeExpression::InitializeAddressesAux();
-}
 //----------------------------------------------------------------------------------------------
 bool And::Evaluate(RtsGame& game)
 {

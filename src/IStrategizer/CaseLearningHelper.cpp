@@ -12,9 +12,9 @@ using namespace std;
 
 void CaseLearningHelper::Init()
 {
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
-    g_MessagePump.RegisterForMessage(MSG_GameActionLog, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
+    g_MessagePump->RegisterForMessage(MSG_GameActionLog, this);
 
     for(unsigned i = START(GoalType); i < END(GoalType); ++i)
     {

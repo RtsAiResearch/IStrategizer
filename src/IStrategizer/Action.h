@@ -17,7 +17,7 @@ namespace IStrategizer
     ///> parent=PlanStepEx
     class Action : public PlanStepEx
     {
-        OBJECT_MEMBERS_P(PlanStepEx, 1, &m_history);
+		OBJECT_SERIALIZABLE_P(Action, PlanStepEx, &m_history);
 
     protected:
         CompositeExpression* _preCondition;

@@ -10,7 +10,7 @@ namespace IStrategizer
     ///> parent=CompositeExpression
     class Or : public CompositeExpression
     {
-        OBJECT_SERIALIZABLE(Or);
+        OBJECT_SERIALIZABLE_P(Or, CompositeExpression);
 
     public:
         Or() {}

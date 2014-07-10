@@ -2,10 +2,7 @@
 #ifndef STARCRAFTTECHTREE_H
 #define STARCRAFTTECHTREE_H
 
-#ifndef GAMETECHTREE_H
 #include "GameTechTree.h"
-#endif
-
 #include "BWAPI.h"
 #include "SSet.h"
 
@@ -17,9 +14,7 @@ namespace IStrategizer
     ///> parent=GameTechTree
     class StarCraftTechTree : public GameTechTree
     {
-        OBJECT_SERIALIZABLE(StarCraftTechTree);
-        OBJECT_MEMBERS_P(GameTechTree, 3, &m_isOnline, &m_cachedAvailResearches, &m_cachedDoneResearches);
-
+		OBJECT_SERIALIZABLE_P(StarCraftTechTree, GameTechTree, &m_isOnline, &m_cachedAvailResearches, &m_cachedDoneResearches);
     public:
         StarCraftTechTree() : m_isOnline(true), m_pPlayer(nullptr) {}
         StarCraftTechTree(BWAPI::Player pPlayer) :

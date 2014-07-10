@@ -22,7 +22,7 @@ namespace IStrategizer
     ///> parent=Action
     class TrainAction : public Action
     {
-        OBJECT_SERIALIZABLE(TrainAction);
+        OBJECT_SERIALIZABLE_P(TrainAction, Action);
 
     public:
         TrainAction();

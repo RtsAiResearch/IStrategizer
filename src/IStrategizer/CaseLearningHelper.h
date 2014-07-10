@@ -2,7 +2,7 @@
 #define CASELEARNINGHELPER_H
 
 #include "EngineData.h"
-#include "MessagePumpObserver.h"
+#include "IMessagePumpObserver.h"
 #include "GameTrace.h"
 #include "GoalEx.h"
 
@@ -14,7 +14,7 @@ namespace IStrategizer
     class GoalEx;
     class RawLogMessageData;
 
-    class CaseLearningHelper : public MessagePumpObserver
+    class CaseLearningHelper : public IMessagePumpObserver
     {
     public:
         typedef unsigned long GameCycle;

@@ -11,7 +11,7 @@ namespace IStrategizer
     ///> parent=Action
     class AttackEntityAction : public Action
     {
-        OBJECT_SERIALIZABLE(AttackEntityAction);
+        OBJECT_SERIALIZABLE_P(AttackEntityAction, Action);
 
     public:
         AttackEntityAction();

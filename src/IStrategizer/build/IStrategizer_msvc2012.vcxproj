@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -90,7 +90,7 @@
     <ClInclude Include="..\MathHelper.h" />
     <ClInclude Include="..\Message.h" />
     <ClInclude Include="..\MessagePump.h" />
-    <ClInclude Include="..\MessagePumpObserver.h" />
+    <ClInclude Include="..\IMessagePumpObserver.h" />
     <ClInclude Include="..\MessagePumpSubject.h" />
     <ClInclude Include="..\MetaData.h" />
     <ClInclude Include="..\MoveAction.h" />
@@ -174,7 +174,6 @@
     <ClCompile Include="..\MapArea.cpp" />
     <ClCompile Include="..\Message.cpp" />
     <ClCompile Include="..\MessagePump.cpp" />
-    <ClCompile Include="..\MessagePumpObserver.cpp" />
     <ClCompile Include="..\MessagePumpSubject.cpp" />
     <ClCompile Include="..\MetaData.cpp" />
     <ClCompile Include="..\MoveAction.cpp" />
@@ -214,12 +213,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -249,18 +248,18 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Generating engine objects TypeInfo</Message>
-    </PreBuildEvent>
-    <PostBuildEvent>
       <Command>
       </Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
+    </PreBuildEvent>
+    <PreBuildEvent>
       <Message>
       </Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Generating engine objects TypeInfo</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -281,18 +280,18 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Generating engine objects TypeInfo</Message>
-    </PreBuildEvent>
-    <PostBuildEvent>
       <Command>
       </Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
+    </PreBuildEvent>
+    <PreBuildEvent>
       <Message>
       </Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Generating engine objects TypeInfo</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

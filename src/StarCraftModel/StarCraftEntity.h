@@ -22,9 +22,7 @@ namespace IStrategizer
     ///> parent=GameEntity
     class StarCraftEntity: public GameEntity
     {
-        OBJECT_SERIALIZABLE(StarCraftEntity);
-        OBJECT_MEMBERS_P(GameEntity, 2, &m_isOnline, &m_cachedAttr);
-
+		OBJECT_SERIALIZABLE_P(StarCraftEntity, GameEntity, &m_isOnline, &m_cachedAttr);
     public:
         StarCraftEntity() : GameEntity(INVALID_TID), m_pUnit(nullptr) {}
         StarCraftEntity(BWAPI::Unit p_unit);

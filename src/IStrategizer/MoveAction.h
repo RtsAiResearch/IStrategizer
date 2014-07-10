@@ -14,7 +14,7 @@ namespace IStrategizer
     class MoveAction:public Action
     {
     public:
-        OBJECT_SERIALIZABLE(MoveAction);
+        OBJECT_SERIALIZABLE_P(MoveAction, Action);
 
         MoveAction();
         MoveAction(const PlanStepParameters& p_parameters);

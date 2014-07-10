@@ -5,13 +5,13 @@
 #include <list>
 
 #include "Message.h"
-#include "MessagePumpObserver.h"
+#include "IMessagePumpObserver.h"
 
 namespace IStrategizer
 {
     enum MessageType;
 
-    typedef std::list<MessagePumpObserver*> ObserverList;
+    typedef std::list<IMessagePumpObserver*> ObserverList;
     typedef std::map<MessageType, ObserverList* > MessageObserversTable;
 
     class MessagePumpSubject
@@ -20,9 +20,9 @@ namespace IStrategizer
         MessageObserversTable _messageObserversTable;
 
     public:
-        void RegisterForMessage(MessageType p_messageTypeID, MessagePumpObserver* p_observer);
-        void UnRegisterForMessage(MessageType p_messageTypeID, MessagePumpObserver* p_observer);
-        void UnregisterForAllMessages(MessagePumpObserver* p_observer);
+        void RegisterForMessage(MessageType p_messageTypeID, IMessagePumpObserver* p_observer);
+        void UnRegisterForMessage(MessageType p_messageTypeID, IMessagePumpObserver* p_observer);
+        void UnregisterForAllMessages(IMessagePumpObserver* p_observer);
         void AddMessage(MessageType p_messageTypeID);
         void OnMessageSent(Message* p_message);
         void UnregisterAllObservers() { for (auto msgEntry : _messageObserversTable) msgEntry.second->clear(); }

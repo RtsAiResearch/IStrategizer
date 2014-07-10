@@ -156,7 +156,7 @@ void RtsGame::SetOffline()
 //----------------------------------------------------------------------------------------------
 RtsGame* RtsGame::Snapshot() const
 {
-    RtsGame* pSnapshot = dynamic_cast<RtsGame*>(Prototype());
+    RtsGame* pSnapshot = dynamic_cast<RtsGame*>(g_ObjectFactory.Create(GetObjectLayout().TypeName()));
 
     pSnapshot->Init();
     pSnapshot->SetOffline();

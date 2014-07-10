@@ -6,14 +6,6 @@ using namespace IStrategizer;
 using namespace std;
 
 //----------------------------------------------------------------------------------------------
-void CompositeExpression::InitializeAddressesAux()
-{
-    Expression::InitializeAddressesAux();
-    AddMemberAddress(2,
-        &_expressions,
-        &_shortCircuit);
-}
-//----------------------------------------------------------------------------------------------
 bool CompositeExpression::AddExpression(Expression* p_expression)
 {
     vector<Expression*>::iterator m_where;

@@ -12,7 +12,7 @@ namespace IStrategizer
     ///> parent=Action
     class GatherResourceAction : public Action
     {
-        OBJECT_SERIALIZABLE(GatherResourceAction);
+        OBJECT_SERIALIZABLE_P(GatherResourceAction, Action);
 
     public:
         GatherResourceAction();

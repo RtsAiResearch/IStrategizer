@@ -4,17 +4,16 @@
 
 #include "EngineData.h"
 #include "WorldResources.h"
-#include "UserObject.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
     class WorldResources;
 
     ///> class=GameResearch
-    class GameResearch : public Serialization::UserObject
+    class GameResearch : public EngineObject
     {
-        OBJECT_MEMBERS(1, &m_id);
-
+        OBJECT_SERIALIZABLE(GameResearch, &m_id);
     public:
         GameResearch() :
             m_id(RESEARCH_END)

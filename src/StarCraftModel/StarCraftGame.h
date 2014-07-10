@@ -12,7 +12,7 @@ namespace IStrategizer
     ///> parent=RtsGame
     class StarCraftGame : public RtsGame
     {
-        OBJECT_SERIALIZABLE(StarCraftGame);
+		OBJECT_SERIALIZABLE_P(StarCraftGame, RtsGame);
 
     public:
         void ExecuteCommand(const char *p_cmd);

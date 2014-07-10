@@ -14,7 +14,7 @@ namespace IStrategizer
     ///> parent=GameResearch
     class StarCraftResearch : public GameResearch
     {
-        OBJECT_SERIALIZABLE(StarCraftResearch);
+		OBJECT_SERIALIZABLE_P(StarCraftResearch, GameResearch);
 
     public:
         StarCraftResearch() {}

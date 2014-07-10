@@ -16,7 +16,7 @@ namespace IStrategizer
     private:
         MessageQueue _messageQueue;
     public:
-        static MessagePump& Instance();
+        static MessagePump* Instance();
         void Update(const WorldClock& p_clock);
         void Send(Message* p_message, bool p_immediate = false);
 

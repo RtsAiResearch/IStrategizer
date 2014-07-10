@@ -18,7 +18,7 @@ namespace IStrategizer
     ///> parent=Action
     class ResearchAction : public Action
     {
-        OBJECT_SERIALIZABLE(ResearchAction);
+        OBJECT_SERIALIZABLE_P(ResearchAction, Action);
 
     public:
         ResearchAction();

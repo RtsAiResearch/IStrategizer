@@ -1,9 +1,4 @@
 #include "ClientMain.h"
-#include <stdio.h>
-#include <Windows.h>
-#include <string>
-#include <cassert>
-#include <set>
 #include "IMView.h"
 #include "BWAPI.h"
 #include "BWAPI\Client.h"
@@ -15,9 +10,7 @@
 #include "IMSystemManager.h"
 #include "InfluenceMap.h"
 #include "IMViewWidget.h"
-#include <QGridLayout>
 #include "WorldClock.h"
-#include <iostream>
 #include "OnlineCaseBasedPlannerEx.h"
 #include "OnlinePlanExpansionExecution.h"
 #include "GameTraceCollector.h"
@@ -27,8 +20,18 @@
 #include "WorldMap.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
+
+#include <stdio.h>
+#include <string>
+#include <cassert>
+#include <set>
+#include <iostream>
+#include <QGridLayout>
 #include <QTableWidget>
 #include <Psapi.h>
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 using namespace IStrategizer;
 using namespace BWAPI;
@@ -50,7 +53,7 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
 {
     ui.setupUi(this);
     IStrategizer::Init();
-    g_MessagePump.RegisterForMessage(MSG_PlanStructureChange, this);
+    g_MessagePump->RegisterForMessage(MSG_PlanStructureChange, this);
 
     connect(ui.sldHistoryFrame, SIGNAL(valueChanged(int)), SLOT(OneHistorySliderValueChanged()));
 }
@@ -233,7 +236,8 @@ void ClientMain::OnClientLoopStart()
     // Dump memory leaks if exist
     EngineObject::DumpAliveObjects();
     // Make sure that we start from a clean slate
-    EngineObject::FreeMemoryPool();
+    // Hard Reset is always a bad idea and can cause inconsistency
+	// EngineObject::FreeMemoryPool();
 
     m_enemyPlayerUnitsCollected = false;
     InitIStrategizer();
@@ -251,7 +255,7 @@ void ClientMain::OnSendText(const string& p_text)
     TextMessage *pTxtMsg;
 
     pTxtMsg = new TextMessage(Broodwar->getFrameCount(), MSG_Input, new string(p_text));
-    g_MessagePump.Send(pTxtMsg);
+    g_MessagePump->Send(pTxtMsg);
 
     if (p_text == "export-statics")
         m_pGameModel->ExportStaticData();
@@ -284,7 +288,7 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
     pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityCreate, pData);
     _ASSERTE(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    g_MessagePump->Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
@@ -314,7 +318,7 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
     pMsg = new EntityDestroyMessage(Broodwar->getFrameCount(), MSG_EntityDestroy, pData);
     _ASSERTE(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    g_MessagePump->Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
@@ -344,7 +348,7 @@ void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
     pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityRenegade, pData);
     _ASSERTE(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    g_MessagePump->Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchStart()
@@ -354,7 +358,7 @@ void ClientMain::OnMatchStart()
     pMsg = new Message(Broodwar->getFrameCount(), MSG_GameStart);
     _ASSERTE(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    g_MessagePump->Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchEnd(bool p_isWinner)
@@ -373,7 +377,7 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
     pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSG_GameEnd, pData);
     _ASSERTE(pMsg);
 
-    g_MessagePump.Send(pMsg);
+    g_MessagePump->Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateStatsView()
@@ -466,7 +470,6 @@ void ClientMain::OnClientUpdate()
         pCopy->Map()->Update();
         m_snapshots[Broodwar->getFrameCount()].second = pCopy;
         }*/
-
     }
     catch (IStrategizer::Exception &e)
     {

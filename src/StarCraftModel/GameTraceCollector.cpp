@@ -6,8 +6,10 @@
 #include "DefinitionCrossMapping.h"
 #include "RtsGame.h"
 
-#include <Windows.h>
 #include <set>
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 using namespace BWAPI;
 using namespace IStrategizer;
@@ -287,7 +289,7 @@ void GameTraceCollector::SendGameTrace(GameTrace* pTrace) const
     _ASSERTE(pTrace != nullptr);
     pTraceMsg = new DataMessage<GameTrace>(Broodwar->getFrameCount(), MSG_GameActionLog, pTrace);
 
-    g_MessagePump.Send(pTraceMsg, true);
+    g_MessagePump->Send(pTraceMsg, true);
 }
 //////////////////////////////////////////////////////////////////////////
 bool GameTraceCollector::IsAutoGatheringGas(const Unit unit)

@@ -87,7 +87,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
         }
 
         m_clock.Update(p_gameCycle);
-        g_MessagePump.Update(m_clock);
+        g_MessagePump->Update(m_clock);
         g_IMSysMgr.Update(m_clock);
 
         if (m_param.Phase == PHASE_Online)
@@ -145,14 +145,14 @@ bool IStrategizerEx::Init()
         m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[m_armyTrainOrderInx]));
         m_pPlanner->ExpansionExecution()->StartPlanning();
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
-        g_MessagePump.RegisterForMessage(MSG_BattleComplete, this);
-        g_MessagePump.RegisterForMessage(MSG_PlanComplete, this);
+        g_MessagePump->RegisterForMessage(MSG_BattleComplete, this);
+        g_MessagePump->RegisterForMessage(MSG_PlanComplete, this);
         break;
     }
 
-    g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump->RegisterForMessage(MSG_GameEnd, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
     return true;
 }

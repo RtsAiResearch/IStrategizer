@@ -1,11 +1,13 @@
 #ifndef BWAPICLIENT_H
 #define BWAPICLIENT_H
 
-#include <Windows.h>
-#include <string>
-
 #include "BWAPI.h"
 #include "BWAPI\Client.h"
+#include <string>
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
 
 class BwapiClient
 {

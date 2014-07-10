@@ -75,6 +75,7 @@
 #include "ExecutionHistory.h"
 #include "ExecutionTrial.h"
 #include "TrainArmyGoal.h"
+#include "PlayerAttributeExist.h"
 
 using namespace IStrategizer;
 
@@ -100,6 +101,7 @@ DECL_SERIALIZABLE(ResourceExist);
 DECL_SERIALIZABLE(ResearchDone);
 DECL_SERIALIZABLE(EntityClassExist);
 DECL_SERIALIZABLE(EntityClassNearArea);
+DECL_SERIALIZABLE(PlayerAttributeExist);
 DECL_SERIALIZABLE(And);
 DECL_SERIALIZABLE(Not);
 DECL_SERIALIZABLE(Or);

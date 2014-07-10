@@ -5,9 +5,6 @@
 #ifndef CONDITIONEX_H
 #include "ConditionEx.h"
 #endif
-#ifndef MESSAGEPUMPOBSERVER_H
-#include "MessagePumpObserver.h"
-#endif
 
 namespace IStrategizer
 {
@@ -16,10 +13,9 @@ namespace IStrategizer
 
     ///> class=EventTriggered
     ///> parent=ConditionEx
-    class EventTriggered : public ConditionEx, public MessagePumpObserver
+    class EventTriggered : public ConditionEx
     {
-        OBJECT_SERIALIZABLE(EventTriggered);
-
+		OBJECT_SERIALIZABLE_P(EventTriggered, ConditionEx);
     private:
         bool _triggered;
 

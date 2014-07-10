@@ -1,8 +1,10 @@
 #include "EngineObject.h"
 #include "EngineDefs.h"
-#include <Windows.h>
+#include "MessagePump.h"
 #include <unordered_set>
-#include <unordered_map>
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 using namespace IStrategizer;
 using namespace std;
@@ -18,17 +20,20 @@ void* EngineObject::Alloc(std::size_t sz)
         g_hHeap = HeapCreate(HEAP_NO_SERIALIZE | HEAP_GENERATE_EXCEPTIONS, 0 , 0);
         _ASSERTE(NULL != g_hHeap);
 
-        g_pAliveObjects = new unordered_set<EngineObject*>;
+		if (nullptr == g_pAliveObjects)
+			g_pAliveObjects = new unordered_set<EngineObject*>;
     }
 
     void* pMem = HeapAlloc(g_hHeap, 0, sz);
     g_AliveObjectsUsedMem += HeapSize(g_hHeap, 0, pMem);
+	g_pAliveObjects->insert((EngineObject*)pMem);
 
     return pMem;
 }
 //////////////////////////////////////////////////////////////////////////
 void EngineObject::Free(void* pMem)
 {
+	g_pAliveObjects->erase((EngineObject*)pMem);
     g_AliveObjectsUsedMem -= HeapSize(g_hHeap, 0, pMem);
     (void)HeapFree(g_hHeap, 0, pMem);
 }
@@ -87,13 +92,12 @@ void EngineObject::DumpAliveObjects()
 //////////////////////////////////////////////////////////////////////////
 EngineObject::EngineObject()
 {
-    g_pAliveObjects->insert(this);
     LogInfo("EngineObject@0x%x created", (void*)this);
 }
 //////////////////////////////////////////////////////////////////////////
 EngineObject::~EngineObject()
 {
-    g_pAliveObjects->erase(this);
+	g_MessagePump->UnregisterForAllMessages(this);
     LogInfo("EngineObject@0x%x destroyed", (void*)this);
 }
 //////////////////////////////////////////////////////////////////////////

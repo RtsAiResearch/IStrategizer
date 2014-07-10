@@ -4,16 +4,14 @@
 
 #include "SVector.h"
 #include "CaseEx.h"
-#include "UserObject.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
     ///> class=CaseBaseEx
-    class CaseBaseEx : public Serialization::UserObject
+    class CaseBaseEx : public EngineObject
     {
-        OBJECT_SERIALIZABLE(CaseBaseEx);
-        OBJECT_MEMBERS(1, &CaseContainer);
-
+		OBJECT_SERIALIZABLE(CaseBaseEx, &CaseContainer);
     public:
         ///> type=vector(CaseEx*)
         Serialization::SVector<CaseEx*> CaseContainer;

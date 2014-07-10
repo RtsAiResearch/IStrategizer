@@ -4,7 +4,7 @@
 
 #include <vector>
 #include "EngineData.h"
-#include "UserObject.h"
+#include "EngineObject.h"
 #include "SMap.h"
 
 namespace IStrategizer
@@ -27,10 +27,9 @@ namespace IStrategizer
     #define GAME_STATIC_DATA_FILENAME "GameStaticData.bin"
 
     ///> class=RtsGameStaticData
-    class RtsGameStaticData: public Serialization::UserObject
+    class RtsGameStaticData: public EngineObject
     {
-        OBJECT_SERIALIZABLE(RtsGameStaticData);
-        OBJECT_MEMBERS(2, &EntityTypes, &ResearchTypes);
+		OBJECT_SERIALIZABLE(RtsGameStaticData, &EntityTypes, &ResearchTypes);
 
     public:
         ///> type=map(pair(int,GameType*)
@@ -41,9 +40,9 @@ namespace IStrategizer
     };
 
     ///> class=RtsGame
-    class RtsGame : public Serialization::UserObject
+    class RtsGame : public EngineObject
     {
-        OBJECT_MEMBERS(5, &m_isOnline, &m_players, &m_cachedGameFrame, &m_cachedWorldWidth, &m_cachedWorldHeight);
+		OBJECT_SERIALIZABLE(RtsGame, &m_isOnline, &m_players, &m_cachedGameFrame, &m_cachedWorldWidth, &m_cachedWorldHeight);
 
     public:
         RtsGame() :

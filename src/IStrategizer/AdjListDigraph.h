@@ -8,7 +8,7 @@
 #include "SMap.h"
 #include "SPair.h"
 #include "SSet.h"
-#include "UserObject.h"
+#include "ISerializable.h"
 #include "Logger.h"
 
 namespace IStrategizer
@@ -25,8 +25,10 @@ namespace IStrategizer
     ///> class=AdjListDigraph(TNodeValue)
     ///> parent=IDigraph(TNodeValue)
     template<class TNodeValue, class TNodeValueTraits = AdjListDigraphNodeValueTraits<TNodeValue>>
-    class AdjListDigraph :  public Serialization::UserObject, public IDigraph<TNodeValue>
+    class AdjListDigraph :  public Serialization::ISerializable, public IDigraph<TNodeValue>
     {
+		OBJECT_SERIALIZABLE(AdjListDigraph, &m_lastNodeId, &m_adjList);
+
     public:
         ///> alias=NodeEntry(pair(NodeValue,NodeSerializedSet))
         typedef Serialization::SPair<NodeValue, NodeSerializedSet> NodeEntry;
@@ -399,7 +401,7 @@ namespace IStrategizer
         // Description:	Unlocks the graph acquisition by caller thread
         // Returns:   	void
         //************************************
-        void Unlock() { m_lock.unlock(); }        OBJECT_SERIALIZABLE(AdjListDigraph);
+        void Unlock() { m_lock.unlock(); }
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::ToString
@@ -555,8 +557,6 @@ namespace IStrategizer
         }
 
         PlanHashMap PlanHash;
-
-        OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
 
     private:
         ///> type=NodeID

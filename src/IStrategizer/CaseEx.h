@@ -2,11 +2,11 @@
 #ifndef CASEEX_H
 #define CASEEX_H
 
-#include "UserObject.h"
-#include "PlanStepEx.h"
 #include <vector>
+#include "PlanStepEx.h"
 #include "EngineDefs.h"
 #include "GoalEx.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
@@ -38,8 +38,9 @@ namespace IStrategizer
     typedef AdjListDigraph<PlanStepStrongPtr> OlcbpPlanMngd;
 
     ///> class=CaseEx
-    class CaseEx : public Serialization::UserObject
+    class CaseEx : public EngineObject
     {
+		OBJECT_SERIALIZABLE(CaseEx, &m_pGoal, &m_pGameState, &m_trialCount, &m_successCount, &m_pPlan);
     public:
         CaseEx() 
             : m_pGoal(nullptr),
@@ -76,9 +77,6 @@ namespace IStrategizer
         int SuccessCount() const { return m_successCount; }
         void TrialCount(int val) { m_trialCount = val; }
         void SuccessCount(int val) { m_successCount = val; }
-
-        OBJECT_SERIALIZABLE(CaseEx);
-        OBJECT_MEMBERS(5, &m_pGoal, &m_pGameState, &m_trialCount, &m_successCount, &m_pPlan);
 
     private:
         ///> type=GoalEx*

@@ -2,7 +2,7 @@
 #define ISTRATEGIZEREX_H
 
 #include "MetaData.h"
-#include "MessagePumpObserver.h"
+#include "IMessagePumpObserver.h"
 #include "WorldClock.h"
 #include "AttackManager.h"
 #include <vector>

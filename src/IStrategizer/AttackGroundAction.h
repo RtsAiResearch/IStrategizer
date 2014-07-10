@@ -18,7 +18,7 @@ namespace IStrategizer
     class AttackGroundAction : public Action
     {
     public:
-        OBJECT_SERIALIZABLE(AttackGroundAction);
+        OBJECT_SERIALIZABLE_P(AttackGroundAction, Action);
 
         AttackGroundAction();
         AttackGroundAction(const PlanStepParameters& p_parameters);

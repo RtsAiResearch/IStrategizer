@@ -2,18 +2,16 @@
 #ifndef EXECUTIONTRIAL_H
 #define EXECUTIONTRIAL_H
 
-#include "UserObject.h"
+#include "EngineObject.h"
 #include "TypesMetaData.h"
 #include "ConditionEx.h"
 
 namespace IStrategizer
 {
     ///> class=ExecutionTrial
-    class ExecutionTrial : public Serialization::UserObject
+    class ExecutionTrial : public EngineObject
     {
-        OBJECT_SERIALIZABLE(ExecutionTrial);
-        OBJECT_MEMBERS(2, &m_lastExecutionState, &m_failedAliveCondition);
-
+        OBJECT_SERIALIZABLE(ExecutionTrial, &m_lastExecutionState, &m_failedAliveCondition);
     public:
         typedef Serialization::SVector<ExecutionTrial> List;
 

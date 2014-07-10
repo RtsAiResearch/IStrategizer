@@ -103,6 +103,8 @@ namespace IStrategizer
                 itr != p_points.end();
                 itr++)
             {
+#undef min
+#undef max
                 farthestWidth   = std::max(p_topLeftXCoord + p_width, itr->first);
                 farthestHeight  = std::max(p_topLeftYCoord + p_width, itr->second);
 

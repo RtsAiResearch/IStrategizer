@@ -10,7 +10,7 @@ namespace IStrategizer
     ///> parent=ConditionEx
     class ResourceExist : public ConditionEx
     {
-        OBJECT_SERIALIZABLE(ResourceExist);
+		OBJECT_SERIALIZABLE_P(ResourceExist, ConditionEx);
 
     private:
         int _availableAmount;

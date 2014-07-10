@@ -10,7 +10,7 @@ namespace IStrategizer
     ///> parent=ConditionEx
     class ResearchDone : public ConditionEx
     {
-        OBJECT_SERIALIZABLE(ResearchDone);
+		OBJECT_SERIALIZABLE_P(ResearchDone, ConditionEx);
 
     public:
         ResearchDone() {}

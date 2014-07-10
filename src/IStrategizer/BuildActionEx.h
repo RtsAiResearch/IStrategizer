@@ -24,8 +24,7 @@ namespace IStrategizer
     ///> parent=Action
     class BuildActionEx : public Action
     {
-        OBJECT_SERIALIZABLE(BuildActionEx);
-
+        OBJECT_SERIALIZABLE_P(BuildActionEx, Action);
     public:
         BuildActionEx();
         BuildActionEx(const PlanStepParameters& p_parameters);

@@ -32,6 +32,9 @@ Purpose: Common header file containing handy macros and definitions
 ///////////////////////// Include Windows Definitions /////////////////////////
 
 #pragma warning(push, 3)
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
 #pragma warning(pop) 
 #pragma warning(push, 4)

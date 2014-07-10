@@ -2,19 +2,18 @@
 #ifndef PLANSTEPEX_H
 #define PLANSTEPEX_H
 
+#include <map>
+#include <vector>
+#include <string>
+#include <memory>
 #include "CompositeExpression.h"
 #include "EngineData.h"
 #include "IComparable.h"
-#include "UserObject.h"
 #include "EngineObject.h"
 #include "IClonable.h"
 #include "CellFeature.h"
 #include "WorldClock.h"
 #include "RtsGame.h"
-#include <map>
-#include <vector>
-#include <string>
-#include <memory>
 
 namespace IStrategizer
 {
@@ -22,10 +21,9 @@ namespace IStrategizer
     class Message;
 
     ///> class=PlanStepEx
-    class PlanStepEx : public Serialization::UserObject, public EngineObject, public IComparable, public IClonable
+	class PlanStepEx : public EngineObject, public IComparable, public IClonable
     {
-        OBJECT_MEMBERS(2, &_params, &_id);
-
+        OBJECT_SERIALIZABLE(PlanStepEx, &_params, &_id);
     public:
         static unsigned GenerateID();
         

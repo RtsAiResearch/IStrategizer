@@ -11,7 +11,7 @@ namespace IStrategizer
     ///> parent=GoalEx
     class DeployArmyGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(DeployArmyGoal);
+        OBJECT_SERIALIZABLE_P(DeployArmyGoal, GoalEx);
 
     public:
         DeployArmyGoal();

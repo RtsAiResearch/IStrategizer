@@ -4,16 +4,14 @@
 
 #include "ExecutionTrial.h"
 #include "ConditionEx.h"
-#include "UserObject.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
     ///> class=ExecutionHistory
-    class ExecutionHistory : public Serialization::UserObject
+    class ExecutionHistory : public EngineObject
     {
-        OBJECT_SERIALIZABLE(ExecutionHistory);
-        OBJECT_MEMBERS(1, &m_history);
-
+		OBJECT_SERIALIZABLE(ExecutionHistory, &m_history);
     public:
         double GetFailureProbability() const;
         void Add(ExecutionStateType state);

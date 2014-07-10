@@ -11,7 +11,7 @@ namespace IStrategizer
     ///> parent=GoalEx
     class WinGameGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(WinGameGoal);
+        OBJECT_SERIALIZABLE_P(WinGameGoal, GoalEx);
 
     public:
         WinGameGoal();

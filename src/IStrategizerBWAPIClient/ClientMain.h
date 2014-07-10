@@ -1,16 +1,15 @@
 #ifndef CLIENTMAIN_H
 #define CLIENTMAIN_H
 
-#include <QMainWindow>
 #include "ui_ClientMain.h"
 #include "CrossMap.h"
 #include "BwapiClient.h"
-#include <Windows.h>
-#include <vector>
-#include "MessagePumpObserver.h"
+#include "IMessagePumpObserver.h"
 #include "EngineData.h"
 #include <memory>
+#include <vector>
 #include "OlcbpPlanNodeData.h"
+#include <QMainWindow>
 
 namespace IStrategizer
 {
@@ -52,7 +51,7 @@ private:
     std::shared_ptr<IStrategizer::IOlcbpPlan> m_pPlan;
 };
 
-class ClientMain : public QMainWindow, public BwapiClient, public IStrategizer::MessagePumpObserver
+class ClientMain : public QMainWindow, public BwapiClient, public IStrategizer::IMessagePumpObserver
 {
     Q_OBJECT
 

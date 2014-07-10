@@ -79,11 +79,6 @@ bool AttackGroundAction::SuccessConditionsSatisfied(RtsGame& game)
     return (attackerState == OBJSTATE_Attacking) || (attackerState == OBJSTATE_UnderAttack);
 }
 //----------------------------------------------------------------------------------------------
-void  AttackGroundAction::InitializeAddressesAux()
-{
-    Action::InitializeAddressesAux();
-}
-//----------------------------------------------------------------------------------------------
 void AttackGroundAction::InitializePostConditions()
 {
     _postCondition = new Not(new EntityClassExist(PLAYER_Enemy, DONT_CARE, 1));

@@ -2,10 +2,10 @@
 #ifndef GAMETYPE_H
 #define GAMETYPE_H
 
+#include <map>
 #include "EngineData.h"
 #include "WorldResources.h"
-#include <map>
-#include "UserObject.h"
+#include "EngineObject.h"
 #include "SVector.h"
 
 namespace IStrategizer
@@ -13,10 +13,9 @@ namespace IStrategizer
     class WorldResources;
 
     ///> class=GameType
-    class GameType : public Serialization::UserObject
+    class GameType : public EngineObject
     {
-        OBJECT_MEMBERS(2, &m_id, &m_attributes);
-
+        OBJECT_SERIALIZABLE(GameType, &m_id, &m_attributes);
     public:
         GameType() :
             m_id(ECLASS_END),

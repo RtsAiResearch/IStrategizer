@@ -14,7 +14,7 @@ void MessagePumpSubject::AddMessage(MessageType p_messageTypeID)
     }
 }
 //----------------------------------------------------------------------------------------------
-void MessagePumpSubject::RegisterForMessage(MessageType p_messageTypeID, MessagePumpObserver* p_observer)
+void MessagePumpSubject::RegisterForMessage(MessageType p_messageTypeID, IMessagePumpObserver* p_observer)
 {
     ObserverList* m_observerList;
 
@@ -28,7 +28,7 @@ void MessagePumpSubject::RegisterForMessage(MessageType p_messageTypeID, Message
     }
 }
 //----------------------------------------------------------------------------------------------
-void MessagePumpSubject::UnRegisterForMessage(MessageType p_messageTypeID, MessagePumpObserver* p_observer)
+void MessagePumpSubject::UnRegisterForMessage(MessageType p_messageTypeID, IMessagePumpObserver* p_observer)
 {
     if(_messageObserversTable.find(p_messageTypeID) != _messageObserversTable.end())
     {
@@ -36,7 +36,7 @@ void MessagePumpSubject::UnRegisterForMessage(MessageType p_messageTypeID, Messa
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void MessagePumpSubject::UnregisterForAllMessages(MessagePumpObserver* p_observer)
+void MessagePumpSubject::UnregisterForAllMessages(IMessagePumpObserver* p_observer)
 {
     ObserverList* m_observerList;
 

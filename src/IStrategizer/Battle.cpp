@@ -25,7 +25,7 @@ Battle::Battle(RtsGame& game) :
     m_stateMachine.AddState(new FinishedFSMState<Battle*>(this));
 
     // Register for messages
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 }
 //////////////////////////////////////////////////////////////////////////
 void Battle::SelectArmy(RtsGame &game)

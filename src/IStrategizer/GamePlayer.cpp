@@ -45,9 +45,9 @@ void GamePlayer::Init()
 {
     if (m_isOnline)
     {
-        g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-        g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
-        g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ MapArea GamePlayer::GetColonyMapArea()
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::SetOffline(RtsGame* pBelongingGame)
 {
-    g_MessagePump.UnregisterForAllMessages(this);
+    g_MessagePump->UnregisterForAllMessages(this);
 
     m_pResources->SetOffline(pBelongingGame);
     m_pTechTree->SetOffline(pBelongingGame);

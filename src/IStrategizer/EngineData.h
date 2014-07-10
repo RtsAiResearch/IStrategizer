@@ -2,18 +2,10 @@
 #ifndef ENGINEDATA_H
 #define ENGINEDATA_H
 
-#include <map>
 #include <unordered_set>
 #include "MetaData.h"
-
-#ifndef SVECTOR_H
 #include "SVector.h"
-#endif
-
-#ifndef USEROBJECT_H
-#include "UserObject.h"
-#endif
-
+#include "SMap.h"
 #include "AdjListDigraph.h"
 
 namespace IStrategizer

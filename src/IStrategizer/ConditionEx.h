@@ -14,8 +14,7 @@ namespace IStrategizer
     ///> parent=Expression
     class ConditionEx : public Expression
     {
-        OBJECT_MEMBERS_P(Expression, 3, &_conditionType, &_conditionParameters, &_playerType);
-
+		OBJECT_SERIALIZABLE_P(ConditionEx, Expression, &_conditionType, &_conditionParameters, &_playerType);
     protected:
         ///> type=int
         ConditionType _conditionType;

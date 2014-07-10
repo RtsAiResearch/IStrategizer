@@ -2,12 +2,14 @@
 #define ENGINEOBJECT_H
 
 #include <string>
-#include "MessagePumpObserver.h"
+#include "IMessagePumpObserver.h"
+#include "ISerializable.h"
 
 namespace IStrategizer
 {
-    class EngineObject : public MessagePumpObserver
+    class EngineObject : public Serialization::ISerializable, public IMessagePumpObserver
     {
+		OBJECT_SERIALIZABLE(EngineObject);
     public:
         EngineObject();
         ~EngineObject();

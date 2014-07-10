@@ -10,7 +10,7 @@ namespace IStrategizer
     ///> parent=GoalEx
     class BuildInfrastructureGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(BuildInfrastructureGoal);
+        OBJECT_SERIALIZABLE_P(BuildInfrastructureGoal, GoalEx);
 
     public:
         BuildInfrastructureGoal();

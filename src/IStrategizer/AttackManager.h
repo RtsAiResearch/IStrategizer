@@ -31,7 +31,7 @@ namespace IStrategizer
                 else
                 {
                     inactiveBattles.insert(battle);
-                    g_MessagePump.Send(new Message(0, MSG_BattleComplete));
+                    g_MessagePump->Send(new Message(0, MSG_BattleComplete));
                 }
             }
 

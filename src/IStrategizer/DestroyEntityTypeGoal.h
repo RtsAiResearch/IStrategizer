@@ -11,7 +11,7 @@ namespace IStrategizer
     ///> parent=GoalEx
     class DestroyEntityTypeGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(DestroyEntityTypeGoal);
+        OBJECT_SERIALIZABLE_P(DestroyEntityTypeGoal, GoalEx);
 
     public:
         DestroyEntityTypeGoal();
