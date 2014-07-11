@@ -171,6 +171,8 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
 //----------------------------------------------------------------------------------------------
 bool TrainAction::ExecuteAux(RtsGame& game, const WorldClock& clock)
 {
+	LogActivity(ExecuteAux);
+
     EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
     GameEntity *pGameTrainer;
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();

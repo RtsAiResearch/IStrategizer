@@ -15,15 +15,14 @@
 #include "SimilarityWeightModel.h"
 #include "PlayerResources.h"
 #include "ObjectFactory.h"
+#include "EngineDefs.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
 using namespace std;
 
-IStrategizer::RtsGame* g_Game = nullptr;
-
-RtsGameStaticData RtsGame::sm_gameStatics;
-bool RtsGame::sm_gameStaticsInitialized = false;
+RtsGame* g_Game = nullptr;
+RtsGameStaticData* RtsGame::sm_pGameStatics = nullptr;
 
 DECL_SERIALIZABLE(RtsGameStaticData);
 
@@ -49,6 +48,21 @@ static SimilarityWeightModel GetDefaultWeightModel()
 
 SimilarityWeightModel RtsGame::DefaultWeightModel = GetDefaultWeightModel();
 
+RtsGameStaticData::~RtsGameStaticData()
+{
+	for (auto& entityType : EntityTypes)
+		SAFE_DELETE(entityType.second);
+	EntityTypes.clear();
+
+	for (auto& researchType : ResearchTypes)
+		SAFE_DELETE(researchType.second);
+	ResearchTypes.clear();
+
+	for (auto& raceType : RaceTypes)
+		SAFE_DELETE(raceType.second);
+	RaceTypes.clear();
+}
+//----------------------------------------------------------------------------------------------
 RtsGame::~RtsGame()
 {
     Finalize();
@@ -56,14 +70,14 @@ RtsGame::~RtsGame()
 //----------------------------------------------------------------------------------------------
 void RtsGame::Init()
 {
-    if (!sm_gameStaticsInitialized)
+    if (nullptr == sm_pGameStatics)
     {
         LogInfo("Initializing RTS game static data");
 
         if (InitStaticData())
         {
+			_ASSERTE(sm_pGameStatics);
             LogInfo("Game static data initialized successfully");
-            sm_gameStaticsInitialized = true;
         }
         else
         {
@@ -95,10 +109,10 @@ void RtsGame::Init()
 void RtsGame::Finalize()
 {
     for (auto& playerEntry : m_players)
-        Toolbox::MemoryClean(playerEntry.second);
+        SAFE_DELETE(playerEntry.second);
     m_players.clear();
 
-    Toolbox::MemoryClean(m_pMap);
+    SAFE_DELETE(m_pMap);
 }
 //----------------------------------------------------------------------------------------------
 GamePlayer* RtsGame::GetPlayer(PlayerType p_id) const
@@ -113,30 +127,30 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id) const
 //----------------------------------------------------------------------------------------------
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
-    _ASSERTE(sm_gameStaticsInitialized);
+    _ASSERTE(sm_pGameStatics);
 
-    if (!sm_gameStatics.EntityTypes.Contains(p_id))
+    if (!sm_pGameStatics->EntityTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return sm_gameStatics.EntityTypes[p_id];
+    return sm_pGameStatics->EntityTypes[p_id];
 }
 //----------------------------------------------------------------------------------------------
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
-    _ASSERTE(sm_gameStaticsInitialized);
-    if (!sm_gameStatics.ResearchTypes.Contains(p_id))
+	_ASSERTE(sm_pGameStatics);
+    if (!sm_pGameStatics->ResearchTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return sm_gameStatics.ResearchTypes[p_id];
+    return sm_pGameStatics->ResearchTypes[p_id];
 }
 //----------------------------------------------------------------------------------------------
 GameRace* RtsGame::GetRace(TID id)
 {
-    _ASSERTE(sm_gameStaticsInitialized);
-    if (!sm_gameStatics.RaceTypes.Contains(id))
+	_ASSERTE(sm_pGameStatics);
+    if (!sm_pGameStatics->RaceTypes.Contains(id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return sm_gameStatics.RaceTypes[id];
+    return sm_pGameStatics->RaceTypes[id];
 }
 //----------------------------------------------------------------------------------------------
 void RtsGame::SetOffline()
@@ -235,5 +249,10 @@ int RtsGameModel::Attr(_In_ RtsGameModelAttribute attr) const
 void RtsGame::ExportStaticData()
 {
     LogInfo("Exporting game static data to disk '%s'", GAME_STATIC_DATA_FILENAME);
-    g_ObjectSerializer.Serialize(&sm_gameStatics, GAME_STATIC_DATA_FILENAME);
+    g_ObjectSerializer.Serialize(sm_pGameStatics, GAME_STATIC_DATA_FILENAME);
+}
+//----------------------------------------------------------------------------------------------
+void RtsGame::FinalizeStaticData()
+{
+	SAFE_DELETE(sm_pGameStatics);
 }

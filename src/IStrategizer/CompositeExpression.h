@@ -23,6 +23,7 @@ namespace IStrategizer
         CompositeExpression() {}
         CompositeExpression(const std::vector<Expression*>& p_expressions) : Expression(EXPRESSION_Composite), _expressions(p_expressions), _shortCircuit(true) {}
         CompositeExpression(Expression* p_expression) : Expression(EXPRESSION_Composite), _shortCircuit(true) { _expressions.push_back(p_expression); }
+		~CompositeExpression();
         bool AddExpression(Expression* p_expression);
         bool RemoveExpression(Expression* p_expression);
         bool Equals(const Expression* p_rhs) const;

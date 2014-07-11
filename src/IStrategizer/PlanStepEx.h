@@ -25,6 +25,7 @@ namespace IStrategizer
     {
         OBJECT_SERIALIZABLE(PlanStepEx, &_params, &_id);
     public:
+		~PlanStepEx();
         static unsigned GenerateID();
         
         void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()) ; }
@@ -44,7 +45,6 @@ namespace IStrategizer
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
         virtual unsigned Hash(bool quantified = true) const;
         virtual std::string ToString(bool minimal = false) const;
-        virtual ~PlanStepEx() {}
         PlanStepParameters& Parameters() { return _params; }
         ExecutionStateType State() const { return _state; }
         StepLevelType LevelType() const { return _stepLevelType; }

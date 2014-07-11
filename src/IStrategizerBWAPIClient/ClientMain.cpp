@@ -206,6 +206,8 @@ void ClientMain::InitIdLookup()
 void ClientMain::FinalizeIStrategizer()
 {
     SAFE_DELETE(m_pIStrategizer);
+
+	RtsGame::FinalizeStaticData();
     SAFE_DELETE(m_pGameModel);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -236,6 +238,7 @@ void ClientMain::OnClientLoopStart()
     // Dump memory leaks if exist
     EngineObject::DumpAliveObjects();
     // Make sure that we start from a clean slate
+
     // Hard Reset is always a bad idea and can cause inconsistency
 	// EngineObject::FreeMemoryPool();
 

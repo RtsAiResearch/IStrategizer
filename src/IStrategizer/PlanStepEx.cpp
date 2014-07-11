@@ -5,6 +5,7 @@
 #include "MathHelper.h"
 #include "Logger.h"
 #include "ObjectFactory.h"
+#include "EngineDefs.h"
 #pragma comment(lib, "Rpcrt4.lib")
 
 using namespace std;
@@ -48,6 +49,11 @@ PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanS
 {
     memset(_stateStartTime, 0, sizeof(_stateStartTime));
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
+}
+//////////////////////////////////////////////////////////////////////////
+PlanStepEx::~PlanStepEx()
+{
+	SAFE_DELETE(_postCondition);
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeConditions()

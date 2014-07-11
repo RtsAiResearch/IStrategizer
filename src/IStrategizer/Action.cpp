@@ -5,6 +5,7 @@
 #include "RtsGame.h"
 #include "MathHelper.h"
 #include "CellFeature.h"
+#include "EngineDefs.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -21,6 +22,11 @@ Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, 
 {
     _stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
     _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
+}
+//////////////////////////////////////////////////////////////////////////
+Action::~Action()
+{
+	SAFE_DELETE(_preCondition);
 }
 //////////////////////////////////////////////////////////////////////////
 void Action::State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)

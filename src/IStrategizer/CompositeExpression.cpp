@@ -1,10 +1,18 @@
 #include "CompositeExpression.h"
+#include "EngineDefs.h"
 #include <algorithm>
 #include <cassert>
 
 using namespace IStrategizer;
 using namespace std;
 
+CompositeExpression::~CompositeExpression()
+{
+	for (auto& pExpr : _expressions)
+		SAFE_DELETE(pExpr);
+
+	_expressions.clear();
+}
 //----------------------------------------------------------------------------------------------
 bool CompositeExpression::AddExpression(Expression* p_expression)
 {

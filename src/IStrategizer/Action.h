@@ -35,6 +35,7 @@ namespace IStrategizer
         virtual void FreeResources(RtsGame& game) {}
 
     public:
+		~Action();
         int Type() const { return PlanStepEx::_stepTypeId; }
         CompositeExpression* PreCondition() { _ASSERTE(_preCondition); return _preCondition; }
         void Reset(RtsGame& game, const WorldClock& p_clock);

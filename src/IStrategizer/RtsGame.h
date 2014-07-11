@@ -32,6 +32,8 @@ namespace IStrategizer
 		OBJECT_SERIALIZABLE(RtsGameStaticData, &EntityTypes, &ResearchTypes);
 
     public:
+		~RtsGameStaticData();
+
         ///> type=map(pair(int,GameType*)
         EntiyTypesMap EntityTypes;
         ///> type=map(pair(int,GameResearch*)
@@ -52,18 +54,20 @@ namespace IStrategizer
             m_cachedGameFrame(0)
         {}
 
+		static void FinalizeStaticData();
+
         virtual ~RtsGame();
         virtual void Init();
         virtual void DisplayMessage(const char* p_msg) = 0;
         void ExportStaticData();
 
         void Players(std::vector<PlayerType>& p_playerIds) const { m_players.Keys(p_playerIds); }
-        void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds) const { sm_gameStatics.EntityTypes.Keys(p_entityTypeIds); }
-        void Researches(std::vector<ResearchType>& p_researchTypeIds) const { sm_gameStatics.ResearchTypes.Keys(p_researchTypeIds); }
+        void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds) const { sm_pGameStatics->EntityTypes.Keys(p_entityTypeIds); }
+        void Researches(std::vector<ResearchType>& p_researchTypeIds) const { sm_pGameStatics->ResearchTypes.Keys(p_researchTypeIds); }
 
-        const EntiyTypesMap& EntityTypes() const { return sm_gameStatics.EntityTypes; }
-        const ResearchTypesMap& ResearchTypes() const { return sm_gameStatics.ResearchTypes; }
-        const RaceTypesMap& RaceTypes() const { return sm_gameStatics.RaceTypes; }
+        const EntiyTypesMap& EntityTypes() const { return sm_pGameStatics->EntityTypes; }
+        const ResearchTypesMap& ResearchTypes() const { return sm_pGameStatics->ResearchTypes; }
+        const RaceTypesMap& RaceTypes() const { return sm_pGameStatics->RaceTypes; }
 
         GamePlayer* GetPlayer(PlayerType p_id) const;
         GameType* GetEntityType(EntityClassType p_id);
@@ -93,8 +97,7 @@ namespace IStrategizer
         virtual void Finalize();
 
         // Game types are shared across all RtsGame instances
-        static RtsGameStaticData sm_gameStatics;
-        static bool sm_gameStaticsInitialized;
+        static RtsGameStaticData* sm_pGameStatics;
 
         ///> type=bool
         bool m_isOnline;
