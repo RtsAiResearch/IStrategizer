@@ -29,6 +29,7 @@
 #include "IStrategizerException.h"
 #include "Logger.h"
 #include "GmlHelper.h"
+#include <list>
 
 using namespace IStrategizer;
 using namespace Serialization;
@@ -166,9 +167,12 @@ void IStrategizer::GraphScene::ComputeGraphLevels()
         m_graphLevels[i].clear();
     m_graphLevels.clear();
 
+	list<NodeID> orderedCaseChildren;
+	list<NodeID> orderedSnippetChildren;
+
     while(!Q.empty())
     {
-        NodeID nodeId = Q.front().first;
+        NodeID currNodeId = Q.front().first;
         NodeLevel nodeLevel = Q.front().second;
 
         Q.pop_front();
@@ -176,18 +180,55 @@ void IStrategizer::GraphScene::ComputeGraphLevels()
         if(nodeLevel >= m_graphLevels.size())
             m_graphLevels.resize(nodeLevel + 1);
 
-        m_graphLevels[nodeLevel].push_back(nodeId);
+		m_graphLevels[nodeLevel].push_back(currNodeId);
 
-        IOlcbpPlan::NodeSerializedSet children = m_pGraph->GetAdjacentNodes(nodeId);
+		IOlcbpPlan::NodeSerializedSet children = m_pGraph->GetAdjacentNodes(currNodeId);
 
-        for (NodeID nodeId : children)
-        {
-            if(visitedNodes.count(nodeId) == 0)
-            {
-                visitedNodes.insert(nodeId);
-                Q.push_back(make_pair(nodeId, nodeLevel + 1));
-            }
-        }
+		if (m_pPlanContext != nullptr)
+		{
+			orderedCaseChildren.clear();
+			orderedSnippetChildren.clear();
+
+			for (NodeID nodeId : children)
+			{
+				if (visitedNodes.count(nodeId) == 0)
+				{
+					visitedNodes.insert(nodeId);
+
+					if (m_pPlanContext->Data.at(nodeId).SatisfyingGoal != currNodeId)
+					{
+						if (IsGoalNode(nodeId))
+							orderedCaseChildren.push_front(nodeId);
+						else
+							orderedCaseChildren.push_back(nodeId);
+					}
+					else
+					{
+						if (IsGoalNode(nodeId))
+							orderedSnippetChildren.push_front(nodeId);
+						else
+							orderedSnippetChildren.push_back(nodeId);
+					}
+				}
+			}
+
+			for (auto nodeId : orderedCaseChildren)
+				Q.push_back(make_pair(nodeId, nodeLevel + 1));
+
+			for (auto nodeId : orderedSnippetChildren)
+				Q.push_back(make_pair(nodeId, nodeLevel + 1));
+		}
+		else
+		{
+			for (NodeID nodeId : children)
+			{
+				if (visitedNodes.count(nodeId) == 0)
+				{
+					visitedNodes.insert(nodeId);
+					Q.push_back(make_pair(nodeId, nodeLevel + 1));
+				}
+			}
+		}
     }
 }
 //----------------------------------------------------------------------------------------------

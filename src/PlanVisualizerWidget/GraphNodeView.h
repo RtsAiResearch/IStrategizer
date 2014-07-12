@@ -47,6 +47,7 @@ namespace IStrategizer
         int NodeHeight() const { return m_nodeHeight; }
         void MarkAsActive() { m_isActive = true; }
         void MarkAsInactive() { m_isActive = false; }
+		ConstOlcbpPlanNodeDataPtr Data() const { return m_pNodeData;  }
 
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);

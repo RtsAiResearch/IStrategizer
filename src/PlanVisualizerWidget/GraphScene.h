@@ -130,6 +130,7 @@ namespace IStrategizer
         int ComputeLevelWidth(int levelIdx);
         int ComputeLevelHeight(int levelIdx);
         void OnGraphUpdate();
+		bool IsGoalNode(_In_ IOlcbpPlan::NodeID nodeId) const { return BELONG(GoalType, m_pGraph->GetNode(nodeId)->StepTypeId()); }
 
     private slots:
         void NodeSelected();
