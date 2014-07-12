@@ -317,7 +317,9 @@ void AdapterEx::StackRankEntitiesOfType(_In_ PlayerType playerType, _In_ EntityC
 	{
 		auto pEntity = g_Game->GetPlayer(playerType)->GetEntity(entityId);
 		_ASSERTE(pEntity);
-		clusters[(ObjectStateType)pEntity->Attr(EOATTR_State)].push_back(entityId);
+
+		if (!pEntity->IsLocked())
+			clusters[(ObjectStateType)pEntity->Attr(EOATTR_State)].push_back(entityId);
 	}
 
 	for (auto state : ranks)

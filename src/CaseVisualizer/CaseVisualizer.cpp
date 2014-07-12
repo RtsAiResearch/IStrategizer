@@ -485,7 +485,6 @@ void CaseVisualizer::GenCollectPrimaryResourceCases()
 			auto pCollectResource = g_GoalFactory.GetGoal(GOALEX_CollectResource, false);
 			pCollectResource->Parameter(PARAM_ResourceId, RESOURCE_Primary);
 			pCollectResource->Parameter(PARAM_Amount, numSCVs - 1);
-			pCollectResource->Parameter(PARAM_DistanceToBase, 25);
 			pCollectResourceCase->Plan()->AddNode(pCollectResource, pCollectResource->Id());
 
 			pCollectResourceCase->Plan()->AddEdge(pCollectResource->Id(), pSCVTrainForceG->Id());
