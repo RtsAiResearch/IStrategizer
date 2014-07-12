@@ -127,6 +127,8 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
+    <ClInclude Include="GeneratedFiles\ui_CaseView.h" />
+    <ClInclude Include="GeneratedFiles\ui_CaseVisualizer.h" />
     <ClInclude Include="IdLookupReader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +155,7 @@
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_CaseVisualizer.h;%(Outputs)</Outputs>
+      <SubType>Designer</SubType>
     </CustomBuild>
     <CustomBuild Include="CaseVisualizer.qrc">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

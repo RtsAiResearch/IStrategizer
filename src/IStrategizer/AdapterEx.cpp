@@ -13,6 +13,7 @@
 #include "OccupanceDataIM.h"
 #include "PlayerResources.h"
 #include "GameResearch.h"
+#include "CaseBasedReasonerEx.h"
 
 #include <cassert>
 #include <algorithm>
@@ -25,10 +26,11 @@ using namespace std;
 
 typedef pair<TID, ObjectStateType> UnitEntry;
 
-RankedStates AdapterEx::WorkerStatesRank;
-RankedStates AdapterEx::AttackerStatesRank;
-RankedStates AdapterEx::EntityToMoveStatesRank;
-ObjectStateStackRankMap AdapterEx::ProducingBuildingStatesRank;
+RankedStates AdapterEx::BuilderStatesRank = { OBJSTATE_Idle, OBJSTATE_GatheringPrimary, OBJSTATE_GatheringSecondary };
+RankedStates AdapterEx::GathererStatesRank = { OBJSTATE_Idle };
+RankedStates AdapterEx::AttackerStatesRank = { OBJSTATE_Idle };
+RankedStates AdapterEx::EntityToMoveStatesRank = { OBJSTATE_Idle, OBJSTATE_UnderAttack, OBJSTATE_Attacking, OBJSTATE_Moving };
+RankedStates AdapterEx::ProducingBuildingStatesRank = { OBJSTATE_Idle, OBJSTATE_Training };
 
 // Minimum number of build cells to be between colony buildings
 const int AdapterEx::DefaultBuildingSpacing = 64;
@@ -38,26 +40,6 @@ bool AdapterEx::IsRankedStatesInitialized = false;
 AdapterEx::AdapterEx()
 {
     m_buildingSpacing = DefaultBuildingSpacing;
-    InitializePredefinedRankedStates();
-}
-//////////////////////////////////////////////////////////////////////////
-void IStrategizer::AdapterEx::InitializePredefinedRankedStates()
-{
-    IsRankedStatesInitialized = true;
-
-    WorkerStatesRank.push_back(OBJSTATE_Idle);
-    WorkerStatesRank.push_back(OBJSTATE_GatheringPrimary);
-    WorkerStatesRank.push_back(OBJSTATE_GatheringSecondary);
-
-    AttackerStatesRank.push_back(OBJSTATE_Idle);
-
-    EntityToMoveStatesRank.push_back(OBJSTATE_Idle);
-    EntityToMoveStatesRank.push_back(OBJSTATE_UnderAttack);
-    EntityToMoveStatesRank.push_back(OBJSTATE_Attacking);
-    EntityToMoveStatesRank.push_back(OBJSTATE_Moving);
-
-    ProducingBuildingStatesRank[OBJSTATE_Idle] = 0;
-    ProducingBuildingStatesRank[OBJSTATE_Training] = 1;
 }
 //////////////////////////////////////////////////////////////////////////
 bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_worldY, const TCell* p_pCell, void *p_pParam)
@@ -139,7 +121,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates& p_rankedStates)
+TID AdapterEx::GetEntityObjectId(EntityClassType entityType,const RankedStates& rankedStates)
 {
     /*
     Entity Object Adaptation Algorithm:
@@ -148,43 +130,13 @@ TID AdapterEx::GetEntityObjectId(EntityClassType p_entityType,const RankedStates
     ELSE
     adaptation failed and return nullptr entity Id
     */
-    GamePlayer *pPlayer;
-    GameEntity *pEntity;
-    EntityList entityIds;
-    ObjectStateType curEntityState;
-    TID adaptedEntityId = INVALID_TID;
-    vector<UnitEntry> validEntities;
-    if(!IsRankedStatesInitialized)
-        InitializePredefinedRankedStates();
+	EntityList ladder;
+	StackRankEntitiesOfType(PLAYER_Self, entityType, rankedStates, ladder);
 
-    pPlayer = g_Game->Self();
-    _ASSERTE(pPlayer);
-
-    pPlayer->Entities(entityIds);
-    for (unsigned i = 0, size = entityIds.size(); i < size; ++i)
-    {
-        pEntity = pPlayer->GetEntity(entityIds[i]);
-        _ASSERTE(pEntity);
-
-        if (p_entityType == pEntity->Type() && !pEntity->IsLocked())
-        {
-            curEntityState = (ObjectStateType)pEntity->Attr(EOATTR_State);
-
-            if (IsValidEntityState(curEntityState,p_rankedStates))
-                validEntities.push_back(MakePair(pEntity->Id(), curEntityState));
-        }
-    }
-
-    if (!validEntities.empty())
-    {
-        sort(validEntities.begin(), validEntities.end(), [p_rankedStates](UnitEntry leftEntity,UnitEntry rightEntity)
-        {
-            return GetEntityStateIndex(leftEntity.second,p_rankedStates) < GetEntityStateIndex(rightEntity.second,p_rankedStates);
-        });
-        adaptedEntityId = validEntities[0].first;
-    }
-
-    return adaptedEntityId;
+	if (ladder.empty())
+		return INVALID_TID;
+	else
+		return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
 IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_entityType )
@@ -255,60 +207,29 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
 {
-    EntityClassType researchedType = g_Game->GetResearch(p_researchType)->SourceEntity();
+    EntityClassType researcherType = g_Game->GetResearch(p_researchType)->SourceEntity();
 
-    EntityList candidateResearchers;
-    g_Game->Self()->Entities(researchedType, candidateResearchers);
+	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+	EntityList ladder;
+	StackRankEntitiesOfType(PLAYER_Self, researcherType, GathererStatesRank, ladder);
 
-    if (candidateResearchers.empty())
-        return INVALID_TID;
-
-    multimap<unsigned, GameEntity*> reseacherClusters; 
-
-    for (auto researcherId : candidateResearchers)
-    {
-        GameEntity* pResearcher = g_Game->Self()->GetEntity(researcherId);
-        ObjectStateType state = (ObjectStateType)pResearcher->Attr(EOATTR_State);
-
-        // If state is not ranked - which means it is not favored, then we don't consider it at all
-        if (ProducingBuildingStatesRank.count(state) > 0)
-            reseacherClusters.insert(make_pair(ProducingBuildingStatesRank[state], pResearcher));
-    }
-
-    if (reseacherClusters.empty())
-        return INVALID_TID;
-
-    GameEntity* pAdaptedResearcher = reseacherClusters.begin()->second;
-    return pAdaptedResearcher->Id();
+	if (ladder.empty())
+		return INVALID_TID;
+	else
+		return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptBuildingForTraining(EntityClassType traineeType)
 {
-    EntityClassType trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
+	EntityClassType trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
+	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+	EntityList ladder;
+	StackRankEntitiesOfType(PLAYER_Self, trainerType, ProducingBuildingStatesRank, ladder);
 
-    EntityList candidateTrainer;
-    g_Game->Self()->Entities(trainerType, candidateTrainer);
-
-    if (candidateTrainer.empty())
-        return INVALID_TID;
-
-    multimap<unsigned, GameEntity*> trainerClusters; 
-
-    for (auto researcherId : candidateTrainer)
-    {
-        GameEntity* pResearcher = g_Game->Self()->GetEntity(researcherId);
-        ObjectStateType state = (ObjectStateType)pResearcher->Attr(EOATTR_State);
-
-        // If state is not ranked - which means it is not favored, then we don't consider it at all
-        if (ProducingBuildingStatesRank.count(state) > 0)
-            trainerClusters.insert(make_pair(ProducingBuildingStatesRank[state], pResearcher));
-    }
-
-    if (trainerClusters.empty())
-        return INVALID_TID;
-
-    GameEntity* pAdaptedTrainer = trainerClusters.begin()->second;
-    return pAdaptedTrainer->Id();
+	if (ladder.empty())
+		return INVALID_TID;
+	else
+		return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
@@ -354,16 +275,54 @@ Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
     return g_Game->Map()->GetNearestCell(&*pCell);
 }
 //////////////////////////////////////////////////////////////////////////
-bool AdapterEx::IsValidEntityState(ObjectStateType p_entityState, const RankedStates &p_rankedStates)
+TID AdapterEx::AdaptWorkerForGather(ResourceType resourceType)
 {
-    return GetEntityStateIndex(p_entityState,p_rankedStates) != INVALID_INDEX;
+	EntityClassType gathererType = g_Game->Self()->Race()->GetWorkerType();
+
+	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+	EntityList ladder;
+	StackRankEntitiesOfType(PLAYER_Self, gathererType, GathererStatesRank, ladder);
+
+	if (ladder.empty())
+		return INVALID_TID;
+	else
+		return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
-int AdapterEx::GetEntityStateIndex(ObjectStateType p_entityState, const RankedStates &p_rankedStates)
+TID AdapterEx::AdaptWorkerForBuild()
 {
-    int size = p_rankedStates.size();
-    for (int i = 0; i < size; i++)
-        if (p_rankedStates[i] == p_entityState)
-            return i;
-    return INVALID_INDEX;
+	EntityClassType builderType = g_Game->Self()->Race()->GetWorkerType();
+
+	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+	EntityList ladder;
+	StackRankEntitiesOfType(PLAYER_Self, builderType, BuilderStatesRank, ladder);
+
+	if (ladder.empty())
+		return INVALID_TID;
+	else
+		return ladder[0];
+}
+//////////////////////////////////////////////////////////////////////////
+void AdapterEx::StackRankEntitiesOfType(_In_ PlayerType playerType, _In_ EntityClassType entityType, _In_ RankedStates ranks, _Out_ EntityList& ladder)
+{
+	EntityList candidates;
+	g_Game->GetPlayer(playerType)->Entities(entityType, candidates);
+
+	if (candidates.empty())
+		return;
+
+	map<ObjectStateType, vector<TID>> clusters;
+
+	for (auto entityId : candidates)
+	{
+		auto pEntity = g_Game->GetPlayer(playerType)->GetEntity(entityId);
+		_ASSERTE(pEntity);
+		clusters[(ObjectStateType)pEntity->Attr(EOATTR_State)].push_back(entityId);
+	}
+
+	for (auto state : ranks)
+	{
+		for (auto entityId : clusters[state])
+			ladder.push_back(entityId);
+	}
 }

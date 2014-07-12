@@ -14,6 +14,7 @@
 #include "EntityClassExist.h"
 #include "ResourceExist.h"
 #include "Logger.h"
+#include "CandidateGathererExist.h"
 #include <vector>
 
 using namespace std;
@@ -44,11 +45,10 @@ GatherResourceAction::GatherResourceAction(const PlanStepParameters& p_parameter
 //////////////////////////////////////////////////////////////////////////
 void GatherResourceAction::InitializePreConditions()
 {
-	EntityClassType gathererType = g_Game->Self()->Race()->GetWorkerType();
     EntityClassType baseType = g_Game->Self()->Race()->GetBaseType();
     vector<Expression*> m_terms;
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1));
+    m_terms.push_back(new CandidateGathererExist(PLAYER_Self, (ResourceType)_params[PARAM_ResourceId]));
     m_terms.push_back(new EntityClassExist(PLAYER_Self, baseType, 1));
     if (_params[PARAM_ResourceId] == RESOURCE_Secondary)
     {
@@ -151,18 +151,15 @@ bool GatherResourceAction::SuccessConditionsSatisfied(RtsGame& game)
 //////////////////////////////////////////////////////////////////////////
 bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
-	EntityClassType gathererType = game.Self()->Race()->GetWorkerType();
-	ResourceType resourceType;
+	ResourceType resourceType = (ResourceType)_params[PARAM_ResourceId];
 	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 	bool bOK = false;
 
     // Adapt gatherer
-    m_gathererId = pAdapter->GetEntityObjectId(gathererType, AdapterEx::WorkerStatesRank);
+	m_gathererId = pAdapter->AdaptWorkerForGather(resourceType);
 
     if(m_gathererId != INVALID_TID)
     {
-        resourceType = (ResourceType)_params[PARAM_ResourceId];
-
         // Initialize gather state
         m_gatherStarted = true;
 

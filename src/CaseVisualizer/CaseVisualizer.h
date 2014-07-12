@@ -38,8 +38,8 @@ namespace IStrategizer
         void SaveCaseBaseAs();
         void SaveCaseBase();
         void Refresh();
-        void NewCase();
-        void NewCase(GoalType p_caseGoal);
+        CaseEx* NewCase();
+		CaseEx* NewCase(GoalType p_caseGoal);
         void DeleteCase(CaseEx* pCase);
         void EditCase();
         void SelectCase(int caseIdx);
@@ -58,20 +58,26 @@ namespace IStrategizer
         void CreateToolBox();
         void VerifyHashCollisions();
 
+		void GenCollectPrimaryResourceCases();
+		void GenCollectSecondaryResourceCases();
+		void GenSCVTrainForceCases();
+		void GenBuildRefineryCases();
+
         private slots:
             void on_actionSaveAs_triggered();
             void on_actionShow_triggered();
             void on_lstCases_itemSelectionChanged();
             void on_btnDeleteCase_clicked();
-            void on_btnDuplicateCase_clicked();
             void on_btnNewCase_clicked();
             void on_lstCases_itemDoubleClicked(QListWidgetItem*);
             void on_actionNew_triggered();
             void on_actionSave_triggered();
             void on_actionOpen_triggered();
             void PointerGroupClicked(int);
+			void on_btnDuplicateCase_clicked();
             void on_btnReloadCB_clicked();
-    };
+			void on_btnGenSCVPlans_clicked();
+	};
 }
 
 #endif // CASEVISUALIZER_H

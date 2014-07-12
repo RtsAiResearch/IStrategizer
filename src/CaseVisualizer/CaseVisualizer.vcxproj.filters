@@ -48,6 +48,12 @@
     <ClInclude Include="IdLookupReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_CaseView.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_CaseVisualizer.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="CaseVisualizer.ico" />

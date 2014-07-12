@@ -87,7 +87,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="bntDupCase">
+         <widget class="QPushButton" name="btnDuplicateCase">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -140,6 +140,28 @@
           </property>
           <property name="text">
            <string>Reload Case Base</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnGenSCVPlans">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Gen SCV Cases</string>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
           </property>
          </widget>
         </item>

@@ -50,6 +50,7 @@
     <ClInclude Include="..\DeployArmyGoal.h" />
     <ClInclude Include="..\EngineDefs.h" />
     <ClInclude Include="..\EngineObject.h" />
+    <ClInclude Include="..\CandidateGathererExist.h" />
     <ClInclude Include="..\TargetFSMState.h" />
     <ClInclude Include="..\DestroyEntityTypeGoal.h" />
     <ClInclude Include="..\EngineAssist.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="..\ForceDescription.cpp" />
     <ClCompile Include="..\GamePlayer.cpp" />
     <ClCompile Include="..\GameTrace.cpp" />
+    <ClCompile Include="..\CandidateGathererExist.cpp" />
     <ClCompile Include="..\GatherResourceAction.cpp" />
     <ClCompile Include="..\GoalEx.cpp" />
     <ClCompile Include="..\GoalFactory.cpp" />

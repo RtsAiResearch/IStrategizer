@@ -408,6 +408,9 @@
     <ClInclude Include="..\IMessagePumpObserver.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
+    <ClInclude Include="..\CandidateGathererExist.h">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Action.cpp">
@@ -621,6 +624,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\EngineObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CandidateGathererExist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

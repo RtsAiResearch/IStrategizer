@@ -28,7 +28,8 @@ namespace IStrategizer
 		~PlanStepEx();
         static unsigned GenerateID();
         
-        void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()) ; }
+		void Parameter(ParameterType key, int val) { _params[key] = val; }
+		void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()); }
         void Copy(IClonable* p_dest);
         virtual void Update(RtsGame& game, const WorldClock& p_clock);
         int StepTypeId() const { return _stepTypeId; }

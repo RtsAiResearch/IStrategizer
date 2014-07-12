@@ -130,7 +130,6 @@ namespace IStrategizer
         int ComputeLevelWidth(int levelIdx);
         int ComputeLevelHeight(int levelIdx);
         void OnGraphUpdate();
-        void OnGraphStructureChange();
 
     private slots:
         void NodeSelected();
@@ -139,6 +138,7 @@ namespace IStrategizer
         void DeleteEdge();
         void DisconnectNode();
         void DuplicateNode();
+		void OnGraphStructureChange();
 
     signals:
         void NodeSelected(GraphNodeView* pNode);

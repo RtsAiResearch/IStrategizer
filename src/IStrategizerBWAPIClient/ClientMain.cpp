@@ -95,7 +95,7 @@ void ClientMain::InitIStrategizer()
         else
         {
             param.Phase = PHASE_Online;
-            Broodwar->setLocalSpeed(0);
+            //Broodwar->setLocalSpeed(0);
         }
 
         m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);

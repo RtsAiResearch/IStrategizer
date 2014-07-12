@@ -187,7 +187,7 @@ bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
     bool bOk = false;
 
     // Adapt builder
-    _builderId = pAdapter->GetEntityObjectId(game.GetEntityType(buildingType)->GetBuilderType(), AdapterEx::WorkerStatesRank);
+    _builderId = pAdapter->AdaptWorkerForBuild();
 
     if (_builderId != INVALID_TID)
     {
