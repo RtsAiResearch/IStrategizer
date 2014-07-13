@@ -2,22 +2,18 @@
 #ifndef RESOURCEDESCRIPTION_H
 #define RESOURCEDESCRIPTION_H
 
-#ifndef SVECTOR_H
 #include "SVector.h"
-#endif
-
 #include "MetaData.h"
-#include "UserObject.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
     class GameEntity;
 
     ///> class=ResourceDescription
-    class ResourceDescription : public Serialization::UserObject
+    class ResourceDescription : public EngineObject
     {
-        OBJECT_SERIALIZABLE(ResourceDescription);
-
+        OBJECT_SERIALIZABLE(ResourceDescription, &m_numberOfPrimary, &m_numberOfSecondary, &m_numberOfSupply);
     public:
         ///> type=int
         int m_numberOfPrimary;
@@ -32,9 +28,6 @@ namespace IStrategizer
         void RemoveEntity(GameEntity *p_entity);
         void Clear();
         float GetDistance(ResourceDescription *p_other) const;
-
-    protected:
-        void InitializeAddressesAux();
     };
 }
 

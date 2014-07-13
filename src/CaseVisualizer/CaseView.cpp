@@ -30,6 +30,8 @@
 #include "GraphScene.h"
 #include "GoalEx.h"
 #include "ParameterEdit.h"
+#include "StarCraftEntity.h"
+#include "WorldMap.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -87,7 +89,6 @@ void CaseView::View(CaseEx* p_case)
 	{
 		ViewGoal(p_case->Goal());
 		ViewGameState(p_case->GameState());
-		ViewGameState(nullptr);
 		ViewPlanGraph(p_case->Goal(), p_case->Plan());
 		ViewPerformance(p_case);
 	}
@@ -174,45 +175,59 @@ void CaseView::ViewGameState(RtsGame* p_gameState)
 {
     ui.tblGameState->clear();
 
-	if(p_gameState == NULL)
+	if(p_gameState == nullptr)
 		return;
 
-	disconnect(ui.tblGameState, SIGNAL(cellChanged(int,int)), this, SLOT(OnCellChanged(int, int)));
-
-	const ShallowFeaturesEx& sfeatures = ShallowFeaturesEx(); //p_gameState->ShallowFeatures();
-
+    p_gameState->Init();
     ui.tblGameState->setColumnCount(2);
-    ui.tblGameState->setRowCount(sfeatures.size());
+    ui.tblGameState->setRowCount(COUNT(RtsGameModelAttribute));
 
-    ui.tblGameState->setColumnWidth(0, (int)(ui.tblGameState->width() * (3.0f / 4.0f)) - 10);
-    ui.tblGameState->setColumnWidth(1, (int)(ui.tblGameState->width() * (1.0f / 4.0f)) - 10);
-    ui.tblGameState->setSelectionMode(QAbstractItemView::NoSelection);
+    //ui.tblGameState->setColumnWidth(0, (int)(ui.tblGameState->width() * (3.0f / 4.0f)) - 10);
+    //ui.tblGameState->setColumnWidth(1, (int)(ui.tblGameState->width() * (1.0f / 4.0f)) - 10);
+
     QTableWidgetItem* cell = NULL;
+    RtsGameModel model(*p_gameState);
     int row = 0;
 
     ui.tblGameState->horizontalHeader()->hide();
     ui.tblGameState->verticalHeader()->hide();
 
-    for(int i = 0, size = sfeatures.size(); i < size; ++i)
+    for(RtsGameModelAttribute attr = START(RtsGameModelAttribute);
+        attr != END(RtsGameModelAttribute);
+        attr = RtsGameModelAttribute(int(attr) + 1))
     {
-        cell = new QTableWidgetItem(QString::fromLocal8Bit(m_idLookup->GetByFirst(GET(i, ShallowFeatureType)).c_str()));
-		cell->setFlags(Qt::NoItemFlags);
+        cell = new QTableWidgetItem(QString::fromLocal8Bit(m_idLookup->GetByFirst(attr).c_str()));
+		cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui.tblGameState->setItem(row, 0, cell);
 
-        cell = new QTableWidgetItem(tr("%1").arg(sfeatures[i]));
+        auto attrVal = model.Attr(attr);
+
+        if (attr == RTSMODATTR_MapArea)
+        {
+            char buff[32];
+            sprintf_s(buff, "%dx%d", TilePositionFromUnitPosition(p_gameState->Map()->Width()),
+                TilePositionFromUnitPosition(p_gameState->Map()->Height()));
+            cell = new QTableWidgetItem(QString::fromLocal8Bit(buff));
+        }
+        else
+        {
+            cell = new QTableWidgetItem(tr("%1").arg(attrVal));
+        }
+
+        cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui.tblGameState->setItem(row, 1, cell);
 
         ui.tblGameState->setRowHeight(row, 20);
         ++row;
     }
 
-	connect(ui.tblGameState, SIGNAL(cellChanged(int,int)), SLOT(OnCellChanged(int, int)));
+    ui.tblGameState->resizeColumnsToContents();
 }
 //----------------------------------------------------------------------------------------------
 void CaseView::ViewPlanGraph(GoalEx* p_caseGoal, IOlcbpPlan* p_planGraph)
 {
     m_graphView->View(p_planGraph);
-    m_graphView->OnPlanStructureChange(p_planGraph);
+    m_graphView->NotifyGraphStructureChange(p_planGraph);
 }
 //----------------------------------------------------------------------------------------------
 void CaseView::ViewPerformance(CaseEx *p_pCase)

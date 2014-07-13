@@ -1,11 +1,12 @@
 #ifndef ISTRATEGIZEREX_H
 #define ISTRATEGIZEREX_H
 
-#include <vector>
 #include "MetaData.h"
-#include "MessagePumpObserver.h"
+#include "IMessagePumpObserver.h"
 #include "WorldClock.h"
 #include "AttackManager.h"
+#include <vector>
+#include <memory>
 
 namespace IStrategizer
 {
@@ -15,6 +16,7 @@ namespace IStrategizer
     class LearningFromHumanDemonstration;
     class OnlineCaseBasedPlannerEx;
     class RtsGame;
+    class BotStatistics;
 
     struct IStrategizerParam
     {
@@ -25,25 +27,31 @@ namespace IStrategizer
         PhaseType Phase;
     };
 
-    class IStrategizerEx : public MessagePumpObserver
+    class IStrategizerEx : public EngineObject
     {
-    private:
-        OnlineCaseBasedPlannerEx* m_pPlanner;
-        LearningFromHumanDemonstration* m_pCaseLearning;
-        IStrategizerParam m_param;
-        bool m_isFirstUpdate;
-        WorldClock m_clock;
-        AttackManager m_attackManager;
-
     public:
         IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame);
         void Update(unsigned gameCycle);
-        const OnlineCaseBasedPlannerEx* Planner() const { return m_pPlanner; }
-        OnlineCaseBasedPlannerEx* Planner() { return m_pPlanner; }
         void NotifyMessegeSent(Message* pMsg);
-        const WorldClock& Clock() const { return m_clock; }
         bool Init();
+        const OnlineCaseBasedPlannerEx* Planner() const { return &*m_pPlanner; }
+        OnlineCaseBasedPlannerEx* Planner() { return &*m_pPlanner; }
+        const WorldClock& Clock() const { return m_clock; }
         ~IStrategizerEx();
+
+    private:
+        void DefineArmyTrainOrder();
+        int GetTrainOrderInx();
+
+        bool m_isFirstUpdate;
+        unsigned m_armyTrainOrderInx;
+        std::shared_ptr<OnlineCaseBasedPlannerEx> m_pPlanner;
+        std::shared_ptr<LearningFromHumanDemonstration> m_pCaseLearning;
+        IStrategizerParam m_param;
+        WorldClock m_clock;
+        AttackManager m_attackManager;
+        std::vector<PlanStepParameters> m_armyTrainOrder;
+        std::shared_ptr<BotStatistics> m_pStatistics;
     };
 }
 

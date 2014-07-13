@@ -24,19 +24,15 @@ namespace IStrategizer
     ///> parent=Action
     class BuildActionEx : public Action
     {
-        OBJECT_SERIALIZABLE(BuildActionEx);
-
+        OBJECT_SERIALIZABLE_P(BuildActionEx, Action);
     public:
         BuildActionEx();
         BuildActionEx(const PlanStepParameters& p_parameters);
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_EntityClassId); }
 
     protected:
-        void OnSucccess(RtsGame& game, const WorldClock& p_clock);
-        void OnFailure(RtsGame& game, const WorldClock& p_clock);
         void FreeResources(RtsGame &game);
         bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);

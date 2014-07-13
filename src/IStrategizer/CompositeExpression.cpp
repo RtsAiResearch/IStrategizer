@@ -1,17 +1,17 @@
 #include "CompositeExpression.h"
+#include "EngineDefs.h"
 #include <algorithm>
 #include <cassert>
 
 using namespace IStrategizer;
 using namespace std;
 
-//----------------------------------------------------------------------------------------------
-void CompositeExpression::InitializeAddressesAux()
+CompositeExpression::~CompositeExpression()
 {
-    Expression::InitializeAddressesAux();
-    AddMemberAddress(2,
-        &_expressions,
-        &_shortCircuit);
+	for (auto& pExpr : _expressions)
+		SAFE_DELETE(pExpr);
+
+	_expressions.clear();
 }
 //----------------------------------------------------------------------------------------------
 bool CompositeExpression::AddExpression(Expression* p_expression)

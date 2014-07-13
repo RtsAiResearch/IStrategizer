@@ -103,7 +103,6 @@ namespace IStrategizer
         ACTIONEX_Research,
         ACTIONEX_AttackGround,
         ACTIONEX_AttackEntity,
-        ACTIONEX_MoveEntity,
         ACTIONEX_Move,
         ACTIONEX_GatherResource,
         ACTIONEX_END
@@ -127,6 +126,7 @@ namespace IStrategizer
         CONDEX_EntityClassNearArea,
         CONDEX_False,
         CONDEX_PlayerAttributeExist,
+		CONDEX_CandidateGathererExist,
         CONDEX_END
     };
 #define Define_ConditionType \
@@ -135,7 +135,8 @@ namespace IStrategizer
     Enums[CONDEX_ResourceExist] = "Resource Exist"; \
     Enums[CONDEX_EntityClassNearArea] = "Entity Class Near Area"; \
     Enums[CONDEX_False] = "False"; \
-    Enums[CONDEX_PlayerAttributeExist] = "Player Attribute Exist";
+	Enums[CONDEX_PlayerAttributeExist] = "Player Attribute Exist"; \
+	Enums[CONDEX_CandidateGathererExist] = "Candidate Gatherer Exist";
     //---------------------------------------------------------------------------
 #define Prefix_ParameterType PARAM
     enum ParameterType
@@ -270,7 +271,8 @@ namespace IStrategizer
         OBJSTATE_Idle,
         OBJSTATE_Moving,
         OBJSTATE_Constructing,
-        OBJSTATE_Gathering,
+        OBJSTATE_GatheringPrimary,
+        OBJSTATE_GatheringSecondary,
         OBJSTATE_Training,
         OBJSTATE_Attacking,
         OBJSTATE_UnderAttack,
@@ -281,10 +283,12 @@ namespace IStrategizer
     Enums[OBJSTATE_Idle] =  "Idle"; \
     Enums[OBJSTATE_Moving] = "Moving"; \
     Enums[OBJSTATE_Constructing] = "Constructing"; \
-    Enums[OBJSTATE_Gathering] = "Gathering"; \
+    Enums[OBJSTATE_GatheringPrimary] = "Gathering Primary"; \
+    Enums[OBJSTATE_GatheringSecondary] = "Gathering Secondary"; \
     Enums[OBJSTATE_Training] = "Training"; \
     Enums[OBJSTATE_Attacking] = "Attacking"; \
-    Enums[OBJSTATE_UnderAttack] = "Under Attack";
+    Enums[OBJSTATE_UnderAttack] = "Under Attack"; \
+    Enums[OBJSTATE_END] = "Undefined";
     //---------------------------------------------------------------------------
 #define Prefix_StrategyType STRTYPE
     enum StrategyType
@@ -441,7 +445,7 @@ namespace IStrategizer
         MSG_EntityComplete,
         MSG_PlanStructureChange,
         MSG_PlanComplete,
-        MSG_AttackComplete,
+        MSG_BattleComplete,
         MSG_END
     };
     //---------------------------------------------------------------------------

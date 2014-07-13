@@ -287,3 +287,25 @@ void EngineAssist::GetPrerequisiteResources(int p_entityOrResearchType, PlayerTy
     }
     else _ASSERTE(!"Not supported type");
 }
+//------------------------------------------------------------------------------------------------------------------------------------------------
+bool EngineAssist::IsEntityInState(TID p_entityObject, ObjectStateType stateType, PlayerType p_playerType)
+{
+    if (stateType == OBJSTATE_END)
+    {
+        return IsEntityObjectReady(p_entityObject, p_playerType);
+    }
+    else
+    {
+        GamePlayer *pPlayer;
+        GameEntity *pEntity;
+        bool inState;
+
+        pPlayer = g_Game->GetPlayer(p_playerType);
+        _ASSERTE(pPlayer);
+
+        pEntity = pPlayer->GetEntity(p_entityObject);
+        inState = (pEntity != nullptr) && ((ObjectStateType)pEntity->Attr(EOATTR_State) == stateType);
+
+        return inState;
+    }
+}

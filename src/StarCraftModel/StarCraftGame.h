@@ -12,7 +12,7 @@ namespace IStrategizer
     ///> parent=RtsGame
     class StarCraftGame : public RtsGame
     {
-        OBJECT_SERIALIZABLE(StarCraftGame);
+		OBJECT_SERIALIZABLE_P(StarCraftGame, RtsGame);
 
     public:
         void ExecuteCommand(const char *p_cmd);
@@ -27,6 +27,7 @@ namespace IStrategizer
         void InitEntityTypes();
         void InitResearchTypes();
         void InitRaceTypes();
+        bool InitStaticData();
 
         GamePlayer* FetchPlayer(PlayerType p_id);
         IStrategizer::GameType* FetchEntityType(EntityClassType p_id);

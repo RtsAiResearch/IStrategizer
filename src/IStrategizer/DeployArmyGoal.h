@@ -11,7 +11,7 @@ namespace IStrategizer
     ///> parent=GoalEx
     class DeployArmyGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(DeployArmyGoal);
+        OBJECT_SERIALIZABLE_P(DeployArmyGoal, GoalEx);
 
     public:
         DeployArmyGoal();
@@ -19,7 +19,6 @@ namespace IStrategizer
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
         bool Merge(PlanStepEx* planStep) { return false; }
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_DeployType) + Parameter(PARAM_EntityClassId); }
         
     protected:
         void InitializePostConditions();

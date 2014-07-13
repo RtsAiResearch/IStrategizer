@@ -1,9 +1,11 @@
 #include "PlanStepEx.h"
 #include <cstdio>
 #include <algorithm>
-#include "Logger.h"
-#include <Windows.h>
 #include <Rpc.h>
+#include "MathHelper.h"
+#include "Logger.h"
+#include "ObjectFactory.h"
+#include "EngineDefs.h"
 #pragma comment(lib, "Rpcrt4.lib")
 
 using namespace std;
@@ -13,14 +15,6 @@ unsigned PlanStepEx::s_lastPlanstepID = 0;
 
 unsigned PlanStepEx::GenerateID()
 {
-    //UUID uuid;
-    //::ZeroMemory(&uuid, sizeof(UUID));
-
-    //// Create uuid or load from a string by UuidFromString() function
-    //::UuidCreate(&uuid);
-
-    //return uuid.Data1;
-
     return ++s_lastPlanstepID;
 }
 
@@ -57,6 +51,11 @@ PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanS
     memset(_stateTimeout, 0, sizeof(_stateTimeout));
 }
 //////////////////////////////////////////////////////////////////////////
+PlanStepEx::~PlanStepEx()
+{
+	SAFE_DELETE(_postCondition);
+}
+//////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeConditions()
 {
     InitializePostConditions();
@@ -64,7 +63,7 @@ void PlanStepEx::InitializeConditions()
 //////////////////////////////////////////////////////////////////////////
 IClonable* PlanStepEx::Clone()
 {
-    PlanStepEx* clone = static_cast<PlanStepEx*>(Prototype());
+    PlanStepEx* clone = static_cast<PlanStepEx*>(g_ObjectFactory.Create(GetObjectLayout().TypeName()));
     Copy(clone);
 
     return clone;
@@ -145,6 +144,8 @@ std::string PlanStepEx::ToString(bool minimal) const
     stepDescription += "[";
     stepDescription += strID;
     stepDescription += "]";
+    sprintf_s(strID, "@0x%x", (void*)this);
+    stepDescription += strID;
 
     if (!minimal)
     {
@@ -196,4 +197,24 @@ std::string PlanStepEx::ToString(bool minimal) const
     }
 
     return stepDescription;
+}
+//----------------------------------------------------------------------------------------------
+unsigned PlanStepEx::Hash(bool quantified) const
+{
+    auto& params = Parameters();
+    // + 1 to include the StepTypeId since it is used as well in the hashing
+    size_t numWords = (params.size() + 1);
+    vector<int> str(numWords);
+
+    str.push_back(StepTypeId());
+    for (auto& param : Parameters())
+    {
+        if (!quantified && param.first == PARAM_Amount)
+            continue;
+
+        str.push_back(param.second);
+    }
+
+    unsigned h = MathHelper::SuperFastHash((const char*)&*str.cbegin(), str.size() * sizeof(int));
+    return h;
 }

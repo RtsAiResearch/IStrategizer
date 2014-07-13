@@ -3,74 +3,60 @@
 #include "Toolbox.h"
 #include "ObjectSerializer.h"
 #include "RtsGame.h"
+#include "GoalEx.h"
 
 #include <fstream>
 using namespace std;
 using namespace IStrategizer;
 
-RetainerEx::RetainerEx(string p_caseBasePath) : AbstractRetainer("Retainer"), _caseBasePath(p_caseBasePath), _caseBaseLoaded(false)
+RetainerEx::RetainerEx() :
+    m_caseBasePath(CASEBASE_FILENAME), 
+    m_caseBaseLoaded(false)
 {
 }
 //----------------------------------------------------------------------------------------------
 void RetainerEx::ReadCaseBase()
 {
-    LogInfo("reading case-base");
-
-    Toolbox::MemoryClean(_caseBase);
-    _caseBase = new CaseBaseEx();
+    LogInfo("Reading case-base %s", m_caseBasePath.c_str());
 
     fstream file;
 
-    file.open(_caseBasePath.c_str(), ios::in | ios::binary);
+    file.open(m_caseBasePath.c_str(), ios::in | ios::binary);
 
     // Read existing case-base
     if (file.is_open())
     {
         file.close();
-        g_ObjectSerializer.Deserialize(_caseBase, _caseBasePath);
-        _caseBaseLoaded = true;
+        g_ObjectSerializer.Deserialize(&m_casebase, m_caseBasePath);
+        m_caseBaseLoaded = true;
     }
     // Create case-base if not found
     else
     {
-        file.open(_caseBasePath.c_str(), ios::out | ios::binary | ios::app);
+        file.open(m_caseBasePath.c_str(), ios::out | ios::binary);
         file.close();
-        _caseBaseLoaded = true;
+        m_caseBaseLoaded = true;
         Flush();
     }
 }
 //----------------------------------------------------------------------------------------------
+void RetainerEx::Retain(_In_ CaseEx* pCase)
+{
+    if (find(m_casebase.CaseContainer.begin(), m_casebase.CaseContainer.end(), pCase) == m_casebase.CaseContainer.end())
+        m_casebase.CaseContainer.push_back(pCase);
+}
+//----------------------------------------------------------------------------------------------
 void RetainerEx::Flush()
 {
-    if (_caseBaseLoaded && _caseBase)
+    if (m_caseBaseLoaded)
     {
         LogInfo("Flushing case-base");
-
-        g_ObjectSerializer.Serialize(_caseBase, _caseBasePath);
+        g_ObjectSerializer.Serialize(&m_casebase, m_caseBasePath);
     }
     else
     {
-        LogError("Failed to flushing case-base");
+        LogError("Failed to flush case-base");
     }
-}
-//-------------------------------------------------------------------------------------------------------------------------------
-void RetainerEx::Retain(CaseEx* p_case)
-{
-    _ASSERTE(_caseBaseLoaded);
-    _ASSERTE(p_case);
-
-    LogInfo("retaining case");
-
-    for (unsigned i = 0; i < _caseBase->CaseContainer.size(); ++i)
-    {
-        if (_caseBase->CaseContainer[i] == p_case)
-        {
-            _caseBase->CaseContainer[i] = p_case;
-            return;
-        }
-    }
-
-    _caseBase->CaseContainer.push_back(const_cast<CaseEx*>(p_case));
 }
 //----------------------------------------------------------------------------------------------
 void RetainerEx::ExecuteCommand(const char* p_cmd)
@@ -83,7 +69,7 @@ void RetainerEx::ExecuteCommand(const char* p_cmd)
     else if(!strcmp(p_cmd, "info"))
     {
         char buffer[128];
-        sprintf_s(buffer, "retriever has %d cases", _caseBase->CaseContainer.size());
+        sprintf_s(buffer, "retriever has %d cases", m_casebase.CaseContainer.size());
         g_Game->DisplayMessage(buffer);
     }
 }
@@ -91,5 +77,11 @@ void RetainerEx::ExecuteCommand(const char* p_cmd)
 RetainerEx::~RetainerEx()
 {
     Flush();
-    Toolbox::MemoryClean(_caseBase);
+
+    while (!m_casebase.CaseContainer.empty())
+    {
+        auto& pCase = m_casebase.CaseContainer.back();
+        SAFE_DELETE(pCase);
+        m_casebase.CaseContainer.pop_back();
+    }
 }

@@ -6,17 +6,17 @@ namespace Serialization
     class Iterator
     {
     public:
+        virtual ~Iterator() {}
         virtual char*   Current() = 0;
         virtual bool    MoveNext() = 0;
         virtual void    Reset() = 0;
-        virtual ~Iterator() {}
     };
 
     class ITraversable
     {
     public:
-        virtual Iterator* GetIterator() = 0;
         virtual ~ITraversable() {}
+        virtual Iterator* GetIterator() const = 0;
     };
 }
 

@@ -17,7 +17,7 @@ namespace IStrategizer
     ///> parent=PlanStepEx
     class Action : public PlanStepEx
     {
-        OBJECT_MEMBERS_P(PlanStepEx, 1, &m_history);
+		OBJECT_SERIALIZABLE_P(Action, PlanStepEx, &m_history);
 
     protected:
         CompositeExpression* _preCondition;
@@ -30,10 +30,12 @@ namespace IStrategizer
         void UpdateAux(RtsGame& game, const WorldClock& p_clock);
         virtual bool ExecuteAux(RtsGame& game, const WorldClock& p_clock) = 0;
         virtual void InitializePreConditions() = 0;
-        virtual void OnSucccess(RtsGame& game, const WorldClock& p_clock) {};
-        virtual void OnFailure(RtsGame& game, const WorldClock& p_clock) {};
+        virtual void OnSucccess(RtsGame& game, const WorldClock& p_clock) { FreeResources(game); };
+        virtual void OnFailure(RtsGame& game, const WorldClock& p_clock) { FreeResources(game); };
+        virtual void FreeResources(RtsGame& game) {}
 
     public:
+		~Action();
         int Type() const { return PlanStepEx::_stepTypeId; }
         CompositeExpression* PreCondition() { _ASSERTE(_preCondition); return _preCondition; }
         void Reset(RtsGame& game, const WorldClock& p_clock);
@@ -44,6 +46,8 @@ namespace IStrategizer
         IStrategizer::ExecutionHistory ExecutionHistory() const { return m_history; }
         virtual bool Execute(RtsGame& game, const WorldClock& p_clock);
         virtual bool AliveConditionsSatisfied(RtsGame& game) = 0;
+        unsigned Hash(bool quantified /* = true */) const;
+        virtual void Abort(RtsGame &game) { LogInfo("%s is aborting", ToString().c_str()); FreeResources(game); }
     };
 }
 

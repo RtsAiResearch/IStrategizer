@@ -12,7 +12,7 @@ namespace IStrategizer
     ///> parent=ConditionEx
     class False : public ConditionEx
     {
-        OBJECT_SERIALIZABLE(False);
+		OBJECT_SERIALIZABLE_P(False, ConditionEx);
 
     public:
         False() : ConditionEx(PLAYER_Self, CONDEX_False) {}

@@ -33,10 +33,12 @@
 #endif
 #include "StarCraftRace.h"
 #include "ObjectFactory.h"
+#include "ObjectSerializer.h"
 #include "BWAPI.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
+using namespace Serialization;
 using namespace std;
 
 DECL_SERIALIZABLE(StarCraftGame);
@@ -44,170 +46,220 @@ DECL_SERIALIZABLE(StarCraftGame);
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitMap()
 {
-    // Set the world map grid cell size to be a square of size 8 build tiles
-    m_pMap = new StarCraftMap(this, TILE_SIZE * 8);
-    m_pMap->Init();
+	if (m_isOnline)
+	{
+		// Set the world map grid cell size to be a square of size 8 build tiles
+		m_pMap = new StarCraftMap(this, TILE_SIZE * 8, Broodwar->mapWidth() * TILE_SIZE, Broodwar->mapHeight() * TILE_SIZE);
+	}
+	else
+	{
+		// Set the world map grid cell size to be a square of size 8 build tiles
+		m_pMap = new StarCraftMap(this, TILE_SIZE * 8, m_cachedWorldWidth, m_cachedWorldHeight);
+	}
+	m_pMap->Init();
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitPlayers()
 {
-    vector<GamePlayer*> oldPlayers;
-    EntityList gamePlayerIds;
-    IStrategizer::PlayerType typeId;
+	vector<GamePlayer*> oldPlayers;
+	EntityList gamePlayerIds;
+	IStrategizer::PlayerType typeId;
 
-    m_players.Values(oldPlayers);
+	m_players.Values(oldPlayers);
 
-    Toolbox::MemoryClean(oldPlayers);
-    m_players.clear();
+	Toolbox::MemoryClean(oldPlayers);
+	m_players.clear();
 
-    g_Database.PlayerMapping.FirstValues(gamePlayerIds);
+	g_Database.PlayerMapping.FirstValues(gamePlayerIds);
 
-    for (int i = 0, size = gamePlayerIds.size(); i < size; ++i)
-    {
-        typeId = g_Database.PlayerMapping.GetByFirst(gamePlayerIds[i]);
-        m_players[typeId] = FetchPlayer(typeId);
-        m_players[typeId]->Init();
-    }
+	for (int i = 0, size = gamePlayerIds.size(); i < size; ++i)
+	{
+		typeId = g_Database.PlayerMapping.GetByFirst(gamePlayerIds[i]);
+		m_players[typeId] = FetchPlayer(typeId);
+		m_players[typeId]->Init();
+	}
+}
+//----------------------------------------------------------------------------------------------
+bool StarCraftGame::InitStaticData()
+{
+	if (sm_pGameStatics != nullptr)
+	{
+		LogInfo("RtsGame static data is already initialized");
+		return true;
+	}
+
+	sm_pGameStatics = new RtsGameStaticData;
+
+	if (BroodwarPtr && Broodwar->isInGame())
+	{
+		LogInfo("Loading game static data from current Broodwar game instance ...");
+
+		InitEntityTypes();
+		InitResearchTypes();
+		InitRaceTypes();
+	}
+	else
+	{
+		LogInfo("Loading game static data from disk '%s' ...", GAME_STATIC_DATA_FILENAME);
+
+		ifstream f(GAME_STATIC_DATA_FILENAME);
+
+		if (f.is_open())
+		{
+			f.close();
+			g_ObjectSerializer.Deserialize(sm_pGameStatics, GAME_STATIC_DATA_FILENAME);
+		}
+		else
+		{
+			LogError("Failed to load game static data from disk. '%s does not exist or access denied");
+			return false;
+		}
+	}
+
+	return true;
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitEntityTypes()
 {
-    vector<IStrategizer::GameType*> oldEntityTypes;
-    vector<EntityClassType> newEntityTypes;
+	vector<IStrategizer::GameType*> oldEntityTypes;
+	vector<EntityClassType> newEntityTypes;
 
-    sm_entityTypes.Values(oldEntityTypes);
-    Toolbox::MemoryClean(oldEntityTypes);
-    sm_entityTypes.clear();
+	sm_pGameStatics->EntityTypes.Values(oldEntityTypes);
+	Toolbox::MemoryClean(oldEntityTypes);
+	sm_pGameStatics->EntityTypes.clear();
 
-    g_Database.EntityTypes(newEntityTypes);
+	g_Database.EntityTypes(newEntityTypes);
 
-    for(unsigned i = 0, size = newEntityTypes.size(); i < size; ++i)
-    {
-        sm_entityTypes[newEntityTypes[i]] = FetchEntityType(newEntityTypes[i]);
-    }
+	for (unsigned i = 0, size = newEntityTypes.size(); i < size; ++i)
+	{
+		sm_pGameStatics->EntityTypes[newEntityTypes[i]] = FetchEntityType(newEntityTypes[i]);
+	}
+
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitResearchTypes()
 {
-    vector<GameResearch*> oldResearchTypes;
-    vector<ResearchType> newResearchTypes;
+	vector<GameResearch*> oldResearchTypes;
+	vector<ResearchType> newResearchTypes;
 
-    sm_researchTypes.Values(oldResearchTypes);
-    Toolbox::MemoryClean(oldResearchTypes);
-    sm_researchTypes.clear();
+	sm_pGameStatics->ResearchTypes.Values(oldResearchTypes);
+	Toolbox::MemoryClean(oldResearchTypes);
+	sm_pGameStatics->ResearchTypes.clear();
 
-    g_Database.ResearchTypes(newResearchTypes);
+	g_Database.ResearchTypes(newResearchTypes);
 
-    for(unsigned i = 0, size = newResearchTypes.size(); i < size; ++i)
-    {
-        sm_researchTypes[newResearchTypes[i]] = FetchResearch(newResearchTypes[i]);
-    }
+	for (unsigned i = 0, size = newResearchTypes.size(); i < size; ++i)
+	{
+		sm_pGameStatics->ResearchTypes[newResearchTypes[i]] = FetchResearch(newResearchTypes[i]);
+	}
 }
 //----------------------------------------------------------------------------------------------
 GamePlayer* StarCraftGame::FetchPlayer(IStrategizer::PlayerType p_id)
 {
-    TID typeId = g_Database.PlayerMapping.GetBySecond(p_id);
-    BWAPI::Player pPlayer = Broodwar->getPlayer(typeId);
+	TID typeId = g_Database.PlayerMapping.GetBySecond(p_id);
+	BWAPI::Player pPlayer = Broodwar->getPlayer(typeId);
 
-    return new StarCraftPlayer(pPlayer);
+	return new StarCraftPlayer(pPlayer);
 }
 //----------------------------------------------------------------------------------------------
 IStrategizer::GameType* StarCraftGame::FetchEntityType(EntityClassType p_id)
 {
-    TID unitId;
-    string typeIdent; 
-    BWAPI::UnitType unitType;
-    IStrategizer::GameType* entityType;
+	TID unitId;
+	string typeIdent;
+	BWAPI::UnitType unitType;
+	IStrategizer::GameType* entityType;
 
-    unitId = g_Database.EntityMapping.GetBySecond(p_id);
-    typeIdent = g_Database.EntityIdentMapping.GetByFirst(unitId);
+	unitId = g_Database.EntityMapping.GetBySecond(p_id);
+	typeIdent = g_Database.EntityIdentMapping.GetByFirst(unitId);
 
-    unitType = UnitType::getType(typeIdent);
-    entityType = new StarCraftType(unitType);
-    entityType->Init();
+	unitType = UnitType::getType(typeIdent);
+	entityType = new StarCraftType(unitType);
+	entityType->Init();
 
-    return entityType;
+	return entityType;
 }
 //----------------------------------------------------------------------------------------------
 GameResearch* StarCraftGame::FetchResearch(ResearchType p_id)
 {
-    TID researchId;
-    string typeIdent;
-    BWAPI::UpgradeType upgrade;
-    TechType tech;
-    GameResearch* research;
+	TID researchId;
+	string typeIdent;
+	BWAPI::UpgradeType upgrade;
+	TechType tech;
+	GameResearch* research;
 
-    if(p_id >= ((int)(START(ResearchType) +  TechIdOffset)))
-    {
-        researchId = g_Database.TechMapping.GetBySecond(p_id);
-        typeIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
-        tech = TechType::getType(typeIdent);
-        research = new StarCraftResearch(tech);
-    }
-    else
-    {
-        researchId = g_Database.UpgradeMapping.GetBySecond(p_id);
-        typeIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
-        upgrade = UpgradeType::getType(typeIdent);
-        research = new StarCraftResearch(upgrade);
-    }
+	if (p_id >= ((int)(START(ResearchType) + TechIdOffset)))
+	{
+		researchId = g_Database.TechMapping.GetBySecond(p_id);
+		typeIdent = g_Database.TechIdentMapping.GetByFirst(researchId);
+		tech = TechType::getType(typeIdent);
+		research = new StarCraftResearch(tech);
+	}
+	else
+	{
+		researchId = g_Database.UpgradeMapping.GetBySecond(p_id);
+		typeIdent = g_Database.UpgradeIdentMapping.GetByFirst(researchId);
+		upgrade = UpgradeType::getType(typeIdent);
+		research = new StarCraftResearch(upgrade);
+	}
 
-    _ASSERTE(research);
-    research->Init();
+	_ASSERTE(research);
+	research->Init();
 
-    return research;
+	return research;
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::InitRaceTypes()
 {
-    for (Race& race : Races::allRaces())
-    {
-        sm_raceTypes[race.getID()] = new StarCraftRace(race);
-    }
+	for (Race& race : Races::allRaces())
+	{
+		sm_pGameStatics->RaceTypes[race.getID()] = new StarCraftRace(race);
+	}
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::ExecuteCommand(const char *p_cmd)
 {
-    static const char* commands[] = {
-        "export-all-ids",
-        "export-game-ids"
-    };
+	static const char* commands[] = {
+		"export-all-ids",
+		"export-game-ids",
+		"export-statics"
+	};
 
-    unsigned cmdLen;
-    const char* cmdParam;
+	unsigned cmdLen;
+	const char* cmdParam;
 
-    if (!strncmp(p_cmd, commands[0], strlen(commands[0])))
-    {
-        cmdLen = strlen(commands[0]);
-        cmdParam = p_cmd + cmdLen + 1;
+	if (!strncmp(p_cmd, commands[0], strlen(commands[0])))
+	{
+		cmdLen = strlen(commands[0]);
+		cmdParam = p_cmd + cmdLen + 1;
 
-        if (g_Database.ExportAllIds(cmdParam))
-            DisplayMessage("All ids exported successfully");
-        else
-            DisplayMessage("Failed to export all ids");
-    }
-    else if (!strncmp(p_cmd, commands[1], strlen(commands[1])))
-    {
-        cmdLen = strlen(commands[1]);
-        cmdParam = p_cmd + cmdLen + 1;
+		if (g_Database.ExportAllIds(cmdParam))
+			DisplayMessage("All ids exported successfully");
+		else
+			DisplayMessage("Failed to export all ids");
+	}
+	else if (!strncmp(p_cmd, commands[1], strlen(commands[1])))
+	{
+		cmdLen = strlen(commands[1]);
+		cmdParam = p_cmd + cmdLen + 1;
 
-        if (g_Database.ExportGameIds(cmdParam))
-            DisplayMessage("Game ids exported successfully");
-        else
-            DisplayMessage("Failed to export game ids");
-    }
+		if (g_Database.ExportGameIds(cmdParam))
+			DisplayMessage("Game ids exported successfully");
+		else
+			DisplayMessage("Failed to export game ids");
+	}
+
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftGame::DisplayMessage(const char* p_msg)
 {
-    BroodwarPtr->sendText(p_msg);
+	BroodwarPtr->sendText(p_msg);
 }
 //----------------------------------------------------------------------------------------------
 unsigned StarCraftGame::GameFrame() const
 {
-    if (m_isOnline)
-        return Broodwar->getFrameCount();
-    else
-        return m_cachedGameFrame;
+	if (m_isOnline)
+		return Broodwar->getFrameCount();
+	else
+		return m_cachedGameFrame;
 
 }

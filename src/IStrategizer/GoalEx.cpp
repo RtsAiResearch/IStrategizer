@@ -1,4 +1,5 @@
 #include "GoalEx.h"
+#include "MathHelper.h"
 #include <cassert>
 
 using namespace IStrategizer;
@@ -17,24 +18,5 @@ void GoalEx::Reset(RtsGame& game, const WorldClock& p_clock)
 //----------------------------------------------------------------------------------------------
 unsigned GoalEx::Key() const
 {
-    unsigned key = Hash();
-
-    if (ContainsParameter(PARAM_Amount))
-    {
-        key -= Parameter(PARAM_Amount);
-    }
-
-    return key;
-}
-//----------------------------------------------------------------------------------------------
-ParameterWeights GoalEx::GetWeights() const
-{
-    map<ParameterType, int> weights;
-    for (auto parameter : _params)
-    {
-        int weight = parameter.first == PARAM_Amount ? 1 : INT_MAX;
-        weights[parameter.first] = weight;
-    }
-
-    return weights;
+    return Hash(false);
 }

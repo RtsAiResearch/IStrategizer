@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -27,8 +27,8 @@
     <ClInclude Include="..\AttackManager.h" />
     <ClInclude Include="..\AttributesMetaData.h" />
     <ClInclude Include="..\Battle.h" />
+    <ClInclude Include="..\BotStatistics.h" />
     <ClInclude Include="..\BuildActionEx.h" />
-    <ClInclude Include="..\BuildBaseGoal.h" />
     <ClInclude Include="..\BuildInfrastructureGoal.h" />
     <ClInclude Include="..\BuildingDescription.h" />
     <ClInclude Include="..\CaseBasedReasonerEx.h" />
@@ -48,10 +48,12 @@
     <ClInclude Include="..\DataMessage.h" />
     <ClInclude Include="..\Delegate.h" />
     <ClInclude Include="..\DeployArmyGoal.h" />
-    <ClInclude Include="..\DeployFSMState.h" />
+    <ClInclude Include="..\EngineDefs.h" />
+    <ClInclude Include="..\EngineObject.h" />
+    <ClInclude Include="..\CandidateGathererExist.h" />
+    <ClInclude Include="..\TargetFSMState.h" />
     <ClInclude Include="..\DestroyEntityTypeGoal.h" />
     <ClInclude Include="..\EngineAssist.h" />
-    <ClInclude Include="..\EngineComponent.h" />
     <ClInclude Include="..\EngineData.h" />
     <ClInclude Include="..\EntityClassExist.h" />
     <ClInclude Include="..\EntityClassNearArea.h" />
@@ -68,6 +70,7 @@
     <ClInclude Include="..\GamePlayer.h" />
     <ClInclude Include="..\GameRace.h" />
     <ClInclude Include="..\GameResearch.h" />
+    <ClInclude Include="..\GameStatistics.h" />
     <ClInclude Include="..\GameTechTree.h" />
     <ClInclude Include="..\GameTrace.h" />
     <ClInclude Include="..\GameType.h" />
@@ -88,11 +91,10 @@
     <ClInclude Include="..\MathHelper.h" />
     <ClInclude Include="..\Message.h" />
     <ClInclude Include="..\MessagePump.h" />
-    <ClInclude Include="..\MessagePumpObserver.h" />
+    <ClInclude Include="..\IMessagePumpObserver.h" />
     <ClInclude Include="..\MessagePumpSubject.h" />
     <ClInclude Include="..\MetaData.h" />
     <ClInclude Include="..\MoveAction.h" />
-    <ClInclude Include="..\MoveEntityAction.h" />
     <ClInclude Include="..\MultiIndex.h" />
     <ClInclude Include="..\MultiIndexContainer.h" />
     <ClInclude Include="..\Not.h" />
@@ -137,6 +139,7 @@
     <ClCompile Include="..\AttackEntityAction.cpp" />
     <ClCompile Include="..\AttackGroundAction.cpp" />
     <ClCompile Include="..\Battle.cpp" />
+    <ClCompile Include="..\BotStatistics.cpp" />
     <ClCompile Include="..\BuildActionEx.cpp" />
     <ClCompile Include="..\BuildInfrastructureGoal.cpp" />
     <ClCompile Include="..\BuildingDescription.cpp" />
@@ -150,7 +153,7 @@
     <ClCompile Include="..\DeployArmyGoal.cpp" />
     <ClCompile Include="..\DestroyEntityTypeGoal.cpp" />
     <ClCompile Include="..\EngineAssist.cpp" />
-    <ClCompile Include="..\EngineComponent.cpp" />
+    <ClCompile Include="..\EngineObject.cpp" />
     <ClCompile Include="..\EntityClassExist.cpp" />
     <ClCompile Include="..\EntityClassNearArea.cpp" />
     <ClCompile Include="..\EventTriggered.cpp" />
@@ -159,6 +162,7 @@
     <ClCompile Include="..\ForceDescription.cpp" />
     <ClCompile Include="..\GamePlayer.cpp" />
     <ClCompile Include="..\GameTrace.cpp" />
+    <ClCompile Include="..\CandidateGathererExist.cpp" />
     <ClCompile Include="..\GatherResourceAction.cpp" />
     <ClCompile Include="..\GoalEx.cpp" />
     <ClCompile Include="..\GoalFactory.cpp" />
@@ -172,7 +176,6 @@
     <ClCompile Include="..\MapArea.cpp" />
     <ClCompile Include="..\Message.cpp" />
     <ClCompile Include="..\MessagePump.cpp" />
-    <ClCompile Include="..\MessagePumpObserver.cpp" />
     <ClCompile Include="..\MessagePumpSubject.cpp" />
     <ClCompile Include="..\MetaData.cpp" />
     <ClCompile Include="..\MoveAction.cpp" />
@@ -212,12 +215,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -247,18 +250,18 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Generating engine objects TypeInfo</Message>
-    </PreBuildEvent>
-    <PostBuildEvent>
       <Command>
       </Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
+    </PreBuildEvent>
+    <PreBuildEvent>
       <Message>
       </Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Generating engine objects TypeInfo</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -279,18 +282,18 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Generating engine objects TypeInfo</Message>
-    </PreBuildEvent>
-    <PostBuildEvent>
       <Command>
       </Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
+    </PreBuildEvent>
+    <PreBuildEvent>
       <Message>
       </Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Generating engine objects TypeInfo</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

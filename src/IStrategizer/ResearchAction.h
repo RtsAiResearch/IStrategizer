@@ -18,7 +18,7 @@ namespace IStrategizer
     ///> parent=Action
     class ResearchAction : public Action
     {
-        OBJECT_SERIALIZABLE(ResearchAction);
+        OBJECT_SERIALIZABLE_P(ResearchAction, Action);
 
     public:
         ResearchAction();
@@ -26,7 +26,6 @@ namespace IStrategizer
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_ResearchId); }
 
     protected:
         bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);

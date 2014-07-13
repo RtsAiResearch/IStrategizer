@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <map>
-#include "UserObject.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
@@ -13,8 +13,9 @@ namespace IStrategizer
     class RtsGame;
 
     ///> class=GameTechTree
-    class GameTechTree : public Serialization::UserObject
+    class GameTechTree : public EngineObject
     {
+		OBJECT_SERIALIZABLE(GameTechTree);
     public:
         virtual ~GameTechTree() {}
         virtual bool ResearchDone(ResearchType researchId) const = 0;

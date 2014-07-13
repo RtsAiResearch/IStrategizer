@@ -22,6 +22,7 @@ namespace IStrategizer
         virtual int Supply() const { return m_supply; }
         virtual int Secondary() const { return m_secondary; }
         virtual int Primary() const { return m_primary; }
+        std::string ToString() const;
 
     protected:
         bool Acquire();

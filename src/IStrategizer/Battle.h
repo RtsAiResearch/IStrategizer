@@ -1,7 +1,7 @@
 #ifndef BATTLE_H
 #define BATTLE_H
 
-#include "EngineComponent.h"
+#include "EngineObject.h"
 #include "EngineData.h"
 #include "FSMMachine.h"
 #include <vector>
@@ -14,21 +14,25 @@ namespace IStrategizer
     template<class T>
     struct ControllerTraits<T*>;
 
-    class Battle : public EngineComponent
+    class Battle : public EngineObject
     {
     public:
         Battle(RtsGame& game);
+        ~Battle();
         void NotifyMessegeSent(Message* p_msg);
         void Update(RtsGame& game, const WorldClock& clock) { m_stateMachine.Update(game, clock); }
         bool Active() const { return !m_stateMachine.ReachedGoalState(); }
-        TID TargetEnemyEntity() const { return m_targetEnemyEntity; }
-        void TargetEnemyEntity(TID targetEnemyEntity) { _ASSERTE(targetEnemyEntity >= 0); m_targetEnemyEntity = targetEnemyEntity; }
+        TID NextTarget() const { return m_nextTarget; }
+        void NextTarget(TID nextTarget) { _ASSERTE(nextTarget >= 0); m_nextTarget = nextTarget; }
+        TID CurrentTarget() const { return m_currentTarget; }
+        void CurrentTarget(TID currentTarget) { _ASSERTE(currentTarget >= 0); m_currentTarget = currentTarget; }
         EntitySet Army() const { return m_army; }
 
     private:
         void SelectArmy(RtsGame& game);
 
-        TID m_targetEnemyEntity;
+        TID m_nextTarget;
+        TID m_currentTarget;
         FSMMachine<Battle*> m_stateMachine;
         EntitySet m_army;
         EntityList m_destroyedArmyEntities;
@@ -41,8 +45,10 @@ namespace IStrategizer
         typedef Battle* Type;
         typedef const Battle* ConstType;
         static EntitySet Army(ConstType battle) { return battle->Army(); }
-        static void TargetEnemyEntity(Type battle, TID targetEnemyEntity) { battle->TargetEnemyEntity(targetEnemyEntity); }
-        static TID TargetEnemyEntity(ConstType battle) { return battle->TargetEnemyEntity(); }
+        static void NextTarget(Type battle, TID targetId) { battle->NextTarget(targetId); }
+        static void CurrentTarget(Type battle, TID targetId) { battle->CurrentTarget(targetId); }
+        static TID NextTarget(ConstType battle) { return battle->NextTarget(); }
+        static TID CurrentTarget(ConstType battle) { return battle->CurrentTarget(); }
     };
 }
 

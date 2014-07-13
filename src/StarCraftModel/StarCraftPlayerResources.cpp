@@ -9,7 +9,7 @@ using namespace BWAPI;
 
 DECL_SERIALIZABLE(StarCraftPlayerResources);
 
-int StarCraftPlayerResources::Supply() 
+int StarCraftPlayerResources::Supply() const
 {
     if (m_isOnline)
     {
@@ -26,7 +26,7 @@ int StarCraftPlayerResources::Supply()
         return m_cachedSupply;
 }
 //////////////////////////////////////////////////////////////////////////
-int StarCraftPlayerResources::Secondary()
+int StarCraftPlayerResources::Secondary() const
 {
     if (m_isOnline)
         return m_player->gas();
@@ -34,7 +34,7 @@ int StarCraftPlayerResources::Secondary()
         return m_cachedSecondary;
 }
 //////////////////////////////////////////////////////////////////////////
-int StarCraftPlayerResources::Primary()
+int StarCraftPlayerResources::Primary() const
 {
     if (m_isOnline)
         return m_player->minerals();

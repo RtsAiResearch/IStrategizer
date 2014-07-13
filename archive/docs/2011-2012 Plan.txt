@@ -1,0 +1,20 @@
+Goal:
+-----
+IStrategizer is able to play a complete game using micro and macromanagement planning
+
+Subgoals:
+---------
+1. Perform macromanagement using OLCBP (extend and complete 2010-2011 work)
+2. Perform micromanagement in {combat} using machine-learning techniques (Micromanagement Thesis)
+3. Perform resource management task using FSMs
+4. Realtime engine mind visualization for debugging purpose
+5. Use influence maps to simplify perception search space
+
+Opportunities:
+--------------
+1. Write two papers, one in the macromanagement (2010-2011) and the other in the micromanagement (2011-2012)
+2. Participate in Starcraft annual competition if it will be held this year
+
+Challenges:
+-----------
+1. Utilize human resources which is 6 persons (Graduates and undergraduates)

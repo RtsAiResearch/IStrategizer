@@ -1,10 +1,13 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include <Windows.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
 
 #define CRT_ERROR -1
 #define CRT_READ _T("r")

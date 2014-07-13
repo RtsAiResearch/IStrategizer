@@ -16,7 +16,7 @@ namespace IStrategizer
     ///> parent=ConditionEx
     class EntityClassNearArea : public ConditionEx
     {
-        OBJECT_SERIALIZABLE(EntityClassNearArea);
+		OBJECT_SERIALIZABLE_P(EntityClassNearArea, ConditionEx);
 
     public:
         EntityClassNearArea() {}

@@ -12,7 +12,7 @@ namespace IStrategizer
     ///> parent=Action
     class GatherResourceAction : public Action
     {
-        OBJECT_SERIALIZABLE(GatherResourceAction);
+        OBJECT_SERIALIZABLE_P(GatherResourceAction, Action);
 
     public:
         GatherResourceAction();
@@ -20,14 +20,12 @@ namespace IStrategizer
         bool AliveConditionsSatisfied(RtsGame& pRtsGame);
         bool SuccessConditionsSatisfied(RtsGame& pRtsGame);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_ResourceId) + Parameter(PARAM_Amount); }
 
     protected:
         bool ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock);
         void InitializePreConditions();
         void InitializePostConditions();
-        void OnSucccess(RtsGame& pRtsGame, const WorldClock& p_clock);
-        void OnFailure(RtsGame& pRtsGame, const WorldClock& p_clock);
+        void FreeResources(RtsGame &game);
         void HandleMessage(RtsGame& pRtsGame, Message* p_msg, bool& p_consumed);
 
     private:

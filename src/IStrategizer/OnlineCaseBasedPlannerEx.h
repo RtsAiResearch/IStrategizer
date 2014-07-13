@@ -22,8 +22,7 @@ namespace IStrategizer
     public:
         OnlineCaseBasedPlannerEx();
         void Update(const WorldClock& p_clock);
-        void Init(GoalEx *p_initialGoal);
-        void Init(GoalType p_goalType);
+        bool Init(GoalEx *p_initialGoal);
         const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
         const OnlinePlanExpansionExecution* ExpansionExecution() const { return _onlineExpansionExecution; }
         OnlinePlanExpansionExecution* ExpansionExecution() { return _onlineExpansionExecution; }

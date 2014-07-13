@@ -14,10 +14,7 @@ namespace IStrategizer
     ///> parent=PlanStepEx
     class GoalEx : public PlanStepEx
     {
-    protected:
-        inline GoalEx(GoalType p_goalType) : PlanStepEx((int)p_goalType, ESTATE_NotPrepared) {}
-        inline GoalEx(GoalType p_goalType, const PlanStepParameters& p_parameters) : PlanStepEx(p_goalType, ESTATE_NotPrepared, p_parameters) {}
-
+		OBJECT_SERIALIZABLE_P(GoalEx, PlanStepEx);
     public:
         void Update(RtsGame& game, const WorldClock& p_clock);
         void Reset(RtsGame& game, const WorldClock& p_clock);
@@ -25,7 +22,10 @@ namespace IStrategizer
         virtual void AdaptParameters(RtsGame& game) { }
         virtual bool Merge(PlanStepEx* planStep) = 0;
         unsigned Key() const;
-        ParameterWeights GetWeights() const;
+
+    protected:
+        inline GoalEx(GoalType p_goalType) : PlanStepEx((int)p_goalType, ESTATE_NotPrepared) {}
+        inline GoalEx(GoalType p_goalType, const PlanStepParameters& p_parameters) : PlanStepEx(p_goalType, ESTATE_NotPrepared, p_parameters) {}
     };
 }
 

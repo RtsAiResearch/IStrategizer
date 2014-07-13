@@ -6,10 +6,7 @@
 #include "MetaData.h"
 #include "IClonable.h"
 #include "RtsGame.h"
-
-#ifndef USEROBJECT_H
-#include "UserObject.h"
-#endif
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
@@ -20,9 +17,9 @@ namespace IStrategizer
     };
 
     ///> class=Expression
-    class Expression : public Serialization::UserObject, public IClonable
+    class Expression : public EngineObject, public IClonable
     {
-        OBJECT_MEMBERS(3, &_expressionType, &_isEvaluated, &_isSatisfied);
+        OBJECT_SERIALIZABLE(Expression, &_expressionType, &_isEvaluated, &_isSatisfied);
     protected:
         ///> type=int
         ExpressionType _expressionType;

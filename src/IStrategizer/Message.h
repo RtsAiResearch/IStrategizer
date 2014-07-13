@@ -21,6 +21,8 @@ namespace IStrategizer
         Message(unsigned long p_gameCycle, MessageType p_messageTypeID);
         virtual ~Message();
     };
+
+
 }
 
 #endif // MESSAGE_H

@@ -3,7 +3,7 @@
 
 #include "Trace.h"
 #include "SituationAssessmentUtilities.h"
-#include "MessagePumpObserver.h"
+#include "IMessagePumpObserver.h"
 #include "Log.h"
 #include "MessagePump.h"
 #include "Goal.h"
@@ -15,7 +15,7 @@ using namespace std;
 
 #define LOG_PATH_OLD "wc2\\logs\\CaseLearningLog.log"
 
-class CaseLearningLog : public Log<Trace>, public MessagePumpObserver
+class CaseLearningLog : public Log<Trace>, public IMessagePumpObserver
 {
 private:
     void Split(string str, vector<string>& tokens,string delimiters);

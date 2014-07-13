@@ -27,6 +27,7 @@ namespace IStrategizer
         typedef Serialization::SSet<NodeID> NodeSerializedSet;
 
         typedef std::set<NodeID> NodeSet;
+        typedef const std::set<NodeID>& ConstNodeSetRef;
 
         typedef std::vector<NodeID> NodeList;
 
@@ -163,7 +164,7 @@ namespace IStrategizer
         //************************************
         virtual const NodeSerializedSet& GetAdjacentNodes(_In_ NodeID sourceNodeId) const 
             throw(ItemNotFoundException) = 0;
-        
+
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::SubGraphSubstitution
         // Description:	Replaces a sub-part of the IDigraph with the given TNodeValue provided.
@@ -217,6 +218,27 @@ namespace IStrategizer
         // Returns:   	bool: True if the dest node is reachable, false otherwise.
         //************************************
         virtual bool Reachable(const _In_ NodeID sourceNodeId, const _In_ NodeID destNodeId) = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetNodeAncestors
+        // Description:	Gets ancestor nodes for a certain node up to the root
+        // Parameter: 	NodeSet ancestors (OUT): A set to fill with the Ids of node ancestors
+        // Returns:   	void
+        virtual void GetNodeAncestors(_In_ NodeID nodeId, _Out_ NodeSet& ancestors) const = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetParents
+        // Description:	Gets direct parents to a certain node
+        // Parameter: 	NodeSet parents (OUT): A set to fill with the Ids of the direct node parents
+        // Returns:   	void
+        virtual void GetParents(_In_ NodeID nodeId, _Out_ NodeSet& parents) const 
+            throw(ItemNotFoundException) = 0;
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Clone
+        // Description:	Make a deep clone of the existing digraph
+        // Returns:   	New digraph instance
+        virtual IDigraph<TNodeValue>* Clone() const = 0;
     };
 }
 

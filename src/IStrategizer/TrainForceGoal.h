@@ -10,16 +10,14 @@ namespace IStrategizer
     ///> parent=GoalEx
     class TrainForceGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(TrainForceGoal);
+        OBJECT_SERIALIZABLE_P(TrainForceGoal, GoalEx);
 
     public:
         TrainForceGoal();
         TrainForceGoal(const PlanStepParameters& p_parameters);
-        void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
         bool Merge(PlanStepEx* planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_EntityClassId) + Parameter(PARAM_Amount); }
 
     protected:
         void InitializePostConditions();
@@ -27,7 +25,8 @@ namespace IStrategizer
 
     private:
         std::map<EntityClassType, int> m_trainedUnits;
-        std::vector<GoalEx*> m_succeededInstances;
+        EntitySet m_usedUnits;
+        bool m_firstUpdate;
     };
 }
 #endif // TRAINFORCEGOAL_H

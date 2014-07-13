@@ -14,7 +14,7 @@ namespace IStrategizer
     ///> parent=PlayerResources
     class StarCraftPlayerResources : public PlayerResources
     {
-        OBJECT_SERIALIZABLE(StarCraftPlayerResources);
+		OBJECT_SERIALIZABLE_P(StarCraftPlayerResources, PlayerResources);
 
     public:
         StarCraftPlayerResources() :
@@ -25,9 +25,9 @@ namespace IStrategizer
             m_player(p_player)
         {}
 
-        int Supply();
-        int Secondary();
-        int Primary();
+        int Supply() const;
+        int Secondary() const;
+        int Primary() const;
         void SetOffline(RtsGame* pBelongingGame);
 
     private:

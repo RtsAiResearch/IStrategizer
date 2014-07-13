@@ -1,11 +1,12 @@
 #include "Expression.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 
 //----------------------------------------------------------------------------------------------
 IClonable* Expression::Clone()
 {
-    Expression* clone = static_cast<Expression*>(Prototype());
+    Expression* clone = static_cast<Expression*>(g_ObjectFactory.Create(GetObjectLayout().TypeName()));
     Copy(clone);
 
     return clone;

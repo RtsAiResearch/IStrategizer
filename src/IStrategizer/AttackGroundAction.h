@@ -18,14 +18,13 @@ namespace IStrategizer
     class AttackGroundAction : public Action
     {
     public:
-        OBJECT_SERIALIZABLE(AttackGroundAction);
+        OBJECT_SERIALIZABLE_P(AttackGroundAction, Action);
 
         AttackGroundAction();
         AttackGroundAction(const PlanStepParameters& p_parameters);
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_EntityClassId); }
 
     protected:
         bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);

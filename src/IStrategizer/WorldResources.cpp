@@ -39,3 +39,10 @@ bool WorldResources::IsNull()
         m_primary < 0 ||
         m_secondary < 0;
 }
+//////////////////////////////////////////////////////////////////////////
+std::string WorldResources::ToString() const
+{
+    char str[256];
+    sprintf_s(str, "WorldResource(Primary=%d,Secondary=%d,Supply=%d)", m_primary, m_secondary, m_supply);
+    return str;
+}

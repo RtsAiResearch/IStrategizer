@@ -10,16 +10,11 @@ namespace IStrategizer
     ///> parent=CompositeExpression
     class And : public CompositeExpression
     {
-        OBJECT_SERIALIZABLE(And);
-
-    protected:
-        void And::InitializeAddressesAux();
-
+        OBJECT_SERIALIZABLE_P(And, CompositeExpression);
     public:
         And() {}
         And(const std::vector<Expression*>& p_expressions) : CompositeExpression(p_expressions) {}
         bool Evaluate(RtsGame& game);
-
     };
 }
 

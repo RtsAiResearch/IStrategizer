@@ -9,10 +9,13 @@
 #endif
 #include <cassert>
 #include "BWAPI.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
+
+DECL_SERIALIZABLE(StarCraftResearch);
 
 void StarCraftResearch::Init()
 {

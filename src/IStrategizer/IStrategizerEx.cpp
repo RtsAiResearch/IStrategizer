@@ -1,5 +1,5 @@
 #include "IStrategizerEx.h"
-
+#include "BotStatistics.h"
 #include "MessagePump.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "LearningFromHumanDemonstration.h"
@@ -9,15 +9,16 @@
 #include "DataMessage.h"
 #include "IStrategizerException.h"
 #include "WorldClock.h"
-#include "SerializationEssentials.h"
 #include "RtsGame.h"
 #include "Toolbox.h"
 #include "IMSystemManager.h"
-#include "GamePlayer.h"
-#include "GameType.h"
-#include "GameEntity.h"
-#include "EngineAssist.h"
-#include <cassert>
+#include "OnlinePlanExpansionExecution.h"
+#include "WorldMap.h"
+#include "AbstractRetainer.h"
+#include "CaseBaseEx.h"
+#include "GameStatistics.h"
+#include "CaseBasedReasonerEx.h"
+#include "SharedResource.h"
 #include <iostream>
 
 using namespace IStrategizer;
@@ -27,7 +28,8 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame) :
     m_param(param),
     m_pCaseLearning(nullptr),
     m_pPlanner(nullptr),
-    m_isFirstUpdate(true)
+    m_isFirstUpdate(true),
+    m_armyTrainOrderInx(0)
 {
     g_Game = pGame;
 }
@@ -38,11 +40,38 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
     {
     case MSG_GameStart:
         m_clock.Reset();
+        break;
+
     case MSG_GameEnd:
         if (m_param.Phase == PHASE_Offline)
         {
             m_pCaseLearning->Learn();
         }
+        else
+        {
+            GameEndMessage* pMsg = static_cast<GameEndMessage*>(p_message);
+            
+            GameStatistics stats(pMsg->Data()->IsWinner,
+                pMsg->Data()->MapName,
+                g_Game->Map()->Width(), 
+                g_Game->Map()->Height(),
+                m_clock.ElapsedGameCycles(),
+                m_pPlanner->Reasoner()->Retainer()->CaseBase()->CaseContainer.size(),
+                pMsg->Data()->Score,
+                pMsg->Data()->EnemyRace);
+            m_pStatistics->Add(stats);
+        }
+        break;
+
+    case MSG_BattleComplete:
+        /*m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();*/
+        break;
+
+    case MSG_PlanComplete:
+        m_attackManager.AddBattle();
+        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();
         break;
     }
 }
@@ -58,7 +87,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
         }
 
         m_clock.Update(p_gameCycle);
-        g_MessagePump.Update(m_clock);
+        g_MessagePump->Update(m_clock);
         g_IMSysMgr.Update(m_clock);
 
         if (m_param.Phase == PHASE_Online)
@@ -70,7 +99,6 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 
             m_pPlanner->Update(m_clock);
         }
-
     }
     catch (IStrategizer::Exception &e)
     {
@@ -87,8 +115,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 IStrategizerEx::~IStrategizerEx()
 {
     g_IMSysMgr.Finalize();
-    Toolbox::MemoryClean(m_pPlanner);
-    Toolbox::MemoryClean(m_pCaseLearning);
+    g_Game = nullptr;
 }
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
@@ -96,6 +123,7 @@ bool IStrategizerEx::Init()
     // Note that the order of the engine components initialization is intended
     // and any change in the order can result in unexpected behavior
     //
+    SharedResource::Init();
     g_Game->Init();
 
     IMSysManagerParam imSysMgrParam;
@@ -107,20 +135,48 @@ bool IStrategizerEx::Init()
     switch(m_param.Phase)
     {
     case  PHASE_Offline:
-        m_pCaseLearning = new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy);
+        m_pCaseLearning = shared_ptr<LearningFromHumanDemonstration>(new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy));
         m_pCaseLearning->Init();
-        g_MessagePump.RegisterForMessage(MSG_GameEnd, this);
         break;
 
     case PHASE_Online:
-        m_pPlanner = new OnlineCaseBasedPlannerEx();
-        m_pPlanner->Init(GOALEX_TrainArmy);
-        g_OnlineCaseBasedPlanner = m_pPlanner;
+        m_pPlanner = shared_ptr<OnlineCaseBasedPlannerEx>(new OnlineCaseBasedPlannerEx());
+        DefineArmyTrainOrder();
+        m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[m_armyTrainOrderInx]));
+        m_pPlanner->ExpansionExecution()->StartPlanning();
+        g_OnlineCaseBasedPlanner = &*m_pPlanner;
+        g_MessagePump->RegisterForMessage(MSG_BattleComplete, this);
+        g_MessagePump->RegisterForMessage(MSG_PlanComplete, this);
         break;
     }
 
-    g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump->RegisterForMessage(MSG_GameEnd, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
     return true;
+}
+//----------------------------------------------------------------------------------------------
+void IStrategizerEx::DefineArmyTrainOrder()
+{
+    PlanStepParameters params;
+    params[PARAM_AlliedUnitsTotalHP] = 160;
+    params[PARAM_AlliedUnitsTotalDamage] = 196;
+    m_armyTrainOrder.push_back(params);
+
+    params[PARAM_AlliedUnitsTotalHP] = 200;
+    params[PARAM_AlliedUnitsTotalDamage] = 36;
+    m_armyTrainOrder.push_back(params);
+}
+//----------------------------------------------------------------------------------------------
+int IStrategizerEx::GetTrainOrderInx()
+{
+    if (m_armyTrainOrderInx == m_armyTrainOrder.size() - 1)
+    {
+        return m_armyTrainOrderInx;
+    }
+    else
+    {
+        return ++m_armyTrainOrderInx;
+    }
 }

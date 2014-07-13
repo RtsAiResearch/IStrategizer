@@ -11,7 +11,7 @@ namespace IStrategizer
     ///> parent=Action
     class AttackEntityAction : public Action
     {
-        OBJECT_SERIALIZABLE(AttackEntityAction);
+        OBJECT_SERIALIZABLE_P(AttackEntityAction, Action);
 
     public:
         AttackEntityAction();
@@ -19,7 +19,6 @@ namespace IStrategizer
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_EntityClassId) + Parameter(PARAM_TargetEntityClassId); }
 
     protected:
         bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);

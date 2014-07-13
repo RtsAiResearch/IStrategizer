@@ -11,7 +11,7 @@ namespace IStrategizer
     ///> parent=GoalEx
     class WinGameGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(WinGameGoal);
+        OBJECT_SERIALIZABLE_P(WinGameGoal, GoalEx);
 
     public:
         WinGameGoal();
@@ -19,7 +19,6 @@ namespace IStrategizer
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
         bool Merge(PlanStepEx* planStep) { return false; }
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_StrategyTypeId); }
         
     protected:
         void InitializePostConditions();

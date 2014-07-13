@@ -14,6 +14,7 @@
 #include "EntityClassExist.h"
 #include "ResourceExist.h"
 #include "Logger.h"
+#include "CandidateGathererExist.h"
 #include <vector>
 
 using namespace std;
@@ -44,11 +45,10 @@ GatherResourceAction::GatherResourceAction(const PlanStepParameters& p_parameter
 //////////////////////////////////////////////////////////////////////////
 void GatherResourceAction::InitializePreConditions()
 {
-	EntityClassType gathererType = g_Game->Self()->Race()->GetWorkerType();
     EntityClassType baseType = g_Game->Self()->Race()->GetBaseType();
     vector<Expression*> m_terms;
 
-    m_terms.push_back(new EntityClassExist(PLAYER_Self, gathererType, 1));
+    m_terms.push_back(new CandidateGathererExist(PLAYER_Self, (ResourceType)_params[PARAM_ResourceId]));
     m_terms.push_back(new EntityClassExist(PLAYER_Self, baseType, 1));
     if (_params[PARAM_ResourceId] == RESOURCE_Secondary)
     {
@@ -85,7 +85,7 @@ bool GatherResourceAction::AliveConditionsSatisfied(RtsGame& game)
         ObjectStateType gathererState = (ObjectStateType)pGameGatherer->Attr(EOATTR_State);
 
         // 2. Gatherer is gathering resource
-        if(gathererState == OBJSTATE_Gathering)
+        if(gathererState == OBJSTATE_GatheringPrimary || gathererState == OBJSTATE_GatheringSecondary)
         {
             // 3. There is still remaining resource to be gathered
             if (_params[PARAM_ResourceId] == RESOURCE_Primary)
@@ -135,7 +135,7 @@ bool GatherResourceAction::SuccessConditionsSatisfied(RtsGame& game)
         _ASSERTE(pGameGatherer);
 
         ObjectStateType gathererState = (ObjectStateType)pGameGatherer->Attr(EOATTR_State);
-        if (gathererState == OBJSTATE_Gathering)
+        if (gathererState == OBJSTATE_GatheringPrimary || gathererState == OBJSTATE_GatheringSecondary)
         {
             if (_params[PARAM_Amount] == DONT_CARE)
                 return true;
@@ -149,42 +149,17 @@ bool GatherResourceAction::SuccessConditionsSatisfied(RtsGame& game)
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-void GatherResourceAction::OnSucccess(RtsGame& game, const WorldClock& p_clock )
-{
-    if(m_gatherIssued)
-    {
-        GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
-
-        if (pEntity)
-            pEntity->Unlock(this);
-    }
-}
-//////////////////////////////////////////////////////////////////////////
-void GatherResourceAction::OnFailure(RtsGame& game, const WorldClock& p_clock)
-{
-    if(m_gatherIssued)
-    {
-        GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
-
-        if (pEntity)
-            pEntity->Unlock(this);
-    }
-}
-//////////////////////////////////////////////////////////////////////////
 bool GatherResourceAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
 {
-	EntityClassType gathererType = game.Self()->Race()->GetWorkerType();
-	ResourceType resourceType;
+	ResourceType resourceType = (ResourceType)_params[PARAM_ResourceId];
 	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 	bool bOK = false;
 
     // Adapt gatherer
-    m_gathererId = pAdapter->GetEntityObjectId(gathererType, AdapterEx::WorkerStatesRank);
+	m_gathererId = pAdapter->AdaptWorkerForGather(resourceType);
 
     if(m_gathererId != INVALID_TID)
     {
-        resourceType = (ResourceType)_params[PARAM_ResourceId];
-
         // Initialize gather state
         m_gatherStarted = true;
 
@@ -259,4 +234,17 @@ bool GatherResourceAction::Equals(PlanStepEx* p_planStep)
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_ResourceId] == p_planStep->Parameter(PARAM_ResourceId) &&
         _params[PARAM_Amount] == p_planStep->Parameter(PARAM_Amount);
+}
+//////////////////////////////////////////////////////////////////////////
+void GatherResourceAction::FreeResources(RtsGame &game)
+{
+    if(m_gatherIssued && m_gathererId != DONT_CARE)
+    {
+        GameEntity* pEntity = g_Game->Self()->GetEntity(m_gathererId);
+
+        if (pEntity && pEntity->IsLocked())
+            pEntity->Unlock(this);
+        
+        m_gathererId = DONT_CARE;
+    }
 }

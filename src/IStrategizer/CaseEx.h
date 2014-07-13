@@ -2,31 +2,45 @@
 #ifndef CASEEX_H
 #define CASEEX_H
 
-#include "UserObject.h"
-#include "PlanStepEx.h"
 #include <vector>
+#include "PlanStepEx.h"
+#include "EngineDefs.h"
+#include "GoalEx.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
     class GoalEx;
     class RtsGame;
 
-
     template<>
     struct AdjListDigraphNodeValueTraits<PlanStepEx*>
     {
         typedef PlanStepEx* Type;
         typedef const PlanStepEx* ConstType;
-        static std::string ToString(const PlanStepEx* pStep) { return pStep->ToString(true); }
-        static unsigned Hash(PlanStepEx* pStep) { return pStep->Hash(); }
+        static std::string ToString(ConstType pStep) { return pStep->ToString(true); }
+        static unsigned Hash(ConstType pStep) { return pStep->Hash(); }
+        static Type Clone(Type pObj) { return (Type)pObj->Clone(); }
+    };
+
+    template<>
+    struct AdjListDigraphNodeValueTraits<PlanStepStrongPtr>
+    {
+        typedef PlanStepStrongPtr Type;
+        typedef ConstPlanStepStrongPtr  ConstType;
+        static std::string ToString(ConstType pStep) { return pStep->ToString(true); }
+        static unsigned Hash(ConstType pStep) { return pStep->Hash(); }
+        static Type Clone(Type pObj) { return PlanStepStrongPtr((PlanStepEx*)pObj->Clone()); }
     };
 
     ///> alias=OlcbpPlan(AdjListDigraph(PlanStepEx*))
     typedef AdjListDigraph<PlanStepEx*> OlcbpPlan;
+    typedef AdjListDigraph<PlanStepStrongPtr> OlcbpPlanMngd;
 
     ///> class=CaseEx
-    class CaseEx : public Serialization::UserObject
+    class CaseEx : public EngineObject
     {
+		OBJECT_SERIALIZABLE(CaseEx, &m_pGoal, &m_pGameState, &m_trialCount, &m_successCount, &m_pPlan);
     public:
         CaseEx() 
             : m_pGoal(nullptr),
@@ -42,6 +56,20 @@ namespace IStrategizer
             m_successCount(successCount),
             m_pPlan(pPlan) {}
 
+        ~CaseEx()
+        {
+            SAFE_DELETE(m_pGoal);
+            SAFE_DELETE(m_pGameState);
+         
+            if (m_pPlan)
+            {
+                auto nodes = m_pPlan->GetNodes();
+                for (auto nodeId : nodes)
+                    SAFE_DELETE(m_pPlan->GetNode(nodeId));
+                SAFE_DELETE(m_pPlan);
+            }
+        }
+
         IOlcbpPlan* Plan() const { return m_pPlan; }
         GoalEx* Goal() const { return m_pGoal; }
         RtsGame* GameState() const { return m_pGameState; }
@@ -49,9 +77,6 @@ namespace IStrategizer
         int SuccessCount() const { return m_successCount; }
         void TrialCount(int val) { m_trialCount = val; }
         void SuccessCount(int val) { m_successCount = val; }
-
-        OBJECT_SERIALIZABLE(CaseEx);
-        OBJECT_MEMBERS(5, &m_pGoal, &m_pGameState, &m_trialCount, &m_successCount, &m_pPlan);
 
     private:
         ///> type=GoalEx*

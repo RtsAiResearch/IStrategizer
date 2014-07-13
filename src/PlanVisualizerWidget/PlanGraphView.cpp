@@ -51,9 +51,9 @@ void PlanGraphView::SetMode(GraphScene::PointerMode mode)
     m_pScene->Mode((GraphScene::PointerMode)mode); 
 }
 //----------------------------------------------------------------------------------------------
-void PlanGraphView::View(IOlcbpPlan* pPlanGraph, ConstOlcbpPlanNodeDataMapPtr pNodeData)
+void PlanGraphView::View(IOlcbpPlan* pPlanGraph, ConstOlcbpPlanContextPtr pPlanContext)
 {
-    m_pScene->View(pPlanGraph, pNodeData);
+    m_pScene->View(pPlanGraph, pPlanContext);
 }
 //----------------------------------------------------------------------------------------------
 void PlanGraphView::HandleNodeSelected(GraphNodeView* p_node)
@@ -64,13 +64,13 @@ void PlanGraphView::HandleNodeSelected(GraphNodeView* p_node)
         m_pPlanStepView->View(p_node->NodeModel());
 }
 //----------------------------------------------------------------------------------------------
-void PlanGraphView::OnPlanStructureChange(IOlcbpPlan* pPlan)
+void PlanGraphView::NotifyGraphStructureChange(IOlcbpPlan* pPlan)
 {
-    m_pScene->OnGraphStructureChange(pPlan);
+    m_pScene->NotifyGraphStructureChange(pPlan);
 }
 //----------------------------------------------------------------------------------------------
 void PlanGraphView::timerEvent(QTimerEvent *pEvt)
 {
     if (pEvt->timerId() == m_updateTimerId)
-        m_pScene->OnGraphUpdate();
+        m_pScene->UpdateGraph();
 }

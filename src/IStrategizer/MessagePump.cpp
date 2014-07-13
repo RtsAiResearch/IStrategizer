@@ -15,7 +15,7 @@ MessagePump::MessagePump()
     AddMessage(MSG_GameEnd);
     AddMessage(MSG_PlanStructureChange);
     AddMessage(MSG_PlanComplete);
-    AddMessage(MSG_AttackComplete);
+    AddMessage(MSG_BattleComplete);
 
     // Obsolete Messages
     AddMessage(MSG_GameActionLog);
@@ -26,9 +26,15 @@ MessagePump::MessagePump()
     AddMessage(MSG_BuildingBuilt);
 }
 //----------------------------------------------------------------------------------------------
-MessagePump& MessagePump::Instance()
+MessagePump* MessagePump::Instance()
 {
-    static MessagePump m_instance;
+    static MessagePump* m_instance = nullptr;
+
+	if (nullptr == m_instance)
+	{
+		m_instance = new MessagePump;
+	}
+
     return m_instance;
 }
 //----------------------------------------------------------------------------------------------

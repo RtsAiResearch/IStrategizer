@@ -47,7 +47,7 @@ GraphScene::GraphScene(CrossMap<unsigned, string>* pIdLookup, QObject *pParent) 
     m_lastCtxtMenuScreenPos = QPointF(0.0, 0.0);
 
     connect(this, SIGNAL(selectionChanged()), SLOT(NodeSelected()));
-    
+
     CreateNodeMenu();
     CreateEdgeMenu();
     CreateSceneMenu();
@@ -94,7 +94,7 @@ void GraphScene::CreateSceneMenu()
 
     QAction *pLayoutGraph = new QAction(tr("L&ayout Plan"), this);
     pLayoutGraph->setStatusTip(tr("Layout plan graph in the scene"));
-    connect(pLayoutGraph, SIGNAL(triggered()), this, SLOT(ReconstructScene()));
+    connect(pLayoutGraph, SIGNAL(triggered()), this, SLOT(OnGraphStructureChange()));
 
     m_pSceneMenu = new QMenu(tr("Scene Menu"));
     m_pSceneMenu->setTearOffEnabled(true);
@@ -102,13 +102,14 @@ void GraphScene::CreateSceneMenu()
     m_pSceneMenu->addAction(pLayoutGraph);
 }
 //----------------------------------------------------------------------------------------------
-void GraphScene::View(IOlcbpPlan* pPlan, ConstOlcbpPlanNodeDataMapPtr pNodeData)
+void GraphScene::View(IOlcbpPlan* pPlan, ConstOlcbpPlanContextPtr pPlanContext)
 {
     m_pGraph = pPlan;
-    m_pGraphNodeData = pNodeData;
+    m_pPlanContext = pPlanContext;
+    QApplication::postEvent(this, new QGraphStructureChangeEvent(pPlan));
 }
 //----------------------------------------------------------------------------------------------
-void GraphScene::ReconstructScene()
+void GraphScene::OnGraphStructureChange()
 {
     clear();
 
@@ -125,18 +126,20 @@ void GraphScene::ReconstructScene()
 //----------------------------------------------------------------------------------------------
 void GraphScene::ConstructGraph()
 {
-    if(m_pGraph == NULL)
+    if (m_pGraph == nullptr && !m_nodeIdToNodeViewMap.empty())
+        m_nodeIdToNodeViewMap.clear();
+
+    if(m_pGraph == nullptr)
         return;
 
     ComputeGraphLevels();
 
+    m_nodeIdToNodeViewMap.clear();
     for (unsigned level = 0 ; level < m_graphLevels.size(); ++level)
     {
         for (NodeID nodeId : m_graphLevels[level])
         {
-            ConstOlcbpPlanNodeDataPtr pNodeData = (m_pGraphNodeData != nullptr ? &m_pGraphNodeData->at(nodeId) : nullptr);
-
-            GraphNodeView* pNodeView = new GraphNodeView(m_pGraph->GetNode(nodeId), nodeId, pNodeData, m_pNodeMenu, nullptr);
+            GraphNodeView* pNodeView = new GraphNodeView(m_pGraph->GetNode(nodeId), nodeId, m_pPlanContext, m_pNodeMenu, nullptr);
             m_nodeIdToNodeViewMap[nodeId] = pNodeView;
             addItem(pNodeView);
         }
@@ -244,7 +247,7 @@ void GraphScene::LayoutGraph()
     for (unsigned currentLevel = 0 ; currentLevel < m_graphLevels.size(); ++currentLevel)
     {
         int runningHorizontalPosition = m_horizontalNodeSpacing + (maximumLevelWidth - ComputeLevelWidth(currentLevel)) / 2;
-        
+
         for (NodeID nodeId : m_graphLevels[currentLevel])
         {
             m_nodeIdToNodeViewMap[nodeId]->setPos(QPointF(runningHorizontalPosition, runningVerticalPosition));
@@ -286,12 +289,12 @@ int IStrategizer::GraphScene::ComputeLevelHeight(int levelIdx)
     return levelHeight;
 }
 //----------------------------------------------------------------------------------------------
-void GraphScene::OnGraphStructureChange(IOlcbpPlan* pGraph)
+void GraphScene::NotifyGraphStructureChange(IOlcbpPlan* pGraph)
 {
     QApplication::postEvent(this, new QGraphStructureChangeEvent(pGraph));
 }
 //----------------------------------------------------------------------------------------------
-void GraphScene::OnGraphUpdate()
+void GraphScene::UpdateGraph()
 {
     QApplication::postEvent(this, new QEvent((QEvent::Type)SCENEEVT_GraphRedraw));
 }
@@ -393,9 +396,7 @@ void GraphScene::NewNode()
 
         NodeID nodeId = m_pGraph->AddNode(pNodeModel, pNodeModel->Id());
 
-        ConstOlcbpPlanNodeDataPtr pNodeData = (m_pGraphNodeData != nullptr ? &m_pGraphNodeData->at(nodeId) : nullptr);
-
-        GraphNodeView *pNodeView = new GraphNodeView(pNodeModel, nodeId, pNodeData, m_pNodeMenu, nullptr);
+        GraphNodeView *pNodeView = new GraphNodeView(pNodeModel, nodeId, m_pPlanContext, m_pNodeMenu, nullptr);
 
         pNodeView->setPos(m_lastCtxtMenuScreenPos.x(), m_lastCtxtMenuScreenPos.y());
 
@@ -508,7 +509,7 @@ void GraphScene::DisconnectNode()
             continue;
 
         QList<GraphEdgeView*> disconnectedEdges = pNodeView->Disconnect();
-        
+
         foreach(GraphEdgeView* pEdge, disconnectedEdges)
         {
             m_pGraph->RemoveEdge(pEdge->StartNode()->ModelId(), pEdge->EndNode()->ModelId());
@@ -524,16 +525,42 @@ bool GraphScene::event(QEvent * pEvt)
 
     if (evt == SCENEEVT_GraphStructureChange)
     {
-        ReconstructScene();
+        OnGraphStructureChange();
         return true;
     }
     else if (evt == SCENEEVT_GraphRedraw)
     {
-        update();
+        OnGraphUpdate();
         return true;
     }
     else
     {
         return QGraphicsScene::event(pEvt);
     }
+}
+//----------------------------------------------------------------------------------------------
+void GraphScene::OnGraphUpdate()
+{
+    if (m_pGraph != nullptr && m_pPlanContext != nullptr)
+    {
+        m_pGraph->Lock();
+
+        m_currActiveGoalSet = m_pPlanContext->ActiveGoalSet;
+
+        m_pGraph->Unlock();
+
+        for (auto& record : m_nodeIdToNodeViewMap)
+        {
+            if (m_nodeIdToNodeViewMap.count(record.first) > 0)
+                record.second->MarkAsInactive();
+        }
+
+        for (auto goalId : m_currActiveGoalSet)
+        {
+            if (m_nodeIdToNodeViewMap.count(goalId) > 0)
+                m_nodeIdToNodeViewMap[goalId]->MarkAsActive();
+        }
+    }
+
+    update();
 }

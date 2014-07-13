@@ -8,7 +8,7 @@
 #include "SMap.h"
 #include "SPair.h"
 #include "SSet.h"
-#include "UserObject.h"
+#include "ISerializable.h"
 #include "Logger.h"
 
 namespace IStrategizer
@@ -25,8 +25,10 @@ namespace IStrategizer
     ///> class=AdjListDigraph(TNodeValue)
     ///> parent=IDigraph(TNodeValue)
     template<class TNodeValue, class TNodeValueTraits = AdjListDigraphNodeValueTraits<TNodeValue>>
-    class AdjListDigraph :  public Serialization::UserObject, public IDigraph<TNodeValue>
+    class AdjListDigraph :  public Serialization::ISerializable, public IDigraph<TNodeValue>
     {
+		OBJECT_SERIALIZABLE(AdjListDigraph, &m_lastNodeId, &m_adjList);
+
     public:
         ///> alias=NodeEntry(pair(NodeValue,NodeSerializedSet))
         typedef Serialization::SPair<NodeValue, NodeSerializedSet> NodeEntry;
@@ -36,6 +38,10 @@ namespace IStrategizer
         {
         }
 
+        ~AdjListDigraph() 
+        {
+       
+        }
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::AddNode
         // Description:	Add a new node to the Digraph without connecting it and identify it using
@@ -169,7 +175,7 @@ namespace IStrategizer
         {
             NodeSerializedSet nodes;
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
                 nodes.insert(nodeEntry.first);
             }
@@ -186,7 +192,7 @@ namespace IStrategizer
         {
             std::set<NodeValue> nodes;
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
                 nodes.insert(nodeEntry.second.first);
             }
@@ -305,9 +311,9 @@ namespace IStrategizer
             // ......Remove A from O
             NodeSerializedSet orphans = GetNodes();
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
-                NodeSerializedSet& adjacents = nodeEntry.second.second;
+                const NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 for (auto adjNodeId : adjacents)
                 {
@@ -327,9 +333,9 @@ namespace IStrategizer
         {
             NodeSerializedSet leaves;
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
-                NodeSerializedSet& adjacents = nodeEntry.second.second;
+                const NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 if (adjacents.empty())
                     leaves.insert(nodeEntry.first);
@@ -395,7 +401,7 @@ namespace IStrategizer
         // Description:	Unlocks the graph acquisition by caller thread
         // Returns:   	void
         //************************************
-        void Unlock() { m_lock.unlock(); }        OBJECT_SERIALIZABLE(AdjListDigraph);
+        void Unlock() { m_lock.unlock(); }
 
         //************************************
         // IStrategizer::IDigraph<TNodeValue>::ToString
@@ -412,7 +418,7 @@ namespace IStrategizer
             str += ToString(roots);
             str += "\n";
 
-            for (auto nodeEntry : m_adjList)
+            for (auto& nodeEntry : m_adjList)
             {
                 if (m_adjList.count(nodeEntry.first) == 0)
                     DEBUG_THROW(ItemNotFoundException(XcptHere));
@@ -421,7 +427,7 @@ namespace IStrategizer
                 str += TNodeValueTraits::ToString(nodeVal);
                 str += " -> ";
 
-                NodeSerializedSet& adjacents = nodeEntry.second.second;
+                const NodeSerializedSet& adjacents = nodeEntry.second.second;
 
                 for (auto adjNodeID : adjacents)
                 {
@@ -483,9 +489,74 @@ namespace IStrategizer
             return m_nodeReachability[sourceNodeId].count(destNodeId) != 0;
         }
 
-        PlanHashMap PlanHash;
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetNodeAncestors
+        // Description:	Gets ancestor nodes for a certain node up to the root
+        // Parameter: 	NodeSet ancestors (OUT): A set to fill with the Ids of node ancestors
+        // Returns:   	void
+        //************************************
+        void GetNodeAncestors(_In_ NodeID nodeId, _Out_ NodeSet& ancestors) const
+        {
+            NodeSet directParents;
+            GetParents(nodeId, directParents);
 
-        OBJECT_MEMBERS(2 ,&m_lastNodeId, &m_adjList);
+            if (directParents.empty())
+                return;
+            else
+            {
+                ancestors.insert(directParents.begin(), directParents.end());
+
+                for (auto directParentId : directParents)
+                {
+                    GetNodeAncestors(directParentId, ancestors);
+                }
+            }
+        }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::GetParents
+        // Description:	Gets direct parents to a certain node
+        // Parameter: 	NodeSet parents (OUT): A set to fill with the Ids of the direct node parents
+        // Returns:   	void
+        void GetParents(_In_ NodeID nodeId, _Out_ NodeSet& parents) const
+            throw(ItemNotFoundException)
+        {
+            _ASSERTE(m_adjList.count(nodeId) != 0);
+            if (m_adjList.count(nodeId) == 0)
+                throw ItemNotFoundException(XcptHere);
+
+            NodeSet m_parents;
+
+            for (auto parent : m_adjList)
+            {
+                if(parent.second.second.count(nodeId) > 0)
+                {
+                    parents.insert(parent.first);
+                }
+            }
+        }
+
+        //************************************
+        // IStrategizer::IDigraph<TNodeValue>::Clone
+        // Description:	Make a deep clone of the existing digraph
+        // Returns:   	New digraph instance
+        IDigraph<TNodeValue>* Clone() const
+        {
+            auto pClone = new AdjListDigraph;
+            pClone->m_lastNodeId = m_lastNodeId;
+            pClone->m_adjList = m_adjList;
+
+            for (auto& nodeEntry : pClone->m_adjList)
+            {
+                auto originalId = nodeEntry.second.first->Id();
+                nodeEntry.second.first = AdjListDigraphNodeValueTraits<TNodeValue>::Clone(nodeEntry.second.first);
+                nodeEntry.second.first->Id(originalId);
+            }
+
+            return pClone;
+        }
+
+        PlanHashMap PlanHash;
 
     private:
         ///> type=NodeID
@@ -517,7 +588,7 @@ namespace IStrategizer
             return strIdSet;
         }
 
-        NodeSet GetParents(NodeID nodeId) const
+        NodeSet GetParents(_In_ NodeID nodeId) const
         {
             _ASSERTE(m_adjList.count(nodeId) != 0);
             if (m_adjList.count(nodeId) == 0)

@@ -30,34 +30,28 @@ void CollectResourceGoal::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 bool CollectResourceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
-    EntityList entities;
-    game.Self()->Entities(game.Self()->Race()->GetWorkerType(), entities);
     int gatherersCount = GetNumberOfGatherers(game, (ResourceType)_params[PARAM_ResourceId]);
     int minGatherersCount = _params[PARAM_Amount];
 
     return gatherersCount >= minGatherersCount;
 }
 //----------------------------------------------------------------------------------------------
-int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) const
+int CollectResourceGoal::GetNumberOfGatherers(RtsGame &game, ResourceType resourceType)
 {
-    int count = 0;
     EntityList workers;
     game.Self()->Entities(game.Self()->Race()->GetWorkerType(), workers);
 
     for (auto workerId : workers)
     {
         GameEntity* worker = game.Self()->GetEntity(workerId);
-        if (worker->Attr(EOATTR_State) == OBJSTATE_Gathering)
+        if ((resourceType == RESOURCE_Primary && worker->Attr(EOATTR_State) == OBJSTATE_GatheringPrimary) || 
+            (resourceType == RESOURCE_Secondary && worker->Attr(EOATTR_State) == OBJSTATE_GatheringSecondary))
         {
-            if ((resourceType == RESOURCE_Primary && worker->Attr(EOATTR_IsGatheringPrimaryResource)) ||
-                (resourceType == RESOURCE_Secondary && worker->Attr(EOATTR_IsGatheringSecondaryResource)))
-            {
-                ++count;
-            }
+            m_observedGatherers[resourceType].insert(workerId);
         }
     }
 
-    return count;
+    return m_observedGatherers[resourceType].size();
 }
 //----------------------------------------------------------------------------------------------
 void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, vector<GoalEx*>& succeededInstances)
@@ -78,7 +72,7 @@ void CollectResourceGoal::AddSucceededInstancesForResourceType(RtsGame &game, Re
 
             m_succeededPrimaryGatherersCount.insert(gatherersCount);
         }
-        
+
         if (resourceType == RESOURCE_Secondary && m_succeededSecondaryGatherersCount.count(gatherersCount) == 0)
         {
             PlanStepParameters params;

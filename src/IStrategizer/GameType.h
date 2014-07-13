@@ -1,18 +1,27 @@
+///> [Serializable]
 #ifndef GAMETYPE_H
 #define GAMETYPE_H
 
+#include <map>
 #include "EngineData.h"
 #include "WorldResources.h"
-#include <map>
+#include "EngineObject.h"
+#include "SVector.h"
 
 namespace IStrategizer
 {
     class WorldResources;
 
-    class GameType
+    ///> class=GameType
+    class GameType : public EngineObject
     {
+        OBJECT_SERIALIZABLE(GameType, &m_id, &m_attributes);
     public:
-        virtual ~GameType() {}
+        GameType() :
+            m_id(ECLASS_END),
+            m_attributes(COUNT(EntityClassAttribute), 0)
+        {}
+
         EntityClassType Id() const { return m_id; }
         const WorldResources* RequiredResources() const { return &m_requiredResources; }
         int Attr(EntityClassAttribute attrId) const { return m_attributes[INDEX(attrId, EntityClassAttribute)]; }
@@ -25,9 +34,11 @@ namespace IStrategizer
     protected:
         void Attr(EntityClassAttribute attrId, int val) { m_attributes[INDEX(attrId, EntityClassAttribute)] = val; }
 
+        ///> type=int
         EntityClassType m_id;
+        ///> type=vector(int)
+        Serialization::SVector<int> m_attributes;
         WorldResources m_requiredResources;
-        int m_attributes[COUNT(EntityClassAttribute)];
     };
 }
 

@@ -45,9 +45,9 @@ void GamePlayer::Init()
 {
     if (m_isOnline)
     {
-        g_MessagePump.RegisterForMessage(MSG_EntityCreate, this);
-        g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
-        g_MessagePump.RegisterForMessage(MSG_EntityRenegade, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -180,11 +180,11 @@ void GamePlayer::OnEntityDestroy(Message* pMsg)
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityRenegade(Message* pMsg)
 {
-    EntityRenegadeMessage *pRenMsg = nullptr;
+    EntityCreateMessage *pRenMsg = nullptr;
     GameEntity *pEntity = nullptr;
     TID entityId;
 
-    pRenMsg = (EntityRenegadeMessage*)pMsg;
+    pRenMsg = (EntityCreateMessage*)pMsg;
 
     entityId = pRenMsg->Data()->EntityId;
 
@@ -260,7 +260,7 @@ MapArea GamePlayer::GetColonyMapArea()
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::SetOffline(RtsGame* pBelongingGame)
 {
-    g_MessagePump.UnregisterForAllMessages(this);
+    g_MessagePump->UnregisterForAllMessages(this);
 
     m_pResources->SetOffline(pBelongingGame);
     m_pTechTree->SetOffline(pBelongingGame);
@@ -295,6 +295,7 @@ int GamePlayer::Attr(PlayerAttribute attribute)
 
         if (!pGameType->Attr(ECATTR_IsCowrad) &&
             !pGameType->Attr(ECATTR_IsBuilding) &&
+            !pair.second->IsLocked() &&
             g_Assist.IsEntityObjectReady(pair.first))
         {
             amount += pGameType->Attr(classAttribute);
@@ -303,4 +304,17 @@ int GamePlayer::Attr(PlayerAttribute attribute)
     }
 
     return amount;
+}
+
+int GamePlayer::CountEntityTypes(_In_ EntityClassAttribute attr, _In_ int val) const
+{
+    int count = 0;;
+
+    for (auto entityEntry : m_entities)
+    {
+        if (g_Game->GetEntityType(entityEntry.second->Type())->Attr(attr) == val)
+            ++count;
+    }
+
+    return count;
 }

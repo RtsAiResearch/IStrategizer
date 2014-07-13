@@ -13,13 +13,14 @@
 using namespace IStrategizer;
 using namespace std;
 
-TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce)
+TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce), m_firstUpdate(true)
 {
     _params[PARAM_Amount] = DONT_CARE;
     _params[PARAM_EntityClassId] = ECLASS_START;
+    _params[PARAM_ObjectStateType] = OBJSTATE_START;
 }
 //----------------------------------------------------------------------------------------------
-TrainForceGoal::TrainForceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainForce, p_parameters)
+TrainForceGoal::TrainForceGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_TrainForce, p_parameters), m_firstUpdate(true)
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -41,28 +42,31 @@ bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame& game)
     {
         GameEntity *pEntity = game.Self()->GetEntity(unitId);
         _ASSERTE(pEntity);
-        entitiesCount += pEntity->Attr(EOATTR_State) != OBJSTATE_BeingConstructed ? 1 : 0;
+        entitiesCount += ((g_Assist.IsEntityInState(unitId, (ObjectStateType)_params[PARAM_ObjectStateType]) ||
+            g_Assist.IsEntityInState(unitId, OBJSTATE_Idle)) ? 1 : 0);
     }
 
     return entitiesCount >= requiredCount;
 }
 //----------------------------------------------------------------------------------------------
-void TrainForceGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
+vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
 {
-    if (p_msg->MessageTypeID() == MSG_EntityCreate)
+    vector<GoalEx*> succeededInstances;
+
+    EntityList entities;
+    game.Self()->Entities(entities);
+
+    for (TID entityId : entities)
     {
-        EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
-        _ASSERTE(pMsg && pMsg->Data());
-
-        if (pMsg->Data()->OwnerId != PLAYER_Self)
-            return;
-
-        TID entityId = pMsg->Data()->EntityId;
         GameEntity *pEntity = game.Self()->GetEntity(entityId);
         _ASSERTE(pEntity);
         EntityClassType entityType = pEntity->Type();
 
-        if (!game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding))
+        if (m_usedUnits.count(entityId) == 0 &&
+            !game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding) &&
+            g_Assist.IsEntityObjectReady(entityId) &&
+            ((!game.GetEntityType(entityType)->Attr(ECATTR_IsAttacker)) ||
+            (pEntity->Attr(EOATTR_State) != OBJSTATE_Idle)))
         {
             PlanStepParameters params;
             EntityList entities;
@@ -70,15 +74,18 @@ void TrainForceGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consum
             m_trainedUnits[entityType] = entities.size();
             params[PARAM_EntityClassId] = entityType;
             params[PARAM_Amount] = m_trainedUnits[entityType];
-            m_succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_TrainForce, params, true));
+            params[PARAM_ObjectStateType] = pEntity->Attr(EOATTR_State);
+            succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_TrainForce, params, true));
+            m_usedUnits.insert(entityId);
         }
     }
-}
-//----------------------------------------------------------------------------------------------
-vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
-{
-    vector<GoalEx*> succeededInstances(m_succeededInstances);
-    m_succeededInstances.clear();
+
+    if (m_firstUpdate)
+    {
+        m_firstUpdate = false;
+        succeededInstances.clear();
+    }
+
     return succeededInstances;
 }
 //----------------------------------------------------------------------------------------------

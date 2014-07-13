@@ -13,7 +13,7 @@ namespace IStrategizer
     ///> parent=GoalEx
     class CollectResourceGoal : public GoalEx
     {
-        OBJECT_SERIALIZABLE(CollectResourceGoal);
+        OBJECT_SERIALIZABLE_P(CollectResourceGoal, GoalEx);
 
     public:
         CollectResourceGoal();
@@ -21,7 +21,6 @@ namespace IStrategizer
         std::vector<GoalEx*> GetSucceededInstances(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
         bool Merge(PlanStepEx* planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_ResourceId) + Parameter(PARAM_Amount); }
         
     protected:
         void InitializePostConditions();
@@ -31,8 +30,10 @@ namespace IStrategizer
         std::set<int> m_succeededPrimaryGatherersCount;
         std::set<int> m_succeededSecondaryGatherersCount;
 
-        int GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) const;
+        int GetNumberOfGatherers(RtsGame &game, ResourceType resourceType) ;
         void AddSucceededInstancesForResourceType(RtsGame &game, ResourceType resourceType, std::vector<GoalEx*>& succeededInstances);
+
+        std::map<ResourceType, std::set<TID>> m_observedGatherers;
     };
 }
 #endif // COLLECTRESOURCEGOAL_H

@@ -3,7 +3,7 @@
 ////----------------------------------------------------------------------------
 //CaseLearningLog::CaseLearningLog(): Log<Trace>(LOG_PATH_OLD)
 //{
-//    g_MessagePump.RegisterForMessage(MSG_Log, this);
+//    g_MessagePump->RegisterForMessage(MSG_Log, this);
 //}
 //
 ////----------------------------------------------------------------

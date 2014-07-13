@@ -12,6 +12,7 @@
 #include "RtsGame.h"
 #include "GamePlayer.h"
 #include "ObjectFactory.h"
+#include "Action.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
@@ -123,8 +124,10 @@ ObjectStateType StarCraftEntity::FetchState() const
         return OBJSTATE_Idle;
     else if (isBeingConstructed || (isIdle && !isCompleted))
         return OBJSTATE_BeingConstructed;
-    else if (isGatheringGas || isGatheringMinerals)
-        return OBJSTATE_Gathering;
+    else if (isGatheringMinerals)
+        return OBJSTATE_GatheringPrimary;
+    else if (isGatheringGas)
+        return OBJSTATE_GatheringSecondary;
     else if (isConstructing)
         return OBJSTATE_Constructing;
     else if (isMoving)
@@ -157,17 +160,12 @@ bool StarCraftEntity::IsTraining(TID p_traineeId) const
 //----------------------------------------------------------------------------------------------
 string StarCraftEntity::ToString() const
 {
-    std::string asSharedResource = SharedResource::ToString();
-
+    char str[256];
     TID gameTypeId = g_Database.EntityMapping.GetBySecond((EntityClassType)Attr(EOATTR_Type));
     std::string description = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
-    description += "(";
-    description += to_string((long long)m_id);
-    description += ",";
-    description += asSharedResource;
-    description += ")";
 
-    return description;
+    sprintf_s(str, "%s[%d](Owner=%s, State=%s)", description.c_str(), m_id, (m_pOwner != nullptr ? m_pOwner->ToString(true).c_str() : ""), Enums[Attr(EOATTR_State)]);
+    return str;
 }
 //----------------------------------------------------------------------------------------------
 Vector2 StarCraftEntity::GetPosition() const
@@ -273,9 +271,9 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
     UnitType type = BWAPI::UnitType::getType(typeName);
 
     _ASSERTE(building->canTrain(type));
-    bool success = building->train(type);
 
-    return success;
+    LogInfo("%s -> Train(Trainee=%s)", ToString().c_str(), type.toString().c_str());
+    return building->train(type);
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Move(Vector2 p_position)
@@ -299,9 +297,10 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
     _ASSERTE(resource);
 
     _ASSERTE(gatherer->canGather(resource));
+    LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
     return gatherer->gather(resource);
 }
-
+//----------------------------------------------------------------------------------------------
 void StarCraftEntity::SetOffline(RtsGame* pBelongingGame)
 {
     m_cachedAttr.clear();

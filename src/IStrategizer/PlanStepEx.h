@@ -2,34 +2,18 @@
 #ifndef PLANSTEPEX_H
 #define PLANSTEPEX_H
 
-#ifndef COMPOSITEEXPRESSION_H
-#include "CompositeExpression.h"
-#endif
-#ifndef ENGINEDATA_H
-#include "EngineData.h"
-#endif
-#ifndef ICOMPARABLE_H
-#include "IComparable.h"
-#endif
-#ifndef USEROBJECT_H
-#include "UserObject.h"
-#endif
-#ifndef ICLONABLE_H
-#include "IClonable.h"
-#endif
-#ifndef CELLFEATURE_H
-#include "CellFeature.h"
-#endif
-#ifndef WORLDCLOCK_H
-#include "WorldClock.h"
-#endif
-#ifndef RTSGAME_H
-#include "RtsGame.h"
-#endif
-
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
+#include "CompositeExpression.h"
+#include "EngineData.h"
+#include "IComparable.h"
+#include "EngineObject.h"
+#include "IClonable.h"
+#include "CellFeature.h"
+#include "WorldClock.h"
+#include "RtsGame.h"
 
 namespace IStrategizer
 {
@@ -37,14 +21,15 @@ namespace IStrategizer
     class Message;
 
     ///> class=PlanStepEx
-    class PlanStepEx : public Serialization::UserObject, public IComparable, public IClonable
+	class PlanStepEx : public EngineObject, public IComparable, public IClonable
     {
-        OBJECT_MEMBERS(2, &_params, &_id);
-
+        OBJECT_SERIALIZABLE(PlanStepEx, &_params, &_id);
     public:
+		~PlanStepEx();
         static unsigned GenerateID();
         
-        void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()) ; }
+		void Parameter(ParameterType key, int val) { _params[key] = val; }
+		void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()); }
         void Copy(IClonable* p_dest);
         virtual void Update(RtsGame& game, const WorldClock& p_clock);
         int StepTypeId() const { return _stepTypeId; }
@@ -59,9 +44,8 @@ namespace IStrategizer
         virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         virtual bool Equals(PlanStepEx* p_planStep) = 0;
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
-        virtual unsigned Hash() const = 0;
+        virtual unsigned Hash(bool quantified = true) const;
         virtual std::string ToString(bool minimal = false) const;
-        virtual ~PlanStepEx() {}
         PlanStepParameters& Parameters() { return _params; }
         ExecutionStateType State() const { return _state; }
         StepLevelType LevelType() const { return _stepLevelType; }
@@ -92,6 +76,10 @@ namespace IStrategizer
     private:
         ExecutionStateType _state;
     };
+    
+    typedef std::shared_ptr<PlanStepEx> PlanStepStrongPtr;
+    typedef std::shared_ptr<const PlanStepEx> ConstPlanStepStrongPtr;
+    typedef std::weak_ptr<PlanStepEx> PlanStepWeakPtr;
 }
 
 #endif // PLANSTEPEX_H

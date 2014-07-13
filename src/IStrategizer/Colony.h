@@ -3,22 +3,15 @@
 #define COLONY_H
 
 #include "MathHelper.h"
-
-#ifndef USEROBJECT_H
-#include "UserObject.h"
-#endif
-
-#ifndef ICLONABLE_H
+#include "ISerializable.h"
 #include "IClonable.h"
-#endif
 
 namespace IStrategizer
 {
     ///> class=Colony
-    class Colony : public Serialization::UserObject, public IClonable
+    class Colony : public Serialization::ISerializable, public IClonable
     {
-        OBJECT_SERIALIZABLE(Colony);
-
+        OBJECT_SERIALIZABLE(Colony, &Top, &Left, &Width, Height);
     public:
         ///> type=int
         int Top;
@@ -38,10 +31,6 @@ namespace IStrategizer
 
         IClonable*  Clone();
         void        Copy(IClonable* p_dest);
-        
-
-    protected:
-        void InitializeAddressesAux() { AddMemberAddress(4, &Top, &Left, &Width, &Height); }
     };
 }
 

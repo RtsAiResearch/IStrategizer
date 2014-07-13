@@ -7,13 +7,15 @@
 #ifndef WORLDRESOURCES_H
 #include "WorldResources.h"
 #endif
-
+#include "ObjectFactory.h"
 #include <string>
 #include "BWAPI.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
 using namespace std;
+
+DECL_SERIALIZABLE(StarCraftType);
 
 void StarCraftType::Init()
 {
@@ -34,6 +36,7 @@ void StarCraftType::Init()
     Attr(ECATTR_IsBuilding, m_type.isBuilding());
     Attr(ECATTR_IsCritical, m_type.canProduce());
     Attr(ECATTR_IsCowrad, m_type.isWorker());
+    Attr(ECATTR_IsAttacker, m_type.canAttack() && !m_type.isWorker());
     Attr(ECATTR_MaxHp, m_type.maxHitPoints());
     Attr(ECATTR_IsPrimaryResource, m_type.isMineralField());
     // FIXME: consider zerg and protoss refineries

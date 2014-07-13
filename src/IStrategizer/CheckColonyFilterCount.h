@@ -11,7 +11,7 @@ using namespace IStrategizer;
 ///> parent=ConditionEx
 class CheckColonyFilterCount : public ConditionEx
 {
-    OBJECT_SERIALIZABLE(CheckColonyFilterCount);
+	OBJECT_SERIALIZABLE_P(CheckColonyFilterCount, ConditionEx);
 
 private:
     int     _currentCount;

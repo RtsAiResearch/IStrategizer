@@ -16,7 +16,7 @@ namespace IStrategizer
     ///> parent=GamePlayer
     class StarCraftPlayer : public GamePlayer
     {
-        OBJECT_SERIALIZABLE(StarCraftPlayer);
+		OBJECT_SERIALIZABLE_P(StarCraftPlayer, GamePlayer);
 
     public:
         StarCraftPlayer() : GamePlayer(0), m_pPlayer(nullptr) {}

@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{B086163D-D289-4E97-B657-61096F84C73C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{31A66C37-EBCA-4C42-B7B1-650F772D0282}"
@@ -53,7 +55,7 @@ Global
 		{0819F5F6-A4F3-4A71-B5FF-4EEFB15DAF28} = {31A66C37-EBCA-4C42-B7B1-650F772D0282}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = Qt5.2.1_msvc2012
+		Qt5Version = Qt5.3.1_msvc2013
 	EndGlobalSection
 	GlobalSection(Qt) = preSolution
 		Integration = True

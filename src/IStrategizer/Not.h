@@ -11,7 +11,7 @@ namespace IStrategizer
     ///> parent=CompositeExpression
     class Not : public CompositeExpression
     {
-        OBJECT_SERIALIZABLE(Not);
+		OBJECT_SERIALIZABLE_P(Not, CompositeExpression);
 
     public:
         Not() {}

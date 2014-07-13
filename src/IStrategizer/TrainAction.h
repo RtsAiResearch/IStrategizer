@@ -22,7 +22,7 @@ namespace IStrategizer
     ///> parent=Action
     class TrainAction : public Action
     {
-        OBJECT_SERIALIZABLE(TrainAction);
+        OBJECT_SERIALIZABLE_P(TrainAction, Action);
 
     public:
         TrainAction();
@@ -30,11 +30,8 @@ namespace IStrategizer
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_EntityClassId); }
 
     protected:
-        void OnSucccess(RtsGame& game, const WorldClock& clock);
-        void OnFailure(RtsGame& game, const WorldClock& clock);
         bool ExecuteAux(RtsGame& game, const WorldClock& clock);
         void HandleMessage(RtsGame& game, Message* pMsg, bool& consumed);
         void InitializePostConditions();

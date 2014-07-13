@@ -2,17 +2,14 @@
 #ifndef GAMEPLAYER_H
 #define GAMEPLAYER_H
 
-#ifndef ENGINEDATA_H
+#include <vector>
 #include "EngineData.h"
-#endif
-#ifndef MESSAGEPUMPOBSERVER_H
-#include "MessagePumpObserver.h"
-#endif
+#include "IMessagePumpObserver.h"
 #include "MapArea.h"
-#include "UserObject.h"
+#include "ISerializable.h"
 #include "GameTechTree.h"
 #include "GameRace.h"
-#include <vector>
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
@@ -27,10 +24,9 @@ namespace IStrategizer
     typedef Serialization::SMap<TID, GameEntity*> EntitiesMap;
 
     ///> class=GamePlayer
-    class GamePlayer : public Serialization::UserObject, public MessagePumpObserver
+    class GamePlayer : public EngineObject
     {
-        OBJECT_MEMBERS(6, &m_isOnline, &m_type, &m_raceId, &m_pResources, &m_pTechTree, &m_entities);
-
+        OBJECT_SERIALIZABLE(GamePlayer, &m_isOnline, &m_type, &m_raceId, &m_pResources, &m_pTechTree, &m_entities);
     public:
         GamePlayer(TID raceId);
         virtual ~GamePlayer();
@@ -47,7 +43,10 @@ namespace IStrategizer
 		int Attr(PlayerAttribute attribute);
 
         PlayerResources* Resources() { _ASSERTE(m_pResources != nullptr); return m_pResources;}
+        const PlayerResources* Resources() const { _ASSERTE(m_pResources != nullptr); return m_pResources;}
         GameTechTree* TechTree() const { _ASSERTE(m_pTechTree != nullptr); return m_pTechTree; }
+        // Count number of entities which have their type attribute [attr] equals [val]
+        int CountEntityTypes(_In_ EntityClassAttribute attr, _In_ int val) const;
 
     protected:
         virtual GameEntity* FetchEntity(TID p_id) = 0;

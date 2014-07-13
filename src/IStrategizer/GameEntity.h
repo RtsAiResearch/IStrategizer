@@ -5,7 +5,7 @@
 #include "EngineData.h"
 #include "SharedResource.h"
 #include "Vector2.h"
-#include "UserObject.h"
+#include "EngineObject.h"
 
 class Action;
 
@@ -17,10 +17,9 @@ namespace IStrategizer
     class RtsGame;
 
     ///> class=GameEntity
-    class GameEntity : public Serialization::UserObject, public SharedResource
+	class GameEntity : public EngineObject, public SharedResource
     {
-        OBJECT_MEMBERS(1, &m_id);
-
+        OBJECT_SERIALIZABLE(GameEntity, &m_id);
     public:
         GameEntity(TID id) :
             m_id(id)
@@ -36,7 +35,6 @@ namespace IStrategizer
         virtual int Attr(EntityObjectAttribute attrId) const = 0;
         virtual bool IsTraining(TID traineeId) const = 0;
         virtual bool CanGather(TID resourceObjectId) const = 0;
-        virtual std::string ToString() const = 0;
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;

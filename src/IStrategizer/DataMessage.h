@@ -9,35 +9,40 @@
 
 namespace IStrategizer
 {
+    // DataMessage that owns the lifetime of the data object
     template<class T>
     class DataMessage : public Message
     {
-    private:
-        T* _data;
     public:
-    const T* Data() const;
-        T* Data();
-        DataMessage(unsigned long p_gameCycle, MessageType p_messageTypeID, T* p_data);
-        ~DataMessage();
+        DataMessage(unsigned gameFrame, MessageType msgType, T* pData) :
+            Message(gameFrame, msgType),
+            m_pData(pData)
+        {}
+        ~DataMessage() { delete m_pData; }
+        const T* Data() const { return m_pData; }
+        T* Data() { return m_pData; }
+
+    private:
+        T* m_pData;
     };
-    //----------------------------------------------------------------------------------------------
+
+    // DataMessage that does not own the lifetime of the data object
     template<class T>
-    DataMessage<T>::DataMessage(unsigned long p_gameCycle, MessageType p_messageTypeID, T* p_data) : Message(p_gameCycle, p_messageTypeID)
+    class DataMessage<T*> : public Message
     {
-        _data = p_data;
-    }
-    //----------------------------------------------------------------------------------------------
-    template<class T>
-    const T* DataMessage<T>::Data() const { return _data; }
-  //----------------------------------------------------------------------------------------------
-  template<class T>
-  T* DataMessage<T>::Data() { return _data; }
-  //----------------------------------------------------------------------------------------------
-    template<class T>
-    DataMessage<T>::~DataMessage()
-    {
-        delete _data;
-    }
+    public:
+        DataMessage(unsigned long gameFrame, MessageType msgType, T* pData) :
+            Message(gameFrame, msgType),
+            m_pData(pData)
+        {}
+
+        const T* Data() const { return m_pData; }
+        T* Data() { return m_pData; }
+
+    private:
+        T* m_pData;
+    };
+
     //----------------------------------------------------------------------------------------------
     typedef DataMessage<std::string> TextMessage;
     //----------------------------------------------------------------------------------------------
@@ -51,11 +56,13 @@ namespace IStrategizer
     };
     typedef DataMessage<EntityMessageData> EntityCreateMessage;
     typedef DataMessage<EntityMessageData> EntityDestroyMessage;
-    typedef DataMessage<EntityMessageData> EntityRenegadeMessage;
     //----------------------------------------------------------------------------------------------
     struct GameEndMessageData
     {
         bool IsWinner;
+        int Score;
+        std::string MapName;
+        std::string EnemyRace;
     };
     typedef DataMessage<GameEndMessageData> GameEndMessage;
     //----------------------------------------------------------------------------------------------
@@ -67,10 +74,10 @@ namespace IStrategizer
         EntityClassType TrainerType;
 
         EntityTrainedMessageData(TID p_trainerId, TID p_entityId, EntityClassType p_trainerType, EntityClassType p_entityType) :
-        TrainerId(p_trainerId), EntityId(p_entityId), EntityType(p_trainerType), TrainerType(p_entityType) {}
+            TrainerId(p_trainerId), EntityId(p_entityId), EntityType(p_trainerType), TrainerType(p_entityType) {}
 
         EntityTrainedMessageData() :
-        TrainerId(0), EntityId(0), EntityType(ECLASS_END), TrainerType(ECLASS_END) {}
+            TrainerId(0), EntityId(0), EntityType(ECLASS_END), TrainerType(ECLASS_END) {}
     };
     //----------------------------------------------------------------------------------------------
     struct BuildingBuiltMessageData
@@ -79,10 +86,10 @@ namespace IStrategizer
         TID BuildingId;
 
         BuildingBuiltMessageData(TID p_builderId, TID p_buildingId) :
-        BuilderId(p_builderId), BuildingId(p_buildingId) {}
+            BuilderId(p_builderId), BuildingId(p_buildingId) {}
 
         BuildingBuiltMessageData() :
-        BuilderId(0), BuildingId(0) {}
+            BuilderId(0), BuildingId(0) {}
     };
 }
 

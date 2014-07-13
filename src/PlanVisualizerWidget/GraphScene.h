@@ -70,7 +70,7 @@ namespace IStrategizer
         enum PointerMode { PTRMODE_Move, MODE_Connect };
 
         GraphScene(CrossMap<unsigned, std::string>* p_idLookup, QObject *p_parent = 0);
-        void View(IOlcbpPlan* pGraph, ConstOlcbpPlanNodeDataMapPtr pNodeData);
+        void View(IOlcbpPlan* pGraph, ConstOlcbpPlanContextPtr pPlanContext);
         void Mode(PointerMode p_mode) { m_pointerMode = p_mode; }
         PointerMode Mode() const { return m_pointerMode; }
 
@@ -80,14 +80,14 @@ namespace IStrategizer
         // scene a chance to redraw and layout the graph view
         // Returns:       void
         //************************************
-        virtual void OnGraphStructureChange(IOlcbpPlan* pGraph);
+        virtual void NotifyGraphStructureChange(IOlcbpPlan* pGraph);
 
         //************************************
         // IStrategizer::GraphScene::OnGraphUpdate
         // Description:	Called to redraw the current graph nodes without layouting the graph
         // Returns:   	void
         //************************************
-        virtual void OnGraphUpdate();
+        virtual void UpdateGraph();
 
     protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *pEvent);
@@ -113,7 +113,8 @@ namespace IStrategizer
         IOlcbpPlan *m_pGraph;
         std::vector< std::vector<NodeID> > m_graphLevels;
         std::map<NodeID, GraphNodeView*> m_nodeIdToNodeViewMap;
-        ConstOlcbpPlanNodeDataMapPtr m_pGraphNodeData;
+        ConstOlcbpPlanContextPtr m_pPlanContext;
+        IOlcbpPlan::NodeSet m_currActiveGoalSet;
 
         void ConstructGraph();
         void ComputeGraphLevels();
@@ -128,15 +129,16 @@ namespace IStrategizer
         void LayoutGraphInHierarchy();
         int ComputeLevelWidth(int levelIdx);
         int ComputeLevelHeight(int levelIdx);
+        void OnGraphUpdate();
 
     private slots:
-        void ReconstructScene();
         void NodeSelected();
         void NewNode();
         void DeleteNode();
         void DeleteEdge();
         void DisconnectNode();
         void DuplicateNode();
+		void OnGraphStructureChange();
 
     signals:
         void NodeSelected(GraphNodeView* pNode);

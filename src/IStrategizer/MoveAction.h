@@ -14,7 +14,7 @@ namespace IStrategizer
     class MoveAction:public Action
     {
     public:
-        OBJECT_SERIALIZABLE(MoveAction);
+        OBJECT_SERIALIZABLE_P(MoveAction, Action);
 
         MoveAction();
         MoveAction(const PlanStepParameters& p_parameters);
@@ -22,7 +22,6 @@ namespace IStrategizer
         bool AliveConditionsSatisfied(RtsGame& game);
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
-        unsigned Hash() const { return StepTypeId() + Parameter(PARAM_ResourceId) + Parameter(PARAM_ObjectStateType); }
 
     protected:
         bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);

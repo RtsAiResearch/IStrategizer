@@ -8,13 +8,6 @@
 
 using namespace IStrategizer;
 
-void ResourceDescription::InitializeAddressesAux()
-{
-    AddMemberAddress(3,
-        &m_numberOfPrimary,
-        &m_numberOfSecondary,
-        &m_numberOfSupply);
-}
 //----------------------------------------------------------------------------------------------
 void ResourceDescription::AddEntity(GameEntity *p_entity)
 {

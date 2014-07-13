@@ -22,9 +22,17 @@
 
 using namespace IStrategizer;
 
-void CaseBasedReasonerEx::Initialize()
+bool CaseBasedReasonerEx::Init()
 {
     _retainer->ReadCaseBase();
+    
+    if (!_retriever->Init())
+    {
+        LogError("Retriever initialization failed");
+        return false;
+    }
+
+    return true;
 }
 //----------------------------------------------------------------------------------------------
 CaseBasedReasonerEx::~CaseBasedReasonerEx()

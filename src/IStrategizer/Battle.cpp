@@ -1,5 +1,5 @@
 #include "Battle.h"
-#include "DeployFSMState.h"
+#include "TargetFSMState.h"
 #include "AttackFSMState.h"
 #include "FinishedFSMState.h"
 #include "MessagePump.h"
@@ -13,18 +13,19 @@ using namespace IStrategizer;
 using namespace std;
 
 Battle::Battle(RtsGame& game) :
-    EngineComponent("Battle"),
-    m_stateMachine(Deploy, Finished)
+    m_stateMachine(Target, Finished),
+    m_currentTarget(DONT_CARE),
+    m_nextTarget(DONT_CARE)
 {
     SelectArmy(game);
 
     // Initialize the FSM
-    m_stateMachine.AddState(new DeployFSMState<Battle*>(this));
+    m_stateMachine.AddState(new TargetFSMState<Battle*>(this));
     m_stateMachine.AddState(new AttackFSMState<Battle*>(this));
     m_stateMachine.AddState(new FinishedFSMState<Battle*>(this));
 
     // Register for messages
-    g_MessagePump.RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 }
 //////////////////////////////////////////////////////////////////////////
 void Battle::SelectArmy(RtsGame &game)
@@ -33,11 +34,15 @@ void Battle::SelectArmy(RtsGame &game)
     game.Self()->Entities(entities);
     for (TID entityId : entities)
     {
-        GameType* pEntityType = game.GetEntityType(game.Self()->GetEntity(entityId)->Type());
+        GameEntity* pAttacker = game.Self()->GetEntity(entityId);
+        GameType* pEntityType = game.GetEntityType(pAttacker->Type());
 
-        if (!pEntityType->Attr(ECATTR_IsCowrad) && pEntityType->Attr(ECATTR_CanAttack))
+        if (pEntityType->Attr(ECATTR_IsAttacker) &&
+            g_Assist.IsEntityObjectReady(entityId) &&
+            !pAttacker->IsLocked())
         {
             m_army.insert(entityId);
+            pAttacker->Lock(this);
         }
     }
 }
@@ -59,9 +64,24 @@ void Battle::NotifyMessegeSent(Message* p_msg)
         }
         else if (pMsg->Data()->OwnerId == PLAYER_Enemy)
         {
-            if (m_targetEnemyEntity == pMsg->Data()->EntityId)
+            if (m_nextTarget == pMsg->Data()->EntityId)
             {
                 m_destroyedEnemyEntities.push_back(pMsg->Data()->EntityId);
+            }
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+Battle::~Battle()
+{
+    if (g_Game != nullptr)
+    {
+        for (auto attackerId : m_army)
+        {
+            GameEntity* pAttacker = g_Game->Self()->GetEntity(attackerId);
+            if (pAttacker != nullptr)
+            {
+                pAttacker->Unlock(this);
             }
         }
     }

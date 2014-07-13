@@ -4,16 +4,13 @@
 
 #include "Expression.h"
 
-#ifndef SVECTOR_H
-#include "SVector.h"
-#endif
-
 namespace IStrategizer
 {
     ///> class=CompositeExpression
     ///> parent=Expression
     class CompositeExpression : public Expression
     {
+		OBJECT_SERIALIZABLE_P(CompositeExpression, Expression, &_expressions, &_shortCircuit);
     protected:
         ///> type=vector(Expression*)
         Serialization::SVector<Expression*> _expressions;
@@ -21,12 +18,12 @@ namespace IStrategizer
         bool _shortCircuit;
 
         Expression* GetTermAux(int p_currentIndex, int p_targetIndex);
-        void InitializeAddressesAux();
 
     public:
         CompositeExpression() {}
         CompositeExpression(const std::vector<Expression*>& p_expressions) : Expression(EXPRESSION_Composite), _expressions(p_expressions), _shortCircuit(true) {}
         CompositeExpression(Expression* p_expression) : Expression(EXPRESSION_Composite), _shortCircuit(true) { _expressions.push_back(p_expression); }
+		~CompositeExpression();
         bool AddExpression(Expression* p_expression);
         bool RemoveExpression(Expression* p_expression);
         bool Equals(const Expression* p_rhs) const;

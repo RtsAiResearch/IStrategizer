@@ -2,21 +2,18 @@
 #ifndef PLAYERRESOURCES_H
 #define PLAYERRESOURCES_H
 
-#ifndef WORLDRESOURCES_H
 #include "WorldResources.h"
-#endif
-#include "UserObject.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
     class RtsGame;
 
     ///> class=PlayerResources
-    class PlayerResources : public Serialization::UserObject
+    class PlayerResources : public EngineObject
     {
-        OBJECT_MEMBERS(7, &m_lockedPrimary, &m_lockedSecondary, &m_lockedSupply,
+		OBJECT_SERIALIZABLE(PlayerResources, &m_lockedPrimary, &m_lockedSecondary, &m_lockedSupply,
             &m_isOnline, &m_cachedPrimary, &m_cachedSecondary, &m_cachedSupply);
-
     public:
         PlayerResources() :
             m_lockedPrimary(0),
@@ -33,9 +30,9 @@ namespace IStrategizer
 
         virtual ~PlayerResources() {}
         virtual bool HasEnough(const WorldResources* p_resources);
-        virtual int Supply() = 0;
-        virtual int Secondary() = 0;
-        virtual int Primary() = 0;
+        virtual int Supply() const = 0;
+        virtual int Secondary() const = 0;
+        virtual int Primary() const = 0;
         void SetOffline(RtsGame* pBelongingGame);
 
     protected:

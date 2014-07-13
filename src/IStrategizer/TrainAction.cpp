@@ -171,6 +171,8 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
 //----------------------------------------------------------------------------------------------
 bool TrainAction::ExecuteAux(RtsGame& game, const WorldClock& clock)
 {
+	LogActivity(ExecuteAux);
+
     EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
     GameEntity *pGameTrainer;
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
@@ -226,25 +228,19 @@ void TrainAction::InitializePreConditions()
     _preCondition = new And(m_terms);
 }
 //----------------------------------------------------------------------------------------------
-void TrainAction::OnSucccess(RtsGame& game, const WorldClock& clock)
-{
-    FreeResources(game);
-}
-//----------------------------------------------------------------------------------------------
-void TrainAction::OnFailure(RtsGame& game, const WorldClock& clock)
-{
-    FreeResources(game);
-}
-//----------------------------------------------------------------------------------------------
 void TrainAction::FreeResources(RtsGame& game)
 {
-    GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
+    if (m_traineeId != DONT_CARE)
+    {
+        GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
 
-    if (pTrainee && pTrainee->IsLocked())
-        pTrainee->Unlock(this);
+        if (pTrainee && pTrainee->IsLocked())
+            pTrainee->Unlock(this);
 
-    if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
-        m_requiredResources.Unlock(this);
+        if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
+            m_requiredResources.Unlock(this);
+        m_traineeId = DONT_CARE;
+    }
 }
 //----------------------------------------------------------------------------------------------
 bool TrainAction::Equals(PlanStepEx* p_planStep)

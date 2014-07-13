@@ -5,7 +5,10 @@
 #include <fstream>
 #include <cassert>
 #include <crtdefs.h>
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <Psapi.h>
 
 using namespace IStrategizer;
 using namespace std;
@@ -30,16 +33,16 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
     GetLocalTime(&sysTime);
 
     sprintf_s(buffer2, LogBufferMax, "[%s@%02d:%02d:%02d.%03d@%s] %s\n",
-    logTypeName[(unsigned)p_type],
-    sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
-    p_pFun,
-    buffer1);
+        logTypeName[(unsigned)p_type],
+        sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
+        p_pFun,
+        buffer1);
 
     printf_s(buffer2);
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
     OutputDebugStringA(buffer2);
-    #endif
+#endif
 
     if (m_isLogFileInitialized)
         m_pen << buffer2;
@@ -64,4 +67,13 @@ void Logger::FinalizeLogFile()
         m_pen.close();
         m_isLogFileInitialized = false;
     }
+}
+
+
+void ActivityLogMarker::FormatActivity()
+{
+    PROCESS_MEMORY_COUNTERS pmc;
+
+    GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
+    sprintf_s(m_txt, "%s: Memory=%d", m_pName, pmc.WorkingSetSize / 1024);
 }
