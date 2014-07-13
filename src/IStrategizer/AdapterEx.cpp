@@ -26,7 +26,7 @@ using namespace std;
 
 typedef pair<TID, ObjectStateType> UnitEntry;
 
-RankedStates AdapterEx::BuilderStatesRank = { OBJSTATE_Idle, OBJSTATE_GatheringPrimary, OBJSTATE_GatheringSecondary };
+RankedStates AdapterEx::BuilderStatesRank = { OBJSTATE_Idle, OBJSTATE_GatheringSecondary, OBJSTATE_GatheringPrimary };
 RankedStates AdapterEx::GathererStatesRank = { OBJSTATE_Idle };
 RankedStates AdapterEx::AttackerStatesRank = { OBJSTATE_Idle };
 RankedStates AdapterEx::EntityToMoveStatesRank = { OBJSTATE_Idle, OBJSTATE_UnderAttack, OBJSTATE_Attacking, OBJSTATE_Moving };

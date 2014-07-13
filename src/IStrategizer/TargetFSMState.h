@@ -32,7 +32,11 @@ namespace IStrategizer
 
         void Enter(RtsGame& game, const WorldClock& clock)
         {
-            SelectEnemyTarget(game);
+            if (!ArmyUnderAttack(game))
+            {
+                SelectEnemyTarget(game);
+            }
+
             ControllerTraits<TController>::Type battle = m_controller;
             if (m_targetId != DONT_CARE)
             {
