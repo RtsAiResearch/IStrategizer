@@ -27,8 +27,8 @@ const unsigned MaxExecTime = 0;
 TrainAction::TrainAction()
     : Action(ACTIONEX_Train, MaxPrepTime, MaxExecTrialTime, MaxExecTime),
     m_trainStarted(false),
-    m_traineeId(TID()),
-    m_trainerId(TID()),
+	m_traineeId(INVALID_TID),
+    m_trainerId(INVALID_TID),
     m_pTrainee(nullptr)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
@@ -38,8 +38,8 @@ TrainAction::TrainAction()
 TrainAction::TrainAction(const PlanStepParameters& params)
     : Action(ACTIONEX_Train, params, MaxPrepTime, MaxExecTrialTime, MaxExecTime),
     m_trainStarted(false),
-    m_traineeId(TID()),
-    m_trainerId(TID()),
+	m_traineeId(INVALID_TID),
+	m_trainerId(INVALID_TID),
     m_pTrainee(nullptr)
 {
 }
@@ -59,7 +59,9 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
         _ASSERTE(pEntity);
 
         // We are interested only in free trainees that have not been locked before
-        if (pEntity->Type() == _params[PARAM_EntityClassId] &&
+        if (!m_trainStarted &&
+			m_traineeId == INVALID_TID &&
+			pEntity->Type() == _params[PARAM_EntityClassId] &&
             !pEntity->IsLocked())
         {
             // Check if the trainer is training that entity
@@ -188,7 +190,6 @@ bool TrainAction::ExecuteAux(RtsGame& game, const WorldClock& clock)
         _ASSERTE(pGameTrainer);
         _ASSERTE(!m_requiredResources.IsNull());
         m_requiredResources.Lock(this);
-        LogInfo("Action %s commanded trainer=%d to train trainee=%d", ToString().c_str(), m_trainerId, m_traineeId);
         executed = pGameTrainer->Train(traineeType);
     }
 
@@ -230,7 +231,7 @@ void TrainAction::InitializePreConditions()
 //----------------------------------------------------------------------------------------------
 void TrainAction::FreeResources(RtsGame& game)
 {
-    if (m_traineeId != DONT_CARE)
+    if (m_traineeId != INVALID_TID)
     {
         GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
 
@@ -239,7 +240,8 @@ void TrainAction::FreeResources(RtsGame& game)
 
         if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
             m_requiredResources.Unlock(this);
-        m_traineeId = DONT_CARE;
+        m_traineeId = INVALID_TID;
+		m_trainerId = INVALID_TID;
     }
 }
 //----------------------------------------------------------------------------------------------

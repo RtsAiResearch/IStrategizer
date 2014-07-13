@@ -7,19 +7,21 @@ namespace IStrategizer
 {
     class Message
     {
-    private:
-        MessageType _messageTypeID;
-        unsigned long _gameCycle; 
-        bool _delivered;
-        int _priority;
     public:
+		Message(unsigned long p_gameCycle, MessageType p_messageTypeID);
+		virtual ~Message();
         unsigned long GameCycle();
         int MessageTypeID();
         bool Delivered();
         void Delivered(bool p_delivered);
         int Priority();
-        Message(unsigned long p_gameCycle, MessageType p_messageTypeID);
-        virtual ~Message();
+		const char* ToString()  const { return Enums[_messageTypeID]; }
+
+	private:
+		MessageType _messageTypeID;
+		unsigned long _gameCycle;
+		bool _delivered;
+		int _priority;
     };
 
 

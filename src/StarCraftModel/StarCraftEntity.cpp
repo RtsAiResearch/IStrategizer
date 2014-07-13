@@ -205,6 +205,7 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     else
     {
         // _ASSERTE(Broodwar->canBuildHere(pos, type));
+		m_pUnit->stop(true);
         return m_pUnit->build(type, pos);
     }
 };
@@ -298,6 +299,9 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
 
     _ASSERTE(gatherer->canGather(resource));
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
+	gatherer->stop();
+
+	gatherer->stop(true);
     return gatherer->gather(resource);
 }
 //----------------------------------------------------------------------------------------------

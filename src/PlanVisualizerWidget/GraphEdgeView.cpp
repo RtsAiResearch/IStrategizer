@@ -6,7 +6,6 @@
 #include "GraphEdgeView.h"
 #endif
 
-
 using namespace std;
 using namespace IStrategizer;
 
@@ -18,13 +17,22 @@ GraphEdgeView::GraphEdgeView(GraphNodeView *p_startNode, GraphNodeView *p_endNod
 {
     m_startNode = p_startNode;
     m_endNode = p_endNode;
-    m_color = Qt::black;
     m_selectedColor = Qt::red;
     m_arrowSize = DefaultArrowSize;
     m_contextMenu = p_contextMenu;
 
-    setPen(QPen(m_color, 2, Qt::SolidLine, Qt::SquareCap));
-    setFlag(ItemIsSelectable, true);
+	if (p_endNode->SatisfyingGoalId() == p_startNode->ModelId())
+	{
+		m_color = Qt::darkGray;
+		setPen(QPen(m_color, 4, Qt::DotLine, Qt::SquareCap));
+	}
+	else
+	{
+		m_color = Qt::black;
+		setPen(QPen(m_color, 3, Qt::SolidLine, Qt::SquareCap));
+	}
+    
+	setFlag(ItemIsSelectable, true);
 
     setCacheMode(QGraphicsItem::ItemCoordinateCache);
 }
@@ -88,8 +96,15 @@ void GraphEdgeView::paint(QPainter *p_painter, const QStyleOptionGraphicsItem *p
     QPointF intersectPoint1;
     QPointF intersectPoint2;
     QLineF polyLine;
+	int polyWidth, polyHeight;
 
     endPolygon = QPolygonF(m_endNode->rect());
+	polyWidth = (int)m_endNode->rect().width();
+	polyHeight = (int)m_endNode->rect().height();
+
+	if (polyWidth == 0 && polyHeight == 0)
+		return;
+
     p1 = endPolygon.first() + m_endNode->pos();
     for (int i = 1; i < endPolygon.count(); ++i) 
     {
@@ -103,6 +118,12 @@ void GraphEdgeView::paint(QPainter *p_painter, const QStyleOptionGraphicsItem *p
     }
 
     endPolygon = QPolygonF(m_startNode->rect());
+	polyWidth = (int)m_endNode->rect().width();
+	polyHeight = (int)m_endNode->rect().height();
+
+	if (polyWidth == 0 && polyHeight == 0)
+		return;
+
     p1 = endPolygon.first() + m_startNode->pos();
     for (int i = 1; i < endPolygon.count(); ++i) 
     {
@@ -130,25 +151,6 @@ void GraphEdgeView::paint(QPainter *p_painter, const QStyleOptionGraphicsItem *p
     m_arrowHead << this->line().p1() << arrowP1 << arrowP2;
     p_painter->drawLine(this->line());
     p_painter->drawPolygon(m_arrowHead);
-
-    //if (isSelected()) 
-    //{
-    //    p_painter->setPen(QPen(m_selectedColor, 2, Qt::DotLine));
-
-    //    QLineF normal = this->line().unitVector().normalVector();
-    //    qreal dx = normal.dx();
-    //    qreal dy = normal.dy();
-
-    //    QLineF myLine;
-    //    
-    //    myLine = this->line();
-    //    myLine.translate(dx * 4, dy * 4);
-    //    p_painter->drawLine(myLine);
-
-    //    myLine = this->line();
-    //    myLine.translate(-dx * 4,-dy * 4);
-    //    p_painter->drawLine(myLine);
-    //}
 }
 //----------------------------------------------------------------------------------------------
 void GraphEdgeView::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

@@ -365,8 +365,6 @@ bool OnlinePlanExpansionExecution::DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::No
     IOlcbpPlan::NodeSerializedSet visitedNodes;
     IOlcbpPlan::NodeSerializedSet snippetRoots;
 
-    _ASSERTE(IsNodeOpen(snippetGoalId));
-
     // 1. Collect the snippet orphan nodes to start the BFS from
     GetSnippetOrphanNodes(snippetGoalId, snippetRoots);
     for (auto childNode : snippetRoots)
@@ -449,7 +447,6 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
     GoalEx* pGoal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
     _ASSERTE(pGoal->State() == ESTATE_Succeeded);
 
-
     if (GetNodeData(nodeId).BelongingCase != nullptr)
     {
         LogInfo("Goal=%s succeeded, revising its case and retaining it", pGoal->ToString().c_str());
@@ -457,6 +454,7 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
         CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
         m_pCbReasoner->Reviser()->Revise(currentCase, true);
         //UpdateHistory(currentCase);
+		m_succeededSnippets.insert(nodeId);
     }
     else
     {

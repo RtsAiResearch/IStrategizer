@@ -2,14 +2,14 @@
 #ifndef ADJLISTDIGRAPH_H
 #define ADJLISTDIGRAPH_H
 
-#include <mutex>
-#include <stack>
 #include "IDigraph.h"
 #include "SMap.h"
 #include "SPair.h"
 #include "SSet.h"
 #include "ISerializable.h"
 #include "Logger.h"
+#include <mutex>
+#include <stack>
 
 namespace IStrategizer
 {

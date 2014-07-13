@@ -41,6 +41,7 @@ namespace IStrategizer
         DEFINE(StrategyType);
         DEFINE(ExecutionStateType);
         DEFINE(DeployType);
+		DEFINE(MessageType);
     };
     //---------------------------------------------------------------------------
     void InitAttributesMetaData()

@@ -1,8 +1,7 @@
 #include "MessagePump.h"
-
-#ifndef METADATA_H
 #include "MetaData.h"
-#endif
+#include "Logger.h"
+
 using namespace IStrategizer;
 
 MessagePump::MessagePump()
@@ -16,14 +15,7 @@ MessagePump::MessagePump()
     AddMessage(MSG_PlanStructureChange);
     AddMessage(MSG_PlanComplete);
     AddMessage(MSG_BattleComplete);
-
-    // Obsolete Messages
     AddMessage(MSG_GameActionLog);
-    AddMessage(MSG_GameExit);
-    AddMessage(MSG_EntityAttacked);
-    AddMessage(MSG_EntityKilled);
-    AddMessage(MSG_EntityTrained);
-    AddMessage(MSG_BuildingBuilt);
 }
 //----------------------------------------------------------------------------------------------
 MessagePump* MessagePump::Instance()
@@ -46,6 +38,7 @@ void MessagePump::Send(Message* p_message, bool p_immediate)
     }
     else
     {
+		LogInfo("Queuing message %s", p_message->ToString());
         _messageQueue.push(p_message);
     }
 }

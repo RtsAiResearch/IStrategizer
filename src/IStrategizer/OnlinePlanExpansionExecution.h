@@ -85,6 +85,7 @@ namespace IStrategizer
         IOlcbpPlan::NodeSet m_activeGoalSet;
         OlcbpPlanContext m_planContext;
         std::map<IOlcbpPlan::NodeID, std::set<IOlcbpPlan::NodeID>> m_executingActions;
+		std::set<IOlcbpPlan::NodeID> m_succeededSnippets;
     };
 }
 
