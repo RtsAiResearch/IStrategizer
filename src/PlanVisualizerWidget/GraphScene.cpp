@@ -140,7 +140,9 @@ void GraphScene::ConstructGraph()
     {
         for (NodeID nodeId : m_graphLevels[level])
         {
-            GraphNodeView* pNodeView = new GraphNodeView(m_pGraph->GetNode(nodeId), nodeId, m_pPlanContext, m_pNodeMenu, nullptr);
+            GraphNodeView* pNodeView = new GraphNodeView(m_pGraph->GetNode(nodeId),
+				(m_pPlanContext != nullptr ? &m_pPlanContext->Data.at(nodeId) : nullptr)
+				, m_pNodeMenu, nullptr);
             m_nodeIdToNodeViewMap[nodeId] = pNodeView;
             addItem(pNodeView);
         }
@@ -437,7 +439,9 @@ void GraphScene::NewNode()
 
         NodeID nodeId = m_pGraph->AddNode(pNodeModel, pNodeModel->Id());
 
-        GraphNodeView *pNodeView = new GraphNodeView(pNodeModel, nodeId, m_pPlanContext, m_pNodeMenu, nullptr);
+        GraphNodeView *pNodeView = new GraphNodeView(pNodeModel,
+			(m_pPlanContext != nullptr ? &m_pPlanContext->Data.at(nodeId) : nullptr),
+			m_pNodeMenu, nullptr);
 
         pNodeView->setPos(m_lastCtxtMenuScreenPos.x(), m_lastCtxtMenuScreenPos.y());
 
@@ -586,21 +590,17 @@ void GraphScene::OnGraphUpdate()
     {
         m_pGraph->Lock();
 
-        m_currActiveGoalSet = m_pPlanContext->ActiveGoalSet;
-
-        m_pGraph->Unlock();
-
         for (auto& record : m_nodeIdToNodeViewMap)
         {
-            if (m_nodeIdToNodeViewMap.count(record.first) > 0)
-                record.second->MarkAsInactive();
+			if (m_pPlanContext->ActiveGoalSet.count(record.first) > 0)
+				record.second->MarkAsActive();
+			else
+				record.second->MarkAsInactive();
+
+			record.second->OnUpdate();
         }
 
-        for (auto goalId : m_currActiveGoalSet)
-        {
-            if (m_nodeIdToNodeViewMap.count(goalId) > 0)
-                m_nodeIdToNodeViewMap[goalId]->MarkAsActive();
-        }
+		m_pGraph->Unlock();
     }
 
     update();

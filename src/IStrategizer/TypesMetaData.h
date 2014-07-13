@@ -432,22 +432,27 @@ namespace IStrategizer
         MSG_GameActionLog    = 0x21900,
         MSG_START            = 0x21900, 
         MSG_Input,
-        MSG_GameExit,
         MSG_GameStart,
         MSG_GameEnd,
-        MSG_BuildingBuilt,
-        MSG_EntityTrained,
-        MSG_EntityAttacked,
-        MSG_EntityKilled,
         MSG_EntityCreate,
         MSG_EntityDestroy,
         MSG_EntityRenegade,
-        MSG_EntityComplete,
         MSG_PlanStructureChange,
         MSG_PlanComplete,
         MSG_BattleComplete,
         MSG_END
     };
+#define Define_MessageType \
+	Enums[MSG_GameActionLog] = "GameActionLog"; \
+	Enums[MSG_Input] = "Input"; \
+	Enums[MSG_GameStart] = "GameStart"; \
+	Enums[MSG_GameEnd] = "GameEnd"; \
+	Enums[MSG_EntityCreate] = "EntityCreate"; \
+	Enums[MSG_EntityDestroy] = "EntityDestroy"; \
+	Enums[MSG_EntityRenegade] = "EntityRenegade"; \
+	Enums[MSG_PlanStructureChange] = "PlanStructureChange"; \
+	Enums[MSG_PlanComplete] = "PlanComplete"; \
+	Enums[MSG_BattleComplete] = "BattleComplete"; \
     //---------------------------------------------------------------------------
 #define Prefix_UnitAttackType UTYPE
     enum UnitAttackType

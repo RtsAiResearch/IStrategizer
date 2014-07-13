@@ -21,7 +21,7 @@ GraphEdgeView::GraphEdgeView(GraphNodeView *p_startNode, GraphNodeView *p_endNod
     m_arrowSize = DefaultArrowSize;
     m_contextMenu = p_contextMenu;
 
-	if (p_endNode->Data()->SatisfyingGoal == p_startNode->Data()->ID)
+	if (p_endNode->SatisfyingGoalId() == p_startNode->ModelId())
 	{
 		m_color = Qt::darkGray;
 		setPen(QPen(m_color, 4, Qt::DotLine, Qt::SquareCap));

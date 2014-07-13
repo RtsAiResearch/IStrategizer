@@ -1,9 +1,8 @@
 #include "MessagePumpSubject.h"
+#include "MetaData.h"
+#include "Logger.h"
 #include <algorithm>
 
-#ifndef METADATA_H
-#include "MetaData.h"
-#endif
 using namespace IStrategizer;
 
 void MessagePumpSubject::AddMessage(MessageType p_messageTypeID)
@@ -51,6 +50,8 @@ void MessagePumpSubject::UnregisterForAllMessages(IMessagePumpObserver* p_observ
 void MessagePumpSubject::OnMessageSent(Message* p_message)
 {
     ObserverList* m_observerList;
+
+	LogInfo("Delivering message %s", p_message->ToString());
 
     if(_messageObserversTable.find((MessageType)p_message->MessageTypeID()) != _messageObserversTable.end())
     {
