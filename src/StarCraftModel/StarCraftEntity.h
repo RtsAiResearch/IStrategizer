@@ -57,7 +57,8 @@ namespace IStrategizer
         bool AttackEntity(TID p_targetEntityObjectId);
         bool Train(EntityClassType p_entityClassId);
         bool Move(Vector2 p_position);
-		bool GatherResourceEntity(TID p_resourceEntityObjectId);
+        bool GatherResourceEntity(TID p_resourceEntityObjectId);
+        bool Stop();
 
         void SetOffline(RtsGame* pBelongingGame);
 

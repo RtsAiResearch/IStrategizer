@@ -44,6 +44,7 @@ namespace IStrategizer
         virtual bool AttackEntity(TID targetEntityObjectId) = 0;
         virtual bool Train(EntityClassType entityClassId) = 0;
         virtual bool GatherResourceEntity(TID resourceEntityObjectId) = 0;
+        virtual bool Stop() = 0;
 
         virtual void SetOffline(RtsGame* pBelongingGame) = 0;
         bool Acquire() { return true; }

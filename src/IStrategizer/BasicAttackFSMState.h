@@ -1,5 +1,5 @@
-#ifndef ATTACKFSMSTATE_H
-#define ATTACKFSMSTATE_H
+#ifndef BASICATTACKFSMSTATE_H
+#define BASICATTACKFSMSTATE_H
 
 #include "FSMState.h"
 #include "EngineData.h"
@@ -13,10 +13,10 @@
 namespace IStrategizer
 {
     template<class TController, class TControllerTraits = ControllerTraits<TController>>
-    class AttackFSMState : public FSMState<TController, ControllerTraits<TController>>
+    class BasicAttackFSMState : public FSMState<TController, ControllerTraits<TController>>
     {
     public:
-        AttackFSMState(TController controller) : FSMState(Attack, controller) {}
+        BasicAttackFSMState(TController controller) : FSMState(BasicAttack, controller) {}
         
         void Enter(RtsGame& game, const WorldClock& clock)
         {
@@ -49,4 +49,4 @@ namespace IStrategizer
     };
 }
 
-#endif // ATTACKFSMSTATE_H
+#endif // BASICATTACKFSMSTATE_H

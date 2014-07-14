@@ -17,12 +17,13 @@ namespace IStrategizer
     class TargetFSMState : public FSMState<TController, ControllerTraits<TController>>
     {
     public:
-        TargetFSMState(TController controller) : 
+        TargetFSMState(TController controller, BattleStateType nextState) :
             m_enemyAttacked(false),
             m_targetId(DONT_CARE),
             m_targetTypeRank(DONT_CARE),
             m_enemyEntitiesCount(DONT_CARE),
-            FSMState(Target, controller)
+            FSMState(Target, controller),
+            m_nextState(nextState)
         {
             m_targetRanking.push_back(ECATTR_IsAttacker);
             m_targetRanking.push_back(ECATTR_IsCowrad);
@@ -65,7 +66,7 @@ namespace IStrategizer
             ControllerTraits<TController>::ConstType battle = m_controller;
             Army* pArmy = TControllerTraits::GetArmy(battle);
 
-            return (pArmy->Empty() || m_enemyEntitiesCount == 0) ? Finished : Attack ;
+            return (pArmy->Empty() || m_enemyEntitiesCount == 0) ? Finished : m_nextState;
         }
 
     private:
@@ -136,6 +137,7 @@ namespace IStrategizer
         int m_targetTypeRank;
         int m_enemyEntitiesCount;
         bool m_enemyAttacked;
+        BattleStateType m_nextState;
         std::vector<EntityClassAttribute> m_targetRanking;
     };
 }

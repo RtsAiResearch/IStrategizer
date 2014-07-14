@@ -243,6 +243,14 @@ bool StarCraftEntity::AttackGround(Vector2 p_position)
     return m_pUnit->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
+bool StarCraftEntity::Stop()
+{
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
+    return m_pUnit->stop();
+};
+//----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 {
     if (!m_isOnline)

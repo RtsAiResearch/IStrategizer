@@ -114,9 +114,6 @@
     <ClInclude Include="..\AdapterEx.h">
       <Filter>Header Files\OLCBP\CBR</Filter>
     </ClInclude>
-    <ClInclude Include="..\AttackFSMState.h">
-      <Filter>Header Files\AttackManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\AttackManager.h">
       <Filter>Header Files\AttackManager</Filter>
     </ClInclude>
@@ -415,6 +412,12 @@
       <Filter>Header Files\AttackManager</Filter>
     </ClInclude>
     <ClInclude Include="..\StrategySelector.h">
+      <Filter>Header Files\AttackManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BasicAttackFSMState.h">
+      <Filter>Header Files\AttackManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DeployFSMState.h">
       <Filter>Header Files\AttackManager</Filter>
     </ClInclude>
   </ItemGroup>

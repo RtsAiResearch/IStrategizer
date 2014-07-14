@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\ActionAbstractor.h" />
     <ClInclude Include="..\DefinitionCrossMapping.h" />
+    <ClInclude Include="..\TankAttackFSMState.h" />
     <ClInclude Include="..\GameTraceCollector.h" />
     <ClInclude Include="..\StarCraftEntity.h" />
     <ClInclude Include="..\StarCraftGame.h" />
