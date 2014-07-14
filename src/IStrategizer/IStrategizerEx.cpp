@@ -166,7 +166,7 @@ bool IStrategizerEx::Init()
 PlanStepParameters IStrategizerEx::StartTrainingArmy()
 {
     PlanStepParameters params;
-    m_pStrategySelector->SelectTrainOrder(m_param.map, params);
+    m_pStrategySelector->SelectTrainOrder(params);
     
     return params;
 }

@@ -13,7 +13,7 @@ namespace IStrategizer
     {
     public:
         virtual void SelectAttackStrategy(Army* pArmy, std::vector<FSMState<Battle*>*>& states) const = 0;
-        virtual void SelectTrainOrder(std::string map, PlanStepParameters& params) = 0;
+        virtual void SelectTrainOrder(PlanStepParameters& params) = 0;
     };
 }
 

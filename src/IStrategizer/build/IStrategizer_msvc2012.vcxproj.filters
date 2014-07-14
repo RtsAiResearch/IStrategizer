@@ -412,10 +412,10 @@
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="..\Army.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\AttackManager</Filter>
     </ClInclude>
     <ClInclude Include="..\StrategySelector.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\AttackManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

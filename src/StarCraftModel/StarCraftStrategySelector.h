@@ -12,11 +12,18 @@ namespace IStrategizer
     class StarCraftStrategySelector : public StrategySelector
     {
     public:
-        StarCraftStrategySelector() : m_currentTrainOrder(0)
+        StarCraftStrategySelector(std::string map) : m_currentTrainOrder(0)
         {
             PlanStepParameters params;
+
+            // 4 Marines
             params[PARAM_AlliedUnitsTotalHP] = 160;
             params[PARAM_AlliedUnitsTotalDamage] = 196;
+            m_trainOrders.push_back(params);
+
+            // 4 Firebats
+            params[PARAM_AlliedUnitsTotalHP] = 200;
+            params[PARAM_AlliedUnitsTotalDamage] = 36;
             m_trainOrders.push_back(params);
         }
 
@@ -27,7 +34,7 @@ namespace IStrategizer
             states.push_back(new FinishedFSMState<Battle*>(nullptr));
         }
 
-        void SelectTrainOrder(std::string map, PlanStepParameters& params)
+        void SelectTrainOrder(PlanStepParameters& params)
         {
             int orderInx;
             if (m_currentTrainOrder == m_trainOrders.size() - 1)
@@ -36,7 +43,7 @@ namespace IStrategizer
             }
             else
             {
-                orderInx = ++m_currentTrainOrder;
+                orderInx = m_currentTrainOrder++;
             }
 
             params = m_trainOrders[orderInx];
