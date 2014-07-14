@@ -15,6 +15,7 @@
 #include "RetainerEx.h"
 #include "DataMessage.h"
 #include "GoalFactory.h"
+#include "Action.h"
 #include <stack>
 
 using namespace std;
@@ -167,7 +168,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 
 	if (m_planStructureChangedThisFrame)
 	{
-		g_MessagePump->Send(new Message(clock.ElapsedGameCycles(), MSG_PlanStructureChange), true);
+		g_MessagePump->Send(new Message(clock.ElapsedGameCycles(), MSG_PlanStructureChange));
 		m_planStructureChangedThisFrame = false;
 	}
 }
@@ -182,7 +183,7 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 #pragma region Node Open
 	if (IsNodeOpen(currentNode))
 	{
-		_ASSERTE(pCurrentGoalNode->State() == ESTATE_NotPrepared);
+		_ASSERTE(pCurrentGoalNode->GetState() == ESTATE_NotPrepared);
 		_ASSERTE(IsNodeDone(currentNode) == false);
 
 		bool hasPreviousPlan = DestroyGoalSnippetIfExist(currentNode);
@@ -202,7 +203,7 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 		if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))
 		{
 			LogInfo("Goal %s already satisfied, no need to expand it, closing the node", pCurrentGoalNode->ToString().c_str());
-			pCurrentGoalNode->State(ESTATE_Succeeded, *g_Game, clock);
+			pCurrentGoalNode->SetState(ESTATE_Succeeded, *g_Game, clock);
 			CloseNode(currentNode);
 			OnGoalNodeSucceeded(currentNode);
 		}
@@ -254,7 +255,7 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 				else
 				{
 					LogInfo("Goal=%s exhausted all possible cases, failing it", pCurrentGoalNode->ToString().c_str());
-					pCurrentGoalNode->State(ESTATE_Failed, *g_Game, clock);
+					pCurrentGoalNode->SetState(ESTATE_Failed, *g_Game, clock);
 					CloseNode(currentNode);
 					OnGoalNodeFailed(currentNode);
 				}
@@ -265,11 +266,11 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 #pragma region Node Closed
 	else
 	{
-		_ASSERTE(pCurrentGoalNode->State() == ESTATE_NotPrepared);
+		_ASSERTE(pCurrentGoalNode->GetState() == ESTATE_NotPrepared);
 
 		if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))
 		{
-			pCurrentGoalNode->State(ESTATE_Succeeded, *g_Game, clock);
+			pCurrentGoalNode->SetState(ESTATE_Succeeded, *g_Game, clock);
 			OnGoalNodeSucceeded(currentNode);
 		}
 		else
@@ -279,9 +280,19 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 			// this goal should fail, it has no future
 			if (GetNodeData(currentNode).WaitOnChildrenCount == 0)
 			{
-				LogInfo("Goal '%s' is still not done and all of its children are done execution, failing it",
-					pCurrentGoalNode->ToString().c_str());
-				OpenNode(currentNode);
+				if (!pCurrentGoalNode->IsSleeping(clock))
+				{
+					if (pCurrentGoalNode->SleepsCount() < GoalMaxSleepsCount)
+					{
+						LogInfo("%s is still not done and all of its children are done execution, slept %d time(s) before, will send it to sleep", ToString().c_str(), pCurrentGoalNode->SleepsCount());
+						pCurrentGoalNode->Sleep(clock, GoalSleepTime);
+					}
+					else
+					{
+						LogInfo("%s is still not done and all of its children are done execution, already tried to sleep it %d time(s) before, failing it", pCurrentGoalNode->ToString().c_str(), GoalMaxSleepsCount);
+						OpenNode(currentNode);
+					}
+				}
 			}
 		}
 	}
@@ -290,25 +301,41 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock)
 {
-	PlanStepEx *pCurrentPlanStep = m_pOlcbpPlan->GetNode(currentNode);
 	_ASSERTE(IsNodeReady(currentNode));
+	_ASSERTE(IsActionNode(currentNode));
+
+	Action *pAction = (Action*)m_pOlcbpPlan->GetNode(currentNode);
 
 	if (!IsNodeDone(currentNode))
 	{
-		_ASSERTE(pCurrentPlanStep->State() == ESTATE_NotPrepared ||
-			pCurrentPlanStep->State() == ESTATE_Executing ||
-			pCurrentPlanStep->State() == ESTATE_END);
+		_ASSERTE(pAction->GetState() == ESTATE_NotPrepared ||
+			pAction->GetState() == ESTATE_Executing ||
+			pAction->GetState() == ESTATE_END);
 
-		pCurrentPlanStep->Update(*g_Game, clock);
+		pAction->Update(*g_Game, clock);
 		AddExecutingNode(currentNode);
 
-		if (pCurrentPlanStep->State() == ESTATE_Succeeded)
+		if (pAction->GetState() == ESTATE_Succeeded)
 		{
 			OnActionNodeSucceeded(currentNode);
 		}
-		else if (pCurrentPlanStep->State() == ESTATE_Failed)
+		else if (pAction->GetState() == ESTATE_Failed)
 		{
-			OnActionNodeFailed(currentNode);
+			if (pAction->SleepsCount() < ActionMaxSleepsCount)
+			{
+				LogInfo("%s failed execution, but will reset it and send it to sleep", pAction->ToString().c_str(), pAction->SleepsCount());
+
+				pAction->Abort(*g_Game);
+				pAction->Reset(*g_Game, clock);
+				pAction->Sleep(clock, ActionSleepTime);
+			}
+			else
+			{
+
+				LogInfo("%s failed execution, already tried to sleep it %d time(s) before, failing it", pAction->ToString().c_str(), ActionMaxSleepsCount);
+				OnActionNodeFailed(currentNode);
+			}
 		}
 	}
 }
+

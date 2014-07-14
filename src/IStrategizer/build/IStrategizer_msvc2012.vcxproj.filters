@@ -52,6 +52,9 @@
     <Filter Include="Header Files\OLCBP\Contingency">
       <UniqueIdentifier>{00fc4716-0edd-4e6b-bc36-81a2c7196232}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\OLCBP\Actions\Obsolete">
+      <UniqueIdentifier>{bef55df9-dadc-44f2-8e6b-725dd0d0408f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\IStrategizerEx.h">
@@ -74,12 +77,6 @@
     </ClInclude>
     <ClInclude Include="..\TrainForceGoal.h">
       <Filter>Header Files\OLCBP\Goals</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AttackEntityAction.h">
-      <Filter>Header Files\OLCBP\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AttackGroundAction.h">
-      <Filter>Header Files\OLCBP\Actions</Filter>
     </ClInclude>
     <ClInclude Include="..\TrainAction.h">
       <Filter>Header Files\OLCBP\Actions</Filter>
@@ -306,9 +303,6 @@
     <ClInclude Include="..\MapArea.h">
       <Filter>Header Files\InfluenceMaps</Filter>
     </ClInclude>
-    <ClInclude Include="..\MoveAction.h">
-      <Filter>Header Files\OLCBP\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="..\GroundControlIM.h">
       <Filter>Header Files\InfluenceMaps</Filter>
     </ClInclude>
@@ -411,6 +405,15 @@
     <ClInclude Include="..\CandidateGathererExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
+    <ClInclude Include="..\MoveAction.h">
+      <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AttackEntityAction.h">
+      <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AttackGroundAction.h">
+      <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Action.cpp">
@@ -495,9 +498,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GatherResourceAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GoalEx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\GoalFactory.cpp">

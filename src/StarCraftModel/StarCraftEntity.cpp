@@ -158,13 +158,14 @@ bool StarCraftEntity::IsTraining(TID p_traineeId) const
         pTrainee->Attr(EOATTR_PosCenterY));
 }
 //----------------------------------------------------------------------------------------------
-string StarCraftEntity::ToString() const
+string StarCraftEntity::ToString(bool minimal) const
 {
-    char str[256];
+    char str[512];
     TID gameTypeId = g_Database.EntityMapping.GetBySecond((EntityClassType)Attr(EOATTR_Type));
     std::string description = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
+	std::string asResource = SharedResource::ToString();
 
-    sprintf_s(str, "%s[%d](Owner=%s, State=%s)", description.c_str(), m_id, (m_pOwner != nullptr ? m_pOwner->ToString(true).c_str() : ""), Enums[Attr(EOATTR_State)]);
+    sprintf_s(str, "%s[%d](%s, State=%s)", description.c_str(), m_id, asResource.c_str(), Enums[Attr(EOATTR_State)]);
     return str;
 }
 //----------------------------------------------------------------------------------------------
@@ -205,7 +206,7 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     else
     {
         // _ASSERTE(Broodwar->canBuildHere(pos, type));
-		m_pUnit->stop(true);
+		m_pUnit->stop();
         return m_pUnit->build(type, pos);
     }
 };
@@ -301,7 +302,7 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
 	gatherer->stop();
 
-	gatherer->stop(true);
+	gatherer->stop();
     return gatherer->gather(resource);
 }
 //----------------------------------------------------------------------------------------------

@@ -318,7 +318,7 @@ void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
         {
             Action* pOriginalActionNode = (Action*)pOriginalNode;
             Action* pClonedActionNode = (Action*)m_clonedNodesMapping[pOriginalNode];
-            pOriginalActionNode->ExecutionHistory(pClonedActionNode->ExecutionHistory());
+            pOriginalActionNode->SetExecutionHistory(pClonedActionNode->GetExecutionHistory());
         }
     }
 }
@@ -445,7 +445,7 @@ void OnlinePlanExpansionExecution::AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan
 void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID nodeId)
 {
     GoalEx* pGoal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
-    _ASSERTE(pGoal->State() == ESTATE_Succeeded);
+    _ASSERTE(pGoal->GetState() == ESTATE_Succeeded);
 
     if (GetNodeData(nodeId).BelongingCase != nullptr)
     {
@@ -473,7 +473,7 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
 void OnlinePlanExpansionExecution::OnGoalNodeFailed(_In_ IOlcbpPlan::NodeID nodeId)
 {
     GoalEx* pGoal = (GoalEx*)m_pOlcbpPlan->GetNode(nodeId);
-    _ASSERTE(pGoal->State() == ESTATE_Failed);
+    _ASSERTE(pGoal->GetState() == ESTATE_Failed);
 
     if (GetNodeData(nodeId).BelongingCase != nullptr)
     {

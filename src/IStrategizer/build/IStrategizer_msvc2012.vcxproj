@@ -164,7 +164,6 @@
     <ClCompile Include="..\GameTrace.cpp" />
     <ClCompile Include="..\CandidateGathererExist.cpp" />
     <ClCompile Include="..\GatherResourceAction.cpp" />
-    <ClCompile Include="..\GoalEx.cpp" />
     <ClCompile Include="..\GoalFactory.cpp" />
     <ClCompile Include="..\GroundControlIM.cpp" />
     <ClCompile Include="..\IMSystemManager.cpp" />

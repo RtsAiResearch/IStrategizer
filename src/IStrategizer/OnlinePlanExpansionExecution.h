@@ -21,7 +21,13 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue CaseNodeValue;
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
 
-        OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx* pCbReasoner);
+		// Time is counted as number of game frames
+		const unsigned GoalSleepTime = 500;
+		const unsigned GoalMaxSleepsCount = 3;
+		const unsigned ActionSleepTime = 500;
+		const unsigned ActionMaxSleepsCount = 3;
+		
+		OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx* pCbReasoner);
         ~OnlinePlanExpansionExecution();
 
         void Update(_In_ const WorldClock& clock);
@@ -37,7 +43,7 @@ namespace IStrategizer
         bool IsActionNode(_In_ IOlcbpPlan::NodeID nodeId) const { return BELONG(ActionType, m_pOlcbpPlan->GetNode(nodeId)->StepTypeId()); }
         bool IsNodeOpen(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).IsOpen == true; }
         bool IsNodeReady(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).WaitOnParentsCount == 0; }
-        bool IsNodeDone(_In_ IOlcbpPlan::NodeID nodeId) const { auto state = m_pOlcbpPlan->GetNode(nodeId)->State(); return state == ESTATE_Succeeded || state == ESTATE_Failed; }
+        bool IsNodeDone(_In_ IOlcbpPlan::NodeID nodeId) const { auto state = m_pOlcbpPlan->GetNode(nodeId)->GetState(); return state == ESTATE_Succeeded || state == ESTATE_Failed; }
         bool IsCaseTried(_In_ IOlcbpPlan::NodeID nodeId, _In_ CaseEx* pCase) const { return GetNodeData(nodeId).TriedCases.count(pCase) > 0; }
 
         OlcbpPlanNodeData& GetNodeData(_In_ IOlcbpPlan::NodeID nodeId) { _ASSERTE(m_nodeData.count(nodeId) > 0); return m_nodeData[nodeId]; }

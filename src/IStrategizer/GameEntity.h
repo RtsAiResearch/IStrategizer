@@ -17,7 +17,7 @@ namespace IStrategizer
     class RtsGame;
 
     ///> class=GameEntity
-	class GameEntity : public EngineObject, public SharedResource
+	class GameEntity : public SharedResource
     {
         OBJECT_SERIALIZABLE(GameEntity, &m_id);
     public:

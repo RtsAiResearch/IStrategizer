@@ -22,7 +22,7 @@ namespace IStrategizer
         bool Equals(PlanStepEx* p_planStep);
 
     protected:
-        bool ExecuteAux(RtsGame& pRtsGame, const WorldClock& p_clock);
+        bool Execute(RtsGame& pRtsGame, const WorldClock& p_clock);
         void InitializePreConditions();
         void InitializePostConditions();
         void FreeResources(RtsGame &game);

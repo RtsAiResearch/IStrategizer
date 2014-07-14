@@ -35,7 +35,7 @@ AttackEntityAction::AttackEntityAction(const PlanStepParameters& p_parameters) :
 {
 }
 //----------------------------------------------------------------------------------------------
-bool AttackEntityAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
+bool AttackEntityAction::Execute(RtsGame& game, const WorldClock& p_clock)
 {
     EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
     EntityClassType targetType = (EntityClassType)_params[PARAM_TargetEntityClassId];
@@ -77,7 +77,7 @@ bool AttackEntityAction::AliveConditionsSatisfied(RtsGame& game)
 //----------------------------------------------------------------------------------------------
 bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& game)
 {
-    _ASSERTE(PlanStepEx::State() == ESTATE_Executing);
+    _ASSERTE(PlanStepEx::GetState() == ESTATE_Executing);
     bool targetExists = g_Assist.DoesEntityObjectExist(m_targetId, PLAYER_Enemy);
 
     if (targetExists)

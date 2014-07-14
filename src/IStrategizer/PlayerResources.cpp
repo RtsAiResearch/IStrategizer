@@ -50,7 +50,7 @@ bool PlayerResources::Lock(WorldResources* pResources)
 
         LogInfo("Action succeeded to lock requested resources");
         LogInfo("Total locked supply=%d, primary=%d, secondary=%d | Available supply=%d, primary=%d, secondary=%d",
-            m_lockedSupply, m_lockedPrimary, m_lockedSecondary, Supply(), Primary(), Secondary());
+            m_lockedSupply, m_lockedPrimary, m_lockedSecondary, AvailablePrimary(), AvailableSecondary(), AvailableSupply());
     }
     else
     {

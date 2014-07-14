@@ -597,7 +597,8 @@ void GraphScene::OnGraphUpdate()
 			else
 				record.second->MarkAsInactive();
 
-			record.second->OnUpdate();
+			if (m_pGraph->Contains(record.first))
+				record.second->OnUpdate();
         }
 
 		m_pGraph->Unlock();

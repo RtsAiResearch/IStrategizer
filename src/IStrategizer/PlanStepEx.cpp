@@ -18,25 +18,18 @@ unsigned PlanStepEx::GenerateID()
     return ++s_lastPlanstepID;
 }
 
-PlanStepEx::PlanStepEx() :
-    _state(ESTATE_NotPrepared),
-    _postCondition(nullptr),
-    _firstUpdate(true),
-    _id(GenerateID())
-{
-    memset(_stateStartTime, 0, sizeof(_stateStartTime));
-    memset(_stateTimeout, 0, sizeof(_stateTimeout));
-}
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) 
     : _stepTypeId(p_stepTypeId),
     _state(p_state), 
     _postCondition(nullptr), 
     _firstUpdate(true),
-    _id(GenerateID())
+    _id(GenerateID()),
+	m_sleepStartGameFrame(0),
+	m_sleepEndGameFrame(0),
+	m_sleepsCount(0)
 {
-    memset(_stateStartTime, 0, sizeof(_stateStartTime));
-    memset(_stateTimeout, 0, sizeof(_stateTimeout));
+    
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters) 
@@ -45,10 +38,11 @@ PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanS
     _params(p_parameters),
     _postCondition(nullptr),
     _firstUpdate(true),
-    _id(GenerateID())
+    _id(GenerateID()),
+	m_sleepStartGameFrame(0),
+	m_sleepEndGameFrame(0),
+	m_sleepsCount(0)
 {
-    memset(_stateStartTime, 0, sizeof(_stateStartTime));
-    memset(_stateTimeout, 0, sizeof(_stateTimeout));
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::~PlanStepEx()
@@ -77,10 +71,9 @@ void PlanStepEx::Copy(IClonable* p_dest)
     m_dest->_state = _state;
     m_dest->_params = _params;
     m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
-    m_dest->_stepLevelType = _stepLevelType;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)
+void PlanStepEx::SetState(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)
 {
     _ASSERTE(p_state != _state);
 
@@ -90,42 +83,7 @@ void PlanStepEx::State(ExecutionStateType p_state, RtsGame& game, const WorldClo
 
     LogInfo("%s: '%s'->'%s'", stepName.c_str(), oldStateName, newStateName);
 
-    _stateStartTime[INDEX(p_state, ExecutionStateType)] = p_clock.ElapsedMilliseconds();
     _state = p_state;
-}
-//////////////////////////////////////////////////////////////////////////
-bool PlanStepEx::IsCurrentStateTimeout(const WorldClock& p_clock)
-{
-    unsigned timeout = _stateTimeout[INDEX(_state, ExecutionStateType)];
-    unsigned startTime = _stateStartTime[INDEX(_state, ExecutionStateType)];
-
-    // 0 means no timeout and thus meaning infinite timeout
-    if (timeout == 0)
-        return false;
-    else
-        return ((p_clock.ElapsedMilliseconds() - startTime) > timeout);
-}
-//////////////////////////////////////////////////////////////////////////
-void PlanStepEx::Update(RtsGame& game, const WorldClock& p_clock)
-{
-    if (_firstUpdate)
-    {
-        Reset(game, p_clock);
-        _firstUpdate = false;
-    }
-
-    if (IsCurrentStateTimeout(p_clock))
-    {
-        LogInfo(
-            "State %s timed-out after %dms",
-            Enums[(int)State()],
-            _stateTimeout[INDEX(State(), ExecutionStateType)]);
-        State(ESTATE_Failed, game, p_clock);
-    }
-    else
-    {
-        UpdateAux(game, p_clock);
-    }
 }
 //////////////////////////////////////////////////////////////////////////
 std::string PlanStepEx::ToString(bool minimal) const
@@ -218,3 +176,15 @@ unsigned PlanStepEx::Hash(bool quantified) const
     unsigned h = MathHelper::SuperFastHash((const char*)&*str.cbegin(), str.size() * sizeof(int));
     return h;
 }
+//----------------------------------------------------------------------------------------------
+void PlanStepEx::Sleep(const WorldClock& clock, unsigned numGameFrames)
+{
+	_ASSERTE(!IsSleeping(clock));
+
+	m_sleepStartGameFrame = clock.ElapsedGameCycles();
+	m_sleepEndGameFrame = m_sleepStartGameFrame + numGameFrames;
+	++m_sleepsCount;
+	LogInfo("%s is sent for sleep in the GameFrame range=[%d,%d], slept %d times so far", ToString().c_str(),
+		m_sleepStartGameFrame, m_sleepEndGameFrame, m_sleepsCount);
+}
+//----------------------------------------------------------------------------------------------

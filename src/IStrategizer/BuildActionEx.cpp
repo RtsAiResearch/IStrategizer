@@ -22,19 +22,19 @@
 using namespace IStrategizer;
 using namespace std;
 
-const unsigned MaxPrepTime = 300000;
-const unsigned MaxExecTrialTime = 120000;
-const unsigned MaxExecTime = 120000;
+const unsigned MaxPrepTime = 2000;
+// MaxExecTime should be deduced from the unit being built
+const unsigned MaxExecTime = 5000;
 
 BuildActionEx::BuildActionEx() :
-    Action(ACTIONEX_Build, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
+    Action(ACTIONEX_Build, MaxPrepTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
 {
     _params[PARAM_EntityClassId] = ECLASS_START;
     CellFeature::Null().To(_params);
 }
 //////////////////////////////////////////////////////////////////////////
 BuildActionEx::BuildActionEx(const PlanStepParameters& p_parameters) :
-    Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTrialTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
+    Action(ACTIONEX_Build, p_parameters, MaxPrepTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
 {
 }
 //////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ void BuildActionEx::FreeResources(RtsGame &game)
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
-    if(PlanStepEx::State() == ESTATE_Executing &&
+    if(PlanStepEx::GetState() == ESTATE_Executing &&
         (p_msg->MessageTypeID() == MSG_EntityCreate || 
         p_msg->MessageTypeID() == MSG_EntityRenegade))
     {
@@ -113,7 +113,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
     bool success = false;
     GameEntity *pEntity = nullptr;
 
-    _ASSERTE(PlanStepEx::State() == ESTATE_Executing);
+    _ASSERTE(PlanStepEx::GetState() == ESTATE_Executing);
 
     builderExist = g_Assist.DoesEntityObjectExist(_builderId);
 
@@ -131,7 +131,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 
             if (!(pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false) && !_buildStarted)
             {
-                LogInfo("Builder with ID=%d of action %s is not moving toward the build position, will NOT fail the action but this is weird case.", _builderId, ToString().c_str());
+                LogInfo("Builder %s of action %s is not moving toward the build position, will fail the action but this is weird case.", pEntity->ToString().c_str(), ToString().c_str());
             }
         }
         else
@@ -163,7 +163,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 //////////////////////////////////////////////////////////////////////////
 bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& game)
 {
-    _ASSERTE(PlanStepEx::State() == ESTATE_Executing);
+    _ASSERTE(PlanStepEx::GetState() == ESTATE_Executing);
 
     if (_buildStarted)
     {
@@ -179,7 +179,7 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& game)
     return false;
 }
 //////////////////////////////////////////////////////////////////////////
-bool BuildActionEx::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
+bool BuildActionEx::Execute(RtsGame& game, const WorldClock& p_clock)
 {
     EntityClassType buildingType = (EntityClassType)_params[PARAM_EntityClassId];
     GameEntity *pGameBuilder;

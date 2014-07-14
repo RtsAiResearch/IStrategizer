@@ -33,7 +33,7 @@ AttackGroundAction::AttackGroundAction(const PlanStepParameters& p_parameters) :
 {
 }
 //----------------------------------------------------------------------------------------------
-bool AttackGroundAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
+bool AttackGroundAction::Execute(RtsGame& game, const WorldClock& p_clock)
 {
     EntityClassType attackerType = (EntityClassType)_params[PARAM_EntityClassId];
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
@@ -71,7 +71,7 @@ bool AttackGroundAction::AliveConditionsSatisfied(RtsGame& game)
 //----------------------------------------------------------------------------------------------
 bool AttackGroundAction::SuccessConditionsSatisfied(RtsGame& game)
 {
-    _ASSERTE(PlanStepEx::State() == ESTATE_Executing);
+    _ASSERTE(PlanStepEx::GetState() == ESTATE_Executing);
 
     GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
     _ASSERTE(pGameAttacker);

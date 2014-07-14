@@ -16,12 +16,10 @@ namespace IStrategizer
     {
 		OBJECT_SERIALIZABLE_P(GoalEx, PlanStepEx);
     public:
-        void Update(RtsGame& game, const WorldClock& p_clock);
-        void Reset(RtsGame& game, const WorldClock& p_clock);
         virtual std::vector<GoalEx*> GetSucceededInstances(RtsGame &game) = 0;
         virtual void AdaptParameters(RtsGame& game) { }
         virtual bool Merge(PlanStepEx* planStep) = 0;
-        unsigned Key() const;
+		unsigned Key() const { return Hash(false); }
 
     protected:
         inline GoalEx(GoalType p_goalType) : PlanStepEx((int)p_goalType, ESTATE_NotPrepared) {}

@@ -2,13 +2,12 @@
 #define SHAREDRESOURCE_H
 
 #include "IStrategizerException.h"
+#include "EngineObject.h"
 #include <set>
 
 namespace IStrategizer
 {
-    class EngineObject;
-
-    class SharedResource
+    class SharedResource : public EngineObject
     {
     public:
         typedef std::set<SharedResource*> ResourceList;
@@ -57,7 +56,7 @@ namespace IStrategizer
             RecursiveLockException,
             AlreadyLockedException);
 
-        virtual std::string ToString() const = 0;
+		virtual std::string ToString(bool minimal = false) const;
         void Unlock(EngineObject *p_pOwner);
         bool IsLocked() { return m_pOwner != nullptr; }
         const EngineObject* Owner() const { return m_pOwner; }

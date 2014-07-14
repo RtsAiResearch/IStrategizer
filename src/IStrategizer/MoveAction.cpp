@@ -65,7 +65,7 @@ bool MoveAction::SuccessConditionsSatisfied(RtsGame& game)
     return g_Assist.IsEntityCloseToPoint(_entityId, _position, ENTITY_DEST_ARRIVAL_THRESHOLD_DISTANCE);
 }
 //----------------------------------------------------------------------------------------------
-bool MoveAction::ExecuteAux(RtsGame& game, const WorldClock& p_clock)
+bool MoveAction::Execute(RtsGame& game, const WorldClock& p_clock)
 {
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     EntityClassType entityType = (EntityClassType)_params[PARAM_EntityClassId];

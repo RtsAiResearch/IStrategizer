@@ -107,3 +107,12 @@ void SharedResource::Unlock(EngineObject *p_pOwner)
         }
     }
 }
+//////////////////////////////////////////////////////////////////////////
+std::string SharedResource::ToString(bool minimal) const
+{
+	char buff[512];
+	sprintf_s(buff, "Owner=%s", (m_pOwner != nullptr ? m_pOwner->ToString().c_str() : ""));
+	
+	return buff;
+}
+

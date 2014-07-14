@@ -33,7 +33,7 @@ namespace IStrategizer
         bool IsTraining(TID p_traineeId) const;
         bool IsNull() { return m_isOnline && m_pUnit == nullptr; }
         bool CanGather(TID resourceObjectId) const;
-        std::string ToString() const;
+		std::string ToString(bool minimal = false) const;
         TID GetTargetId() const
         {
             int id = DONT_CARE;

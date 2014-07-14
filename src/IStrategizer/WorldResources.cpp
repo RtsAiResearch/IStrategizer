@@ -40,9 +40,11 @@ bool WorldResources::IsNull()
         m_secondary < 0;
 }
 //////////////////////////////////////////////////////////////////////////
-std::string WorldResources::ToString() const
+std::string WorldResources::ToString(bool minimal) const
 {
-    char str[256];
-    sprintf_s(str, "WorldResource(Primary=%d,Secondary=%d,Supply=%d)", m_primary, m_secondary, m_supply);
+    char str[512];
+	std::string asResource = SharedResource::ToString();
+
+    sprintf_s(str, "WorldResource(%s,Primary=%d,Secondary=%d,Supply=%d)", asResource.c_str(), m_primary, m_secondary, m_supply);
     return str;
 }
