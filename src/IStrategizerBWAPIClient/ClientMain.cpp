@@ -20,6 +20,7 @@
 #include "WorldMap.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
+#include "StarCraftStrategySelector.h"
 
 #include <stdio.h>
 #include <string>
@@ -78,6 +79,8 @@ void ClientMain::InitIStrategizer()
         param.GrndCtrlIMCellSize = TILE_SIZE;
         param.OccupanceIMUpdateInterval = 250;
         param.GrndCtrlIMUpdateInterval = 1000;
+        param.pStrategySelector = new StarCraftStrategySelector();
+        param.map = Broodwar->mapFileName();
 
         if (Broodwar->isReplay())
         {
@@ -207,7 +210,7 @@ void ClientMain::FinalizeIStrategizer()
 {
     SAFE_DELETE(m_pIStrategizer);
 
-	RtsGame::FinalizeStaticData();
+    RtsGame::FinalizeStaticData();
     SAFE_DELETE(m_pGameModel);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -240,7 +243,7 @@ void ClientMain::OnClientLoopStart()
     // Make sure that we start from a clean slate
 
     // Hard Reset is always a bad idea and can cause inconsistency
-	// EngineObject::FreeMemoryPool();
+    // EngineObject::FreeMemoryPool();
 
     m_enemyPlayerUnitsCollected = false;
     InitIStrategizer();

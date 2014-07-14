@@ -1,34 +1,23 @@
-#include "Battle.h"
-#include "TargetFSMState.h"
-#include "AttackFSMState.h"
-#include "FinishedFSMState.h"
+#include "Army.h"
 #include "MessagePump.h"
 #include "DataMessage.h"
 #include "RtsGame.h"
 #include "GamePlayer.h"
 #include "GameType.h"
 #include "GameEntity.h"
+#include "EngineAssist.h"
+#include "MathHelper.h"
 
 using namespace IStrategizer;
 using namespace std;
 
-Battle::Battle(RtsGame& game) :
-    m_stateMachine(Target, Finished),
-    m_currentTarget(DONT_CARE),
-    m_nextTarget(DONT_CARE)
+Army::Army(RtsGame& game)
 {
     SelectArmy(game);
-
-    // Initialize the FSM
-    m_stateMachine.AddState(new TargetFSMState<Battle*>(this));
-    m_stateMachine.AddState(new AttackFSMState<Battle*>(this));
-    m_stateMachine.AddState(new FinishedFSMState<Battle*>(this));
-
-    // Register for messages
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 }
 //////////////////////////////////////////////////////////////////////////
-void Battle::SelectArmy(RtsGame &game)
+void Army::SelectArmy(RtsGame &game)
 {
     EntityList entities;
     game.Self()->Entities(entities);
@@ -47,7 +36,7 @@ void Battle::SelectArmy(RtsGame &game)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void Battle::NotifyMessegeSent(Message* p_msg)
+void Army::NotifyMessegeSent(Message* p_msg)
 {
     if (p_msg->MessageTypeID() == MSG_EntityDestroy)
     {
@@ -59,20 +48,12 @@ void Battle::NotifyMessegeSent(Message* p_msg)
             if (m_army.count(pMsg->Data()->EntityId) != 0)
             {
                 m_army.erase(pMsg->Data()->EntityId);
-                m_destroyedArmyEntities.push_back(pMsg->Data()->EntityId);
-            }
-        }
-        else if (pMsg->Data()->OwnerId == PLAYER_Enemy)
-        {
-            if (m_nextTarget == pMsg->Data()->EntityId)
-            {
-                m_destroyedEnemyEntities.push_back(pMsg->Data()->EntityId);
             }
         }
     }
 }
 //////////////////////////////////////////////////////////////////////////
-Battle::~Battle()
+Army::~Army()
 {
     if (g_Game != nullptr)
     {
@@ -85,4 +66,22 @@ Battle::~Battle()
             }
         }
     }
+}
+//////////////////////////////////////////////////////////////////////////
+Vector2 Army::Center() const
+{
+    vector<Vector2> positions;
+    Vector2 upperLeft, lowerRight;
+
+    for (TID entityId : m_army)
+    {
+        GameEntity* pAttacker = g_Game->Self()->GetEntity(entityId);
+        positions.push_back(pAttacker->GetPosition());
+    }
+
+    MathHelper::MinimumBoundingBox(positions, upperLeft, lowerRight);
+
+    int centerX = (upperLeft.X + lowerRight.X) / 2;
+    int centerY = (upperLeft.Y + lowerRight.Y) / 2;
+    return Vector2(centerX, centerY);
 }

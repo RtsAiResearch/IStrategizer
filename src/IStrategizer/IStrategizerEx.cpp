@@ -29,9 +29,11 @@ IStrategizerEx::IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame) :
     m_pCaseLearning(nullptr),
     m_pPlanner(nullptr),
     m_isFirstUpdate(true),
-    m_armyTrainOrderInx(0)
+    m_attackManager(param.pStrategySelector)
 {
     g_Game = pGame;
+    _ASSERTE(param.pStrategySelector);
+    _ASSERTE(!param.map.empty());
 }
 //---------------------------------------------------------------------------------------------
 void IStrategizerEx::NotifyMessegeSent(Message* p_message)
@@ -64,13 +66,15 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
         break;
 
     case MSG_BattleComplete:
-        /*m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        /*PlanStepParameters params = StartTrainingArmy();
+        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
         m_pPlanner->ExpansionExecution()->StartPlanning();*/
         break;
 
     case MSG_PlanComplete:
         m_attackManager.AddBattle();
-        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
+        PlanStepParameters params = StartTrainingArmy();
+        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
         m_pPlanner->ExpansionExecution()->StartPlanning();
         break;
     }
@@ -116,6 +120,7 @@ IStrategizerEx::~IStrategizerEx()
 {
     g_IMSysMgr.Finalize();
     g_Game = nullptr;
+    delete m_pStrategySelector;
 }
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
@@ -141,8 +146,9 @@ bool IStrategizerEx::Init()
 
     case PHASE_Online:
         m_pPlanner = shared_ptr<OnlineCaseBasedPlannerEx>(new OnlineCaseBasedPlannerEx());
-        DefineArmyTrainOrder();
-        m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[m_armyTrainOrderInx]));
+        m_pStrategySelector = m_param.pStrategySelector;
+        PlanStepParameters params = StartTrainingArmy();
+        m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
         m_pPlanner->ExpansionExecution()->StartPlanning();
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
         g_MessagePump->RegisterForMessage(MSG_BattleComplete, this);
@@ -157,26 +163,10 @@ bool IStrategizerEx::Init()
     return true;
 }
 //----------------------------------------------------------------------------------------------
-void IStrategizerEx::DefineArmyTrainOrder()
+PlanStepParameters IStrategizerEx::StartTrainingArmy()
 {
     PlanStepParameters params;
-    params[PARAM_AlliedUnitsTotalHP] = 160;
-    params[PARAM_AlliedUnitsTotalDamage] = 196;
-    m_armyTrainOrder.push_back(params);
-
-    params[PARAM_AlliedUnitsTotalHP] = 200;
-    params[PARAM_AlliedUnitsTotalDamage] = 36;
-    m_armyTrainOrder.push_back(params);
-}
-//----------------------------------------------------------------------------------------------
-int IStrategizerEx::GetTrainOrderInx()
-{
-    if (m_armyTrainOrderInx == m_armyTrainOrder.size() - 1)
-    {
-        return m_armyTrainOrderInx;
-    }
-    else
-    {
-        return ++m_armyTrainOrderInx;
-    }
+    m_pStrategySelector->SelectTrainOrder(m_param.map, params);
+    
+    return params;
 }

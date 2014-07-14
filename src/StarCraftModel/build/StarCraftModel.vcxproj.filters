@@ -51,6 +51,9 @@
     <ClInclude Include="..\StarCraftType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\StarCraftStrategySelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ActionAbstractor.cpp">

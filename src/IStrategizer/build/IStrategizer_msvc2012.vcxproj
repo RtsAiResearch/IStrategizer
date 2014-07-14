@@ -21,6 +21,7 @@
     <ClInclude Include="..\AdapterEx.h" />
     <ClInclude Include="..\AdjListDigraph.h" />
     <ClInclude Include="..\And.h" />
+    <ClInclude Include="..\Army.h" />
     <ClInclude Include="..\AttackEntityAction.h" />
     <ClInclude Include="..\AttackFSMState.h" />
     <ClInclude Include="..\AttackGroundAction.h" />
@@ -51,6 +52,7 @@
     <ClInclude Include="..\EngineDefs.h" />
     <ClInclude Include="..\EngineObject.h" />
     <ClInclude Include="..\CandidateGathererExist.h" />
+    <ClInclude Include="..\StrategySelector.h" />
     <ClInclude Include="..\TargetFSMState.h" />
     <ClInclude Include="..\DestroyEntityTypeGoal.h" />
     <ClInclude Include="..\EngineAssist.h" />
@@ -136,9 +138,9 @@
     <ClCompile Include="..\ActionFactory.cpp" />
     <ClCompile Include="..\AdapterEx.cpp" />
     <ClCompile Include="..\And.cpp" />
+    <ClCompile Include="..\Army.cpp" />
     <ClCompile Include="..\AttackEntityAction.cpp" />
     <ClCompile Include="..\AttackGroundAction.cpp" />
-    <ClCompile Include="..\Battle.cpp" />
     <ClCompile Include="..\BotStatistics.cpp" />
     <ClCompile Include="..\BuildActionEx.cpp" />
     <ClCompile Include="..\BuildInfrastructureGoal.cpp" />

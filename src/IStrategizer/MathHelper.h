@@ -85,35 +85,20 @@ namespace IStrategizer
                 p_testYCoord >= p_topLeftYCoord;
         }
 
-        static void MinimumBoundingBox(const std::vector<std::pair<int, int> >& p_points, int& p_topLeftXCoord, int& p_topLeftYCoord, int& p_width, int& p_height)
+        static void MinimumBoundingBox(const std::vector<Vector2>& p_points, Vector2& upperLeft, Vector2& lowerRight)
         {
-            p_topLeftXCoord = 0;
-            p_topLeftYCoord = 0;
-            p_width = 0;
-            p_height = 0;
-            int farthestWidth;
-            int farthestHeight;
+            auto xExtremes = std::minmax_element(p_points.begin(), p_points.end(),
+                [](const Vector2& lhs, const Vector2& rhs) {
+                return lhs.X < rhs.X;
+            });
 
-            if(p_points.size() == 0)
-                return;
+            auto yExtremes = std::minmax_element(p_points.begin(), p_points.end(),
+                [](const Vector2& lhs, const Vector2& rhs) {
+                return lhs.Y < rhs.Y;
+            });
 
-            p_topLeftXCoord = p_points[0].first;
-            p_topLeftYCoord = p_points[0].second;
-            for(std::vector<std::pair<int, int> >::const_iterator itr = p_points.begin() + 1;
-                itr != p_points.end();
-                itr++)
-            {
-#undef min
-#undef max
-                farthestWidth   = std::max(p_topLeftXCoord + p_width, itr->first);
-                farthestHeight  = std::max(p_topLeftYCoord + p_width, itr->second);
-
-                p_topLeftXCoord = std::min(p_topLeftXCoord, itr->first);
-                p_topLeftYCoord = std::min(p_topLeftYCoord, itr->second);
-
-                p_width = farthestWidth - p_topLeftYCoord;
-                p_height = farthestHeight - p_topLeftYCoord;
-            }
+            upperLeft = Vector2(xExtremes.first->X, yExtremes.first->Y);
+            lowerRight = Vector2(xExtremes.second->X, yExtremes.second->Y);
         }
 
         // Test whether rectangle r1 is fully contained in rectangle r2

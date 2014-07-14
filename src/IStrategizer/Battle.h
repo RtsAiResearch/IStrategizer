@@ -2,10 +2,8 @@
 #define BATTLE_H
 
 #include "EngineObject.h"
-#include "EngineData.h"
+#include "Army.h"
 #include "FSMMachine.h"
-#include <vector>
-#include <set>
 
 namespace IStrategizer
 {
@@ -17,26 +15,34 @@ namespace IStrategizer
     class Battle : public EngineObject
     {
     public:
-        Battle(RtsGame& game);
-        ~Battle();
-        void NotifyMessegeSent(Message* p_msg);
+        Battle::Battle(Army* pArmy, std::vector<FSMState<Battle*>*>& states) :
+            m_stateMachine(states.front()->StateType(), states.back()->StateType()),
+            m_currentTarget(DONT_CARE),
+            m_nextTarget(DONT_CARE),
+            m_pArmy(pArmy)
+        {
+            for (FSMState<Battle*>* state : states)
+            {
+                state->m_controller = this;
+                m_stateMachine.AddState(state);
+            }
+        }
+
+        ~Battle() { delete m_pArmy; }
+
         void Update(RtsGame& game, const WorldClock& clock) { m_stateMachine.Update(game, clock); }
         bool Active() const { return !m_stateMachine.ReachedGoalState(); }
         TID NextTarget() const { return m_nextTarget; }
         void NextTarget(TID nextTarget) { _ASSERTE(nextTarget >= 0); m_nextTarget = nextTarget; }
         TID CurrentTarget() const { return m_currentTarget; }
         void CurrentTarget(TID currentTarget) { _ASSERTE(currentTarget >= 0); m_currentTarget = currentTarget; }
-        EntitySet Army() const { return m_army; }
+        Army* GetArmy() const { return m_pArmy; }
 
     private:
-        void SelectArmy(RtsGame& game);
-
         TID m_nextTarget;
         TID m_currentTarget;
         FSMMachine<Battle*> m_stateMachine;
-        EntitySet m_army;
-        EntityList m_destroyedArmyEntities;
-        EntityList m_destroyedEnemyEntities;
+        Army* m_pArmy;
     };
 
     template<>
@@ -44,7 +50,7 @@ namespace IStrategizer
     {
         typedef Battle* Type;
         typedef const Battle* ConstType;
-        static EntitySet Army(ConstType battle) { return battle->Army(); }
+        static Army* GetArmy(ConstType battle) { return battle->GetArmy(); }
         static void NextTarget(Type battle, TID targetId) { battle->NextTarget(targetId); }
         static void CurrentTarget(Type battle, TID targetId) { battle->CurrentTarget(targetId); }
         static TID NextTarget(ConstType battle) { return battle->NextTarget(); }

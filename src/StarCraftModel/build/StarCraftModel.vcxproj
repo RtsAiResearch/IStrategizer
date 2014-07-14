@@ -21,6 +21,7 @@
     <ClInclude Include="..\StarCraftPlayerResources.h" />
     <ClInclude Include="..\StarCraftRace.h" />
     <ClInclude Include="..\StarCraftResearch.h" />
+    <ClInclude Include="..\StarCraftStrategySelector.h" />
     <ClInclude Include="..\StarCraftTechTree.h" />
     <ClInclude Include="..\StarCraftType.h" />
   </ItemGroup>

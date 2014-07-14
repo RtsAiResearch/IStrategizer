@@ -21,7 +21,7 @@ namespace IStrategizer
         void Enter(RtsGame& game, const WorldClock& clock)
         {
             ControllerTraits<TController>::Type battle = m_controller;
-            EntitySet army = TControllerTraits::Army(battle);
+            EntitySet army = TControllerTraits::GetArmy(battle)->Entities();
             TID nextTargetId = TControllerTraits::NextTarget(battle);
             TID currentTargetId = TControllerTraits::CurrentTarget(battle);
 
@@ -42,10 +42,9 @@ namespace IStrategizer
         int CheckTransitions(RtsGame& game, const WorldClock& clock)
         {
             ControllerTraits<TController>::ConstType battle = m_controller;
-            EntitySet army = TControllerTraits::Army(battle);
-            bool armyEmpty = army.empty();
+            Army* pArmy = TControllerTraits::GetArmy(battle);
 
-            return armyEmpty ? Finished : Target;
+            return pArmy->Empty() ? Finished : Target;
         }
     };
 }

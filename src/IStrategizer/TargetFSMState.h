@@ -32,12 +32,20 @@ namespace IStrategizer
 
         void Enter(RtsGame& game, const WorldClock& clock)
         {
+            ControllerTraits<TController>::Type battle = m_controller;
+            Army* pArmy = TControllerTraits::GetArmy(battle);
+            
+            if (pArmy->Empty())
+            {
+                // Do not select target if the army is empty.
+                return;
+            }
+
             if (!ArmyUnderAttack(game))
             {
                 SelectEnemyTarget(game);
             }
 
-            ControllerTraits<TController>::Type battle = m_controller;
             if (m_targetId != DONT_CARE)
             {
                 TControllerTraits::NextTarget(battle, m_targetId);
@@ -55,9 +63,9 @@ namespace IStrategizer
         int CheckTransitions(RtsGame& game, const WorldClock& clock)
         {
             ControllerTraits<TController>::ConstType battle = m_controller;
-            EntitySet army = TControllerTraits::Army(battle);
+            Army* pArmy = TControllerTraits::GetArmy(battle);
 
-            return (army.empty() || m_enemyEntitiesCount == 0) ? Finished : Attack ;
+            return (pArmy->Empty() || m_enemyEntitiesCount == 0) ? Finished : Attack ;
         }
 
     private:
@@ -65,13 +73,19 @@ namespace IStrategizer
         {
             EntityList entities;
             game.Enemy()->Entities(entities);
+            int closestDistance = INT_MAX;
+            ControllerTraits<TController>::ConstType battle = m_controller;
+            Army* pArmy = TControllerTraits::GetArmy(battle);
+            Vector2 armyCenter = pArmy->Center();
+
             for (TID enemyEntityId : entities)
             {
                 GameEntity* pEnemyEntity = game.Enemy()->GetEntity(enemyEntityId);
                 _ASSERTE(pEnemyEntity);
                 ObjectStateType enemyEntityState = (ObjectStateType)pEnemyEntity->Attr(EOATTR_State);
+                int distance = armyCenter.Distance(pEnemyEntity->GetPosition());
 
-                if (enemyEntityState == OBJSTATE_Attacking)
+                if (enemyEntityState == OBJSTATE_Attacking && distance <= closestDistance)
                 {
                     m_targetId = enemyEntityId;
                     m_enemyAttacked = true;
@@ -86,25 +100,32 @@ namespace IStrategizer
         void SelectEnemyTarget(RtsGame &game)
         {
             EntityList entities;
-            std::map<EntityClassAttribute, std::stack<TID>> targets;
             game.Enemy()->Entities(entities);
             m_enemyEntitiesCount = entities.size();
+            int closestDistance = INT_MAX;
+
+            ControllerTraits<TController>::ConstType battle = m_controller;
+            Army* pArmy = TControllerTraits::GetArmy(battle);
+            Vector2 armyCenter = pArmy->Center();
             
             int rank = m_targetRanking.size();
             for (EntityClassAttribute attr : m_targetRanking)
             {
                 for (TID entityId : entities)
                 {
-                    GameType* pEntityType = game.GetEntityType(game.Enemy()->GetEntity(entityId)->Type());
+                    GameEntity* pGameEntity = game.Enemy()->GetEntity(entityId);
+                    GameType* pEntityType = game.GetEntityType(pGameEntity->Type());
 
                     if (!g_Assist.IsEntityObjectReady(entityId, PLAYER_Enemy) && !pEntityType->Attr(ECATTR_IsBuilding))
                         continue;
 
-                    if (pEntityType->Attr(attr) && rank > m_targetTypeRank)
+                    int distance = armyCenter.Distance(pGameEntity->GetPosition());
+
+                    if (pEntityType->Attr(attr) && rank > m_targetTypeRank && distance <= closestDistance)
                     {
                         m_targetId = entityId;
                         m_targetTypeRank = rank;
-                        break;
+                        closestDistance = distance;
                     }
                 }
                 --rank;

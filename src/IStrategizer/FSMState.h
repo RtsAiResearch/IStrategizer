@@ -15,11 +15,11 @@ namespace IStrategizer
     {
         typedef T Type;
         typedef const T ConstType;
-        static EntitySet Army(ConstType& v) { return set<TID>(); }
-        static void NextTarget(Type v, TID targetEnemyEntity) { }
-        static TID NextTarget(ConstType battle) { return default<TID>(); }
-        static void CurrentTarget(Type v, TID targetEnemyEntity) { }
-        static TID CurrentTarget(ConstType battle) { return default<TID>(); }
+        static Army* GetArmy(ConstType& v) { throw "Not implemented exception"; }
+        static void NextTarget(Type v, TID targetEnemyEntity) { throw "Not implemented exception" }
+        static TID NextTarget(ConstType battle) { throw "Not implemented exception" }
+        static void CurrentTarget(Type v, TID targetEnemyEntity) { throw "Not implemented exception" }
+        static TID CurrentTarget(ConstType battle) { throw "Not implemented exception" }
     };
 
     template<class TController, class TControllerTraits = ControllerTraits<TController>>
@@ -33,7 +33,6 @@ namespace IStrategizer
         virtual void Update(RtsGame& game, const WorldClock& clock) {}
         virtual int CheckTransitions(RtsGame& game, const WorldClock& clock)  { return m_type; }
 
-    protected:
         TController m_controller;
 
     private:

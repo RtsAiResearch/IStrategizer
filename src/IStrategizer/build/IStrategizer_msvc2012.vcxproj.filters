@@ -411,6 +411,12 @@
     <ClInclude Include="..\CandidateGathererExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
+    <ClInclude Include="..\Army.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StrategySelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Action.cpp">
@@ -614,9 +620,6 @@
     <ClCompile Include="..\PlayerAttributeExist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Battle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\OnlinePlanExpansionExecution.Update.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -627,6 +630,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\CandidateGathererExist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Army.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
