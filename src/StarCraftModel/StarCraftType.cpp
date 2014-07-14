@@ -44,6 +44,7 @@ void StarCraftType::Init()
     Attr(ECATTR_IsSupply, (m_type.supplyProvided() > 0));
     // FIXME: mention critical buildings
     Attr(ECATTR_LineOfSight, m_type.sightRange());
+	Attr(ECATTR_BuildTime, m_type.buildTime());
 
     // Convert build tiles to walk tiles
     if (m_type.isBuilding())

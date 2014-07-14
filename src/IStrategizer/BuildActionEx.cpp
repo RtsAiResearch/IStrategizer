@@ -22,9 +22,10 @@
 using namespace IStrategizer;
 using namespace std;
 
-const unsigned MaxPrepTime = 2000;
-// MaxExecTime should be deduced from the unit being built
-const unsigned MaxExecTime = 5000;
+const unsigned MaxPrepTime = 0;
+// In BuildAction case, the MaxExecTime is the time between issuing the Build command
+// and the worker starts actually build the building
+const unsigned MaxExecTime = 0;
 
 BuildActionEx::BuildActionEx() :
     Action(ACTIONEX_Build, MaxPrepTime, MaxExecTime), _buildStarted(false), _buildIssued(false)
@@ -101,6 +102,7 @@ void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
             _ASSERTE(!_requiredResources.IsNull());
             _requiredResources.Unlock(this);
             p_consumed = true;
+			LogInfo("%s started actual building of %s", ToString().c_str(), pGameBuilding->ToString().c_str());
         }
     }
 }
@@ -109,7 +111,6 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 {
     bool builderExist = false;
     bool buildingExist = false;
-    bool isBuilderConstructing = false;
     bool success = false;
     GameEntity *pEntity = nullptr;
 
@@ -123,18 +124,18 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
         pEntity = game.Self()->GetEntity(_builderId);
 
         _ASSERTE(pEntity);
-        isBuilderConstructing = (pEntity->Attr(EOATTR_State) == OBJSTATE_Constructing);
-
-        if (!isBuilderConstructing)
+        if (pEntity->Attr(EOATTR_State) == OBJSTATE_Idle)
         {
-            LogInfo("Builder with ID=%d of action %s is not in the constructing state", _builderId, ToString().c_str());
+			LogInfo("Builder %s of action %s is standing idle, something wrong happened, failing the build", pEntity->ToString().c_str(), ToString().c_str());
+			success = false;
 
-            if (!(pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false) && !_buildStarted)
+           /* if (!(pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false) && !_buildStarted)
             {
                 LogInfo("Builder %s of action %s is not moving toward the build position, will fail the action but this is weird case.", pEntity->ToString().c_str(), ToString().c_str());
-            }
+				success = false;
+            }*/
         }
-        else
+		else if (pEntity->Attr(EOATTR_State) == OBJSTATE_Constructing)
         {
             if (_buildStarted)
             {
@@ -146,6 +147,10 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
                 }
             }
         }
+		else
+		{
+			LogInfo("Builder %s of action %s is not in the constructing state, didn't start actual constructing yet", pEntity->ToString().c_str(), ToString().c_str());
+		}
     }
     else
     {
@@ -188,25 +193,22 @@ bool BuildActionEx::Execute(RtsGame& game, const WorldClock& p_clock)
 
     // Adapt builder
     _builderId = pAdapter->AdaptWorkerForBuild();
+	// Adapt build position
+	_buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
 
-    if (_builderId != INVALID_TID)
+    if (_builderId != INVALID_TID &&
+		!_buildArea.IsNull())
     {
         // Initialize build state
         _buildStarted = false;
 
-        // Adapt build position
-        _ASSERTE(pAdapter);
-        _buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
-
         // Issue build order
         pGameBuilder = game.Self()->GetEntity(_builderId);
-        _ASSERTE(pGameBuilder);
 
-        LogInfo("Builder=%d was selected to execute build", _builderId);
+        LogInfo("Builder=%s was selected to execute build", pGameBuilder->ToString().c_str());
 
         pGameBuilder->Lock(this);
 
-        _ASSERTE(!_buildArea.IsNull());
         // Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
         if (!game.GetEntityType(buildingType)->Attr(ECATTR_IsSpecialBuilding))
         {
@@ -217,8 +219,8 @@ bool BuildActionEx::Execute(RtsGame& game, const WorldClock& p_clock)
         _requiredResources.Lock(this);
         bOk = pGameBuilder->Build(buildingType, _buildArea.Pos());
 
-        if (bOk)
-            _buildIssued = true;
+		if (bOk)
+			_buildIssued = true;
     }
 
     return bOk;
@@ -253,4 +255,17 @@ bool BuildActionEx::Equals(PlanStepEx* p_planStep)
 {
     return StepTypeId() == p_planStep->StepTypeId() &&
         _params[PARAM_EntityClassId] == p_planStep->Parameter(PARAM_EntityClassId);
+}
+//////////////////////////////////////////////////////////////////////////
+void BuildActionEx::Abort(RtsGame &game)
+{
+	if (_builderId != INVALID_TID)
+	{
+		auto pGameBuilder = game.Self()->GetEntity(_builderId);
+
+		if (pGameBuilder != nullptr)
+			pGameBuilder->CancelOrders();
+	}
+
+	Action::Abort(game);
 }

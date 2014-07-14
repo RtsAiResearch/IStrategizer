@@ -99,6 +99,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CaseGenerator.cpp" />
     <ClCompile Include="CaseView.cpp" />
     <ClCompile Include="CaseVisualizer.cpp" />
     <ClCompile Include="GeneratedFiles\moc_CaseView.cpp" />
@@ -127,6 +128,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
+    <ClInclude Include="CaseGenerator.h" />
     <ClInclude Include="GeneratedFiles\ui_CaseView.h" />
     <ClInclude Include="GeneratedFiles\ui_CaseVisualizer.h" />
     <ClInclude Include="IdLookupReader.h" />

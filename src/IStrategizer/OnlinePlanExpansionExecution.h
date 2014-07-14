@@ -24,8 +24,8 @@ namespace IStrategizer
 		// Time is counted as number of game frames
 		const unsigned GoalSleepTime = 500;
 		const unsigned GoalMaxSleepsCount = 3;
-		const unsigned ActionSleepTime = 500;
-		const unsigned ActionMaxSleepsCount = 3;
+		const unsigned ActionSleepTime = 200;
+		const unsigned ActionMaxSleepsCount = 5;
 		
 		OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx* pCbReasoner);
         ~OnlinePlanExpansionExecution();

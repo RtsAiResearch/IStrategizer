@@ -46,6 +46,14 @@ namespace IStrategizer
         virtual void OnSucccess(RtsGame& game, const WorldClock& p_clock) { FreeResources(game); };
         virtual void OnFailure(RtsGame& game, const WorldClock& p_clock) { FreeResources(game); };
         virtual void FreeResources(RtsGame& game) {}
+
+		void SetStateTimeout(ExecutionStateType state, unsigned timeout) 
+		{
+			LogInfo("Setting %s state=%s new time out to %d", ToString().c_str(), Enums[state], timeout);
+			_stateTimeout[INDEX(state, ExecutionStateType)] = timeout; 
+		}
+
+		unsigned CurrentStateElapsedTime(const WorldClock& clock) const { return clock.ElapsedGameCycles() - _stateStartTime[INDEX(_state, ExecutionStateType)]; }
 		bool IsCurrentStateTimeout(const WorldClock& p_clock);
 
 		CompositeExpression* _preCondition;

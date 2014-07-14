@@ -57,7 +57,7 @@ using namespace IStrategizer;
 using namespace Serialization;
 
 CaseVisualizer::CaseVisualizer(QWidget *parent, Qt::WindowFlags flags)
-: QMainWindow(parent, flags), m_pCaseBase(new CaseBaseEx)
+: QMainWindow(parent, flags), m_pCaseBase(new CaseBaseEx), m_cbGen(m_idLookup)
 {
 
     ui.setupUi(this);
@@ -370,11 +370,8 @@ CaseEx* CaseVisualizer::NewCase()
 {
     if(m_goalDialog->exec() == QDialog::Accepted)
     {
-        GoalEx* newGoal = g_GoalFactory.GetGoal((GoalType)m_goalDialog->SelectedPlanStepId(), false);
-        CaseEx* newCase = new CaseEx(new OlcbpPlan, newGoal, nullptr, 1, 1);
-        m_pCaseBase->CaseContainer.push_back(newCase);
-
-		return newCase;
+		m_cbGen.SetCaseBase(m_pCaseBase);
+		return m_cbGen.NewCase((GoalType)m_goalDialog->SelectedPlanStepId());
     }
 
 	return nullptr;
@@ -382,11 +379,8 @@ CaseEx* CaseVisualizer::NewCase()
 //----------------------------------------------------------------------------------------------
 CaseEx* CaseVisualizer::NewCase(GoalType p_caseGoal)
 {
-    GoalEx* newGoal = g_GoalFactory.GetGoal(p_caseGoal, false);
-    CaseEx* newCase = new CaseEx(new OlcbpPlan, newGoal, nullptr, 1, 1);
-    m_pCaseBase->CaseContainer.push_back(newCase);
-
-	return newCase;
+	m_cbGen.SetCaseBase(m_pCaseBase);
+	return m_cbGen.NewCase(p_caseGoal);
 }
 //----------------------------------------------------------------------------------------------
 void CaseVisualizer::DeleteCase(CaseEx* pCase)
@@ -440,136 +434,11 @@ void CaseVisualizer::SelectCase(int caseIdx)
 //////////////////////////////////////////////////////////////////////////
 void CaseVisualizer::on_btnGenSCVPlans_clicked()
 {
-	GenCollectPrimaryResourceCases();
-	GenCollectSecondaryResourceCases();
-	GenSCVTrainForceCases();
-	GenBuildRefineryCases();
+	if (m_pCaseBase != nullptr)
+	{
+		m_cbGen.SetCaseBase(m_pCaseBase);
+		m_cbGen.GenResourceMgmtCases();
+	}
 
 	Refresh();
-}
-//////////////////////////////////////////////////////////////////////////
-void CaseVisualizer::GenCollectPrimaryResourceCases()
-{
-	/*
-	Collect(X) = { X == 1 -> S(TrainForce(SCV),Gather(Primary))
-	{ X > 1  -> S(Collect(X-1),TrainForce(SCV),Gather(Primary))
-	*/
-	const unsigned MaxSCVs = 15;
-	EntityClassType scvType = (EntityClassType)m_idLookup.GetBySecond("Terran_SCV");
-
-	for (unsigned numSCVs = 1; numSCVs <= MaxSCVs; ++numSCVs)
-	{
-		auto pCollectResourceCase = NewCase(GOALEX_CollectResource);
-
-		pCollectResourceCase->Goal()->Parameter(PARAM_ResourceId, RESOURCE_Primary);
-		pCollectResourceCase->Goal()->Parameter(PARAM_Amount, numSCVs);
-
-		// TrainForce(SCV,Idle,1)
-		auto pSCVTrainForceG = g_GoalFactory.GetGoal(GOALEX_TrainForce, false);
-		pSCVTrainForceG->Parameter(PARAM_EntityClassId, scvType);
-		pSCVTrainForceG->Parameter(PARAM_ObjectStateType, OBJSTATE_Idle);
-		pSCVTrainForceG->Parameter(PARAM_Amount, 1);
-		pCollectResourceCase->Plan()->AddNode(pSCVTrainForceG, pSCVTrainForceG->Id());
-
-		// GatherResource(Primary,DistanceToBase=25)
-		auto pSCVGatherA = g_ActionFactory.GetAction(ACTIONEX_GatherResource, false);
-		pSCVGatherA->Parameter(PARAM_ResourceId, RESOURCE_Primary);
-		pSCVGatherA->Parameter(PARAM_DistanceToBase, 25);
-		pCollectResourceCase->Plan()->AddNode(pSCVGatherA, pSCVGatherA->Id());
-
-		pCollectResourceCase->Plan()->AddEdge(pSCVTrainForceG->Id(), pSCVGatherA->Id());
-
-		if (numSCVs > 1)
-		{
-			// CollectResource(Primary,numSCVs-1)
-			auto pCollectResource = g_GoalFactory.GetGoal(GOALEX_CollectResource, false);
-			pCollectResource->Parameter(PARAM_ResourceId, RESOURCE_Primary);
-			pCollectResource->Parameter(PARAM_Amount, numSCVs - 1);
-			pCollectResourceCase->Plan()->AddNode(pCollectResource, pCollectResource->Id());
-
-			pCollectResourceCase->Plan()->AddEdge(pCollectResource->Id(), pSCVTrainForceG->Id());
-		}
-	}
-}
-//////////////////////////////////////////////////////////////////////////
-void CaseVisualizer::GenSCVTrainForceCases()
-{
-	auto pTrainForceCase = NewCase(GOALEX_TrainForce);
-
-	EntityClassType scvType = (EntityClassType)m_idLookup.GetBySecond("Terran_SCV");
-
-	pTrainForceCase->Goal()->Parameter(PARAM_EntityClassId, scvType);
-	pTrainForceCase->Goal()->Parameter(PARAM_ObjectStateType, OBJSTATE_Idle);
-	pTrainForceCase->Goal()->Parameter(PARAM_Amount, 1);
-
-	auto pTrainSCV = g_ActionFactory.GetAction(ACTIONEX_Train, false);
-	pTrainSCV->Parameter(PARAM_EntityClassId, (int)scvType);
-	pTrainForceCase->Plan()->AddNode(pTrainSCV, pTrainSCV->Id());
-}
-//////////////////////////////////////////////////////////////////////////
-void CaseVisualizer::GenCollectSecondaryResourceCases()
-{
-	/*
-	Collect(X) = { X == 1 -> S(BuildInfra(Refinery),TrainForce(SCV),Gather(Secondary)) 
-				 { X > 1  -> S(Collect(X-1),BuildInfra(Refinery),TrainForce(SCV),Gather(Secondary))
-	*/
-	const unsigned MaxSCVs = 3;
-	EntityClassType scvType = (EntityClassType)m_idLookup.GetBySecond("Terran_SCV");
-	EntityClassType refineryType = (EntityClassType)m_idLookup.GetBySecond("Terran_Refinery");
-
-	for (unsigned numSCVs = 1; numSCVs <= MaxSCVs; ++numSCVs)
-	{
-		auto pCollectResourceCase = NewCase(GOALEX_CollectResource);
-
-		pCollectResourceCase->Goal()->Parameter(PARAM_ResourceId, RESOURCE_Secondary);
-		pCollectResourceCase->Goal()->Parameter(PARAM_Amount, numSCVs);
-
-		// BuildInfrastructure(Refinery,1)
-		auto pBuildRefineryG = g_GoalFactory.GetGoal(GOALEX_BuildInfrastructure, false);
-		pBuildRefineryG->Parameter(PARAM_EntityClassId, refineryType);
-		pBuildRefineryG->Parameter(PARAM_Amount, 1);
-		pCollectResourceCase->Plan()->AddNode(pBuildRefineryG, pBuildRefineryG->Id());
-
-		// TrainForce(SCV,Idle,1)
-		auto pSCVTrainForceG = g_GoalFactory.GetGoal(GOALEX_TrainForce, false);
-		pSCVTrainForceG->Parameter(PARAM_EntityClassId, scvType);
-		pSCVTrainForceG->Parameter(PARAM_ObjectStateType, OBJSTATE_Idle);
-		pSCVTrainForceG->Parameter(PARAM_Amount, 1);
-		pCollectResourceCase->Plan()->AddNode(pSCVTrainForceG, pSCVTrainForceG->Id());
-
-		// GatherResource(Secondary,DistanceToBase=25)
-		auto pSCVGatherA = g_ActionFactory.GetAction(ACTIONEX_GatherResource, false);
-		pSCVGatherA->Parameter(PARAM_ResourceId, RESOURCE_Secondary);
-		pSCVGatherA->Parameter(PARAM_DistanceToBase, 25);
-		pCollectResourceCase->Plan()->AddNode(pSCVGatherA, pSCVGatherA->Id());
-
-		pCollectResourceCase->Plan()->AddEdge(pBuildRefineryG->Id(), pSCVTrainForceG->Id());
-		pCollectResourceCase->Plan()->AddEdge(pSCVTrainForceG->Id(), pSCVGatherA->Id());
-
-		if (numSCVs > 1)
-		{
-			// CollectResource(Secondary,numSCVs-1)
-			auto pCollectResource = g_GoalFactory.GetGoal(GOALEX_CollectResource, false);
-			pCollectResource->Parameter(PARAM_ResourceId, RESOURCE_Secondary);
-			pCollectResource->Parameter(PARAM_Amount, numSCVs - 1);
-			pCollectResourceCase->Plan()->AddNode(pCollectResource, pCollectResource->Id());
-
-			pCollectResourceCase->Plan()->AddEdge(pCollectResource->Id(), pBuildRefineryG->Id());
-		}
-	}
-}
-//////////////////////////////////////////////////////////////////////////
-void CaseVisualizer::GenBuildRefineryCases()
-{
-	auto pBuildRefineryCase = NewCase(GOALEX_BuildInfrastructure);
-
-	EntityClassType refineryType = (EntityClassType)m_idLookup.GetBySecond("Terran_Refinery");
-
-	pBuildRefineryCase->Goal()->Parameter(PARAM_EntityClassId, refineryType);
-	pBuildRefineryCase->Goal()->Parameter(PARAM_Amount, 1);
-
-	auto pBuildRefineryA = g_ActionFactory.GetAction(ACTIONEX_Build, false);
-	pBuildRefineryA->Parameter(PARAM_EntityClassId, (int)refineryType);
-	pBuildRefineryA->Parameter(PARAM_DistanceToBase, 25);
-	pBuildRefineryCase->Plan()->AddNode(pBuildRefineryA, pBuildRefineryA->Id());
 }

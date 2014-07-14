@@ -49,6 +49,7 @@ namespace IStrategizer
             
             return id;
         }
+		void CancelOrders();
 
         // Game Commands
         bool Research(IStrategizer::ResearchType p_researchId);

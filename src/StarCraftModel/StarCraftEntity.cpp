@@ -205,7 +205,7 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     }
     else
     {
-        // _ASSERTE(Broodwar->canBuildHere(pos, type));
+		LogInfo("%s -> Build(%s@<%d,%d>)", ToString().c_str(), type.toString().c_str(), pos.x, pos.y);
 		m_pUnit->stop();
         return m_pUnit->build(type, pos);
     }
@@ -301,8 +301,6 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
     _ASSERTE(gatherer->canGather(resource));
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
 	gatherer->stop();
-
-	gatherer->stop();
     return gatherer->gather(resource);
 }
 //----------------------------------------------------------------------------------------------
@@ -316,4 +314,22 @@ void StarCraftEntity::SetOffline(RtsGame* pBelongingGame)
     }
 
     m_isOnline = false;
+}
+//////////////////////////////////////////////////////////////////////////
+void StarCraftEntity::CancelOrders()
+{
+	LogInfo("Canceling all %s active orders", ToString().c_str());
+
+	if (m_pUnit->cancelAddon())
+		LogInfo("%s canceled add-on construction", ToString().c_str());
+	if (m_pUnit->cancelConstruction())
+		LogInfo("%s canceled building construction", ToString().c_str());
+	if (m_pUnit->cancelMorph())
+		LogInfo("%s canceled moreph", ToString().c_str());
+	if (m_pUnit->cancelResearch())
+		LogInfo("%s canceled research", ToString().c_str());
+	if (m_pUnit->cancelTrain())
+		LogInfo("%s canceled train", ToString().c_str());
+	if (m_pUnit->cancelUpgrade())
+		LogInfo("%s canceled upgrade", ToString().c_str());
 }

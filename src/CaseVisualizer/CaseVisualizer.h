@@ -11,6 +11,7 @@
 #ifndef CROSSMAP_H
 #include "CrossMap.h"
 #endif
+#include "CaseGenerator.h"
 
 class QToolBar;
 class QButtonGroup;
@@ -54,6 +55,8 @@ namespace IStrategizer
         QString m_caseBasePath;
         ChoosePlanStepDialog* m_goalDialog;
         CrossMap<unsigned, std::string> m_idLookup;
+		CaseGenerator m_cbGen;
+
         bool InitIdLookup();
         void CreateToolBox();
         void VerifyHashCollisions();

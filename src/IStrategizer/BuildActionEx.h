@@ -34,6 +34,7 @@ namespace IStrategizer
 
     protected:
         void FreeResources(RtsGame &game);
+		void Abort(RtsGame &game);
         bool Execute(RtsGame& game, const WorldClock& p_clock);
         void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
         void InitializePostConditions();

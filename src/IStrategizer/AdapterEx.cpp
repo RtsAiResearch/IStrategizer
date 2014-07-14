@@ -87,8 +87,8 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         _ASSERTE(pGameType);
 
         // Append building width with padding of free space to achieve building spacing
-        searchData.BuildingWidth = pGameType->Attr(ECATTR_Width) + (m_buildingSpacing * 2);
-        searchData.BuildingHeight = pGameType->Attr(ECATTR_Height) + (m_buildingSpacing * 2);
+        searchData.BuildingWidth = pGameType->Attr(ECATTR_Width) + (m_buildingSpacing);
+        searchData.BuildingHeight = pGameType->Attr(ECATTR_Height) + (m_buildingSpacing);
         searchData.CandidateBuildPos = Vector2::Null();
         searchData.BuildingType = p_buildingType;
 
@@ -105,9 +105,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         }
         else
         {
-            // Shift the build position so that the building will be padded by a space
-            searchData.CandidateBuildPos.X += m_buildingSpacing;
-            searchData.CandidateBuildPos.Y += m_buildingSpacing;
+			_ASSERTE(g_Game->Map()->CanBuildHere(searchData.CandidateBuildPos, p_buildingType));
 
             return MapArea(
                 searchData.CandidateBuildPos,
