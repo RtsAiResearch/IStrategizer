@@ -17,11 +17,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IStrategizerBWAPIClient", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CaseVisualizer", "CaseVisualizer\CaseVisualizer.vcxproj", "{91A99414-2864-4939-9C49-2BCEFEE10DA2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FF7D6C42-1B3A-4DD5-A651-45BDFB631DE0}"
-	ProjectSection(SolutionItems) = preProject
-		Performance2.psess = Performance2.psess
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
