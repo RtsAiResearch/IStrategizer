@@ -629,5 +629,8 @@
     <ClCompile Include="..\CandidateGathererExist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CaseBaseEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

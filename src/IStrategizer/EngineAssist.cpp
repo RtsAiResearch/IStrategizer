@@ -290,7 +290,7 @@ void EngineAssist::GetPrerequisiteResources(int p_entityOrResearchType, PlayerTy
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::IsEntityInState(TID p_entityObject, ObjectStateType stateType, PlayerType p_playerType)
 {
-    if (stateType == OBJSTATE_END)
+    if (stateType == OBJSTATE_DontCare)
     {
         return IsEntityObjectReady(p_entityObject, p_playerType);
     }

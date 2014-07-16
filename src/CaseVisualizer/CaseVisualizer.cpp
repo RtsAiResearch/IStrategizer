@@ -432,12 +432,13 @@ void CaseVisualizer::SelectCase(int caseIdx)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void CaseVisualizer::on_btnGenSCVPlans_clicked()
+void CaseVisualizer::on_btnGenBuildOrder_clicked()
 {
 	if (m_pCaseBase != nullptr)
 	{
 		m_cbGen.SetCaseBase(m_pCaseBase);
-		m_cbGen.GenResourceMgmtCases();
+		m_cbGen.GenBuildOrderCases();
+		m_cbGen.GenTrainOrderCases();
 	}
 
 	Refresh();

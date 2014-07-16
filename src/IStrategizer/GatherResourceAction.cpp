@@ -20,7 +20,7 @@
 using namespace std;
 using namespace IStrategizer;
 
-const unsigned MaxPrepTime = 2000;
+const unsigned MaxPrepTime = 3000;
 const unsigned MaxExecTime = 5000;
 
 GatherResourceAction::GatherResourceAction() :
@@ -158,7 +158,7 @@ bool GatherResourceAction::Execute(RtsGame& game, const WorldClock& p_clock)
 	bool bOK = false;
 
 	// Adapt gatherer
-	m_gathererId = pAdapter->AdaptWorkerForGather(resourceType);
+	m_gathererId = pAdapter->AdaptWorkerForGather(resourceType, true);
 
 	if (m_gathererId != INVALID_TID)
 	{

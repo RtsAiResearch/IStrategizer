@@ -43,14 +43,15 @@ namespace IStrategizer
         TID AdaptResourceForGathering(ResourceType p_resourceType, const PlanStepParameters& p_parameters, const TID& p_gathererID);
         Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
         Vector2 AdaptEnemyBorder();
-		TID AdaptWorkerForGather(ResourceType resourceType);
+		TID AdaptWorkerForGather(ResourceType resourceType, bool immediate);
 		TID AdaptWorkerForBuild();
 
         static RankedStates BuilderStatesRank;
 		static RankedStates AttackerStatesRank;
         static RankedStates EntityToMoveStatesRank;
 		static RankedStates ProducingBuildingStatesRank;
-		static RankedStates GathererStatesRank;
+		static RankedStates ImmediateGathererStatesRank;
+		static RankedStates FutureGathererStatesRank;
 
     private:
 		void StackRankEntitiesOfType(_In_ PlayerType playerType, _In_ EntityClassType entityType, _In_ RankedStates ranks, _Out_ EntityList& ladder);

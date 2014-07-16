@@ -79,7 +79,7 @@ namespace IStrategizer
             void PointerGroupClicked(int);
 			void on_btnDuplicateCase_clicked();
             void on_btnReloadCB_clicked();
-			void on_btnGenSCVPlans_clicked();
+			void on_btnGenBuildOrder_clicked();
 	};
 }
 

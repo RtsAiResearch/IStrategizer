@@ -203,6 +203,7 @@
     <ClCompile Include="..\WorldClock.cpp" />
     <ClCompile Include="..\WorldMap.cpp" />
     <ClCompile Include="..\WorldResources.cpp" />
+    <ClCompile Include="CaseBaseEx.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E83C355-2FEB-4072-A99E-38882D5FBCBB}</ProjectGuid>

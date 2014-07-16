@@ -27,7 +27,8 @@ using namespace std;
 typedef pair<TID, ObjectStateType> UnitEntry;
 
 RankedStates AdapterEx::BuilderStatesRank = { OBJSTATE_Idle, OBJSTATE_GatheringPrimary, OBJSTATE_GatheringSecondary };
-RankedStates AdapterEx::GathererStatesRank = { OBJSTATE_Idle };
+RankedStates AdapterEx::FutureGathererStatesRank = { OBJSTATE_Idle };
+RankedStates AdapterEx::ImmediateGathererStatesRank = { OBJSTATE_Idle, OBJSTATE_Constructing };
 RankedStates AdapterEx::AttackerStatesRank = { OBJSTATE_Idle };
 RankedStates AdapterEx::EntityToMoveStatesRank = { OBJSTATE_Idle, OBJSTATE_UnderAttack, OBJSTATE_Attacking, OBJSTATE_Moving };
 RankedStates AdapterEx::ProducingBuildingStatesRank = { OBJSTATE_Idle, OBJSTATE_Training };
@@ -209,7 +210,7 @@ TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
 
 	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
 	EntityList ladder;
-	StackRankEntitiesOfType(PLAYER_Self, researcherType, GathererStatesRank, ladder);
+	StackRankEntitiesOfType(PLAYER_Self, researcherType, ProducingBuildingStatesRank, ladder);
 
 	if (ladder.empty())
 		return INVALID_TID;
@@ -273,13 +274,16 @@ Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
     return g_Game->Map()->GetNearestCell(&*pCell);
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptWorkerForGather(ResourceType resourceType)
+TID AdapterEx::AdaptWorkerForGather(ResourceType resourceType, bool immediate)
 {
 	EntityClassType gathererType = g_Game->Self()->Race()->GetWorkerType();
 
 	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
 	EntityList ladder;
-	StackRankEntitiesOfType(PLAYER_Self, gathererType, GathererStatesRank, ladder);
+	if (immediate)
+		StackRankEntitiesOfType(PLAYER_Self, gathererType, ImmediateGathererStatesRank, ladder);
+	else
+		StackRankEntitiesOfType(PLAYER_Self, gathererType, FutureGathererStatesRank, ladder);
 
 	if (ladder.empty())
 		return INVALID_TID;

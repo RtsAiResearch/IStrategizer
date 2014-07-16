@@ -13,6 +13,8 @@ namespace IStrategizer
     {
 		OBJECT_SERIALIZABLE(CaseBaseEx, &CaseContainer);
     public:
+		void DeleteAllGeneratedCases();
+
         ///> type=vector(CaseEx*)
         Serialization::SVector<CaseEx*> CaseContainer;
     };

@@ -42,8 +42,8 @@ bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame& game)
     {
         GameEntity *pEntity = game.Self()->GetEntity(unitId);
         _ASSERTE(pEntity);
-        entitiesCount += ((g_Assist.IsEntityInState(unitId, (ObjectStateType)_params[PARAM_ObjectStateType]) ||
-            g_Assist.IsEntityInState(unitId, OBJSTATE_Idle)) ? 1 : 0);
+
+        entitiesCount += ((g_Assist.IsEntityInState(unitId, (ObjectStateType)_params[PARAM_ObjectStateType])) ? 1 : 0);
     }
 
     return entitiesCount >= requiredCount;

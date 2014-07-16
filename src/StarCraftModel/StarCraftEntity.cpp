@@ -206,7 +206,6 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     else
     {
 		LogInfo("%s -> Build(%s@<%d,%d>)", ToString().c_str(), type.toString().c_str(), pos.x, pos.y);
-		m_pUnit->stop();
         return m_pUnit->build(type, pos);
     }
 };
@@ -300,7 +299,7 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
 
     _ASSERTE(gatherer->canGather(resource));
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
-	gatherer->stop();
+
     return gatherer->gather(resource);
 }
 //----------------------------------------------------------------------------------------------

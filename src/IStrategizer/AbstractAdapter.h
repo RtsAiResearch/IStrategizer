@@ -25,7 +25,7 @@ namespace IStrategizer
         virtual TID GetEntityObjectId(EntityClassType p_entityType) = 0;
         virtual Vector2 AdaptPosition(const PlanStepParameters& p_parameters) = 0;
         virtual Vector2 AdaptEnemyBorder() = 0;
-		virtual TID AdaptWorkerForGather(ResourceType resourceType) = 0;
+		virtual TID AdaptWorkerForGather(ResourceType resourceType, bool immediate) = 0;
 		virtual TID AdaptWorkerForBuild() = 0;
     };
 }

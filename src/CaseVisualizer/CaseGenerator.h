@@ -19,14 +19,20 @@ namespace IStrategizer
 		{}
 
 		void SetCaseBase(_In_ CaseBaseEx* pCb) { m_pCb = pCb; }
-		void GenResourceMgmtCases();
+		void GenBuildOrderCases();
+		void GenTrainOrderCases();
 		CaseEx* NewCase(_In_ GoalType caseGoal);
+		void GetTrainForceCases(const char* pBwapiUnitName, unsigned amount);
 
 	private:
+		const unsigned MaxSCVs = 15;
+
 		void GenCollectPrimaryResourceCases();
 		void GenCollectSecondaryResourceCases();
 		void GenSCVTrainForceCases();
 		void GenBuildRefineryCases();
+		void GenRecursiveGoalActionCases(GoalType goalType, const PlanStepParameters& goalParams, ActionType actionType, const PlanStepParameters& actionParams);
+		void DeleteAllGeneratedCases();
 
 		CaseBaseEx* m_pCb;
 		CrossMap<unsigned, std::string>& m_idLookup;

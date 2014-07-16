@@ -27,7 +27,7 @@ bool CandidateGathererExist::Evaluate(RtsGame& game)
 	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
 	// Adapt gatherer
-	auto candidateId = pAdapter->AdaptWorkerForGather(resourceType);
+	auto candidateId = pAdapter->AdaptWorkerForGather(resourceType, true);
 	_isEvaluated = _isSatisfied = candidateId != INVALID_TID;
 	return _isSatisfied;
 }

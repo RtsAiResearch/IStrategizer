@@ -266,7 +266,7 @@ namespace IStrategizer
 #define Prefix_ObjectStateType OBJSTATE
     enum ObjectStateType
     {
-        OBJSTATE_BeingConstructed    = 0x20d00,
+		OBJSTATE_DontCare = 0x20d00,
         OBJSTATE_START                = 0x20d00,
         OBJSTATE_Idle,
         OBJSTATE_Moving,
@@ -276,7 +276,8 @@ namespace IStrategizer
         OBJSTATE_Training,
         OBJSTATE_Attacking,
         OBJSTATE_UnderAttack,
-        OBJSTATE_END
+		OBJSTATE_BeingConstructed,
+		OBJSTATE_END
     };
 #define Define_ObjectStateType \
     Enums[OBJSTATE_BeingConstructed] = "Being Constructed"; \
@@ -288,7 +289,7 @@ namespace IStrategizer
     Enums[OBJSTATE_Training] = "Training"; \
     Enums[OBJSTATE_Attacking] = "Attacking"; \
     Enums[OBJSTATE_UnderAttack] = "Under Attack"; \
-    Enums[OBJSTATE_END] = "Undefined";
+	Enums[OBJSTATE_DontCare] = "Don't Care State";
     //---------------------------------------------------------------------------
 #define Prefix_StrategyType STRTYPE
     enum StrategyType
