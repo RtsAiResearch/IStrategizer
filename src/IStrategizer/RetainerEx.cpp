@@ -43,7 +43,7 @@ void RetainerEx::ReadCaseBase()
 void RetainerEx::Retain(_In_ CaseEx* pCase)
 {
     if (find(m_casebase.CaseContainer.begin(), m_casebase.CaseContainer.end(), pCase) == m_casebase.CaseContainer.end())
-        m_casebase.CaseContainer.push_back(pCase);
+        m_casebase.CaseContainer.insert(pCase);
 }
 //----------------------------------------------------------------------------------------------
 void RetainerEx::Flush()
@@ -78,10 +78,5 @@ RetainerEx::~RetainerEx()
 {
     Flush();
 
-    while (!m_casebase.CaseContainer.empty())
-    {
-        auto& pCase = m_casebase.CaseContainer.back();
-        SAFE_DELETE(pCase);
-        m_casebase.CaseContainer.pop_back();
-    }
+	m_casebase.DeleteAll();
 }

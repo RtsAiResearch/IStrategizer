@@ -50,6 +50,12 @@ PlanStepEx::~PlanStepEx()
 	SAFE_DELETE(_postCondition);
 }
 //////////////////////////////////////////////////////////////////////////
+void PlanStepEx::Parameters(const PlanStepParameters& p_val)
+{
+	for (auto& r : p_val)
+		_params[r.first] = p_val.at(r.first);
+}
+//////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeConditions()
 {
     InitializePostConditions();

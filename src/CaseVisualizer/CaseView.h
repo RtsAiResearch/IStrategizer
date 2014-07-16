@@ -17,8 +17,6 @@
 #include <hash_map>
 #include "GraphScene.h"
 
-#define GameIdsLookupFilename "IdLookup.txt"
-
 namespace IStrategizer
 {
 	class CaseEx;

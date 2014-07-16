@@ -56,6 +56,11 @@ bool ResearchAction::SuccessConditionsSatisfied(RtsGame& game)
 //----------------------------------------------------------------------------------------------
 bool ResearchAction::Execute(RtsGame& game, const WorldClock& p_clock)
 {
+	// FIXME: because we don't have a goal for Research for now, we can use the action as a goal
+	// at the same time, by not issuing the research action if it is already done
+	if (game.Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]))
+		return true;
+
 	ResearchType researchType = (ResearchType)_params[PARAM_ResearchId];
 	GameEntity *pGameResearcher;
 	AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();

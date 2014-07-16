@@ -29,7 +29,7 @@ namespace IStrategizer
         
 		~PlanStepEx();
 		void Parameter(ParameterType key, int val) { _params[key] = val; }
-		void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()); }
+		void Parameters(const PlanStepParameters& p_val);
         void Copy(IClonable* p_dest);
         int StepTypeId() const { return _stepTypeId; }
         int Parameter(int p_parameterName) const { return ContainsParameter(p_parameterName) ? _params.at((ParameterType)p_parameterName) : 0; }

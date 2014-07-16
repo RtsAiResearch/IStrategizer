@@ -17,6 +17,7 @@ class QToolBar;
 class QButtonGroup;
 
 #define CaseBaseFilter tr("Case-base (*.cb)")
+#define GameIdsLookupFilename "IdLookup.txt"
 
 namespace IStrategizer
 {
@@ -33,29 +34,17 @@ namespace IStrategizer
     public:
         CaseVisualizer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
         ~CaseVisualizer();
-
-        void OpenCaseBase(QString cbFilename);
-        void NewCaseBase();
-        void SaveCaseBaseAs();
-        void SaveCaseBase();
-        void Refresh();
-        CaseEx* NewCase();
-		CaseEx* NewCase(GoalType p_caseGoal);
-        void DeleteCase(CaseEx* pCase);
-        void EditCase();
-        void SelectCase(int caseIdx);
-        void DuplicateCase(CaseEx* pCase);
-
     private:
-        Ui::CaseVisualizerClass ui;
-        CaseBaseEx* m_pCaseBase;
-        CaseView* m_pCaseView;
-        QToolBar* m_pointerToolbar;
-        QButtonGroup* m_pointerTypeGroup;
-        QString m_caseBasePath;
-        ChoosePlanStepDialog* m_goalDialog;
-        CrossMap<unsigned, std::string> m_idLookup;
-		CaseGenerator m_cbGen;
+		void OpenCaseBase(QString cbFilename);
+		void NewCaseBase();
+		void SaveCaseBaseAs();
+		void SaveCaseBase();
+		void Refresh();
+		CaseEx* NewCase();
+		void EditCase();
+		void SelectCase(int caseIdx);
+		void SelectCase(const CaseEx* pCase);
+		void DuplicateCase(CaseEx* pCase);
 
         bool InitIdLookup();
         void CreateToolBox();
@@ -65,6 +54,16 @@ namespace IStrategizer
 		void GenCollectSecondaryResourceCases();
 		void GenSCVTrainForceCases();
 		void GenBuildRefineryCases();
+
+		Ui::CaseVisualizerClass ui;
+		CaseBaseEx* m_pCaseBase;
+		CaseView* m_pCaseView;
+		QToolBar* m_pointerToolbar;
+		QButtonGroup* m_pointerTypeGroup;
+		QString m_caseBasePath;
+		ChoosePlanStepDialog* m_goalDialog;
+		CrossMap<unsigned, std::string> m_idLookup;
+		CaseGenerator m_cbGen;
 
         private slots:
             void on_actionSaveAs_triggered();
@@ -79,7 +78,8 @@ namespace IStrategizer
             void PointerGroupClicked(int);
 			void on_btnDuplicateCase_clicked();
             void on_btnReloadCB_clicked();
-			void on_btnGenBuildOrder_clicked();
+			void on_btnGenCases_clicked();
+			void on_btnDelGenCases_clicked();
 	};
 }
 
