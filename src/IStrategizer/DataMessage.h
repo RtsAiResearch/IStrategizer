@@ -6,6 +6,7 @@
 #ifndef ENGINEDATA_H
 #include "EngineData.h"
 #endif
+#include <memory>
 
 namespace IStrategizer
 {
@@ -18,12 +19,11 @@ namespace IStrategizer
             Message(gameFrame, msgType),
             m_pData(pData)
         {}
-        ~DataMessage() { delete m_pData; }
-        const T* Data() const { return m_pData; }
-        T* Data() { return m_pData; }
+        const T* Data() const { return &*m_pData; }
+        T* Data() { return &*m_pData; }
 
     private:
-        T* m_pData;
+        std::shared_ptr<T> m_pData;
     };
 
     // DataMessage that does not own the lifetime of the data object

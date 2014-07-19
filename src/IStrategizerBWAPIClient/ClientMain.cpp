@@ -456,6 +456,10 @@ void ClientMain::OnClientUpdate()
         m_enemyPlayerUnitsCollected = !enemyUnits.empty();
     }
 
+	// Engine skip the first 2 frames, frame 0 and frame 1
+	if (Broodwar->getFrameCount() < 2)
+		return;
+
     try
     {
         m_pIStrategizer->Update(Broodwar->getFrameCount());

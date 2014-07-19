@@ -98,6 +98,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
             }
 
             m_pPlanner->Update(m_clock);
+			m_resourceManager.Update(*g_Game, m_clock);
         }
     }
     catch (IStrategizer::Exception &e)
@@ -147,6 +148,7 @@ bool IStrategizerEx::Init()
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
         g_MessagePump->RegisterForMessage(MSG_BattleComplete, this);
         g_MessagePump->RegisterForMessage(MSG_PlanComplete, this);
+		(void)m_resourceManager.Init();
         break;
     }
 

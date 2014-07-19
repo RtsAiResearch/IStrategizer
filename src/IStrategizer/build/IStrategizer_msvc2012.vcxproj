@@ -51,6 +51,7 @@
     <ClInclude Include="..\EngineDefs.h" />
     <ClInclude Include="..\EngineObject.h" />
     <ClInclude Include="..\CandidateGathererExist.h" />
+    <ClInclude Include="..\ResourceManager.h" />
     <ClInclude Include="..\TargetFSMState.h" />
     <ClInclude Include="..\DestroyEntityTypeGoal.h" />
     <ClInclude Include="..\EngineAssist.h" />
@@ -160,6 +161,7 @@
     <ClCompile Include="..\ExecutionHistory.cpp" />
     <ClCompile Include="..\Expression.cpp" />
     <ClCompile Include="..\ForceDescription.cpp" />
+    <ClCompile Include="..\GameEntity.cpp" />
     <ClCompile Include="..\GamePlayer.cpp" />
     <ClCompile Include="..\GameTrace.cpp" />
     <ClCompile Include="..\CandidateGathererExist.cpp" />
@@ -190,6 +192,7 @@
     <ClCompile Include="..\ResearchDone.cpp" />
     <ClCompile Include="..\ResourceDescription.cpp" />
     <ClCompile Include="..\ResourceExist.cpp" />
+    <ClCompile Include="..\ResourceManager.cpp" />
     <ClCompile Include="..\RetainerEx.cpp" />
     <ClCompile Include="..\RetrieverEx.cpp" />
     <ClCompile Include="..\Reviser.cpp" />

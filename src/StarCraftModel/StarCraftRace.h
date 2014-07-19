@@ -18,6 +18,7 @@ namespace IStrategizer
         int BaseSupplyAmount() const;
         int SupplyBuildingSupplyAmount() const;
         const std::string& ToString() const;
+		unsigned OptimalGatherersPerSource(ResourceType resource) const;
 
     private:
         static const float MineralsPerWorkerPerFrame;

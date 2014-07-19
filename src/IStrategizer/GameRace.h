@@ -20,6 +20,7 @@ namespace IStrategizer
         virtual int BaseSupplyAmount() const = 0;
         virtual int SupplyBuildingSupplyAmount() const = 0;
         virtual const std::string& ToString() const = 0;
+		virtual unsigned OptimalGatherersPerSource(ResourceType resource) const = 0;
     };
 }
 #endif // GAMERACE_H

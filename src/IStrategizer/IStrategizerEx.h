@@ -5,6 +5,7 @@
 #include "IMessagePumpObserver.h"
 #include "WorldClock.h"
 #include "AttackManager.h"
+#include "ResourceManager.h"
 #include <vector>
 #include <memory>
 
@@ -52,6 +53,7 @@ namespace IStrategizer
         AttackManager m_attackManager;
         std::vector<PlanStepParameters> m_armyTrainOrder;
         std::shared_ptr<BotStatistics> m_pStatistics;
+		ResourceManager m_resourceManager;
     };
 }
 

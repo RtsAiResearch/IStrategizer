@@ -10,7 +10,7 @@ using namespace std;
 
 const TInfluence PositiveInfluence = 1;
 const TInfluence NegativeInfluence = -1;
-const TInfluence nullptrInfluence = 0;
+const TInfluence NullInfluence = 0;
 
 //////////////////////////////////////////////////////////////////////////
 void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
@@ -94,8 +94,12 @@ bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, T
     _ASSERTE(p_pParam);
     bool *pAllCellsFree = (bool*)p_pParam;
 
+	bool isBuildable = g_Game->Map()->CanBuildHere(Vector2(p_worldX, p_worldY));
+
     _ASSERTE(p_pCell);
-    if (p_pCell->Inf != nullptrInfluence || p_pCell->Data != CELL_Free)
+    if (p_pCell->Inf != NullInfluence ||
+		p_pCell->Data != CELL_Free ||
+		!isBuildable)
     {
         stopSearch = true;
         *pAllCellsFree = false;
@@ -175,6 +179,5 @@ bool OccupanceDataIM::FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::CanBuildHere(Vector2 p_worldPos, int p_buildingWidth, int p_buildingHeight, EntityClassType p_buildingType)
 {
-    return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight) &&
-           g_Game->Map()->CanBuildHere(p_worldPos, p_buildingType);
+	return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight);
 }

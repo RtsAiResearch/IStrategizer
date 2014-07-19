@@ -26,6 +26,7 @@ namespace IStrategizer
         virtual Vector2 Size() const { return Vector2(m_worldWidth, m_worldHeight); }
         virtual unsigned Area() const { return m_worldWidth * m_worldHeight; }
         virtual bool CanBuildHere(Vector2 p_position, EntityClassType p_buildingType) const = 0;
+		virtual bool CanBuildHere(Vector2 pos) const = 0;
         virtual MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const = 0;
         void Update();
         Vector2 CellMatrixSize() const;
@@ -36,6 +37,7 @@ namespace IStrategizer
         void SetOffline(RtsGame* pBelongingGame);
         unsigned Width() const { return m_worldWidth; }
         unsigned Height() const { return m_worldHeight; }
+		bool IsInMap(Vector2 pos, Vector2 size);
 
     protected:
         CellFeature** m_cellFeatureMatrix;

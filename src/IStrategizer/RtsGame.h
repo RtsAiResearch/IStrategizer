@@ -82,7 +82,6 @@ namespace IStrategizer
         virtual size_t GetMaxTrainingQueueCount() const = 0;
         virtual unsigned GameFrame() const = 0;
         float Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const;
-
         static SimilarityWeightModel DefaultWeightModel;
 
     protected:

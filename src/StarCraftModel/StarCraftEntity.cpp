@@ -87,14 +87,17 @@ int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
         case EOATTR_PosCenterY:
             return m_pUnit->getPosition().y;
 
-        case EOATTR_IsMoving:
-            return m_pUnit->isMoving();
+		case EOATTR_IsGatheringSecondaryResource:
+			return m_pUnit->isGatheringGas() || m_pUnit->isCarryingGas();
 
         case EOATTR_IsGatheringPrimaryResource:
             return m_pUnit->isGatheringMinerals() || m_pUnit->isCarryingMinerals();
 
-        case EOATTR_IsGatheringSecondaryResource:
-            return m_pUnit->isGatheringGas() || m_pUnit->isCarryingGas();
+		case EOATTR_IsBeingGathered:
+			return m_pUnit->isBeingGathered();
+
+		case EOATTR_OrderTargetId:
+			return m_pUnit->getOrderTarget()->getID();
 
         default:
             DEBUG_THROW(InvalidParameterException(XcptHere));
@@ -120,7 +123,7 @@ ObjectStateType StarCraftEntity::FetchState() const
     bool isAttacking = m_pUnit->isAttacking();
     bool isUnderAttack = m_pUnit->isUnderAttack();
 
-    if (isIdle && isCompleted)
+    if (isIdle && isCompleted && m_pUnit->isInterruptible())
         return OBJSTATE_Idle;
     else if (isBeingConstructed || (isIdle && !isCompleted))
         return OBJSTATE_BeingConstructed;
@@ -200,7 +203,7 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
 
     if (type.isAddon())
     {
-        _ASSERTE(m_pUnit->canBuildAddon(type));
+        //_ASSERTE(m_pUnit->canBuildAddon(type));
         return m_pUnit->buildAddon(type);
     }
     else
@@ -297,9 +300,10 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
     resource = Broodwar->getUnit(p_resourceEntityObjectId);
     _ASSERTE(resource);
 
-    _ASSERTE(gatherer->canGather(resource));
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
+	//_ASSERTE(gatherer->canGather(resource));
 
+	gatherer->stop();
     return gatherer->gather(resource);
 }
 //----------------------------------------------------------------------------------------------
@@ -317,7 +321,7 @@ void StarCraftEntity::SetOffline(RtsGame* pBelongingGame)
 //////////////////////////////////////////////////////////////////////////
 void StarCraftEntity::CancelOrders()
 {
-	LogInfo("Canceling all %s active orders", ToString().c_str());
+	LogInfo("%s -> Cancel All Active Orders", ToString().c_str());
 
 	if (m_pUnit->cancelAddon())
 		LogInfo("%s canceled add-on construction", ToString().c_str());
@@ -331,4 +335,23 @@ void StarCraftEntity::CancelOrders()
 		LogInfo("%s canceled train", ToString().c_str());
 	if (m_pUnit->cancelUpgrade())
 		LogInfo("%s canceled upgrade", ToString().c_str());
+}
+//////////////////////////////////////////////////////////////////////////
+void StarCraftEntity::Stop()
+{
+	LogInfo("%s -> Stop", ToString().c_str());
+
+	(void)m_pUnit->stop();
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftEntity::CanTrain(EntityClassType type)
+{
+	if (!m_isOnline)
+		DEBUG_THROW(InvalidOperationException(XcptHere));
+
+	TID unitTypeId = g_Database.EntityMapping.GetBySecond(type);
+	string typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
+	UnitType gameType = BWAPI::UnitType::getType(typeName);
+
+	return m_pUnit->canTrain(gameType);
 }

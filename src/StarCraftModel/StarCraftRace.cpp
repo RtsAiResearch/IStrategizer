@@ -53,7 +53,7 @@ float StarCraftRace::GetResourceConsumbtionRatePerWorker(ResourceType p_id) cons
 //----------------------------------------------------------------------------------------------
 EntityClassType StarCraftRace::GetResourceSource(ResourceType p_type) const
 {
-    // This method is hard-coded for Terran, ideally it should take race type.
+    // Only terran is currently supported
     _ASSERTE(m_race == Races::Terran);
 
     switch(p_type)
@@ -70,4 +70,25 @@ EntityClassType StarCraftRace::GetResourceSource(ResourceType p_type) const
     default:
         DEBUG_THROW(InvalidParameterException(XcptHere));
     }
+}
+//----------------------------------------------------------------------------------------------
+unsigned StarCraftRace::OptimalGatherersPerSource(ResourceType resource) const
+{
+	// Only terran is currently supported
+	_ASSERTE(m_race == Races::Terran);
+
+	switch (resource)
+	{
+	case RESOURCE_Primary:
+		return 3;
+
+	case RESOURCE_Secondary:
+		return 3;
+
+	case RESOURCE_Supply:
+		return 0;
+
+	default:
+		DEBUG_THROW(InvalidParameterException(XcptHere));
+	}
 }

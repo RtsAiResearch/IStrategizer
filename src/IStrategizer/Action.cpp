@@ -110,15 +110,13 @@ void Action::Update(RtsGame& game, const WorldClock& clock)
 		break;
 
 	case ESTATE_Executing:
-		if (AliveConditionsSatisfied(game))
+
+		if (SuccessConditionsSatisfied(game))
 		{
-			if (SuccessConditionsSatisfied(game))
-			{
-				SetState(ESTATE_Succeeded, game, clock);
-				m_history.Add(ESTATE_Succeeded);
-			}
+			SetState(ESTATE_Succeeded, game, clock);
+			m_history.Add(ESTATE_Succeeded);
 		}
-		else
+		else if (!AliveConditionsSatisfied(game))
 		{
 			LogInfo("%s alive conditions not satisfied", ToString().c_str());
 			SetState(ESTATE_Failed, game, clock);

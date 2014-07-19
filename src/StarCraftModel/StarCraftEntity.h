@@ -49,8 +49,6 @@ namespace IStrategizer
             
             return id;
         }
-		void CancelOrders();
-
         // Game Commands
         bool Research(IStrategizer::ResearchType p_researchId);
         bool Build(EntityClassType p_buildingClassId, Vector2 p_position);
@@ -59,7 +57,9 @@ namespace IStrategizer
         bool Train(EntityClassType p_entityClassId);
         bool Move(Vector2 p_position);
 		bool GatherResourceEntity(TID p_resourceEntityObjectId);
-
+		void Stop();
+		void CancelOrders();
+		bool CanTrain(EntityClassType type);
         void SetOffline(RtsGame* pBelongingGame);
 
     protected:

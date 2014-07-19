@@ -35,6 +35,8 @@ namespace IStrategizer
         virtual int Attr(EntityObjectAttribute attrId) const = 0;
         virtual bool IsTraining(TID traineeId) const = 0;
         virtual bool CanGather(TID resourceObjectId) const = 0;
+		// Euclidean distance squared between 2 units on the game map
+		unsigned Distance(_In_ const GameEntity *pOther) const;
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;
@@ -45,6 +47,8 @@ namespace IStrategizer
         virtual bool Train(EntityClassType entityClassId) = 0;
         virtual bool GatherResourceEntity(TID resourceEntityObjectId) = 0;
 		virtual void CancelOrders() = 0;
+		virtual void Stop() = 0;
+		virtual bool CanTrain(EntityClassType type) = 0;
 
         virtual void SetOffline(RtsGame* pBelongingGame) = 0;
         bool Acquire() { return true; }

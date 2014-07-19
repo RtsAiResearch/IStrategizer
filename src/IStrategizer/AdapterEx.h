@@ -23,6 +23,7 @@ namespace IStrategizer
     {
         int BuildingWidth;
         int BuildingHeight;
+		int AllSidePadding;
         Vector2 CandidateBuildPos;
         EntityClassType BuildingType;
     };
@@ -44,7 +45,7 @@ namespace IStrategizer
         Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
         Vector2 AdaptEnemyBorder();
 		TID AdaptWorkerForGather(ResourceType resourceType, bool immediate);
-		TID AdaptWorkerForBuild();
+		TID AdaptWorkerForBuild(EntityClassType buildingType);
 
         static RankedStates BuilderStatesRank;
 		static RankedStates AttackerStatesRank;

@@ -25,6 +25,8 @@ namespace IStrategizer
         EOATTR_Type,
         EOATTR_IsGatheringPrimaryResource,
         EOATTR_IsGatheringSecondaryResource,
+		EOATTR_IsBeingGathered,
+		EOATTR_OrderTargetId,
         EOATTR_END
     };
 #define Define_EntityObjectAttribute \
@@ -40,7 +42,9 @@ namespace IStrategizer
     Enums[EOATTR_Bottom] = "Bottom Y Position"; \
     Enums[EOATTR_Type] = "Type"; \
     Enums[EOATTR_IsGatheringPrimaryResource] = "Is Gathering Primary Rresource"; \
-    Enums[EOATTR_IsGatheringSecondaryResource] = "Is Gathering Secondary Resource"; \
+	Enums[EOATTR_IsGatheringSecondaryResource] = "Is Gathering Secondary Resource"; \
+	Enums[EOATTR_IsBeingGathered] = "Is Being Gathered"; \
+	Enums[EOATTR_OrderTargetId] = "Order Target ID"; \
     //---------------------------------------------------------------------------
 #define Prefix_EntityClassAttribute ECATTR
     enum EntityClassAttribute

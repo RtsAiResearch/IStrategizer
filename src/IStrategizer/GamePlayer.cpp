@@ -77,20 +77,16 @@ GameEntity* GamePlayer::GetEntity(TID id)
     return m_entities[id];
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::GetBases(EntityList &basesIds)
+void GamePlayer::GetBases(EntityList &bases)
 {
-    EntityClassType typeId;
-
-    typeId = Race()->GetBaseType();
-
-    basesIds.clear();
-
-    for(EntitiesMap::iterator itr = m_entities.begin();
-        itr != m_entities.end(); ++itr)
-    {
-        if (itr->second->Type() == typeId)
-            basesIds.push_back(itr->first);
-    }
+    EntityClassType typeId = Race()->GetBaseType();
+	Entities(typeId, bases);
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::GetWorkers(_Out_ EntityList& workers)
+{
+	EntityClassType typeId = Race()->GetWorkerType();
+	Entities(typeId, workers);
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds)

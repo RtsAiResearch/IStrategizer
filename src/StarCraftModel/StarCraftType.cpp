@@ -69,7 +69,7 @@ void StarCraftType::Init()
     groundDmg = groundWeapon.damageAmount();
     airDmg = airWeapon.damageAmount();
 
-    totalDmg = (airDmg + 1) * (groundDmg + 1);
+    totalDmg = max(airDmg, groundDmg);
 
     Attr(ECATTR_AirRange, airWeapon.maxRange());
     Attr(ECATTR_GroundRange, groundWeapon.maxRange());

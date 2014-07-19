@@ -203,3 +203,16 @@ void WorldMap::SetOffline(RtsGame* pBelongingGame)
     m_isOnline = false;
     m_pGame = pBelongingGame;
 }
+//////////////////////////////////////////////////////////////////////////
+bool WorldMap::IsInMap(Vector2 pos, Vector2 size)
+{
+	if (pos.X < 0 || pos.X >= (int)Width() ||
+		pos.Y < 0 || pos.Y >= (int)Height())
+		return false;
+
+	if (pos.X + size.X >= (int)Width() ||
+		pos.Y + size.Y >= (int)Height())
+		return false;
+
+	return true;
+}

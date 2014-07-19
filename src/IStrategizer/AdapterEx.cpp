@@ -43,21 +43,32 @@ AdapterEx::AdapterEx()
     m_buildingSpacing = DefaultBuildingSpacing;
 }
 //////////////////////////////////////////////////////////////////////////
-bool AdapterEx::BuildPositionSearchPredicate(unsigned p_worldX, unsigned p_worldY, const TCell* p_pCell, void *p_pParam)
+bool AdapterEx::BuildPositionSearchPredicate(unsigned worldX, unsigned worldY, const TCell* pCell, void *pParam)
 {
     OccupanceDataIM *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
-    SpiralSearchData *pSearchData = (SpiralSearchData*)p_pParam;
-    Vector2 worldPos(p_worldX, p_worldY);
-    bool canBuildThere;
+    SpiralSearchData *pSearchData = (SpiralSearchData*)pParam;
+    Vector2 worldPos(worldX, worldY);
+
+	Vector2 paddedSize(pSearchData->BuildingWidth + (2 * pSearchData->AllSidePadding),
+		pSearchData->BuildingHeight + (2 * pSearchData->AllSidePadding));
+	Vector2 paddedPos(worldX - pSearchData->AllSidePadding, worldY - pSearchData->AllSidePadding);
+
+	// Can't build here if part of the build area including the padding
+	// will be out of the game map
+	if (!g_Game->Map()->IsInMap(paddedPos, paddedSize))
+		return false;
 
     // If an area is not occupied then we can build there
     _ASSERTE(pBuildingIM && pSearchData);
-    canBuildThere = pBuildingIM->CanBuildHere(worldPos, pSearchData->BuildingWidth, pSearchData->BuildingHeight, pSearchData->BuildingType);
+	bool isFree = pBuildingIM->CanBuildHere(paddedPos,
+		paddedSize.X,
+		paddedSize.Y,
+		pSearchData->BuildingType);
 
-    if (canBuildThere)
-        pSearchData->CandidateBuildPos = worldPos;
+	if (isFree)
+		pSearchData->CandidateBuildPos = worldPos;
 
-    return canBuildThere;
+    return isFree;
 }
 //////////////////////////////////////////////////////////////////////////
 MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
@@ -88,9 +99,10 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         _ASSERTE(pGameType);
 
         // Append building width with padding of free space to achieve building spacing
-        searchData.BuildingWidth = pGameType->Attr(ECATTR_Width) + (m_buildingSpacing);
-        searchData.BuildingHeight = pGameType->Attr(ECATTR_Height) + (m_buildingSpacing);
+        searchData.BuildingWidth = pGameType->Attr(ECATTR_Width);
+        searchData.BuildingHeight = pGameType->Attr(ECATTR_Height);
         searchData.CandidateBuildPos = Vector2::Null();
+		searchData.AllSidePadding = m_buildingSpacing;
         searchData.BuildingType = p_buildingType;
 
         // This means to search all the map if the map is a square
@@ -225,10 +237,20 @@ TID AdapterEx::AdaptBuildingForTraining(EntityClassType traineeType)
 	EntityList ladder;
 	StackRankEntitiesOfType(PLAYER_Self, trainerType, ProducingBuildingStatesRank, ladder);
 
-	if (ladder.empty())
-		return INVALID_TID;
-	else
-		return ladder[0];
+	TID candidateTrainer = INVALID_TID;
+
+	for (auto trainerId : ladder)
+	{
+		auto pTrainer = g_Game->Self()->GetEntity(trainerId);
+
+		if (pTrainer->CanTrain(traineeType))
+		{
+			candidateTrainer = trainerId;
+			break;
+		}
+	}
+
+	return candidateTrainer;
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
@@ -291,9 +313,9 @@ TID AdapterEx::AdaptWorkerForGather(ResourceType resourceType, bool immediate)
 		return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptWorkerForBuild()
+TID AdapterEx::AdaptWorkerForBuild(EntityClassType buildingType)
 {
-	EntityClassType builderType = g_Game->Self()->Race()->GetWorkerType();
+	EntityClassType builderType = g_Game->GetEntityType(buildingType)->GetBuilderType();
 
 	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
 	EntityList ladder;

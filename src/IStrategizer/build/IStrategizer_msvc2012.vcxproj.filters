@@ -414,6 +414,9 @@
     <ClInclude Include="..\AttackGroundAction.h">
       <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
     </ClInclude>
+    <ClInclude Include="..\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Action.cpp">
@@ -630,6 +633,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CaseBaseEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

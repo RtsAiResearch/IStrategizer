@@ -30,9 +30,10 @@ namespace IStrategizer
     public:
         GamePlayer(TID raceId);
         virtual ~GamePlayer();
-        void Entities(std::vector<TID>& p_entityIds);
-        void Entities(EntityClassType p_typeId, std::vector<TID> &p_entityIds);
-        void GetBases(std::vector<TID> &p_basesIds);
+		void Entities(EntityList& p_entityIds);
+        void Entities(EntityClassType p_typeId, EntityList& p_entityIds);
+		void GetBases(EntityList &p_basesIds);
+		void GetWorkers(_Out_ EntityList& workers);
         GameEntity* GetEntity(TID p_id);
         MapArea GetColonyMapArea();
         virtual void SetOffline(RtsGame* pBelongingGame) = 0;

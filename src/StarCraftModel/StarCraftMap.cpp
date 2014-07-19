@@ -21,11 +21,9 @@ MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType)
 	if (!m_isOnline)
 		DEBUG_THROW(InvalidOperationException(XcptHere));
 
+	// Add-ons are always built in place of its parent building, it has nothing to do with
+	// place adaptation
 	MapArea candidatePosition = MapArea::Null();
-
-	// Get the player base tile position
-	MapArea colony = g_Game->Self()->GetColonyMapArea();
-	Vector2 colonyTile = colony.Pos();
 
 	// Get the unit type object
 	UnitType type;
@@ -37,6 +35,10 @@ MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType)
 
 	if (type.isRefinery())
 	{
+		// Get the player base tile position
+		MapArea colony = g_Game->Self()->GetColonyMapArea();
+		Vector2 colonyTile = colony.Pos();
+
 		int bestDistance = INT_MAX;
 		Unitset geysers = Broodwar->getGeysers();
 		Unit currentGeyser;
@@ -63,8 +65,6 @@ MapArea StarCraftMap::GetSpecialBuildingPosition(EntityClassType p_buildingType)
 				}
 			}
 		}
-
-		//_ASSERTE(CanBuildHere(candidatePosition.Pos(), p_buildingType));
 	}
 
 	return candidatePosition;
@@ -90,4 +90,13 @@ bool StarCraftMap::CanBuildHere(Vector2 p_worldPosition, EntityClassType p_build
 
 	auto tilePos = TilePosition(TilePositionFromUnitPosition(p_worldPosition.X), TilePositionFromUnitPosition(p_worldPosition.Y));
 	return Broodwar->canBuildHere(tilePos, type) && Broodwar->isExplored(tilePos);
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftMap::CanBuildHere(Vector2 pos) const
+{
+	if (!m_isOnline)
+		DEBUG_THROW(InvalidOperationException(XcptHere));
+
+	return Broodwar->isBuildable(TilePositionFromUnitPosition(pos.X), TilePositionFromUnitPosition(pos.Y), false) &&
+		Broodwar->isExplored(TilePositionFromUnitPosition(pos.X), TilePositionFromUnitPosition(pos.Y));
 }
