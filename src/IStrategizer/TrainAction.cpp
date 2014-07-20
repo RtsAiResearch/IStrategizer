@@ -204,8 +204,8 @@ void TrainAction::InitializePostConditions()
 
 	if (!pGameType->Attr(ECATTR_IsWorker))
 	{
-		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedUnitsTotalHP, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_MaxHp)));
-		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedUnitsTotalDamage, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_GroundAttack)));
+		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedAttackersTotalHP, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_MaxHp)));
+		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedAttackersTotalDamage, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_GroundAttack)));
 	}
 
 	m_terms.push_back(new EntityClassExist(PLAYER_Self, entityTypeId, 1));

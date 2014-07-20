@@ -48,6 +48,7 @@
     <ClInclude Include="..\CrossMap.h" />
     <ClInclude Include="..\DataMessage.h" />
     <ClInclude Include="..\Delegate.h" />
+    <ClInclude Include="..\NodeSelectionStrategy.h" />
     <ClInclude Include="..\DeployArmyGoal.h" />
     <ClInclude Include="..\DeployFSMState.h" />
     <ClInclude Include="..\EngineDefs.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="..\MessagePumpSubject.cpp" />
     <ClCompile Include="..\MetaData.cpp" />
     <ClCompile Include="..\MoveAction.cpp" />
+    <ClCompile Include="..\NodeSelectionStrategy.cpp" />
     <ClCompile Include="..\OccupanceDataIM.cpp" />
     <ClCompile Include="..\OnlineCaseBasedPlannerEx.cpp" />
     <ClCompile Include="..\OnlinePlanExpansionExecution.cpp" />

@@ -28,6 +28,7 @@ namespace IStrategizer
 
         typedef std::set<NodeID> NodeSet;
         typedef const std::set<NodeID>& ConstNodeSetRef;
+        typedef std::set<NodeID>& NodeSetRef;
 
         typedef std::vector<NodeID> NodeList;
 

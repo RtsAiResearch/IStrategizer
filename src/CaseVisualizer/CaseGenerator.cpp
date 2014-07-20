@@ -14,14 +14,21 @@ void CaseGenerator::GenBuildOrderCases()
 {
 	GenCollectPrimaryResourceCases();
 	GenCollectSecondaryResourceCases();
-	GenBuildInfraCases("Terran_Refinery", 1);
 	GenBuildInfraCases("Terran_Barracks", 2);
 	GenBuildInfraCases("Terran_Factory", 2);
-	GenBuildInfraCases("Terran_Supply_Depot", 2);
 	GenBuildInfraCases("Terran_Machine_Shop", 2);
+    GenBuildInfraCases("Terran_Armory", 2);
+    GenBuildInfraCases("Terran_Command_Center", 2);
+    GenBuildInfraCases("Terran_Physics_Lab", 2);
+    GenBuildInfraCases("Terran_Science_Facility", 1);
+    GenBuildInfraCases("Terran_Covert_Ops", 2);
+    GenBuildInfraCases("Terran_Starport", 2);
+	GenBuildInfraCases("Terran_Supply_Depot", 2);
 	GenBuildInfraCases("Terran_Bunker", 3);
 	GenBuildInfraCases("Terran_Academy", 1);
-	GenBuildInfraCases("Terran_Engineering_Bay", 1);
+	GenBuildInfraCases("Terran_Refinery", 1);
+    GenBuildInfraCases("Terran_Engineering_Bay", 1);
+    GenBuildInfraCases("Terran_Missile_Turret", 4);
 }
 //////////////////////////////////////////////////////////////////////////
 void CaseGenerator::GenTrainOrderCases()
@@ -184,8 +191,8 @@ void CaseGenerator::CalcTrainArmyCaseParams(_In_ CaseEx* pCase)
     }
 
     PlanStepParameters newParams;
-    newParams[PARAM_AlliedUnitsTotalHP] = hpAcc;
-    newParams[PARAM_AlliedUnitsTotalDamage] = dmgAcc;
+    newParams[PARAM_AlliedAttackersTotalHP] = hpAcc;
+    newParams[PARAM_AlliedAttackersTotalDamage] = dmgAcc;
 
     pCase->Goal()->Parameters(newParams);
 }

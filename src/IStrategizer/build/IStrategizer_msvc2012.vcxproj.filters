@@ -426,6 +426,9 @@
     <ClInclude Include="..\StrategySelector.h">
       <Filter>Header Files\AttackManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\NodeSelectionStrategy.h">
+      <Filter>Header Files\OLCBP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Action.cpp">
@@ -648,6 +651,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\CaseBaseEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NodeSelectionStrategy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

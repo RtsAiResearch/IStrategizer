@@ -17,7 +17,7 @@ bool ResourceExist::Evaluate(RtsGame& game)
     g_Assist.GetResourceAmount((PlayerType)_conditionParameters[PARAM_PlayerId], (ResourceType)_conditionParameters[PARAM_ResourceId], _availableAmount);
     
     ConditionEx::Evaluate(game);
-    _isSatisfied = _isEvaluated && (_availableAmount >= requiredAmount);
+    _isSatisfied = _isEvaluated && (requiredAmount == 0 || _availableAmount >= requiredAmount);
 
     return _isEvaluated && _isSatisfied;
 }

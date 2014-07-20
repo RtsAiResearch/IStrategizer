@@ -14,9 +14,9 @@ bool PlayerResources::HasEnough(const WorldResources* pResources)
     int requiredSecondary = pResources->Secondary();
     int requiredSupply = pResources->Supply();
 
-    return availablePrimary >= requiredPrimary &&
-           availableSecondary >= requiredSecondary &&
-           availableSupply >= requiredSupply;
+    return (requiredPrimary == 0 || availablePrimary >= requiredPrimary) &&
+        (requiredSecondary == 0 || availableSecondary >= requiredSecondary) &&
+        (requiredSupply == 0 || availableSupply >= requiredSupply);
 }
 //////////////////////////////////////////////////////////////////////////
 bool PlayerResources::Lock(WorldResources* pResources)
@@ -56,7 +56,7 @@ bool PlayerResources::Lock(WorldResources* pResources)
     {
         LogInfo("Action failed to lock requested resources");
     }
-    
+
     return amountAvailable;
 }
 //////////////////////////////////////////////////////////////////////////

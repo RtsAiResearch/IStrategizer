@@ -20,6 +20,10 @@ m_armySize(0)
 //////////////////////////////////////////////////////////////////////////
 void Army::SelectArmy(RtsGame &game)
 {
+    m_groups[ARMGRP_MeleelAttacker].clear();
+    m_groups[ARMGRP_RangedAttacker].clear();
+    m_groups[ARMGRP_Supporter].clear();
+
     m_armySize = 0;
     EntityList entities;
     game.Self()->Entities(entities);

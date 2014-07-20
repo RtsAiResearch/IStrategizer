@@ -271,11 +271,11 @@ int GamePlayer::Attr(PlayerAttribute attribute)
 
     switch (attribute)
     {
-    case PATTR_AlliedUnitsTotalHP:
+    case PATTR_AlliedAttackersTotalHP:
         classAttribute = ECATTR_MaxHp;
         break;
     
-    case PATTR_AlliedUnitsTotalDamage:
+    case PATTR_AlliedAttackersTotalDamage:
         classAttribute = ECATTR_GroundAttack;
         break;
 

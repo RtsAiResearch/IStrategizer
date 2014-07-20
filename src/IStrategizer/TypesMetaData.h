@@ -174,8 +174,8 @@ namespace IStrategizer
         PARAM_EnemyUnitsTotalHP,
         PARAM_EnemyUnitsTotalDamage,
         PARAM_AlliedUnitsCount,
-        PARAM_AlliedUnitsTotalHP,
-        PARAM_AlliedUnitsTotalDamage,
+        PARAM_AlliedAttackersTotalHP,
+        PARAM_AlliedAttackersTotalDamage,
         PARAM_EnemyBuildingsCount,
         PARAM_EnemyCriticalBuildingsCount,
         PARAM_AlliedBuildingsCount,
@@ -219,8 +219,8 @@ namespace IStrategizer
     Enums[PARAM_EnemyUnitsTotalHP] = "Enemy Units Total HP"; \
     Enums[PARAM_EnemyUnitsTotalDamage] = "Enemy Units Total Damage"; \
     Enums[PARAM_AlliedUnitsCount] = "Allied Units Count"; \
-    Enums[PARAM_AlliedUnitsTotalHP] = "Allied Units Total HP"; \
-    Enums[PARAM_AlliedUnitsTotalDamage] = "Allied Units Total Damage"; \
+    Enums[PARAM_AlliedAttackersTotalHP] = "Allied Attackers Total HP"; \
+    Enums[PARAM_AlliedAttackersTotalDamage] = "Allied Attackers Total Damage"; \
     Enums[PARAM_EnemyBuildingsCount] = "Enemy Buildings Count"; \
     Enums[PARAM_EnemyCriticalBuildingsCount] = "Enemy Critical Buildings Count"; \
     Enums[PARAM_AlliedBuildingsCount] = "Allied Buildings Count"; \

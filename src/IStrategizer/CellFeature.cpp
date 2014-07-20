@@ -15,8 +15,8 @@ CellFeature::CellFeature(const PlanStepParameters& p_parameters)
     m_alliedBuildingDescription.m_numberOfBuildings = p_parameters.at(PARAM_AlliedBuildingsCount);
     m_alliedBuildingDescription.m_numberOfCriticalBuildings = p_parameters.at(PARAM_AlliedCriticalBuildingsCount);
     m_alliedForceDescription.m_numberOfUnits = p_parameters.at(PARAM_AlliedUnitsCount);
-    m_alliedForceDescription.m_totalDamage = p_parameters.at(PARAM_AlliedUnitsTotalDamage);
-    m_alliedForceDescription.m_totalHP = p_parameters.at(PARAM_AlliedUnitsTotalHP);
+    m_alliedForceDescription.m_totalDamage = p_parameters.at(PARAM_AlliedAttackersTotalDamage);
+    m_alliedForceDescription.m_totalHP = p_parameters.at(PARAM_AlliedAttackersTotalHP);
     m_enemyBuildingDescription.m_numberOfBuildings = p_parameters.at(PARAM_EnemyBuildingsCount);
     m_enemyBuildingDescription.m_numberOfCriticalBuildings = p_parameters.at(PARAM_EnemyCriticalBuildingsCount);
     m_enemyForceDescription.m_numberOfUnits = p_parameters.at(PARAM_EnemyUnitsCount);
@@ -35,8 +35,8 @@ void CellFeature::To(PlanStepParameters& p_parameters) const
     p_parameters[PARAM_AlliedBuildingsCount] = m_alliedBuildingDescription.m_numberOfBuildings;
     p_parameters[PARAM_AlliedCriticalBuildingsCount] = m_alliedBuildingDescription.m_numberOfCriticalBuildings;
     p_parameters[PARAM_AlliedUnitsCount] = m_alliedForceDescription.m_numberOfUnits;
-    p_parameters[PARAM_AlliedUnitsTotalDamage] = m_alliedForceDescription.m_totalDamage;
-    p_parameters[PARAM_AlliedUnitsTotalHP] = m_alliedForceDescription.m_totalHP;
+    p_parameters[PARAM_AlliedAttackersTotalDamage] = m_alliedForceDescription.m_totalDamage;
+    p_parameters[PARAM_AlliedAttackersTotalHP] = m_alliedForceDescription.m_totalHP;
     p_parameters[PARAM_EnemyBuildingsCount] = m_enemyBuildingDescription.m_numberOfBuildings;
     p_parameters[PARAM_EnemyCriticalBuildingsCount] = m_enemyBuildingDescription.m_numberOfCriticalBuildings;
     p_parameters[PARAM_EnemyUnitsCount] = m_enemyForceDescription.m_numberOfUnits;

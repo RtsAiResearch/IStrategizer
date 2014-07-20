@@ -38,7 +38,7 @@ void MessagePump::Send(Message* p_message, bool p_immediate)
     }
     else
     {
-		LogInfo("Queuing message %s", p_message->ToString());
+		LogDebugInfo("Queuing message %s", p_message->ToString());
         _messageQueue.push(p_message);
     }
 }

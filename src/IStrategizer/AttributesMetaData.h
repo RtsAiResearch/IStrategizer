@@ -97,14 +97,14 @@ namespace IStrategizer
 #define Prefix_PlayerAttribute PATTR
     enum PlayerAttribute
     {
-        PATTR_AlliedUnitsTotalHP = 0x30200,
+        PATTR_AlliedAttackersTotalHP = 0x30200,
         PATTR_START = 0x30200,
-        PATTR_AlliedUnitsTotalDamage,
+        PATTR_AlliedAttackersTotalDamage,
         PATTR_END
     };
 #define Define_PlayerAttribute \
-    Enums[PATTR_AlliedUnitsTotalHP] = "Units Total HP"; \
-    Enums[PATTR_AlliedUnitsTotalDamage] = "Units Total Damage";
+    Enums[PATTR_AlliedAttackersTotalHP] = "Allied Attackers Total HP"; \
+    Enums[PATTR_AlliedAttackersTotalDamage] = "Allied Attackers Total Damage";
     //---------------------------------------------------------------------------
 #define Prefix_RtsGameModelAttribute RTSMODATTR
     enum RtsGameModelAttribute

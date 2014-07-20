@@ -18,6 +18,7 @@
 #include "GoalFactory.h"
 #include "PlayerResources.h"
 #include "EngineDefs.h"
+#include "NodeSelectionStrategy.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -28,7 +29,8 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     m_pOlcbpPlan(new OlcbpPlan),
     m_pRootGoal(pInitialGoal),
     m_rootGoalType((GoalType)pInitialGoal->StepTypeId()),
-    m_planContext(m_nodeData, m_activeGoalSet)
+    m_planContext(m_nodeData, m_activeGoalSet),
+    m_pNodeSelector(new LfhdCbNodeSelector(this))
 {
     g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
@@ -262,7 +264,7 @@ void IStrategizer::OnlinePlanExpansionExecution::MarkCaseAsTried(_In_ IOlcbpPlan
     GetNodeData(nodeId).TriedCases.insert(pCase);
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecution::RemoveExecutingNode(IOlcbpPlan::NodeID nodeId)
+void IStrategizer::OnlinePlanExpansionExecution::RemoveExecutingAction(IOlcbpPlan::NodeID nodeId)
 {
     IOlcbpPlan::NodeSet ancestors;
     GetAncestorSatisfyingGoals(nodeId, ancestors);
@@ -270,39 +272,12 @@ void IStrategizer::OnlinePlanExpansionExecution::RemoveExecutingNode(IOlcbpPlan:
         m_executingActions[ancestor].erase(nodeId);
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecution::AddExecutingNode(IOlcbpPlan::NodeID nodeId)
+void IStrategizer::OnlinePlanExpansionExecution::AddExecutingAction(IOlcbpPlan::NodeID nodeId)
 {
     IOlcbpPlan::NodeSet ancestors;
     GetAncestorSatisfyingGoals(nodeId, ancestors);
     for (IOlcbpPlan::NodeID ancestor : ancestors)
         m_executingActions[ancestor].insert(nodeId);
-}
-//////////////////////////////////////////////////////////////////////////
-bool OnlinePlanExpansionExecution::HasExecutingAction(IOlcbpPlan::NodeID nodeId)
-{
-    /*_ASSERTE(IsGoalNode(nodeId));
-    stack<IOlcbpPlan::NodeID> currentNodes;
-    for (auto childId : m_pOlcbpPlan->GetAdjacentNodes(nodeId)) currentNodes.push(childId);
-
-    while (!currentNodes.empty())
-    {
-        IOlcbpPlan::NodeID currentNode = currentNodes.top();
-        if (IsActionNode(currentNode))
-        {
-            PlanStepEx* actionNode = (PlanStepEx*)m_pOlcbpPlan->GetNode(currentNode);
-            if (actionNode->State() == ESTATE_Executing)
-            {
-                return true;
-            }
-        }
-
-        for (auto childId : m_pOlcbpPlan->GetAdjacentNodes(currentNode)) currentNodes.push(childId);
-        currentNodes.pop();
-    }
-
-    return false;*/
-
-    return !m_executingActions[nodeId].empty();
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
@@ -415,6 +390,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::No
         return false;
     else
     {
+        GetNodeData(snippetGoalId).SetWaitOnChildrenCount(0);
         // 4. Since the plan structure changed, raise the flag
         m_planStructureChangedThisFrame = true;
         return true;
@@ -453,7 +429,6 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
         CaseEx* currentCase = GetLastCaseForGoalNode(nodeId);
         m_pCbReasoner->Reviser()->Revise(currentCase, true);
         //UpdateHistory(currentCase);
-		m_succeededSnippets.insert(nodeId);
     }
     else
     {
@@ -500,7 +475,7 @@ void OnlinePlanExpansionExecution::OnActionNodeFailed(_In_ IOlcbpPlan::NodeID no
 void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
 {
     IOlcbpPlan::NodeID satisfyingGoalNode = GetNodeData(nodeId).SatisfyingGoal;
-    RemoveExecutingNode(nodeId);
+    RemoveExecutingAction(nodeId);
 
     if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
     {
@@ -522,7 +497,7 @@ void OnlinePlanExpansionExecution::GetSnippetOrphanNodes(_In_ IOlcbpPlan::NodeID
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ)
+void OnlinePlanExpansionExecution::GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ) const
 {
     IOlcbpPlan::NodeQueue Q;
     IOlcbpPlan::NodeID currNodeId;

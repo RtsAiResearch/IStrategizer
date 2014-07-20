@@ -10,12 +10,12 @@ PlayerAttributeExist::PlayerAttributeExist(PlayerType playerType, PlayerAttribut
 {
     switch (p_attribute)
     {
-    case PATTR_AlliedUnitsTotalHP:
-        _conditionParameters[PARAM_AlliedUnitsTotalHP] = 1;
+    case PATTR_AlliedAttackersTotalHP:
+        _conditionParameters[PARAM_AlliedAttackersTotalHP] = 1;
         break;
 
-    case PATTR_AlliedUnitsTotalDamage:
-        _conditionParameters[PARAM_AlliedUnitsTotalDamage] = 1;
+    case PATTR_AlliedAttackersTotalDamage:
+        _conditionParameters[PARAM_AlliedAttackersTotalDamage] = 1;
         break;
 
     default:

@@ -71,8 +71,11 @@ namespace IStrategizer
         const char* m_pFunName;
         char m_txt[TxtSize];
     };
+#ifdef LOG_ACTIVITY
 #define LogActivity(Name) ActivityLogMarker __##Name##_Activity(__FUNCTION__, #Name)
-
+#else
+#define LogActivity(Name)
+#endif
 }
 
 
