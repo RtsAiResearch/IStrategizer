@@ -166,7 +166,7 @@ IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_e
         pEntity = pPlayer->GetEntity(entityIds[i]);
         _ASSERTE(pEntity);
 
-        if (p_entityType == pEntity->Type() && !pEntity->IsLocked())
+        if (p_entityType == pEntity->TypeId() && !pEntity->IsLocked())
         {
             return pEntity->Id();
         }
@@ -273,7 +273,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
         pEntity = pPlayer->GetEntity(entityIds[i]);
         _ASSERTE(pEntity);
 
-        if (p_targetType == pEntity->Type())
+        if (p_targetType == pEntity->TypeId())
         {
             CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
             double dist = pTarGetCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);

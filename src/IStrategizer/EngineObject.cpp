@@ -92,12 +92,12 @@ void EngineObject::DumpAliveObjects()
 //////////////////////////////////////////////////////////////////////////
 EngineObject::EngineObject()
 {
-    LogInfo("EngineObject@0x%x created", (void*)this);
+    LogDebugInfo("EngineObject@0x%x created", (void*)this);
 }
 //////////////////////////////////////////////////////////////////////////
 EngineObject::~EngineObject()
 {
 	g_MessagePump->UnregisterForAllMessages(this);
-    LogInfo("EngineObject@0x%x destroyed", (void*)this);
+    LogDebugInfo("EngineObject@0x%x destroyed", (void*)this);
 }
 //////////////////////////////////////////////////////////////////////////

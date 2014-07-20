@@ -93,7 +93,7 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
         
         state = (ObjectStateType)pEntity->Attr(EOATTR_State);
 
-        if (pEntity->Type() == p_entityType.first && 
+        if (pEntity->TypeId() == p_entityType.first && 
             !pEntity->IsLocked() && state != OBJSTATE_BeingConstructed)
             ++matches;
     }
@@ -128,7 +128,7 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
             pEntity = pPlayer->GetEntity(entities[i]);
             _ASSERTE(pEntity);
 
-            if (pEntity->Type() == itr->first)
+            if (pEntity->TypeId() == itr->first)
             {
                 pType = g_Game->GetEntityType(itr->first);
                 _ASSERTE(pType);

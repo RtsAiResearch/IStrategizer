@@ -196,7 +196,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" QtVersion="4.4.2" Qt5Version_x0020_Win32="Qt5.3.1_msvc2013" QtVersion_x0020_Win32="$(DefaultQtVersion)" />
+      <UserProperties MocDir=".\GeneratedFiles" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" QtVersion="4.4.2" Qt5Version_x0020_Win32="$(DefaultQtVersion)" QtVersion_x0020_Win32="$(DefaultQtVersion)" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

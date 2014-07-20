@@ -54,6 +54,7 @@ namespace IStrategizer
 		void GenCollectSecondaryResourceCases();
 		void GenSCVTrainForceCases();
 		void GenBuildRefineryCases();
+        bool IsIndexInRange(int idx);
 
 		Ui::CaseVisualizerClass ui;
 		CaseBaseEx* m_pCaseBase;
@@ -80,6 +81,7 @@ namespace IStrategizer
             void on_btnReloadCB_clicked();
 			void on_btnGenCases_clicked();
 			void on_btnDelGenCases_clicked();
+            void on_btnCalcArmyPower_clicked();
 	};
 }
 

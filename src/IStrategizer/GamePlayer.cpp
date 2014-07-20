@@ -94,7 +94,7 @@ void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds)
     entityIds.clear();
     for(EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
     {
-        if (itr->second->Type() == typeId)
+        if (itr->second->TypeId() == typeId)
             entityIds.push_back(itr->first);
     }
 }
@@ -141,7 +141,7 @@ void GamePlayer::OnEntityCreate(Message* pMsg)
         m_entities[entityId] = pEntity;
 
         LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
-            Enums[m_type], Enums[pEntity->Type()], pEntity->Id(), pEntity->Attr(EOATTR_Left), pEntity->Attr(EOATTR_Top));
+            Enums[m_type], Enums[pEntity->TypeId()], pEntity->Id(), pEntity->Attr(EOATTR_Left), pEntity->Attr(EOATTR_Top));
 
         g_IMSysMgr.RegisterGameObj(entityId, pCreateMsg->Data()->OwnerId);
     }
@@ -161,14 +161,14 @@ void GamePlayer::OnEntityDestroy(Message* pMsg)
         entityId = pDestroyMsg->Data()->EntityId;
         _ASSERTE(m_entities.Contains(entityId));
         pEntity = GetEntity(entityId);
-        pDestroyMsg->Data()->EntityType = pEntity->Type();
+        pDestroyMsg->Data()->EntityType = pEntity->TypeId();
         _ASSERTE(pEntity);
         m_entities.erase(entityId);
 
         g_IMSysMgr.UnregisterGameObj(entityId);
 
         LogInfo("[%s] Unit '%s':%d destroyed",
-            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
+            Enums[m_type], Enums[pEntity->TypeId()], pEntity->Id());
 
         Toolbox::MemoryClean(pEntity);
     }
@@ -195,7 +195,7 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
         m_entities[entityId] = pEntity;
 
         LogInfo("[%s] Unit '%s':%d renegaded TO me",
-            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
+            Enums[m_type], Enums[pEntity->TypeId()], pEntity->Id());
 
         g_IMSysMgr.RegisterGameObj(entityId, pRenMsg->Data()->OwnerId);
     }
@@ -210,7 +210,7 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
         g_IMSysMgr.UnregisterGameObj(entityId);
 
         LogInfo("[%s] Unit '%s':%d renegaded from me",
-            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
+            Enums[m_type], Enums[pEntity->TypeId()], pEntity->Id());
 
         Toolbox::MemoryClean(pEntity);
     }
@@ -276,7 +276,7 @@ int GamePlayer::Attr(PlayerAttribute attribute)
         break;
     
     case PATTR_AlliedUnitsTotalDamage:
-        classAttribute = ECATTR_Attack;
+        classAttribute = ECATTR_GroundAttack;
         break;
 
     default:
@@ -287,9 +287,9 @@ int GamePlayer::Attr(PlayerAttribute attribute)
 
     for (auto pair : m_entities)
     {
-        GameType* pGameType = g_Game->GetEntityType(pair.second->Type());
+        const GameType* pGameType = pair.second->Type();
 
-        if (!pGameType->Attr(ECATTR_IsCowrad) &&
+        if (!pGameType->Attr(ECATTR_IsWorker) &&
             !pGameType->Attr(ECATTR_IsBuilding) &&
             !pair.second->IsLocked() &&
             g_Assist.IsEntityObjectReady(pair.first))
@@ -308,7 +308,7 @@ int GamePlayer::CountEntityTypes(_In_ EntityClassAttribute attr, _In_ int val) c
 
     for (auto entityEntry : m_entities)
     {
-        if (g_Game->GetEntityType(entityEntry.second->Type())->Attr(attr) == val)
+        if (entityEntry.second->Type()->Attr(attr) == val)
             ++count;
     }
 

@@ -71,7 +71,6 @@ int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
                 return UnitPositionFromTilePosition(m_pUnit->getTilePosition().y + m_pUnit->getType().tileHeight());
             else
                 return m_pUnit->getBottom();
-
         case EOATTR_State:
             return FetchState();
 
@@ -246,6 +245,16 @@ bool StarCraftEntity::AttackGround(Vector2 p_position)
     return m_pUnit->attack(pos);
 };
 //----------------------------------------------------------------------------------------------
+bool StarCraftEntity::Stop()
+{
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
+	LogInfo("%s -> Stop", ToString().c_str());
+
+    return m_pUnit->stop();
+};
+//----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
 {
     if (!m_isOnline)
@@ -337,13 +346,6 @@ void StarCraftEntity::CancelOrders()
 		LogInfo("%s canceled upgrade", ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-void StarCraftEntity::Stop()
-{
-	LogInfo("%s -> Stop", ToString().c_str());
-
-	(void)m_pUnit->stop();
-}
-//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::CanTrain(EntityClassType type)
 {
 	if (!m_isOnline)
@@ -354,4 +356,14 @@ bool StarCraftEntity::CanTrain(EntityClassType type)
 	UnitType gameType = BWAPI::UnitType::getType(typeName);
 
 	return m_pUnit->canTrain(gameType);
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftEntity::Follow(TID entityId)
+{
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
+    LogInfo("%s -> Follow(Target=%d)", ToString().c_str(), entityId);
+
+    return m_pUnit->follow(Broodwar->getUnit(entityId));
 }

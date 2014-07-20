@@ -55,7 +55,7 @@ namespace IStrategizer
         {}
 
 		static void FinalizeStaticData();
-
+        virtual bool InitStaticData() = 0;
         virtual ~RtsGame();
         virtual void Init();
         virtual void DisplayMessage(const char* p_msg) = 0;
@@ -86,7 +86,6 @@ namespace IStrategizer
 
     protected:
         void SetOffline();
-        virtual bool InitStaticData() = 0;
         virtual void InitPlayers() = 0;
         virtual void InitMap() = 0;
         virtual GameType* FetchEntityType(EntityClassType p_id) = 0;

@@ -10,14 +10,14 @@ void ForceDescription::AddEntity(GameEntity *p_entity)
 {
     m_numberOfUnits++;
     m_totalHP += p_entity->Attr(EOATTR_Health);
-    m_totalDamage += g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
+    m_totalDamage += g_Game->GetEntityType(p_entity->TypeId())->Attr(ECATTR_GroundAttack);
 }
 //////////////////////////////////////////////////////////////////////////
 void ForceDescription::RemoveEntity(GameEntity *p_entity)
 {
     m_numberOfUnits--;
     m_totalHP -= p_entity->Attr(EOATTR_Health);
-    m_totalDamage -= g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
+    m_totalDamage -= g_Game->GetEntityType(p_entity->TypeId())->Attr(ECATTR_GroundAttack);
 }
 //////////////////////////////////////////////////////////////////////////
 void ForceDescription::Clear()

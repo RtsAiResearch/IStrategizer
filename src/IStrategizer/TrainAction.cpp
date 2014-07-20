@@ -61,7 +61,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
 		// We are interested only in free trainees that have not been locked before
 		if (!m_trainStarted &&
 			m_traineeId == INVALID_TID &&
-			pEntity->Type() == _params[PARAM_EntityClassId] &&
+			pEntity->TypeId() == _params[PARAM_EntityClassId] &&
 			!pEntity->IsLocked())
 		{
 			// Check if the trainer is training that entity
@@ -202,10 +202,10 @@ void TrainAction::InitializePostConditions()
 	EntityClassType entityTypeId = (EntityClassType)_params[PARAM_EntityClassId];
 	GameType *pGameType = g_Game->GetEntityType(entityTypeId);
 
-	if (!pGameType->Attr(ECATTR_IsCowrad))
+	if (!pGameType->Attr(ECATTR_IsWorker))
 	{
 		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedUnitsTotalHP, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_MaxHp)));
-		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedUnitsTotalDamage, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_Attack)));
+		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedUnitsTotalDamage, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_GroundAttack)));
 	}
 
 	m_terms.push_back(new EntityClassExist(PLAYER_Self, entityTypeId, 1));

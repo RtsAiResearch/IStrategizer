@@ -4,6 +4,8 @@
 #include "ActionFactory.h"
 #include "GoalEx.h"
 #include "Action.h"
+#include "GameType.h"
+#include <queue>
 
 using namespace IStrategizer;
 using namespace std;
@@ -126,8 +128,6 @@ void CaseGenerator::GenRecursiveGoalActionCases(GoalType goalType, const PlanSte
 			pGoal->Parameters(goalParams);
 			pGoal->Parameter(PARAM_Amount, caseOrder - 1);
 			pCase->Plan()->AddNode(pGoal, pGoal->Id());
-
-			pCase->Plan()->AddEdge(pGoal->Id(), pAction->Id());
 		}
 	}
 }
@@ -148,4 +148,44 @@ void CaseGenerator::GenBuildInfraCases(const char* pBwapiUnitName, unsigned amou
 	PlanStepParameters actionParams = map<ParameterType, int>{{ PARAM_EntityClassId, unitType }, { PARAM_DistanceToBase, 25 }};
 
 	GenRecursiveGoalActionCases(GOALEX_BuildInfrastructure, goalParams, ACTIONEX_Build, actionParams);
+}
+//////////////////////////////////////////////////////////////////////////
+void CaseGenerator::CalcTrainArmyCaseParams(_In_ CaseEx* pCase)
+{
+    if (pCase->Goal()->StepTypeId() != GOALEX_TrainArmy)
+        return;
+
+    auto nodes = pCase->Plan()->GetNodes();
+    
+    map<EntityClassType, int> resultantAmounts;
+
+    for (auto nodeId : nodes)
+    {
+        auto pPlanstep = pCase->Plan()->GetNode(nodeId);
+
+        if (pPlanstep->StepTypeId() != GOALEX_TrainForce)
+            continue;
+
+        auto type = (EntityClassType)pPlanstep->Parameter(PARAM_EntityClassId);
+        auto amount = pPlanstep->Parameter(PARAM_Amount);
+
+        resultantAmounts[type] = max(amount, resultantAmounts[type]);
+    }
+
+    int hpAcc = 0;
+    int dmgAcc = 0;
+
+    for (auto& r : resultantAmounts)
+    {
+        auto pType = g_Game->GetEntityType(r.first);
+
+        hpAcc += (pType->Attr(ECATTR_MaxHp) * r.second);
+        dmgAcc += (pType->Attr(ECATTR_GroundAttack) * r.second);
+    }
+
+    PlanStepParameters newParams;
+    newParams[PARAM_AlliedUnitsTotalHP] = hpAcc;
+    newParams[PARAM_AlliedUnitsTotalDamage] = dmgAcc;
+
+    pCase->Goal()->Parameters(newParams);
 }

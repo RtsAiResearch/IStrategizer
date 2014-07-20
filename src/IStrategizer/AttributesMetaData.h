@@ -54,17 +54,19 @@ namespace IStrategizer
 		ECATTR_CanAttack,
 		ECATTR_CanBuild,
 		ECATTR_IsBuilding,
-		ECATTR_IsCowrad,
+		ECATTR_IsWorker,
 		ECATTR_IsAttacker,
-		ECATTR_Attack,
+		ECATTR_GroundAttack,
+        ECATTR_AirAttack,
+		ECATTR_AirRange,
+		ECATTR_GroundRange,
+        ECATTR_IsMelee,
 		ECATTR_IsPrimaryResource,
 		ECATTR_IsSecondaryResource,
 		ECATTR_IsSupply,
-		ECATTR_IsCritical,
+		ECATTR_IsProducer,
 		ECATTR_Width,
 		ECATTR_Height,
-		ECATTR_AirRange,
-		ECATTR_GroundRange,
 		ECATTR_LineOfSight,
 		ECATTR_IsSpecialBuilding,
 		ECATTR_BuildTime,
@@ -75,17 +77,19 @@ namespace IStrategizer
 	Enums[ECATTR_CanAttack] = "Can Attack"; \
 	Enums[ECATTR_CanBuild] = "Can Build"; \
 	Enums[ECATTR_IsBuilding] = "Is Building"; \
-	Enums[ECATTR_IsCowrad] = "Is Coward"; \
+	Enums[ECATTR_IsWorker] = "Is Worker"; \
 	Enums[ECATTR_IsAttacker] = "Is Attacker"; \
-	Enums[ECATTR_Attack] = "Attack Damage"; \
+    Enums[ECATTR_GroundAttack] = "Attack Damage"; \
+	Enums[ECATTR_AirRange] = "Air Weapon Range"; \
+	Enums[ECATTR_GroundRange] = "Ground Weapon Range"; \
+    Enums[ECATTR_IsMelee] = "Is Melee"; \
+    Enums[ECATTR_AirAttack] = "Air Damage"; \
 	Enums[ECATTR_IsPrimaryResource] = "Is Primary Resource"; \
 	Enums[ECATTR_IsSecondaryResource] = "Is Secondary Resource"; \
 	Enums[ECATTR_IsSupply] = "Is Supply"; \
-	Enums[ECATTR_IsCritical] = "Is Critical"; \
+	Enums[ECATTR_IsProducer] = "Is Producer"; \
 	Enums[ECATTR_Width] = "Tile Width"; \
 	Enums[ECATTR_Height] = "Tile Height"; \
-	Enums[ECATTR_AirRange] = "Air Weapon Range"; \
-	Enums[ECATTR_GroundRange] = "Ground Weapon Range"; \
 	Enums[ECATTR_LineOfSight] = "Line of Sight"; \
 	Enums[ECATTR_IsSpecialBuilding] = "Is Special Building"; \
 	Enums[ECATTR_BuildTime] = "BuildTime"; \

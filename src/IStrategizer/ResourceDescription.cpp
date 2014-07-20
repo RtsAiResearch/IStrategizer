@@ -11,7 +11,7 @@ using namespace IStrategizer;
 //----------------------------------------------------------------------------------------------
 void ResourceDescription::AddEntity(GameEntity *p_entity)
 {
-    EntityClassType typeId = p_entity->Type();
+    EntityClassType typeId = p_entity->TypeId();
     GameType* pType = g_Game->GetEntityType(typeId);
 
     if (!pType)
@@ -29,7 +29,7 @@ void ResourceDescription::AddEntity(GameEntity *p_entity)
 //----------------------------------------------------------------------------------------------
 void ResourceDescription::RemoveEntity(GameEntity *p_entity)
 {
-    EntityClassType typeId = p_entity->Type();
+    EntityClassType typeId = p_entity->TypeId();
     GameType* pType = g_Game->GetEntityType(typeId);
 
     if (!pType)

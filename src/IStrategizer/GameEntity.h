@@ -15,6 +15,7 @@ namespace IStrategizer
     enum EntityObjectAttribute;
     enum PlayerType;
     class RtsGame;
+    class GameType;
 
     ///> class=GameEntity
 	class GameEntity : public SharedResource
@@ -28,7 +29,8 @@ namespace IStrategizer
 
         // Game Properties
         TID Id() const { return m_id; }
-        EntityClassType Type() const { return (EntityClassType)Attr(EOATTR_Type); }
+        EntityClassType TypeId() const { return (EntityClassType)Attr(EOATTR_Type); }
+        const GameType* Type() const;
         PlayerType GetPlayer() const { return (PlayerType)Attr(EOATTR_OwnerId); }
         virtual Vector2 GetPosition() const = 0;
         virtual TID GetTargetId() const = 0;
@@ -47,8 +49,9 @@ namespace IStrategizer
         virtual bool Train(EntityClassType entityClassId) = 0;
         virtual bool GatherResourceEntity(TID resourceEntityObjectId) = 0;
 		virtual void CancelOrders() = 0;
-		virtual void Stop() = 0;
+		virtual bool Stop() = 0;
 		virtual bool CanTrain(EntityClassType type) = 0;
+        virtual bool Follow(TID entityId) = 0;
 
         virtual void SetOffline(RtsGame* pBelongingGame) = 0;
         bool Acquire() { return true; }

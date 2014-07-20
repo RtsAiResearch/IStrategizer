@@ -33,7 +33,7 @@ void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDi
     EntityClassType typeId;
     GameType *pObjType = nullptr;
     
-    typeId = p_pGameObj->Type();
+    typeId = p_pGameObj->TypeId();
     pObjType = g_Game->GetEntityType(typeId);
 
     p_effectiveDistance = max(pObjType->Attr(ECATTR_GroundRange), pObjType->Attr(ECATTR_AirRange));
@@ -42,7 +42,7 @@ void GetInfluence(GameEntity *p_pGameObj, int &p_effectiveDistance, int &p_maxDi
     // We add 1 for all attack damages to take into account those non-attacking units
     // Also because we scale all attack damages the same, this has no effect on influence considerations
     // The relative influence should be conserved this way
-    p_initValue = (pObjType->Attr(ECATTR_Attack) + 10) * infSign;
+    p_initValue = (pObjType->Attr(ECATTR_GroundAttack) + 10) * infSign;
 }
 //////////////////////////////////////////////////////////////////////////
 void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)

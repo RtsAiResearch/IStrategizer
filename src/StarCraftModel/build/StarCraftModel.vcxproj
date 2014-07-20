@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\ActionAbstractor.h" />
     <ClInclude Include="..\DefinitionCrossMapping.h" />
+    <ClInclude Include="..\TankAttackFSMState.h" />
     <ClInclude Include="..\GameTraceCollector.h" />
     <ClInclude Include="..\StarCraftEntity.h" />
     <ClInclude Include="..\StarCraftGame.h" />
@@ -21,6 +22,7 @@
     <ClInclude Include="..\StarCraftPlayerResources.h" />
     <ClInclude Include="..\StarCraftRace.h" />
     <ClInclude Include="..\StarCraftResearch.h" />
+    <ClInclude Include="..\StarCraftStrategySelector.h" />
     <ClInclude Include="..\StarCraftTechTree.h" />
     <ClInclude Include="..\StarCraftType.h" />
   </ItemGroup>

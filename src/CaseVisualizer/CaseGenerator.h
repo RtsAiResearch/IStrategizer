@@ -21,6 +21,7 @@ namespace IStrategizer
 		void SetCaseBase(_In_ CaseBaseEx* pCb) { m_pCb = pCb; }
 		void GenBuildOrderCases();
 		void GenTrainOrderCases();
+        void CalcTrainArmyCaseParams(_In_ CaseEx* pCase);
 
 	private:
 		const unsigned MaxSCVs = 15;

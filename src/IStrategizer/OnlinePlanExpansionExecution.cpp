@@ -404,8 +404,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::No
             ((Action*)pCurrNode)->Abort(*g_Game);
         }
 
-        LogWarning("MEMORY LEAK detected, should delete plan node[%d]", visitedNodeId);
-        // deleting currNode crashes the execution history logic, should fix
+        // FIXME: deleting currNode crashes the execution history logic, should fix
         m_pOlcbpPlan->RemoveNode(visitedNodeId);
         m_nodeData.erase(visitedNodeId);
         delete pCurrNode;

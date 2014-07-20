@@ -62,7 +62,7 @@ void InfluenceMap::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
     _ASSERTE(pGameObj);
     pNewObj->LastPosition = Vector2::Null();
 
-    pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->Type());
+    pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->TypeId());
     _ASSERTE(pObjType);
     pNewObj->ObjWidth = pObjType->Attr(ECATTR_Width);
     pNewObj->ObjHeight = pObjType->Attr(ECATTR_Height);

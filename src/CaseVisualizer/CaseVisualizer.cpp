@@ -79,7 +79,8 @@ CaseVisualizer::CaseVisualizer(QWidget *parent, Qt::WindowFlags flags)
 	}
 
 	RtsGame* pDummGame = new StarCraftGame;
-	delete pDummGame;
+    pDummGame->InitStaticData();
+    g_Game = pDummGame;
 }
 //----------------------------------------------------------------------------------------------
 bool CaseVisualizer::InitIdLookup()
@@ -467,4 +468,29 @@ void CaseVisualizer::on_btnDelGenCases_clicked()
 	m_pCaseBase->DeleteAllGeneratedCases();
 
 	Refresh();
+}
+//////////////////////////////////////////////////////////////////////////
+void CaseVisualizer::on_btnCalcArmyPower_clicked()
+{
+    int caseIdx = ui.lstCases->currentIndex().row();
+
+    if (IsIndexInRange(caseIdx))
+    {
+        QVariant casePtrData = ui.lstCases->item(caseIdx)->data(Qt::UserRole);
+        CaseEx* pSelectedCase = (CaseEx*)casePtrData.toULongLong();
+        m_cbGen.CalcTrainArmyCaseParams(pSelectedCase);
+        on_lstCases_itemSelectionChanged();
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+bool CaseVisualizer::IsIndexInRange(int idx)
+{
+    if (idx < 0)
+        return false;
+    else if (ui.lstCases->count() == 0 ||
+        m_pCaseBase->CaseContainer.empty())
+        return false;
+    else
+        return (idx >= 0 && idx < ui.lstCases->count()) &&
+        (idx >= 0 && idx < m_pCaseBase->CaseContainer.size());
 }

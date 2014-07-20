@@ -92,9 +92,9 @@ void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
 		msgBuildPosition.X = pMsg->Data()->X;
 		msgBuildPosition.Y = pMsg->Data()->Y;
 
-		if (pGameBuilding->Type() == _params[PARAM_EntityClassId] &&
+		if (pGameBuilding->TypeId() == _params[PARAM_EntityClassId] &&
 			((msgBuildPosition.X == _buildArea.Pos().X && msgBuildPosition.Y == _buildArea.Pos().Y) ||
-			game.GetEntityType(pGameBuilding->Type())->Attr(ECATTR_IsSpecialBuilding)))
+			game.GetEntityType(pGameBuilding->TypeId())->Attr(ECATTR_IsSpecialBuilding)))
 		{
 			_buildingId = pGameBuilding->Id();
 			_buildStarted = true;
@@ -123,7 +123,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 		pEntity = game.Self()->GetEntity(_builderId);
 
 		_ASSERTE(pEntity);
-		auto pBuilderType = g_Game->GetEntityType(pEntity->Type());
+		auto pBuilderType = g_Game->GetEntityType(pEntity->TypeId());
 
 
 		if (pBuilderType->Attr((ECATTR_IsBuilding)))

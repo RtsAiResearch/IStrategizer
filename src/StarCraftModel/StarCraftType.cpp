@@ -31,11 +31,11 @@ void StarCraftType::Init()
     // The supply amount is doubled, divide over two.
     m_requiredResources = WorldResources(m_type.supplyRequired() / 2, m_type.gasPrice(), m_type.mineralPrice());
 
-    Attr(ECATTR_CanAttack, m_type.canAttack() && !m_type.isWorker());
-    Attr(ECATTR_CanBuild, m_type.isWorker());
+    Attr(ECATTR_CanAttack, m_type.canAttack());
+    Attr(ECATTR_CanBuild, m_type.canBuildAddon() || m_type.isWorker());
     Attr(ECATTR_IsBuilding, m_type.isBuilding());
-    Attr(ECATTR_IsCritical, m_type.canProduce());
-    Attr(ECATTR_IsCowrad, m_type.isWorker());
+    Attr(ECATTR_IsProducer, m_type.canProduce());
+    Attr(ECATTR_IsWorker, m_type.isWorker());
     Attr(ECATTR_IsAttacker, m_type.canAttack() && !m_type.isWorker());
     Attr(ECATTR_MaxHp, m_type.maxHitPoints());
     Attr(ECATTR_IsPrimaryResource, m_type.isMineralField());
@@ -58,23 +58,15 @@ void StarCraftType::Init()
         Attr(ECATTR_Height, m_type.dimensionUp() * 2);
     }
 
-    WeaponType groundWeapon;
-    WeaponType airWeapon;
-    int groundDmg;
-    int airDmg;
-    int totalDmg;
-
-    groundWeapon = m_type.groundWeapon();
-    airWeapon = m_type.airWeapon();
-    groundDmg = groundWeapon.damageAmount();
-    airDmg = airWeapon.damageAmount();
-
-    totalDmg = max(airDmg, groundDmg);
+    WeaponType groundWeapon = m_type.groundWeapon();
+    WeaponType airWeapon = m_type.airWeapon();
 
     Attr(ECATTR_AirRange, airWeapon.maxRange());
+    Attr(ECATTR_AirAttack, airWeapon.damageAmount());
     Attr(ECATTR_GroundRange, groundWeapon.maxRange());
-    Attr(ECATTR_Attack, totalDmg);
+    Attr(ECATTR_GroundAttack, groundWeapon.damageAmount());
     Attr(ECATTR_IsSpecialBuilding, m_type.isRefinery() || m_type.isAddon());
+    Attr(ECATTR_IsMelee, groundWeapon.maxRange() <= TILE_SIZE);
 }
 
 EntityClassType StarCraftType::GetBuilderType() const

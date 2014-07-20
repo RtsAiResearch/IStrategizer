@@ -60,7 +60,7 @@ vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
     {
         GameEntity *pEntity = game.Self()->GetEntity(entityId);
         _ASSERTE(pEntity);
-        EntityClassType entityType = pEntity->Type();
+        EntityClassType entityType = pEntity->TypeId();
 
         if (m_usedUnits.count(entityId) == 0 &&
             !game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding) &&

@@ -1,2 +1,2 @@
 - Use differnent padding for producing building/buildings with add ons/non-producing buildings
-- 
+- Parallel goal execution of same type (active goal selection algorithm)

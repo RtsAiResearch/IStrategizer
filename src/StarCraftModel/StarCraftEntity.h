@@ -57,11 +57,12 @@ namespace IStrategizer
         bool Train(EntityClassType p_entityClassId);
         bool Move(Vector2 p_position);
 		bool GatherResourceEntity(TID p_resourceEntityObjectId);
-		void Stop();
+		bool Stop();
 		void CancelOrders();
 		bool CanTrain(EntityClassType type);
-        void SetOffline(RtsGame* pBelongingGame);
+        bool Follow(TID entityId);
 
+        void SetOffline(RtsGame* pBelongingGame);
     protected:
         ObjectStateType FetchState() const;
         ///> type=int

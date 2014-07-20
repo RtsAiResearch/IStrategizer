@@ -39,7 +39,7 @@ void ResourceManager::NotifyMessegeSent(Message* pMsg)
 				return;
 			}
 
-			auto pType = g_Game->GetEntityType(g_Game->GetPlayer(pData->OwnerId)->GetEntity(pData->EntityId)->Type());
+			auto pType = g_Game->GetEntityType(g_Game->GetPlayer(pData->OwnerId)->GetEntity(pData->EntityId)->TypeId());
 
 			if (pType->Attr(ECATTR_IsPrimaryResource))
 			{

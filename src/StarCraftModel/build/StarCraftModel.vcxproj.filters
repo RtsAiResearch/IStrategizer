@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Header Files\FSMStates">
+      <UniqueIdentifier>{c073a893-d932-4bcc-ad0b-e7cec7b3262a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ActionAbstractor.h">
@@ -50,6 +53,12 @@
     </ClInclude>
     <ClInclude Include="..\StarCraftType.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StarCraftStrategySelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TankAttackFSMState.h">
+      <Filter>Header Files\FSMStates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -26,6 +26,8 @@ namespace IStrategizer
         int BuildingDataIMCellSize;
         int GrndCtrlIMCellSize;
         PhaseType Phase;
+        StrategySelector* pStrategySelector;
+        std::string map;
     };
 
     class IStrategizerEx : public EngineObject
@@ -41,17 +43,15 @@ namespace IStrategizer
         ~IStrategizerEx();
 
     private:
-        void DefineArmyTrainOrder();
-        int GetTrainOrderInx();
-
+        PlanStepParameters StartTrainingArmy();
+        
         bool m_isFirstUpdate;
-        unsigned m_armyTrainOrderInx;
         std::shared_ptr<OnlineCaseBasedPlannerEx> m_pPlanner;
         std::shared_ptr<LearningFromHumanDemonstration> m_pCaseLearning;
         IStrategizerParam m_param;
         WorldClock m_clock;
         AttackManager m_attackManager;
-        std::vector<PlanStepParameters> m_armyTrainOrder;
+        StrategySelector* m_pStrategySelector;
         std::shared_ptr<BotStatistics> m_pStatistics;
 		ResourceManager m_resourceManager;
     };

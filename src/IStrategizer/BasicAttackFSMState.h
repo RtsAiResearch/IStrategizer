@@ -1,5 +1,5 @@
-#ifndef ATTACKFSMSTATE_H
-#define ATTACKFSMSTATE_H
+#ifndef BASICATTACKFSMSTATE_H
+#define BASICATTACKFSMSTATE_H
 
 #include "FSMState.h"
 #include "EngineData.h"
@@ -13,15 +13,15 @@
 namespace IStrategizer
 {
     template<class TController, class TControllerTraits = ControllerTraits<TController>>
-    class AttackFSMState : public FSMState<TController, ControllerTraits<TController>>
+    class BasicAttackFSMState : public FSMState<TController, ControllerTraits<TController>>
     {
     public:
-        AttackFSMState(TController controller) : FSMState(Attack, controller) {}
+        BasicAttackFSMState(TController controller) : FSMState(BasicAttack, controller) {}
         
         void Enter(RtsGame& game, const WorldClock& clock)
         {
             ControllerTraits<TController>::Type battle = m_controller;
-            EntitySet army = TControllerTraits::Army(battle);
+            Army* pArmy = TControllerTraits::GetArmy(battle);
             TID nextTargetId = TControllerTraits::NextTarget(battle);
             TID currentTargetId = TControllerTraits::CurrentTarget(battle);
 
@@ -29,25 +29,18 @@ namespace IStrategizer
             {
                 TControllerTraits::CurrentTarget(battle, nextTargetId);
                 
-                for (TID entityId : army)
-                {
-                    GameEntity* pEntity = game.Self()->GetEntity(entityId);
-                    _ASSERTE(pEntity);
-
-                    pEntity->AttackEntity(nextTargetId);
-                }
+                pArmy->Attack(nextTargetId);
             }
         }
 
         int CheckTransitions(RtsGame& game, const WorldClock& clock)
         {
             ControllerTraits<TController>::ConstType battle = m_controller;
-            EntitySet army = TControllerTraits::Army(battle);
-            bool armyEmpty = army.empty();
+            Army* pArmy = TControllerTraits::GetArmy(battle);
 
-            return armyEmpty ? Finished : Target;
+            return pArmy->Empty() ? Finished : Target;
         }
     };
 }
 
-#endif // ATTACKFSMSTATE_H
+#endif // BASICATTACKFSMSTATE_H
