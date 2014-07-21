@@ -35,9 +35,9 @@ void WorldResources::Set(const WorldResources* pOther)
 //////////////////////////////////////////////////////////////////////////
 bool WorldResources::IsNull()
 {
-    return m_supply < 0 ||
-        m_primary < 0 ||
-        m_secondary < 0;
+    return m_supply == -1 &&
+        m_primary == -1 &&
+        m_secondary == -1;
 }
 //////////////////////////////////////////////////////////////////////////
 std::string WorldResources::ToString(bool minimal) const

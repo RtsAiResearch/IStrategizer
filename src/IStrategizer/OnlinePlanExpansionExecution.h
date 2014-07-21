@@ -49,7 +49,8 @@ namespace IStrategizer
         bool IsCaseTried(_In_ IOlcbpPlan::NodeID nodeId, _In_ CaseEx* pCase) const { return GetNodeData(nodeId).TriedCases.count(pCase) > 0; }
         const OlcbpPlanNodeData& GetNodeData(_In_ IOlcbpPlan::NodeID nodeId) const { _ASSERTE(m_nodeData.count(nodeId) > 0); return m_nodeData.at(nodeId); }
         OlcbpPlanNodeData& GetNodeData(_In_ IOlcbpPlan::NodeID nodeId) { _ASSERTE(m_nodeData.count(nodeId) > 0); return m_nodeData[nodeId]; }
-        bool HasExecutingAction(IOlcbpPlan::NodeID snippetGoalId) { return !m_executingActions[snippetGoalId].empty(); }
+        bool HasExecutingAction(_In_ IOlcbpPlan::NodeID snippetGoalId) { return !m_executingActions[snippetGoalId].empty(); }
+        bool IsGoalExpanded(_In_ IOlcbpPlan::NodeID snippetGoalId);
 
     private:
         CaseEx* GetLastCaseForGoalNode(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).BelongingCase; }

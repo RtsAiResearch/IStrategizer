@@ -80,32 +80,35 @@ void CaseView::View(CaseEx* p_case)
 
 	if(p_case == NULL)
 	{
-		ViewGoal(NULL);
+		ViewCaseGoal(NULL);
 		ViewGameState(NULL);
 		ViewPlanGraph(NULL, NULL);
 		ViewPerformance(NULL);
 	}
 	else
 	{
-		ViewGoal(p_case->Goal());
+		ViewCaseGoal(p_case);
 		ViewGameState(p_case->GameState());
 		ViewPlanGraph(p_case->Goal(), p_case->Plan());
 		ViewPerformance(p_case);
 	}
 }
 //----------------------------------------------------------------------------------------------
-void CaseView::ViewGoal(GoalEx* p_goal)
+void CaseView::ViewCaseGoal(CaseEx* pCase)
 {
-	if(p_goal == NULL)
+	if(pCase == NULL)
 	{
-		ui.lblGoalName->setText(QString::fromLocal8Bit("Goal Name"));
+		ui.lblGoalName->setText(QString::fromLocal8Bit("<Case Goal Name>"));
 		ViewGoalParameters(NULL);
+        ui.txtCaseName->setText("<Case Name>");
 	}
 	else
 	{
+        GoalEx* p_goal = pCase->Goal();
 		string goalName = m_idLookup->GetByFirst(p_goal->StepTypeId());
 		ui.lblGoalName->setText(QString::fromLocal8Bit(goalName.c_str()));
 		ViewGoalParameters(&p_goal->Parameters());
+        ui.txtCaseName->setText(pCase->Name().c_str());
 	}
 }
 //----------------------------------------------------------------------------------------------
@@ -311,4 +314,9 @@ void CaseView::EditSelectedParameter()
         params[key] = newValue;
         this->View(m_currentCase);
     }
+}
+//////////////////////////////////////////////////////////////////////////
+void CaseView::on_txtCaseName_editingFinished()
+{
+    m_currentCase->Name(string(ui.txtCaseName->text().toLocal8Bit()));
 }

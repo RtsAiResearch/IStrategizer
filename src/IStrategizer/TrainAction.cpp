@@ -188,9 +188,12 @@ bool TrainAction::Execute(RtsGame& game, const WorldClock& clock)
 		// Issue train order
 		pGameTrainer = game.Self()->GetEntity(m_trainerId);
 		_ASSERTE(pGameTrainer);
-		_ASSERTE(!m_requiredResources.IsNull());
-		m_requiredResources.Lock(this);
 		executed = pGameTrainer->Train(traineeType);
+
+        if (executed)
+        {
+            pGameTrainer->Lock(this);
+        }
 	}
 
 	return executed;
@@ -217,14 +220,8 @@ void TrainAction::InitializePreConditions()
 	EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
 	m_trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
 	vector<Expression*> m_terms;
-	WorldResources completeRequiredRespurces = WorldResources::FromEntity(traineeType);
 
-	// Do not lock resources other than supply, because supply does not get consumed
-	// when the action is triggered. Unlike primary and secondary resources which get
-	// consumed upon executing the action
-	m_requiredResources = WorldResources(completeRequiredRespurces.Supply(), 0, 0);
-
-	m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, 1));
+	m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, 1, OBJSTATE_Idle));
 	g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
 	_preCondition = new And(m_terms);
 }
@@ -238,11 +235,18 @@ void TrainAction::FreeResources(RtsGame& game)
 		if (pTrainee && pTrainee->IsLocked())
 			pTrainee->Unlock(this);
 
-		if (!m_requiredResources.IsNull() && m_requiredResources.IsLocked())
-			m_requiredResources.Unlock(this);
 		m_traineeId = INVALID_TID;
-		m_trainerId = INVALID_TID;
 	}
+
+    if (m_trainerId != INVALID_TID)
+    {
+        GameEntity* pTrainer = game.Self()->GetEntity(m_trainerId);
+
+        if (pTrainer && pTrainer->IsLocked())
+            pTrainer->Unlock(this);
+
+        m_trainerId = INVALID_TID;
+    }
 }
 //----------------------------------------------------------------------------------------------
 bool TrainAction::Equals(PlanStepEx* p_planStep)

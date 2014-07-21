@@ -32,6 +32,17 @@ namespace IStrategizer
             _Out_ IOlcbpPlan::NodeSet& actionsToUpdate,
             _Out_ IOlcbpPlan::NodeSet& snippetsToDestroy);
     };
+
+    class GenCbNodeSelector : public NodeSelectionStrategy
+    {
+    public:
+        GenCbNodeSelector(OnlinePlanExpansionExecution* pPlanner) :
+            NodeSelectionStrategy(pPlanner) {}
+
+        void Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
+            _Out_ IOlcbpPlan::NodeSet& actionsToUpdate,
+            _Out_ IOlcbpPlan::NodeSet& snippetsToDestroy);
+    };
 }
 
 #endif // DENSECBNODESELECTOR_H

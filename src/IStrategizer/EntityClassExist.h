@@ -18,8 +18,8 @@ namespace IStrategizer
     public:
         EntityClassExist() {}
         EntityClassExist(PlayerType p_player);
-        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId);
-        EntityClassExist(PlayerType p_player, int p_unitClassId, int p_amount);
+        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, ObjectStateType state = OBJSTATE_END);
+        EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, ObjectStateType state = OBJSTATE_END);
         bool Evaluate(RtsGame& game);
         bool Consume(int p_amount);
     };

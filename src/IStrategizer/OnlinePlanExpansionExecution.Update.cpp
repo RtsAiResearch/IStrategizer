@@ -42,6 +42,9 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             // Only update an action node if it still exist
             // What applies to a goal in the 3rd pass apply here
             _ASSERTE(m_pOlcbpPlan->Contains(actionNodeId));
+            // It is illogical to update already succeeding actions, there is
+            // a problem in the node selection strategy
+            _ASSERTE(m_pOlcbpPlan->GetNode(actionNodeId)->GetState() != ESTATE_Succeeded);
             UpdateActionNode(actionNodeId, clock);
         }
 
@@ -56,13 +59,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
                 // It is illogical to update already succeeding goals, there is
                 // a problem in the node selection strategy
                 _ASSERTE(m_pOlcbpPlan->GetNode(goalNodeId)->GetState() != ESTATE_Succeeded);
-
                 UpdateGoalNode(goalNodeId, clock);
-
-                // Prune the plan by destroying snippets of succeeding goals to 
-                // reduce plan noise and make it easier to read/visualize the plan
-                if (m_pOlcbpPlan->GetNode(goalNodeId)->GetState() == ESTATE_Succeeded)
-                    snippetsToDestroy.insert(goalNodeId);
             }
         }
 

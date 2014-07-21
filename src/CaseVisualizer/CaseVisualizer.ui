@@ -236,7 +236,7 @@
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
-    <addaction name="actionShow"/>
+    <addaction name="actionRefresh"/>
    </widget>
    <addaction name="menuCaseBase"/>
   </widget>
@@ -264,12 +264,12 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionShow">
+  <action name="actionRefresh">
    <property name="text">
-    <string>Show Explorer</string>
+    <string>Refresh</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+B</string>
+    <string>F5</string>
    </property>
   </action>
   <action name="actionSaveAs">

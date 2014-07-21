@@ -290,13 +290,15 @@ int GamePlayer::Attr(PlayerAttribute attribute)
         const GameType* pGameType = pair.second->Type();
 
         if (!pGameType->Attr(ECATTR_IsWorker) &&
-            !pGameType->Attr(ECATTR_IsBuilding) &&
-            !pair.second->IsLocked() &&
-            g_Assist.IsEntityObjectReady(pair.first))
+            !pGameType->Attr(ECATTR_IsBuilding))
         {
-            amount += pGameType->Attr(classAttribute);
+            bool isLocked = pair.second->IsLocked();
+            bool isReady = g_Assist.IsEntityObjectReady(pair.first);
+            if (!isLocked && isReady)
+            {
+                amount += pGameType->Attr(classAttribute);
+            }
         }
-
     }
 
     return amount;

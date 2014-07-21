@@ -21,9 +21,8 @@ namespace IStrategizer
         {
             PlanStepParameters params;
 
-            // 4 Tanks
-            params[PARAM_AlliedAttackersTotalHP] = 1850;
-            params[PARAM_AlliedAttackersTotalDamage] = 275;
+            params[PARAM_AlliedAttackersTotalHP] = 640;
+            params[PARAM_AlliedAttackersTotalDamage] = 140;
             m_trainOrders.push_back(params);
 
             //// 4 Marines

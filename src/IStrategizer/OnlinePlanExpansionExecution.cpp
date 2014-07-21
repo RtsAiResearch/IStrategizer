@@ -30,7 +30,7 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitial
     m_pRootGoal(pInitialGoal),
     m_rootGoalType((GoalType)pInitialGoal->StepTypeId()),
     m_planContext(m_nodeData, m_activeGoalSet),
-    m_pNodeSelector(new LfhdCbNodeSelector(this))
+    m_pNodeSelector(new GenCbNodeSelector(this))
 {
     g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
@@ -625,4 +625,17 @@ void OnlinePlanExpansionExecution::GetAncestorSatisfyingGoals(_In_ IOlcbpPlan::N
         ancestors.insert(nodeId);
         nodeId = GetNodeData(nodeId).SatisfyingGoal;
     }
+}
+//////////////////////////////////////////////////////////////////////////
+bool OnlinePlanExpansionExecution::IsGoalExpanded(_In_ IOlcbpPlan::NodeID snippetGoalId)
+{
+    for (auto childNodeId : m_pOlcbpPlan->GetAdjacentNodes(snippetGoalId))
+    {
+        // Goal is not expanded with a snippet as long as the goal is not
+        // the satisfying goal of any direct child
+        if (GetNodeData(childNodeId).SatisfyingGoal == snippetGoalId)
+            return true;
+    }
+
+    return false;
 }

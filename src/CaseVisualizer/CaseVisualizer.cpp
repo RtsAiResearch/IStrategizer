@@ -161,8 +161,9 @@ void CaseVisualizer::on_actionNew_triggered()
 	NewCaseBase();
 }
 //----------------------------------------------------------------------------------------------
-void CaseVisualizer::on_actionShow_triggered()
+void CaseVisualizer::on_actionRefresh_triggered()
 {
+    Refresh();
 }
 //----------------------------------------------------------------------------------------------
 void CaseVisualizer::on_lstCases_itemDoubleClicked(QListWidgetItem*)
@@ -363,6 +364,12 @@ void CaseVisualizer::Refresh()
 		{
 			pCaseGoal = const_cast<GoalEx*>((*caseItr)->Goal());
 			assert(pCaseGoal);
+
+            if (!(*caseItr)->Name().empty())
+            {
+                entryStream << (*caseItr)->Name();
+                entryStream << "-";
+            }
 
 			entryStream << pCaseGoal->ToString(true);
 		}

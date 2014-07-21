@@ -13,34 +13,37 @@ using namespace IStrategizer;
 using namespace Serialization;
 using namespace std;
 
-EntityClassExist::EntityClassExist(PlayerType p_player, int p_unitClassId, int p_amount) : ConditionEx(p_player, CONDEX_EntityClassExist)
+EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, ObjectStateType state) :
+ConditionEx(p_player, CONDEX_EntityClassExist)
 {
     _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
     _conditionParameters[PARAM_Amount] = p_amount;
+    _conditionParameters[PARAM_ObjectStateType] = state;
 }
 //---------------------------------------------------------------------------------------------------
-EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId) : ConditionEx(p_player, CONDEX_EntityClassExist)
+EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, ObjectStateType state) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
     _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
     _conditionParameters[PARAM_Amount] = DONT_CARE;
+    _conditionParameters[PARAM_ObjectStateType] = state;
 }
 //---------------------------------------------------------------------------------------------------
 EntityClassExist::EntityClassExist(PlayerType p_player) : ConditionEx(p_player, CONDEX_EntityClassExist)
 {
-    _conditionParameters[PARAM_EntityClassId] = DONT_CARE;
+    _conditionParameters[PARAM_EntityClassId] = OBJSTATE_END;
     _conditionParameters[PARAM_Amount] = DONT_CARE;
 }
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Evaluate(RtsGame& game)
 {
-    if (_conditionParameters[PARAM_EntityClassId] != DONT_CARE)
+    if (_conditionParameters[PARAM_EntityClassId] != OBJSTATE_END)
     {
         EntityClassType entityClassId = (EntityClassType)_conditionParameters[PARAM_EntityClassId];
         int amount = _conditionParameters[PARAM_Amount];
         PlayerType playerId = (PlayerType)_conditionParameters[PARAM_PlayerId];
 
         ConditionEx::Evaluate(game);
-        _isSatisfied = g_Assist.DoesEntityClassExist(MakePair(entityClassId, amount), playerId);
+        _isSatisfied = g_Assist.DoesEntityClassExist(MakePair(entityClassId, amount), (ObjectStateType)_conditionParameters[PARAM_ObjectStateType], playerId);
     }
 
     return _isEvaluated && _isSatisfied;

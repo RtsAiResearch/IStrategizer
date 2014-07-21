@@ -36,7 +36,7 @@ namespace IStrategizer
         static EngineAssist& Instance() { static EngineAssist m_instance; return m_instance; }
         CheckReturn int ResearchDone(IN PlayerType p_playerIndex, IN ResearchType p_researchId);
         CheckReturn int GetResourceAmount(IN PlayerType p_playerIndex, IN ResourceType p_resourceId, OUT int& p_availableAmount);
-        CheckReturn bool DoesEntityClassExist(IN std::pair<EntityClassType, unsigned> p_entityType, IN PlayerType p_playerType = PLAYER_Self);
+        CheckReturn bool DoesEntityClassExist(IN std::pair<EntityClassType, unsigned> p_entityType, IN ObjectStateType state = OBJSTATE_END, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool DoesEntityClassExist(IN const std::map<EntityClassType, unsigned> &p_entityTypes, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool IsEntityObjectReady(IN TID p_entityObject, IN PlayerType p_playerType = PLAYER_Self);
         CheckReturn bool IsEntityInState(IN TID p_entityObject, IN ObjectStateType stateType, IN PlayerType p_playerType = PLAYER_Self);

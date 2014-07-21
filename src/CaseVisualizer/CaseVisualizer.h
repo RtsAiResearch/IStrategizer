@@ -68,7 +68,7 @@ namespace IStrategizer
 
         private slots:
             void on_actionSaveAs_triggered();
-            void on_actionShow_triggered();
+            void on_actionRefresh_triggered();
             void on_lstCases_itemSelectionChanged();
             void on_btnDeleteCase_clicked();
             void on_btnNewCase_clicked();

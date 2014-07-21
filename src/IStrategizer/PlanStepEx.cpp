@@ -15,9 +15,10 @@ unsigned PlanStepEx::s_lastPlanstepID = 0;
 
 unsigned PlanStepEx::GenerateID()
 {
-    return ++s_lastPlanstepID;
+    UUID newId;
+    UuidCreate(&newId);
+    return newId.Data1;
 }
-
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state) 
     : _stepTypeId(p_stepTypeId),
@@ -102,14 +103,16 @@ std::string PlanStepEx::ToString(bool minimal) const
     const char* stepName = Enums[_stepTypeId];
     unsigned    paramIdx = 0;
 
-    sprintf_s(strID, "%d", _id);
+    sprintf_s(strID, "%x", _id);
 
     stepDescription += stepName;
     stepDescription += "[";
     stepDescription += strID;
     stepDescription += "]";
+#ifdef LOG_DEBUG_INFO
     sprintf_s(strID, "@0x%x", (void*)this);
     stepDescription += strID;
+#endif
 
     if (!minimal)
     {

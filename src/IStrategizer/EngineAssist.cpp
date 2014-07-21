@@ -52,7 +52,7 @@ int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_res
 {
     PlayerResources* m_resources = g_Game->GetPlayer(p_playerIndex)->Resources();
 
-    switch(p_resourceId)
+    switch (p_resourceId)
     {
     case RESOURCE_Supply:
         p_availableAmount = m_resources->AvailableSupply();
@@ -70,14 +70,14 @@ int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_res
     return 0;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entityType, PlayerType p_playerType)
+bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entityType, ObjectStateType state, PlayerType p_playerType)
 {
     GamePlayer* pPlayer;
     GameEntity* pEntity;
     EntityList entities;
     unsigned matches;
     bool exist;
-    ObjectStateType state;
+    ObjectStateType currState;
 
     pPlayer = g_Game->GetPlayer(p_playerType);
     _ASSERTE(pPlayer);
@@ -86,16 +86,23 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
     exist = false;
     matches = 0;
 
-    for(int i = 0, size = entities.size(); i < size; ++i)
+    for (int i = 0, size = entities.size(); i < size; ++i)
     {
         pEntity = pPlayer->GetEntity(entities[i]);
         _ASSERTE(pEntity);
-        
-        state = (ObjectStateType)pEntity->Attr(EOATTR_State);
 
-        if (pEntity->TypeId() == p_entityType.first && 
-            !pEntity->IsLocked() && state != OBJSTATE_BeingConstructed)
-            ++matches;
+        currState = (ObjectStateType)pEntity->Attr(EOATTR_State);
+
+        if (pEntity->TypeId() == p_entityType.first &&
+            !pEntity->IsLocked())
+        {
+
+            if ((state == OBJSTATE_END && currState != OBJSTATE_BeingConstructed) ||
+                (state != OBJSTATE_END && currState == state))
+            {
+                ++matches;
+            }
+        }
     }
 
     exist = (matches >= p_entityType.second);
@@ -203,7 +210,7 @@ bool EngineAssist::DoesEntityObjectExist(const EntityList &p_entityObjects, Play
             break;
         }
     }
-    
+
     return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -251,7 +258,7 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
         sourceEntity = g_Game->GetResearch((ResearchType)p_entityOrResearchType)->SourceEntity();
 
     _ASSERTE(sourceEntity != ECLASS_END);
-        
+
     p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1));
 
     // 4. Required resources exist
@@ -269,12 +276,12 @@ void EngineAssist::GetPrerequisiteResources(int p_entityOrResearchType, PlayerTy
 
     pPlayer = g_Game->GetPlayer(p_playerType);
     _ASSERTE(pPlayer);
-        
+
     if (BELONG(ResearchType, p_entityOrResearchType))
     {
         pResearchType = g_Game->GetResearch((ResearchType)p_entityOrResearchType);
         _ASSERTE(pResearchType);
-            
+
         p_resources.Set(pResearchType->RequiredResources());
     }
     else if (BELONG(EntityClassType, p_entityOrResearchType))

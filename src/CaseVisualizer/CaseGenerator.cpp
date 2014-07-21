@@ -165,12 +165,15 @@ void CaseGenerator::CalcTrainArmyCaseParams(_In_ CaseEx* pCase)
     auto nodes = pCase->Plan()->GetNodes();
     
     map<EntityClassType, int> resultantAmounts;
-
+    EntityClassType scvType = (EntityClassType)m_idLookup.GetBySecond("Terran_SCV");
     for (auto nodeId : nodes)
     {
         auto pPlanstep = pCase->Plan()->GetNode(nodeId);
 
         if (pPlanstep->StepTypeId() != GOALEX_TrainForce)
+            continue;
+
+        if ((EntityClassType)pPlanstep->Parameter(PARAM_EntityClassId) == scvType)
             continue;
 
         auto type = (EntityClassType)pPlanstep->Parameter(PARAM_EntityClassId);

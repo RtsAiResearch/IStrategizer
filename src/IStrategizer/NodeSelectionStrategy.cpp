@@ -98,3 +98,47 @@ void LfhdCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
         actionQ.pop();
     }
 }
+//////////////////////////////////////////////////////////////////////////
+void GenCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
+    _Out_ IOlcbpPlan::NodeSet& actionsToUpdate,
+    _Out_ IOlcbpPlan::NodeSet& snippetsToDestroy)
+{
+    IOlcbpPlan* pPlan = m_pPlanner->Plan();
+    IOlcbpPlan::NodeQueue actionQ;
+    IOlcbpPlan::NodeQueue goalQ;
+
+    // 1st pass: get ready nodes only
+    m_pPlanner->GetReachableReadyNodes(actionQ, goalQ);
+
+    while (!goalQ.empty())
+    {
+        auto goalNodeId = goalQ.front();
+        if (!m_pPlanner->IsNodeDone(goalNodeId))
+        {
+            goalsToUpdate.insert(goalQ.front());
+
+        }
+
+        // Prune the plan by destroying snippets of succeeding goals to 
+        // reduce plan noise and make it easier to read/visualize the plan
+        if (pPlan->GetNode(goalNodeId)->GetState() == ESTATE_Succeeded &&
+            !m_pPlanner->HasExecutingAction(goalNodeId) &&
+            m_pPlanner->IsGoalExpanded(goalNodeId))
+        {
+            snippetsToDestroy.insert(goalNodeId);
+        }
+
+        goalQ.pop();
+    }
+
+    while (!actionQ.empty())
+    {
+        auto actionNodeId = actionQ.front();
+
+        if (!m_pPlanner->IsNodeDone(actionNodeId))
+        {
+            actionsToUpdate.insert(actionQ.front());
+        }
+        actionQ.pop();
+    }
+}
