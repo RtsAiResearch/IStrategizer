@@ -60,3 +60,13 @@ void StarCraftPlayer::SetOffline(RtsGame* pBelongingGame)
 
     GamePlayer::SetOffline(pBelongingGame);
 }
+//////////////////////////////////////////////////////////////////////////
+Vector2 StarCraftPlayer::StartLocation() const
+{
+    auto pos = m_pPlayer->getStartLocation();
+    
+    if (pos != TilePositions::Unknown)
+        return Vector2(pos.x * TILE_SIZE, pos.y * TILE_SIZE);
+    else
+        return Vector2::Inf();
+}

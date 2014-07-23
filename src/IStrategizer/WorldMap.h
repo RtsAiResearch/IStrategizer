@@ -38,6 +38,7 @@ namespace IStrategizer
         unsigned Width() const { return m_worldWidth; }
         unsigned Height() const { return m_worldHeight; }
 		bool IsInMap(Vector2 pos, Vector2 size);
+        virtual void SpawnLocations(_Out_ std::vector<Vector2>& spawnPoints) const = 0;
 
     protected:
         CellFeature** m_cellFeatureMatrix;

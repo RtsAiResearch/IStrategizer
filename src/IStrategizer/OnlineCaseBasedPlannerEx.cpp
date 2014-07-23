@@ -72,9 +72,9 @@ bool OnlineCaseBasedPlannerEx::Init()
     return true;
 }
 //----------------------------------------------------------------------------------------------
-void OnlineCaseBasedPlannerEx::Update(const WorldClock& p_clock)
+void OnlineCaseBasedPlannerEx::Update(_In_ RtsGame& game)
 {
-    _onlineExpansionExecution->Update(p_clock);
+    _onlineExpansionExecution->Update(game);
 }
 //----------------------------------------------------------------------------------------------
 OnlineCaseBasedPlannerEx::~OnlineCaseBasedPlannerEx()

@@ -13,9 +13,9 @@ MessagePump::MessagePump()
     AddMessage(MSG_GameStart);
     AddMessage(MSG_GameEnd);
     AddMessage(MSG_PlanStructureChange);
-    AddMessage(MSG_PlanComplete);
-    AddMessage(MSG_BattleComplete);
+    AddMessage(MSG_PlanGoalSuccess);
     AddMessage(MSG_GameActionLog);
+    AddMessage(MSG_BaseUnderAttack);
 }
 //----------------------------------------------------------------------------------------------
 MessagePump* MessagePump::Instance()

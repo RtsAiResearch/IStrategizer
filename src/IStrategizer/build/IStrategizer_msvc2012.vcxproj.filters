@@ -52,13 +52,16 @@
     <Filter Include="Header Files\OLCBP\Actions\Obsolete">
       <UniqueIdentifier>{bef55df9-dadc-44f2-8e6b-725dd0d0408f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\CombatManager">
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{f22ed0d6-838c-4510-afcc-77b724326dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\CombatManager">
       <UniqueIdentifier>{9360ecfa-57aa-4863-83a8-87faa02a9390}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\CombatManager\FSM">
+    <Filter Include="Header Files\Managers\CombatManager\FSM">
       <UniqueIdentifier>{bb2e8bb2-a585-47e0-a569-ae52d6b8e105}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\CombatManager\FSM\Obsolete">
+    <Filter Include="Header Files\Obsolete">
       <UniqueIdentifier>{27878e90-ac18-4317-83d3-4d9ed3edbda0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -399,41 +402,47 @@
     <ClInclude Include="..\AttackGroundAction.h">
       <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
     </ClInclude>
-    <ClInclude Include="..\ResourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Army.h">
-      <Filter>Header Files\CombatManager</Filter>
+      <Filter>Header Files\Managers\CombatManager</Filter>
     </ClInclude>
     <ClInclude Include="..\StrategySelector.h">
-      <Filter>Header Files\CombatManager</Filter>
+      <Filter>Header Files\Managers\CombatManager</Filter>
     </ClInclude>
     <ClInclude Include="..\NodeSelectionStrategy.h">
       <Filter>Header Files\OLCBP</Filter>
     </ClInclude>
     <ClInclude Include="..\FSMState.h">
-      <Filter>Header Files\CombatManager\FSM</Filter>
+      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\FinishedFSMState.h">
-      <Filter>Header Files\CombatManager\FSM\Obsolete</Filter>
+      <Filter>Header Files\Obsolete</Filter>
     </ClInclude>
     <ClInclude Include="..\TargetFSMState.h">
-      <Filter>Header Files\CombatManager\FSM\Obsolete</Filter>
+      <Filter>Header Files\Obsolete</Filter>
     </ClInclude>
     <ClInclude Include="..\DeployFSMState.h">
-      <Filter>Header Files\CombatManager\FSM\Obsolete</Filter>
+      <Filter>Header Files\Obsolete</Filter>
     </ClInclude>
     <ClInclude Include="..\BasicAttackFSMState.h">
-      <Filter>Header Files\CombatManager\FSM\Obsolete</Filter>
+      <Filter>Header Files\Obsolete</Filter>
     </ClInclude>
     <ClInclude Include="..\StackFSM.h">
-      <Filter>Header Files\CombatManager\FSM</Filter>
+      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\ArmyController.h">
-      <Filter>Header Files\CombatManager</Filter>
+      <Filter>Header Files\Managers\CombatManager</Filter>
     </ClInclude>
     <ClInclude Include="..\CombatManager.h">
-      <Filter>Header Files\CombatManager</Filter>
+      <Filter>Header Files\Managers\CombatManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScoutManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ResourceManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EntityController.h">
+      <Filter>Header Files\Managers\CombatManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -657,6 +666,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\NodeSelectionStrategy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CombatManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScoutManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EntityController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

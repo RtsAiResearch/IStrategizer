@@ -59,7 +59,7 @@ void BwapiClient::BwapiMainThread()
         // Enable some cheat flags
         Broodwar->enableFlag(Flag::UserInput);
         // Uncomment to enable complete map information
-        Broodwar->enableFlag(Flag::CompleteMapInformation);
+        //Broodwar->enableFlag(Flag::CompleteMapInformation);
 
 
         Broodwar->sendText("Hello world!");

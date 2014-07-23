@@ -19,6 +19,7 @@
 #include "GameStatistics.h"
 #include "CaseBasedReasonerEx.h"
 #include "SharedResource.h"
+#include "GamePlayer.h"
 #include <iostream>
 
 using namespace IStrategizer;
@@ -29,40 +30,54 @@ m_param(param),
 m_pCaseLearning(nullptr),
 m_pPlanner(nullptr),
 m_isFirstUpdate(true),
-m_combatManager(param.pStrategySelector)
+m_combatMgr(param.Consultant),
+m_scoutMgr(param.Consultant)
 {
     g_Game = pGame;
-    _ASSERTE(param.pStrategySelector);
+    _ASSERTE(param.Consultant);
 }
 //---------------------------------------------------------------------------------------------
-void IStrategizerEx::NotifyMessegeSent(Message* p_message)
+void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
 {
-    switch (p_message->TypeId())
+    auto msgType = pMsg->TypeId();
+    if (msgType == MSG_GameEnd)
     {
-    case MSG_GameEnd:
         if (m_param.Phase == PHASE_Offline)
         {
             m_pCaseLearning->Learn();
         }
         else
         {
-            GameEndMessage* pMsg = static_cast<GameEndMessage*>(p_message);
+            GameEndMessage* pEndMsg = static_cast<GameEndMessage*>(pMsg);
 
-            GameStatistics stats(pMsg->Data()->IsWinner,
-                pMsg->Data()->MapName,
+            GameStatistics stats(pEndMsg->Data()->IsWinner,
+                pEndMsg->Data()->MapName,
                 g_Game->Map()->Width(),
                 g_Game->Map()->Height(),
                 g_Game->Clock().ElapsedGameCycles(),
                 m_pPlanner->Reasoner()->Retainer()->CaseBase()->CaseContainer.size(),
-                pMsg->Data()->Score,
-                pMsg->Data()->EnemyRace);
+                pEndMsg->Data()->Score,
+                pEndMsg->Data()->EnemyRace);
             m_pStatistics->Add(stats);
         }
-        break;
-
-    case MSG_PlanComplete:
-        SelectNextProductionGoal();
-        break;
+    }
+    else if (msgType == MSG_PlanGoalSuccess)
+    {
+        auto enemyLoc = g_Game->Enemy()->StartLocation();
+        // Location not discovered, needs scouting
+        if (enemyLoc.IsInf())
+        {
+            _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
+            m_scoutMgr.StartScouting();
+        }
+        else
+        {
+            m_combatMgr.AttackArea(Circle2(enemyLoc, 500));
+        }
+    }
+    else if (msgType == MSG_BaseUnderAttack)
+    {
+        m_combatMgr.DefendArea(Circle2(*((DataMessage<Vector2>*)pMsg)->Data(), 500));
     }
 }
 //--------------------------------------------------------------------------------
@@ -76,9 +91,16 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 
         if (m_param.Phase == PHASE_Online)
         {
-            m_resourceManager.Update(*g_Game);
-            m_combatManager.Update(*g_Game);
-            m_pPlanner->Update(g_Game->Clock());
+            // Time to kick scouting
+            if (g_Game->Clock().ElapsedGameCycles() >= ScoutStartFrame)
+            {
+                m_scoutMgr.StartScouting();
+            }
+
+            m_scoutMgr.Update(*g_Game);
+            m_resourceMgr.Update(*g_Game);
+            m_combatMgr.Update(*g_Game);
+            m_pPlanner->Update(*g_Game);
         }
     }
     catch (IStrategizer::Exception &e)
@@ -126,10 +148,16 @@ bool IStrategizerEx::Init()
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
         m_pPlanner->Init();
 
-        // Init resource manager
-        m_resourceManager.Init();
+        // Init scout manager
+        m_scoutMgr.Init();
 
-        g_MessagePump->RegisterForMessage(MSG_PlanComplete, this);
+        // Init combat manager
+        m_combatMgr.Init();
+
+        // Init resource manager
+        m_resourceMgr.Init();
+
+        g_MessagePump->RegisterForMessage(MSG_PlanGoalSuccess, this);
 
         SelectNextProductionGoal();
     }
@@ -142,8 +170,7 @@ bool IStrategizerEx::Init()
 void IStrategizerEx::SelectNextProductionGoal()
 {
     PlanStepParameters params;
-    m_param.pStrategySelector->SelectGameOpening(*g_Game, params);
+    m_param.Consultant->SelectGameOpening(*g_Game, params);
     _ASSERTE(!params.empty());
     m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
-
 }

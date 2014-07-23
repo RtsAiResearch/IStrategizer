@@ -6,6 +6,8 @@
 #include "WorldClock.h"
 #include "CombatManager.h"
 #include "ResourceManager.h"
+#include "ScoutManager.h"
+#include "EngineDefs.h"
 #include <vector>
 #include <memory>
 
@@ -26,7 +28,7 @@ namespace IStrategizer
         int BuildingDataIMCellSize;
         int GrndCtrlIMCellSize;
         PhaseType Phase;
-        StrategySelectorPtr pStrategySelector;
+        StrategySelectorPtr Consultant;
     };
 
     class IStrategizerEx : public EngineObject
@@ -41,15 +43,20 @@ namespace IStrategizer
         ~IStrategizerEx();
 
     private:
+        DISALLOW_COPY_AND_ASSIGN(IStrategizerEx);
+
+        const unsigned ScoutStartFrame = 2000;
         void SelectNextProductionGoal();
 
         bool m_isFirstUpdate;
-        std::shared_ptr<OnlineCaseBasedPlannerEx> m_pPlanner;
         std::shared_ptr<LearningFromHumanDemonstration> m_pCaseLearning;
         IStrategizerParam m_param;
-        CombatManager m_combatManager;
-		ResourceManager m_resourceManager;
         std::shared_ptr<BotStatistics> m_pStatistics;
+
+        std::shared_ptr<OnlineCaseBasedPlannerEx> m_pPlanner;
+        CombatManager m_combatMgr;
+        ScoutManager m_scoutMgr;
+		ResourceManager m_resourceMgr;
     };
 }
 

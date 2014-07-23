@@ -27,14 +27,17 @@ namespace IStrategizer
 		const unsigned GoalMaxSleepsCount = 3;
 		const unsigned ActionSleepTime = 200;
 		const unsigned ActionMaxSleepsCount = 5;
+        // Every 50 frame check the current goal satisfaction
+        const unsigned PlanMaintenanceWindow = 50;
+        // Every 2nd frame update the plan execution
+        const unsigned PlanExecuteWindow = 2;
 		
 		OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx* pCbReasoner);
         ~OnlinePlanExpansionExecution();
 
-        void Update(_In_ const WorldClock& clock);
+        void Update(_In_ RtsGame& game);
         void NotifyMessegeSent(_In_ Message* pMessage);
         void StartNewPlan(_In_ GoalEx* pPlanGoal);
-        void RootGoal(GoalEx* pGoal) { _ASSERTE(pGoal); m_pRootGoal = pGoal; }
         const IOlcbpPlan* Plan() const { return &*m_pOlcbpPlan; }
         IOlcbpPlan* Plan() { return &*m_pOlcbpPlan; }
         ConstOlcbpPlanContextRef GetContext() const { return m_planContext; }
@@ -81,6 +84,7 @@ namespace IStrategizer
         void RemoveExecutingAction(IOlcbpPlan::NodeID nodeId);
         void AddExecutingAction(IOlcbpPlan::NodeID currentNode);
         void ClearPlan();
+        bool IsPlanDone();
 
         CaseBasedReasonerEx *m_pCbReasoner;
         OlcbpPlanNodeDataMap m_nodeData;
@@ -88,12 +92,13 @@ namespace IStrategizer
         std::shared_ptr<IOlcbpPlan> m_pOlcbpPlan;
         bool m_planStructureChangedThisFrame;
         std::map<CaseNodeValue, ClonedCaseNodeValue> m_clonedNodesMapping;
-        GoalType m_rootGoalType;
-        GoalEx* m_pRootGoal;
+        std::shared_ptr<GoalEx> m_pPlanGoalPrototype;
         IOlcbpPlan::NodeSet m_activeGoalSet;
         OlcbpPlanContext m_planContext;
         std::map<IOlcbpPlan::NodeID, std::set<IOlcbpPlan::NodeID>> m_executingActions;
         std::shared_ptr<NodeSelectionStrategy> m_pNodeSelector;
+        bool m_inMaintenanceMode;
+
     };
 }
 

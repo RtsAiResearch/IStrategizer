@@ -31,7 +31,7 @@ namespace IStrategizer
         GamePlayer(TID raceId);
         virtual ~GamePlayer();
 		void Entities(EntityList& p_entityIds);
-        void Entities(EntityClassType p_typeId, EntityList& p_entityIds);
+        void Entities(EntityClassType p_typeId, EntityList& p_entityIds, bool checkReadyOnly = false, bool checkFree = false);
 		void GetBases(EntityList &p_basesIds);
 		void GetWorkers(_Out_ EntityList& workers);
         GameEntity* GetEntity(TID p_id);
@@ -42,6 +42,7 @@ namespace IStrategizer
         void Init();
         float Distance(const GamePlayer* pOther, const SimilarityWeightModel* pModel) const { return 0.0f; }
 		int Attr(PlayerAttribute attribute);
+        virtual Vector2 StartLocation() const = 0;
 
         PlayerResources* Resources() { _ASSERTE(m_pResources != nullptr); return m_pResources;}
         const PlayerResources* Resources() const { _ASSERTE(m_pResources != nullptr); return m_pResources;}

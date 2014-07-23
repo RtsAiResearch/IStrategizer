@@ -23,12 +23,31 @@ using namespace std;
 using namespace IStrategizer;
 
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
+void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
 {
     m_pOlcbpPlan->Lock();
 
-    // We have exhausted all possible plans. We have surrendered, nothing to do
-    if (m_pOlcbpPlan->Size() > 0)
+    // We are in maintenance mode and its window kicked in
+    // Then check if the root goal is not satisfied and try to re expand it
+    if (m_pOlcbpPlan->Size() > 0 &&
+        m_inMaintenanceMode &&
+        game.Clock().ElapsedGameCycles() % PlanMaintenanceWindow == 0)
+    {
+        auto pPlanGoal = m_pOlcbpPlan->GetNode(m_planRootNodeId);
+
+        // In case the plan goal is not satisfied and the plan
+        // has no execution ongoing in any action node, then 
+        // its time to replan for the same plan goal
+        if (!pPlanGoal->SuccessConditionsSatisfied(*g_Game) &&
+            IsPlanDone())
+        {
+            LogInfo("PLAN MAINTENANCE: Plan %s goal is not succeeded, replanning", pPlanGoal->ToString().c_str());
+            // Replan and escape the maintenance mode
+            StartNewPlan((GoalEx*)m_pPlanGoalPrototype->Clone());
+        }
+    }
+    else if (m_pOlcbpPlan->Size() > 0 &&
+        game.Clock().ElapsedGameCycles() % PlanExecuteWindow == 0)
     {
         IOlcbpPlan::NodeSet actionsToUpdate;
         IOlcbpPlan::NodeSet& goalsToUpdate = m_activeGoalSet;
@@ -45,7 +64,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
             // It is illogical to update already succeeding actions, there is
             // a problem in the node selection strategy
             _ASSERTE(m_pOlcbpPlan->GetNode(actionNodeId)->GetState() != ESTATE_Succeeded);
-            UpdateActionNode(actionNodeId, clock);
+            UpdateActionNode(actionNodeId, game.Clock());
         }
 
         for (auto goalNodeId : goalsToUpdate)
@@ -59,7 +78,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
                 // It is illogical to update already succeeding goals, there is
                 // a problem in the node selection strategy
                 _ASSERTE(m_pOlcbpPlan->GetNode(goalNodeId)->GetState() != ESTATE_Succeeded);
-                UpdateGoalNode(goalNodeId, clock);
+                UpdateGoalNode(goalNodeId, game.Clock());
             }
         }
 
@@ -88,7 +107,7 @@ void OnlinePlanExpansionExecution::Update(_In_ const WorldClock& clock)
 
     if (m_planStructureChangedThisFrame)
     {
-        g_MessagePump->Send(new Message(clock.ElapsedGameCycles(), MSG_PlanStructureChange));
+        g_MessagePump->Send(new Message(game.Clock().ElapsedGameCycles(), MSG_PlanStructureChange));
         m_planStructureChangedThisFrame = false;
     }
 }

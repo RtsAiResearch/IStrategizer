@@ -79,7 +79,7 @@ void ClientMain::InitIStrategizer()
         param.GrndCtrlIMCellSize = TILE_SIZE;
         param.OccupanceIMUpdateInterval = 250;
         param.GrndCtrlIMUpdateInterval = 1000;
-        param.pStrategySelector = shared_ptr<StarCraftStrategySelector>(new StarCraftStrategySelector());
+        param.Consultant = shared_ptr<StarCraftStrategySelector>(new StarCraftStrategySelector());
 
         if (Broodwar->isReplay())
         {

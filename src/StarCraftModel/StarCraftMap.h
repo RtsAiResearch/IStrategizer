@@ -14,6 +14,7 @@ namespace IStrategizer
 		bool CanBuildHere(Vector2 p_position, EntityClassType p_buildingType) const;
 		bool CanBuildHere(Vector2 pos) const;
         MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const;
+        void SpawnLocations(_Out_ std::vector<Vector2>& spawnPoints) const;
     };
 }
 

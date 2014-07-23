@@ -28,10 +28,10 @@ using namespace IStrategizer;
 using namespace std;
 
 GamePlayer::GamePlayer(TID raceId) :
-    m_pResources(nullptr),
-    m_pTechTree(nullptr),
-    m_raceId(raceId),
-    m_isOnline(true)
+m_pResources(nullptr),
+m_pTechTree(nullptr),
+m_raceId(raceId),
+m_isOnline(true)
 {
     m_colonyCenter = MapArea::Null();
 }
@@ -68,7 +68,9 @@ void GamePlayer::Entities(EntityList& entityIds)
 //////////////////////////////////////////////////////////////////////////
 GameEntity* GamePlayer::GetEntity(TID id)
 {
-    if(m_entities.count(id) == 0)
+    _ASSERTE(id != INVALID_TID);
+
+    if (m_entities.count(id) == 0)
     {
         return nullptr;
     }
@@ -80,21 +82,23 @@ GameEntity* GamePlayer::GetEntity(TID id)
 void GamePlayer::GetBases(EntityList &bases)
 {
     EntityClassType typeId = Race()->GetBaseType();
-	Entities(typeId, bases);
+    Entities(typeId, bases);
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::GetWorkers(_Out_ EntityList& workers)
 {
-	EntityClassType typeId = Race()->GetWorkerType();
-	Entities(typeId, workers);
+    EntityClassType typeId = Race()->GetWorkerType();
+    Entities(typeId, workers);
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds)
+void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds, bool checkReadyOnly, bool checkFree)
 {
     entityIds.clear();
-    for(EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
+    for (EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
     {
-        if (itr->second->TypeId() == typeId)
+        if (itr->second->TypeId() == typeId &&
+            (!checkReadyOnly || itr->second->Attr(EOATTR_State) != OBJSTATE_BeingConstructed) &&
+            (!checkFree || !itr->second->IsLocked()))
             entityIds.push_back(itr->first);
     }
 }
@@ -274,7 +278,7 @@ int GamePlayer::Attr(PlayerAttribute attribute)
     case PATTR_AlliedAttackersTotalHP:
         classAttribute = ECATTR_MaxHp;
         break;
-    
+
     case PATTR_AlliedAttackersTotalDamage:
         classAttribute = ECATTR_GroundAttack;
         break;
@@ -282,7 +286,7 @@ int GamePlayer::Attr(PlayerAttribute attribute)
     default:
         _ASSERTE(!"Inavlid player attribute!");
         classAttribute = ECATTR_START;
-        break;    
+        break;
     }
 
     for (auto pair : m_entities)

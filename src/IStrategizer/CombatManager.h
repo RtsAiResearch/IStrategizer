@@ -15,7 +15,12 @@ namespace IStrategizer
     class CombatManager : public EngineObject
     {
     public:
-        CombatManager(StrategySelectorPtr pSelector) : m_pStrategySelector(pSelector) {}
+        CombatManager(StrategySelectorPtr pConsultant) :
+            m_pConsultant(pConsultant),
+            m_armyCtrlr(pConsultant)
+        {}
+
+        void Init() {}
 
         void Update(_In_ RtsGame& game)
         {
@@ -24,18 +29,27 @@ namespace IStrategizer
 
         void AttackArea(_In_ Circle2 area)
         {
-
+            _ASSERTE(!area.Center.IsInf());
+            m_armyCtrlr.AttackArea(area);
         }
 
         void DefendArea(_In_ Circle2 area)
         {
+            _ASSERTE(!area.Center.IsInf());
             // For now, defend is just an army attack, 
             // until base buildings and workers are part of the equation
             AttackArea(area);
         }
 
+        void ScoutLocation(_In_ Vector2 loc)
+        {
+
+        }
+
+        bool NeedReinforcements() { return true; }
+
     private:
-        StrategySelectorPtr m_pStrategySelector;
+        StrategySelectorPtr m_pConsultant;
         ArmyController m_armyCtrlr;
     };
 }

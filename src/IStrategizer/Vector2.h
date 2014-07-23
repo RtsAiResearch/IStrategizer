@@ -2,6 +2,7 @@
 #define VECTOR2_H
 
 #include <cmath>
+#include <limits>
 
 #define SQR(X) ((X) * (X))
 
@@ -24,7 +25,7 @@ namespace IStrategizer
 
         bool operator !=(const Vector2T& right) const
         {
-            return X != right.X || Y == right.Y;
+            return !(X != right.X || Y == right.Y);
         }
 
         Vector2T& operator +=(const Vector2T& right)
@@ -61,15 +62,26 @@ namespace IStrategizer
         }
 
         bool IsZero() { return *this == Zero(); }
+        bool IsInf() { return *this == Inf(); }
 
-        static const Vector2T& Zero() { static Vector2 zero; return zero; }
-        static const Vector2T& One() { static Vector2 one(T(1), T(1)); return one; }
+        static const Vector2T& Zero() { static Vector2T zero; return zero; }
+        static const Vector2T& One() { static Vector2T one(T(1), T(1)); return one; }
+#undef max
+        static const Vector2T& Inf() { static Vector2T inf(std::numeric_limits<T>::max(), std::numeric_limits<T>::max()); return inf; }
     };
 
     template<class T>
     class Circle2T
     {
     public:
+        Circle2T() :
+            Center(Vector2T<T>::Zero()),
+            Radius(T(0))
+        {}
+        Circle2T(Vector2T<T> center, T radius) :
+            Center(center),
+            Radius(Radius)
+        {}
         Vector2T<T> Center;
         T Radius;
     };

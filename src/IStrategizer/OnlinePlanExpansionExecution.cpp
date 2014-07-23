@@ -27,10 +27,10 @@ OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ CaseBasedReasone
     m_planStructureChangedThisFrame(false),
     m_pCbReasoner(pCasedBasedReasoner),
     m_pOlcbpPlan(new OlcbpPlan),
-    m_pRootGoal(nullptr),
-    m_rootGoalType(GOALEX_END),
+    m_pPlanGoalPrototype(nullptr),
     m_planContext(m_nodeData, m_activeGoalSet),
-    m_pNodeSelector(new GenCbNodeSelector(this))
+    m_pNodeSelector(new GenCbNodeSelector(this)),
+    m_inMaintenanceMode(false)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
@@ -57,13 +57,18 @@ void OnlinePlanExpansionExecution::StartNewPlan(_In_ GoalEx* pPlanGoal)
 {
     ClearPlan();
 
-    m_pRootGoal = pPlanGoal;
+    LogInfo("Starting a new plan %s", pPlanGoal->ToString().c_str());
+
+    // Release previous plan goal
+    m_pPlanGoalPrototype.reset();
+    m_pPlanGoalPrototype = shared_ptr<GoalEx>((GoalEx*)pPlanGoal->Clone());
     m_planRootNodeId = m_pOlcbpPlan->AddNode(pPlanGoal, pPlanGoal->Id());
 
     m_nodeData[m_planRootNodeId] = OlcbpPlanNodeData();
     OpenNode(m_planRootNodeId);
 
     m_planStructureChangedThisFrame = true;
+    m_inMaintenanceMode = false;
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionGoalNodeId, _In_ CaseEx *pExpansionCase)
@@ -440,7 +445,9 @@ void OnlinePlanExpansionExecution::OnGoalNodeSucceeded(_In_ IOlcbpPlan::NodeID n
 
     if (m_planRootNodeId == nodeId)
     {
-        g_MessagePump->Send(new Message(0, MSG_PlanComplete));
+        g_MessagePump->Send(new Message(0, MSG_PlanGoalSuccess));
+        LogInfo("Plan goal succeeded, entering maintenance mode");
+        m_inMaintenanceMode = true;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -638,4 +645,15 @@ bool OnlinePlanExpansionExecution::IsGoalExpanded(_In_ IOlcbpPlan::NodeID snippe
     }
 
     return false;
+}
+//////////////////////////////////////////////////////////////////////////
+bool OnlinePlanExpansionExecution::IsPlanDone()
+{
+    for (auto& a : m_executingActions)
+    {
+        if (!a.second.empty())
+            return false;
+    }
+
+    return true;
 }

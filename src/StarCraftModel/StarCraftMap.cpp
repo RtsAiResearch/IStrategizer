@@ -100,3 +100,16 @@ bool StarCraftMap::CanBuildHere(Vector2 pos) const
 	return Broodwar->isBuildable(TilePositionFromUnitPosition(pos.X), TilePositionFromUnitPosition(pos.Y), false) &&
 		Broodwar->isExplored(TilePositionFromUnitPosition(pos.X), TilePositionFromUnitPosition(pos.Y));
 }
+//////////////////////////////////////////////////////////////////////////
+void StarCraftMap::SpawnLocations(_Out_ std::vector<Vector2>& spawnPoints) const
+{
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
+    auto locSet = Broodwar->getStartLocations();
+
+    for (auto& loc : locSet)
+    {
+        spawnPoints.push_back(Vector2(loc.x * TILE_SIZE, loc.y * TILE_SIZE));
+    }
+}
