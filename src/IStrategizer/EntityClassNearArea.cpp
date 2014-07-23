@@ -20,14 +20,14 @@ bool EntityClassNearArea::Evaluate(RtsGame& game)
 {
     EntityList entityIds;
     game.Self()->Entities((EntityClassType)_conditionParameters[PARAM_EntityClassId], entityIds);
-    Vector2 position = Vector2::Null();
+    Vector2 position = Vector2(-1, -1);
     int counter = 0;
     ConditionEx::Evaluate(game);
     for (unsigned i = 0; i < entityIds.size(); ++i)
     {
         position = game.Map()->GetNearestCell(new CellFeature(_conditionParameters));
 
-        if (!position.IsNull())
+        if (position.X == -1 && position.Y == -1)
         {
             if (_conditionParameters[PARAM_Amount] == DONT_CARE)
             {

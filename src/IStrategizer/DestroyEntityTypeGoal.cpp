@@ -46,7 +46,7 @@ bool DestroyEntityTypeGoal::SuccessConditionsSatisfied(RtsGame& game)
 //----------------------------------------------------------------------------------------------
 void DestroyEntityTypeGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
-    if (p_msg->MessageTypeID() == MSG_EntityDestroy)
+    if (p_msg->TypeId() == MSG_EntityDestroy)
     {
         EntityDestroyMessage* pMsg = static_cast<EntityDestroyMessage*>(p_msg);
         _ASSERTE(pMsg && pMsg->Data());

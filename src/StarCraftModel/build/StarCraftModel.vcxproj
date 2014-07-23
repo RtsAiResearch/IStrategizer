@@ -37,6 +37,7 @@
     <ClCompile Include="..\StarCraftPlayerResources.cpp" />
     <ClCompile Include="..\StarCraftRace.cpp" />
     <ClCompile Include="..\StarCraftResearch.cpp" />
+    <ClCompile Include="..\StarCraftStrategySelector.cpp" />
     <ClCompile Include="..\StarCraftTechTree.cpp" />
     <ClCompile Include="..\StarCraftType.cpp" />
   </ItemGroup>

@@ -29,8 +29,8 @@ namespace IStrategizer
 			m_secondaryOptimalAssignment(0)
 		{}
 
-		bool Init();
-		void Update(_In_ RtsGame& game, _In_ const WorldClock& clock);
+		void Init();
+		void Update(_In_ RtsGame& game);
 		void NotifyMessegeSent(Message* p_pMessage);
 
 	private:

@@ -72,8 +72,8 @@ void BuildActionEx::FreeResources(RtsGame &game)
 void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
 	if (PlanStepEx::GetState() == ESTATE_Executing &&
-		(p_msg->MessageTypeID() == MSG_EntityCreate ||
-		p_msg->MessageTypeID() == MSG_EntityRenegade))
+		(p_msg->TypeId() == MSG_EntityCreate ||
+		p_msg->TypeId() == MSG_EntityRenegade))
 	{
 		EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
 		TID buildingId;

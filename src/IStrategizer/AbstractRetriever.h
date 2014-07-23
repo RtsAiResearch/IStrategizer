@@ -22,6 +22,7 @@ namespace IStrategizer
             RtsGame* pGameState;
             std::set<CaseEx*> ExcludedCases;
             std::set<unsigned> ExcludedGoalHashes;
+            std::string CaseName;
         };
 
         AbstractRetriever(AbstractRetainer* p_pRetainer, const char* p_pName) : m_pRetainer(p_pRetainer) {}

@@ -46,7 +46,7 @@ m_pTrainee(nullptr)
 //----------------------------------------------------------------------------------------------
 void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
 {
-	if (PlanStepEx::GetState() == ESTATE_Executing && pMsg->MessageTypeID() == MSG_EntityCreate)
+	if (PlanStepEx::GetState() == ESTATE_Executing && pMsg->TypeId() == MSG_EntityCreate)
 	{
 		EntityCreateMessage* pEntityMsg = static_cast<EntityCreateMessage*>(pMsg);
 		_ASSERTE(pEntityMsg && pEntityMsg->Data());

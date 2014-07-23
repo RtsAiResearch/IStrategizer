@@ -17,6 +17,7 @@ namespace IStrategizer
 		void Delete(_In_ CaseEx* pCase);
 		void DeleteAll();
 		void DeleteAllGeneratedCases();
+        CaseEx* FindByName(const std::string caseName);
 
         ///> type=set(CaseEx*)
         Serialization::SSet<CaseEx*> CaseContainer;

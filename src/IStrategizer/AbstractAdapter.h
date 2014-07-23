@@ -10,7 +10,6 @@
 
 namespace IStrategizer
 {
-    class Vector2;
     class CellFeature;
 
     class AbstractAdapter

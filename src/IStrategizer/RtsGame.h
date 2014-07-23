@@ -2,10 +2,11 @@
 #ifndef RTSGAME_H
 #define RTSGAME_H
 
-#include <vector>
 #include "EngineData.h"
 #include "EngineObject.h"
 #include "SMap.h"
+#include "WorldClock.h"
+#include <vector>
 
 namespace IStrategizer
 {
@@ -51,7 +52,8 @@ namespace IStrategizer
             m_pMap(nullptr),
             m_isInitialized(false),
             m_isOnline(true),
-            m_cachedGameFrame(0)
+            m_cachedGameFrame(0),
+            m_firstUpdate(true)
         {}
 
 		static void FinalizeStaticData();
@@ -82,6 +84,9 @@ namespace IStrategizer
         virtual size_t GetMaxTrainingQueueCount() const = 0;
         virtual unsigned GameFrame() const = 0;
         float Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const;
+        const WorldClock& Clock() const { return m_clock; }
+        void Update();
+
         static SimilarityWeightModel DefaultWeightModel;
 
     protected:
@@ -110,6 +115,8 @@ namespace IStrategizer
 
         bool m_isInitialized;
         WorldMap* m_pMap;
+        WorldClock m_clock;
+        bool m_firstUpdate;
     };
 
     struct RtsGameModelAttributeWeights

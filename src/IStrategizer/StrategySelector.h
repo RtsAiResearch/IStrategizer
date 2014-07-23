@@ -1,20 +1,19 @@
 #ifndef STRATEGYSELECTOR_H
 #define STRATEGYSELECTOR_H
 
-#include "EngineObject.h"
 #include "Army.h"
-#include "FSMState.h"
-#include <vector>
-#include <string>
+#include "StackFSM.h"
 
 namespace IStrategizer
 {
     class StrategySelector : public EngineObject
     {
     public:
-        virtual void SelectAttackStrategy(Army* pArmy, std::vector<FSMState<Battle*>*>& states) const = 0;
-        virtual void SelectTrainOrder(PlanStepParameters& params) = 0;
+        virtual StackFSMPtr SelectAttackStrategy(_In_ RtsGame& game, _In_ const Army& pArmy) const = 0;
+        virtual void SelectGameOpening(_In_ RtsGame& game, _Out_ PlanStepParameters& trainArmyParams) const = 0;
     };
+
+    typedef std::shared_ptr<StrategySelector> StrategySelectorPtr;
 }
 
 #endif // STRATEGYSELECTOR_H

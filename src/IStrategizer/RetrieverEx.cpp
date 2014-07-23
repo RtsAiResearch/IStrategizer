@@ -159,6 +159,12 @@ float RetrieverEx::CaseDistance(const CaseEx* pCase, const AbstractRetriever::Re
 //----------------------------------------------------------------------------------------------
 CaseEx* RetrieverEx::Retrieve(const AbstractRetriever::RetrieveOptions& options)
 {
+    if (!options.CaseName.empty())
+    {
+        LogInfo("Retreiving case by name '%s'", options.CaseName.c_str());
+        return m_pRetainer->CaseBase()->FindByName(options.CaseName.c_str());
+    }
+
     string goalDesc;
 
     if (!options.Parameters.empty())

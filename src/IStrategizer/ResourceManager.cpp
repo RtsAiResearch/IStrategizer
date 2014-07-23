@@ -9,7 +9,7 @@
 using namespace IStrategizer;
 using namespace std;
 
-bool ResourceManager::Init()
+void ResourceManager::Init()
 {
 	g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
 	g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
@@ -17,15 +17,13 @@ bool ResourceManager::Init()
 
 	m_primaryOptimalAssignment = g_Game->Self()->Race()->OptimalGatherersPerSource(RESOURCE_Primary);
 	m_secondaryOptimalAssignment = g_Game->Self()->Race()->OptimalGatherersPerSource(RESOURCE_Secondary);
-
-	return true;
 }
 //////////////////////////////////////////////////////////////////////////
 void ResourceManager::NotifyMessegeSent(Message* pMsg)
 {
 	LogActivity(NotifyMessegeSent);
 
-	auto msgType = pMsg->MessageTypeID();
+	auto msgType = pMsg->TypeId();
 
 	if (msgType == MSG_EntityCreate)
 	{
@@ -102,7 +100,7 @@ void ResourceManager::NotifyMessegeSent(Message* pMsg)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::Update(_In_ RtsGame& game, _In_ const WorldClock& clock)
+void ResourceManager::Update(_In_ RtsGame& game)
 {
 	if (m_firstUpdate)
 	{
@@ -110,7 +108,7 @@ void ResourceManager::Update(_In_ RtsGame& game, _In_ const WorldClock& clock)
 		UpdateDelayedSources(game);
 	}
 
-	if (clock.ElapsedGameCycles() % 2 != 0)
+	if (game.Clock().ElapsedGameCycles() % 2 != 0)
 		return;
 
 	UpdateWorkersState(game);

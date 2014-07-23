@@ -53,7 +53,7 @@ OnlineCaseBasedPlannerEx::OnlineCaseBasedPlannerEx() :
     _caseBasedReasoner(nullptr),
     _onlineExpansionExecution(nullptr) {}
 //----------------------------------------------------------------------------------------------
-bool OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
+bool OnlineCaseBasedPlannerEx::Init()
 {
     AbstractRetainer* m_retainer = new RetainerEx();
     AbstractRetriever* m_retriever = new RetrieverEx(m_retainer);
@@ -67,7 +67,7 @@ bool OnlineCaseBasedPlannerEx::Init(GoalEx *p_initialGoal)
         return false;
     }
 
-    _onlineExpansionExecution = new OnlinePlanExpansionExecution(p_initialGoal, _caseBasedReasoner);
+    _onlineExpansionExecution = new OnlinePlanExpansionExecution(_caseBasedReasoner);
 
     return true;
 }

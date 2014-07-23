@@ -117,8 +117,8 @@ CellFeature* WorldMap::GetCellFeatureFromWorldPosition(Vector2 p_worldPosition) 
 //----------------------------------------------------------------------------------------------
 Vector2 WorldMap::GetNearestCell(CellFeature* p_cell) const
 {
-    Vector2 bestGridCellPosition = Vector2::Null();
-    Vector2 bestWorldCellPosition = Vector2::Null();
+    Vector2 bestGridCellPosition = Vector2(-1, -1);
+    Vector2 bestWorldCellPosition = Vector2(-1, -1);
     float  bestDistance = numeric_limits<float>::max();
     float  currDistance = 0.0;
 

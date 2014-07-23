@@ -101,7 +101,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         // Append building width with padding of free space to achieve building spacing
         searchData.BuildingWidth = pGameType->Attr(ECATTR_Width);
         searchData.BuildingHeight = pGameType->Attr(ECATTR_Height);
-        searchData.CandidateBuildPos = Vector2::Null();
+        searchData.CandidateBuildPos = Vector2(-1, -1);
 		searchData.AllSidePadding = m_buildingSpacing;
         searchData.BuildingType = p_buildingType;
 
@@ -112,7 +112,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         colonyCenter = g_Game->Self()->GetColonyMapArea().Pos();
         pBuildingIM->SpiralMove(colonyCenter, searchRadius, searchPredicate, &searchData);
 
-        if (searchData.CandidateBuildPos == Vector2::Null())
+        if (searchData.CandidateBuildPos == Vector2(-1, -1))
         {
             return MapArea::Null();
         }

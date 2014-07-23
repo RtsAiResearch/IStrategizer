@@ -54,21 +54,21 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     if (p_message == nullptr)
         DEBUG_THROW(InvalidParameterException(XcptHere));
 
-    for (unsigned i = 0; i < m_goals.size() && p_message->GameCycle() > 0; ++i)
+    for (unsigned i = 0; i < m_goals.size() && p_message->GameFrame() > 0; ++i)
     {
         m_goals[i]->HandleMessage(*g_Game, p_message, dummy);
     }
 
-    if (p_message->GameCycle() > 0)
+    if (p_message->GameFrame() > 0)
     {
         succeededGoals = GetSatisfiedGoals();
         for (unsigned i = 0; i < succeededGoals.size(); ++i)
         {
-            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
+            m_goalMatrix[p_message->GameFrame()].push_back(succeededGoals[i]);
         }
     }
 
-    switch(p_message->MessageTypeID())
+    switch(p_message->TypeId())
     {
     case MSG_GameActionLog:
         pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);

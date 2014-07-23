@@ -7,64 +7,77 @@
 
 namespace IStrategizer
 {
-    class Vector2
+    template<class T>
+    class Vector2T
     {
     public:
-        int X;
-        int Y;
+        T X;
+        T Y;
 
-        Vector2() : X(0), Y(0) {}
-        Vector2(int x, int y) : X(x), Y(y) {}
+        Vector2T() : X(T(0)), Y(T(0)) {}
+        Vector2T(T x, T y) : X(x), Y(y) {}
 
-        bool operator ==(const Vector2& right) const
+        bool operator ==(const Vector2T& right) const
         {
-            return this->X == right.X && this->Y == right.Y;
+            return X == right.X && Y == right.Y;
         }
 
-        bool operator !=(const Vector2& right) const
+        bool operator !=(const Vector2T& right) const
         {
-            return this->X != right.X || this->Y == right.Y;
+            return X != right.X || Y == right.Y;
         }
 
-        Vector2& operator +=(const Vector2& right)
+        Vector2T& operator +=(const Vector2T& right)
         {
             X += right.X;
             Y += right.Y;
             return *this;
         }
 
-        Vector2& operator /=(int n)
+        Vector2T& operator /=(T n)
         {
             X /= n;
             Y /= n;
             return *this;
         }
 
-        Vector2 operator - (const Vector2& right)
+        Vector2T operator - (const Vector2T& right)
         {
-            Vector2 res = *this;
+            Vector2T res = *this;
             res.X -= right.X;
             res.Y -= right.Y;
             return res;
         }
 
-        int Length() const { return Distance(Zero()); }
+        T Length() const { return (T)sqrt(T(SQR(other.X) + SQR(other.Y))); }
 
-        int Distance(const Vector2& other) const { return (int)sqrt(SQR(other.X - X) + SQR(other.Y - Y)); }
+        T Distance(const Vector2T& other) const { return (T)sqrt(T(SQR(other.X - X) + SQR(other.Y - Y))); }
 
         void Normalize()
         {
-            int len = Length();
+            T len = Length();
             X /= len;
             Y /= len;
         }
 
-        bool IsNull()                    { return X == -1 && Y == -1; }
-        static const Vector2& Zero()    { static Vector2 zero; return zero; }
-        static const Vector2& One()        { static Vector2 one(1, 1); return one; }
-        static const Vector2& Null()    { static Vector2 one(-1, -1); return one; }
+        bool IsZero() { return *this == Zero(); }
 
+        static const Vector2T& Zero() { static Vector2 zero; return zero; }
+        static const Vector2T& One() { static Vector2 one(T(1), T(1)); return one; }
     };
+
+    template<class T>
+    class Circle2T
+    {
+    public:
+        Vector2T<T> Center;
+        T Radius;
+    };
+
+    typedef Vector2T<int> Vector2;
+    typedef Vector2T<float> Vector2F;
+    typedef Circle2T<int> Circle2;
+    typedef Circle2T<float> Circle2F;
 }
 
 #endif // VECTOR2_H

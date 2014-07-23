@@ -62,12 +62,12 @@ RtsGameStaticData::~RtsGameStaticData()
 		SAFE_DELETE(raceType.second);
 	RaceTypes.clear();
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 RtsGame::~RtsGame()
 {
     Finalize();
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void RtsGame::Init()
 {
     if (nullptr == sm_pGameStatics)
@@ -105,7 +105,7 @@ void RtsGame::Init()
         m_isInitialized = true;
     }
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void RtsGame::Finalize()
 {
     for (auto& playerEntry : m_players)
@@ -114,7 +114,7 @@ void RtsGame::Finalize()
 
     SAFE_DELETE(m_pMap);
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 GamePlayer* RtsGame::GetPlayer(PlayerType p_id) const
 {
     _ASSERTE(m_isInitialized);
@@ -124,7 +124,7 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id) const
 
     return m_players.at(p_id);
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 GameType* RtsGame::GetEntityType(EntityClassType p_id)
 {
     _ASSERTE(sm_pGameStatics);
@@ -134,7 +134,7 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
 
     return sm_pGameStatics->EntityTypes[p_id];
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
 	_ASSERTE(sm_pGameStatics);
@@ -143,7 +143,7 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
 
     return sm_pGameStatics->ResearchTypes[p_id];
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 GameRace* RtsGame::GetRace(TID id)
 {
 	_ASSERTE(sm_pGameStatics);
@@ -152,7 +152,7 @@ GameRace* RtsGame::GetRace(TID id)
 
     return sm_pGameStatics->RaceTypes[id];
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void RtsGame::SetOffline()
 {
     // Currently, once an RTS game instance is brought offline, it can't come online again
@@ -167,7 +167,7 @@ void RtsGame::SetOffline()
 
     m_isOnline = false;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 RtsGame* RtsGame::Snapshot() const
 {
     RtsGame* pSnapshot = dynamic_cast<RtsGame*>(g_ObjectFactory.Create(GetObjectLayout().TypeName()));
@@ -177,7 +177,7 @@ RtsGame* RtsGame::Snapshot() const
 
     return pSnapshot;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 float RtsGame::Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const
 {
     float distance = 0;
@@ -245,14 +245,25 @@ int RtsGameModel::Attr(_In_ RtsGameModelAttribute attr) const
 
     return val;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void RtsGame::ExportStaticData()
 {
     LogInfo("Exporting game static data to disk '%s'", GAME_STATIC_DATA_FILENAME);
     g_ObjectSerializer.Serialize(sm_pGameStatics, GAME_STATIC_DATA_FILENAME);
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void RtsGame::FinalizeStaticData()
 {
 	SAFE_DELETE(sm_pGameStatics);
+}
+//////////////////////////////////////////////////////////////////////////
+void RtsGame::Update()
+{
+    if (m_firstUpdate)
+    {
+        m_clock.Reset();
+        m_firstUpdate = false;
+    }
+
+    m_clock.Update(GameFrame());
 }

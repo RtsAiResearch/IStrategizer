@@ -6,14 +6,15 @@ using namespace std;
 
 MapArea& MapArea::Null()
 {
-    static MapArea nullptrArea(Vector2::Null(), -1, -1);
+    static MapArea nullptrArea(Vector2(-1, -1), -1, -1);
 
     return nullptrArea;
 }
 //////////////////////////////////////////////////////////////////////////
 bool MapArea::IsNull()
 {
-    return m_pos.IsNull() &&
+    return m_pos.X == -1 &&
+        m_pos.Y == -1 &&
         m_width == -1 &&
         m_height == -1;
 }

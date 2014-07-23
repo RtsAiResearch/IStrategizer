@@ -9,7 +9,7 @@ namespace IStrategizer
     class MapArea :  public SharedResource
     {
     public:
-        MapArea() : m_pos(Vector2::Null()), m_width(-1), m_height(-1) {}
+        MapArea() : m_pos(-1, -1), m_width(-1), m_height(-1) {}
         MapArea(Vector2 p_pos, int p_width, int p_height) :
           m_pos(p_pos), m_width(p_width), m_height(p_height) {}
 

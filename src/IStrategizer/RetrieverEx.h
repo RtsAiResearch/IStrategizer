@@ -45,7 +45,6 @@ namespace IStrategizer
         float GoalDistance(const GoalEx* pCaseGoal, const AbstractRetriever::RetrieveOptions& options);
         float StateDistance(RtsGame* pCaseGameState, const AbstractRetriever::RetrieveOptions& options);
         float CaseDistance(const CaseEx* pCase, const AbstractRetriever::RetrieveOptions& options);
-        void ExecuteCommand(const char* p_cmd) {}
 
         std::shared_ptr<GoalEx> GetGoal(_In_ GoalType type, _In_ const PlanStepParameters& params);
 

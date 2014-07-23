@@ -26,7 +26,7 @@ void EventTriggered::NotifyMessegeSent(Message* p_message)
     if(_triggered)
         return;
 
-    if(p_message->MessageTypeID() == _conditionParameters[PARAM_MessageTypeId])
+    if(p_message->TypeId() == _conditionParameters[PARAM_MessageTypeId])
     {
         DataMessage<PlanStepParameters>* m_concMsg = static_cast<DataMessage<PlanStepParameters>*>(p_message);
         const PlanStepParameters* m_params = m_concMsg->Data();

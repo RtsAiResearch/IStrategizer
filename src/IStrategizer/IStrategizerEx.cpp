@@ -29,21 +29,16 @@ m_param(param),
 m_pCaseLearning(nullptr),
 m_pPlanner(nullptr),
 m_isFirstUpdate(true),
-m_attackManager(param.pStrategySelector)
+m_combatManager(param.pStrategySelector)
 {
     g_Game = pGame;
     _ASSERTE(param.pStrategySelector);
-    _ASSERTE(!param.map.empty());
 }
 //---------------------------------------------------------------------------------------------
 void IStrategizerEx::NotifyMessegeSent(Message* p_message)
 {
-    switch (p_message->MessageTypeID())
+    switch (p_message->TypeId())
     {
-    case MSG_GameStart:
-        m_clock.Reset();
-        break;
-
     case MSG_GameEnd:
         if (m_param.Phase == PHASE_Offline)
         {
@@ -57,7 +52,7 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
                 pMsg->Data()->MapName,
                 g_Game->Map()->Width(),
                 g_Game->Map()->Height(),
-                m_clock.ElapsedGameCycles(),
+                g_Game->Clock().ElapsedGameCycles(),
                 m_pPlanner->Reasoner()->Retainer()->CaseBase()->CaseContainer.size(),
                 pMsg->Data()->Score,
                 pMsg->Data()->EnemyRace);
@@ -65,17 +60,8 @@ void IStrategizerEx::NotifyMessegeSent(Message* p_message)
         }
         break;
 
-    case MSG_BattleComplete:
-        /*PlanStepParameters params = StartTrainingArmy();
-        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
-        m_pPlanner->ExpansionExecution()->StartPlanning();*/
-        break;
-
     case MSG_PlanComplete:
-        m_attackManager.AddBattle();
-        PlanStepParameters params = StartTrainingArmy();
-        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
-        m_pPlanner->ExpansionExecution()->StartPlanning();
+        SelectNextProductionGoal();
         break;
     }
 }
@@ -84,21 +70,15 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 {
     try
     {
-        if (m_isFirstUpdate)
-        {
-            m_clock.Reset();
-            m_isFirstUpdate = false;
-        }
-
-        m_clock.Update(p_gameCycle);
-        g_MessagePump->Update(m_clock);
-        g_IMSysMgr.Update(m_clock);
+        g_Game->Update();
+        g_MessagePump->Update(g_Game->Clock());
+        g_IMSysMgr.Update(g_Game->Clock());
 
         if (m_param.Phase == PHASE_Online)
         {
-            m_resourceManager.Update(*g_Game, m_clock);
-            m_attackManager.Update(*g_Game, m_clock);
-            m_pPlanner->Update(m_clock);
+            m_resourceManager.Update(*g_Game);
+            m_combatManager.Update(*g_Game);
+            m_pPlanner->Update(g_Game->Clock());
         }
     }
     catch (IStrategizer::Exception &e)
@@ -117,7 +97,6 @@ IStrategizerEx::~IStrategizerEx()
 {
     g_IMSysMgr.Finalize();
     g_Game = nullptr;
-    delete m_pStrategySelector;
 }
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
@@ -134,35 +113,37 @@ bool IStrategizerEx::Init()
 
     g_IMSysMgr.Init(imSysMgrParam);
 
-    switch (m_param.Phase)
+    if (m_param.Phase == PHASE_Offline)
     {
-    case  PHASE_Offline:
         m_pCaseLearning = shared_ptr<LearningFromHumanDemonstration>(new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy));
         m_pCaseLearning->Init();
-        break;
 
-    case PHASE_Online:
+    }
+    else if (m_param.Phase == PHASE_Online)
+    {
+        // Init build/train order planner
         m_pPlanner = shared_ptr<OnlineCaseBasedPlannerEx>(new OnlineCaseBasedPlannerEx());
-        m_pStrategySelector = m_param.pStrategySelector;
-        PlanStepParameters params = StartTrainingArmy();
-        m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
-        m_pPlanner->ExpansionExecution()->StartPlanning();
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
-        g_MessagePump->RegisterForMessage(MSG_BattleComplete, this);
+        m_pPlanner->Init();
+
+        // Init resource manager
+        m_resourceManager.Init();
+
         g_MessagePump->RegisterForMessage(MSG_PlanComplete, this);
-        (void)m_resourceManager.Init();
-        break;
+
+        SelectNextProductionGoal();
     }
 
     g_MessagePump->RegisterForMessage(MSG_GameEnd, this);
 
     return true;
 }
-//----------------------------------------------------------------------------------------------
-PlanStepParameters IStrategizerEx::StartTrainingArmy()
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::SelectNextProductionGoal()
 {
     PlanStepParameters params;
-    m_pStrategySelector->SelectTrainOrder(params);
+    m_param.pStrategySelector->SelectGameOpening(*g_Game, params);
+    _ASSERTE(!params.empty());
+    m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
 
-    return params;
 }

@@ -44,3 +44,14 @@ void CaseBaseEx::DeleteAllGeneratedCases()
 			++itr;
 	}
 }
+//////////////////////////////////////////////////////////////////////////
+CaseEx* CaseBaseEx::FindByName(const std::string caseName)
+{
+    for (auto pCase : CaseContainer)
+    {
+        if (_stricmp(caseName.c_str(), pCase->Name().c_str()) == 0)
+            return pCase;
+    }
+
+    return nullptr;
+}

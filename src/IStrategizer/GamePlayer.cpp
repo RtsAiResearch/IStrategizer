@@ -101,7 +101,7 @@ void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds)
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::NotifyMessegeSent(Message* pMsg)
 {
-    switch (pMsg->MessageTypeID())
+    switch (pMsg->TypeId())
     {
     case MSG_EntityRenegade:
         OnEntityRenegade(pMsg);

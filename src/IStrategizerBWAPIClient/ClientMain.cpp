@@ -79,8 +79,7 @@ void ClientMain::InitIStrategizer()
         param.GrndCtrlIMCellSize = TILE_SIZE;
         param.OccupanceIMUpdateInterval = 250;
         param.GrndCtrlIMUpdateInterval = 1000;
-        param.pStrategySelector = new StarCraftStrategySelector(Broodwar->mapFileName());
-        param.map = Broodwar->mapFileName();
+        param.pStrategySelector = shared_ptr<StarCraftStrategySelector>(new StarCraftStrategySelector());
 
         if (Broodwar->isReplay())
         {
@@ -309,6 +308,7 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 
     pData->EntityId = p_pUnit->getID();
     pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
+    pData->EntityType = g_Database.EntityMapping.GetByFirst(p_pUnit->getType());
 
     if (p_pUnit->getType().isBuilding())
     {
@@ -388,7 +388,7 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateStatsView()
 {
-    ui.lblGameCyclesData->setText(tr("%1").arg(m_pIStrategizer->Clock().ElapsedGameCycles()));
+    ui.lblGameCyclesData->setText(tr("%1").arg(m_pGameModel->Clock().ElapsedGameCycles()));
 
     EntityList workers;
     map<ObjectStateType, set<TID>> workersState;
@@ -492,7 +492,7 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 {
     _ASSERTE(p_pMessage != nullptr);
 
-    if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange && m_pPlanGraphView != nullptr )
+    if (p_pMessage->TypeId() == MSG_PlanStructureChange && m_pPlanGraphView != nullptr )
     {
         Message* pPlanChangeMsg = static_cast<Message*>(p_pMessage);
 
@@ -505,7 +505,7 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
         {
             pPlanner->Plan()->Lock();
 
-            shared_ptr<PlanSnapshot> pSnapshot(new PlanSnapshot(pPlanChangeMsg->GameCycle(),
+            shared_ptr<PlanSnapshot> pSnapshot(new PlanSnapshot(pPlanChangeMsg->GameFrame(),
                 shared_ptr<IOlcbpPlan>(pPlanner->Plan()->Clone()),
                 pPlanner->GetContext().Data,
                 pPlanner->GetContext().ActiveGoalSet));

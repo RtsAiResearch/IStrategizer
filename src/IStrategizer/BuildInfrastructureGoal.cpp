@@ -34,7 +34,7 @@ vector<GoalEx*> BuildInfrastructureGoal::GetSucceededInstances(RtsGame &game)
 //----------------------------------------------------------------------------------------------
 void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
-    if (p_msg->MessageTypeID() == MSG_EntityCreate || p_msg->MessageTypeID() == MSG_EntityRenegade)
+    if (p_msg->TypeId() == MSG_EntityCreate || p_msg->TypeId() == MSG_EntityRenegade)
     {
         EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
         _ASSERTE(pMsg && pMsg->Data());

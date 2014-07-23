@@ -60,7 +60,7 @@ void InfluenceMap::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
 
     pGameObj = g_Game->GetPlayer(p_ownerId)->GetEntity(p_objId);
     _ASSERTE(pGameObj);
-    pNewObj->LastPosition = Vector2::Null();
+    pNewObj->LastPosition = Vector2(-1, -1);
 
     pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->TypeId());
     _ASSERTE(pObjType);

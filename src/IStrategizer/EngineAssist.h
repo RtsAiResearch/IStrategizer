@@ -4,6 +4,7 @@
 #include "EngineData.h"
 #include "Expression.h"
 #include "WorldResources.h"
+#include "Vector2.h"
 #include <vector>
 #include <map>
 
@@ -24,8 +25,6 @@
 namespace IStrategizer
 {
 #define ERR_Success 0
-
-    class Vector2;
 
     class EngineAssist
     {

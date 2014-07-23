@@ -23,12 +23,12 @@
 using namespace std;
 using namespace IStrategizer;
 
-OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx *pCasedBasedReasoner) :
+OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx *pCasedBasedReasoner) :
     m_planStructureChangedThisFrame(false),
     m_pCbReasoner(pCasedBasedReasoner),
     m_pOlcbpPlan(new OlcbpPlan),
-    m_pRootGoal(pInitialGoal),
-    m_rootGoalType((GoalType)pInitialGoal->StepTypeId()),
+    m_pRootGoal(nullptr),
+    m_rootGoalType(GOALEX_END),
     m_planContext(m_nodeData, m_activeGoalSet),
     m_pNodeSelector(new GenCbNodeSelector(this))
 {
@@ -53,17 +53,17 @@ void OnlinePlanExpansionExecution::ClearPlan()
     m_pOlcbpPlan->Clear();
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::StartPlanning()
+void OnlinePlanExpansionExecution::StartNewPlan(_In_ GoalEx* pPlanGoal)
 {
     ClearPlan();
 
-    m_planStructureChangedThisFrame = true;
-
-    PlanStepEx* pRootNode = (PlanStepEx*)m_pRootGoal;
-    m_planRootNodeId = m_pOlcbpPlan->AddNode(pRootNode, pRootNode->Id());
+    m_pRootGoal = pPlanGoal;
+    m_planRootNodeId = m_pOlcbpPlan->AddNode(pPlanGoal, pPlanGoal->Id());
 
     m_nodeData[m_planRootNodeId] = OlcbpPlanNodeData();
     OpenNode(m_planRootNodeId);
+
+    m_planStructureChangedThisFrame = true;
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::ExpandGoal(_In_ IOlcbpPlan::NodeID expansionGoalNodeId, _In_ CaseEx *pExpansionCase)
@@ -322,7 +322,7 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
             pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
 
             if (msgConsumedByAction)
-                LogInfo("Message with ID=%d consumed by action node %s", pMessage->MessageTypeID(), pCurreNode->ToString().c_str());
+                LogInfo("Message with ID=%d consumed by action node %s", pMessage->TypeId(), pCurreNode->ToString().c_str());
         }
 
         if (msgConsumedByAction)

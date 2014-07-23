@@ -196,7 +196,7 @@ bool GatherResourceAction::Execute(RtsGame& game, const WorldClock& p_clock)
 //////////////////////////////////////////////////////////////////////////
 void GatherResourceAction::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
-	if (PlanStepEx::GetState() == ESTATE_Executing && p_msg->MessageTypeID() == MSG_EntityDestroy)
+	if (PlanStepEx::GetState() == ESTATE_Executing && p_msg->TypeId() == MSG_EntityDestroy)
 	{
 		EntityDestroyMessage*	pMsg = static_cast<EntityDestroyMessage*>(p_msg);
 		TID resourceId;

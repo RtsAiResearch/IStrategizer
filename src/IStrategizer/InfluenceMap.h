@@ -41,7 +41,7 @@ namespace IStrategizer
         bool Stamped;
         int ObjWidth;
         int ObjHeight;
-        RegObjEntry() : ObjId(TID()), LastPosition(Vector2::Null()), Stamped(false) {}
+        RegObjEntry() : ObjId(TID()), LastPosition(-1, -1), Stamped(false) {}
     };
 
     struct IMStatistics

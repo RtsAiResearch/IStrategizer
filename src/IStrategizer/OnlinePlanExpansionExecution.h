@@ -28,12 +28,12 @@ namespace IStrategizer
 		const unsigned ActionSleepTime = 200;
 		const unsigned ActionMaxSleepsCount = 5;
 		
-		OnlinePlanExpansionExecution(_In_ GoalEx* pInitialGoal, _In_ CaseBasedReasonerEx* pCbReasoner);
+		OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx* pCbReasoner);
         ~OnlinePlanExpansionExecution();
 
         void Update(_In_ const WorldClock& clock);
         void NotifyMessegeSent(_In_ Message* pMessage);
-        void StartPlanning();
+        void StartNewPlan(_In_ GoalEx* pPlanGoal);
         void RootGoal(GoalEx* pGoal) { _ASSERTE(pGoal); m_pRootGoal = pGoal; }
         const IOlcbpPlan* Plan() const { return &*m_pOlcbpPlan; }
         IOlcbpPlan* Plan() { return &*m_pOlcbpPlan; }
