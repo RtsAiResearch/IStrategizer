@@ -405,9 +405,6 @@
     <ClInclude Include="..\Army.h">
       <Filter>Header Files\Managers\CombatManager</Filter>
     </ClInclude>
-    <ClInclude Include="..\StrategySelector.h">
-      <Filter>Header Files\Managers\CombatManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\NodeSelectionStrategy.h">
       <Filter>Header Files\OLCBP</Filter>
     </ClInclude>
@@ -443,6 +440,12 @@
     </ClInclude>
     <ClInclude Include="..\EntityController.h">
       <Filter>Header Files\Managers\CombatManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EntityFSM.h">
+      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StrategySelector.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -675,6 +678,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\EntityController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EntityFSM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

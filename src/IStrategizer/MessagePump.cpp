@@ -10,6 +10,8 @@ MessagePump::MessagePump()
     AddMessage(MSG_EntityCreate);
     AddMessage(MSG_EntityDestroy);
     AddMessage(MSG_EntityRenegade);
+    AddMessage(MSG_EntityShow);
+    AddMessage(MSG_EntityHide);
     AddMessage(MSG_GameStart);
     AddMessage(MSG_GameEnd);
     AddMessage(MSG_PlanStructureChange);
@@ -39,6 +41,7 @@ void MessagePump::Send(Message* p_message, bool p_immediate)
     else
     {
 		LogDebugInfo("Queuing message %s", p_message->ToString());
+        _ASSERTE(_messageObserversTable.count(p_message->TypeId()) > 0);
         _messageQueue.push(p_message);
     }
 }

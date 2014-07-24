@@ -27,6 +27,7 @@ namespace IStrategizer
         EOATTR_IsGatheringSecondaryResource,
 		EOATTR_IsBeingGathered,
 		EOATTR_OrderTargetId,
+        EOATTR_IsBeingHit,
         EOATTR_END
     };
 #define Define_EntityObjectAttribute \
@@ -44,7 +45,8 @@ namespace IStrategizer
     Enums[EOATTR_IsGatheringPrimaryResource] = "Is Gathering Primary Rresource"; \
 	Enums[EOATTR_IsGatheringSecondaryResource] = "Is Gathering Secondary Resource"; \
 	Enums[EOATTR_IsBeingGathered] = "Is Being Gathered"; \
-	Enums[EOATTR_OrderTargetId] = "Order Target ID"; \
+    Enums[EOATTR_OrderTargetId] = "Order Target ID"; \
+    Enums[EOATTR_IsBeingHit] = "Is Being Hit"; \
     //---------------------------------------------------------------------------
 #define Prefix_EntityClassAttribute ECATTR
     enum EntityClassAttribute

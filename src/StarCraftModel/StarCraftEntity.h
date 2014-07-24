@@ -34,21 +34,9 @@ namespace IStrategizer
         bool IsNull() { return m_isOnline && m_pUnit == nullptr; }
         bool CanGather(TID resourceObjectId) const;
 		std::string ToString(bool minimal = false) const;
-        TID GetTargetId() const
-        {
-            int id = DONT_CARE;
-            BWAPI::Unit target = m_pUnit->getTarget();
-            if (target == NULL)
-            {
-                target = m_pUnit->getOrderTarget();
-                if (target != NULL)
-                {
-                    id = target->getID();
-                }
-            }
-            
-            return id;
-        }
+        TID GetTargetId() const;
+        bool Exists() const;
+
         // Game Commands
         bool Research(IStrategizer::ResearchType p_researchId);
         bool Build(EntityClassType p_buildingClassId, Vector2 p_position);
@@ -67,8 +55,6 @@ namespace IStrategizer
         ObjectStateType FetchState() const;
         ///> type=int
         bool m_isOnline;
-        ///> type=map(pair(int,int))
-        Serialization::SMap<EntityObjectAttribute, int> m_cachedAttr;
         BWAPI::Unit m_pUnit;
     };
 }

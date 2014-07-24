@@ -49,6 +49,7 @@
     <ClInclude Include="..\DataMessage.h" />
     <ClInclude Include="..\Delegate.h" />
     <ClInclude Include="..\EntityController.h" />
+    <ClInclude Include="..\EntityFSM.h" />
     <ClInclude Include="..\ScoutManager.h" />
     <ClInclude Include="..\NodeSelectionStrategy.h" />
     <ClInclude Include="..\DeployArmyGoal.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="..\EntityClassExist.cpp" />
     <ClCompile Include="..\EntityClassNearArea.cpp" />
     <ClCompile Include="..\EntityController.cpp" />
+    <ClCompile Include="..\EntityFSM.cpp" />
     <ClCompile Include="..\EventTriggered.cpp" />
     <ClCompile Include="..\ExecutionHistory.cpp" />
     <ClCompile Include="..\Expression.cpp" />

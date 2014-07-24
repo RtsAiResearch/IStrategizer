@@ -75,11 +75,11 @@ void ClientMain::InitIStrategizer()
         m_pGameModel = new StarCraftGame;
         _ASSERTE(m_pGameModel);
 
-        param.BuildingDataIMCellSize = TILE_SIZE;
+        param.OccupanceIMCellSize = TILE_SIZE;
         param.GrndCtrlIMCellSize = TILE_SIZE;
-        param.OccupanceIMUpdateInterval = 250;
-        param.GrndCtrlIMUpdateInterval = 1000;
-        param.Consultant = shared_ptr<StarCraftStrategySelector>(new StarCraftStrategySelector());
+        param.OccupanceIMUpdateInterval = 1;
+        param.GrndCtrlIMUpdateInterval = 32;
+        param.Consultant = make_shared<StarCraftStrategySelector>();
 
         if (Broodwar->isReplay())
         {
@@ -268,6 +268,8 @@ void ClientMain::OnSendText(const string& p_text)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 {
+    LogInfo("OnUnitCreate -> %s[%d]", p_pUnit->getType().toString().c_str(), p_pUnit->getID());
+
     EntityMessageData    *pData = nullptr;
     EntityCreateMessage    *pMsg = nullptr;
 
@@ -298,6 +300,8 @@ void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 {
+    LogInfo("OnUnitDestroy -> %s[%d]", p_pUnit->getType().toString().c_str(), p_pUnit->getID());
+
     EntityMessageData *pData = nullptr;
     EntityDestroyMessage    *pMsg = nullptr;
 
@@ -329,6 +333,8 @@ void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
 {
+    LogInfo("OnUnitRenegade -> %s[%d]", p_pUnit->getType().toString().c_str(), p_pUnit->getID());
+
     EntityMessageData *pData = nullptr;
     EntityCreateMessage *pMsg = nullptr;
 
@@ -352,6 +358,70 @@ void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
     }
 
     pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityRenegade, pData);
+    _ASSERTE(pMsg);
+
+    g_MessagePump->Send(pMsg);
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::OnUnitShow(BWAPI::Unit p_pUnit)
+{
+    LogInfo("OnUnitShow -> %s[%d]", p_pUnit->getType().toString().c_str(), p_pUnit->getID());
+
+    EntityMessageData* pData = nullptr;
+    EntityShowMessage* pMsg = nullptr;
+
+    pData = new EntityMessageData;
+    _ASSERTE(pData);
+
+    _ASSERTE(p_pUnit);
+    pData->EntityId = p_pUnit->getID();
+    pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
+    pData->EntityType = g_Database.EntityMapping.GetByFirst(p_pUnit->getType());
+
+    if (p_pUnit->getType().isBuilding())
+    {
+        pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x);
+        pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y);
+    }
+    else
+    {
+        pData->X = p_pUnit->getLeft();
+        pData->Y = p_pUnit->getTop();
+    }
+
+    pMsg = new EntityShowMessage(Broodwar->getFrameCount(), MSG_EntityShow, pData);
+    _ASSERTE(pMsg);
+
+    g_MessagePump->Send(pMsg);
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::OnUnitHide(BWAPI::Unit p_pUnit)
+{
+    LogInfo("OnUnitHide -> %s[%d]", p_pUnit->getType().toString().c_str(), p_pUnit->getID());
+
+    EntityMessageData* pData = nullptr;
+    EntityHideMessage* pMsg = nullptr;
+
+    pData = new EntityMessageData;
+    _ASSERTE(pData);
+
+    _ASSERTE(p_pUnit);
+    pData->EntityId = p_pUnit->getID();
+    pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
+    pData->EntityType = g_Database.EntityMapping.GetByFirst(p_pUnit->getType());
+
+    if (p_pUnit->getType().isBuilding())
+    {
+        pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x);
+        pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y);
+    }
+    else
+    {
+        pData->X = p_pUnit->getLeft();
+        pData->Y = p_pUnit->getTop();
+    }
+
+    pMsg = new EntityHideMessage(Broodwar->getFrameCount(), MSG_EntityHide, pData);
     _ASSERTE(pMsg);
 
     g_MessagePump->Send(pMsg);
@@ -460,8 +530,8 @@ void ClientMain::OnClientUpdate()
     }
 
 	// Engine skip the first 2 frames, frame 0 and frame 1
-	if (Broodwar->getFrameCount() < 2)
-		return;
+	//if (Broodwar->getFrameCount() < 2)
+	//	return;
 
     try
     {

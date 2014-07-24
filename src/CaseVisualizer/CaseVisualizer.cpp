@@ -499,5 +499,5 @@ bool CaseVisualizer::IsIndexInRange(int idx)
         return false;
     else
         return (idx >= 0 && idx < ui.lstCases->count()) &&
-        (idx >= 0 && idx < m_pCaseBase->CaseContainer.size());
+        (idx >= 0 && idx < (int)m_pCaseBase->CaseContainer.size());
 }

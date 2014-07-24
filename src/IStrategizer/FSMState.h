@@ -1,6 +1,7 @@
 #ifndef FSMSTATE_H
 #define FSMSTATE_H
 
+#include "EngineDefs.h"
 #include "RtsGame.h"
 #include <memory>
 
@@ -11,19 +12,27 @@ namespace IStrategizer
     class FSMState : public EngineObject
     {
     public:
-        FSMState(EngineObject* pController) : m_pController(pController) {}
-        virtual FSMStateTypeID TypeId() = 0;
-        virtual void Enter(_In_ RtsGame& game) {}
-        virtual void Exit(_In_ RtsGame& game) {}
-        virtual void Update(_In_ RtsGame& game) {}
+        FSMState(FSMStateTypeID typeId, EngineObject* pController) :
+            m_typeId(typeId),
+            m_pController(pController) 
+        {}
+
+        FSMStateTypeID TypeId() const { return m_typeId; }
+        virtual void Enter() {}
+        virtual void Exit() {}
+        virtual void Update() {} 
 
         static const FSMStateTypeID NullFSMState = 0;
 
-    private:
+    protected:
+        DISALLOW_COPY_AND_ASSIGN(FSMState);
+
         EngineObject* m_pController;
+        const FSMStateTypeID m_typeId;
     };
 
     typedef std::shared_ptr<FSMState> FSMStatePtr;
+    typedef std::shared_ptr<const FSMState> ConstFSMStatePtr;
 }
 
 #endif // FSMSTATE_H

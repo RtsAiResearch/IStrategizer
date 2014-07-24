@@ -64,16 +64,14 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
     else if (msgType == MSG_PlanGoalSuccess)
     {
         auto enemyLoc = g_Game->Enemy()->StartLocation();
+
         // Location not discovered, needs scouting
         if (enemyLoc.IsInf())
         {
             _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
-            m_scoutMgr.StartScouting();
         }
-        else
-        {
-            m_combatMgr.AttackArea(Circle2(enemyLoc, 500));
-        }
+
+        m_combatMgr.AttackArea(Circle2(enemyLoc, 500));
     }
     else if (msgType == MSG_BaseUnderAttack)
     {
@@ -94,12 +92,11 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
             // Time to kick scouting
             if (g_Game->Clock().ElapsedGameCycles() >= ScoutStartFrame)
             {
-                m_scoutMgr.StartScouting();
+                m_scoutMgr.Update();
             }
 
-            m_scoutMgr.Update(*g_Game);
             m_resourceMgr.Update(*g_Game);
-            m_combatMgr.Update(*g_Game);
+            m_combatMgr.Update();
             m_pPlanner->Update(*g_Game);
         }
     }
@@ -130,9 +127,10 @@ bool IStrategizerEx::Init()
     g_Game->Init();
 
     IMSysManagerParam imSysMgrParam;
-    imSysMgrParam.BuildingDataIMCellSize = m_param.BuildingDataIMCellSize;
-    imSysMgrParam.GroundControlIMCellSize = m_param.GrndCtrlIMCellSize;
-
+    imSysMgrParam.OccupanceIMCellSize = m_param.OccupanceIMCellSize;
+    imSysMgrParam.GrndCtrllIMCellSize = m_param.GrndCtrlIMCellSize;
+    imSysMgrParam.OccupanceIMUpdateInterval = m_param.OccupanceIMUpdateInterval;
+    imSysMgrParam.GrndCtrlIMUpdateInterval = m_param.GrndCtrlIMUpdateInterval;
     g_IMSysMgr.Init(imSysMgrParam);
 
     if (m_param.Phase == PHASE_Offline)
@@ -170,7 +168,7 @@ bool IStrategizerEx::Init()
 void IStrategizerEx::SelectNextProductionGoal()
 {
     PlanStepParameters params;
-    m_param.Consultant->SelectGameOpening(*g_Game, params);
+    m_param.Consultant->SelectGameOpening(params);
     _ASSERTE(!params.empty());
     m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
 }

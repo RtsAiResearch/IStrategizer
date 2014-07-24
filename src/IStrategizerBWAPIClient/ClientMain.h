@@ -77,6 +77,8 @@ protected:
     void OnUnitCreate(BWAPI::Unit p_pUnit);
     void OnUnitDestroy(BWAPI::Unit p_pUnit);
     void OnUnitRenegade(BWAPI::Unit p_pUnit);
+    void OnUnitShow(BWAPI::Unit pUnit);
+    void OnUnitHide(BWAPI::Unit pUnit);
     void OnSendText(const std::string &p_text);
     void OnGameFrame();
     void timerEvent(QTimerEvent *pEvt);

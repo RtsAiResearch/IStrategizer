@@ -438,6 +438,8 @@ namespace IStrategizer
         MSG_EntityCreate,
         MSG_EntityDestroy,
         MSG_EntityRenegade,
+        MSG_EntityShow,
+        MSG_EntityHide,
         MSG_PlanStructureChange,
         MSG_PlanGoalSuccess,
         MSG_BaseUnderAttack,
@@ -454,6 +456,8 @@ namespace IStrategizer
 	Enums[MSG_PlanStructureChange] = "PlanStructureChange"; \
 	Enums[MSG_PlanGoalSuccess] = "PlanGoalSuccess"; \
     Enums[MSG_BaseUnderAttack] = "BaseUnderAttack"; \
+    Enums[MSG_EntityShow] = "EntityShow"; \
+    Enums[MSG_EntityHide] = "EntityHide"; \
     //---------------------------------------------------------------------------
 #define Prefix_UnitAttackType UTYPE
     enum UnitAttackType

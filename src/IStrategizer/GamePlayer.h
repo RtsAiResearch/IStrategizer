@@ -56,6 +56,8 @@ namespace IStrategizer
         virtual void OnEntityRenegade(Message* p_pMessage);
         virtual void OnEntityCreate(Message* p_pMessage);
         virtual void OnEntityDestroy(Message* p_pMessage);
+        virtual void OnEntityShow(Message* p_pMessage);
+        virtual void OnEntityHide(Message* p_pMessage);
 
         ///> type=bool
         bool m_isOnline;

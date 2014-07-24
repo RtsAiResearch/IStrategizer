@@ -160,6 +160,12 @@ void BwapiClient::HandleGameEvents()
         case EventType::UnitDestroy:
             OnUnitDestroy(e->getUnit());
             break;
+        case EventType::UnitShow:
+            OnUnitShow(e->getUnit());
+            break;
+        case EventType::UnitHide:
+            OnUnitHide(e->getUnit());
+            break;;
         case EventType::SendText:
             OnSendText(e->getText());
             break;

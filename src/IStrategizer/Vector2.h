@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <limits>
+#include <sstream>
 
 #define SQR(X) ((X) * (X))
 
@@ -59,6 +60,18 @@ namespace IStrategizer
             T len = Length();
             X /= len;
             Y /= len;
+        }
+
+        std::string ToString()
+        {
+            std::stringstream ss;
+            ss << '<';
+            ss << X;
+            ss << ',';
+            ss << Y;
+            ss << '>';
+
+            return ss.str();
         }
 
         bool IsZero() { return *this == Zero(); }

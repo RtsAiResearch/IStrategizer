@@ -21,15 +21,20 @@ using namespace std;
 DECL_SERIALIZABLE(StarCraftEntity);
 
 StarCraftEntity::StarCraftEntity(Unit p_unit) :
-    GameEntity(p_unit->getID()),
-    m_pUnit(p_unit),
-    m_isOnline(true)
+GameEntity(p_unit->getID()),
+m_pUnit(p_unit),
+m_isOnline(true)
 {
 }
 //----------------------------------------------------------------------------------------------
 int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
 {
-    if (m_isOnline)
+    // Attributes are accessible from game directly if the entity is online in 2 cases only
+    // 1- Unit is visible to player
+    // 2- Unit belongs to neutral and game frame is 0
+    if (m_isOnline &&
+        (m_pUnit->isVisible() ||
+        (m_pUnit->getPlayer()->isNeutral() && g_Game->GameFrame() == 0)))
     {
         // Positions are measured in pixels and are the highest resolution
         // Walk Tiles - each walk tile is an 8x8 square of pixels. These are called walk tiles because walkability data is available at this resolution.
@@ -39,7 +44,7 @@ int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
         // We will use walk tiles as a measure of positions units across IStrategizer
         // See: http://code.google.com/p/bwapi/wiki/Misc
 
-        switch(attrId)
+        switch (attrId)
         {
         case EOATTR_Health:
             return m_pUnit->getHitPoints();
@@ -86,17 +91,23 @@ int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
         case EOATTR_PosCenterY:
             return m_pUnit->getPosition().y;
 
-		case EOATTR_IsGatheringSecondaryResource:
-			return m_pUnit->isGatheringGas() || m_pUnit->isCarryingGas();
+        case EOATTR_IsGatheringSecondaryResource:
+            return m_pUnit->isGatheringGas() || m_pUnit->isCarryingGas();
 
         case EOATTR_IsGatheringPrimaryResource:
             return m_pUnit->isGatheringMinerals() || m_pUnit->isCarryingMinerals();
 
-		case EOATTR_IsBeingGathered:
-			return m_pUnit->isBeingGathered();
+        case EOATTR_IsBeingGathered:
+            return m_pUnit->isBeingGathered();
 
-		case EOATTR_OrderTargetId:
-			return m_pUnit->getOrderTarget()->getID();
+        case EOATTR_OrderTargetId:
+            return GetTargetId();
+
+        case EOATTR_IsBeingHit:
+            return m_pUnit->isUnderAttack();
+
+        case EOATTR_IsMoving:
+            return m_pUnit->isMoving();
 
         default:
             DEBUG_THROW(InvalidParameterException(XcptHere));
@@ -165,9 +176,14 @@ string StarCraftEntity::ToString(bool minimal) const
     char str[512];
     TID gameTypeId = g_Database.EntityMapping.GetBySecond((EntityClassType)Attr(EOATTR_Type));
     std::string description = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
-	std::string asResource = SharedResource::ToString();
 
-    sprintf_s(str, "%s[%d](%s, State=%s)", description.c_str(), m_id, asResource.c_str(), Enums[Attr(EOATTR_State)]);
+    if (minimal)
+        sprintf_s(str, "%s[%d]", description.c_str(), m_id);
+    else
+    {
+        std::string asResource = SharedResource::ToString();
+        sprintf_s(str, "%s[%d](%s, State=%s)", description.c_str(), m_id, asResource.c_str(), Enums[Attr(EOATTR_State)]);
+    }
     return str;
 }
 //----------------------------------------------------------------------------------------------
@@ -184,7 +200,7 @@ bool StarCraftEntity::CanGather(TID resourceObjectId) const
     return m_pUnit->canGather(Broodwar->getUnit(resourceObjectId));
 }
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position) 
+bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position)
 {
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
@@ -207,7 +223,7 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     }
     else
     {
-		LogInfo("%s -> Build(%s@<%d,%d>)", ToString().c_str(), type.toString().c_str(), pos.x, pos.y);
+        LogInfo("%s -> Build(%s@<%d,%d>)", ToString().c_str(), type.toString().c_str(), pos.x, pos.y);
         return m_pUnit->build(type, pos);
     }
 };
@@ -220,7 +236,7 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
     bool bOk;
 
     // Is tech
-    if ((int)p_researchId >= ((int)(RESEARCH_START +  TechIdOffset)))
+    if ((int)p_researchId >= ((int)(RESEARCH_START + TechIdOffset)))
     {
         TID gameTypeID = g_Database.TechMapping.GetBySecond(p_researchId);
 
@@ -250,7 +266,7 @@ bool StarCraftEntity::Stop()
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-	LogInfo("%s -> Stop", ToString().c_str());
+    LogInfo("%s -> Stop", ToString().c_str());
 
     return m_pUnit->stop();
 };
@@ -289,12 +305,30 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
     return building->train(type);
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::Move(Vector2 p_position)
+bool StarCraftEntity::Move(Vector2 targetPos)
 {
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-    Position pos(p_position.X, p_position.Y);
+    // if we have issued a command to this unit already this frame, 
+    // ignore this one and raise warning
+    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
+    {
+        LogWarning("Entity %s command drop", ToString().c_str());
+        return true;
+    }
+
+    // get the unit's current command
+    BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
+    Position pos(targetPos.X, targetPos.Y);
+
+    // if we've already told this unit to attack this target, ignore this command
+    if (currentCommand.getType() == BWAPI::UnitCommandTypes::Move &&
+        currentCommand.getTargetPosition() == pos)
+    {
+        return true;
+    }
+
     return m_pUnit->move(pos);
 }
 //----------------------------------------------------------------------------------------------
@@ -310,52 +344,46 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
     _ASSERTE(resource);
 
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
-	//_ASSERTE(gatherer->canGather(resource));
+    //_ASSERTE(gatherer->canGather(resource));
 
-	gatherer->stop();
+    gatherer->stop();
     return gatherer->gather(resource);
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftEntity::SetOffline(RtsGame* pBelongingGame)
 {
-    m_cachedAttr.clear();
-    for (int attr = START(EntityObjectAttribute);
-        attr != END(EntityObjectAttribute); ++attr)
-    {
-        m_cachedAttr[EntityObjectAttribute(attr)] = Attr(EntityObjectAttribute(attr));
-    }
-
+    CacheAttributes();
     m_isOnline = false;
 }
 //////////////////////////////////////////////////////////////////////////
 void StarCraftEntity::CancelOrders()
 {
-	LogInfo("%s -> Cancel All Active Orders", ToString().c_str());
+    LogInfo("%s -> Cancel All Active Orders", ToString().c_str());
 
-	if (m_pUnit->cancelAddon())
-		LogInfo("%s canceled add-on construction", ToString().c_str());
-	if (m_pUnit->cancelConstruction())
-		LogInfo("%s canceled building construction", ToString().c_str());
-	if (m_pUnit->cancelMorph())
-		LogInfo("%s canceled moreph", ToString().c_str());
-	if (m_pUnit->cancelResearch())
-		LogInfo("%s canceled research", ToString().c_str());
-	if (m_pUnit->cancelTrain())
-		LogInfo("%s canceled train", ToString().c_str());
-	if (m_pUnit->cancelUpgrade())
-		LogInfo("%s canceled upgrade", ToString().c_str());
+    if (m_pUnit->cancelAddon())
+        LogInfo("%s canceled add-on construction", ToString().c_str());
+    if (m_pUnit->cancelConstruction())
+        LogInfo("%s canceled building construction", ToString().c_str());
+    if (m_pUnit->cancelMorph())
+        LogInfo("%s canceled moreph", ToString().c_str());
+    if (m_pUnit->cancelResearch())
+        LogInfo("%s canceled research", ToString().c_str());
+    if (m_pUnit->cancelTrain())
+        LogInfo("%s canceled train", ToString().c_str());
+    if (m_pUnit->cancelUpgrade())
+        LogInfo("%s canceled upgrade", ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::CanTrain(EntityClassType type)
 {
-	if (!m_isOnline)
-		DEBUG_THROW(InvalidOperationException(XcptHere));
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
 
-	TID unitTypeId = g_Database.EntityMapping.GetBySecond(type);
-	string typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
-	UnitType gameType = BWAPI::UnitType::getType(typeName);
+    TID unitTypeId = g_Database.EntityMapping.GetBySecond(type);
+    string typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
+    UnitType gameType = BWAPI::UnitType::getType(typeName);
 
-	return m_pUnit->canTrain(gameType);
+    return m_pUnit->canTrain(gameType);
 }
 //////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::Follow(TID entityId)
@@ -366,4 +394,26 @@ bool StarCraftEntity::Follow(TID entityId)
     LogInfo("%s -> Follow(Target=%d)", ToString().c_str(), entityId);
 
     return m_pUnit->follow(Broodwar->getUnit(entityId));
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftEntity::Exists() const
+{
+    return m_pUnit->exists();
+}
+//////////////////////////////////////////////////////////////////////////
+TID StarCraftEntity::GetTargetId() const
+{
+    int id = INVALID_TID;
+
+    BWAPI::Unit target = m_pUnit->getTarget();
+    if (target == NULL)
+    {
+        target = m_pUnit->getOrderTarget();
+        if (target != NULL)
+        {
+            id = target->getID();
+        }
+    }
+
+    return id;
 }

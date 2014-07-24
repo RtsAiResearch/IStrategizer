@@ -25,7 +25,7 @@ namespace IStrategizer
     {
         unsigned GrndCtrlIMUpdateInterval;
         unsigned OccupanceIMUpdateInterval;
-        int BuildingDataIMCellSize;
+        int OccupanceIMCellSize;
         int GrndCtrlIMCellSize;
         PhaseType Phase;
         StrategySelectorPtr Consultant;

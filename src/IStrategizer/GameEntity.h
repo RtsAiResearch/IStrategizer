@@ -20,10 +20,11 @@ namespace IStrategizer
     ///> class=GameEntity
 	class GameEntity : public SharedResource
     {
-        OBJECT_SERIALIZABLE(GameEntity, &m_id);
+        OBJECT_SERIALIZABLE(GameEntity, &m_id, &m_cachedAttr);
     public:
         GameEntity(TID id) :
-            m_id(id)
+            m_id(id),
+            m_cacheFrame(-1)
         {}
         virtual ~GameEntity() {}
 
@@ -39,6 +40,8 @@ namespace IStrategizer
         virtual bool CanGather(TID resourceObjectId) const = 0;
 		// Euclidean distance squared between 2 units on the game map
 		unsigned Distance(_In_ const GameEntity *pOther) const;
+        void CacheAttributes();
+        virtual bool Exists() const = 0;
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;
@@ -60,6 +63,9 @@ namespace IStrategizer
     protected:
         ///> type=int
         TID m_id;
+        ///> type=map(pair(int,int))
+        Serialization::SMap<EntityObjectAttribute, int> m_cachedAttr;
+        int m_cacheFrame;
     };
 }
 

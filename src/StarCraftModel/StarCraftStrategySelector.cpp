@@ -11,7 +11,7 @@
 using namespace IStrategizer;
 using namespace BWAPI;
 
-void StarCraftStrategySelector::SelectGameOpening(_In_ RtsGame& game, _Out_ PlanStepParameters& trainArmyParams) const
+void StarCraftStrategySelector::SelectGameOpening(_Out_ PlanStepParameters& trainArmyParams) const
 {
     LogActivity(SelectGameOpening);
 
@@ -27,7 +27,7 @@ void StarCraftStrategySelector::SelectGameOpening(_In_ RtsGame& game, _Out_ Plan
     }
 }
 //////////////////////////////////////////////////////////////////////////
-TID StarCraftStrategySelector::SelectScout(_In_ RtsGame& game) const
+TID StarCraftStrategySelector::SelectScout() const
 {
     // For Terran, vultures are best scout
     // then comes a marine

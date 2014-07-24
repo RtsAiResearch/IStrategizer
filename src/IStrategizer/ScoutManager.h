@@ -17,15 +17,15 @@ namespace IStrategizer
         ScoutManager(StrategySelectorPtr pConsultant) :
             m_pConsultant(pConsultant),
             m_active(false),
-            m_targetSpawnLocationId(0)
+            m_enemySpawnLocIdx(-1)
         {}
 
         void Init();
-        void Update(_In_ RtsGame& game);
-        void StartScouting() { m_active = true; }
-        void StopScouting() { m_active = false; }
+        void Update();
         bool IsScouting() const { return m_scoutController.EntityId() != INVALID_TID; }
+        Vector2 GetEnemyStartLocation() const;
         bool IsEnemySpawnLocationKnown() const;
+        int GetNearestSpawnLocation(_In_ bool checkNotDiscovered = false, _In_ bool checkEnemyNotExist = false);
         void NotifyMessegeSent(_In_ Message* pMsg);
         
     private:
@@ -42,7 +42,7 @@ namespace IStrategizer
         };
         
         std::vector<SpawnLocationData> m_otherSpawnLocations;
-        size_t m_targetSpawnLocationId;
+        int m_enemySpawnLocIdx;
     };
 }
 

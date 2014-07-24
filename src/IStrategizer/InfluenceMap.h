@@ -1,10 +1,10 @@
 #ifndef INFLUENCEMAP_H
 #define INFLUENCEMAP_H
 
-#include <list>
 #include "EngineData.h"
 #include "Vector2.h"
 #include "IMSystemManager.h"
+#include <unordered_map>
 
 namespace IStrategizer
 {
@@ -21,7 +21,7 @@ namespace IStrategizer
         TInfData Data;
     };
 
-    typedef std::list<RegObjEntry*> RegObjectList;
+    typedef std::unordered_map<TID, RegObjEntry*> RegObjectMap;
     typedef void (*RegObjCallback)(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry);
 
     // This callback is called for each valid cell in a rectangular area
@@ -68,7 +68,7 @@ namespace IStrategizer
         virtual void StampInfluenceShape(Vector2& p_startPosition, int p_width, int p_height, TInfluence p_value);
         virtual void StampInfluenceGradient(Vector2& p_centerPosition, int p_fastFalloffDistance, int p_slowFalloffDistance, TInfluence p_initValue);
         TInfluence  SumInfluenceShape(Vector2& p_startPosition, int p_width, int p_height);
-        const RegObjectList &RegisteredObjects() const { return m_registeredObjects; }
+        const RegObjectMap &RegisteredObjects() const { return m_registeredObjects; }
         IMType TypeId() const { return m_typeId; }
         int CellSide() const { return m_cellSide; }
         int WorldWidth() const { return m_worldWidth; }
@@ -89,7 +89,7 @@ namespace IStrategizer
         void ResetStats();
         bool InBound(int p_gridX, int p_gridY);
 
-        RegObjectList m_registeredObjects;
+        RegObjectMap m_registeredObjects;
 
         IMStatistics m_statistics;
         int m_cellSide;

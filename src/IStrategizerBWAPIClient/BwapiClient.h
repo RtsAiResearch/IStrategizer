@@ -29,10 +29,13 @@ protected:
     virtual void OnUnitDestroy(BWAPI::Unit p_pUnit) {}
     virtual void OnUnitRenegade(BWAPI::Unit p_pUnit) {}
     virtual void OnUnitMorph(BWAPI::Unit p_pUnit) {}
+    virtual void OnUnitShow(BWAPI::Unit p_pUnit) {}
+    virtual void OnUnitHide(BWAPI::Unit p_pUnit) {}
     virtual void OnGameFrame() {}
     virtual void OnMatchStart() {};
     virtual void OnMatchEnd(bool p_isWinner) {}
     virtual void OnSendText(const std::string &p_text) {}
+    
     static DWORD BwapiThreadStart(PVOID p_pvContext);
 
 private:

@@ -48,6 +48,8 @@ void GamePlayer::Init()
         g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
         g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
         g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityShow, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityHide, this);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -71,11 +73,8 @@ GameEntity* GamePlayer::GetEntity(TID id)
     _ASSERTE(id != INVALID_TID);
 
     if (m_entities.count(id) == 0)
-    {
         return nullptr;
-    }
 
-    _ASSERTE(m_entities[id] != nullptr);
     return m_entities[id];
 }
 //////////////////////////////////////////////////////////////////////////
@@ -118,12 +117,19 @@ void GamePlayer::NotifyMessegeSent(Message* pMsg)
     case MSG_EntityDestroy:
         OnEntityDestroy(pMsg);
         break;
+
+    case MSG_EntityShow:
+        OnEntityShow(pMsg);
+        break;
+
+    case MSG_EntityHide:
+        OnEntityHide(pMsg);
+        break;
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityCreate(Message* pMsg)
 {
-    GameEntity *pEntity = nullptr;
     TID entityId;
     EntityCreateMessage *pCreateMsg = nullptr;
 
@@ -133,23 +139,27 @@ void GamePlayer::OnEntityCreate(Message* pMsg)
     {
         entityId = pCreateMsg->Data()->EntityId;
 
-        if (m_entities.Contains(entityId))
+        GameEntity* pEntity = nullptr;
+
+        if (!m_entities.Contains(entityId))
         {
-            LogError("Entity %d already exist in Player %s units", entityId, Enums[m_type]);
-            return;
+            LogInfo("Entity %d does not exist in Player %s units, will fetch it from game", entityId, Enums[m_type]);
+            pEntity = FetchEntity(entityId);
+            _ASSERTE(pEntity);
+            m_entities[entityId] = pEntity;
+            pEntity->CacheAttributes();
+        }
+        else
+        {
+            LogInfo("Entity %d already exist in Player %s units, won't fetch it from game", entityId, Enums[m_type]);
+            pEntity = GetEntity(entityId);
         }
 
-        pEntity = FetchEntity(entityId);
-        _ASSERTE(pEntity);
+        g_IMSysMgr.RegisterGameObj(entityId, m_type);
 
-        m_entities[entityId] = pEntity;
-
-        LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
-            Enums[m_type], Enums[pEntity->TypeId()], pEntity->Id(), pEntity->Attr(EOATTR_Left), pEntity->Attr(EOATTR_Top));
-
-        g_IMSysMgr.RegisterGameObj(entityId, pCreateMsg->Data()->OwnerId);
+        LogInfo("[%s] %s created at <%d, %d>",
+            Enums[m_type], pEntity->ToString(true).c_str(), pEntity->GetPosition().ToString().c_str());
     }
-
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityDestroy(Message* pMsg)
@@ -169,10 +179,8 @@ void GamePlayer::OnEntityDestroy(Message* pMsg)
         _ASSERTE(pEntity);
         m_entities.erase(entityId);
 
-        g_IMSysMgr.UnregisterGameObj(entityId);
-
-        LogInfo("[%s] Unit '%s':%d destroyed",
-            Enums[m_type], Enums[pEntity->TypeId()], pEntity->Id());
+        LogInfo("[%s] %s destroyed",
+            Enums[m_type], pEntity->ToString(true).c_str());
 
         Toolbox::MemoryClean(pEntity);
     }
@@ -198,10 +206,10 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
 
         m_entities[entityId] = pEntity;
 
-        LogInfo("[%s] Unit '%s':%d renegaded TO me",
-            Enums[m_type], Enums[pEntity->TypeId()], pEntity->Id());
+        LogInfo("[%s] %s renegaded TO me",
+            Enums[m_type], pEntity->ToString(true).c_str());
 
-        g_IMSysMgr.RegisterGameObj(entityId, pRenMsg->Data()->OwnerId);
+        g_IMSysMgr.RegisterGameObj(entityId, m_type);
     }
     // Used to be my unit, but it is not anymore
     else if (pRenMsg->Data()->OwnerId != m_type && m_entities.Contains(entityId))
@@ -211,12 +219,68 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
 
         m_entities.erase(entityId);
 
+        LogInfo("[%s] %s renegaded from me",
+            Enums[m_type], pEntity->ToString(true).c_str());
+
         g_IMSysMgr.UnregisterGameObj(entityId);
 
-        LogInfo("[%s] Unit '%s':%d renegaded from me",
-            Enums[m_type], Enums[pEntity->TypeId()], pEntity->Id());
-
         Toolbox::MemoryClean(pEntity);
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::OnEntityShow(Message* pMsg)
+{
+    GameEntity *pEntity = nullptr;
+    TID entityId;
+    EntityShowMessage *pShowMsg = nullptr;
+
+    pShowMsg = (EntityCreateMessage*)pMsg;
+
+    if (pShowMsg->Data()->OwnerId == m_type)
+    {
+        entityId = pShowMsg->Data()->EntityId;
+
+        if (m_entities.Contains(entityId))
+        {
+            LogInfo("Entity %d already exist in Player %s units", entityId, Enums[m_type]);
+            pEntity = GetEntity(entityId);
+        }
+        else
+        {
+            LogInfo("Entity %d does not exist in Player %s units, adding it", entityId, Enums[m_type]);
+            pEntity = FetchEntity(entityId);
+            _ASSERTE(pEntity);
+            m_entities[entityId] = pEntity;
+        }
+
+        LogInfo("[%s] %s showed at %s",
+            Enums[m_type], pEntity->ToString(true).c_str(), pEntity->GetPosition().ToString().c_str());
+
+        g_IMSysMgr.RegisterGameObj(entityId, pShowMsg->Data()->OwnerId);
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::OnEntityHide(Message* pMsg)
+{
+    TID entityId;
+    EntityShowMessage *pShowMsg = nullptr;
+
+    pShowMsg = (EntityCreateMessage*)pMsg;
+
+    if (pShowMsg->Data()->OwnerId == m_type)
+    {
+        entityId = pShowMsg->Data()->EntityId;
+
+        if (m_entities.Contains(entityId))
+        {
+            LogInfo("Entity %d exist in Player %s units, caching its attributes before being invisible", entityId, Enums[m_type]);
+
+            auto pEntity = GetEntity(entityId);
+            pEntity->CacheAttributes();
+
+            LogInfo("[%s] %s hidden from %s",
+                Enums[m_type], pEntity->ToString(true).c_str(), pEntity->GetPosition().ToString().c_str());
+        }
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -234,7 +298,7 @@ MapArea GamePlayer::GetColonyMapArea()
         // Note that player having many bases it not supported by the engine
         if (!playerBases.empty())
             pPlayerBase = GetEntity(playerBases[0]);
-        // No base! This is weird but for the case, we will select the first unit position as the player coloney center
+        // No base! This is weird but for the case, we will select the first unit position as the player colony center
         else
         {
             EntityList    playerEntities;
@@ -307,7 +371,7 @@ int GamePlayer::Attr(PlayerAttribute attribute)
 
     return amount;
 }
-
+//////////////////////////////////////////////////////////////////////////
 int GamePlayer::CountEntityTypes(_In_ EntityClassAttribute attr, _In_ int val) const
 {
     int count = 0;;

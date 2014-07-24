@@ -22,13 +22,13 @@ void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
     _ASSERTE(pGameObj);
     currentPosition.X = pGameObj->Attr(EOATTR_Left);
     currentPosition.Y = pGameObj->Attr(EOATTR_Top);
-    
+
     // If not dirty, then skip
     if (currentPosition == p_pObjEntry->LastPosition)
         return;
 
     // Unstamp dirty object
-    if(p_pObjEntry->Stamped)
+    if (p_pObjEntry->Stamped)
         p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, NegativeInfluence);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -63,27 +63,20 @@ void OccupanceDataIM::Update(const WorldClock& p_clock)
     ForEachObj(StampNonDirtyObj);
 }
 //////////////////////////////////////////////////////////////////////////
-void OccupanceDataIM::UnregisterGameObj(TID p_objId)
+void OccupanceDataIM::UnregisterGameObj(TID objId)
 {
     if (m_registeredObjects.empty())
         return;
 
-    RegObjectList::iterator objItr;
-    RegObjEntry *pObjEntry;
-
-    for (objItr = m_registeredObjects.begin(); objItr != m_registeredObjects.end(); ++objItr)
+    if (m_registeredObjects.count(objId) > 0)
     {
-        pObjEntry = *objItr;
+        auto pObjEntry = m_registeredObjects[objId];
 
-        if (pObjEntry->ObjId == p_objId)
-        {
-            if (pObjEntry->Stamped)
-                StampInfluenceShape(pObjEntry->LastPosition, pObjEntry->ObjWidth, pObjEntry->ObjHeight, NegativeInfluence);
+        if (pObjEntry->Stamped)
+            StampInfluenceShape(pObjEntry->LastPosition, pObjEntry->ObjWidth, pObjEntry->ObjHeight, NegativeInfluence);
 
-            m_registeredObjects.erase(objItr);
-            delete pObjEntry;
-            return;
-        }
+        m_registeredObjects.erase(objId);
+        delete pObjEntry;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -94,12 +87,12 @@ bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, T
     _ASSERTE(p_pParam);
     bool *pAllCellsFree = (bool*)p_pParam;
 
-	bool isBuildable = g_Game->Map()->CanBuildHere(Vector2(p_worldX, p_worldY));
+    bool isBuildable = g_Game->Map()->CanBuildHere(Vector2(p_worldX, p_worldY));
 
     _ASSERTE(p_pCell);
     if (p_pCell->Inf != NullInfluence ||
-		p_pCell->Data != CELL_Free ||
-		!isBuildable)
+        p_pCell->Data != CELL_Free ||
+        !isBuildable)
     {
         stopSearch = true;
         *pAllCellsFree = false;
@@ -179,5 +172,5 @@ bool OccupanceDataIM::FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::CanBuildHere(Vector2 p_worldPos, int p_buildingWidth, int p_buildingHeight, EntityClassType p_buildingType)
 {
-	return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight);
+    return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight);
 }

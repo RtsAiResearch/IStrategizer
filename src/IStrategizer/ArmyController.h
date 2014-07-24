@@ -16,10 +16,10 @@ namespace IStrategizer
         {
         }
 
-        void Update(_In_ RtsGame& game)
+        void Update()
         {
             if (m_pMachine != nullptr)
-                m_pMachine->Update(game); 
+                m_pMachine->Update(); 
         }
 
         TID CurrentTarget() const { return m_currentTarget; }

@@ -44,50 +44,48 @@ void InfluenceMap::Reset()
     if (m_registeredObjects.empty())
         return;
 
-    for_each(m_registeredObjects.begin(), m_registeredObjects.end(), DeleteObjCallback);
+    for (auto& objEntry : m_registeredObjects)
+        DeleteObjCallback(objEntry.second);
+
     m_registeredObjects.clear();
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
+void InfluenceMap::RegisterGameObj(TID objId, PlayerType ownerId)
 {
-    RegObjEntry *pNewObj = new RegObjEntry;
-    GameEntity *pGameObj = nullptr;
-    GameType *pObjType = nullptr;
+    if (m_registeredObjects.count(objId) == 0)
+    {
+        RegObjEntry *pNewObj = new RegObjEntry;
+        GameEntity *pGameObj = nullptr;
+        GameType *pObjType = nullptr;
 
-    pNewObj->ObjId = p_objId;
-    pNewObj->OwnerId = p_ownerId;
-    pNewObj->Stamped = false;
+        pNewObj->ObjId = objId;
+        pNewObj->OwnerId = ownerId;
+        pNewObj->Stamped = false;
 
-    pGameObj = g_Game->GetPlayer(p_ownerId)->GetEntity(p_objId);
-    _ASSERTE(pGameObj);
-    pNewObj->LastPosition = Vector2(-1, -1);
+        pGameObj = g_Game->GetPlayer(ownerId)->GetEntity(objId);
+        _ASSERTE(pGameObj);
+        pNewObj->LastPosition = Vector2(-1, -1);
 
-    pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->TypeId());
-    _ASSERTE(pObjType);
-    pNewObj->ObjWidth = pObjType->Attr(ECATTR_Width);
-    pNewObj->ObjHeight = pObjType->Attr(ECATTR_Height);
+        pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->TypeId());
+        _ASSERTE(pObjType);
+        pNewObj->ObjWidth = pObjType->Attr(ECATTR_Width);
+        pNewObj->ObjHeight = pObjType->Attr(ECATTR_Height);
 
-    m_registeredObjects.push_back(pNewObj);
+        m_registeredObjects[objId] = pNewObj;
+    }
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::UnregisterGameObj(TID p_objId)
+void InfluenceMap::UnregisterGameObj(TID objId)
 {
     if (m_registeredObjects.empty())
         return;
 
-    RegObjectList::iterator objItr;
-    RegObjEntry* pObjEntry;
-
-    for (objItr = m_registeredObjects.begin(); objItr != m_registeredObjects.end(); ++objItr)
+    if (m_registeredObjects.count(objId) > 0)
     {
-        pObjEntry = *objItr;
+        auto pObjEntry = m_registeredObjects[objId];
 
-        if (pObjEntry->ObjId == p_objId)
-        {
-            m_registeredObjects.erase(objItr);
-            delete pObjEntry;
-            return;
-        }
+        m_registeredObjects.erase(objId);
+        delete pObjEntry;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -275,11 +273,11 @@ GameEntity* InfluenceMap::GetObj(RegObjEntry* p_pObjEntry)
 //////////////////////////////////////////////////////////////////////////
 void InfluenceMap::ForEachObj(RegObjCallback p_pfnCallback)
 {
-    RegObjectList::iterator objItr;
+    RegObjectMap::iterator objItr;
 
-    for (objItr = m_registeredObjects.begin(); objItr != m_registeredObjects.end(); ++objItr)
+    for (auto& objEntry : m_registeredObjects)
     {
-        p_pfnCallback(this, *objItr);
+        p_pfnCallback(this, objEntry.second);
     }
 }
 //////////////////////////////////////////////////////////////////////////

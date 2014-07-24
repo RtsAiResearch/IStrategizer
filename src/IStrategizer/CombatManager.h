@@ -22,9 +22,9 @@ namespace IStrategizer
 
         void Init() {}
 
-        void Update(_In_ RtsGame& game)
+        void Update()
         {
-            m_armyCtrlr.Update(game);
+            m_armyCtrlr.Update();
         }
 
         void AttackArea(_In_ Circle2 area)

@@ -12,26 +12,22 @@ using namespace std;
 
 void IMSystemManager::Update(const WorldClock& p_clock)
 {
-    unsigned elapsedTimeSinceLastUpdateMs = p_clock.ElapsedMilliseconds() - m_lastUpdateTimeMs;
-
     for (IMContainer::iterator itr = m_managedMaps.begin(); itr != m_managedMaps.end(); ++itr)
     {
         switch (itr->first)
         {
         case IM_BuildingData:
-            if (elapsedTimeSinceLastUpdateMs > m_params.OccupanceIMUpdateInterval)
+            if (p_clock.ElapsedGameCycles() % m_params.OccupanceIMUpdateInterval != 0)
                 continue;
             break;
         case IM_GroundControl:
-            if (elapsedTimeSinceLastUpdateMs > m_params.GrndCtrlIMUpdateInterval)
+            if (p_clock.ElapsedGameCycles() % m_params.GrndCtrlIMUpdateInterval != 0)
                 continue;
             break;
         }
 
         itr->second->Update(p_clock);
     }
-
-    m_lastUpdateTimeMs = p_clock.ElapsedMilliseconds();
 }
 //////////////////////////////////////////////////////////////////////////
 void IMSystemManager::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
@@ -69,7 +65,7 @@ void IMSystemManager::Init(const IMSysManagerParam& p_params)
     worldWidth = pMap->Size().X;
     worldHeight = pMap->Size().Y;
     
-    cellSize = p_params.BuildingDataIMCellSize;
+    cellSize = p_params.OccupanceIMCellSize;
     cellSize = min(cellSize, worldWidth);
     while (worldWidth % cellSize != 0)
         ++cellSize;
@@ -79,7 +75,7 @@ void IMSystemManager::Init(const IMSysManagerParam& p_params)
     pBuildingDataIM->Init(cellSize, cellSize, worldWidth, worldHeight);
     RegisterIM(pBuildingDataIM, IM_BuildingData);
 
-    cellSize = p_params.GroundControlIMCellSize;
+    cellSize = p_params.GrndCtrllIMCellSize;
     cellSize = min(cellSize, worldWidth);
     while (worldWidth % cellSize != 0)
         ++cellSize;

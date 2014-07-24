@@ -4,6 +4,7 @@
 #include "WorldMap.h"
 #include "DataMessage.h"
 #include "GameEntity.h"
+#include "EntityFSM.h"
 #include "MessagePump.h"
 #include <algorithm>
 
@@ -24,6 +25,7 @@ void ScoutManager::Init()
     {
         dat.DistanceToSelf = v.Distance(selfLoc);
 
+        // Self spawn location is already discovered, ignore it
         if (dat.DistanceToSelf == 0)
             continue;
 
@@ -34,7 +36,7 @@ void ScoutManager::Init()
         m_otherSpawnLocations.push_back(dat);
     }
 
-    // Sort spawn locations by distance to me in ascending order
+    // Sort spawn locations by distance to self in ascending order
     sort(m_otherSpawnLocations.begin(),
         m_otherSpawnLocations.end(),
         [](const SpawnLocationData& left, const SpawnLocationData& right) {
@@ -42,57 +44,53 @@ void ScoutManager::Init()
     });
 }
 //////////////////////////////////////////////////////////////////////////
-void ScoutManager::Update(_In_ RtsGame& game)
+void ScoutManager::Update()
 {
-    if (!m_active)
-        return;
-
     // For now we scout only if the enemy base location is not known to us
-    if (!IsScouting() &&
-        !IsEnemySpawnLocationKnown())
+    if (!IsScouting())
     {
-        TID scoutEntityId = m_pConsultant->SelectScout(game);
-
-        if (scoutEntityId != INVALID_TID)
+        if (!IsEnemySpawnLocationKnown())
         {
-            auto pScout = g_Game->Self()->GetEntity(scoutEntityId);
-            _ASSERTE(pScout);
-            _ASSERTE(!pScout->IsLocked());
-            _ASSERTE(pScout->Attr(EOATTR_State) != OBJSTATE_BeingConstructed);
-            m_scoutController.ControlEntity(scoutEntityId);
+            TID scoutEntityId = m_pConsultant->SelectScout();
 
-            // Scout the next closest undiscovered spawn location
-            for (auto& spawnLocData : m_otherSpawnLocations)
+            if (scoutEntityId != INVALID_TID)
             {
-                if (!spawnLocData.Discovered)
-                {
-                    m_scoutController.TargetPosition(spawnLocData.Location);
-                    break;
-                }
+                auto pScout = g_Game->Self()->GetEntity(scoutEntityId);
+                _ASSERTE(pScout);
+                _ASSERTE(!pScout->IsLocked());
+                _ASSERTE(pScout->Attr(EOATTR_State) != OBJSTATE_BeingConstructed);
+                m_scoutController.ControlEntity(scoutEntityId, make_shared<ScoutEntityFSM>(&m_scoutController));
+
+                int locIdx = GetNearestSpawnLocation(true, true);
+                _ASSERTE(locIdx != -1);
+                m_enemySpawnLocIdx = locIdx;
+
+                // Scout the next closest undiscovered spawn location
+                m_scoutController.TargetPosition(m_otherSpawnLocations[locIdx].Location);
             }
         }
     }
-    else if (IsScouting())
+    else
     {
-        m_scoutController.Update(game);
+        m_scoutController.Update();
 
         // Enemy location found, no need to continue scouting
         // Release the scout unit and deactivate ourself
         if (IsEnemySpawnLocationKnown())
-        {
+        { 
+            LogInfo("Enemy spwan location discovered at %s", m_otherSpawnLocations[m_enemySpawnLocIdx].Location.ToString().c_str());
             // Mark location as discovered and that enemy exist there
-            m_otherSpawnLocations[m_targetSpawnLocationId].EnemyExist = true;
-            m_otherSpawnLocations[m_targetSpawnLocationId].Discovered = true;
+            m_otherSpawnLocations[m_enemySpawnLocIdx].EnemyExist = true;
+            m_otherSpawnLocations[m_enemySpawnLocIdx].Discovered = true;
 
             m_scoutController.ReleaseEntity();
-            StopScouting();
         }
     }
 }
 //////////////////////////////////////////////////////////////////////////
 bool ScoutManager::IsEnemySpawnLocationKnown() const
 {
-    return g_Game->Enemy()->StartLocation() != Vector2::Inf();
+    return m_enemySpawnLocIdx != -1;
 }
 //////////////////////////////////////////////////////////////////////////
 void ScoutManager::NotifyMessegeSent(_In_ Message* pMsg)
@@ -100,11 +98,27 @@ void ScoutManager::NotifyMessegeSent(_In_ Message* pMsg)
     if (pMsg->TypeId() == MSG_EntityDestroy)
     {
         auto pDestroyMsg = (EntityDestroyMessage*)pMsg;
-        
+
         if (pDestroyMsg->Data()->OwnerId == PLAYER_Self &&
             pDestroyMsg->Data()->EntityId == m_scoutController.EntityId())
         {
             m_scoutController.ReleaseEntity();
         }
     }
+}
+//////////////////////////////////////////////////////////////////////////
+int ScoutManager::GetNearestSpawnLocation(_In_ bool checkNotDiscovered, _In_ bool checkEnemyNotExist)
+{
+    int idx = 0;
+    for (auto& spawnLocData : m_otherSpawnLocations)
+    {
+        if ((!checkNotDiscovered || !spawnLocData.Discovered) &&
+            (!checkEnemyNotExist || !spawnLocData.EnemyExist))
+        {
+            return idx;
+        }
+        ++idx;
+    }
+
+    return -1;
 }

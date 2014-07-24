@@ -56,6 +56,8 @@ namespace IStrategizer
     };
     typedef DataMessage<EntityMessageData> EntityCreateMessage;
     typedef DataMessage<EntityMessageData> EntityDestroyMessage;
+    typedef DataMessage<EntityMessageData> EntityShowMessage;
+    typedef DataMessage<EntityMessageData> EntityHideMessage;
     //----------------------------------------------------------------------------------------------
     struct GameEndMessageData
     {
