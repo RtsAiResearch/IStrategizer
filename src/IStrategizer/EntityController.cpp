@@ -6,13 +6,13 @@
 
 using namespace IStrategizer;
 
-void EntityController::ControlEntity(_In_ TID entityId, _In_ StackFSMPtr logic)
+void EntityController::ControlEntity(_In_ TID entityId, _In_ StackFSMPtr pLogic)
 {
     if (m_entityId != INVALID_TID)
         ReleaseEntity();
 
     m_entityId = entityId;
-    m_logic = logic;
+    m_pLogic = pLogic;
 
     auto pScout = g_Game->Self()->GetEntity(m_entityId);
     _ASSERTE(pScout);
@@ -39,7 +39,7 @@ void EntityController::Update()
     if (m_entityId == INVALID_TID)
         return;
 
-    m_logic->Update();
+    m_pLogic->Update();
 }
 //////////////////////////////////////////////////////////////////////////
 GameEntity* EntityController::Entity()

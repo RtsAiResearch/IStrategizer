@@ -6,6 +6,8 @@
 #include "GameEntity.h"
 #include "EntityFSM.h"
 #include "MessagePump.h"
+#include "IMSystemManager.h"
+#include "GroundControlIM.h"
 #include <algorithm>
 
 using namespace IStrategizer;
@@ -30,7 +32,6 @@ void ScoutManager::Init()
             continue;
 
         dat.Location = v;
-        dat.Discovered = false;
         dat.EnemyExist = false;
 
         m_otherSpawnLocations.push_back(dat);
@@ -61,9 +62,9 @@ void ScoutManager::Update()
                 _ASSERTE(pScout->Attr(EOATTR_State) != OBJSTATE_BeingConstructed);
                 m_scoutController.ControlEntity(scoutEntityId, make_shared<ScoutEntityFSM>(&m_scoutController));
 
-                int locIdx = GetNearestSpawnLocation(true, true);
+                int locIdx = GetNearestSpawnLocationIdx(true, true);
                 _ASSERTE(locIdx != -1);
-                m_enemySpawnLocIdx = locIdx;
+                m_currSpawnLocIdxToScout = locIdx;
 
                 // Scout the next closest undiscovered spawn location
                 m_scoutController.TargetPosition(m_otherSpawnLocations[locIdx].Location);
@@ -74,23 +75,46 @@ void ScoutManager::Update()
     {
         m_scoutController.Update();
 
-        // Enemy location found, no need to continue scouting
-        // Release the scout unit and deactivate ourself
-        if (IsEnemySpawnLocationKnown())
-        { 
-            LogInfo("Enemy spwan location discovered at %s", m_otherSpawnLocations[m_enemySpawnLocIdx].Location.ToString().c_str());
+        auto pGrnCtrlIM = (GroundControlIM*)g_IMSysMgr.GetIM(IM_GroundControl);
+
+        // Negative influence means enemy control, which means the location is enemy's spawn location
+        if (pGrnCtrlIM->GetCellInfluenceFromWorldPosition(m_otherSpawnLocations[m_currSpawnLocIdxToScout].Location) < 0)
+        {
+            // Enemy location found, no need to continue scouting
+            // Release the scout unit and deactivate ourself
+
+            m_knownEnemySpawnLocIdx = m_currSpawnLocIdxToScout;
+            m_currSpawnLocIdxToScout = -1;
+
+            LogInfo("Enemy spwan location discovered at %s", m_otherSpawnLocations[m_knownEnemySpawnLocIdx].Location.ToString().c_str());
             // Mark location as discovered and that enemy exist there
-            m_otherSpawnLocations[m_enemySpawnLocIdx].EnemyExist = true;
-            m_otherSpawnLocations[m_enemySpawnLocIdx].Discovered = true;
+            m_otherSpawnLocations[m_knownEnemySpawnLocIdx].EnemyExist = true;
 
             m_scoutController.ReleaseEntity();
+        }
+        // Scout could reach the chosen spawn location but couldn't find enemy there, mark this loc as discovered
+        else if (m_scoutController.ArrivedAtTarget())
+        {
+            m_currSpawnLocIdxToScout = -1;
+
+            LogInfo("Enemy does not exist at discovered spawn location %s", m_otherSpawnLocations[m_knownEnemySpawnLocIdx].Location.ToString().c_str());
+            // Mark location as discovered and that enemy DOES NOT exist there
+            m_otherSpawnLocations[m_knownEnemySpawnLocIdx].EnemyExist = false;
+
+            // Scout the next closest undiscovered spawn location
+            int locIdx = GetNearestSpawnLocationIdx(true, true);
+            _ASSERTE(locIdx != -1);
+            m_currSpawnLocIdxToScout = locIdx;
+
+            m_scoutController.TargetPosition(m_otherSpawnLocations[locIdx].Location);
+            m_scoutController.ResetLogic();
         }
     }
 }
 //////////////////////////////////////////////////////////////////////////
 bool ScoutManager::IsEnemySpawnLocationKnown() const
 {
-    return m_enemySpawnLocIdx != -1;
+    return m_knownEnemySpawnLocIdx != -1;
 }
 //////////////////////////////////////////////////////////////////////////
 void ScoutManager::NotifyMessegeSent(_In_ Message* pMsg)
@@ -107,12 +131,12 @@ void ScoutManager::NotifyMessegeSent(_In_ Message* pMsg)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-int ScoutManager::GetNearestSpawnLocation(_In_ bool checkNotDiscovered, _In_ bool checkEnemyNotExist)
+int ScoutManager::GetNearestSpawnLocationIdx(_In_ bool checkNotDiscovered, _In_ bool checkEnemyNotExist)
 {
     int idx = 0;
     for (auto& spawnLocData : m_otherSpawnLocations)
     {
-        if ((!checkNotDiscovered || !spawnLocData.Discovered) &&
+        if ((!checkNotDiscovered || !g_Game->Map()->IsLocationExplored(spawnLocData.Location)) &&
             (!checkEnemyNotExist || !spawnLocData.EnemyExist))
         {
             return idx;
@@ -121,4 +145,16 @@ int ScoutManager::GetNearestSpawnLocation(_In_ bool checkNotDiscovered, _In_ boo
     }
 
     return -1;
+}
+//////////////////////////////////////////////////////////////////////////
+Vector2 ScoutManager::GetSuspectedEnemySpawnLocation()
+{
+    if (IsEnemySpawnLocationKnown())
+        return m_otherSpawnLocations[m_knownEnemySpawnLocIdx].Location;
+    else
+    {
+        int bestGuessLocIdx = GetNearestSpawnLocationIdx(true, true);
+        _ASSERTE(bestGuessLocIdx != -1);
+        return m_otherSpawnLocations[bestGuessLocIdx].Location;
+    }
 }

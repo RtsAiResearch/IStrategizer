@@ -157,7 +157,7 @@ void GamePlayer::OnEntityCreate(Message* pMsg)
 
         g_IMSysMgr.RegisterGameObj(entityId, m_type);
 
-        LogInfo("[%s] %s created at <%d, %d>",
+        LogInfo("[%s] %s created at %s",
             Enums[m_type], pEntity->ToString(true).c_str(), pEntity->GetPosition().ToString().c_str());
     }
 }
@@ -182,6 +182,8 @@ void GamePlayer::OnEntityDestroy(Message* pMsg)
         LogInfo("[%s] %s destroyed",
             Enums[m_type], pEntity->ToString(true).c_str());
 
+        g_IMSysMgr.UnregisterGameObj(entityId);
+
         Toolbox::MemoryClean(pEntity);
     }
 }
@@ -199,12 +201,16 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
     // I am the unit new owner
     if (pRenMsg->Data()->OwnerId == m_type)
     {
-        _ASSERTE(!m_entities.Contains(entityId));
-
-        pEntity = FetchEntity(entityId);
-        _ASSERTE(pEntity);
-
-        m_entities[entityId] = pEntity;
+        if (!m_entities.Contains(entityId))
+        {
+            pEntity = FetchEntity(entityId);
+            _ASSERTE(pEntity);
+            m_entities[entityId] = pEntity;
+        }
+        else
+        {
+            pEntity = GetEntity(entityId);
+        }
 
         LogInfo("[%s] %s renegaded TO me",
             Enums[m_type], pEntity->ToString(true).c_str());

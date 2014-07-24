@@ -93,7 +93,7 @@ namespace IStrategizer
         {}
         Circle2T(Vector2T<T> center, T radius) :
             Center(center),
-            Radius(Radius)
+            Radius(radius)
         {}
         Vector2T<T> Center;
         T Radius;

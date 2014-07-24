@@ -113,3 +113,8 @@ void StarCraftMap::SpawnLocations(_Out_ std::vector<Vector2>& spawnPoints) const
         spawnPoints.push_back(Vector2(loc.x * TILE_SIZE, loc.y * TILE_SIZE));
     }
 }
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftMap::IsLocationExplored(Vector2 loc) const
+{
+    return Broodwar->isExplored(TilePositionFromUnitPosition(loc.X), TilePositionFromUnitPosition(loc.Y));
+}

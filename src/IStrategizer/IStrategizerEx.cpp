@@ -63,12 +63,14 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
     }
     else if (msgType == MSG_PlanGoalSuccess)
     {
-        auto enemyLoc = g_Game->Enemy()->StartLocation();
+        auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
 
-        // Location not discovered, needs scouting
+        // Location not discovered, scouting trials seemed to fail
+        // Needs to perform attack now, lets scout with the army itself
         if (enemyLoc.IsInf())
         {
             _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
+            enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
         }
 
         m_combatMgr.AttackArea(Circle2(enemyLoc, 500));

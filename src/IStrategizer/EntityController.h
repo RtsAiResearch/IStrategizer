@@ -30,6 +30,8 @@ namespace IStrategizer
         GameEntity* Entity();
         bool IsControllingEntity() const{ return m_entityId != INVALID_TID; }
         bool EntityExist() const;
+        bool IsLogicGoalAchieved() const { return m_pLogic->IsInFinalState(); }
+        void ResetLogic() { m_pLogic->Reset(); }
 
         // Controller Conditions
         bool IsOnCriticalHP();
@@ -41,7 +43,7 @@ namespace IStrategizer
 
         TID m_entityId;
         Vector2 m_targetPos;
-        StackFSMPtr m_logic;
+        StackFSMPtr m_pLogic;
     };
 }
 
