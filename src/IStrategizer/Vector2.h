@@ -95,6 +95,12 @@ namespace IStrategizer
             Center(center),
             Radius(radius)
         {}
+
+        bool IsInside(const Vector2T<T>& v)
+        {
+            return Center.Distance(v) < Radius;
+        }
+
         Vector2T<T> Center;
         T Radius;
     };

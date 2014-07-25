@@ -6,6 +6,7 @@
 #include "EngineObject.h"
 #include "SMap.h"
 #include "WorldClock.h"
+#include "Vector2.h"
 #include <vector>
 
 namespace IStrategizer
@@ -25,15 +26,15 @@ namespace IStrategizer
     typedef Serialization::SMap<ResearchType, GameResearch*> ResearchTypesMap;
     typedef Serialization::SMap<TID, GameRace*> RaceTypesMap;
 
-    #define GAME_STATIC_DATA_FILENAME "GameStaticData.bin"
+#define GAME_STATIC_DATA_FILENAME "GameStaticData.bin"
 
     ///> class=RtsGameStaticData
-    class RtsGameStaticData: public EngineObject
+    class RtsGameStaticData : public EngineObject
     {
-		OBJECT_SERIALIZABLE(RtsGameStaticData, &EntityTypes, &ResearchTypes);
+        OBJECT_SERIALIZABLE(RtsGameStaticData, &EntityTypes, &ResearchTypes);
 
     public:
-		~RtsGameStaticData();
+        ~RtsGameStaticData();
 
         ///> type=map(pair(int,GameType*)
         EntiyTypesMap EntityTypes;
@@ -42,10 +43,19 @@ namespace IStrategizer
         RaceTypesMap RaceTypes;
     };
 
+    enum GameDrawColor
+    {
+        GCLR_Red,
+        GCLR_Green,
+        GCLR_Blue,
+        GCLR_Yellow,
+        GCLR_White,
+    };
+
     ///> class=RtsGame
     class RtsGame : public EngineObject
     {
-		OBJECT_SERIALIZABLE(RtsGame, &m_isOnline, &m_players, &m_cachedGameFrame, &m_cachedWorldWidth, &m_cachedWorldHeight);
+        OBJECT_SERIALIZABLE(RtsGame, &m_isOnline, &m_players, &m_cachedGameFrame, &m_cachedWorldWidth, &m_cachedWorldHeight);
 
     public:
         RtsGame() :
@@ -56,7 +66,7 @@ namespace IStrategizer
             m_firstUpdate(true)
         {}
 
-		static void FinalizeStaticData();
+        static void FinalizeStaticData();
         virtual bool InitStaticData() = 0;
         virtual ~RtsGame();
         virtual void Init();
@@ -86,6 +96,9 @@ namespace IStrategizer
         float Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const;
         const WorldClock& Clock() const { return m_clock; }
         void Update();
+
+        virtual void DrawMapLine(Vector2 p1, Vector2 p2, GameDrawColor c) = 0;
+        virtual void DrawMapCircle(Vector2 p, int r, GameDrawColor c) = 0;
 
         static SimilarityWeightModel DefaultWeightModel;
 

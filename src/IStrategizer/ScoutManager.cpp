@@ -37,6 +37,8 @@ void ScoutManager::Init()
         m_otherSpawnLocations.push_back(dat);
     }
 
+    LogInfo("ScoutManager is suspecting %d enemy spawn locations", m_otherSpawnLocations.size());
+
     // Sort spawn locations by distance to self in ascending order
     sort(m_otherSpawnLocations.begin(),
         m_otherSpawnLocations.end(),
@@ -48,68 +50,53 @@ void ScoutManager::Init()
 void ScoutManager::Update()
 {
     // For now we scout only if the enemy base location is not known to us
-    if (!IsScouting())
+    if (!IsEnemySpawnLocationKnown() && !IsScouting())
     {
-        if (!IsEnemySpawnLocationKnown())
-        {
-            TID scoutEntityId = m_pConsultant->SelectScout();
+        TID scoutEntityId = m_pConsultant->SelectScout();
 
-            if (scoutEntityId != INVALID_TID)
+        if (scoutEntityId != INVALID_TID)
+        {
+            auto pScout = g_Game->Self()->GetEntity(scoutEntityId);
+            _ASSERTE(pScout);
+            _ASSERTE(!pScout->IsLocked());
+            _ASSERTE(pScout->Attr(EOATTR_State) != OBJSTATE_BeingConstructed);
+            m_scoutController.ControlEntity(scoutEntityId,
+                make_shared<ScoutEntityFSM>(ScoutEntityFSM::SCTGL_Explore, &m_scoutController));
+
+            vector<Vector2> suspectLocations;
+            for (auto& locR : m_otherSpawnLocations)
             {
-                auto pScout = g_Game->Self()->GetEntity(scoutEntityId);
-                _ASSERTE(pScout);
-                _ASSERTE(!pScout->IsLocked());
-                _ASSERTE(pScout->Attr(EOATTR_State) != OBJSTATE_BeingConstructed);
-                m_scoutController.ControlEntity(scoutEntityId, make_shared<ScoutEntityFSM>(&m_scoutController));
-
-                int locIdx = GetNearestSpawnLocationIdx(true, true);
-                _ASSERTE(locIdx != -1);
-                m_currSpawnLocIdxToScout = locIdx;
-
-                // Scout the next closest undiscovered spawn location
-                m_scoutController.TargetPosition(m_otherSpawnLocations[locIdx].Location);
+                // Only suspect unexplored locations before
+                if (!g_Game->Map()->IsLocationExplored(locR.Location))
+                    suspectLocations.push_back(locR.Location);
             }
-        }
-    }
-    else
-    {
-        m_scoutController.Update();
 
-        auto pGrnCtrlIM = (GroundControlIM*)g_IMSysMgr.GetIM(IM_GroundControl);
-
-        // Negative influence means enemy control, which means the location is enemy's spawn location
-        if (pGrnCtrlIM->GetCellInfluenceFromWorldPosition(m_otherSpawnLocations[m_currSpawnLocIdxToScout].Location) < 0)
-        {
-            // Enemy location found, no need to continue scouting
-            // Release the scout unit and deactivate ourself
-
-            m_knownEnemySpawnLocIdx = m_currSpawnLocIdxToScout;
-            m_currSpawnLocIdxToScout = -1;
-
-            LogInfo("Enemy spwan location discovered at %s", m_otherSpawnLocations[m_knownEnemySpawnLocIdx].Location.ToString().c_str());
-            // Mark location as discovered and that enemy exist there
-            m_otherSpawnLocations[m_knownEnemySpawnLocIdx].EnemyExist = true;
-
-            m_scoutController.ReleaseEntity();
-        }
-        // Scout could reach the chosen spawn location but couldn't find enemy there, mark this loc as discovered
-        else if (m_scoutController.ArrivedAtTarget())
-        {
-            m_currSpawnLocIdxToScout = -1;
-
-            LogInfo("Enemy does not exist at discovered spawn location %s", m_otherSpawnLocations[m_knownEnemySpawnLocIdx].Location.ToString().c_str());
-            // Mark location as discovered and that enemy DOES NOT exist there
-            m_otherSpawnLocations[m_knownEnemySpawnLocIdx].EnemyExist = false;
-
-            // Scout the next closest undiscovered spawn location
-            int locIdx = GetNearestSpawnLocationIdx(true, true);
-            _ASSERTE(locIdx != -1);
-            m_currSpawnLocIdxToScout = locIdx;
-
-            m_scoutController.TargetPosition(m_otherSpawnLocations[locIdx].Location);
+            // Scout the set of spawn locations
+            // The order is important, since logic resetting requires that
+            // the logic required parameters are well set in the controller
+            m_scoutController.MultiTargetPosition(suspectLocations);
             m_scoutController.ResetLogic();
         }
     }
+    else if (!IsEnemySpawnLocationKnown())
+    {
+        int locIdx = 0;
+        for (auto& locR : m_otherSpawnLocations)
+        {
+            auto pGrnCtrlIM = (GroundControlIM*)g_IMSysMgr.GetIM(IM_GroundControl);
+            if (pGrnCtrlIM->GetCellInfluenceFromWorldPosition(locR.Location) < 0)
+            {
+                LogInfo("Eneny spawn location discovered at %s", locR.Location.ToString().c_str());
+                m_knownEnemySpawnLocIdx = locIdx;
+            }
+            ++locIdx;
+        }
+    }
+
+    if (m_scoutController.IsLogicGoalAchieved())
+        m_scoutController.ReleaseEntity();
+    else
+        m_scoutController.Update();
 }
 //////////////////////////////////////////////////////////////////////////
 bool ScoutManager::IsEnemySpawnLocationKnown() const

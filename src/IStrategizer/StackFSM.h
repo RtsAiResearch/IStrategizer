@@ -20,7 +20,7 @@ namespace IStrategizer
 
         virtual void CheckTransitions() = 0;
 
-        void Reset()
+        virtual void Reset()
         {
             while (!m_states.empty())
                 m_states.pop();
@@ -33,8 +33,10 @@ namespace IStrategizer
             // Our Stack FSM has the property of never being empty
             // There should be always at least one state in the stack
             // e.g the Idle state can be the always state in the bottom
-            _ASSERTE(m_states.empty());
-            return m_states.top() == m_finalState; 
+            if (m_states.empty())
+                return false;
+            else
+                return m_states.top() == m_finalState; 
         }
 
         void Update()

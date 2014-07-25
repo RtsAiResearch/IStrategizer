@@ -332,7 +332,7 @@ bool StarCraftEntity::Move(Vector2 targetPos)
     return m_pUnit->move(pos);
 }
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
+bool StarCraftEntity::GatherResourceEntity(TID resourceId)
 {
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
@@ -340,13 +340,14 @@ bool StarCraftEntity::GatherResourceEntity(TID p_resourceEntityObjectId)
     Unit gatherer = m_pUnit;
     Unit resource;
 
-    resource = Broodwar->getUnit(p_resourceEntityObjectId);
+    resource = Broodwar->getUnit(resourceId);
     _ASSERTE(resource);
 
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
     //_ASSERTE(gatherer->canGather(resource));
 
     gatherer->stop();
+
     return gatherer->gather(resource);
 }
 //----------------------------------------------------------------------------------------------

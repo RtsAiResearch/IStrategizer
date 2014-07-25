@@ -3,6 +3,8 @@
 #include "GamePlayer.h"
 #include "GameEntity.h"
 #include "GameType.h"
+#include "IMSystemManager.h"
+#include "GroundControlIM.h"
 
 using namespace IStrategizer;
 
@@ -31,7 +33,7 @@ void EntityController::ReleaseEntity()
         m_entityId = INVALID_TID;
     }
 
-    m_targetPos = Vector2::Inf();
+    m_multiTargetPos[0] = Vector2::Inf();
 }
 //////////////////////////////////////////////////////////////////////////
 void EntityController::Update()
@@ -80,12 +82,37 @@ bool EntityController::ArrivedAtTarget()
 {
     if (!IsControllingEntity() ||
         !EntityExist() ||
-        m_targetPos.IsInf())
+        m_multiTargetPos[0].IsInf())
         return false;
 
     auto pEntity = g_Game->Self()->GetEntity(m_entityId);
     auto pos = pEntity->GetPosition();
-    auto distToTarget = m_targetPos.Distance(pos);
+    auto distToTarget = TargetPosition().Distance(pos);
 
     return distToTarget <= PositionArriveRadius;
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::ThreatAtTarget()
+{
+    if (!IsControllingEntity() ||
+        !EntityExist() ||
+        m_multiTargetPos[0].IsInf())
+        return false;
+
+    auto pGrnCtrlIM = (GroundControlIM*)g_IMSysMgr.GetIM(IM_GroundControl);
+    return pGrnCtrlIM->GetCellInfluenceFromWorldPosition(TargetPosition()) < 0;
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::IsTargetInSight()
+{
+    if (!IsControllingEntity() ||
+        !EntityExist() ||
+        m_multiTargetPos[0].IsInf())
+        return false;
+
+    auto pEntity = g_Game->Self()->GetEntity(m_entityId);
+    int los = pEntity->Type()->Attr(ECATTR_LineOfSight);
+    Circle2 sight(pEntity->GetPosition(), los);
+
+    return sight.IsInside(TargetPosition());
 }

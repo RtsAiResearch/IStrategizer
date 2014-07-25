@@ -263,3 +263,31 @@ unsigned StarCraftGame::GameFrame() const
 		return m_cachedGameFrame;
 
 }
+//////////////////////////////////////////////////////////////////////////
+BWAPI::Color BwapiColorFrom(GameDrawColor c)
+{
+    switch (c)
+    {
+    case IStrategizer::GCLR_Red:
+        return Colors::Red;
+    case IStrategizer::GCLR_Green:
+        return Colors::Green;
+    case IStrategizer::GCLR_Blue:
+        return Colors::Blue;
+    case IStrategizer::GCLR_Yellow:
+        return Colors::Yellow;
+    case IStrategizer::GCLR_White:
+    default:
+        return Colors::White;
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void StarCraftGame::DrawMapLine(Vector2 p1, Vector2 p2, GameDrawColor c)
+{
+    Broodwar->drawLineMap(p1.X, p1.Y, p2.X, p2.Y, BwapiColorFrom(c));
+}
+//////////////////////////////////////////////////////////////////////////
+void StarCraftGame::DrawMapCircle(Vector2 p, int r, GameDrawColor c)
+{
+    Broodwar->drawCircleMap(p.X, p.Y, r, BwapiColorFrom(c), false);
+}
