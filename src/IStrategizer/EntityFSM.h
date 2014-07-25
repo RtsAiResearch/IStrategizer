@@ -15,13 +15,20 @@ namespace IStrategizer
     public:
         EntityState(FSMStateTypeID typeId, EntityController* pController) :
             FSMState(typeId, (EngineObject*)pController),
-            m_targetPos(Vector2::Inf())
+            m_targetPos1(Vector2::Inf()),
+            m_targetPos2(Vector2::Inf()),
+            m_targetEntity(INVALID_TID)
         {}
 
-        Vector2 TargetPosition() const { return m_targetPos; }
+        Vector2 TargetPosition1() const { return m_targetPos1; }
+        Vector2 TargetPosition2() const { return m_targetPos2; }
+        TID TargetEntity() const { return m_targetEntity; }
+        void Update();
 
     protected:
-        Vector2 m_targetPos;
+        Vector2 m_targetPos1;
+        Vector2 m_targetPos2;
+        TID m_targetEntity;
     };
 
     class IdleState : public EntityState
@@ -69,6 +76,38 @@ namespace IStrategizer
         DISALLOW_COPY_AND_ASSIGN(FleeState);
     };
 
+    class AttackState : public EntityState
+    {
+    public:
+        static const FSMStateTypeID TypeID = 0x6B18AF0C;
+
+        AttackState(EntityController* pController) :
+            EntityState(TypeID, pController)
+        {}
+
+        void Enter();
+        void Update();
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(AttackState);
+    };
+
+    class AlarmState : public EntityState
+    {
+    public:
+        static const FSMStateTypeID TypeID = 0xE3068D3A;
+
+        AlarmState(EntityController* pController) :
+            EntityState(TypeID, pController)
+        {}
+
+        void Enter();
+        void Update();
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(AlarmState);
+    };
+
     class ScoutEntityFSM : public StackFSM
     {
     public:
@@ -99,6 +138,27 @@ namespace IStrategizer
         DISALLOW_COPY_AND_ASSIGN(ScoutEntityFSM);
         Goal m_scoutGoal;
         int m_currTargetPosIdx;
+    };
+
+    class GuardEntityFSM : public StackFSM
+    {
+    public:
+        static const FSMStateTypeID TypeID = 0x1D672B0D;
+
+        GuardEntityFSM(EntityController* pController) :
+            StackFSM(AlarmState::TypeID, IdleState::TypeID, TypeID, (EngineObject*)pController)
+        {
+            AddState(FSMStatePtr(new IdleState(pController)));
+            AddState(FSMStatePtr(new ArriveState(pController)));
+            AddState(FSMStatePtr(new FleeState(pController)));
+            AddState(FSMStatePtr(new AttackState(pController)));
+            AddState(FSMStatePtr(new AlarmState(pController)));
+        }
+
+        void CheckTransitions();
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(GuardEntityFSM);
     };
 }
 

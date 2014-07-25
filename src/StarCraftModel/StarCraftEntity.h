@@ -28,13 +28,14 @@ namespace IStrategizer
         StarCraftEntity(BWAPI::Unit p_unit);
 
         // Game Properties
-        IStrategizer::Vector2 GetPosition() const;
+        Vector2 GetPosition() const;
         int Attr(EntityObjectAttribute p_attrId) const;
         bool IsTraining(TID p_traineeId) const;
         bool IsNull() { return m_isOnline && m_pUnit == nullptr; }
         bool CanGather(TID resourceObjectId) const;
 		std::string ToString(bool minimal = false) const;
         TID GetTargetId() const;
+        Vector2 GetTargetPosition() const;
         bool Exists() const;
 
         // Game Commands

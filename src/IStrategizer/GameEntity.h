@@ -35,6 +35,7 @@ namespace IStrategizer
         PlayerType GetPlayer() const { return (PlayerType)Attr(EOATTR_OwnerId); }
         virtual Vector2 GetPosition() const = 0;
         virtual TID GetTargetId() const = 0;
+        virtual Vector2 GetTargetPosition() const = 0;
         virtual int Attr(EntityObjectAttribute attrId) const = 0;
         virtual bool IsTraining(TID traineeId) const = 0;
         virtual bool CanGather(TID resourceObjectId) const = 0;
@@ -55,6 +56,10 @@ namespace IStrategizer
 		virtual bool Stop() = 0;
 		virtual bool CanTrain(EntityClassType type) = 0;
         virtual bool Follow(TID entityId) = 0;
+
+        void DebugDrawTarget();
+        void DebugDrawRange();
+        void DebugDrawLineOfSight();
 
         virtual void SetOffline(RtsGame* pBelongingGame) = 0;
         bool Acquire() { return true; }

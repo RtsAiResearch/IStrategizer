@@ -268,26 +268,35 @@ BWAPI::Color BwapiColorFrom(GameDrawColor c)
 {
     switch (c)
     {
-    case IStrategizer::GCLR_Red:
+    case GCLR_Red:
         return Colors::Red;
-    case IStrategizer::GCLR_Green:
+    case GCLR_Green:
         return Colors::Green;
-    case IStrategizer::GCLR_Blue:
+    case GCLR_Blue:
         return Colors::Blue;
-    case IStrategizer::GCLR_Yellow:
+    case GCLR_Yellow:
         return Colors::Yellow;
-    case IStrategizer::GCLR_White:
+    case GCLR_Orange:
+        return Colors::Orange;
+    case GCLR_Cyan:
+        return Colors::Cyan;
+    case GCLR_White:
     default:
         return Colors::White;
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void StarCraftGame::DrawMapLine(Vector2 p1, Vector2 p2, GameDrawColor c)
+void StarCraftGame::DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c)
 {
     Broodwar->drawLineMap(p1.X, p1.Y, p2.X, p2.Y, BwapiColorFrom(c));
 }
 //////////////////////////////////////////////////////////////////////////
-void StarCraftGame::DrawMapCircle(Vector2 p, int r, GameDrawColor c)
+void StarCraftGame::DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c)
 {
     Broodwar->drawCircleMap(p.X, p.Y, r, BwapiColorFrom(c), false);
+}
+//////////////////////////////////////////////////////////////////////////
+void StarCraftGame::DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt)
+{
+    Broodwar->drawTextMap(p.X, p.Y, txt.c_str());
 }

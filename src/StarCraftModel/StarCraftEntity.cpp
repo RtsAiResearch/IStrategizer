@@ -307,6 +307,7 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Move(Vector2 targetPos)
 {
+    _ASSERTE(!targetPos.IsInf());
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
@@ -417,4 +418,16 @@ TID StarCraftEntity::GetTargetId() const
     }
 
     return id;
+}
+//////////////////////////////////////////////////////////////////////////
+Vector2 StarCraftEntity::GetTargetPosition() const
+{
+    BWAPI::Position pos;
+
+    if (m_pUnit->getTarget() != nullptr)
+        pos = m_pUnit->getTarget()->getPosition();
+    else
+        pos = m_pUnit->getTargetPosition();
+
+    return Vector2(pos.x, pos.y);
 }

@@ -50,6 +50,8 @@ namespace IStrategizer
         GCLR_Blue,
         GCLR_Yellow,
         GCLR_White,
+        GCLR_Orange,
+        GCLR_Cyan
     };
 
     ///> class=RtsGame
@@ -96,9 +98,12 @@ namespace IStrategizer
         float Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const;
         const WorldClock& Clock() const { return m_clock; }
         void Update();
+        GameEntity* GetEntity(_In_ TID entityId);
 
-        virtual void DrawMapLine(Vector2 p1, Vector2 p2, GameDrawColor c) = 0;
-        virtual void DrawMapCircle(Vector2 p, int r, GameDrawColor c) = 0;
+        // Debugging Draw Helpers
+        virtual void DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c) = 0;
+        virtual void DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c) = 0;
+        virtual void DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt) = 0;
 
         static SimilarityWeightModel DefaultWeightModel;
 

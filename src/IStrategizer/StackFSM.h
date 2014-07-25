@@ -61,9 +61,16 @@ namespace IStrategizer
         }
         
     protected:
-        void AddState(std::shared_ptr<FSMState> state) { m_stateMap[state->TypeId()] = state; }
-        void PushState(FSMStateTypeID newState) { m_states.push(newState); CurrentState()->Enter(); }
+        void AddState(_In_ std::shared_ptr<FSMState> state) { m_stateMap[state->TypeId()] = state; }
+        void PushState(_In_ FSMStateTypeID newState) { m_states.push(newState); CurrentState()->Enter(); }
         void PopState() { CurrentState()->Exit(); m_states.pop(); }
+        void PopAllAndPushState(_In_ FSMStateTypeID newState)
+        {
+            while (!m_states.empty())
+                PopState();
+            PushState(newState);
+        }
+
         FSMStatePtr CurrentState() { _ASSERTE(!m_states.empty()); return m_stateMap.at(m_states.top()); }
 
     private:

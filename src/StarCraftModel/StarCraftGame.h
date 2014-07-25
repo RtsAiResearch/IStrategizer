@@ -20,8 +20,9 @@ namespace IStrategizer
         int GetMaxForceSize() const { return 12; }
         size_t GetMaxTrainingQueueCount() const { return 5; }
         unsigned GameFrame() const;
-        void DrawMapLine(Vector2 p1, Vector2 p2, GameDrawColor c);
-        void DrawMapCircle(Vector2 p, int r, GameDrawColor c);
+        void DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c);
+        void DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c);
+        void DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt);
 
     protected:
         void InitPlayers();

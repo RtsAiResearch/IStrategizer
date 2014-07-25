@@ -1,5 +1,6 @@
 #include "GameEntity.h"
 #include "RtsGame.h"
+#include "GameType.h"
 
 using namespace IStrategizer;
 
@@ -30,4 +31,19 @@ void GameEntity::CacheAttributes()
 
         m_cacheFrame = g_Game->GameFrame();
     }
+}
+//////////////////////////////////////////////////////////////////////////
+void GameEntity::DebugDrawTarget()
+{
+    g_Game->DebugDrawMapLine(GetPosition(), GetTargetPosition(), GCLR_Red);
+}
+//////////////////////////////////////////////////////////////////////////
+void GameEntity::DebugDrawRange()
+{
+    g_Game->DebugDrawMapCircle(GetPosition(), Type()->Attr(ECATTR_GroundRange), GCLR_Yellow);
+}
+//////////////////////////////////////////////////////////////////////////
+void GameEntity::DebugDrawLineOfSight()
+{
+    g_Game->DebugDrawMapCircle(GetPosition(), Type()->Attr(ECATTR_LineOfSight), GCLR_White);
 }

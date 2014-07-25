@@ -49,7 +49,7 @@ GameEntity* EntityController::Entity()
     return g_Game->Self()->GetEntity(m_entityId);
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::EntityExist() const
+bool EntityController::EntityExists() const
 {
     return g_Game->Self()->GetEntity(m_entityId) != nullptr;
 }
@@ -57,7 +57,7 @@ bool EntityController::EntityExist() const
 bool EntityController::IsOnCriticalHP()
 {
     if (!IsControllingEntity() ||
-        !EntityExist())
+        !EntityExists())
         return false;
 
     auto pEntity = g_Game->Self()->GetEntity(m_entityId);
@@ -71,7 +71,7 @@ bool EntityController::IsOnCriticalHP()
 bool EntityController::IsBeingHit()
 {
     if (!IsControllingEntity() ||
-        !EntityExist())
+        !EntityExists())
         return false;
 
     auto pEntity = g_Game->Self()->GetEntity(m_entityId);
@@ -81,7 +81,7 @@ bool EntityController::IsBeingHit()
 bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
 {
     if (!IsControllingEntity() ||
-        !EntityExist() ||
+        !EntityExists() ||
         pos.IsInf())
         return false;
 
@@ -94,7 +94,7 @@ bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
 bool EntityController::ThreatAtTarget(_In_ Vector2 pos)
 {
     if (!IsControllingEntity() ||
-        !EntityExist() ||
+        !EntityExists() ||
         pos.IsInf())
         return false;
 
@@ -105,7 +105,7 @@ bool EntityController::ThreatAtTarget(_In_ Vector2 pos)
 bool EntityController::IsTargetInSight(_In_ Vector2 pos)
 {
     if (!IsControllingEntity() ||
-        !EntityExist() ||
+        !EntityExists() ||
         pos.IsInf())
         return false;
 
@@ -114,4 +114,30 @@ bool EntityController::IsTargetInSight(_In_ Vector2 pos)
     Circle2 sight(pEntity->GetPosition(), los);
 
     return sight.IsInside(pos);
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::IsTargetInSight(_In_ TID entityId)
+{
+    if (!IsControllingEntity() ||
+        !EntityExists())
+        return false;
+
+    auto pEntity = g_Game->Self()->GetEntity(m_entityId);
+    return IsTargetInSight(pEntity->GetPosition());
+}
+//////////////////////////////////////////////////////////////////////////
+TID EntityController::SmartSelectEnemyEntityInSight()
+{
+    return INVALID_TID;
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::IsAnyTargetInSight()
+{
+    return true;
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::EntityExists(_In_ TID entityId) const
+{
+    auto pEntity = g_Game->GetEntity(entityId);
+    return pEntity != nullptr && pEntity->Exists();
 }

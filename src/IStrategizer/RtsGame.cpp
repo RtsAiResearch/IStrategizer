@@ -267,3 +267,16 @@ void RtsGame::Update()
 
     m_clock.Update(GameFrame());
 }
+//////////////////////////////////////////////////////////////////////////
+GameEntity* RtsGame::GetEntity(_In_ TID entityId)
+{
+    for (auto& playerR : m_players)
+    {
+        auto pEntity = playerR.second->GetEntity(entityId);
+
+        if (pEntity != nullptr)
+            return pEntity;
+    }
+
+    return nullptr;
+}
