@@ -10,26 +10,40 @@ namespace IStrategizer
 {
     class EntityController;
 
-    class IdleState : public FSMState
+    class EntityState : public FSMState
+    {
+    public:
+        EntityState(FSMStateTypeID typeId, EntityController* pController) :
+            FSMState(typeId, (EngineObject*)pController),
+            m_targetPos(Vector2::Inf())
+        {}
+
+        Vector2 TargetPosition() const { return m_targetPos; }
+
+    protected:
+        Vector2 m_targetPos;
+    };
+
+    class IdleState : public EntityState
     {
     public:
         static const FSMStateTypeID TypeID = 0xE2D7944B;
 
         IdleState(EntityController* pController) :
-            FSMState(TypeID, (EngineObject*)pController)
+            EntityState(TypeID, pController)
         {}
 
     private:
         DISALLOW_COPY_AND_ASSIGN(IdleState);
     };
 
-    class ArriveState : public FSMState
+    class ArriveState : public EntityState
     {
     public:
         static const FSMStateTypeID TypeID = 0x274E49CA;
 
         ArriveState(EntityController* pController) :
-            FSMState(TypeID, (EngineObject*)pController)
+            EntityState(TypeID, pController)
         {}
 
         void Enter();
@@ -37,16 +51,15 @@ namespace IStrategizer
 
     private:
         DISALLOW_COPY_AND_ASSIGN(ArriveState);
-        Vector2 m_targetPos;
     };
 
-    class FleeState : public FSMState
+    class FleeState : public EntityState
     {
     public:
         static const FSMStateTypeID TypeID = 0x1B646F8D;
 
         FleeState(EntityController* pController) :
-            FSMState(TypeID, (EngineObject*)pController)
+            EntityState(TypeID, pController)
         {}
 
         void Enter();
@@ -54,7 +67,6 @@ namespace IStrategizer
 
     private:
         DISALLOW_COPY_AND_ASSIGN(FleeState);
-        Vector2 m_targetPos;
     };
 
     class ScoutEntityFSM : public StackFSM

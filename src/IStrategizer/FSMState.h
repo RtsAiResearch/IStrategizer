@@ -14,7 +14,7 @@ namespace IStrategizer
     public:
         FSMState(FSMStateTypeID typeId, EngineObject* pController) :
             m_typeId(typeId),
-            m_pController(pController) 
+            m_pController(pController)
         {}
 
         FSMStateTypeID TypeId() const { return m_typeId; }

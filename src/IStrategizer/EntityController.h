@@ -40,9 +40,9 @@ namespace IStrategizer
         // Controller Conditions
         bool IsOnCriticalHP();
         bool IsBeingHit();
-        bool ArrivedAtTarget();
-        bool ThreatAtTarget();
-        bool IsTargetInSight();
+        bool ArrivedAtTarget(_In_ Vector2 pos);
+        bool ThreatAtTarget(_In_ Vector2 pos);
+        bool IsTargetInSight(_In_ Vector2 pos);
 
     private:
         DISALLOW_COPY_AND_ASSIGN(EntityController);

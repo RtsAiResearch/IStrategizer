@@ -78,41 +78,40 @@ bool EntityController::IsBeingHit()
     return pEntity->Attr(EOATTR_IsBeingHit) > 0;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::ArrivedAtTarget()
+bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
 {
     if (!IsControllingEntity() ||
         !EntityExist() ||
-        m_multiTargetPos[0].IsInf())
+        pos.IsInf())
         return false;
 
     auto pEntity = g_Game->Self()->GetEntity(m_entityId);
-    auto pos = pEntity->GetPosition();
-    auto distToTarget = TargetPosition().Distance(pos);
+    auto distToTarget = pos.Distance(pEntity->GetPosition());
 
     return distToTarget <= PositionArriveRadius;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::ThreatAtTarget()
+bool EntityController::ThreatAtTarget(_In_ Vector2 pos)
 {
     if (!IsControllingEntity() ||
         !EntityExist() ||
-        m_multiTargetPos[0].IsInf())
+        pos.IsInf())
         return false;
 
     auto pGrnCtrlIM = (GroundControlIM*)g_IMSysMgr.GetIM(IM_GroundControl);
-    return pGrnCtrlIM->GetCellInfluenceFromWorldPosition(TargetPosition()) < 0;
+    return pGrnCtrlIM->GetCellInfluenceFromWorldPosition(pos) < 0;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsTargetInSight()
+bool EntityController::IsTargetInSight(_In_ Vector2 pos)
 {
     if (!IsControllingEntity() ||
         !EntityExist() ||
-        m_multiTargetPos[0].IsInf())
+        pos.IsInf())
         return false;
 
     auto pEntity = g_Game->Self()->GetEntity(m_entityId);
     int los = pEntity->Type()->Attr(ECATTR_LineOfSight);
     Circle2 sight(pEntity->GetPosition(), los);
 
-    return sight.IsInside(TargetPosition());
+    return sight.IsInside(pos);
 }
