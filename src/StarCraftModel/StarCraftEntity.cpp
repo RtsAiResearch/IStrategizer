@@ -27,7 +27,7 @@ m_isOnline(true)
 {
 }
 //----------------------------------------------------------------------------------------------
-int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
+int StarCraftEntity::P(EntityObjectProperty attrId) const
 {
     // Attributes are accessible from game directly if the entity is online in 2 cases only
     // 1- Unit is visible to player
@@ -46,22 +46,22 @@ int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
 
         switch (attrId)
         {
-        case EOATTR_Health:
+        case OP_Health:
             return m_pUnit->getHitPoints();
 
-        case EOATTR_Left:
+        case OP_Left:
             if (m_pUnit->getType().isBuilding())
                 return UnitPositionFromTilePosition(m_pUnit->getTilePosition().x);
             else
                 return m_pUnit->getLeft();
 
-        case EOATTR_Top:
+        case OP_Top:
             if (m_pUnit->getType().isBuilding())
                 return UnitPositionFromTilePosition(m_pUnit->getTilePosition().y);
             else
                 return m_pUnit->getTop();
 
-        case EOATTR_Right:
+        case OP_Right:
             if (m_pUnit->getType().isBuilding())
             {
                 int w = m_pUnit->getType().tileWidth();
@@ -71,42 +71,42 @@ int StarCraftEntity::Attr(EntityObjectAttribute attrId) const
             else
                 return m_pUnit->getRight();
 
-        case EOATTR_Bottom:
+        case OP_Bottom:
             if (m_pUnit->getType().isBuilding())
                 return UnitPositionFromTilePosition(m_pUnit->getTilePosition().y + m_pUnit->getType().tileHeight());
             else
                 return m_pUnit->getBottom();
-        case EOATTR_State:
+        case OP_State:
             return FetchState();
 
-        case EOATTR_OwnerId:
+        case OP_OwnerId:
             return g_Database.PlayerMapping.GetByFirst(m_pUnit->getPlayer()->getID());
 
-        case EOATTR_Type:
+        case OP_TypeId:
             return g_Database.EntityMapping.GetByFirst(m_pUnit->getType().getID());
 
-        case EOATTR_PosCenterX:
+        case OP_PosCenterX:
             return m_pUnit->getPosition().x;
 
-        case EOATTR_PosCenterY:
+        case OP_PosCenterY:
             return m_pUnit->getPosition().y;
 
-        case EOATTR_IsGatheringSecondaryResource:
+        case OP_IsGatheringSecondaryResource:
             return m_pUnit->isGatheringGas() || m_pUnit->isCarryingGas();
 
-        case EOATTR_IsGatheringPrimaryResource:
+        case OP_IsGatheringPrimaryResource:
             return m_pUnit->isGatheringMinerals() || m_pUnit->isCarryingMinerals();
 
-        case EOATTR_IsBeingGathered:
+        case OP_IsBeingGathered:
             return m_pUnit->isBeingGathered();
 
-        case EOATTR_OrderTargetId:
+        case OP_OrderTargetId:
             return GetTargetId();
 
-        case EOATTR_IsBeingHit:
+        case OP_IsBeingHit:
             return m_pUnit->isUnderAttack();
 
-        case EOATTR_IsMoving:
+        case OP_IsMoving:
             return m_pUnit->isMoving();
 
         default:
@@ -157,24 +157,24 @@ ObjectStateType StarCraftEntity::FetchState() const
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::IsTraining(TID p_traineeId) const
 {
-    GameEntity* pTrainee = g_Game->GetPlayer((PlayerType)Attr(EOATTR_OwnerId))->GetEntity(p_traineeId);
+    GameEntity* pTrainee = g_Game->GetPlayer((PlayerType)P(OP_OwnerId))->GetEntity(p_traineeId);
 
     if (nullptr == pTrainee)
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
     return MathHelper::RectangleMembership(
-        Attr(EOATTR_Left),
-        Attr(EOATTR_Top),
-        Attr(EOATTR_Right) - Attr(EOATTR_Left),
-        Attr(EOATTR_Bottom) - Attr(EOATTR_Top),
-        pTrainee->Attr(EOATTR_PosCenterX),
-        pTrainee->Attr(EOATTR_PosCenterY));
+        P(OP_Left),
+        P(OP_Top),
+        P(OP_Right) - P(OP_Left),
+        P(OP_Bottom) - P(OP_Top),
+        pTrainee->P(OP_PosCenterX),
+        pTrainee->P(OP_PosCenterY));
 }
 //----------------------------------------------------------------------------------------------
 string StarCraftEntity::ToString(bool minimal) const
 {
     char str[512];
-    TID gameTypeId = g_Database.EntityMapping.GetBySecond((EntityClassType)Attr(EOATTR_Type));
+    TID gameTypeId = g_Database.EntityMapping.GetBySecond((EntityClassType)P(OP_TypeId));
     std::string description = g_Database.EntityIdentMapping.GetByFirst(gameTypeId);
 
     if (minimal)
@@ -182,14 +182,14 @@ string StarCraftEntity::ToString(bool minimal) const
     else
     {
         std::string asResource = SharedResource::ToString();
-        sprintf_s(str, "%s[%d](%s, State=%s)", description.c_str(), m_id, asResource.c_str(), Enums[Attr(EOATTR_State)]);
+        sprintf_s(str, "%s[%d](%s, State=%s)", description.c_str(), m_id, asResource.c_str(), Enums[P(OP_State)]);
     }
     return str;
 }
 //----------------------------------------------------------------------------------------------
 Vector2 StarCraftEntity::GetPosition() const
 {
-    return Vector2(Attr(EOATTR_PosCenterX), Attr(EOATTR_PosCenterY));
+    return Vector2(P(OP_PosCenterX), P(OP_PosCenterY));
 }
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::CanGather(TID resourceObjectId) const

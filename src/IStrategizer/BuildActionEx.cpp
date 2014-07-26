@@ -46,7 +46,7 @@ void BuildActionEx::FreeResources(RtsGame &game)
 		if (!_buildArea.IsNull() && _buildArea.IsLocked())
 		{
 			// Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
-			_ASSERTE(game.GetEntityType((EntityClassType)_params[PARAM_EntityClassId])->Attr(ECATTR_IsSpecialBuilding) || !_buildArea.IsNull());
+			_ASSERTE(game.GetEntityType((EntityClassType)_params[PARAM_EntityClassId])->P(TP_IsSpecialBuilding) || !_buildArea.IsNull());
 			_buildArea.Unlock(this);
 		}
 
@@ -94,7 +94,7 @@ void BuildActionEx::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consume
 
 		if (pGameBuilding->TypeId() == _params[PARAM_EntityClassId] &&
 			((msgBuildPosition.X == _buildArea.Pos().X && msgBuildPosition.Y == _buildArea.Pos().Y) ||
-			game.GetEntityType(pGameBuilding->TypeId())->Attr(ECATTR_IsSpecialBuilding)))
+			game.GetEntityType(pGameBuilding->TypeId())->P(TP_IsSpecialBuilding)))
 		{
 			_buildingId = pGameBuilding->Id();
 			_buildStarted = true;
@@ -126,12 +126,12 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 		auto pBuilderType = g_Game->GetEntityType(pEntity->TypeId());
 
 
-		if (pBuilderType->Attr((ECATTR_IsBuilding)))
+		if (pBuilderType->P((TP_IsBuilding)))
 		{
 			/*if (_buildStarted)
 			{*/
 			LogInfo("Checking state of builder %s", pEntity->ToString().c_str());
-			ObjectStateType state = (ObjectStateType)pEntity->Attr(EOATTR_State);
+			ObjectStateType state = (ObjectStateType)pEntity->P(OP_State);
 
 			if (state != OBJSTATE_Constructing)
 			{
@@ -156,12 +156,12 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 		// for stucking
 		else
 		{
-			if (pEntity->Attr(EOATTR_State) == OBJSTATE_Idle)
+			if (pEntity->P(OP_State) == OBJSTATE_Idle)
 			{
 				LogInfo("Builder %s of action %s is standing idle, something wrong happened, failing the build", pEntity->ToString().c_str(), ToString().c_str());
 				success = false;
 			}
-			else if (pEntity->Attr(EOATTR_State) == OBJSTATE_Constructing)
+			else if (pEntity->P(OP_State) == OBJSTATE_Constructing)
 			{
 				if (_buildStarted)
 				{
@@ -173,8 +173,8 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 					}
 				}
 			}
-			else if (pEntity->Attr(EOATTR_State) == OBJSTATE_GatheringPrimary ||
-				pEntity->Attr(EOATTR_State) == OBJSTATE_GatheringSecondary)
+			else if (pEntity->P(OP_State) == OBJSTATE_GatheringPrimary ||
+				pEntity->P(OP_State) == OBJSTATE_GatheringSecondary)
 			{
 				LogInfo("Builder %s of action %s is gathering, something wrong happened, failing the build", pEntity->ToString().c_str(), ToString().c_str());
 				success = false;
@@ -209,7 +209,7 @@ bool BuildActionEx::SuccessConditionsSatisfied(RtsGame& game)
 
 		if (pEntity)
 		{
-			int entityState = pEntity->Attr(EOATTR_State);
+			int entityState = pEntity->P(OP_State);
 			return entityState != OBJSTATE_BeingConstructed;
 		}
 		else
@@ -244,7 +244,7 @@ bool BuildActionEx::Execute(RtsGame& game, const WorldClock& p_clock)
 		pGameBuilder->Lock(this);
 
 		// Special buildings (for example addons) are not associated with build positions so no need to assert in that case.
-		if (!game.GetEntityType(buildingType)->Attr(ECATTR_IsSpecialBuilding))
+		if (!game.GetEntityType(buildingType)->P(TP_IsSpecialBuilding))
 		{
 			_ASSERTE(!_buildArea.IsNull());
 			_buildArea.Lock(this);

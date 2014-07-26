@@ -189,8 +189,8 @@ void CaseGenerator::CalcTrainArmyCaseParams(_In_ CaseEx* pCase)
     {
         auto pType = g_Game->GetEntityType(r.first);
 
-        hpAcc += (pType->Attr(ECATTR_MaxHp) * r.second);
-        dmgAcc += (pType->Attr(ECATTR_GroundAttack) * r.second);
+        hpAcc += (pType->P(TP_MaxHp) * r.second);
+        dmgAcc += (pType->P(TP_GroundAttack) * r.second);
     }
 
     PlanStepParameters newParams;

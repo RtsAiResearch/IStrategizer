@@ -30,8 +30,8 @@ void ArmyController::ControlArmy()
         auto pEntity = entityR.second;
         auto pEntityType = pEntity->Type();
 
-        if (!pEntityType->Attr(ECATTR_IsWorker) &&
-            !pEntityType->Attr(ECATTR_IsBuilding) &&
+        if (!pEntityType->P(TP_IsWorker) &&
+            !pEntityType->P(TP_IsBuilding) &&
             g_Assist.IsEntityObjectReady(entityR.first) &&
             !pEntity->IsLocked())
         {
@@ -92,11 +92,11 @@ Vector2 ArmyController::Center() const
 //////////////////////////////////////////////////////////////////////////
 ArmyGroup ArmyController::Classify(const GameType* pType)
 {
-    if (pType->Attr(ECATTR_IsWorker))
+    if (pType->P(TP_IsWorker))
         return ARMGRP_Worker;
-    if (!pType->Attr(ECATTR_IsAttacker))
+    if (!pType->P(TP_IsAttacker))
         return ARMGRP_Supporter;
-    else if (pType->Attr(ECATTR_IsMelee))
+    else if (pType->P(TP_IsMelee))
         return ARMGRP_MeleelAttacker;
     else
         return ARMGRP_RangedAttacker;

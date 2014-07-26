@@ -49,7 +49,7 @@ namespace IStrategizer
         const PlayerResources* Resources() const { _ASSERTE(m_pResources != nullptr); return m_pResources;}
         GameTechTree* TechTree() const { _ASSERTE(m_pTechTree != nullptr); return m_pTechTree; }
         // Count number of entities which have their type attribute [attr] equals [val]
-        int CountEntityTypes(_In_ EntityClassAttribute attr, _In_ int val) const;
+        int CountEntityTypes(_In_ EntityTypeProperty attr, _In_ int val) const;
 
     protected:
         virtual GameEntity* FetchEntity(TID p_id) = 0;

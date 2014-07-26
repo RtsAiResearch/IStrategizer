@@ -8,93 +8,93 @@
 namespace IStrategizer
 {
     //---------------------------------------------------------------------------
-#define Prefix_EntityObjectAttribute EOATTR
-    enum EntityObjectAttribute
+#define Prefix_EntityObjectProperty OP
+    enum EntityObjectProperty
     {
-        EOATTR_State = 0x30000,
-        EOATTR_START = 0x30000,
-        EOATTR_Health,
-        EOATTR_Left,
-        EOATTR_Top,
-        EOATTR_OwnerId,
-        EOATTR_PosCenterX,
-        EOATTR_PosCenterY,
-        EOATTR_IsMoving,
-        EOATTR_Right,
-        EOATTR_Bottom,
-        EOATTR_Type,
-        EOATTR_IsGatheringPrimaryResource,
-        EOATTR_IsGatheringSecondaryResource,
-		EOATTR_IsBeingGathered,
-		EOATTR_OrderTargetId,
-        EOATTR_IsBeingHit,
-        EOATTR_END
+        OP_State = 0x30000,
+        OP_START = 0x30000,
+        OP_Health,
+        OP_Left,
+        OP_Top,
+        OP_OwnerId,
+        OP_PosCenterX,
+        OP_PosCenterY,
+        OP_IsMoving,
+        OP_Right,
+        OP_Bottom,
+        OP_TypeId,
+        OP_IsGatheringPrimaryResource,
+        OP_IsGatheringSecondaryResource,
+		OP_IsBeingGathered,
+		OP_OrderTargetId,
+        OP_IsBeingHit,
+        OP_END
     };
-#define Define_EntityObjectAttribute \
-    Enums[EOATTR_State] = "State"; \
-    Enums[EOATTR_Health] = "Health"; \
-    Enums[EOATTR_Left] = "Left X Position"; \
-    Enums[EOATTR_Top] = "Top Y Position"; \
-    Enums[EOATTR_OwnerId] = "Owner"; \
-    Enums[EOATTR_PosCenterX] = "Center X Position"; \
-    Enums[EOATTR_PosCenterY] = "Center Y Position"; \
-    Enums[EOATTR_IsMoving] = "Is Moving"; \
-    Enums[EOATTR_Right] = "Right X Position"; \
-    Enums[EOATTR_Bottom] = "Bottom Y Position"; \
-    Enums[EOATTR_Type] = "Type"; \
-    Enums[EOATTR_IsGatheringPrimaryResource] = "Is Gathering Primary Rresource"; \
-	Enums[EOATTR_IsGatheringSecondaryResource] = "Is Gathering Secondary Resource"; \
-	Enums[EOATTR_IsBeingGathered] = "Is Being Gathered"; \
-    Enums[EOATTR_OrderTargetId] = "Order Target ID"; \
-    Enums[EOATTR_IsBeingHit] = "Is Being Hit"; \
+#define Define_EntityObjectProperty \
+    Enums[OP_State] = "State"; \
+    Enums[OP_Health] = "Health"; \
+    Enums[OP_Left] = "Left X Position"; \
+    Enums[OP_Top] = "Top Y Position"; \
+    Enums[OP_OwnerId] = "Owner"; \
+    Enums[OP_PosCenterX] = "Center X Position"; \
+    Enums[OP_PosCenterY] = "Center Y Position"; \
+    Enums[OP_IsMoving] = "Is Moving"; \
+    Enums[OP_Right] = "Right X Position"; \
+    Enums[OP_Bottom] = "Bottom Y Position"; \
+    Enums[OP_TypeId] = "TypeID"; \
+    Enums[OP_IsGatheringPrimaryResource] = "Is Gathering Primary Rresource"; \
+	Enums[OP_IsGatheringSecondaryResource] = "Is Gathering Secondary Resource"; \
+	Enums[OP_IsBeingGathered] = "Is Being Gathered"; \
+    Enums[OP_OrderTargetId] = "Order Target ID"; \
+    Enums[OP_IsBeingHit] = "Is Being Hit"; \
     //---------------------------------------------------------------------------
-#define Prefix_EntityClassAttribute ECATTR
-    enum EntityClassAttribute
+#define Prefix_EntityTypeProperty TP
+    enum EntityTypeProperty
     {
-		ECATTR_MaxHp = 0x30100,
-		ECATTR_START = 0x30100,
-		ECATTR_CanAttack,
-		ECATTR_CanBuild,
-		ECATTR_IsBuilding,
-		ECATTR_IsWorker,
-		ECATTR_IsAttacker,
-		ECATTR_GroundAttack,
-        ECATTR_AirAttack,
-		ECATTR_AirRange,
-		ECATTR_GroundRange,
-        ECATTR_IsMelee,
-		ECATTR_IsPrimaryResource,
-		ECATTR_IsSecondaryResource,
-		ECATTR_IsSupply,
-		ECATTR_IsProducer,
-		ECATTR_Width,
-		ECATTR_Height,
-		ECATTR_LineOfSight,
-		ECATTR_IsSpecialBuilding,
-		ECATTR_BuildTime,
-		ECATTR_END
+		TP_MaxHp = 0x30100,
+		TP_START = 0x30100,
+		TP_CanAttack,
+		TP_CanBuild,
+		TP_IsBuilding,
+		TP_IsWorker,
+		TP_IsAttacker,
+		TP_GroundAttack,
+        TP_AirAttack,
+		TP_AirRange,
+		TP_GroundRange,
+        TP_IsMelee,
+		TP_IsPrimaryResource,
+		TP_IsSecondaryResource,
+		TP_IsSupply,
+		TP_IsProducer,
+		TP_Width,
+		TP_Height,
+		TP_LineOfSight,
+		TP_IsSpecialBuilding,
+		TP_BuildTime,
+		TP_END
 	};
-#define Define_EntityClassAttribute \
-	Enums[ECATTR_MaxHp] = "Max HP"; \
-	Enums[ECATTR_CanAttack] = "Can Attack"; \
-	Enums[ECATTR_CanBuild] = "Can Build"; \
-	Enums[ECATTR_IsBuilding] = "Is Building"; \
-	Enums[ECATTR_IsWorker] = "Is Worker"; \
-	Enums[ECATTR_IsAttacker] = "Is Attacker"; \
-    Enums[ECATTR_GroundAttack] = "Attack Damage"; \
-	Enums[ECATTR_AirRange] = "Air Weapon Range"; \
-	Enums[ECATTR_GroundRange] = "Ground Weapon Range"; \
-    Enums[ECATTR_IsMelee] = "Is Melee"; \
-    Enums[ECATTR_AirAttack] = "Air Damage"; \
-	Enums[ECATTR_IsPrimaryResource] = "Is Primary Resource"; \
-	Enums[ECATTR_IsSecondaryResource] = "Is Secondary Resource"; \
-	Enums[ECATTR_IsSupply] = "Is Supply"; \
-	Enums[ECATTR_IsProducer] = "Is Producer"; \
-	Enums[ECATTR_Width] = "Tile Width"; \
-	Enums[ECATTR_Height] = "Tile Height"; \
-	Enums[ECATTR_LineOfSight] = "Line of Sight"; \
-	Enums[ECATTR_IsSpecialBuilding] = "Is Special Building"; \
-	Enums[ECATTR_BuildTime] = "BuildTime"; \
+#define Define_EntityTypeProperty \
+    Enums[TP_MaxHp] = "Max HP"; \
+    Enums[TP_CanAttack] = "Can Attack"; \
+    Enums[TP_CanBuild] = "Can Build"; \
+    Enums[TP_IsBuilding] = "Is Building"; \
+    Enums[TP_IsWorker] = "Is Worker"; \
+    Enums[TP_IsAttacker] = "Is Attacker"; \
+    Enums[TP_GroundAttack] = "Attack Damage"; \
+    Enums[TP_AirRange] = "Air Weapon Range"; \
+    Enums[TP_GroundRange] = "Ground Weapon Range"; \
+    Enums[TP_IsMelee] = "Is Melee"; \
+    Enums[TP_AirAttack] = "Air Damage"; \
+    Enums[TP_IsPrimaryResource] = "Is Primary Resource"; \
+    Enums[TP_IsSecondaryResource] = "Is Secondary Resource"; \
+    Enums[TP_IsSupply] = "Is Supply"; \
+    Enums[TP_IsProducer] = "Is Producer"; \
+    Enums[TP_Width] = "Tile Width"; \
+    Enums[TP_Height] = "Tile Height"; \
+    Enums[TP_LineOfSight] = "Line of Sight"; \
+    Enums[TP_IsSpecialBuilding] = "Is Special Building"; \
+    Enums[TP_BuildTime] = "BuildTime"; \
     //---------------------------------------------------------------------------
 #define Prefix_PlayerAttribute PATTR
     enum PlayerAttribute

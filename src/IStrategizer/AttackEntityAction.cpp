@@ -85,7 +85,7 @@ bool AttackEntityAction::SuccessConditionsSatisfied(RtsGame& game)
         GameEntity* pGameTarget = game.Enemy()->GetEntity(m_targetId);
         _ASSERTE(pGameTarget);
 
-        ObjectStateType targetState = (ObjectStateType)pGameTarget->Attr(EOATTR_State);
+        ObjectStateType targetState = (ObjectStateType)pGameTarget->P(OP_State);
         return targetState == OBJSTATE_UnderAttack;
     }
     else

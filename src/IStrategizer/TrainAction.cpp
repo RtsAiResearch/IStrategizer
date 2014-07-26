@@ -96,7 +96,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
 			// 2. Trainer building is busy or in the training state
 			GameEntity* pTrainer = game.Self()->GetEntity(m_trainerId);
 			_ASSERTE(pTrainer);
-			ObjectStateType trainerState = (ObjectStateType)pTrainer->Attr(EOATTR_State);
+			ObjectStateType trainerState = (ObjectStateType)pTrainer->P(OP_State);
 			trainerBusy = trainerState == OBJSTATE_Training;
 			// 3. The trainee unit object exist, i.e not cancel
 			traineeExist = g_Assist.DoesEntityObjectExist(m_traineeId);
@@ -112,7 +112,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
 					// 4. Trainee is still being trained
 					GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
 					_ASSERTE(pTrainee);
-					ObjectStateType traineeState = (ObjectStateType)pTrainee->Attr(EOATTR_State);
+					ObjectStateType traineeState = (ObjectStateType)pTrainee->P(OP_State);
 					traineeBeingTrained = traineeState == OBJSTATE_BeingConstructed;
 
 					if (traineeBeingTrained || traineeState == OBJSTATE_Idle)
@@ -149,7 +149,7 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
 			// 2. Trainee is ready and no more being constructed
 			GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
 			_ASSERTE(pTrainee);
-			ObjectStateType traineeState = (ObjectStateType)pTrainee->Attr(EOATTR_State);
+			ObjectStateType traineeState = (ObjectStateType)pTrainee->P(OP_State);
 			traineeBeingTrained = traineeState == OBJSTATE_BeingConstructed;
 
 			if (!traineeBeingTrained)
@@ -197,10 +197,10 @@ void TrainAction::InitializePostConditions()
 	EntityClassType entityTypeId = (EntityClassType)_params[PARAM_EntityClassId];
 	GameType *pGameType = g_Game->GetEntityType(entityTypeId);
 
-	if (!pGameType->Attr(ECATTR_IsWorker))
+	if (!pGameType->P(TP_IsWorker))
 	{
-		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedAttackersTotalHP, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_MaxHp)));
-		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedAttackersTotalDamage, g_Game->GetEntityType(entityTypeId)->Attr(ECATTR_GroundAttack)));
+		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedAttackersTotalHP, g_Game->GetEntityType(entityTypeId)->P(TP_MaxHp)));
+		m_terms.push_back(new PlayerAttributeExist(PLAYER_Self, PATTR_AlliedAttackersTotalDamage, g_Game->GetEntityType(entityTypeId)->P(TP_GroundAttack)));
 	}
 
 	m_terms.push_back(new EntityClassExist(PLAYER_Self, entityTypeId, 1));

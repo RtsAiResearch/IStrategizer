@@ -6,8 +6,8 @@ using namespace IStrategizer;
 
 unsigned GameEntity::Distance(_In_ const GameEntity *pOther) const
 {
-    int dX = Attr(EOATTR_PosCenterX) - pOther->Attr(EOATTR_PosCenterX);
-    int dY = Attr(EOATTR_PosCenterY) - pOther->Attr(EOATTR_PosCenterY);
+    int dX = P(OP_PosCenterX) - pOther->P(OP_PosCenterX);
+    int dY = P(OP_PosCenterY) - pOther->P(OP_PosCenterY);
     return (unsigned)sqrt((float)(unsigned)((dX * dX) + (dY * dY)));
 }
 //////////////////////////////////////////////////////////////////////////
@@ -23,10 +23,10 @@ void GameEntity::CacheAttributes()
         LogDebugInfo("Caching %s attributes", ToString().c_str());
 
         m_cachedAttr.clear();
-        for (int attr = START(EntityObjectAttribute);
-            attr != END(EntityObjectAttribute); ++attr)
+        for (int attr = START(EntityObjectProperty);
+            attr != END(EntityObjectProperty); ++attr)
         {
-            m_cachedAttr[EntityObjectAttribute(attr)] = Attr(EntityObjectAttribute(attr));
+            m_cachedAttr[EntityObjectProperty(attr)] = P(EntityObjectProperty(attr));
         }
 
         m_cacheFrame = g_Game->GameFrame();
@@ -40,10 +40,10 @@ void GameEntity::DebugDrawTarget()
 //////////////////////////////////////////////////////////////////////////
 void GameEntity::DebugDrawRange()
 {
-    g_Game->DebugDrawMapCircle(GetPosition(), Type()->Attr(ECATTR_GroundRange), GCLR_Yellow);
+    g_Game->DebugDrawMapCircle(GetPosition(), Type()->P(TP_GroundRange), GCLR_Yellow);
 }
 //////////////////////////////////////////////////////////////////////////
 void GameEntity::DebugDrawLineOfSight()
 {
-    g_Game->DebugDrawMapCircle(GetPosition(), Type()->Attr(ECATTR_LineOfSight), GCLR_White);
+    g_Game->DebugDrawMapCircle(GetPosition(), Type()->P(TP_LineOfSight), GCLR_White);
 }

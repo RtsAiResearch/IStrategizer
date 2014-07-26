@@ -46,8 +46,8 @@ namespace IStrategizer
     //---------------------------------------------------------------------------
     void InitAttributesMetaData()
     {
-        DEFINE(EntityClassAttribute);
-        DEFINE(EntityObjectAttribute);
+        DEFINE(EntityTypeProperty);
+        DEFINE(EntityObjectProperty);
         DEFINE(PlayerAttribute);
         DEFINE(RtsGameModelAttribute);
     }

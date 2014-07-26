@@ -38,7 +38,7 @@ void ArriveState::Update()
         return;
 
     auto pController = (EntityController*)m_pController;
-    if (!pController->Entity()->Attr(EOATTR_IsMoving))
+    if (!pController->Entity()->P(OP_IsMoving))
     {
         LogInfo("Entity is not moving while it is supposed to, retrying the command but with diff coord");
         m_targetPos1 = (Circle2(pController->TargetPosition(), EntityController::PositionArriveRadius)).RandomInside();
@@ -64,7 +64,7 @@ void FleeState::Update()
         return;
 
     auto pController = (EntityController*)m_pController;
-    if (pController->Entity()->Attr(EOATTR_State) == OBJSTATE_Idle)
+    if (pController->Entity()->P(OP_State) == OBJSTATE_Idle)
     {
         LogInfo("Entity is idle while it is supposed to be moving, retrying the command");
         m_targetPos1 = (Circle2(g_Game->Self()->StartLocation(), EntityController::PositionArriveRadius)).RandomInside();
@@ -96,7 +96,7 @@ void AttackState::Update()
 
     auto pController = (EntityController*)m_pController;
     if (pController->Entity()->CanAttack(m_targetEntity) &&
-        pController->Entity()->Attr(EOATTR_State) == OBJSTATE_Idle)
+        pController->Entity()->P(OP_State) == OBJSTATE_Idle)
     {
         auto pTarget = g_Game->GetEntity(m_targetEntity);
         if (pTarget->Exists())

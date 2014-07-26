@@ -31,7 +31,7 @@ namespace IStrategizer
 
         // Game Properties
         Vector2 GetPosition() const;
-        int Attr(EntityObjectAttribute p_attrId) const;
+        int P(EntityObjectProperty p_attrId) const;
         bool IsTraining(TID p_traineeId) const;
         bool IsNull() { return m_isOnline && m_pUnit == nullptr; }
         bool CanGather(TID resourceObjectId) const;

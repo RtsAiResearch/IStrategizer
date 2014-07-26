@@ -90,8 +90,8 @@ void WorldMap::Update()
         {
             currentEntity = m_pGame->GetPlayer(players[i])->GetEntity(currPlayerEntites[j]);
 
-            cellX = currentEntity->Attr(EOATTR_Left) / m_cellSide;
-            cellY = currentEntity->Attr(EOATTR_Top) / m_cellSide;
+            cellX = currentEntity->P(OP_Left) / m_cellSide;
+            cellY = currentEntity->P(OP_Top) / m_cellSide;
 
             m_cellFeatureMatrix[cellY][cellX].AddEntity(currentEntity, players[i] == PLAYER_Self);
         }

@@ -84,7 +84,7 @@ bool GatherResourceAction::AliveConditionsSatisfied(RtsGame& game)
 
 		_ASSERTE(pGameGatherer);
 
-		ObjectStateType gathererState = (ObjectStateType)pGameGatherer->Attr(EOATTR_State);
+		ObjectStateType gathererState = (ObjectStateType)pGameGatherer->P(OP_State);
 
 		// 2. Gatherer is gathering resource
 		if (gathererState == OBJSTATE_GatheringPrimary || gathererState == OBJSTATE_GatheringSecondary)
@@ -136,7 +136,7 @@ bool GatherResourceAction::SuccessConditionsSatisfied(RtsGame& game)
 
 		_ASSERTE(pGameGatherer);
 
-		ObjectStateType gathererState = (ObjectStateType)pGameGatherer->Attr(EOATTR_State);
+		ObjectStateType gathererState = (ObjectStateType)pGameGatherer->P(OP_State);
 		if (gathererState == OBJSTATE_GatheringPrimary || gathererState == OBJSTATE_GatheringSecondary)
 		{
 			if (_params[PARAM_Amount] == DONT_CARE)

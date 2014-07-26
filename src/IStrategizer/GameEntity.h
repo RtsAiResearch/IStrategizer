@@ -12,7 +12,7 @@ class Action;
 namespace IStrategizer
 {
     enum EntityClassType;
-    enum EntityObjectAttribute;
+    enum EntityObjectProperty;
     enum PlayerType;
     class RtsGame;
     class GameType;
@@ -30,13 +30,13 @@ namespace IStrategizer
 
         // Game Properties
         TID Id() const { return m_id; }
-        EntityClassType TypeId() const { return (EntityClassType)Attr(EOATTR_Type); }
+        EntityClassType TypeId() const { return (EntityClassType)P(OP_TypeId); }
         const GameType* Type() const;
-        PlayerType GetPlayer() const { return (PlayerType)Attr(EOATTR_OwnerId); }
+        PlayerType GetPlayer() const { return (PlayerType)P(OP_OwnerId); }
         virtual Vector2 GetPosition() const = 0;
         virtual TID GetTargetId() const = 0;
         virtual Vector2 GetTargetPosition() const = 0;
-        virtual int Attr(EntityObjectAttribute attrId) const = 0;
+        virtual int P(EntityObjectProperty attrId) const = 0;
         virtual bool IsTraining(TID traineeId) const = 0;
         virtual bool CanGather(TID resourceObjectId) const = 0;
 		// Euclidean distance squared between 2 units on the game map
@@ -70,7 +70,7 @@ namespace IStrategizer
         ///> type=int
         TID m_id;
         ///> type=map(pair(int,int))
-        Serialization::SMap<EntityObjectAttribute, int> m_cachedAttr;
+        Serialization::SMap<EntityObjectProperty, int> m_cachedAttr;
         int m_cacheFrame;
     };
 }

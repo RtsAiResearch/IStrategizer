@@ -52,7 +52,7 @@ void CellFeature::To(PlanStepParameters& p_parameters) const
 //----------------------------------------------------------------------------------------------
 void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
 {
-    if(g_Game->GetEntityType(p_entity->TypeId())->Attr(ECATTR_IsBuilding))
+    if(g_Game->GetEntityType(p_entity->TypeId())->P(TP_IsBuilding))
     {
         if(p_isAllied)
             m_alliedBuildingDescription.AddEntity(p_entity);
@@ -60,7 +60,7 @@ void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
             m_enemyBuildingDescription.AddEntity(p_entity);
             
     }
-    else if(g_Game->GetEntityType(p_entity->TypeId())->Attr(ECATTR_CanAttack))
+    else if(g_Game->GetEntityType(p_entity->TypeId())->P(TP_CanAttack))
     {
         if(p_isAllied)
             m_alliedForceDescription.AddEntity(p_entity);
@@ -75,7 +75,7 @@ void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
 //----------------------------------------------------------------------------------------------
 void CellFeature::RemoveEntity(GameEntity *p_entity, bool p_isAllied)
 {
-    if(g_Game->GetEntityType(p_entity->TypeId())->Attr(ECATTR_IsBuilding))
+    if(g_Game->GetEntityType(p_entity->TypeId())->P(TP_IsBuilding))
     {
         if(p_isAllied)
             m_alliedBuildingDescription.RemoveEntity(p_entity);
@@ -83,7 +83,7 @@ void CellFeature::RemoveEntity(GameEntity *p_entity, bool p_isAllied)
             m_enemyBuildingDescription.RemoveEntity(p_entity);
 
     }
-    else if(g_Game->GetEntityType(p_entity->TypeId())->Attr(ECATTR_CanAttack))
+    else if(g_Game->GetEntityType(p_entity->TypeId())->P(TP_CanAttack))
     {
         if(p_isAllied)
             m_alliedForceDescription.RemoveEntity(p_entity);

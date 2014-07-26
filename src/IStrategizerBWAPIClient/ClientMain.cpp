@@ -470,7 +470,7 @@ void ClientMain::UpdateStatsView()
     for (auto workerId : workers)
     {
         GameEntity* worker = m_pGameModel->Self()->GetEntity(workerId);
-        workersState[(ObjectStateType)worker->Attr(EOATTR_State)].insert(worker->Id());
+        workersState[(ObjectStateType)worker->P(OP_State)].insert(worker->Id());
     }
 
     QTableWidgetItem* cell = NULL;

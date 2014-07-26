@@ -25,10 +25,10 @@ namespace IStrategizer
             FSMState(Target, controller),
             m_nextState(nextState)
         {
-            m_targetRanking.push_back(ECATTR_IsAttacker);
-            m_targetRanking.push_back(ECATTR_IsWorker);
-            m_targetRanking.push_back(ECATTR_IsProducer);
-            m_targetRanking.push_back(ECATTR_IsBuilding);
+            m_targetRanking.push_back(TP_IsAttacker);
+            m_targetRanking.push_back(TP_IsWorker);
+            m_targetRanking.push_back(TP_IsProducer);
+            m_targetRanking.push_back(TP_IsBuilding);
         }
 
         void Enter(RtsGame& game, const WorldClock& clock)
@@ -83,7 +83,7 @@ namespace IStrategizer
             {
                 GameEntity* pEnemyEntity = game.Enemy()->GetEntity(enemyEntityId);
                 _ASSERTE(pEnemyEntity);
-                ObjectStateType enemyEntityState = (ObjectStateType)pEnemyEntity->Attr(EOATTR_State);
+                ObjectStateType enemyEntityState = (ObjectStateType)pEnemyEntity->P(OP_State);
                 int distance = armyCenter.Distance(pEnemyEntity->GetPosition());
 
                 if (enemyEntityState == OBJSTATE_Attacking && distance <= closestDistance)
@@ -110,19 +110,19 @@ namespace IStrategizer
             Vector2 armyCenter = pArmy->Center();
             
             int rank = m_targetRanking.size();
-            for (EntityClassAttribute attr : m_targetRanking)
+            for (EntityTypeProperty attr : m_targetRanking)
             {
                 for (TID entityId : entities)
                 {
                     GameEntity* pGameEntity = game.Enemy()->GetEntity(entityId);
                     GameType* pEntityType = game.GetEntityType(pGameEntity->TypeId());
 
-                    if (!g_Assist.IsEntityObjectReady(entityId, PLAYER_Enemy) && !pEntityType->Attr(ECATTR_IsBuilding))
+                    if (!g_Assist.IsEntityObjectReady(entityId, PLAYER_Enemy) && !pEntityType->P(TP_IsBuilding))
                         continue;
 
                     int distance = armyCenter.Distance(pGameEntity->GetPosition());
 
-                    if (pEntityType->Attr(attr) && rank > m_targetTypeRank && distance <= closestDistance)
+                    if (pEntityType->P(attr) && rank > m_targetTypeRank && distance <= closestDistance)
                     {
                         m_targetId = entityId;
                         m_targetTypeRank = rank;
@@ -138,7 +138,7 @@ namespace IStrategizer
         int m_enemyEntitiesCount;
         bool m_enemyAttacked;
         BattleStateType m_nextState;
-        std::vector<EntityClassAttribute> m_targetRanking;
+        std::vector<EntityTypeProperty> m_targetRanking;
     };
 }
 

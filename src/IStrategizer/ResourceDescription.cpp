@@ -17,11 +17,11 @@ void ResourceDescription::AddEntity(GameEntity *p_entity)
     if (!pType)
         return;
 
-    if (pType->Attr(ECATTR_IsPrimaryResource))
+    if (pType->P(TP_IsPrimaryResource))
     {
         ++m_numberOfPrimary;
     }
-    else if (pType->Attr(ECATTR_IsSecondaryResource))
+    else if (pType->P(TP_IsSecondaryResource))
     {
         ++m_numberOfSecondary;
     }
@@ -35,11 +35,11 @@ void ResourceDescription::RemoveEntity(GameEntity *p_entity)
     if (!pType)
         return;
 
-    if(pType && pType->Attr(ECATTR_IsPrimaryResource))
+    if(pType && pType->P(TP_IsPrimaryResource))
     {
         --m_numberOfPrimary;
     }
-    else if (pType->Attr(ECATTR_IsSecondaryResource))
+    else if (pType->P(TP_IsSecondaryResource))
     {
         --m_numberOfSecondary;
     }

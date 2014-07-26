@@ -31,42 +31,42 @@ void StarCraftType::Init()
     // The supply amount is doubled, divide over two.
     m_requiredResources = WorldResources(m_type.supplyRequired() / 2, m_type.gasPrice(), m_type.mineralPrice());
 
-    Attr(ECATTR_CanAttack, m_type.canAttack());
-    Attr(ECATTR_CanBuild, m_type.canBuildAddon() || m_type.isWorker());
-    Attr(ECATTR_IsBuilding, m_type.isBuilding());
-    Attr(ECATTR_IsProducer, m_type.canProduce());
-    Attr(ECATTR_IsWorker, m_type.isWorker());
-    Attr(ECATTR_IsAttacker, m_type.canAttack() && !m_type.isWorker());
-    Attr(ECATTR_MaxHp, m_type.maxHitPoints());
-    Attr(ECATTR_IsPrimaryResource, m_type.isMineralField());
+    P(TP_CanAttack, m_type.canAttack());
+    P(TP_CanBuild, m_type.canBuildAddon() || m_type.isWorker());
+    P(TP_IsBuilding, m_type.isBuilding());
+    P(TP_IsProducer, m_type.canProduce());
+    P(TP_IsWorker, m_type.isWorker());
+    P(TP_IsAttacker, m_type.canAttack() && !m_type.isWorker());
+    P(TP_MaxHp, m_type.maxHitPoints());
+    P(TP_IsPrimaryResource, m_type.isMineralField());
     // FIXME: consider zerg and protoss refineries
-    Attr(ECATTR_IsSecondaryResource, (m_type.getID() == UnitTypes::Resource_Vespene_Geyser.getID()));
-    Attr(ECATTR_IsSupply, (m_type.supplyProvided() > 0));
+    P(TP_IsSecondaryResource, (m_type.getID() == UnitTypes::Resource_Vespene_Geyser.getID()));
+    P(TP_IsSupply, (m_type.supplyProvided() > 0));
     // FIXME: mention critical buildings
-    Attr(ECATTR_LineOfSight, m_type.sightRange());
-	Attr(ECATTR_BuildTime, m_type.buildTime());
+    P(TP_LineOfSight, m_type.sightRange());
+	P(TP_BuildTime, m_type.buildTime());
 
     // Convert build tiles to walk tiles
     if (m_type.isBuilding())
     {
-        Attr(ECATTR_Width, m_type.tileWidth() * 32);
-        Attr(ECATTR_Height, m_type.tileHeight() * 32);
+        P(TP_Width, m_type.tileWidth() * 32);
+        P(TP_Height, m_type.tileHeight() * 32);
     }
     else
     {
-        Attr(ECATTR_Width, m_type.dimensionLeft() * 2);
-        Attr(ECATTR_Height, m_type.dimensionUp() * 2);
+        P(TP_Width, m_type.dimensionLeft() * 2);
+        P(TP_Height, m_type.dimensionUp() * 2);
     }
 
     WeaponType groundWeapon = m_type.groundWeapon();
     WeaponType airWeapon = m_type.airWeapon();
 
-    Attr(ECATTR_AirRange, airWeapon.maxRange());
-    Attr(ECATTR_AirAttack, airWeapon.damageAmount());
-    Attr(ECATTR_GroundRange, groundWeapon.maxRange());
-    Attr(ECATTR_GroundAttack, groundWeapon.damageAmount());
-    Attr(ECATTR_IsSpecialBuilding, m_type.isRefinery() || m_type.isAddon());
-    Attr(ECATTR_IsMelee, groundWeapon.maxRange() <= TILE_SIZE);
+    P(TP_AirRange, airWeapon.maxRange());
+    P(TP_AirAttack, airWeapon.damageAmount());
+    P(TP_GroundRange, groundWeapon.maxRange());
+    P(TP_GroundAttack, groundWeapon.damageAmount());
+    P(TP_IsSpecialBuilding, m_type.isRefinery() || m_type.isAddon());
+    P(TP_IsMelee, groundWeapon.maxRange() <= TILE_SIZE);
 }
 
 EntityClassType StarCraftType::GetBuilderType() const

@@ -91,7 +91,7 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
         pEntity = pPlayer->GetEntity(entities[i]);
         _ASSERTE(pEntity);
 
-        currState = (ObjectStateType)pEntity->Attr(EOATTR_State);
+        currState = (ObjectStateType)pEntity->P(OP_State);
 
         if (pEntity->TypeId() == p_entityType.first &&
             !pEntity->IsLocked())
@@ -141,9 +141,9 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
                 _ASSERTE(pType);
 
                 // Building are considered exist if and only if it is constructed
-                if (pType->Attr(ECATTR_IsBuilding))
+                if (pType->P(TP_IsBuilding))
                 {
-                    if (pEntity->Attr(EOATTR_State) != (int)OBJSTATE_BeingConstructed)
+                    if (pEntity->P(OP_State) != (int)OBJSTATE_BeingConstructed)
                         ++matches;
                 }
                 else
@@ -173,7 +173,7 @@ bool EngineAssist::IsEntityObjectReady(TID p_entityObject, PlayerType p_playerTy
     pEntity = pPlayer->GetEntity(p_entityObject);
     isReady = pEntity != nullptr &&
         pEntity->Exists() &&
-        pEntity->Attr(EOATTR_State) != (int)OBJSTATE_BeingConstructed;
+        pEntity->P(OP_State) != (int)OBJSTATE_BeingConstructed;
 
     return isReady;
 }
@@ -313,7 +313,7 @@ bool EngineAssist::IsEntityInState(TID p_entityObject, ObjectStateType stateType
         _ASSERTE(pPlayer);
 
         pEntity = pPlayer->GetEntity(p_entityObject);
-        inState = (pEntity != nullptr) && ((ObjectStateType)pEntity->Attr(EOATTR_State) == stateType);
+        inState = (pEntity != nullptr) && ((ObjectStateType)pEntity->P(OP_State) == stateType);
 
         return inState;
     }

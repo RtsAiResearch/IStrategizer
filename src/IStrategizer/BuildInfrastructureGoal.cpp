@@ -43,7 +43,7 @@ void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool&
             return;
 
         EntityClassType entityType = pMsg->Data()->EntityType;
-        if (game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding))
+        if (game.GetEntityType(entityType)->P(TP_IsBuilding))
         {
             PlanStepParameters params;
 
@@ -77,7 +77,7 @@ bool BuildInfrastructureGoal::SuccessConditionsSatisfied(RtsGame& game)
         game.Self()->Entities(entityClassType, entities);
         for (auto building : entities)
         {
-            if (game.Self()->GetEntity(building)->Attr(EOATTR_State) != OBJSTATE_BeingConstructed)
+            if (game.Self()->GetEntity(building)->P(OP_State) != OBJSTATE_BeingConstructed)
             {
                 count++;
             }

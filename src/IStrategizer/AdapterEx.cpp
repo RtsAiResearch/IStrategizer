@@ -73,7 +73,7 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned worldX, unsigned worldY, c
 //////////////////////////////////////////////////////////////////////////
 MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
 {
-    if (!g_Game->GetEntityType(p_buildingType)->Attr(ECATTR_IsSpecialBuilding))
+    if (!g_Game->GetEntityType(p_buildingType)->P(TP_IsSpecialBuilding))
     {
         /*
         Position Adaptation Algorithm Outline:
@@ -99,8 +99,8 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         _ASSERTE(pGameType);
 
         // Append building width with padding of free space to achieve building spacing
-        searchData.BuildingWidth = pGameType->Attr(ECATTR_Width);
-        searchData.BuildingHeight = pGameType->Attr(ECATTR_Height);
+        searchData.BuildingWidth = pGameType->P(TP_Width);
+        searchData.BuildingHeight = pGameType->P(TP_Height);
         searchData.CandidateBuildPos = Vector2(-1, -1);
 		searchData.AllSidePadding = m_buildingSpacing;
         searchData.BuildingType = p_buildingType;
@@ -122,8 +122,8 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
 
             return MapArea(
                 searchData.CandidateBuildPos,
-                pGameType->Attr(ECATTR_Width),
-                pGameType->Attr(ECATTR_Height));
+                pGameType->P(TP_Width),
+                pGameType->P(TP_Height));
         }
     }
     else
@@ -343,7 +343,7 @@ void AdapterEx::StackRankEntitiesOfType(_In_ PlayerType playerType, _In_ EntityC
 		_ASSERTE(pEntity);
 
 		if (!pEntity->IsLocked())
-			clusters[(ObjectStateType)pEntity->Attr(EOATTR_State)].push_back(entityId);
+			clusters[(ObjectStateType)pEntity->P(OP_State)].push_back(entityId);
 	}
 
 	for (auto state : ranks)

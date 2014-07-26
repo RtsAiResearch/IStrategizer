@@ -39,7 +39,7 @@ void ResourceManager::NotifyMessegeSent(Message* pMsg)
 
 			auto pType = g_Game->GetEntityType(g_Game->GetPlayer(pData->OwnerId)->GetEntity(pData->EntityId)->TypeId());
 
-			if (pType->Attr(ECATTR_IsPrimaryResource))
+			if (pType->P(TP_IsPrimaryResource))
 			{
 
 				EntityList bases;
@@ -81,7 +81,7 @@ void ResourceManager::NotifyMessegeSent(Message* pMsg)
 		{
 			auto pType = g_Game->GetEntityType(pData->EntityType);
 
-			if (pType->Attr(ECATTR_IsPrimaryResource))
+			if (pType->P(TP_IsPrimaryResource))
 			{
 				RemoveSource(pData->EntityId);
 			}
@@ -131,7 +131,7 @@ void ResourceManager::MaintainSecondaryResources(_In_ RtsGame& game)
 
 	for (auto& sourceDist : m_secondarySrcDist)
 	{
-		if (game.Self()->GetEntity(sourceDist.second)->Attr(EOATTR_State) != OBJSTATE_Idle)
+		if (game.Self()->GetEntity(sourceDist.second)->P(OP_State) != OBJSTATE_Idle)
 			continue;
 
 		auto& source = m_sources.at(sourceDist.second);
@@ -177,7 +177,7 @@ void ResourceManager::UpdateWorkersState(_In_ RtsGame& game)
 	{
 		auto pWorker = game.Self()->GetEntity(workerId);
 
-		auto state = (ObjectStateType)pWorker->Attr(EOATTR_State);
+		auto state = (ObjectStateType)pWorker->P(OP_State);
 
 		if (state == OBJSTATE_BeingConstructed ||
 			pWorker->IsLocked())
@@ -299,9 +299,9 @@ void ResourceManager::UnassignAstrayWorkers(_In_ RtsGame& game)
 		auto pWorker = game.Self()->GetEntity(workerToSource.first);
 
 		// Worker has a wrong assignment, unassign it and reclaim it in the next update
-		if ((pWorker->Attr(EOATTR_IsGatheringSecondaryResource) &&
+		if ((pWorker->P(OP_IsGatheringSecondaryResource) &&
 			m_sources.at(workerToSource.second).Type != RESOURCE_Secondary) ||
-			(pWorker->Attr(EOATTR_IsGatheringPrimaryResource) &&
+			(pWorker->P(OP_IsGatheringPrimaryResource) &&
 			m_sources.at(workerToSource.second).Type != RESOURCE_Primary))
 		{
 			UnassignWorker(workerToSource.first);

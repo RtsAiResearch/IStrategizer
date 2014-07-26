@@ -69,7 +69,7 @@ PlanStepParameters ActionAbstractor::GetAbstractedParameterAux(PlanStepParameter
     if (actionParameters.count(PARAM_ObjectStateType) > 0)
     {
         StarCraftEntity *pStarCraftEntity = new StarCraftEntity(unit);
-        actionParameters[PARAM_ObjectStateType] = pStarCraftEntity->Attr(EOATTR_State);
+        actionParameters[PARAM_ObjectStateType] = pStarCraftEntity->P(OP_State);
     }
 
     if (actionParameters.count(PARAM_ResearchId) > 0)

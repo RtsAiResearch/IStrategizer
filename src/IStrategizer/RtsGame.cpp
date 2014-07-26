@@ -213,13 +213,13 @@ int RtsGameModel::Attr(_In_ RtsGameModelAttribute attr) const
         val = (int)m_game.Map()->Area();
         break;
     case RTSMODATTR_Player_Entities_NumBuildings:
-        val = m_game.Self()->CountEntityTypes(ECATTR_IsBuilding, 1);
+        val = m_game.Self()->CountEntityTypes(TP_IsBuilding, 1);
         break;
     case RTSMODATTR_Player_Entities_NumWorkers:
-        val = m_game.Self()->CountEntityTypes(ECATTR_CanBuild, 1);
+        val = m_game.Self()->CountEntityTypes(TP_CanBuild, 1);
         break;
     case RTSMODATTR_Player_Entities_NumAttackers:
-        val = m_game.Self()->CountEntityTypes(ECATTR_IsAttacker, 1);
+        val = m_game.Self()->CountEntityTypes(TP_IsAttacker, 1);
         break;
     case RTSMODATTR_Player_Entities_NumDoneResearches:
         m_game.Researches(researches);

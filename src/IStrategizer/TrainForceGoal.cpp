@@ -63,10 +63,10 @@ vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
         EntityClassType entityType = pEntity->TypeId();
 
         if (m_usedUnits.count(entityId) == 0 &&
-            !game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding) &&
+            !game.GetEntityType(entityType)->P(TP_IsBuilding) &&
             g_Assist.IsEntityObjectReady(entityId) &&
-            ((!game.GetEntityType(entityType)->Attr(ECATTR_IsAttacker)) ||
-            (pEntity->Attr(EOATTR_State) != OBJSTATE_Idle)))
+            ((!game.GetEntityType(entityType)->P(TP_IsAttacker)) ||
+            (pEntity->P(OP_State) != OBJSTATE_Idle)))
         {
             PlanStepParameters params;
             EntityList entities;
@@ -74,7 +74,7 @@ vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
             m_trainedUnits[entityType] = entities.size();
             params[PARAM_EntityClassId] = entityType;
             params[PARAM_Amount] = m_trainedUnits[entityType];
-            params[PARAM_ObjectStateType] = pEntity->Attr(EOATTR_State);
+            params[PARAM_ObjectStateType] = pEntity->P(OP_State);
             succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_TrainForce, params, true));
             m_usedUnits.insert(entityId);
         }

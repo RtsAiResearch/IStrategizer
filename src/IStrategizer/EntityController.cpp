@@ -60,8 +60,8 @@ bool EntityController::IsOnCriticalHP()
         return false;
 
     auto pEntity = g_Game->Self()->GetEntity(m_entityId);
-    auto currentHp = pEntity->Attr(EOATTR_Health);
-    auto maxHp = pEntity->Type()->Attr(ECATTR_MaxHp);
+    auto currentHp = pEntity->P(OP_Health);
+    auto maxHp = pEntity->Type()->P(TP_MaxHp);
     auto criticalHp = int(0.15 * (float)maxHp);
 
     return currentHp <= criticalHp;
@@ -73,7 +73,7 @@ bool EntityController::IsBeingHit()
         !EntityExists())
         return false;
 
-    return Entity()->Attr(EOATTR_IsBeingHit) > 0;
+    return Entity()->P(OP_IsBeingHit) > 0;
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
@@ -106,7 +106,7 @@ bool EntityController::IsTargetInSight(_In_ Vector2 pos)
         pos.IsInf())
         return false;
 
-    int los = Entity()->Type()->Attr(ECATTR_LineOfSight);
+    int los = Entity()->Type()->P(TP_LineOfSight);
     Circle2 sight(Entity()->GetPosition(), los);
 
     return sight.IsInside(pos);
@@ -134,7 +134,7 @@ TID EntityController::GetClosestEnemyEntityInSight()
     TID closestId = INVALID_TID;
     Vector2 selfPos = Entity()->GetPosition();
     Vector2 otherPos = Vector2::Inf();
-    int los = Entity()->Type()->Attr(ECATTR_LineOfSight);
+    int los = Entity()->Type()->P(TP_LineOfSight);
 
     // For now, just select the closest entity in sight
     for (auto& entityR : g_Game->Enemy()->Entities())
@@ -163,7 +163,7 @@ bool EntityController::IsAnyEnemyTargetInSight()
 
     EntityList enemies;
 
-    int los = Entity()->Type()->Attr(ECATTR_LineOfSight);
+    int los = Entity()->Type()->P(TP_LineOfSight);
     Circle2 sight(Entity()->GetPosition(), los);
 
     for (auto& entityR : g_Game->Enemy()->Entities())

@@ -46,7 +46,7 @@ bool MoveAction::AliveConditionsSatisfied(RtsGame& game)
     {
         GameEntity* pEntity = game.Self()->GetEntity(_entityId);
         _ASSERTE(pEntity);
-        satisfied = (pEntity->Attr(EOATTR_IsMoving) > 0 ? true : false);
+        satisfied = (pEntity->P(OP_IsMoving) > 0 ? true : false);
     }
     else
     {

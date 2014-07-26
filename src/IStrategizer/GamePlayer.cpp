@@ -96,7 +96,7 @@ void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds, bool ch
     for (EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
     {
         if (itr->second->TypeId() == typeId &&
-            (!checkReadyOnly || itr->second->Attr(EOATTR_State) != OBJSTATE_BeingConstructed) &&
+            (!checkReadyOnly || itr->second->P(OP_State) != OBJSTATE_BeingConstructed) &&
             (!checkFree || !itr->second->IsLocked()))
             entityIds.push_back(itr->first);
     }
@@ -320,9 +320,9 @@ MapArea GamePlayer::GetColonyMapArea()
         _ASSERTE(pGameType);
 
         m_colonyCenter = MapArea(
-            Vector2(pPlayerBase->Attr(EOATTR_Left), pPlayerBase->Attr(EOATTR_Top)),
-            pGameType->Attr(ECATTR_Width),
-            pGameType->Attr(ECATTR_Height));
+            Vector2(pPlayerBase->P(OP_Left), pPlayerBase->P(OP_Top)),
+            pGameType->P(TP_Width),
+            pGameType->P(TP_Height));
     }
 
     return m_colonyCenter;
@@ -341,21 +341,21 @@ void GamePlayer::SetOffline(RtsGame* pBelongingGame)
 int GamePlayer::Attr(PlayerAttribute attribute)
 {
     int amount = 0;
-    EntityClassAttribute classAttribute;
+    EntityTypeProperty classAttribute;
 
     switch (attribute)
     {
     case PATTR_AlliedAttackersTotalHP:
-        classAttribute = ECATTR_MaxHp;
+        classAttribute = TP_MaxHp;
         break;
 
     case PATTR_AlliedAttackersTotalDamage:
-        classAttribute = ECATTR_GroundAttack;
+        classAttribute = TP_GroundAttack;
         break;
 
     default:
         _ASSERTE(!"Inavlid player attribute!");
-        classAttribute = ECATTR_START;
+        classAttribute = TP_START;
         break;
     }
 
@@ -363,13 +363,13 @@ int GamePlayer::Attr(PlayerAttribute attribute)
     {
         const GameType* pGameType = pair.second->Type();
 
-        if (!pGameType->Attr(ECATTR_IsWorker) &&
-            !pGameType->Attr(ECATTR_IsBuilding))
+        if (!pGameType->P(TP_IsWorker) &&
+            !pGameType->P(TP_IsBuilding))
         {
             bool isReady = g_Assist.IsEntityObjectReady(pair.first);
             if (isReady)
             {
-                amount += pGameType->Attr(classAttribute);
+                amount += pGameType->P(classAttribute);
             }
         }
     }
@@ -377,13 +377,13 @@ int GamePlayer::Attr(PlayerAttribute attribute)
     return amount;
 }
 //////////////////////////////////////////////////////////////////////////
-int GamePlayer::CountEntityTypes(_In_ EntityClassAttribute attr, _In_ int val) const
+int GamePlayer::CountEntityTypes(_In_ EntityTypeProperty attr, _In_ int val) const
 {
     int count = 0;;
 
     for (auto entityEntry : m_entities)
     {
-        if (entityEntry.second->Type()->Attr(attr) == val)
+        if (entityEntry.second->Type()->P(attr) == val)
             ++count;
     }
 

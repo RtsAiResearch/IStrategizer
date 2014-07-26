@@ -31,7 +31,7 @@ TInfluence GetInfluenceSign(PlayerType p_playerId)
 //////////////////////////////////////////////////////////////////////////
 void GetInfluence(GameEntity *p_pGameObj, int &effectiveDistance, int &maxDistance, TInfluence &infValue)
 {
-    TInfluence infSign = GetInfluenceSign((PlayerType)p_pGameObj->Attr(EOATTR_OwnerId));
+    TInfluence infSign = GetInfluenceSign((PlayerType)p_pGameObj->P(OP_OwnerId));
     EntityClassType typeId;
 
     if (g_InfluenceCache.count(typeId) == 0)
@@ -41,13 +41,13 @@ void GetInfluence(GameEntity *p_pGameObj, int &effectiveDistance, int &maxDistan
         typeId = p_pGameObj->TypeId();
         pObjType = g_Game->GetEntityType(typeId);
 
-        effectiveDistance = max(pObjType->Attr(ECATTR_GroundRange), pObjType->Attr(ECATTR_AirRange));
-        maxDistance = pObjType->Attr(ECATTR_LineOfSight);
+        effectiveDistance = max(pObjType->P(TP_GroundRange), pObjType->P(TP_AirRange));
+        maxDistance = pObjType->P(TP_LineOfSight);
         // For non-attacking units (attack damage = 0) we consider their existence as influence in itself
         // We add 10 for all attack damages to take into account those non-attacking units
         // Also because we scale all attack damages the same, this has no effect on influence considerations
         // The relative influence should be conserved this way
-        int attackDmg = max(pObjType->Attr(ECATTR_GroundAttack), pObjType->Attr(ECATTR_AirAttack));
+        int attackDmg = max(pObjType->P(TP_GroundAttack), pObjType->P(TP_AirAttack));
         infValue = (attackDmg + 10);
         g_InfluenceCache[typeId] = infValue;
     }
@@ -70,8 +70,8 @@ void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
 
     pGameObj = p_pCaller->GetObj(p_pObjEntry);
     _ASSERTE(pGameObj);
-    currentPosition.X = pGameObj->Attr(EOATTR_Left);
-    currentPosition.Y = pGameObj->Attr(EOATTR_Top);
+    currentPosition.X = pGameObj->P(OP_Left);
+    currentPosition.Y = pGameObj->P(OP_Top);
 
     // Optimization: we skip neutral units because they don't have influence
     if (p_pObjEntry->OwnerId == PLAYER_Neutral)
@@ -80,8 +80,8 @@ void StampObjField(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
     p_pObjEntry->Stamped = true;
     p_pObjEntry->LastPosition = currentPosition;
 
-    centerPosition.X = pGameObj->Attr(EOATTR_PosCenterX);
-    centerPosition.Y = pGameObj->Attr(EOATTR_PosCenterY);
+    centerPosition.X = pGameObj->P(OP_PosCenterX);
+    centerPosition.Y = pGameObj->P(OP_PosCenterY);
     
     GetInfluence(pGameObj, effectiveDistance, maxDistance, initValue);
     p_pCaller->StampInfluenceGradient(centerPosition, maxDistance, effectiveDistance, initValue);

@@ -75,7 +75,7 @@ bool AttackGroundAction::SuccessConditionsSatisfied(RtsGame& game)
 
     GameEntity* pGameAttacker = game.Self()->GetEntity(_attackerId);
     _ASSERTE(pGameAttacker);
-    ObjectStateType attackerState = (ObjectStateType)pGameAttacker->Attr(EOATTR_State);
+    ObjectStateType attackerState = (ObjectStateType)pGameAttacker->P(OP_State);
     return (attackerState == OBJSTATE_Attacking) || (attackerState == OBJSTATE_UnderAttack);
 }
 //----------------------------------------------------------------------------------------------

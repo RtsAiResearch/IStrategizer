@@ -19,10 +19,10 @@ void BuildingDescription::AddEntity(GameEntity *p_entity)
     pType = g_Game->GetEntityType(typeId);
     _ASSERTE(pType);
 
-    if (pType->Attr(ECATTR_IsBuilding))
+    if (pType->P(TP_IsBuilding))
     {
         ++m_numberOfBuildings;
-        if (pType->Attr(ECATTR_IsProducer))
+        if (pType->P(TP_IsProducer))
             ++m_numberOfCriticalBuildings;
     }
 }
@@ -38,11 +38,11 @@ void BuildingDescription::RemoveEntity(GameEntity *p_entity)
     pType = g_Game->GetEntityType(typeId);
     _ASSERTE(pType);
 
-    if (pType->Attr(ECATTR_IsBuilding))
+    if (pType->P(TP_IsBuilding))
     {
         --m_numberOfBuildings;
 
-        if (pType->Attr(ECATTR_IsProducer))
+        if (pType->P(TP_IsProducer))
             --m_numberOfCriticalBuildings;
     }
 }
