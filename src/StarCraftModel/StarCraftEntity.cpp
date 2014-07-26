@@ -276,6 +276,8 @@ bool StarCraftEntity::AttackEntity(TID targetId)
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
+    LogInfo("%s -> Attack(%s)", ToString().c_str(),  g_Game->GetEntity(targetId)->ToString().c_str());
+
     // if we have issued a command to this unit already this frame, 
     // ignore this one and raise warning
     if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
@@ -293,6 +295,7 @@ bool StarCraftEntity::AttackEntity(TID targetId)
         !m_pUnit->isStuck() &&
         !m_pUnit->isIdle())
     {
+        LogWarning("Entity %s command drop", ToString().c_str());
         return true;
     }
     
@@ -328,6 +331,8 @@ bool StarCraftEntity::Move(Vector2 targetPos)
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
+    LogInfo("%s -> Move(%s)", ToString().c_str(), targetPos.ToString().c_str());
+
     // if we have issued a command to this unit already this frame, 
     // ignore this one and raise warning
     if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
@@ -346,6 +351,7 @@ bool StarCraftEntity::Move(Vector2 targetPos)
         !m_pUnit->isStuck() &&
         !m_pUnit->isIdle())
     {
+        LogWarning("Entity %s command drop", ToString().c_str());
         return true;
     }
 

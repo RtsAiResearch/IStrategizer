@@ -41,7 +41,6 @@ namespace IStrategizer
     private:
         TID m_trainerId;
         TID m_traineeId;
-        GameEntity* m_pTrainee;
         bool m_trainStarted;
         //WorldResources m_requiredResources;
         EntityClassType m_trainerType;

@@ -4,6 +4,8 @@
 #include <cmath>
 #include <limits>
 #include <sstream>
+#include <cstdlib>
+#include <time.h>
 
 #define SQR(X) ((X) * (X))
 
@@ -99,6 +101,20 @@ namespace IStrategizer
         bool IsInside(const Vector2T<T>& v)
         {
             return Center.Distance(v) < Radius;
+        }
+
+        // Generate a random point on the circle surface
+        Vector2T<T> RandomInside()
+        {
+            Vector2T<T> v = Center;
+
+            // Generate random radius in the range [1, R]
+            int randR = (rand() % Radius) + 1;
+
+            v.X += int(randR * (float)cos((float)rand()));
+            v.Y += int(randR * (float)sin((float)rand()));
+
+            return v;
         }
 
         Vector2T<T> Center;

@@ -26,10 +26,8 @@ const unsigned MaxExecTime = 5000;
 
 TrainAction::TrainAction()
 : Action(ACTIONEX_Train, MaxPrepTime, MaxExecTime),
-m_trainStarted(false),
 m_traineeId(INVALID_TID),
-m_trainerId(INVALID_TID),
-m_pTrainee(nullptr)
+m_trainerId(INVALID_TID)
 {
 	_params[PARAM_EntityClassId] = ECLASS_START;
 	CellFeature::Null().To(_params);
@@ -37,10 +35,8 @@ m_pTrainee(nullptr)
 //----------------------------------------------------------------------------------------------
 TrainAction::TrainAction(const PlanStepParameters& params)
 : Action(ACTIONEX_Train, params, MaxPrepTime, MaxExecTime),
-m_trainStarted(false),
 m_traineeId(INVALID_TID),
-m_trainerId(INVALID_TID),
-m_pTrainee(nullptr)
+m_trainerId(INVALID_TID)
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -59,8 +55,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
 		_ASSERTE(pEntity);
 
 		// We are interested only in free trainees that have not been locked before
-		if (!m_trainStarted &&
-			m_traineeId == INVALID_TID &&
+		if (m_traineeId == INVALID_TID &&
 			pEntity->TypeId() == _params[PARAM_EntityClassId] &&
 			!pEntity->IsLocked())
 		{
@@ -70,10 +65,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
 
 			if (pTrainer->IsTraining(entityId))
 			{
-				m_trainStarted = true;
 				m_traineeId = entityId;
-
-				m_pTrainee = pEntity;
 
 				// Lock that trainee and bound it to this action because if we don't
 				// other ready actions in the same update cycle will receive the same message
@@ -99,7 +91,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
 
 	if (trainerExist)
 	{
-		if (m_trainStarted)
+		if (m_traineeId != INVALID_TID)
 		{
 			// 2. Trainer building is busy or in the training state
 			GameEntity* pTrainer = game.Self()->GetEntity(m_trainerId);
@@ -147,7 +139,7 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
 	bool success = false;
 	bool traineeBeingTrained = false;
 
-	if (m_trainStarted)
+	if (m_traineeId != INVALID_TID)
 	{
 		// 1. Trainee unit object exist
 		bool traineeExist = g_Assist.DoesEntityObjectExist(m_traineeId);

@@ -122,6 +122,8 @@ IStrategizerEx::~IStrategizerEx()
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
 {
+    srand((unsigned)time(nullptr));
+
     // Note that the order of the engine components initialization is intended
     // and any change in the order can result in unexpected behavior
     //
