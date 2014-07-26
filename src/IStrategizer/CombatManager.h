@@ -27,23 +27,18 @@ namespace IStrategizer
             m_armyCtrlr.Update();
         }
 
-        void AttackArea(_In_ Circle2 area)
+        void AttackArea(_In_ Vector2 pos)
         {
-            _ASSERTE(!area.Center.IsInf());
-            m_armyCtrlr.AttackArea(area);
+            _ASSERTE(!pos.IsInf());
+            m_armyCtrlr.ControlArmy();
+            m_armyCtrlr.AttackArea(pos);
         }
 
-        void DefendArea(_In_ Circle2 area)
+        void DefendArea(_In_ Vector2 pos)
         {
-            _ASSERTE(!area.Center.IsInf());
-            // For now, defend is just an army attack, 
-            // until base buildings and workers are part of the equation
-            AttackArea(area);
-        }
-
-        void ScoutLocation(_In_ Vector2 loc)
-        {
-
+            _ASSERTE(!pos.IsInf());
+            m_armyCtrlr.ControlArmy();
+            m_armyCtrlr.DefendArea(pos);
         }
 
         bool NeedReinforcements() { return true; }

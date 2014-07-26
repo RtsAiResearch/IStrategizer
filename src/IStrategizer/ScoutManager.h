@@ -15,6 +15,7 @@ namespace IStrategizer
     {
     public:
         ScoutManager(StrategySelectorPtr pConsultant) :
+            m_scoutController(nullptr),
             m_pConsultant(pConsultant),
             m_active(false),
             m_knownEnemySpawnLocIdx(-1),

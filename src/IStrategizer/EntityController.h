@@ -10,25 +10,31 @@
 namespace IStrategizer
 {
     class RtsGame;
+    class ArmyController;
      
     class EntityController : public EngineObject
     {
     public:
         static const int PositionArriveRadius = 64;
 
-        EntityController() :
+        EntityController(ArmyController* pController) :
             m_entityId(INVALID_TID),
             m_targetEntityId(INVALID_TID),
-            m_singleTargetPos(Vector2::Inf())
+            m_singleTargetPos(Vector2::Inf()),
+            m_pController(pController)
         {}
 
         void Update();
-        void ControlEntity(_In_ TID entityId, _In_ StackFSMPtr logic);
+        void SetController(ArmyController* pController) { m_pController = pController; }
+        void ControlEntity(_In_ TID entityId);
+        void SetLogic(_In_ StackFSMPtr pLogic) { m_pLogic = pLogic; }
         void ReleaseEntity();
         bool IsControllingEntity() const{ return m_entityId != INVALID_TID; }
         bool IsLogicGoalAchieved() const { return m_pLogic->IsInFinalState(); }
         void ResetLogic() { m_pLogic->Reset(); }
-        TID SmartSelectEnemyEntityInSight();
+
+        // Expensive Helpers are candidate for caching somewhere
+        TID GetClosestEnemyEntityInSight(); // Expensive call
 
         // Controller Parameters
         GameEntity* Entity();
@@ -47,9 +53,9 @@ namespace IStrategizer
         bool ThreatAtTarget(_In_ Vector2 pos);
         bool IsTargetInSight(_In_ Vector2 pos);
         bool IsTargetInSight(_In_ TID entityId);
-        bool IsAnyTargetInSight();
         bool EntityExists() const;
         bool EntityExists(_In_ TID entityId) const;
+        bool IsAnyEnemyTargetInSight(); // Expensive call
 
     private:
         DISALLOW_COPY_AND_ASSIGN(EntityController);
@@ -59,7 +65,11 @@ namespace IStrategizer
         Vector2 m_singleTargetPos;
         std::vector<Vector2> m_multiTargetPos;
         StackFSMPtr m_pLogic;
+        ArmyController* m_pController;
     };
+
+    typedef std::shared_ptr<EntityController> EntityControllerPtr;
+    typedef std::shared_ptr<const EntityController> ConstEntityControllerPtr;
 }
 
 #endif // !ENTITYCONTROLLER_H

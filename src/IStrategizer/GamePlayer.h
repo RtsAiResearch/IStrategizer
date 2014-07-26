@@ -31,6 +31,7 @@ namespace IStrategizer
         GamePlayer(TID raceId);
         virtual ~GamePlayer();
 		void Entities(EntityList& p_entityIds);
+        const EntitiesMap& Entities() const { return m_entities; }
         void Entities(EntityClassType p_typeId, EntityList& p_entityIds, bool checkReadyOnly = false, bool checkFree = false);
 		void GetBases(EntityList &p_basesIds);
 		void GetWorkers(_Out_ EntityList& workers);

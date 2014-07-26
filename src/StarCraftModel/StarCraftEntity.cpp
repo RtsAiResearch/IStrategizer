@@ -271,22 +271,39 @@ bool StarCraftEntity::Stop()
     return m_pUnit->stop();
 };
 //----------------------------------------------------------------------------------------------
-bool StarCraftEntity::AttackEntity(TID p_targetEntityObjectId)
+bool StarCraftEntity::AttackEntity(TID targetId)
 {
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-    Unit attacker = m_pUnit;
-    Unit target;
+    // if we have issued a command to this unit already this frame, 
+    // ignore this one and raise warning
+    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
+    {
+        LogWarning("Entity %s command drop", ToString().c_str());
+        return true;
+    }
 
-    target = Broodwar->getUnit(p_targetEntityObjectId);
+    // get the unit's current command
+    BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
 
-    if (!target)
-        DEBUG_THROW(ItemNotFoundException(XcptHere));
+    // if we've already told this unit to attack this target, ignore this command
+    if (currentCommand.getType() == BWAPI::UnitCommandTypes::Attack_Unit &&
+        currentCommand.getTarget()->getID() == targetId &&
+        !m_pUnit->isStuck() &&
+        !m_pUnit->isIdle())
+    {
+        return true;
+    }
+    
+    auto target = Broodwar->getUnit(targetId);
 
-    _ASSERTE(m_pUnit->canAttackUnit(target));
-    attacker->stop();
-    return attacker->attack(target);
+    _ASSERTE(m_pUnit->isDetected());
+
+    if (m_pUnit->canAttackUnit(target))
+        return m_pUnit->attack(target);
+    else
+        return false;
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
@@ -325,11 +342,14 @@ bool StarCraftEntity::Move(Vector2 targetPos)
 
     // if we've already told this unit to attack this target, ignore this command
     if (currentCommand.getType() == BWAPI::UnitCommandTypes::Move &&
-        currentCommand.getTargetPosition() == pos)
+        currentCommand.getTargetPosition() == pos &&
+        !m_pUnit->isStuck() &&
+        !m_pUnit->isIdle())
     {
         return true;
     }
 
+    _ASSERTE(Broodwar->isWalkable(WalkPositionFromUnitPosition(pos.x), WalkPositionFromUnitPosition(pos.y)));
     return m_pUnit->move(pos);
 }
 //----------------------------------------------------------------------------------------------
@@ -338,18 +358,34 @@ bool StarCraftEntity::GatherResourceEntity(TID resourceId)
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-    Unit gatherer = m_pUnit;
-    Unit resource;
+    // if we have issued a command to this unit already this frame, 
+    // ignore this one and raise warning
+    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
+    {
+        LogWarning("Entity %s command drop", ToString().c_str());
+        return true;
+    }
 
-    resource = Broodwar->getUnit(resourceId);
-    _ASSERTE(resource);
+    // get the unit's current command
+    BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
+
+    // if we've already told this unit to attack this target, ignore this command
+    if (currentCommand.getType() == BWAPI::UnitCommandTypes::Right_Click_Unit &&
+        currentCommand.getTarget()->getID() == resourceId &&
+        !m_pUnit->isStuck() &&
+        !m_pUnit->isIdle())
+    {
+        return true;
+    }
+
+    auto resource = Broodwar->getUnit(resourceId);
 
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
-    //_ASSERTE(gatherer->canGather(resource));
 
-    gatherer->stop();
-
-    return gatherer->gather(resource);
+    if (m_pUnit->isInterruptible())
+        return m_pUnit->gather(resource);
+    else
+        return false;
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftEntity::SetOffline(RtsGame* pBelongingGame)
@@ -430,4 +466,9 @@ Vector2 StarCraftEntity::GetTargetPosition() const
         pos = m_pUnit->getTargetPosition();
 
     return Vector2(pos.x, pos.y);
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftEntity::CanAttack(_In_ TID targetId) const
+{
+    return m_pUnit->canAttackUnit(Broodwar->getUnit(targetId));
 }

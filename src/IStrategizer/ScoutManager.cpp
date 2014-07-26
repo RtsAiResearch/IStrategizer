@@ -60,8 +60,8 @@ void ScoutManager::Update()
             _ASSERTE(pScout);
             _ASSERTE(!pScout->IsLocked());
             _ASSERTE(pScout->Attr(EOATTR_State) != OBJSTATE_BeingConstructed);
-            m_scoutController.ControlEntity(scoutEntityId,
-                make_shared<ScoutEntityFSM>(ScoutEntityFSM::SCTGL_Explore, &m_scoutController));
+            m_scoutController.ControlEntity(scoutEntityId);
+            m_scoutController.SetLogic(make_shared<ScoutEntityFSM>(ScoutEntityFSM::SCTGL_Explore, &m_scoutController));
 
             vector<Vector2> suspectLocations;
             for (auto& locR : m_otherSpawnLocations)

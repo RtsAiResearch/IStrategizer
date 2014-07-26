@@ -5,16 +5,17 @@
 #include "GameType.h"
 #include "IMSystemManager.h"
 #include "GroundControlIM.h"
+#include "EntityFSM.h"
 
 using namespace IStrategizer;
 
-void EntityController::ControlEntity(_In_ TID entityId, _In_ StackFSMPtr pLogic)
+void EntityController::ControlEntity(_In_ TID entityId)
 {
     if (m_entityId != INVALID_TID)
         ReleaseEntity();
 
     m_entityId = entityId;
-    m_pLogic = pLogic;
+    m_pLogic = StackFSMPtr(new IdleEntityFSM(this));
 
     auto pScout = g_Game->Self()->GetEntity(m_entityId);
     _ASSERTE(pScout);
@@ -32,8 +33,6 @@ void EntityController::ReleaseEntity()
 
         m_entityId = INVALID_TID;
     }
-
-    m_multiTargetPos[0] = Vector2::Inf();
 }
 //////////////////////////////////////////////////////////////////////////
 void EntityController::Update()
@@ -51,7 +50,7 @@ GameEntity* EntityController::Entity()
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::EntityExists() const
 {
-    return g_Game->Self()->GetEntity(m_entityId) != nullptr;
+    return EntityExists(m_entityId);
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::IsOnCriticalHP()
@@ -74,8 +73,7 @@ bool EntityController::IsBeingHit()
         !EntityExists())
         return false;
 
-    auto pEntity = g_Game->Self()->GetEntity(m_entityId);
-    return pEntity->Attr(EOATTR_IsBeingHit) > 0;
+    return Entity()->Attr(EOATTR_IsBeingHit) > 0;
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
@@ -85,8 +83,7 @@ bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
         pos.IsInf())
         return false;
 
-    auto pEntity = g_Game->Self()->GetEntity(m_entityId);
-    auto distToTarget = pos.Distance(pEntity->GetPosition());
+    auto distToTarget = pos.Distance(Entity()->GetPosition());
 
     return distToTarget <= PositionArriveRadius;
 }
@@ -109,9 +106,8 @@ bool EntityController::IsTargetInSight(_In_ Vector2 pos)
         pos.IsInf())
         return false;
 
-    auto pEntity = g_Game->Self()->GetEntity(m_entityId);
-    int los = pEntity->Type()->Attr(ECATTR_LineOfSight);
-    Circle2 sight(pEntity->GetPosition(), los);
+    int los = Entity()->Type()->Attr(ECATTR_LineOfSight);
+    Circle2 sight(Entity()->GetPosition(), los);
 
     return sight.IsInside(pos);
 }
@@ -122,18 +118,62 @@ bool EntityController::IsTargetInSight(_In_ TID entityId)
         !EntityExists())
         return false;
 
-    auto pEntity = g_Game->Self()->GetEntity(m_entityId);
+    auto pEntity = g_Game->GetEntity(entityId);
     return IsTargetInSight(pEntity->GetPosition());
 }
 //////////////////////////////////////////////////////////////////////////
-TID EntityController::SmartSelectEnemyEntityInSight()
+TID EntityController::GetClosestEnemyEntityInSight()
 {
-    return INVALID_TID;
+    if (!IsControllingEntity() ||
+        !EntityExists())
+        return false;
+
+    EntityList enemies;
+
+    int closestDist = INT_MAX;
+    TID closestId = INVALID_TID;
+    Vector2 selfPos = Entity()->GetPosition();
+    Vector2 otherPos = Vector2::Inf();
+    int los = Entity()->Type()->Attr(ECATTR_LineOfSight);
+
+    // For now, just select the closest entity in sight
+    for (auto& entityR : g_Game->Enemy()->Entities())
+    {
+        if (!Entity()->CanAttack(entityR.first))
+            continue;
+
+        otherPos = entityR.second->GetPosition();
+        int dist = selfPos.Distance(otherPos);
+
+        if (dist < los && dist < closestDist)
+        {
+            closestId = entityR.first;
+            closestDist = dist;
+        }
+    }
+
+    return closestId;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsAnyTargetInSight()
+bool EntityController::IsAnyEnemyTargetInSight()
 {
-    return true;
+    if (!IsControllingEntity() ||
+        !EntityExists())
+        return false;
+
+    EntityList enemies;
+
+    int los = Entity()->Type()->Attr(ECATTR_LineOfSight);
+    Circle2 sight(Entity()->GetPosition(), los);
+
+    for (auto& entityR : g_Game->Enemy()->Entities())
+    {
+        if (sight.IsInside(entityR.second->GetPosition()) &&
+            Entity()->CanAttack(entityR.first))
+            return true;
+    }
+
+    return false;
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::EntityExists(_In_ TID entityId) const

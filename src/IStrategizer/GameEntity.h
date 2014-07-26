@@ -43,6 +43,7 @@ namespace IStrategizer
 		unsigned Distance(_In_ const GameEntity *pOther) const;
         void CacheAttributes();
         virtual bool Exists() const = 0;
+        virtual bool CanAttack(_In_ TID targetId) const = 0;
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;

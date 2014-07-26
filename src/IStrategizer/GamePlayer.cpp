@@ -366,9 +366,8 @@ int GamePlayer::Attr(PlayerAttribute attribute)
         if (!pGameType->Attr(ECATTR_IsWorker) &&
             !pGameType->Attr(ECATTR_IsBuilding))
         {
-            bool isLocked = pair.second->IsLocked();
             bool isReady = g_Assist.IsEntityObjectReady(pair.first);
-            if (!isLocked && isReady)
+            if (isReady)
             {
                 amount += pGameType->Attr(classAttribute);
             }

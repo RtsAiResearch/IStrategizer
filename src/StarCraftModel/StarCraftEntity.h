@@ -10,6 +10,8 @@
 
 #define TilePositionFromUnitPosition(UnitPos) ((UnitPos) / 32)
 #define UnitPositionFromTilePosition(TilePos) ((TilePos) * 32)
+#define WalkPositionFromUnitPosition(UnitPos) ((UnitPos) / 8)
+#define UnitPositionFromWalkPosition(TilePos) ((TilePos) * 8)
 
 namespace IStrategizer
 {
@@ -37,6 +39,7 @@ namespace IStrategizer
         TID GetTargetId() const;
         Vector2 GetTargetPosition() const;
         bool Exists() const;
+        bool CanAttack(_In_ TID targetId) const;
 
         // Game Commands
         bool Research(IStrategizer::ResearchType p_researchId);

@@ -165,15 +165,17 @@ bool EngineAssist::IsEntityObjectReady(TID p_entityObject, PlayerType p_playerTy
 {
     GamePlayer *pPlayer;
     GameEntity *pEntity;
-    bool exist;
+    bool isReady;
 
     pPlayer = g_Game->GetPlayer(p_playerType);
     _ASSERTE(pPlayer);
 
     pEntity = pPlayer->GetEntity(p_entityObject);
-    exist = (pEntity != nullptr) && (pEntity->Attr(EOATTR_State) != (int)OBJSTATE_BeingConstructed);
+    isReady = pEntity != nullptr &&
+        pEntity->Exists() &&
+        pEntity->Attr(EOATTR_State) != (int)OBJSTATE_BeingConstructed;
 
-    return exist;
+    return isReady;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::DoesEntityObjectExist(TID p_entityObject, PlayerType p_playerType)

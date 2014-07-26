@@ -67,9 +67,16 @@ void FleeState::Update()
 void AttackState::Enter()
 {
     auto pController = (EntityController*)m_pController;
-    m_targetEntity = pController->SmartSelectEnemyEntityInSight();
-    bool success = pController->Entity()->AttackEntity(m_targetEntity);
-    _ASSERTE(success);
+    auto candidateTargetId = pController->GetClosestEnemyEntityInSight();
+    m_targetPos1 = pController->TargetPosition();
+
+    if (pController->Entity()->CanAttack(candidateTargetId))
+    {
+        auto pController = (EntityController*)m_pController;
+        m_targetEntity = pController->GetClosestEnemyEntityInSight();
+        bool success = pController->Entity()->AttackEntity(m_targetEntity);
+        _ASSERTE(success);
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void AttackState::Update()
@@ -77,7 +84,8 @@ void AttackState::Update()
     EntityState::Update();
 
     auto pController = (EntityController*)m_pController;
-    if (pController->Entity()->Attr(EOATTR_State) == OBJSTATE_Idle)
+    if (pController->Entity()->CanAttack(m_targetEntity) &&
+        pController->Entity()->Attr(EOATTR_State) == OBJSTATE_Idle)
     {
         auto pTarget = g_Game->GetEntity(m_targetEntity);
         if (pTarget->Exists())
@@ -98,6 +106,8 @@ void AlarmState::Enter()
 //////////////////////////////////////////////////////////////////////////
 void AlarmState::Update()
 {
+    EntityState::Update();
+
     auto pController = (EntityController*)m_pController;
     g_Game->DebugDrawMapLine(pController->Entity()->GetPosition(), m_targetPos1, GCLR_Orange);
 }
@@ -203,9 +213,14 @@ void GuardEntityFSM::CheckTransitions()
         }
         break;
     case AttackState::TypeID:
+
         if (pController->IsOnCriticalHP())
         {
             PopAllAndPushState(FleeState::TypeID);
+        }
+        else if (pController->TargetEntity() == INVALID_TID)
+        {
+
         }
         else if (!pController->IsTargetInSight(pCurrState->TargetEntity()) ||
             !pController->EntityExists(pCurrState->TargetEntity()))
@@ -218,7 +233,7 @@ void GuardEntityFSM::CheckTransitions()
         {
             PushState(ArriveState::TypeID);
         }
-        else if (pController->IsAnyTargetInSight())
+        else if (pController->IsAnyEnemyTargetInSight())
         {
             PushState(AttackState::TypeID);
         }

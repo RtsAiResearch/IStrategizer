@@ -63,21 +63,21 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
     }
     else if (msgType == MSG_PlanGoalSuccess)
     {
-        auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
+        //auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
 
-        // Location not discovered, scouting trials seemed to fail
-        // Needs to perform attack now, lets scout with the army itself
-        if (enemyLoc.IsInf())
-        {
-            _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
-            enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
-        }
+        //// Location not discovered, scouting trials seemed to fail
+        //// Needs to perform attack now, lets scout with the army itself
+        //if (enemyLoc.IsInf())
+        //{
+        //    _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
+        //    enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
+        //}
 
-        m_combatMgr.AttackArea(Circle2(enemyLoc, 500));
+        m_combatMgr.DefendArea(g_Game->Self()->StartLocation());
     }
     else if (msgType == MSG_BaseUnderAttack)
     {
-        m_combatMgr.DefendArea(Circle2(*((DataMessage<Vector2>*)pMsg)->Data(), 500));
+        m_combatMgr.DefendArea(*((DataMessage<Vector2>*)pMsg)->Data());
     }
 }
 //--------------------------------------------------------------------------------
@@ -169,8 +169,13 @@ bool IStrategizerEx::Init()
 //////////////////////////////////////////////////////////////////////////
 void IStrategizerEx::SelectNextProductionGoal()
 {
-    PlanStepParameters params;
-    m_param.Consultant->SelectGameOpening(params);
-    _ASSERTE(!params.empty());
-    m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
+    // Game opening plan selection
+    if (g_Game->GameFrame() == 0)
+    {
+        PlanStepParameters params;
+        m_param.Consultant->SelectGameOpening(params);
+        _ASSERTE(!params.empty());
+        m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
+    }
+    // TODO: Incremental power armies should be trained
 }

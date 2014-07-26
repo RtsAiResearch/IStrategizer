@@ -144,8 +144,8 @@ void ResourceManager::MaintainSecondaryResources(_In_ RtsGame& game)
 			if (pWorker->GatherResourceEntity(source.Id))
 			{
 				AssignWorker(pWorker->Id(), source.Id);
-				lastPrimaryGatherers.erase(pWorker);
 			}
+            lastPrimaryGatherers.erase(pWorker);
 		}
 	}
 }

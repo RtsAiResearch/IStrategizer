@@ -18,6 +18,8 @@ namespace IStrategizer
             m_states.push(m_initialState);
         }
 
+        void SetController(_In_ EngineObject* pController) { m_pController = pController; }
+
         virtual void CheckTransitions() = 0;
 
         virtual void Reset()

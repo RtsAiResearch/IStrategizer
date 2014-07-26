@@ -108,6 +108,23 @@ namespace IStrategizer
         DISALLOW_COPY_AND_ASSIGN(AlarmState);
     };
 
+    class IdleEntityFSM : public StackFSM
+    {
+    public:
+        static const FSMStateTypeID TypeID = 0x081ADAD2;
+
+        IdleEntityFSM(EntityController* pController) :
+            StackFSM(IdleState::TypeID, IdleState::TypeID, TypeID, (EngineObject*)pController)
+        {
+            AddState(FSMStatePtr(new IdleState(pController)));
+        }
+
+        void CheckTransitions() {}
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(IdleEntityFSM);
+    };
+
     class ScoutEntityFSM : public StackFSM
     {
     public:
