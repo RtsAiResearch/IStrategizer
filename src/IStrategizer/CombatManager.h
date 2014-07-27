@@ -20,24 +20,18 @@ namespace IStrategizer
             m_armyCtrlr(pConsultant)
         {}
 
-        void Init() {}
-
-        void Update()
-        {
-            m_armyCtrlr.Update();
-        }
+        void Init();
+        void Update();
 
         void AttackArea(_In_ Vector2 pos)
         {
             _ASSERTE(!pos.IsInf());
-            m_armyCtrlr.ControlArmy();
             m_armyCtrlr.AttackArea(pos);
         }
 
         void DefendArea(_In_ Vector2 pos)
         {
             _ASSERTE(!pos.IsInf());
-            m_armyCtrlr.ControlArmy();
             m_armyCtrlr.DefendArea(pos);
         }
 

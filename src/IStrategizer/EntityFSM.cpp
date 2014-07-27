@@ -20,7 +20,7 @@ void EntityState::Update()
     g_Game->DebugDrawMapText(pController->Entity()->GetPosition(), ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-void ArriveState::Enter()
+void ArriveEntityState::Enter()
 {
     auto pController = (EntityController*)m_pController;
     m_targetPos1 = pController->TargetPosition();
@@ -28,7 +28,7 @@ void ArriveState::Enter()
     _ASSERTE(success);
 }
 //////////////////////////////////////////////////////////////////////////
-void ArriveState::Update()
+void ArriveEntityState::Update()
 {
     EntityState::Update();
 
@@ -46,7 +46,7 @@ void ArriveState::Update()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void FleeState::Enter()
+void FleeEntityState::Enter()
 {
     auto pController = (EntityController*)m_pController;
     m_targetPos1 = g_Game->Self()->StartLocation();
@@ -54,7 +54,7 @@ void FleeState::Enter()
     _ASSERTE(success);
 }
 //////////////////////////////////////////////////////////////////////////
-void FleeState::Update()
+void FleeEntityState::Update()
 {
     EntityState::Update();
 
@@ -72,7 +72,7 @@ void FleeState::Update()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void AttackState::Enter()
+void AttackEntityState::Enter()
 {
     auto pController = (EntityController*)m_pController;
     auto candidateTargetId = pController->GetClosestEnemyEntityInSight();
@@ -80,14 +80,14 @@ void AttackState::Enter()
 
     if (pController->Entity()->CanAttack(candidateTargetId))
     {
+        m_targetEntity = candidateTargetId;
         auto pController = (EntityController*)m_pController;
-        m_targetEntity = pController->GetClosestEnemyEntityInSight();
         bool success = pController->Entity()->AttackEntity(m_targetEntity);
         _ASSERTE(success);
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void AttackState::Update()
+void AttackEntityState::Update()
 {
     EntityState::Update();
 
@@ -105,17 +105,23 @@ void AttackState::Update()
             pController->Entity()->AttackEntity(m_targetEntity);
         }
     }
+    else if (m_targetEntity != pController->TargetEntity())
+    {
+        m_targetEntity = pController->TargetEntity();
+        bool success = pController->Entity()->AttackEntity(m_targetEntity);
+        _ASSERTE(success);
+    }
 
     g_Game->DebugDrawMapLine(pController->Entity()->GetPosition(), m_targetPos1, GCLR_Orange);
 }
 //////////////////////////////////////////////////////////////////////////
-void AlarmState::Enter()
+void AlarmEntityState::Enter()
 {
     auto pController = (EntityController*)m_pController;
     m_targetPos1 = pController->TargetPosition();
 }
 //////////////////////////////////////////////////////////////////////////
-void AlarmState::Update()
+void AlarmEntityState::Update()
 {
     EntityState::Update();
 
@@ -136,12 +142,12 @@ void ScoutEntityFSM::CheckTransitions()
 
     switch (pCurrState->TypeId())
     {
-    case ArriveState::TypeID:
+    case ArriveEntityState::TypeID:
         if (pController->IsOnCriticalHP() ||
             (m_scoutGoal == SCTGL_Explore && pController->IsTargetInSight(targetPos) && pController->ThreatAtTarget(targetPos)))
         {
             PopState();
-            PushState(FleeState::TypeID);
+            PushState(FleeEntityState::TypeID);
         }
         // Pick next target
         else if ((m_scoutGoal == SCTGL_Visit && pController->ArrivedAtTarget(targetPos)) ||
@@ -150,20 +156,20 @@ void ScoutEntityFSM::CheckTransitions()
             if (SetNextTargetPosition())
             {
                 PopState();
-                PushState(ArriveState::TypeID);
+                PushState(ArriveEntityState::TypeID);
             }
             else
             {
                 PopState();
-                PushState(FleeState::TypeID);
+                PushState(FleeEntityState::TypeID);
             }
         }
         break;
-    case FleeState::TypeID:
+    case FleeEntityState::TypeID:
         if (pController->ArrivedAtTarget(targetPos))
         {
             PopState();
-            PushState(IdleState::TypeID);
+            PushState(IdleEntityState::TypeID);
         }
         break;
     }
@@ -207,27 +213,27 @@ void GuardEntityFSM::CheckTransitions()
 
     switch (pCurrState->TypeId())
     {
-    case FleeState::TypeID:
+    case FleeEntityState::TypeID:
         if (pController->ArrivedAtTarget(targetPos))
         {
-            PopAllAndPushState(IdleState::TypeID);
+            PopAllAndPushState(IdleEntityState::TypeID);
         }
         break;
-    case ArriveState::TypeID:
+    case ArriveEntityState::TypeID:
         if (pController->IsOnCriticalHP())
         {
-            PopAllAndPushState(FleeState::TypeID);
+            PopAllAndPushState(FleeEntityState::TypeID);
         }
         else if (pController->ArrivedAtTarget(targetPos))
         {
             PopState();
         }
         break;
-    case AttackState::TypeID:
+    case AttackEntityState::TypeID:
 
         if (pController->IsOnCriticalHP())
         {
-            PopAllAndPushState(FleeState::TypeID);
+            PopAllAndPushState(FleeEntityState::TypeID);
         }
         else if (pController->TargetEntity() == INVALID_TID)
         {
@@ -239,14 +245,14 @@ void GuardEntityFSM::CheckTransitions()
             PopState();
         }
         break;
-    case AlarmState::TypeID:
+    case AlarmEntityState::TypeID:
         if (!pController->IsTargetInSight(targetPos))
         {
-            PushState(ArriveState::TypeID);
+            PushState(ArriveEntityState::TypeID);
         }
         else if (pController->IsAnyEnemyTargetInSight())
         {
-            PushState(AttackState::TypeID);
+            PushState(AttackEntityState::TypeID);
         }
         break;
     }

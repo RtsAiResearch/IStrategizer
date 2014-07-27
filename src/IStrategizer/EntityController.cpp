@@ -6,16 +6,28 @@
 #include "IMSystemManager.h"
 #include "GroundControlIM.h"
 #include "EntityFSM.h"
+#include "ArmyController.h"
 
 using namespace IStrategizer;
 
+Vector2 EntityController::TargetPosition() const 
+{ 
+    // If my target position is not set, always return the army target position
+    // If my target position is set, then return my override position
+    // otherwise if I am part of an army, then return controller position, otherwise
+    // return my position
+    if (m_singleTargetPos.IsInf())
+        return (m_pController != nullptr ? m_pController->TargetPosition() : m_singleTargetPos);
+    else
+        return m_singleTargetPos;
+}
+//////////////////////////////////////////////////////////////////////////
 void EntityController::ControlEntity(_In_ TID entityId)
 {
     if (m_entityId != INVALID_TID)
         ReleaseEntity();
 
     m_entityId = entityId;
-    m_pLogic = StackFSMPtr(new IdleEntityFSM(this));
 
     auto pScout = g_Game->Self()->GetEntity(m_entityId);
     _ASSERTE(pScout);
@@ -32,6 +44,11 @@ void EntityController::ReleaseEntity()
             pScout->Unlock(this);
 
         m_entityId = INVALID_TID;
+
+        while (!m_pLogicMemory.empty())
+            m_pLogicMemory.pop();
+
+        m_pLogicMemory.push(StackFSMPtr(new IdleEntityFSM(this)));
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -40,10 +57,21 @@ void EntityController::Update()
     if (m_entityId == INVALID_TID)
         return;
 
-    m_pLogic->Update();
+    m_pLogicMemory.top()->Update();
+
+    if (m_pLogicMemory.top()->TypeId() == FleeEntityState::TypeID &&
+        m_pController != nullptr)
+    {
+        m_pController->OnControlledEntityFlee(this);
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 GameEntity* EntityController::Entity()
+{
+    return g_Game->Self()->GetEntity(m_entityId);
+}
+//////////////////////////////////////////////////////////////////////////
+const GameEntity* EntityController::Entity() const
 {
     return g_Game->Self()->GetEntity(m_entityId);
 }
@@ -53,18 +81,22 @@ bool EntityController::EntityExists() const
     return EntityExists(m_entityId);
 }
 //////////////////////////////////////////////////////////////////////////
+bool EntityController::IsOnCriticalHP(_In_ const GameEntity* pEntity)
+{
+    auto currentHp = pEntity->P(OP_Health);
+    auto maxHp = pEntity->Type()->P(TP_MaxHp);
+    auto criticalHp = int(0.15 * (float)maxHp);
+
+    return currentHp <= criticalHp;
+}
+//////////////////////////////////////////////////////////////////////////
 bool EntityController::IsOnCriticalHP()
 {
     if (!IsControllingEntity() ||
         !EntityExists())
         return false;
 
-    auto pEntity = g_Game->Self()->GetEntity(m_entityId);
-    auto currentHp = pEntity->P(OP_Health);
-    auto maxHp = pEntity->Type()->P(TP_MaxHp);
-    auto criticalHp = int(0.15 * (float)maxHp);
-
-    return currentHp <= criticalHp;
+    return IsOnCriticalHP(Entity());
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::IsBeingHit()

@@ -12,8 +12,9 @@ namespace IStrategizer
     class FSMState : public EngineObject
     {
     public:
-        FSMState(FSMStateTypeID typeId, EngineObject* pController) :
+        FSMState(FSMStateTypeID typeId, const char* pName, EngineObject* pController) :
             m_typeId(typeId),
+            m_pName(pName),
             m_pController(pController)
         {}
 
@@ -21,7 +22,7 @@ namespace IStrategizer
         virtual void Enter() {}
         virtual void Exit() {}
         virtual void Update() {} 
-
+        std::string ToString(bool minimal = false) { return m_pName; }
         static const FSMStateTypeID NullFSMState = 0;
 
     protected:
@@ -29,6 +30,7 @@ namespace IStrategizer
 
         EngineObject* m_pController;
         const FSMStateTypeID m_typeId;
+        const char* m_pName;
     };
 
     typedef std::shared_ptr<FSMState> FSMStatePtr;

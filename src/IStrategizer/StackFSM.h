@@ -10,7 +10,7 @@ namespace IStrategizer
     {
     public:
         StackFSM(FSMStateTypeID initialState, FSMStateTypeID finalState, FSMStateTypeID typeId, EngineObject* pController) :
-            FSMState(typeId, pController),
+            FSMState(typeId, "UnknownStackFSM", pController),
             m_initialState(initialState),
             m_finalState(finalState),
             m_firstUpdate(true) 

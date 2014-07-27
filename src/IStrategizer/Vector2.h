@@ -76,8 +76,8 @@ namespace IStrategizer
             return ss.str();
         }
 
-        bool IsZero() { return *this == Zero(); }
-        bool IsInf() { return *this == Inf(); }
+        bool IsZero() const { return *this == Zero(); }
+        bool IsInf() const { return *this == Inf(); }
 
         static const Vector2T& Zero() { static Vector2T zero; return zero; }
         static const Vector2T& One() { static Vector2T one(T(1), T(1)); return one; }
@@ -110,9 +110,10 @@ namespace IStrategizer
 
             // Generate random radius in the range [1, R]
             int randR = (rand() % Radius) + 1;
+            float randTheta = (float)rand();
 
-            v.X += int(randR * (float)cos((float)rand()));
-            v.Y += int(randR * (float)sin((float)rand()));
+            v.X += int(randR * (float)cos(randTheta));
+            v.Y += int(randR * (float)sin(randTheta));
 
             return v;
         }

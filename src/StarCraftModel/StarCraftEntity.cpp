@@ -286,14 +286,11 @@ bool StarCraftEntity::AttackEntity(TID targetId)
         return true;
     }
 
-    // get the unit's current command
     BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
 
-    // if we've already told this unit to attack this target, ignore this command
     if (currentCommand.getType() == BWAPI::UnitCommandTypes::Attack_Unit &&
         currentCommand.getTarget()->getID() == targetId &&
-        !m_pUnit->isStuck() &&
-        !m_pUnit->isIdle())
+        ((!m_pUnit->isStuck() && !m_pUnit->isIdle()) || !m_pUnit->exists()))
     {
         LogWarning("Entity %s command drop", ToString().c_str());
         return true;

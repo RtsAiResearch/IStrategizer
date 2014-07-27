@@ -27,19 +27,21 @@ namespace IStrategizer
         void Update();
         void SetController(ArmyController* pController) { m_pController = pController; }
         void ControlEntity(_In_ TID entityId);
-        void SetLogic(_In_ StackFSMPtr pLogic) { m_pLogic = pLogic; }
+        void PushLogic(_In_ StackFSMPtr pLogic) { m_pLogicMemory.push(pLogic); }
+        void PopLogic() { m_pLogicMemory.pop(); }
         void ReleaseEntity();
         bool IsControllingEntity() const{ return m_entityId != INVALID_TID; }
-        bool IsLogicGoalAchieved() const { return m_pLogic->IsInFinalState(); }
-        void ResetLogic() { m_pLogic->Reset(); }
+        bool IsLogicGoalAchieved() const { return m_pLogicMemory.top()->IsInFinalState(); }
+        void ResetLogic() { m_pLogicMemory.top()->Reset(); }
 
+        GameEntity* Entity();
+        const GameEntity* Entity() const;
+        TID EntityId() const { return m_entityId; }
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntityInSight(); // Expensive call
 
-        // Controller Parameters
-        GameEntity* Entity();
-        TID EntityId() const { return m_entityId; }
-        Vector2 TargetPosition() const { return m_singleTargetPos; }
+        // Controller Input Parameters
+        Vector2 TargetPosition() const;
         void TargetPosition(_In_ Vector2 pos) { m_singleTargetPos = pos; }
         const std::vector<Vector2>& MultiTargetPosition() { return m_multiTargetPos; }
         void MultiTargetPosition(_In_ const std::vector<Vector2>& multiPos) { m_multiTargetPos = multiPos; }
@@ -47,6 +49,7 @@ namespace IStrategizer
         TID TargetEntity() const { return m_targetEntityId; }
 
         // Controller Conditions
+        static bool IsOnCriticalHP(_In_ const GameEntity* pEntity);
         bool IsOnCriticalHP();
         bool IsBeingHit();
         bool ArrivedAtTarget(_In_ Vector2 pos);
@@ -64,8 +67,8 @@ namespace IStrategizer
         TID m_targetEntityId;
         Vector2 m_singleTargetPos;
         std::vector<Vector2> m_multiTargetPos;
-        StackFSMPtr m_pLogic;
         ArmyController* m_pController;
+        std::stack<StackFSMPtr> m_pLogicMemory;
     };
 
     typedef std::shared_ptr<EntityController> EntityControllerPtr;

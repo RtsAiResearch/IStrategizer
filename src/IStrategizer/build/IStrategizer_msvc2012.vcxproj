@@ -145,6 +145,7 @@
     <ClCompile Include="..\AdapterEx.cpp" />
     <ClCompile Include="..\And.cpp" />
     <ClCompile Include="..\ArmyController.cpp" />
+    <ClCompile Include="..\ArmyFSM.cpp" />
     <ClCompile Include="..\AttackEntityAction.cpp" />
     <ClCompile Include="..\AttackGroundAction.cpp" />
     <ClCompile Include="..\BotStatistics.cpp" />
