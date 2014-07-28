@@ -62,6 +62,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>BWAPId.lib;BWAPIClientd.lib;StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(OutDir)$(ProjectName).dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -81,6 +84,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>BWAPI.lib;BWAPIClient.lib;StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(OutDir)\$(ProjectName).dll $(SolutionDir)..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dll.cpp" />
