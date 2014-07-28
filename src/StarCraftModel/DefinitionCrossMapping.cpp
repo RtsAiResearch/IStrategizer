@@ -103,53 +103,75 @@ void DefinitionCrossMapping::InitTeches()
 //----------------------------------------------------------------------------------------------
 void DefinitionCrossMapping::InitPlayers()
 {
-    bool playerFound = false;
-    bool selfPlayerIsComputer = false;
-    TID selfID = DONT_CARE;
+    
+    //bool playerFound = false;
+    //bool selfPlayerIsComputer = false;
+    //TID selfID = DONT_CARE;
+    //vector<pair<TID, IStrategizer::PlayerType>> m_players;
+    //const Playerset &players = Broodwar->getPlayers();
+
+    //// Finding PLAYER_Self
+    //playerFound = false;
+    //TID selfType = selfPlayerIsComputer ? PlayerTypes::Computer.getID() : PlayerTypes::Player.getID();
+    //for (BWAPI::Player pPlayer : players)
+    //{
+    //    if (pPlayer->getType().getID() == selfType)
+    //    {
+    //        m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Self));
+    //        selfID = pPlayer->getID();
+    //        playerFound = true;
+    //        break;
+    //    }
+    //}
+    //_ASSERTE(playerFound);
+
+    //// Finding the enemy (PLAYER_Enemy)
+    //playerFound = false;
+    //for (BWAPI::Player pPlayer : players)
+    //{
+    //    if (pPlayer->isEnemy(Broodwar->getPlayer(selfID)))
+    //    {
+    //        m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Enemy));
+    //        playerFound = true;
+    //        break;
+    //    }
+    //}
+
+    //
+    //// Finding PLAYER_Neutral
+    //playerFound = false;
+    //for (BWAPI::Player pPlayer : players)
+    //{
+    //    if (pPlayer->isNeutral())
+    //    {
+    //        m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Neutral));
+    //        playerFound = true;
+    //        break;
+    //    } 
+    //}
+
+    //// We don't handle more that 3 players for now.
+    //_ASSERTE(m_players.size() == 3);
+
     vector<pair<TID, IStrategizer::PlayerType>> m_players;
-    const Playerset &players = Broodwar->getPlayers();
+    m_players.push_back(make_pair(Broodwar->self()->getID(), PLAYER_Self));
+    m_players.push_back(make_pair(Broodwar->enemy()->getID(), PLAYER_Enemy));
 
-    // Finding PLAYER_Self
-    playerFound = false;
-    TID selfType = selfPlayerIsComputer ? PlayerTypes::Computer.getID() : PlayerTypes::Player.getID();
-    for (BWAPI::Player pPlayer : players)
-    {
-        if (pPlayer->getType().getID() == selfType)
-        {
-            m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Self));
-            selfID = pPlayer->getID();
-            playerFound = true;
-            break;
-        }
-    }
-    _ASSERTE(playerFound);
+    map<int, string> playerTable;
 
-    // Finding the enemy (PLAYER_Enemy)
-    playerFound = false;
-    for (BWAPI::Player pPlayer : players)
-    {
-        if (pPlayer->isEnemy(Broodwar->getPlayer(selfID)))
-        {
-            m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Enemy));
-            playerFound = true;
-            break;
-        }
-    }
+    auto allPlayers = Broodwar->getPlayers();
 
-    // Finding PLAYER_Neutral
-    playerFound = false;
-    for (BWAPI::Player pPlayer : players)
+    for (auto pPlayer : allPlayers)
     {
         if (pPlayer->isNeutral())
         {
             m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Neutral));
-            playerFound = true;
             break;
-        } 
+        }
+
+        playerTable[pPlayer->getID()] = pPlayer->getType().toString();
     }
 
-    // We don't handle more that 3 players for now.
-    _ASSERTE(m_players.size() == 3);
     PlayerMapping = CrossMap<TID, IStrategizer::PlayerType>(m_players);
 }
 //----------------------------------------------------------------------------------------------

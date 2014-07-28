@@ -6,7 +6,7 @@
 
 class AbstractTranslator;
 
-typedef Event<AbstractTranslator> AbstractTranslatorEvent;
+typedef Unreal::Event<AbstractTranslator> AbstractTranslatorEvent;
 
 class AbstractTranslator
 {

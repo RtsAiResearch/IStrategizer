@@ -93,7 +93,6 @@
   <ItemGroup>
     <ClCompile Include="BwapiClient.cpp" />
     <ClCompile Include="ClientMain.cpp" />
-    <ClCompile Include="Console.cpp" />
     <ClCompile Include="GeneratedFiles\moc_ClientMain.cpp" />
     <ClCompile Include="GeneratedFiles\moc_IMView.cpp" />
     <ClCompile Include="GeneratedFiles\moc_IMViewWidget.cpp" />
@@ -115,7 +114,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\moc_ClientMain.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <ClInclude Include="CmnHdr.h" />
-    <ClInclude Include="Console.h" />
     <ClInclude Include="IMDrawingStrategy.h" />
     <CustomBuild Include="IMView.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing IMView.h...</Message>

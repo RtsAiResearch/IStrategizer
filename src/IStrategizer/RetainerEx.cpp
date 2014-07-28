@@ -2,15 +2,17 @@
 #include "CaseBaseEx.h"
 #include "Toolbox.h"
 #include "ObjectSerializer.h"
+#include "IStrategizerEx.h"
 #include "RtsGame.h"
 #include "GoalEx.h"
 
 #include <fstream>
+
 using namespace std;
 using namespace IStrategizer;
 
 RetainerEx::RetainerEx() :
-    m_caseBasePath(CASEBASE_FILENAME), 
+    m_caseBasePath(IStrategizerEx::sm_WorkingDir + CASEBASE_FILENAME), 
     m_caseBaseLoaded(false)
 {
 }

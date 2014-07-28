@@ -11,10 +11,10 @@
 
 class UnrealCompiler;
 
-typedef Event<UnrealCompiler> CompilerEvent;
-typedef Delegate<UnrealCompiler, LexicalAnalyzer> LexicalAnalyzerToCompilerDelegate;
-typedef Delegate<UnrealCompiler, AbstractParser> AbstractParserToCompilerDelegate;
-typedef Delegate<UnrealCompiler, AbstractTranslator> AbstractTranslatorToCompilerDelegate;
+typedef Unreal::Event<UnrealCompiler> CompilerEvent;
+typedef Unreal::Delegate<UnrealCompiler, LexicalAnalyzer> LexicalAnalyzerToCompilerDelegate;
+typedef Unreal::Delegate<UnrealCompiler, AbstractParser> AbstractParserToCompilerDelegate;
+typedef Unreal::Delegate<UnrealCompiler, AbstractTranslator> AbstractTranslatorToCompilerDelegate;
 
 class UnrealCompiler
 {
@@ -38,7 +38,7 @@ public:
     void                        Reset();
     void                        Compile(CharacterBuffer* p_codeBuffer);
     const ParseTreeNode*        ParseTree() const { return m_parser->ParseTree(); }
-    const vector<Token*>*       RecognizedTokens() const { return m_lexicalAnalyzer->RecognizedTokens(); }
+    const vector<Unreal::Token*>*       RecognizedTokens() const { return m_lexicalAnalyzer->RecognizedTokens(); }
     const vector<ErrorData*>*   Errors() const { return &m_errors; }
 
     UnrealCompiler(void);

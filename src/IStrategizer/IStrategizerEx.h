@@ -42,6 +42,8 @@ namespace IStrategizer
         OnlineCaseBasedPlannerEx* Planner() { return &*m_pPlanner; }
         ~IStrategizerEx();
 
+        static std::string sm_WorkingDir;
+
     private:
         DISALLOW_COPY_AND_ASSIGN(IStrategizerEx);
 

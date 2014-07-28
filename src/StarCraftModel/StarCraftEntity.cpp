@@ -32,9 +32,13 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
     // Attributes are accessible from game directly if the entity is online in 2 cases only
     // 1- Unit is visible to player
     // 2- Unit belongs to neutral and game frame is 0
+    // 3- Unit is about to hide and this frame is marked as cache frame
+    bool isVisible = m_pUnit->isVisible();
+    bool isNeutralAtFrame0 = m_pUnit->getPlayer()->isNeutral() && g_Game->GameFrame() == 0;
+    bool isCacheFrame = (int)g_Game->GameFrame() == m_cacheFrame;
+
     if (m_isOnline &&
-        (m_pUnit->isVisible() ||
-        (m_pUnit->getPlayer()->isNeutral() && g_Game->GameFrame() == 0)))
+        (isVisible || isNeutralAtFrame0 || isCacheFrame))
     {
         // Positions are measured in pixels and are the highest resolution
         // Walk Tiles - each walk tile is an 8x8 square of pixels. These are called walk tiles because walkability data is available at this resolution.

@@ -8,11 +8,11 @@
 using namespace std;
 
 class Parser;
-typedef Event<Parser> ParserEvent;
+typedef Unreal::Event<Parser> ParserEvent;
 
 class Parser : public AbstractParser
 {
-    Token*              m_currentToken;
+    Unreal::Token*              m_currentToken;
     string     m_output;
     LexicalAnalyzer*    m_scanner;
     

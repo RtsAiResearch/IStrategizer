@@ -19,7 +19,7 @@ using namespace std;
 class TypeDeclarationParser : public AbstractParser
 {
     LexicalAnalyzer*        m_scanner;
-    Token*                  m_currentToken;
+    Unreal::Token*                  m_currentToken;
     TypeNode*               m_typeGraph;
     map<string, DataType>   m_builtInTypes;
 

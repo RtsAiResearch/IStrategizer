@@ -22,14 +22,14 @@ void GameEntity::CacheAttributes()
     {
         LogDebugInfo("Caching %s attributes", ToString().c_str());
 
+        m_cacheFrame = g_Game->GameFrame();
+
         m_cachedAttr.clear();
         for (int attr = START(EntityObjectProperty);
             attr != END(EntityObjectProperty); ++attr)
         {
             m_cachedAttr[EntityObjectProperty(attr)] = P(EntityObjectProperty(attr));
         }
-
-        m_cacheFrame = g_Game->GameFrame();
     }
 }
 //////////////////////////////////////////////////////////////////////////

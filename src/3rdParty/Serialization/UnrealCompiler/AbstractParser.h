@@ -7,7 +7,7 @@
 #include "Grammar.h"
 
 class AbstractParser;
-typedef Event<AbstractParser> AbstractParserEvent;
+typedef Unreal::Event<AbstractParser> AbstractParserEvent;
 
 class AbstractParser
 {

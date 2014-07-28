@@ -21,9 +21,9 @@ class PredictiveParser : public AbstractParser
 public:
     void Reset();
     void Parse();
-    void ReadNextSymbol(Token*& p_currentToken, string& p_symbol);
-    void OnUnexpectedToken( const string& p_expected, const Token* p_found );
-    void OnSyntaxError( const Token* p_token );
+    void ReadNextSymbol(Unreal::Token*& p_currentToken, string& p_symbol);
+    void OnUnexpectedToken( const string& p_expected, const Unreal::Token* p_found );
+    void OnSyntaxError( const Unreal::Token* p_token );
 
     PredictiveParser(LexicalAnalyzer* p_scanner) : m_scanner(p_scanner) { Initialize(); }
     ~PredictiveParser();

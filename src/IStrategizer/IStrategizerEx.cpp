@@ -25,6 +25,9 @@
 using namespace IStrategizer;
 using namespace std;
 
+std::string IStrategizerEx::sm_WorkingDir = ".\\";
+
+
 IStrategizerEx::IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame) :
 m_param(param),
 m_pCaseLearning(nullptr),

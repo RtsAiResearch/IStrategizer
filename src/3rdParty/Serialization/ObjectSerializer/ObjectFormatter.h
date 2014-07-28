@@ -22,6 +22,7 @@ using namespace std;
     #include "ObjectFactory.h"
 #endif
 
+extern string g_SerializationSystemWorkingDir;
 extern string g_TypeInfoPath;
 extern string g_TypeLexerFilePath;
 extern string g_TypeNamesFilePath;

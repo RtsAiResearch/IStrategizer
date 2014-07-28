@@ -8,7 +8,7 @@
 
 class LexicalAnalyzer;
 
-typedef Event<LexicalAnalyzer> LexicalAnalyzerEvent;
+typedef Unreal::Event<LexicalAnalyzer> LexicalAnalyzerEvent;
 
 class LexicalAnalyzer
 {
@@ -17,15 +17,15 @@ class LexicalAnalyzer
     CharacterBuffer*    m_buffer;
     bool                m_eof;
     DFA*                m_dfa;
-    map<string, int>    m_reservedWordsToTokenTypeIdMap;
-    vector<Token*>      m_symbolTable;
-    vector<Token*>      m_recognizedTokens;
+    std::map<string, int>    m_reservedWordsToTokenTypeIdMap;
+    std::vector<Unreal::Token*>      m_symbolTable;
+    std::vector<Unreal::Token*>      m_recognizedTokens;
     void Retract();
     char NextChar();
     bool IsEndOfFile();
 
 protected:
-    virtual void OnFail(Token* p_errorToken);
+    virtual void OnFail(Unreal::Token* p_errorToken);
 
 public:
     LexicalAnalyzerEvent Fail;
@@ -37,14 +37,14 @@ public:
     bool IsCompositeToken(int p_tokenTypeId);
     bool IsIdentifierToken(int p_tokenTypeId);
     bool IsErrorToken(int p_tokenTypeId);
-    Token* GetNextToken();
-    const vector<Token*>* RecognizedTokens() const { return &m_recognizedTokens; }
-    vector<Token*>* GetSymbolTable();
+    Unreal::Token* GetNextToken();
+    const std::vector<Unreal::Token*>* RecognizedTokens() const { return &m_recognizedTokens; }
+    std::vector<Unreal::Token*>* GetSymbolTable();
     
     LexicalAnalyzer();
     LexicalAnalyzer( string p_lexerDefinitionPath);
     ~LexicalAnalyzer();
-    Token* EndOfFileToken();
+    Unreal::Token* EndOfFileToken();
 };
 
 #endif // LEXICALANALYZER_H

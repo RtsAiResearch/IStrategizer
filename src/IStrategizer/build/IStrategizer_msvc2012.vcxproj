@@ -45,6 +45,7 @@
     <ClInclude Include="..\Comparer.h" />
     <ClInclude Include="..\CompositeExpression.h" />
     <ClInclude Include="..\ConditionEx.h" />
+    <ClInclude Include="..\Console.h" />
     <ClInclude Include="..\CrossMap.h" />
     <ClInclude Include="..\DataMessage.h" />
     <ClInclude Include="..\Delegate.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="..\CombatManager.cpp" />
     <ClCompile Include="..\CompositeExpression.cpp" />
     <ClCompile Include="..\ConditionEx.cpp" />
+    <ClCompile Include="..\Console.cpp" />
     <ClCompile Include="..\DeployArmyGoal.cpp" />
     <ClCompile Include="..\DestroyEntityTypeGoal.cpp" />
     <ClCompile Include="..\EngineAssist.cpp" />

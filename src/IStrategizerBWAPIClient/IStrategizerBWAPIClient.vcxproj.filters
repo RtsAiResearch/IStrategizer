@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="BwapiClient.cpp" />
     <ClCompile Include="ClientMain.cpp" />
-    <ClCompile Include="Console.cpp" />
     <ClCompile Include="IMDrawingStrategy.cpp" />
     <ClCompile Include="IMView.cpp" />
     <ClCompile Include="IMViewWidget.cpp" />
@@ -21,7 +20,6 @@
   <ItemGroup>
     <ClInclude Include="BwapiClient.h" />
     <ClInclude Include="CmnHdr.h" />
-    <ClInclude Include="Console.h" />
     <ClInclude Include="IMDrawingStrategy.h" />
     <ClInclude Include="GeneratedFiles\ui_ClientMain.h" />
     <ClInclude Include="GeneratedFiles\ui_IMViewWidget.h" />

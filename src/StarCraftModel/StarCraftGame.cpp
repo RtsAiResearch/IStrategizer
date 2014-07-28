@@ -156,8 +156,15 @@ void StarCraftGame::InitResearchTypes()
 //----------------------------------------------------------------------------------------------
 GamePlayer* StarCraftGame::FetchPlayer(IStrategizer::PlayerType p_id)
 {
-    TID typeId = g_Database.PlayerMapping.GetBySecond(p_id);
-    BWAPI::Player pPlayer = Broodwar->getPlayer(typeId);
+    BWAPI::Player pPlayer;
+
+    if (p_id == PLAYER_Neutral)
+        pPlayer = Broodwar->neutral();
+    else
+    {
+        TID typeId = g_Database.PlayerMapping.GetBySecond(p_id);
+        pPlayer = Broodwar->getPlayer(typeId);
+    }
 
     return new StarCraftPlayer(pPlayer);
 }

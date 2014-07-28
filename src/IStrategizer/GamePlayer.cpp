@@ -279,7 +279,7 @@ void GamePlayer::OnEntityHide(Message* pMsg)
 
         if (m_entities.Contains(entityId))
         {
-            LogInfo("Entity %d exist in Player %s units, caching its attributes before being invisible", entityId, Enums[m_type]);
+            LogInfo("Entity %d exist in Player %s units, caching its attributes before being invisible @ Frame %d", entityId, Enums[m_type], g_Game->GameFrame());
 
             auto pEntity = GetEntity(entityId);
             pEntity->CacheAttributes();
