@@ -15,8 +15,8 @@ void EntityState::Update()
 {
     auto pController = (EntityController*)m_pController;
     pController->Entity()->DebugDrawTarget();
-    pController->Entity()->DebugDrawRange();
-    pController->Entity()->DebugDrawLineOfSight();
+    //pController->Entity()->DebugDrawRange();
+    //pController->Entity()->DebugDrawLineOfSight();
     g_Game->DebugDrawMapText(pController->Entity()->GetPosition(), ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
@@ -52,6 +52,8 @@ void FleeEntityState::Enter()
     m_targetPos1 = g_Game->Self()->StartLocation();
     bool success = pController->Entity()->Move(m_targetPos1);
     _ASSERTE(success);
+
+    pController->OnEntityFleeing();
 }
 //////////////////////////////////////////////////////////////////////////
 void FleeEntityState::Update()

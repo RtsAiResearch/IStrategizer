@@ -27,7 +27,7 @@ namespace IStrategizer
         void Update();
         void AttackArea(_In_ Vector2 pos) {}
         void DefendArea(_In_ Vector2 pos);
-        void NotifyMessegeSent(_In_ Message* p_msg);
+        void NotifyMessegeSent(_In_ Message* pMsg);
         bool IsControllingArmy() const { return !m_entities.empty(); }
         bool HasType(_In_ EntityClassType type);
         void ReleaseEntity(_In_ TID entityId);
@@ -40,19 +40,21 @@ namespace IStrategizer
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntityInSight() const { _ASSERTE(!m_closestEnemyInSight.empty()); return m_closestEnemyInSight.begin()->second; }
         const std::multimap<int, TID>& GetClosestEnemiesInSight() const { return m_closestEnemyInSight; }
-        void OnControlledEntityDestroy(const EntityController* pControl);
-        void OnControlledEntityFlee(const EntityController* pControl);
-
+        void OnEntityDestroyed(_In_ TID entityId);
+        void OnEntityFleeing(_In_ TID entityId);
+        bool IsControllingEntity(_In_ TID entityId) const { return m_entities.count(entityId) > 0; }
         // Controller Input Parameters
         Vector2 TargetPosition() const { return m_singleTargetPos; }
         void TargetPosition(_In_ Vector2 pos) { m_singleTargetPos = pos; }
         TID TargetEntity() const { return m_currentTarget; }
+        bool CanControl(_In_ const GameEntity* pEntity);
 
         // Controller Conditions
-        bool IsAnyEnemyTargetInSight() const { return m_closestEnemyInSight.empty(); }
-        bool IsInOrder() const { return m_isInOrder; }
+        bool IsAnyEnemyTargetInSight() const { return !m_closestEnemyInSight.empty(); }
+        //bool IsInOrder() const { return m_isInOrder; }
+        static bool IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos);
 
-        const std::unordered_map<TID, EntityControllerPtr>& HealthyEntities() const { return m_entities; }
+        const EntityControllersMap& HealthyEntities() const { return m_entities; }
 
     private:
         ArmyGroup Classify(const GameType* pType);
@@ -61,7 +63,6 @@ namespace IStrategizer
         void CalcIsInOrder();
 
         std::unordered_map<TID, EntityControllerPtr> m_entities;
-        std::set<EntityControllerPtr> m_allFleeingUnits;
         std::set<TID> m_currFramefleeingEntities;
 
         StackFSMPtr m_pLogic;

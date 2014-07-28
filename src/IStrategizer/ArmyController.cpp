@@ -29,18 +29,20 @@ void ArmyController::ControlArmy()
 {
     ReleaseArmy();
 
-    // For now, army controls only current free attackers
-    for (auto entityR : g_Game->Self()->Entities())
+    // For now, army controls only current free healthy attackers
+    for (auto& entityR : g_Game->Self()->Entities())
     {
         ControlEntity(entityR.first);
     }
+
+    m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::ReleaseArmy()
 {
-    for (auto& entityR : m_entities)
+    while (!m_entities.empty())
     {
-        ReleaseEntity(entityR.first);
+        ReleaseEntity(m_entities.begin()->first);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -53,7 +55,7 @@ void ArmyController::NotifyMessegeSent(_In_ Message* pMsg)
 
         if (pDestroyMsg->Data()->OwnerId == PLAYER_Self)
         {
-            ReleaseEntity(pDestroyMsg->Data()->EntityId);
+            OnEntityDestroyed(pDestroyMsg->Data()->EntityId);
         }
     }
 }
@@ -87,7 +89,11 @@ void ArmyController::ReleaseEntity(_In_ TID entityId)
         m_entities[entityId]->ReleaseEntity();
         m_entities.erase(entityId);
         auto pEntity = g_Game->Self()->GetEntity(entityId);
-        LogInfo("Excluded %s from army", pEntity->ToString().c_str());
+
+        if (pEntity)
+            LogInfo("Release %s from army", pEntity->ToString().c_str());
+        else
+            LogInfo("Released non-existing entity %d from army, to control %d entities", entityId, m_entities.size());
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -98,7 +104,7 @@ void ArmyController::Update()
 
     CalcCetner();
     CalcClosestEnemyInSight();
-    CalcIsInOrder();
+    //CalcIsInOrder();
 
     m_pLogic->Update();
 
@@ -110,9 +116,10 @@ void ArmyController::Update()
 
     for (auto fleeingId : m_currFramefleeingEntities)
     {
-
+        m_entities.erase(fleeingId);
     }
 
+    m_currFramefleeingEntities.clear();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::DefendArea(_In_ Vector2 pos)
@@ -122,17 +129,6 @@ void ArmyController::DefendArea(_In_ Vector2 pos)
 
     m_pLogic = StackFSMPtr(new GuardArmyFSM(this));
     m_pLogic->Reset();
-
-    //for (auto& group : m_groups)
-    //{
-    //    for (auto& entityR : group.second)
-    //    {
-    //        auto pEntityCtrlr = entityR.second;
-    //        pEntityCtrlr->SetLogic(StackFSMPtr(new GuardEntityFSM(&*entityR.second)));
-    //        pEntityCtrlr->TargetPosition(pos);
-    //        pEntityCtrlr->ResetLogic();
-    //    }
-    //}
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::CalcCetner()
@@ -197,15 +193,46 @@ void ArmyController::CalcIsInOrder()
     }
 }
 //////////////////////////////////////////////////////////////////////////
+bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos)
+{
+    if (entities.empty())
+    {
+        return false;
+    }
+
+    Circle2 orderArea(pos, FocusAreaRadius);
+
+    for (auto& entityR : entities)
+    {
+        // Fast return as soon as we see astray units out of focus area
+        if (!orderArea.IsInside(entityR.second->Entity()->GetPosition()))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+//////////////////////////////////////////////////////////////////////////
+bool ArmyController::CanControl(_In_ const GameEntity* pEntity)
+{
+    _ASSERTE(pEntity != nullptr);
+
+    auto pEntityType = pEntity->Type();
+
+    return pEntity->Exists() &&
+        !pEntityType->P(TP_IsWorker) &&
+        !pEntityType->P(TP_IsBuilding) &&
+        pEntity->P(OP_State) != OBJSTATE_BeingConstructed &&
+        !pEntity->IsLocked() &&
+        !EntityController::IsOnCriticalHP(pEntity);
+}
+//////////////////////////////////////////////////////////////////////////
 void ArmyController::ControlEntity(_In_ TID entityId)
 {
     auto pEntity = g_Game->Self()->GetEntity(entityId);
-    auto pEntityType = pEntity->Type();
 
-    if (!pEntityType->P(TP_IsWorker) &&
-        !pEntityType->P(TP_IsBuilding) &&
-        g_Assist.IsEntityObjectReady(entityId) &&
-        !pEntity->IsLocked())
+    if (CanControl(pEntity))
     {
         auto pController = EntityControllerPtr(new EntityController(this));
 
@@ -215,18 +242,19 @@ void ArmyController::ControlEntity(_In_ TID entityId)
 
         m_entities[entityId] = pController;
         pController->ControlEntity(entityId);
-        pController->PushLogic(StackFSMPtr(new IdleEntityFSM(&*pController)));
+        pController->HardResetLogic();
 
-        LogInfo("Added %s to army", pEntity->ToString().c_str());
+        LogInfo("Added %s to army, to control %d entities", pEntity->ToString().c_str(), m_entities.size());
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::OnControlledEntityDestroy(const EntityController* pControl)
+void ArmyController::OnEntityDestroyed(_In_ TID entityId)
 {
-    ReleaseEntity(pControl->EntityId());
+    ReleaseEntity(entityId);
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::OnControlledEntityFlee(const EntityController* pControl)
+void ArmyController::OnEntityFleeing(_In_ TID entityId)
 {
-    m_currFramefleeingEntities.insert(pControl->EntityId());
+    m_currFramefleeingEntities.insert(entityId);
 }
+//////////////////////////////////////////////////////////////////////////

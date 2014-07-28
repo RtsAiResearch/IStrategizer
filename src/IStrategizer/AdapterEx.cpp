@@ -118,7 +118,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         }
         else
         {
-			_ASSERTE(g_Game->Map()->CanBuildHere(searchData.CandidateBuildPos, p_buildingType));
+			//_ASSERTE(g_Game->Map()->CanBuildHere(searchData.CandidateBuildPos, p_buildingType));
 
             return MapArea(
                 searchData.CandidateBuildPos,

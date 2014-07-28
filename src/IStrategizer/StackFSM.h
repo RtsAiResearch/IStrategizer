@@ -25,9 +25,10 @@ namespace IStrategizer
         virtual void Reset()
         {
             while (!m_states.empty())
-                m_states.pop();
+                PopState();
 
             m_states.push(m_initialState);
+            m_firstUpdate = true;
         }
 
         bool IsInFinalState() const 
@@ -64,8 +65,39 @@ namespace IStrategizer
         
     protected:
         void AddState(_In_ std::shared_ptr<FSMState> state) { m_stateMap[state->TypeId()] = state; }
-        void PushState(_In_ FSMStateTypeID newState) { m_states.push(newState); CurrentState()->Enter(); }
-        void PopState() { CurrentState()->Exit(); m_states.pop(); }
+        void PushState(_In_ FSMStateTypeID newState) 
+        {
+            if (!m_states.empty())
+            {
+                auto oldState = CurrentState();
+                m_states.push(newState); CurrentState()->Enter();
+                LogInfo("%s -> %s", oldState->ToString().c_str(), CurrentState()->ToString().c_str());
+            }
+            else
+            {
+                m_states.push(newState); 
+                CurrentState()->Enter();
+                LogInfo("(NULL) -> %s", CurrentState()->ToString().c_str());
+            }
+        }
+
+        void PopState()
+        {
+            auto oldState = CurrentState();
+            CurrentState()->Exit(); 
+            m_states.pop();
+
+            if (!m_states.empty())
+            {
+                LogInfo("%s -> %s", oldState->ToString().c_str(), CurrentState()->ToString().c_str());
+            }
+            else
+            {
+                LogInfo("%s -> (NULL)", oldState->ToString().c_str());
+            }
+
+        }
+
         void PopAllAndPushState(_In_ FSMStateTypeID newState)
         {
             while (!m_states.empty())

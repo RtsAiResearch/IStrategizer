@@ -58,7 +58,7 @@ namespace IStrategizer
 
 		virtual std::string ToString(bool minimal = false) const;
         void Unlock(EngineObject *p_pOwner);
-        bool IsLocked() { return m_pOwner != nullptr; }
+        bool IsLocked() const { return m_pOwner != nullptr; }
         const EngineObject* Owner() const { return m_pOwner; }
         virtual bool IsNull() = 0;
 

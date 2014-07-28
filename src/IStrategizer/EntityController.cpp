@@ -7,8 +7,18 @@
 #include "GroundControlIM.h"
 #include "EntityFSM.h"
 #include "ArmyController.h"
+#include "MessagePump.h"
 
 using namespace IStrategizer;
+
+EntityController::EntityController(ArmyController* pController) :
+m_entityId(INVALID_TID),
+m_targetEntityId(INVALID_TID),
+m_singleTargetPos(Vector2::Inf()),
+m_pController(pController)
+{
+    g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
+}
 
 Vector2 EntityController::TargetPosition() const 
 { 
@@ -44,11 +54,6 @@ void EntityController::ReleaseEntity()
             pScout->Unlock(this);
 
         m_entityId = INVALID_TID;
-
-        while (!m_pLogicMemory.empty())
-            m_pLogicMemory.pop();
-
-        m_pLogicMemory.push(StackFSMPtr(new IdleEntityFSM(this)));
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -58,13 +63,8 @@ void EntityController::Update()
         return;
 
     m_pLogicMemory.top()->Update();
-
-    if (m_pLogicMemory.top()->TypeId() == FleeEntityState::TypeID &&
-        m_pController != nullptr)
-    {
-        m_pController->OnControlledEntityFlee(this);
-    }
 }
+
 //////////////////////////////////////////////////////////////////////////
 GameEntity* EntityController::Entity()
 {
@@ -210,6 +210,28 @@ bool EntityController::IsAnyEnemyTargetInSight()
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::EntityExists(_In_ TID entityId) const
 {
+    if (entityId == INVALID_TID)
+        return false;
+
     auto pEntity = g_Game->GetEntity(entityId);
     return pEntity != nullptr && pEntity->Exists();
+}
+//////////////////////////////////////////////////////////////////////////
+void EntityController::OnEntityFleeing()
+{
+    if (m_pController != nullptr)
+        m_pController->OnEntityFleeing(m_entityId);
+}
+//////////////////////////////////////////////////////////////////////////
+void EntityController::HardResetLogic()
+{
+    while (!m_pLogicMemory.empty())
+        m_pLogicMemory.pop();
+
+    m_pLogicMemory.push(StackFSMPtr(new IdleEntityFSM(this)));
+}
+//////////////////////////////////////////////////////////////////////////
+void EntityController::PushIdleLogic()
+{
+    PushLogic(StackFSMPtr(new IdleEntityFSM(this)));
 }

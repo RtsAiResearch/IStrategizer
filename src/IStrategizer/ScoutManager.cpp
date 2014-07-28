@@ -75,7 +75,7 @@ void ScoutManager::Update()
             // The order is important, since logic resetting requires that
             // the logic required parameters are well set in the controller
             m_scoutController.MultiTargetPosition(suspectLocations);
-            m_scoutController.ResetLogic();
+            m_scoutController.SoftResetLogic();
         }
     }
     else if (!IsEnemySpawnLocationKnown())

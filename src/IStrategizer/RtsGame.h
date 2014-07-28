@@ -51,7 +51,8 @@ namespace IStrategizer
         GCLR_Yellow,
         GCLR_White,
         GCLR_Orange,
-        GCLR_Cyan
+        GCLR_Cyan,
+        GCLR_Purple
     };
 
     ///> class=RtsGame

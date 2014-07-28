@@ -21,7 +21,8 @@ namespace IStrategizer
         FSMStateTypeID TypeId() const { return m_typeId; }
         virtual void Enter() {}
         virtual void Exit() {}
-        virtual void Update() {} 
+        virtual void Update() {}
+        virtual void Reset() {}
         std::string ToString(bool minimal = false) { return m_pName; }
         static const FSMStateTypeID NullFSMState = 0;
 

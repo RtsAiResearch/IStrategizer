@@ -2,6 +2,7 @@
 #define ARMYFSM_H
 
 #include "StackFSM.h"
+#include "EntityController.h"
 
 namespace IStrategizer
 {
@@ -21,13 +22,17 @@ namespace IStrategizer
         Vector2 TargetPosition1() const { return m_targetPos1; }
         Vector2 TargetPosition2() const { return m_targetPos2; }
         TID TargetEntity() const { return m_targetEntity; }
+        const EntityControllersMap& Entities() const { return m_controlledEntities; }
         void Update();
         void Enter();
+        void Exit();
+        void Reset();
 
     protected:
         Vector2 m_targetPos1;
         Vector2 m_targetPos2;
         TID m_targetEntity;
+        EntityControllersMap m_controlledEntities;
     };
 
     class IdleArmyState : public ArmyState
@@ -36,7 +41,7 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0xC8ED84B8;
 
         IdleArmyState(ArmyController* pController) :
-            ArmyState(TypeID, "IDLE", pController)
+            ArmyState(TypeID, "[IDLE]", pController)
         {}
 
     private:
@@ -49,8 +54,11 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0xCEB67D75;
 
         AlarmArmyState(ArmyController* pController) :
-            ArmyState(TypeID, "ALARM", pController)
+            ArmyState(TypeID, "[ALARM]", pController)
         {}
+
+        void Enter();
+        void Exit();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(AlarmArmyState);
@@ -62,11 +70,11 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0x1825A7EA;
 
         AttackArmyState(ArmyController* pController) :
-            ArmyState(TypeID, "ATTACK", pController)
+            ArmyState(TypeID, "[ATTACK]", pController)
         {}
 
         void Enter();
-        void Exist();
+        void Exit();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(AttackArmyState);
@@ -78,14 +86,17 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0x4EFF3C4E;
 
         RegroupArmyState(ArmyController* pController) :
-            ArmyState(TypeID, "REGROUP", pController)
+            ArmyState(TypeID, "[REGROUP]", pController)
         {}
 
         void Enter();
         void Update();
+        void Exit();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(RegroupArmyState);
+
+        Circle2 m_regroupArea;
     };
 
     class IdleArmyFSM : public StackFSM

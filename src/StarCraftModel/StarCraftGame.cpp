@@ -280,6 +280,8 @@ BWAPI::Color BwapiColorFrom(GameDrawColor c)
         return Colors::Orange;
     case GCLR_Cyan:
         return Colors::Cyan;
+    case GCLR_Purple:
+        return Colors::Purple;
     case GCLR_White:
     default:
         return Colors::White;

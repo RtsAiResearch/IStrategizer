@@ -6,6 +6,7 @@
 #include "EngineObject.h"
 #include "Vector2.h"
 #include "StackFSM.h"
+#include <unordered_map>
 
 namespace IStrategizer
 {
@@ -17,22 +18,19 @@ namespace IStrategizer
     public:
         static const int PositionArriveRadius = 64;
 
-        EntityController(ArmyController* pController) :
-            m_entityId(INVALID_TID),
-            m_targetEntityId(INVALID_TID),
-            m_singleTargetPos(Vector2::Inf()),
-            m_pController(pController)
-        {}
-
+        EntityController(ArmyController* pController);
         void Update();
         void SetController(ArmyController* pController) { m_pController = pController; }
         void ControlEntity(_In_ TID entityId);
         void PushLogic(_In_ StackFSMPtr pLogic) { m_pLogicMemory.push(pLogic); }
         void PopLogic() { m_pLogicMemory.pop(); }
+        void PushIdleLogic();
         void ReleaseEntity();
         bool IsControllingEntity() const{ return m_entityId != INVALID_TID; }
         bool IsLogicGoalAchieved() const { return m_pLogicMemory.top()->IsInFinalState(); }
-        void ResetLogic() { m_pLogicMemory.top()->Reset(); }
+        void OnEntityFleeing();
+        void HardResetLogic();
+        void SoftResetLogic() { m_pLogicMemory.top()->Reset(); }
 
         GameEntity* Entity();
         const GameEntity* Entity() const;
@@ -73,6 +71,8 @@ namespace IStrategizer
 
     typedef std::shared_ptr<EntityController> EntityControllerPtr;
     typedef std::shared_ptr<const EntityController> ConstEntityControllerPtr;
+    typedef std::unordered_map<TID, EntityControllerPtr> EntityControllersMap;
+
 }
 
 #endif // !ENTITYCONTROLLER_H
