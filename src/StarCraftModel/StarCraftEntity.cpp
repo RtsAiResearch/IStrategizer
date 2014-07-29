@@ -220,16 +220,21 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
     type = UnitType::getType(typeName);
     type = BWAPI::UnitType::getType(typeName);
 
+    LogInfo("%s -> Build(%s@<%d,%d>)", ToString().c_str(), type.toString().c_str(), pos.x, pos.y);
+
+    bool bOk = false;
+
     if (type.isAddon())
-    {
-        //_ASSERTE(m_pUnit->canBuildAddon(type));
-        return m_pUnit->buildAddon(type);
-    }
+        bOk = m_pUnit->buildAddon(type);
     else
     {
-        LogInfo("%s -> Build(%s@<%d,%d>)", ToString().c_str(), type.toString().c_str(), pos.x, pos.y);
-        return m_pUnit->build(type, pos);
+        bOk = m_pUnit->build(type, pos);
     }
+
+    if (!bOk)
+        DebugDrawMapLastGameError();
+
+    return bOk;
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Research(ResearchType p_researchId)
@@ -237,7 +242,7 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-    bool bOk;
+    bool bOk = false;
 
     // Is tech
     if ((int)p_researchId >= ((int)(RESEARCH_START + TechIdOffset)))
@@ -253,6 +258,9 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
         bOk = m_pUnit->upgrade(UpgradeType(gameTypeID));
     }
 
+    if (!bOk)
+        DebugDrawMapLastGameError();
+
     return bOk;
 }
 //----------------------------------------------------------------------------------------------
@@ -262,7 +270,14 @@ bool StarCraftEntity::AttackGround(Vector2 p_position)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
     Position pos(p_position.X, p_position.Y);
-    return m_pUnit->attack(pos);
+    
+    if (m_pUnit->attack(pos))
+        return true;
+    else
+    {
+        DebugDrawMapLastGameError();
+        return false;
+    }
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Stop()
@@ -272,7 +287,13 @@ bool StarCraftEntity::Stop()
 
     LogInfo("%s -> Stop", ToString().c_str());
 
-    return m_pUnit->stop();
+    if (m_pUnit->stop())
+        return true;
+    else
+    {
+        DebugDrawMapLastGameError();
+        return false;
+    }
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::AttackEntity(TID targetId)
@@ -280,7 +301,7 @@ bool StarCraftEntity::AttackEntity(TID targetId)
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-    LogInfo("%s -> Attack(%s)", ToString().c_str(),  g_Game->GetEntity(targetId)->ToString().c_str());
+    LogInfo("%s -> Attack(%s)", ToString().c_str(), g_Game->GetEntity(targetId)->ToString().c_str());
 
     // if we have issued a command to this unit already this frame, 
     // ignore this one and raise warning
@@ -299,15 +320,18 @@ bool StarCraftEntity::AttackEntity(TID targetId)
         LogWarning("Entity %s command drop", ToString().c_str());
         return true;
     }
-    
+
     auto target = Broodwar->getUnit(targetId);
 
     _ASSERTE(m_pUnit->isDetected());
 
-    if (m_pUnit->canAttackUnit(target))
-        return m_pUnit->attack(target);
+    if (m_pUnit->attack(target))
+        return true;
     else
+    {
+        DebugDrawMapLastGameError();
         return false;
+    }
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
@@ -323,7 +347,14 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
     _ASSERTE(building->canTrain(type));
 
     LogInfo("%s -> Train(Trainee=%s)", ToString().c_str(), type.toString().c_str());
-    return building->train(type);
+
+    if (building->train(type))
+        return true;
+    else
+    {
+        DebugDrawMapLastGameError();
+        return false;
+    }
 };
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::Move(Vector2 targetPos)
@@ -356,8 +387,14 @@ bool StarCraftEntity::Move(Vector2 targetPos)
         return true;
     }
 
-    _ASSERTE(Broodwar->isWalkable(WalkPositionFromUnitPosition(pos.x), WalkPositionFromUnitPosition(pos.y)));
-    return m_pUnit->move(pos);
+    //_ASSERTE(Broodwar->isWalkable(WalkPositionFromUnitPosition(pos.x), WalkPositionFromUnitPosition(pos.y)));
+    if (m_pUnit->move(pos))
+        return true;
+    else
+    {
+        DebugDrawMapLastGameError();
+        return false;
+    }
 }
 //----------------------------------------------------------------------------------------------
 bool StarCraftEntity::GatherResourceEntity(TID resourceId)
@@ -389,10 +426,13 @@ bool StarCraftEntity::GatherResourceEntity(TID resourceId)
 
     LogInfo("%s -> GatherResource(Resource=%s)", ToString().c_str(), resource->getType().toString().c_str());
 
-    if (m_pUnit->isInterruptible())
-        return m_pUnit->gather(resource);
+    if (m_pUnit->gather(resource))
+        return true;
     else
+    {
+        DebugDrawMapLastGameError();
         return false;
+    }
 }
 //----------------------------------------------------------------------------------------------
 void StarCraftEntity::SetOffline(RtsGame* pBelongingGame)
@@ -438,7 +478,10 @@ bool StarCraftEntity::Follow(TID entityId)
 
     LogInfo("%s -> Follow(Target=%d)", ToString().c_str(), entityId);
 
-    return m_pUnit->follow(Broodwar->getUnit(entityId));
+    if (m_pUnit->follow(Broodwar->getUnit(entityId)))
+        return true;
+    else
+        return false;
 }
 //////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::Exists() const
@@ -478,4 +521,16 @@ Vector2 StarCraftEntity::GetTargetPosition() const
 bool StarCraftEntity::CanAttack(_In_ TID targetId) const
 {
     return m_pUnit->canAttackUnit(Broodwar->getUnit(targetId));
+}
+//////////////////////////////////////////////////////////////////////////
+void StarCraftEntity::DebugDrawMapLastGameError()
+{
+    Error lastErr = Broodwar->getLastError();
+    Position unitPos = m_pUnit->getPosition();
+
+    Broodwar->registerEvent([unitPos, lastErr](Game*){ Broodwar->drawTextMap(unitPos, "%c%s", Text::Red, lastErr.c_str()); },   // action
+        nullptr,    // condition
+        Broodwar->getLatencyFrames());  // frames to run
+
+    LogInfo("BWAPI Game Error: %s", lastErr.c_str());
 }

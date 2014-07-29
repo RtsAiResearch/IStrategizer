@@ -55,7 +55,10 @@ namespace IStrategizer
         bool Follow(TID entityId);
 
         void SetOffline(RtsGame* pBelongingGame);
+
     protected:
+        void DebugDrawMapLastGameError();
+
         ObjectStateType FetchState() const;
         ///> type=int
         bool m_isOnline;
