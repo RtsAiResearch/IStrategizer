@@ -85,7 +85,7 @@
       <AdditionalDependencies>BWAPI.lib;BWAPIClient.lib;StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(OutDir)\$(ProjectName).dll $(SolutionDir)..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
+      <Command>xcopy $(OutDir)$(ProjectName).dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

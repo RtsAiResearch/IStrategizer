@@ -113,6 +113,9 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
         case OP_IsMoving:
             return m_pUnit->isMoving();
 
+        case OP_IsAttacking:
+            return m_pUnit->isAttacking();
+
         default:
             DEBUG_THROW(InvalidParameterException(XcptHere));
         }

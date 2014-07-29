@@ -31,6 +31,7 @@ void ArmyState::Enter()
     auto pController = (ArmyController*)m_pController;
     m_controlledEntities = pController->HealthyEntities();
     m_targetPos1 = pController->TargetPosition();
+    m_targetEntity = pController->TargetEntity();
 
     LogInfo("%s with %d controlled entities", ToString().c_str(), m_controlledEntities.size());
 }
@@ -164,10 +165,6 @@ void GuardArmyFSM::CheckTransitions()
         }
         break;
     case AttackArmyState::TypeID:
-        if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition1()))
-        {
-            PushState(RegroupArmyState::TypeID);
-        }
         if (!pController->IsAnyEnemyTargetInSight())
         {
             PopState();

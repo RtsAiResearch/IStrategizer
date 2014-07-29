@@ -220,7 +220,14 @@ bool EntityController::EntityExists(_In_ TID entityId) const
 void EntityController::OnEntityFleeing()
 {
     if (m_pController != nullptr)
+    {
+        if (EntityExists())
+        {
+            LogInfo("%s is fleeing!", Entity()->ToString().c_str());
+        }
+
         m_pController->OnEntityFleeing(m_entityId);
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void EntityController::HardResetLogic()

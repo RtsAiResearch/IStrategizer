@@ -92,7 +92,7 @@ bool StarCraftGame::InitStaticData()
 
     if (BroodwarPtr && Broodwar->isInGame())
     {
-        LogInfo("Loading game static data from current Broodwar game instance ...");
+        LogInfo("Loading game static data from current Broodwar game instance revision %d ...", Broodwar->getRevision());
 
         InitEntityTypes();
         InitResearchTypes();
@@ -297,23 +297,24 @@ BWAPI::Color BwapiColorFrom(GameDrawColor c)
 //////////////////////////////////////////////////////////////////////////
 void StarCraftGame::DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c)
 {
-    _ASSERTE(!p1.IsInf());
-    _ASSERTE(!p2.IsInf());
+    if (p1.IsInf() || p2.IsInf())
+        return;
 
     Broodwar->drawLineMap(p1.X, p1.Y, p2.X, p2.Y, BwapiColorFrom(c));
 }
 //////////////////////////////////////////////////////////////////////////
 void StarCraftGame::DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c)
 {
-    _ASSERTE(!p.IsInf());
-    _ASSERTE(r >= 0);
+    if (p.IsInf() || r <= 0)
+        return;
 
     Broodwar->drawCircleMap(p.X, p.Y, r, BwapiColorFrom(c), false);
 }
 //////////////////////////////////////////////////////////////////////////
 void StarCraftGame::DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt)
 {
-    _ASSERTE(!p.IsInf());
+    if (p.IsInf())
+        return;
 
     Broodwar->drawTextMap(p.X, p.Y, txt.c_str());
 }

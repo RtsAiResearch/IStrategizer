@@ -11,21 +11,29 @@ using namespace std;
 //
 // States
 //
+void EntityState::Enter()
+{
+    LogInfo("%s -> Enter", ToString().c_str());
+
+    auto pController = (EntityController*)m_pController;
+    m_targetPos1 = pController->TargetPosition();
+    m_targetEntity = pController->TargetEntity();
+}
+//////////////////////////////////////////////////////////////////////////
+void EntityState::Exit()
+{
+    m_targetPos1 = Vector2::Inf();
+    m_targetEntity = INVALID_TID;
+
+    LogInfo("%s -> Exit", ToString().c_str());
+}
+//////////////////////////////////////////////////////////////////////////
 void EntityState::Update()
 {
     auto pController = (EntityController*)m_pController;
     pController->Entity()->DebugDrawTarget();
-    //pController->Entity()->DebugDrawRange();
-    //pController->Entity()->DebugDrawLineOfSight();
+
     g_Game->DebugDrawMapText(pController->Entity()->GetPosition(), ToString().c_str());
-}
-//////////////////////////////////////////////////////////////////////////
-void ArriveEntityState::Enter()
-{
-    auto pController = (EntityController*)m_pController;
-    m_targetPos1 = pController->TargetPosition();
-    bool success = pController->Entity()->Move(m_targetPos1);
-    _ASSERTE(success);
 }
 //////////////////////////////////////////////////////////////////////////
 void ArriveEntityState::Update()
@@ -40,19 +48,16 @@ void ArriveEntityState::Update()
     auto pController = (EntityController*)m_pController;
     if (!pController->Entity()->P(OP_IsMoving))
     {
-        LogInfo("Entity is not moving while it is supposed to, retrying the command but with diff coord");
-        m_targetPos1 = (Circle2(pController->TargetPosition(), EntityController::PositionArriveRadius)).RandomInside();
+        m_targetPos1 = Circle2(m_targetPos1, EntityController::PositionArriveRadius).RandomInside();
         pController->Entity()->Move(m_targetPos1);
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void FleeEntityState::Enter()
 {
-    auto pController = (EntityController*)m_pController;
-    m_targetPos1 = g_Game->Self()->StartLocation();
-    bool success = pController->Entity()->Move(m_targetPos1);
-    _ASSERTE(success);
+    EntityState::Enter();
 
+    auto pController = (EntityController*)m_pController;
     pController->OnEntityFleeing();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -66,26 +71,10 @@ void FleeEntityState::Update()
         return;
 
     auto pController = (EntityController*)m_pController;
-    if (pController->Entity()->P(OP_State) == OBJSTATE_Idle)
+    if (!pController->Entity()->P(OP_IsMoving))
     {
-        LogInfo("Entity is idle while it is supposed to be moving, retrying the command");
-        m_targetPos1 = (Circle2(g_Game->Self()->StartLocation(), EntityController::PositionArriveRadius)).RandomInside();
+        m_targetPos1 = Circle2(g_Game->Self()->StartLocation(), EntityController::PositionArriveRadius).RandomInside();
         pController->Entity()->Move(m_targetPos1);
-    }
-}
-//////////////////////////////////////////////////////////////////////////
-void AttackEntityState::Enter()
-{
-    auto pController = (EntityController*)m_pController;
-    auto candidateTargetId = pController->GetClosestEnemyEntityInSight();
-    m_targetPos1 = pController->TargetPosition();
-
-    if (pController->Entity()->CanAttack(candidateTargetId))
-    {
-        m_targetEntity = candidateTargetId;
-        auto pController = (EntityController*)m_pController;
-        bool success = pController->Entity()->AttackEntity(m_targetEntity);
-        _ASSERTE(success);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -97,30 +86,20 @@ void AttackEntityState::Update()
         return;
 
     auto pController = (EntityController*)m_pController;
-    if (pController->Entity()->CanAttack(m_targetEntity) &&
-        pController->Entity()->P(OP_State) == OBJSTATE_Idle)
+
+    // When the unit can attack the target and it is not attacking or
+    // it is attacking but a different target, then order it to attack our target
+    if (m_targetEntity != INVALID_TID &&
+        pController->Entity()->CanAttack(m_targetEntity) &&
+        (!pController->Entity()->P(OP_IsAttacking) ||
+        pController->Entity()->GetTargetId() != m_targetEntity))
     {
         auto pTarget = g_Game->GetEntity(m_targetEntity);
         if (pTarget->Exists())
         {
-            LogInfo("Entity is idle while it is supposed to be attacking, retrying the command");
             pController->Entity()->AttackEntity(m_targetEntity);
         }
     }
-    else if (m_targetEntity != pController->TargetEntity())
-    {
-        m_targetEntity = pController->TargetEntity();
-        bool success = pController->Entity()->AttackEntity(m_targetEntity);
-        _ASSERTE(success);
-    }
-
-    g_Game->DebugDrawMapLine(pController->Entity()->GetPosition(), m_targetPos1, GCLR_Orange);
-}
-//////////////////////////////////////////////////////////////////////////
-void AlarmEntityState::Enter()
-{
-    auto pController = (EntityController*)m_pController;
-    m_targetPos1 = pController->TargetPosition();
 }
 //////////////////////////////////////////////////////////////////////////
 void AlarmEntityState::Update()
@@ -128,7 +107,18 @@ void AlarmEntityState::Update()
     EntityState::Update();
 
     auto pController = (EntityController*)m_pController;
+
     g_Game->DebugDrawMapLine(pController->Entity()->GetPosition(), m_targetPos1, GCLR_Orange);
+}
+//////////////////////////////////////////////////////////////////////////
+void RetreatEntityState::Enter()
+{
+    EntityState::Enter();
+}
+//////////////////////////////////////////////////////////////////////////
+void RetreatEntityState::Update()
+{
+    EntityState::Exit();
 }
 //////////////////////////////////////////////////////////////////////////
 //
@@ -258,4 +248,9 @@ void GuardEntityFSM::CheckTransitions()
         }
         break;
     }
+}
+//////////////////////////////////////////////////////////////////////////
+void HintNRunEntityFSM::CheckTransitions()
+{
+
 }

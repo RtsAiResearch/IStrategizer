@@ -22,7 +22,7 @@ namespace IStrategizer
         ArmyController(StrategySelectorPtr pConsultant);
 
         static const int FocusAreaRadius = 192;
-        static const int SightAreaRadius = 512;
+        static const int SightAreaRadius = 640;
 
         void Update();
         void AttackArea(_In_ Vector2 pos) {}
