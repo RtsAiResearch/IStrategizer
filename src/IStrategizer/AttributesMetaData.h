@@ -29,6 +29,7 @@ namespace IStrategizer
 		OP_OrderTargetId,
         OP_IsBeingHit,
         OP_IsAttacking,
+        OP_IsVisible,
         OP_END
     };
 #define Define_EntityObjectProperty \
@@ -49,6 +50,7 @@ namespace IStrategizer
     Enums[OP_OrderTargetId] = "Order Target ID"; \
     Enums[OP_IsBeingHit] = "Is Being Hit"; \
     Enums[OP_IsAttacking] = "Is Attacking"; \
+    Enums[OP_IsVisible] = "Is Visible"; \
     //---------------------------------------------------------------------------
 #define Prefix_EntityTypeProperty TP
     enum EntityTypeProperty

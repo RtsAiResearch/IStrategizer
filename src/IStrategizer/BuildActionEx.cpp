@@ -130,7 +130,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 		{
 			/*if (_buildStarted)
 			{*/
-			LogInfo("Checking state of builder %s", pEntity->ToString().c_str());
+			LogDebugInfo("Checking state of builder %s", pEntity->ToString().c_str());
 			ObjectStateType state = (ObjectStateType)pEntity->P(OP_State);
 
 			if (state != OBJSTATE_Constructing)

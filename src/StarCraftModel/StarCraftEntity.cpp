@@ -114,7 +114,10 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
             return m_pUnit->isMoving();
 
         case OP_IsAttacking:
-            return m_pUnit->isAttacking();
+            return m_pUnit->isAttacking() || m_pUnit->isAttackFrame();
+
+        case OP_IsVisible:
+            return m_pUnit->isVisible() && m_pUnit->isDetected();
 
         default:
             DEBUG_THROW(InvalidParameterException(XcptHere));
@@ -310,17 +313,20 @@ bool StarCraftEntity::AttackEntity(TID targetId)
     // ignore this one and raise warning
     if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
     {
-        LogWarning("Entity %s command drop", ToString().c_str());
+        LogWarning("Entity %s command drop, same command issued same frame %d", ToString().c_str(), Broodwar->getFrameCount());
         return true;
     }
 
     BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
 
     if (currentCommand.getType() == BWAPI::UnitCommandTypes::Attack_Unit &&
-        currentCommand.getTarget()->getID() == targetId &&
-        ((!m_pUnit->isStuck() && !m_pUnit->isIdle()) || !m_pUnit->exists()))
+        currentCommand.getTarget()->getID() == targetId)
     {
-        LogWarning("Entity %s command drop", ToString().c_str());
+        if (m_pUnit->exists())
+            LogWarning("Entity %s command drop, same target %d", ToString().c_str(), targetId);
+        else
+            LogWarning("Entity %s command drop, unit does not exist", ToString().c_str(), targetId);
+
         return true;
     }
 
@@ -515,15 +521,24 @@ Vector2 StarCraftEntity::GetTargetPosition() const
 
     if (m_pUnit->getTarget() != nullptr)
         pos = m_pUnit->getTarget()->getPosition();
-    else
+    else if (m_pUnit->getOrderTarget() != nullptr)
+        pos = m_pUnit->getOrderTarget()->getPosition();
+    else if (m_pUnit->getTargetPosition().isValid())
         pos = m_pUnit->getTargetPosition();
+    else if (m_pUnit->getOrderTargetPosition().isValid())
+        pos = m_pUnit->getOrderTargetPosition();
+    else
+        return Vector2::Inf();
 
     return Vector2(pos.x, pos.y);
 }
 //////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::CanAttack(_In_ TID targetId) const
 {
-    return m_pUnit->canAttackUnit(Broodwar->getUnit(targetId));
+    return m_pUnit->exists() &&
+        m_pUnit->canAttackUnit(Broodwar->getUnit(targetId)) &&
+        m_pUnit->isVisible() &&
+        m_pUnit->isDetected();
 }
 //////////////////////////////////////////////////////////////////////////
 void StarCraftEntity::DebugDrawMapLastGameError()

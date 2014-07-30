@@ -32,6 +32,18 @@ Vector2 EntityController::TargetPosition() const
         return m_singleTargetPos;
 }
 //////////////////////////////////////////////////////////////////////////
+TID EntityController::TargetEntity() const
+{
+    // If my target entity is not set, always return the army target position
+    // If my target position is set, then return my override position
+    // otherwise if I am part of an army, then return controller position, otherwise
+    // return my position
+    if (m_targetEntityId == INVALID_TID)
+        return (m_pController != nullptr ? m_pController->TargetEntity() : m_targetEntityId);
+    else
+        return m_targetEntityId;
+}
+//////////////////////////////////////////////////////////////////////////
 void EntityController::ControlEntity(_In_ TID entityId)
 {
     if (m_entityId != INVALID_TID)

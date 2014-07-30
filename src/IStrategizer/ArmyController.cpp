@@ -15,9 +15,9 @@ using namespace std;
 
 ArmyController::ArmyController(StrategySelectorPtr pConsultant) :
 m_pConsultant(pConsultant),
-m_currentTarget(INVALID_TID),
+m_targetEntityId(INVALID_TID),
 m_singleTargetPos(Vector2::Inf()),
-m_isInOrder(false)
+m_isFormationInOrder(false)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
@@ -103,7 +103,7 @@ void ArmyController::Update()
         return;
 
     CalcCetner();
-    CalcClosestEnemyInSight();
+    CalcTargetEntity();
     //CalcIsInOrder();
 
     m_pLogic->Update();
@@ -149,7 +149,7 @@ void ArmyController::CalcCetner()
     m_center /= (int)m_entities.size();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::CalcClosestEnemyInSight()
+void ArmyController::CalcTargetEntity()
 {
     EntityList enemies;
 
@@ -164,22 +164,34 @@ void ArmyController::CalcClosestEnemyInSight()
         otherPos = entityR.second->GetPosition();
         int dist = selfPos.Distance(otherPos);
 
-        if (dist < SightAreaRadius)
+        if (entityR.second->Exists() &&
+            entityR.second->P(OP_IsVisible) &&
+            dist < SightAreaRadius)
         {
             m_closestEnemyInSight.insert(make_pair(dist, entityR.first));
         }
     }
+
+    if (m_closestEnemyInSight.empty())
+    {
+        m_targetEntityId = INVALID_TID;
+    }
+    else if (m_targetEntityId != m_closestEnemyInSight.begin()->second)
+    {
+        m_targetEntityId = m_closestEnemyInSight.begin()->second;
+        LogInfo("New Enemy target choosen %s", g_Game->Enemy()->GetEntity(m_targetEntityId)->ToString(true).c_str());
+    }
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::CalcIsInOrder()
+void ArmyController::CalcIsFormationInOrder()
 {
     if (m_entities.empty())
     {
-        m_isInOrder = false;
+        m_isFormationInOrder = false;
         return;
     }
 
-    m_isInOrder = true;
+    m_isFormationInOrder = true;
     auto orderArea = FocusArea();
 
     for (auto& entityR : m_entities)
@@ -187,7 +199,7 @@ void ArmyController::CalcIsInOrder()
         // Fast return as soon as we see astray units out of focus area
         if (!orderArea.IsInside(entityR.second->Entity()->GetPosition()))
         {
-            m_isInOrder = false;
+            m_isFormationInOrder = false;
             return;
         }
     }

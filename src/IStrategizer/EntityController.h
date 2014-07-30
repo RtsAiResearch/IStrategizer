@@ -22,8 +22,8 @@ namespace IStrategizer
         void Update();
         void SetController(ArmyController* pController) { m_pController = pController; }
         void ControlEntity(_In_ TID entityId);
-        void PushLogic(_In_ StackFSMPtr pLogic) { m_pLogicMemory.push(pLogic); }
-        void PopLogic() { m_pLogicMemory.pop(); }
+        void PushLogic(_In_ StackFSMPtr pLogic) { LogInfo("Pushing %s Logic", pLogic->ToString().c_str()); m_pLogicMemory.push(pLogic); }
+        void PopLogic() { LogInfo("Poping %s Logic", m_pLogicMemory.top()->ToString().c_str()); m_pLogicMemory.pop(); }
         void PushIdleLogic();
         void ReleaseEntity();
         bool IsControllingEntity() const{ return m_entityId != INVALID_TID; }
@@ -41,10 +41,10 @@ namespace IStrategizer
         // Controller Input Parameters
         Vector2 TargetPosition() const;
         void TargetPosition(_In_ Vector2 pos) { m_singleTargetPos = pos; }
+        void TargetEntity(_In_ TID entityId) { m_targetEntityId = entityId; }
         const std::vector<Vector2>& MultiTargetPosition() { return m_multiTargetPos; }
         void MultiTargetPosition(_In_ const std::vector<Vector2>& multiPos) { m_multiTargetPos = multiPos; }
-        void TargetEntity(_In_ TID entityId) { m_targetEntityId = entityId; }
-        TID TargetEntity() const { return m_targetEntityId; }
+        TID TargetEntity() const;
 
         // Controller Conditions
         static bool IsOnCriticalHP(_In_ const GameEntity* pEntity);

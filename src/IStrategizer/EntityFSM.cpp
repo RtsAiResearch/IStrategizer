@@ -13,9 +13,9 @@ using namespace std;
 //
 void EntityState::Enter()
 {
-    LogInfo("%s -> Enter", ToString().c_str());
-
     auto pController = (EntityController*)m_pController;
+    LogInfo("%s: %s -> Enter", pController->Entity()->ToString(true).c_str(), ToString().c_str());
+
     m_targetPos1 = pController->TargetPosition();
     m_targetEntity = pController->TargetEntity();
 }
@@ -25,7 +25,8 @@ void EntityState::Exit()
     m_targetPos1 = Vector2::Inf();
     m_targetEntity = INVALID_TID;
 
-    LogInfo("%s -> Exit", ToString().c_str());
+    auto pController = (EntityController*)m_pController;
+    LogInfo("%s: %s -> Exit", pController->Entity()->ToString(true).c_str(), ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 void EntityState::Update()
@@ -33,7 +34,11 @@ void EntityState::Update()
     auto pController = (EntityController*)m_pController;
     pController->Entity()->DebugDrawTarget();
 
-    g_Game->DebugDrawMapText(pController->Entity()->GetPosition(), ToString().c_str());
+    string str = ToString();
+    str += '_';
+    str += to_string(pController->Entity()->Id());
+
+    g_Game->DebugDrawMapText(pController->Entity()->GetPosition(), str);
 }
 //////////////////////////////////////////////////////////////////////////
 void ArriveEntityState::Update()
@@ -82,23 +87,23 @@ void AttackEntityState::Update()
 {
     EntityState::Update();
 
+
     if (g_Game->GameFrame() % 4 != 0)
         return;
 
+    TID prevTargetEntityId = m_targetEntity;
+
     auto pController = (EntityController*)m_pController;
+    m_targetEntity = pController->TargetEntity();
 
     // When the unit can attack the target and it is not attacking or
     // it is attacking but a different target, then order it to attack our target
-    if (m_targetEntity != INVALID_TID &&
-        pController->Entity()->CanAttack(m_targetEntity) &&
-        (!pController->Entity()->P(OP_IsAttacking) ||
-        pController->Entity()->GetTargetId() != m_targetEntity))
+    if (m_targetEntity != prevTargetEntityId &&
+        m_targetEntity != INVALID_TID &&
+        pController->Entity()->CanAttack(m_targetEntity))
     {
-        auto pTarget = g_Game->GetEntity(m_targetEntity);
-        if (pTarget->Exists())
-        {
-            pController->Entity()->AttackEntity(m_targetEntity);
-        }
+        LogInfo("%s choose to attack %s", pController->Entity()->ToString().c_str(), g_Game->GetEntity(m_targetEntity)->ToString().c_str());
+        pController->Entity()->AttackEntity(m_targetEntity);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -130,7 +135,7 @@ void ScoutEntityFSM::CheckTransitions()
 
     // Get target position in case the current state is using it
     auto pCurrState = static_pointer_cast<EntityState>(CurrentState());
-    Vector2 targetPos = pCurrState->TargetPosition1();
+    Vector2 targetPos = pCurrState->TargetPosition();
 
     switch (pCurrState->TypeId())
     {
@@ -193,6 +198,7 @@ void ScoutEntityFSM::Reset()
 
     auto pController = (EntityController*)m_pController;
     pController->TargetPosition(pController->MultiTargetPosition()[0]);
+    m_currTargetPosIdx = 0;
 }
 //////////////////////////////////////////////////////////////////////////
 void GuardEntityFSM::CheckTransitions()
@@ -201,7 +207,7 @@ void GuardEntityFSM::CheckTransitions()
 
     // Get target position in case the current state is using it
     auto pCurrState = static_pointer_cast<EntityState>(CurrentState());
-    Vector2 targetPos = pCurrState->TargetPosition1();
+    Vector2 targetPos = pCurrState->TargetPosition();
 
     switch (pCurrState->TypeId())
     {
@@ -252,5 +258,43 @@ void GuardEntityFSM::CheckTransitions()
 //////////////////////////////////////////////////////////////////////////
 void HintNRunEntityFSM::CheckTransitions()
 {
+    auto pController = (EntityController*)m_pController;
 
+    // Get target position in case the current state is using it
+    auto pCurrState = static_pointer_cast<EntityState>(CurrentState());
+    Vector2 targetPos = pCurrState->TargetPosition();
+
+    switch (pCurrState->TypeId())
+    {
+    case FleeEntityState::TypeID:
+        if (pController->ArrivedAtTarget(targetPos))
+        {
+            PopAllAndPushState(IdleEntityState::TypeID);
+        }
+        break;
+    case AttackEntityState::TypeID:
+        if (pController->IsOnCriticalHP())
+        {
+            PopState();
+            PushState(FleeEntityState::TypeID);
+        }
+        else if (pController->TargetEntity() == INVALID_TID &&
+            !pController->IsAnyEnemyTargetInSight())
+        {
+            PopState();
+        }
+        break;
+    case AlarmEntityState::TypeID:
+        if (pController->IsOnCriticalHP())
+        {
+            PopState();
+            PushState(FleeEntityState::TypeID);
+        }
+        else if (pController->TargetEntity() != INVALID_TID ||
+            pController->IsAnyEnemyTargetInSight())
+        {
+            PushState(AttackEntityState::TypeID);
+        }
+        break;
+    }
 }

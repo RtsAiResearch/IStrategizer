@@ -19,7 +19,7 @@ namespace IStrategizer
             m_targetEntity(INVALID_TID)
         {}
 
-        Vector2 TargetPosition1() const { return m_targetPos1; }
+        Vector2 TargetPosition() const { return m_targetPos1; }
         Vector2 TargetPosition2() const { return m_targetPos2; }
         TID TargetEntity() const { return m_targetEntity; }
         const EntityControllersMap& Entities() const { return m_controlledEntities; }

@@ -19,7 +19,6 @@ void ArmyState::Reset()
     m_controlledEntities.clear();
 
     LogInfo("%s -> Reset", ToString().c_str());
-
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyState::Enter()
@@ -80,6 +79,8 @@ void AttackArmyState::Enter()
     {
         entityR.second->PushLogic(StackFSMPtr(new HintNRunEntityFSM(&*entityR.second)));
     }
+
+    LogInfo("Assigned attack logic for controlled entities");
 }
 //////////////////////////////////////////////////////////////////////////
 void AttackArmyState::Exit()
@@ -155,7 +156,7 @@ void GuardArmyFSM::CheckTransitions()
     switch (pCurrState->TypeId())
     {
     case AlarmArmyState::TypeID:
-        if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition1()))
+        if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
         {
             PushState(RegroupArmyState::TypeID);
         }
@@ -171,7 +172,7 @@ void GuardArmyFSM::CheckTransitions()
         }
         break;
     case RegroupArmyState::TypeID:
-        if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition1()))
+        if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
         {
             PopState();
         }

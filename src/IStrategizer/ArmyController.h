@@ -46,7 +46,7 @@ namespace IStrategizer
         // Controller Input Parameters
         Vector2 TargetPosition() const { return m_singleTargetPos; }
         void TargetPosition(_In_ Vector2 pos) { m_singleTargetPos = pos; }
-        TID TargetEntity() const { return m_currentTarget; }
+        TID TargetEntity() const { return m_targetEntityId; }
         bool CanControl(_In_ const GameEntity* pEntity);
 
         // Controller Conditions
@@ -59,19 +59,19 @@ namespace IStrategizer
     private:
         ArmyGroup Classify(const GameType* pType);
         void CalcCetner();
-        void CalcClosestEnemyInSight();
-        void CalcIsInOrder();
+        void CalcTargetEntity();
+        void CalcIsFormationInOrder();
 
         std::unordered_map<TID, EntityControllerPtr> m_entities;
         std::set<TID> m_currFramefleeingEntities;
 
         StackFSMPtr m_pLogic;
-        TID m_currentTarget;
+        TID m_targetEntityId;
         StrategySelectorPtr m_pConsultant;
         Vector2 m_singleTargetPos;
         Vector2 m_center;
         std::multimap<int, TID> m_closestEnemyInSight;
-        bool m_isInOrder;
+        bool m_isFormationInOrder;
     };
 }
 

@@ -19,7 +19,7 @@ namespace IStrategizer
             m_targetEntity(INVALID_TID)
         {}
 
-        Vector2 TargetPosition1() const { return m_targetPos1; }
+        Vector2 TargetPosition() const { return m_targetPos1; }
         TID TargetEntity() const { return m_targetEntity; }
         void Update();
         void Enter();
@@ -175,11 +175,12 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0xC5EEF702;
 
         HintNRunEntityFSM(EntityController* pController) :
-            StackFSM(IdleEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
+            StackFSM(AlarmEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
         {
             AddState(FSMStatePtr(new FleeEntityState(pController)));
             AddState(FSMStatePtr(new AttackEntityState(pController)));
             AddState(FSMStatePtr(new IdleEntityState(pController)));
+            AddState(FSMStatePtr(new AlarmEntityState(pController)));
         }
 
         void CheckTransitions();
