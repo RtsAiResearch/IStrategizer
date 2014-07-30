@@ -110,14 +110,18 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0x6E8E8A14;
 
         RetreatEntityState(EntityController* pController) :
-            EntityState(TypeID, "Retreat", pController)
+            EntityState(TypeID, "Retreat", pController),
+            m_retreatAttackerId(INVALID_TID),
+            m_retreatPos(Vector2::Inf())
         {}
 
-        void Enter();
+        void Reset();
         void Update();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(RetreatEntityState);
+        TID m_retreatAttackerId;
+        Vector2 m_retreatPos;
     };
 
     class IdleEntityFSM : public StackFSM
@@ -181,6 +185,7 @@ namespace IStrategizer
             AddState(FSMStatePtr(new AttackEntityState(pController)));
             AddState(FSMStatePtr(new IdleEntityState(pController)));
             AddState(FSMStatePtr(new AlarmEntityState(pController)));
+            AddState(FSMStatePtr(new RetreatEntityState(pController)));
         }
 
         void CheckTransitions();

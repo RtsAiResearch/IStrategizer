@@ -23,6 +23,7 @@ namespace IStrategizer
         void DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c);
         void DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c);
         void DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt);
+        void DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bottomRight, _In_ GameDrawColor c, _In_ bool fill = false);
 
     protected:
         void InitPlayers();

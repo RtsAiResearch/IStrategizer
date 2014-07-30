@@ -17,7 +17,8 @@ ArmyController::ArmyController(StrategySelectorPtr pConsultant) :
 m_pConsultant(pConsultant),
 m_targetEntityId(INVALID_TID),
 m_singleTargetPos(Vector2::Inf()),
-m_isFormationInOrder(false)
+m_isFormationInOrder(false),
+m_totalDiedEntities(0)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
@@ -103,8 +104,7 @@ void ArmyController::Update()
         return;
 
     CalcCetner();
-    CalcTargetEntity();
-    //CalcIsInOrder();
+    CalcEnemyData();
 
     m_pLogic->Update();
 
@@ -143,42 +143,51 @@ void ArmyController::CalcCetner()
 
     for (auto& entityR : m_entities)
     {
-        m_center += entityR.second->Entity()->GetPosition();
+        m_center += entityR.second->Entity()->Position();
     }
 
     m_center /= (int)m_entities.size();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::CalcTargetEntity()
+void ArmyController::CalcEnemyData()
 {
     EntityList enemies;
 
     Vector2 selfPos = Center();
     Vector2 otherPos = Vector2::Inf();
-    Circle2 sightArea = SightArea();
 
-    m_closestEnemyInSight.clear();
+    m_closestEnemy.clear();
+    m_enemyData.clear();
+    m_enemiesInSight.clear();
+
+    auto sightArea = SightArea();
 
     for (auto& entityR : g_Game->Enemy()->Entities())
     {
-        otherPos = entityR.second->GetPosition();
+        otherPos = entityR.second->Position();
         int dist = selfPos.Distance(otherPos);
 
-        if (entityR.second->Exists() &&
-            entityR.second->P(OP_IsVisible) &&
-            dist < SightAreaRadius)
+        if (entityR.second->Exists())
         {
-            m_closestEnemyInSight.insert(make_pair(dist, entityR.first));
+            m_closestEnemy.insert(make_pair(dist, entityR.first));
+            auto& dat = m_enemyData[entityR.first];
+            dat.Id = entityR.first;
+            dat.DistanceToCenter = dist;
+            dat.TargetEntityId = entityR.second->GetTargetId();
+
+            if (sightArea.IsInside(otherPos))
+                m_enemiesInSight.insert(entityR.first);
         }
     }
 
-    if (m_closestEnemyInSight.empty())
+    if (m_closestEnemy.empty())
     {
         m_targetEntityId = INVALID_TID;
     }
-    else if (m_targetEntityId != m_closestEnemyInSight.begin()->second)
+    else if (m_targetEntityId != m_closestEnemy.begin()->second &&
+        m_enemyData[m_targetEntityId].DistanceToCenter < SightAreaRadius)
     {
-        m_targetEntityId = m_closestEnemyInSight.begin()->second;
+        m_targetEntityId = m_closestEnemy.begin()->second;
         LogInfo("New Enemy target choosen %s", g_Game->Enemy()->GetEntity(m_targetEntityId)->ToString(true).c_str());
     }
 }
@@ -197,7 +206,7 @@ void ArmyController::CalcIsFormationInOrder()
     for (auto& entityR : m_entities)
     {
         // Fast return as soon as we see astray units out of focus area
-        if (!orderArea.IsInside(entityR.second->Entity()->GetPosition()))
+        if (!orderArea.IsInside(entityR.second->Entity()->Position()))
         {
             m_isFormationInOrder = false;
             return;
@@ -217,7 +226,7 @@ bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector
     for (auto& entityR : entities)
     {
         // Fast return as soon as we see astray units out of focus area
-        if (!orderArea.IsInside(entityR.second->Entity()->GetPosition()))
+        if (!orderArea.IsInside(entityR.second->Entity()->Position()))
         {
             return false;
         }
@@ -263,10 +272,10 @@ void ArmyController::ControlEntity(_In_ TID entityId)
 void ArmyController::OnEntityDestroyed(_In_ TID entityId)
 {
     ReleaseEntity(entityId);
+    ++m_totalDiedEntities;
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::OnEntityFleeing(_In_ TID entityId)
 {
     m_currFramefleeingEntities.insert(entityId);
 }
-//////////////////////////////////////////////////////////////////////////

@@ -220,7 +220,7 @@ bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector
 {
     GameEntity* entity = g_Game->Self()->GetEntity(p_entityId);
     _ASSERTE(entity);
-    Vector2 currentPosition = entity->GetPosition();
+    Vector2 currentPosition = entity->Position();
 
     double euclideanDistance = sqrt((double)
         (currentPosition.Y - p_point.Y) * (currentPosition.Y - p_point.Y)

@@ -197,7 +197,7 @@ string StarCraftEntity::ToString(bool minimal) const
     return str;
 }
 //----------------------------------------------------------------------------------------------
-Vector2 StarCraftEntity::GetPosition() const
+Vector2 StarCraftEntity::Position() const
 {
     return Vector2(P(OP_PosCenterX), P(OP_PosCenterY));
 }
@@ -275,7 +275,7 @@ bool StarCraftEntity::AttackGround(Vector2 p_position)
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-    Position pos(p_position.X, p_position.Y);
+    BWAPI::Position pos(p_position.X, p_position.Y);
     
     if (m_pUnit->attack(pos))
         return true;
@@ -384,7 +384,7 @@ bool StarCraftEntity::Move(Vector2 targetPos)
 
     // get the unit's current command
     BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
-    Position pos(targetPos.X, targetPos.Y);
+    BWAPI::Position pos(targetPos.X, targetPos.Y);
 
     // if we've already told this unit to attack this target, ignore this command
     if (currentCommand.getType() == BWAPI::UnitCommandTypes::Move &&
@@ -544,7 +544,7 @@ bool StarCraftEntity::CanAttack(_In_ TID targetId) const
 void StarCraftEntity::DebugDrawMapLastGameError()
 {
     Error lastErr = Broodwar->getLastError();
-    Position unitPos = m_pUnit->getPosition();
+    BWAPI::Position unitPos = m_pUnit->getPosition();
 
     Broodwar->registerEvent([unitPos, lastErr](Game*){ Broodwar->drawTextMap(unitPos, "%c%s", Text::Red, lastErr.c_str()); },   // action
         nullptr,    // condition

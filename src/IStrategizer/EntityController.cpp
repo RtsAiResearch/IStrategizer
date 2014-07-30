@@ -127,7 +127,7 @@ bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
         pos.IsInf())
         return false;
 
-    auto distToTarget = pos.Distance(Entity()->GetPosition());
+    auto distToTarget = pos.Distance(Entity()->Position());
 
     return distToTarget <= PositionArriveRadius;
 }
@@ -151,7 +151,7 @@ bool EntityController::IsTargetInSight(_In_ Vector2 pos)
         return false;
 
     int los = Entity()->Type()->P(TP_LineOfSight);
-    Circle2 sight(Entity()->GetPosition(), los);
+    Circle2 sight(Entity()->Position(), los);
 
     return sight.IsInside(pos);
 }
@@ -163,7 +163,7 @@ bool EntityController::IsTargetInSight(_In_ TID entityId)
         return false;
 
     auto pEntity = g_Game->GetEntity(entityId);
-    return IsTargetInSight(pEntity->GetPosition());
+    return IsTargetInSight(pEntity->Position());
 }
 //////////////////////////////////////////////////////////////////////////
 TID EntityController::GetClosestEnemyEntityInSight()
@@ -176,7 +176,7 @@ TID EntityController::GetClosestEnemyEntityInSight()
 
     int closestDist = INT_MAX;
     TID closestId = INVALID_TID;
-    Vector2 selfPos = Entity()->GetPosition();
+    Vector2 selfPos = Entity()->Position();
     Vector2 otherPos = Vector2::Inf();
     int los = Entity()->Type()->P(TP_LineOfSight);
 
@@ -186,7 +186,7 @@ TID EntityController::GetClosestEnemyEntityInSight()
         if (!Entity()->CanAttack(entityR.first))
             continue;
 
-        otherPos = entityR.second->GetPosition();
+        otherPos = entityR.second->Position();
         int dist = selfPos.Distance(otherPos);
 
         if (dist < los && dist < closestDist)
@@ -208,12 +208,32 @@ bool EntityController::IsAnyEnemyTargetInSight()
     EntityList enemies;
 
     int los = Entity()->Type()->P(TP_LineOfSight);
-    Circle2 sight(Entity()->GetPosition(), los);
+    Circle2 sight(Entity()->Position(), los);
 
     for (auto& entityR : g_Game->Enemy()->Entities())
     {
-        if (sight.IsInside(entityR.second->GetPosition()) &&
+        if (sight.IsInside(entityR.second->Position()) &&
             Entity()->CanAttack(entityR.first))
+            return true;
+    }
+
+    return false;
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::IsAnyEnemyTargetInRange()
+{
+    if (!IsControllingEntity() ||
+        !EntityExists())
+        return false;
+
+    EntityList enemies;
+
+    int range = Entity()->Type()->P(TP_GroundRange);
+    Circle2 rangeArea(Entity()->Position(), range);
+
+    for (auto& entityR : g_Game->Enemy()->Entities())
+    {
+        if (rangeArea.IsInside(entityR.second->Position()))
             return true;
     }
 
@@ -253,4 +273,38 @@ void EntityController::HardResetLogic()
 void EntityController::PushIdleLogic()
 {
     PushLogic(StackFSMPtr(new IdleEntityFSM(this)));
+}
+//////////////////////////////////////////////////////////////////////////
+TID EntityController::Attacker() const
+{
+    // Finding my attack can be expensive, thats why it is globally computed per army
+    if (m_pController == nullptr)
+        DEBUG_THROW(NotImplementedException(XcptHere));
+
+    auto& allEnemies = m_pController->EnemyData();
+    auto& nearEnemies = m_pController->ClosestEnemyEntities();
+
+    int minDist = INT_MAX;
+    TID closestAttacker = INVALID_TID;
+    auto selfPos = Entity()->Position();
+
+    for (auto& enemy : nearEnemies)
+    {
+        auto& currEnemy = allEnemies.at(enemy.second);
+
+        auto pCurrEnemy = g_Game->Enemy()->GetEntity(currEnemy.Id);
+
+        if (currEnemy.TargetEntityId == m_entityId &&
+            pCurrEnemy->P(OP_IsAttacking))
+        {
+            int dist = selfPos.Distance(pCurrEnemy->Position());
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closestAttacker = currEnemy.Id;
+            }
+        }
+    }
+    
+    return closestAttacker;
 }

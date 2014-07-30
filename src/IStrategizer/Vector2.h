@@ -38,22 +38,36 @@ namespace IStrategizer
             return *this;
         }
 
-        Vector2T& operator /=(T n)
+        Vector2T& operator *=(const T n)
+        {
+            X *= n;
+            Y *= n;
+            return *this;
+        }
+
+        Vector2T& operator /=(const T n)
         {
             X /= n;
             Y /= n;
             return *this;
         }
 
-        Vector2T operator - (const Vector2T& right)
+        Vector2T operator + (const Vector2T& right)
         {
-            Vector2T res = *this;
-            res.X -= right.X;
-            res.Y -= right.Y;
-            return res;
+            return Vector2T(X + right.X, Y + right.Y);
         }
 
-        T Length() const { return (T)sqrt(T(SQR(other.X) + SQR(other.Y))); }
+        Vector2T operator - (const Vector2T& right)
+        {
+            return Vector2T(X - right.X, Y - right.Y);
+        }
+
+        Vector2T operator * (const T n)
+        {
+            return Vector2T(X * n, Y * n);
+        }
+
+        T Length() const { return (T)sqrt(T(SQR(X) + SQR(Y))); }
 
         T Distance(const Vector2T& other) const { return (T)sqrt(T(SQR(other.X - X) + SQR(other.Y - Y))); }
 

@@ -158,7 +158,7 @@ void GamePlayer::OnEntityCreate(Message* pMsg)
         g_IMSysMgr.RegisterGameObj(entityId, m_type);
 
         LogInfo("[%s] %s created at %s",
-            Enums[m_type], pEntity->ToString(true).c_str(), pEntity->GetPosition().ToString().c_str());
+            Enums[m_type], pEntity->ToString(true).c_str(), pEntity->Position().ToString().c_str());
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ void GamePlayer::OnEntityShow(Message* pMsg)
         }
 
         LogInfo("[%s] %s showed at %s",
-            Enums[m_type], pEntity->ToString(true).c_str(), pEntity->GetPosition().ToString().c_str());
+            Enums[m_type], pEntity->ToString(true).c_str(), pEntity->Position().ToString().c_str());
 
         g_IMSysMgr.RegisterGameObj(entityId, pShowMsg->Data()->OwnerId);
     }
@@ -285,7 +285,7 @@ void GamePlayer::OnEntityHide(Message* pMsg)
             pEntity->CacheAttributes();
 
             LogInfo("[%s] %s hidden from %s",
-                Enums[m_type], pEntity->ToString(true).c_str(), pEntity->GetPosition().ToString().c_str());
+                Enums[m_type], pEntity->ToString(true).c_str(), pEntity->Position().ToString().c_str());
         }
     }
 }

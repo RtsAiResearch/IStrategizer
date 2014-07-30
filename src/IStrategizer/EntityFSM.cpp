@@ -33,12 +33,13 @@ void EntityState::Update()
 {
     auto pController = (EntityController*)m_pController;
     pController->Entity()->DebugDrawTarget();
+    pController->Entity()->DebugDrawHealthBar();
 
     string str = ToString();
     str += '_';
     str += to_string(pController->Entity()->Id());
 
-    g_Game->DebugDrawMapText(pController->Entity()->GetPosition(), str);
+    g_Game->DebugDrawMapText(pController->Entity()->Position(), str);
 }
 //////////////////////////////////////////////////////////////////////////
 void ArriveEntityState::Update()
@@ -113,17 +114,41 @@ void AlarmEntityState::Update()
 
     auto pController = (EntityController*)m_pController;
 
-    g_Game->DebugDrawMapLine(pController->Entity()->GetPosition(), m_targetPos1, GCLR_Orange);
+    g_Game->DebugDrawMapLine(pController->Entity()->Position(), m_targetPos1, GCLR_Orange);
 }
 //////////////////////////////////////////////////////////////////////////
-void RetreatEntityState::Enter()
+void RetreatEntityState::Reset()
 {
-    EntityState::Enter();
+    EntityState::Reset();
+    m_retreatAttackerId = INVALID_TID;
+    m_retreatPos = Vector2::Inf();
 }
 //////////////////////////////////////////////////////////////////////////
 void RetreatEntityState::Update()
 {
-    EntityState::Exit();
+    EntityState::Update();
+
+    auto pController = (EntityController*)m_pController;
+    m_retreatAttackerId = pController->Attacker();
+
+    if (m_retreatAttackerId != INVALID_TID)
+    {
+        auto attackerPos = g_Game->Enemy()->GetEntity(m_retreatAttackerId)->Position();
+        auto selfPos = pController->Entity()->Position();
+        Vector2F attackerPosF((float)attackerPos.X, (float)attackerPos.Y);
+        Vector2F selfPosF((float)selfPos.X, (float)selfPos.Y);
+
+        auto retreatkDir = selfPosF - attackerPosF;
+        retreatkDir.Normalize();
+
+        float retreatDistance = (float)pController->Entity()->Type()->P(TP_GroundRange) * 1.5f;
+
+        Vector2F newPos = selfPosF + retreatkDir * retreatDistance;
+
+        pController->Entity()->Move(Vector2((int)newPos.X, (int)newPos.Y));
+    }
+
+    pController->Entity()->DebugDrawRange();
 }
 //////////////////////////////////////////////////////////////////////////
 //
@@ -280,6 +305,16 @@ void HintNRunEntityFSM::CheckTransitions()
         }
         else if (pController->TargetEntity() == INVALID_TID &&
             !pController->IsAnyEnemyTargetInSight())
+        {
+            PopState();
+        }
+        else if (pController->Entity()->P(OP_IsBeingHit))
+        {
+            PushState(RetreatEntityState::TypeID);
+        }
+        break;
+    case RetreatEntityState::TypeID:
+        if (!pController->IsAnyEnemyTargetInRange())
         {
             PopState();
         }

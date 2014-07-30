@@ -31,6 +31,7 @@ namespace IStrategizer
         void OnEntityFleeing();
         void HardResetLogic();
         void SoftResetLogic() { m_pLogicMemory.top()->Reset(); }
+        TID Attacker() const;
 
         GameEntity* Entity();
         const GameEntity* Entity() const;
@@ -57,6 +58,7 @@ namespace IStrategizer
         bool EntityExists() const;
         bool EntityExists(_In_ TID entityId) const;
         bool IsAnyEnemyTargetInSight(); // Expensive call
+        bool IsAnyEnemyTargetInRange(); // Expensive call
 
     private:
         DISALLOW_COPY_AND_ASSIGN(EntityController);

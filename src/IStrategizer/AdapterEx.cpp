@@ -203,7 +203,7 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
         _ASSERTE(pEntity);
 
         //now we can depend on the cell feature for comparison to get the resource that matches the required cell feature.
-        CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+        CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->Position());
         double dist = pResourceCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
 
         if (dist <= bestDistance && pGatherer->CanGather(pEntity->Id()))
@@ -275,7 +275,7 @@ TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepPar
 
         if (p_targetType == pEntity->TypeId())
         {
-            CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->GetPosition());
+            CellFeature *pCandidateCellFearure = g_Game->Map()->GetCellFeatureFromWorldPosition(pEntity->Position());
             double dist = pTarGetCellFeatureFromWorldPosition->GetDistance(pCandidateCellFearure);
 
             if (dist <= bestDistance)

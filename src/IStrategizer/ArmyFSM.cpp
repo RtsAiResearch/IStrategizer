@@ -52,8 +52,14 @@ void ArmyState::Update()
         g_Game->DebugDrawMapLine(pController->Center(), pController->TargetPosition(), GCLR_Orange);
 
     g_Game->DebugDrawMapCircle(pController->Center(), 32, GCLR_Orange);
-    g_Game->DebugDrawMapText(pController->Center(), ToString().c_str());
 
+    string str = ToString();
+    str += to_string(pController->HealthyEntities().size());
+    str += '/';
+    str += to_string(pController->TotalDiedEntities());
+    
+    g_Game->DebugDrawMapText(pController->Center(), str.c_str());
+    
     auto focusArea = pController->FocusArea();
     g_Game->DebugDrawMapCircle(focusArea.Center, focusArea.Radius, GCLR_Blue);
 
@@ -138,7 +144,7 @@ void RegroupArmyState::Update()
     {
         // Re issue move to any idle out of order entity
         if (entityR.second->Entity()->P(OP_State) == OBJSTATE_Idle &&
-            !m_regroupArea.IsInside(entityR.second->Entity()->GetPosition()))
+            !m_regroupArea.IsInside(entityR.second->Entity()->Position()))
         {
             entityR.second->Entity()->Move(m_regroupArea.RandomInside());
         }
@@ -156,14 +162,15 @@ void GuardArmyFSM::CheckTransitions()
     switch (pCurrState->TypeId())
     {
     case AlarmArmyState::TypeID:
-        if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
-        {
-            PushState(RegroupArmyState::TypeID);
-        }
-        else if (pController->IsAnyEnemyTargetInSight())
+        if (pController->IsAnyEnemyTargetInSight())
         {
             PushState(AttackArmyState::TypeID);
         }
+        else if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
+        {
+            PushState(RegroupArmyState::TypeID);
+        }
+
         break;
     case AttackArmyState::TypeID:
         if (!pController->IsAnyEnemyTargetInSight())

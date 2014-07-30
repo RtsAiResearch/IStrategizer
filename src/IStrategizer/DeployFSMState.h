@@ -35,7 +35,7 @@ namespace IStrategizer
             Army* pArmy = TControllerTraits::GetArmy(battle);
             
             GameEntity* pTarget = game.Enemy()->GetEntity(currentTargetId);
-            Vector2 targetPosition = pTarget->GetPosition();
+            Vector2 targetPosition = pTarget->Position();
 
             if (m_targetPosition != targetPosition)
             {

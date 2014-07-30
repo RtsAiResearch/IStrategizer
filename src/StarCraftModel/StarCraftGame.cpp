@@ -318,3 +318,11 @@ void StarCraftGame::DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt
 
     Broodwar->drawTextMap(p.X, p.Y, txt.c_str());
 }
+//////////////////////////////////////////////////////////////////////////
+void StarCraftGame::DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bottomRight, _In_ GameDrawColor c, _In_ bool fill)
+{
+    if (topLeft.IsInf() || bottomRight.IsInf())
+        return;
+
+    Broodwar->drawBoxMap(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y, BwapiColorFrom(c), fill);
+}

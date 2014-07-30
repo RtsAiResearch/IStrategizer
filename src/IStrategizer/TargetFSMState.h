@@ -84,7 +84,7 @@ namespace IStrategizer
                 GameEntity* pEnemyEntity = game.Enemy()->GetEntity(enemyEntityId);
                 _ASSERTE(pEnemyEntity);
                 ObjectStateType enemyEntityState = (ObjectStateType)pEnemyEntity->P(OP_State);
-                int distance = armyCenter.Distance(pEnemyEntity->GetPosition());
+                int distance = armyCenter.Distance(pEnemyEntity->Position());
 
                 if (enemyEntityState == OBJSTATE_Attacking && distance <= closestDistance)
                 {
@@ -120,7 +120,7 @@ namespace IStrategizer
                     if (!g_Assist.IsEntityObjectReady(entityId, PLAYER_Enemy) && !pEntityType->P(TP_IsBuilding))
                         continue;
 
-                    int distance = armyCenter.Distance(pGameEntity->GetPosition());
+                    int distance = armyCenter.Distance(pGameEntity->Position());
 
                     if (pEntityType->P(attr) && rank > m_targetTypeRank && distance <= closestDistance)
                     {

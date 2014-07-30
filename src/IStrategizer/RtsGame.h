@@ -52,7 +52,8 @@ namespace IStrategizer
         GCLR_White,
         GCLR_Orange,
         GCLR_Cyan,
-        GCLR_Purple
+        GCLR_Purple,
+        GCLR_Black
     };
 
     ///> class=RtsGame
@@ -105,6 +106,7 @@ namespace IStrategizer
         virtual void DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c) = 0;
         virtual void DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c) = 0;
         virtual void DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt) = 0;
+        virtual void DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bottomRight, _In_ GameDrawColor c, _In_ bool fill = false) = 0;
 
         static SimilarityWeightModel DefaultWeightModel;
 

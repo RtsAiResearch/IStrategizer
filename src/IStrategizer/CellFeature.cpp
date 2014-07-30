@@ -154,7 +154,7 @@ void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, const E
 
         _ASSERTE(pBase);
 
-        distance = cellWorldPosition.Distance(pBase->GetPosition());
+        distance = cellWorldPosition.Distance(pBase->Position());
     }
 }
 //----------------------------------------------------------------------------------------------

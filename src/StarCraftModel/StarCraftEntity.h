@@ -30,7 +30,7 @@ namespace IStrategizer
         StarCraftEntity(BWAPI::Unit p_unit);
 
         // Game Properties
-        Vector2 GetPosition() const;
+        Vector2 Position() const;
         int P(EntityObjectProperty p_attrId) const;
         bool IsTraining(TID p_traineeId) const;
         bool IsNull() { return m_isOnline && m_pUnit == nullptr; }

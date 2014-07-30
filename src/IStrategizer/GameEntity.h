@@ -33,7 +33,7 @@ namespace IStrategizer
         EntityClassType TypeId() const { return (EntityClassType)P(OP_TypeId); }
         const GameType* Type() const;
         PlayerType GetPlayer() const { return (PlayerType)P(OP_OwnerId); }
-        virtual Vector2 GetPosition() const = 0;
+        virtual Vector2 Position() const = 0;
         virtual TID GetTargetId() const = 0;
         virtual Vector2 GetTargetPosition() const = 0;
         virtual int P(EntityObjectProperty attrId) const = 0;
@@ -61,6 +61,7 @@ namespace IStrategizer
         void DebugDrawTarget();
         void DebugDrawRange();
         void DebugDrawLineOfSight();
+        void DebugDrawHealthBar();
 
         virtual void SetOffline(RtsGame* pBelongingGame) = 0;
         bool Acquire() { return true; }
