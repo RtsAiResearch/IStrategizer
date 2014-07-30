@@ -17,6 +17,7 @@ namespace IStrategizer
     {
     public:
         static const int PositionArriveRadius = 64;
+        static const int MeleeAttackerSafetyRadius = 96;
 
         EntityController(ArmyController* pController);
         void Update();
@@ -49,16 +50,17 @@ namespace IStrategizer
 
         // Controller Conditions
         static bool IsOnCriticalHP(_In_ const GameEntity* pEntity);
-        bool IsOnCriticalHP();
-        bool IsBeingHit();
-        bool ArrivedAtTarget(_In_ Vector2 pos);
-        bool ThreatAtTarget(_In_ Vector2 pos);
-        bool IsTargetInSight(_In_ Vector2 pos);
-        bool IsTargetInSight(_In_ TID entityId);
+        bool IsOnCriticalHP() const;
+        bool IsBeingHit() const;
+        bool ArrivedAtTarget(_In_ Vector2 pos) const;
+        bool ThreatAtTarget(_In_ Vector2 pos) const;
+        bool IsTargetInSight(_In_ Vector2 pos) const;
+        bool IsTargetInSight(_In_ TID entityId) const;
         bool EntityExists() const;
         bool EntityExists(_In_ TID entityId) const;
-        bool IsAnyEnemyTargetInSight(); // Expensive call
-        bool IsAnyEnemyTargetInRange(); // Expensive call
+        bool IsAnyEnemyTargetInSight() const; // Expensive call
+        bool IsAnyEnemyTargetInRange() const; // Expensive call
+        bool IsCloseToMeleeAttacker() const;
 
     private:
         DISALLOW_COPY_AND_ASSIGN(EntityController);

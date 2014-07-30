@@ -185,7 +185,7 @@ void ArmyController::CalcEnemyData()
         m_targetEntityId = INVALID_TID;
     }
     else if (m_targetEntityId != m_closestEnemy.begin()->second &&
-        m_enemyData[m_targetEntityId].DistanceToCenter < SightAreaRadius)
+        m_enemyData.at(m_closestEnemy.begin()->second).DistanceToCenter < SightAreaRadius)
     {
         m_targetEntityId = m_closestEnemy.begin()->second;
         LogInfo("New Enemy target choosen %s", g_Game->Enemy()->GetEntity(m_targetEntityId)->ToString(true).c_str());

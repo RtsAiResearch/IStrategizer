@@ -141,7 +141,8 @@ void RetreatEntityState::Update()
         auto retreatkDir = selfPosF - attackerPosF;
         retreatkDir.Normalize();
 
-        float retreatDistance = (float)pController->Entity()->Type()->P(TP_GroundRange) * 1.5f;
+        int groundRange = pController->Entity()->Type()->P(TP_GroundRange);
+        float retreatDistance = (float)groundRange * 1.5f;
 
         Vector2F newPos = selfPosF + retreatkDir * retreatDistance;
 
@@ -308,7 +309,8 @@ void HintNRunEntityFSM::CheckTransitions()
         {
             PopState();
         }
-        else if (pController->Entity()->P(OP_IsBeingHit))
+        else if (pController->Entity()->P(OP_IsBeingHit) ||
+            pController->IsCloseToMeleeAttacker())
         {
             PushState(RetreatEntityState::TypeID);
         }

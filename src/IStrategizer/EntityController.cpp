@@ -20,8 +20,8 @@ m_pController(pController)
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 }
 
-Vector2 EntityController::TargetPosition() const 
-{ 
+Vector2 EntityController::TargetPosition() const
+{
     // If my target position is not set, always return the army target position
     // If my target position is set, then return my override position
     // otherwise if I am part of an army, then return controller position, otherwise
@@ -102,7 +102,7 @@ bool EntityController::IsOnCriticalHP(_In_ const GameEntity* pEntity)
     return currentHp <= criticalHp;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsOnCriticalHP()
+bool EntityController::IsOnCriticalHP() const
 {
     if (!IsControllingEntity() ||
         !EntityExists())
@@ -111,7 +111,7 @@ bool EntityController::IsOnCriticalHP()
     return IsOnCriticalHP(Entity());
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsBeingHit()
+bool EntityController::IsBeingHit() const
 {
     if (!IsControllingEntity() ||
         !EntityExists())
@@ -120,7 +120,7 @@ bool EntityController::IsBeingHit()
     return Entity()->P(OP_IsBeingHit) > 0;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
+bool EntityController::ArrivedAtTarget(_In_ Vector2 pos) const
 {
     if (!IsControllingEntity() ||
         !EntityExists() ||
@@ -132,7 +132,7 @@ bool EntityController::ArrivedAtTarget(_In_ Vector2 pos)
     return distToTarget <= PositionArriveRadius;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::ThreatAtTarget(_In_ Vector2 pos)
+bool EntityController::ThreatAtTarget(_In_ Vector2 pos) const
 {
     if (!IsControllingEntity() ||
         !EntityExists() ||
@@ -143,7 +143,7 @@ bool EntityController::ThreatAtTarget(_In_ Vector2 pos)
     return pGrnCtrlIM->GetCellInfluenceFromWorldPosition(pos) < 0;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsTargetInSight(_In_ Vector2 pos)
+bool EntityController::IsTargetInSight(_In_ Vector2 pos) const
 {
     if (!IsControllingEntity() ||
         !EntityExists() ||
@@ -156,7 +156,7 @@ bool EntityController::IsTargetInSight(_In_ Vector2 pos)
     return sight.IsInside(pos);
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsTargetInSight(_In_ TID entityId)
+bool EntityController::IsTargetInSight(_In_ TID entityId) const
 {
     if (!IsControllingEntity() ||
         !EntityExists())
@@ -199,7 +199,7 @@ TID EntityController::GetClosestEnemyEntityInSight()
     return closestId;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsAnyEnemyTargetInSight()
+bool EntityController::IsAnyEnemyTargetInSight() const
 {
     if (!IsControllingEntity() ||
         !EntityExists())
@@ -220,7 +220,7 @@ bool EntityController::IsAnyEnemyTargetInSight()
     return false;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsAnyEnemyTargetInRange()
+bool EntityController::IsAnyEnemyTargetInRange() const
 {
     if (!IsControllingEntity() ||
         !EntityExists())
@@ -305,6 +305,45 @@ TID EntityController::Attacker() const
             }
         }
     }
-    
+
     return closestAttacker;
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::IsCloseToMeleeAttacker() const
+{
+    // Finding my attack can be expensive, thats why it is globally computed per army
+    if (m_pController == nullptr)
+        DEBUG_THROW(NotImplementedException(XcptHere));
+
+    auto& allEnemies = m_pController->EnemyData();
+    auto& nearEnemies = m_pController->ClosestEnemyEntities();
+
+    int minDist = INT_MAX;
+    TID closestAttacker = INVALID_TID;
+    auto selfPos = Entity()->Position();
+
+    for (auto& enemy : nearEnemies)
+    {
+        auto& currEnemy = allEnemies.at(enemy.second);
+        auto pCurrEnemy = g_Game->Enemy()->GetEntity(currEnemy.Id);
+
+        int dist = selfPos.Distance(pCurrEnemy->Position());
+        if (dist < minDist)
+        {
+            minDist = dist;
+            closestAttacker = currEnemy.Id;
+        }
+    }
+
+    if (closestAttacker != INVALID_TID)
+    {
+        auto pCurrEnemy = g_Game->Enemy()->GetEntity(closestAttacker);
+
+        if (pCurrEnemy->Type()->P(TP_IsMelee) && minDist <= MeleeAttackerSafetyRadius)
+            return true;
+        else
+            return false;
+    }
+    else
+        return false;
 }
