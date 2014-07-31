@@ -515,6 +515,7 @@ void ClientMain::UpdateStatsView()
 void ClientMain::OnClientUpdate()
 {
     if (!Broodwar->isReplay() &&
+        !Broodwar->isPaused() &&
         !m_enemyPlayerUnitsCollected)
     {
         // This to solve the bug that the game does not send  messages about creating enemy units at game start

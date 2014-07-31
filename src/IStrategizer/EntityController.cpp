@@ -10,6 +10,7 @@
 #include "MessagePump.h"
 
 using namespace IStrategizer;
+using namespace std;
 
 EntityController::EntityController(ArmyController* pController) :
 m_entityId(INVALID_TID),
@@ -268,7 +269,7 @@ void EntityController::OnEntityFleeing()
     {
         if (EntityExists())
         {
-            LogInfo("%s is fleeing!", Entity()->ToString().c_str());
+            LogInfo("%s: %s is fleeing!", ToString().c_str(), Entity()->ToString().c_str());
         }
 
         m_pController->OnEntityFleeing(m_entityId);
@@ -362,4 +363,12 @@ void EntityController::CalcCloseMeleeAttacker()
     {
         m_closeMeleeAttackerId = closestAttacker->Id();
     }
+}
+//////////////////////////////////////////////////////////////////////////
+string EntityController::ToString(bool minimal) const
+{
+    char str[128];
+    sprintf_s(str, "%s.%s[%d]", (m_pController ? m_pController->ToString().c_str() : ""), Enums[m_typeId], m_entityId);
+
+    return  str;
 }

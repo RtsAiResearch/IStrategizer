@@ -64,7 +64,7 @@ namespace IStrategizer
     class ArmyController : public EngineObject
     {
     public:
-        ArmyController(StrategySelectorPtr pConsultant);
+        ArmyController(const char* pName, StrategySelectorPtr pConsultant);
 
         static const int FocusAreaRadius = 192;
         static const int SightAreaRadius = 768;
@@ -77,8 +77,8 @@ namespace IStrategizer
         bool IsControllingArmy() const { return !m_entities.empty(); }
         bool HasType(_In_ EntityClassType type);
         void ReleaseEntity(_In_ TID entityId);
-        void ControlEntity(_In_ TID entityId);
-        void ControlArmy();
+        void TryControlEntity(_In_ TID entityId);
+        void ControlNewArmy(_In_ bool includeHealthy, _In_ bool includeBroken);
         void ReleaseArmy();
         const StackFSM* Logic() const { return &*m_pLogic; }
         Vector2 Center() const { return m_center; }
@@ -89,6 +89,7 @@ namespace IStrategizer
         int TotalMaxHP() const { return m_totalMaxHP; }
         const ArmyGroupFormation::Data& FormationData() const { return m_formationData; }
         void CalcGroupFormation(_Inout_ ArmyGroupFormation& formation);
+        std::string ToString(bool minimal = false) const { return m_pName; }
 
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntity() const { _ASSERTE(!m_closestEnemy.empty()); return m_closestEnemy.begin()->second; }
@@ -135,12 +136,15 @@ namespace IStrategizer
         static std::unordered_map<int, ArmyGroupFormation::Data> sm_cachedArmySizeToFormationDataMap;
 
         int m_boundingCircleRadius;
+        const char* m_pName;
 
         // Statistics
         int m_totalDiedEntities;
         int m_totalGroundAttack;
         int m_totalMaxHP;
     };
+
+    typedef std::shared_ptr<ArmyController> ArmyControllerPtr;
 }
 
 #endif // BATTLE_H

@@ -15,14 +15,15 @@ using namespace std;
 
 std::unordered_map<int, ArmyGroupFormation::Data> ArmyController::sm_cachedArmySizeToFormationDataMap;
 
-ArmyController::ArmyController(StrategySelectorPtr pConsultant) :
+ArmyController::ArmyController(const char* pName, StrategySelectorPtr pConsultant) :
 m_pConsultant(pConsultant),
 m_targetEntityId(INVALID_TID),
 m_singleTargetPos(Vector2::Inf()),
 m_totalDiedEntities(0),
 m_totalGroundAttack(0),
 m_totalMaxHP(0),
-m_boundingCircleRadius(0)
+m_boundingCircleRadius(0),
+m_pName(pName)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
@@ -30,14 +31,17 @@ m_boundingCircleRadius(0)
     m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::ControlArmy()
+void ArmyController::ControlNewArmy(_In_ bool includeHealthy, _In_ bool includeBroken)
 {
     ReleaseArmy();
 
     // For now, army controls only current free healthy attackers
     for (auto& entityR : g_Game->Self()->Entities())
     {
-        ControlEntity(entityR.first);
+        bool isBroken = EntityController::IsOnCriticalHP(entityR.second);
+        if (includeHealthy && !isBroken ||
+            (includeBroken && isBroken))
+            TryControlEntity(entityR.first);
     }
 
     m_pLogic->Reset();
@@ -106,9 +110,9 @@ void ArmyController::ReleaseEntity(_In_ TID entityId)
 
         auto pEntity = g_Game->Self()->GetEntity(entityId);
         if (pEntity)
-            LogInfo("Release %s from army", pEntity->ToString().c_str());
+            LogInfo("Release %s from %s", pEntity->ToString().c_str(), ToString().c_str());
         else
-            LogInfo("Released non-existing entity %d from army, to control %d entities", entityId, m_entities.size());
+            LogInfo("Released non-existing entity %d from %s, to control %d entities", entityId, ToString().c_str(), m_entities.size());
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -235,7 +239,7 @@ void ArmyController::CalcEnemyData()
     else if (m_targetEntityId != m_closestEnemy.begin()->second)
     {
         m_targetEntityId = m_closestEnemy.begin()->second;
-        LogInfo("New Enemy target choosen %s", g_Game->Enemy()->GetEntity(m_targetEntityId)->ToString(true).c_str());
+        LogInfo("%s chosen enemy target %s", ToString().c_str(), g_Game->Enemy()->GetEntity(m_targetEntityId)->ToString(true).c_str());
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -271,11 +275,10 @@ bool ArmyController::CanControl(_In_ const GameEntity* pEntity)
         !pEntityType->P(TP_IsWorker) &&
         !pEntityType->P(TP_IsBuilding) &&
         pEntity->P(OP_State) != OBJSTATE_BeingConstructed &&
-        !pEntity->IsLocked() &&
-        !EntityController::IsOnCriticalHP(pEntity);
+        !pEntity->IsLocked();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::ControlEntity(_In_ TID entityId)
+void ArmyController::TryControlEntity(_In_ TID entityId)
 {
     auto pEntity = g_Game->Self()->GetEntity(entityId);
 
@@ -296,7 +299,7 @@ void ArmyController::ControlEntity(_In_ TID entityId)
 
         CalcGroupFormationData();
 
-        LogInfo("Added %s to army, to control %d entities", pEntity->ToString().c_str(), m_entities.size());
+        LogInfo("Added %s to %s, to control %d entities", pEntity->ToString().c_str(), ToString().c_str(), m_entities.size());
     }
 }
 //////////////////////////////////////////////////////////////////////////

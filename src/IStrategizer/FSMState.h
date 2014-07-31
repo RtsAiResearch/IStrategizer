@@ -22,7 +22,14 @@ namespace IStrategizer
         virtual void Enter() {}
         virtual void Exit() {}
         virtual void Update() {}
-        std::string ToString(bool minimal = false) const { return m_pName; }
+
+        std::string ToString(bool minimal = false) const
+        {
+            char str[128];
+            sprintf_s(str, "%s.%s", (m_pController ? m_pController->ToString().c_str() : ""), m_pName);
+            return  str;
+        }
+
         static const FSMStateTypeID NullFSMState = 0;
 
     protected:

@@ -1,6 +1,7 @@
-Resource Manager
+Worker Manager
 - If out of minerals, order gatherers to mine from other explored
 - Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct assigned sources
+- Repair damaged mech units
 
 City Builing
 - Use differnent padding for producing building/buildings with add ons/non-producing buildings
@@ -22,7 +23,7 @@ Micro
 
 
 Macro
-- Execute push/rush (Frontlines army, Renforcement army, Broken army)
+- Execute push/rush (Frontlines, Reinforcements, and Broken army)
 - Realize when to retreat the whole army (i.e if combat simulation outcome is negative)
 [AIIDE]- Defend base on rush with workers if no attackers exist or too few
 - Handle city defending (SCVs run/attack and building lifting)

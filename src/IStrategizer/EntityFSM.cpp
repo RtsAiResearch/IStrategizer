@@ -14,7 +14,7 @@ using namespace std;
 void EntityState::Enter()
 {
     auto pController = (EntityController*)m_pController;
-    LogInfo("%s: %s -> Enter", pController->Entity()->ToString(true).c_str(), ToString().c_str());
+    LogInfo("%s: Enter", ToString().c_str());
 
     m_targetPos1 = pController->TargetPosition();
     m_targetEntity = pController->TargetEntity();
@@ -25,8 +25,7 @@ void EntityState::Exit()
     m_targetPos1 = Vector2::Inf();
     m_targetEntity = INVALID_TID;
 
-    auto pController = (EntityController*)m_pController;
-    LogInfo("%s: %s -> Exit", pController->Entity()->ToString(true).c_str(), ToString().c_str());
+    LogInfo("%s: Exit", ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 void EntityState::Update()
@@ -35,7 +34,7 @@ void EntityState::Update()
     pController->Entity()->DebugDrawTarget();
     pController->Entity()->DebugDrawHealthBar();
 
-    string str = ToString();
+    string str = m_pName;
     str += '_';
     str += to_string(pController->Entity()->Id());
 

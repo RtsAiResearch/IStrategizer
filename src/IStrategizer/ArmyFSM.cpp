@@ -39,17 +39,16 @@ void ArmyState::Update()
     g_Game->DebugDrawMapCircle(pController->Center(), 32, GCLR_Orange);
 
     // <army-fsm-str><fsm-state-str><num-controlled>/<num-died>
-    char stats[64];
+    char stats[128];
     auto statsPos = pController->Center();
 
-    sprintf_s(stats, "%s%s C:%d/D:%d",
-        pController->Logic()->ToString().c_str(),
-        ToString().c_str(),
-        pController->HealthyEntities().size(),
-        pController->TotalDiedEntities());
+    sprintf_s(stats, "%s",
+        ToString().c_str());
     g_Game->DebugDrawMapText(statsPos, stats);
     
-    sprintf_s(stats, "HP:%d GA:%d", pController->TotalMaxHP(), pController->TotalGroundAttack());
+    sprintf_s(stats, "C:%d D:%d HP:%d GA:%d", pController->HealthyEntities().size(),
+        pController->TotalDiedEntities(), pController->TotalMaxHP(), pController->TotalGroundAttack());
+
     statsPos.Y += 10;
     g_Game->DebugDrawMapText(statsPos, stats);
 

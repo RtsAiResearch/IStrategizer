@@ -34,6 +34,7 @@ namespace IStrategizer
         void HardResetLogic();
         void SoftResetLogic() { m_pLogicMemory.top()->Reset(); }
         TID Attacker() const;
+        std::string ToString(bool minimal = false) const;
 
         GameEntity* Entity() { return m_pEntity; }
         const GameEntity* Entity() const { return m_pEntity; }
