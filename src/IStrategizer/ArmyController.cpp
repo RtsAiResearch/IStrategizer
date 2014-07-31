@@ -103,9 +103,6 @@ void ArmyController::ReleaseEntity(_In_ TID entityId)
         m_totalMaxHP -= pEntityType->P(TP_MaxHp);
         _ASSERTE(m_totalMaxHP >= 0);
 
-        pCtrlr->ReleaseEntity();
-        m_entities.erase(entityId);
-
         CalcGroupFormationData();
 
         auto pEntity = g_Game->Self()->GetEntity(entityId);
@@ -113,6 +110,9 @@ void ArmyController::ReleaseEntity(_In_ TID entityId)
             LogInfo("Release %s from %s", pEntity->ToString().c_str(), ToString().c_str());
         else
             LogInfo("Released non-existing entity %d from %s, to control %d entities", entityId, ToString().c_str(), m_entities.size());
+
+        pCtrlr->ReleaseEntity();
+        m_entities.erase(entityId);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -369,4 +369,17 @@ void ArmyController::CalcGroupFormation(_Inout_ ArmyGroupFormation& formation)
             ++entityItr;
         }
     }
+}
+//////////////////////////////////////////////////////////////////////////
+bool ArmyController::IsAnyEnemyInFormationAreaSight(_In_ Vector2 areaPos) const
+{
+    auto sightArea = Circle2(areaPos, m_formationData.CircleRadius + SightAreaRadius);
+
+    for (auto& entityR : g_Game->Enemy()->Entities())
+    {
+        if (sightArea.IsInside(entityR.second->Position()))
+            return true;
+    }
+
+    return false;
 }

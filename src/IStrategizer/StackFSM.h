@@ -71,13 +71,13 @@ namespace IStrategizer
             {
                 auto oldState = CurrentState();
                 m_states.push(newState); CurrentState()->Enter();
-                LogInfo("%s: %s -> %s", ToString().c_str(), oldState->ToString().c_str(), CurrentState()->ToString().c_str());
+                LogInfo("%s: %s -> %s", ToString().c_str(), oldState->ToString(true).c_str(), CurrentState()->ToString(true).c_str());
             }
             else
             {
                 m_states.push(newState); 
                 CurrentState()->Enter();
-                LogInfo("%s: (NULL) -> %s", ToString().c_str(), CurrentState()->ToString().c_str());
+                LogInfo("%s: (NULL) -> %s", ToString().c_str(), CurrentState()->ToString(true).c_str());
             }
         }
 
@@ -89,11 +89,11 @@ namespace IStrategizer
 
             if (!m_states.empty())
             {
-                LogInfo("%s: %s -> %s", ToString().c_str(), ToString().c_str(), oldState->ToString().c_str(), CurrentState()->ToString().c_str());
+                LogInfo("%s: %s -> %s", ToString().c_str(), oldState->ToString(true).c_str(), CurrentState()->ToString(true).c_str());
             }
             else
             {
-                LogInfo("%s: %s -> (NULL)", ToString().c_str(), ToString().c_str(), oldState->ToString().c_str());
+                LogInfo("%s: %s -> (NULL)", ToString().c_str(), oldState->ToString(true).c_str());
             }
 
         }

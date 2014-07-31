@@ -271,10 +271,8 @@ void IStrategizer::OnlinePlanExpansionExecution::MarkCaseAsTried(_In_ IOlcbpPlan
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::OnlinePlanExpansionExecution::RemoveExecutingAction(IOlcbpPlan::NodeID nodeId)
 {
-    IOlcbpPlan::NodeSet ancestors;
-    GetAncestorSatisfyingGoals(nodeId, ancestors);
-    for (IOlcbpPlan::NodeID ancestor : ancestors)
-        m_executingActions[ancestor].erase(nodeId);
+    for (auto& r : m_executingActions)
+        r.second.erase(nodeId);
 }
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::OnlinePlanExpansionExecution::AddExecutingAction(IOlcbpPlan::NodeID nodeId)
@@ -382,6 +380,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::No
         if (IsActionNode(visitedNodeId))
         {
             ((Action*)pCurrNode)->Abort(*g_Game);
+            RemoveExecutingAction(visitedNodeId);
         }
 
         // FIXME: deleting currNode crashes the execution history logic, should fix

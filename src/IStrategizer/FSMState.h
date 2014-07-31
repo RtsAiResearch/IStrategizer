@@ -25,9 +25,14 @@ namespace IStrategizer
 
         std::string ToString(bool minimal = false) const
         {
-            char str[128];
-            sprintf_s(str, "%s.%s", (m_pController ? m_pController->ToString().c_str() : ""), m_pName);
-            return  str;
+            if (minimal)
+                return m_pName;
+            else
+            {
+                char str[128];
+                sprintf_s(str, "%s.%s", (m_pController ? m_pController->ToString().c_str() : ""), m_pName);
+                return  str;
+            }
         }
 
         static const FSMStateTypeID NullFSMState = 0;

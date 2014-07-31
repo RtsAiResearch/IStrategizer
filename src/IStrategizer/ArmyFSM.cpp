@@ -212,7 +212,7 @@ void GuardArmyFSM::CheckTransitions()
     switch (pCurrState->TypeId())
     {
     case AlarmArmyState::TypeID:
-        if (pController->IsAnyEnemyTargetInSight())
+        if (pController->IsAnyEnemyInFormationAreaSight(pCurrState->TargetPosition()))
         {
             PushState(AttackArmyState::TypeID);
         }
@@ -223,7 +223,7 @@ void GuardArmyFSM::CheckTransitions()
 
         break;
     case AttackArmyState::TypeID:
-        if (!pController->IsAnyEnemyTargetInSight())
+        if (!pController->IsAnyEnemyInFormationAreaSight(pCurrState->TargetPosition()))
         {
             PopState();
         }

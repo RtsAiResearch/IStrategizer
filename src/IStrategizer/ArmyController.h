@@ -68,7 +68,7 @@ namespace IStrategizer
 
         static const int FocusAreaRadius = 192;
         static const int SightAreaRadius = 768;
-        static const int FormationSpacing = 32;
+        static const int FormationSpacing = 48;
 
         void Update();
         void AttackArea(_In_ Vector2 pos);
@@ -107,6 +107,7 @@ namespace IStrategizer
 
         // Controller Conditions
         bool IsAnyEnemyTargetInSight() const { return !m_enemiesInSight.empty(); }
+        bool IsAnyEnemyInFormationAreaSight(_In_ Vector2 areaPos) const;
         static bool IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos);
         const EntityControllersMap& HealthyEntities() const { return m_entities; }
 
