@@ -515,7 +515,7 @@ TID StarCraftEntity::TargetId() const
     return id;
 }
 //////////////////////////////////////////////////////////////////////////
-Vector2 StarCraftEntity::GetTargetPosition() const
+Vector2 StarCraftEntity::TargetPosition() const
 {
     BWAPI::Position pos;
 

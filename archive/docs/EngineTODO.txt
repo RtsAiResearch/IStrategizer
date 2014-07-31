@@ -11,12 +11,13 @@ Scouting
 - Explore other resource minerals/gas sources
 
 Micro
-- Group formation placement not randomized
+[DONE]- Group formation placement not randomized
 - Retreat should choose different location to retreat to if the destination is not reachable/walkable/out of map.
 - Target selection and prioritization (supporters, melee, ranged, air)
 - Correct calculation of army sight and focus area not to hard code it (based on army size)
 - Take attack type into consideration (Air/Ground targetability and prioritization)
 - Use the more complex pro players Hit&Run: http://wiki.teamliquid.net/starcraft/Vulture_Micro
+- Even if a unit is being hit, not always it should run especially VS weak units, it should depend on the attacker and the unit itself
 [DONE]- Retreat for melee enemies should be more smart to retreat if the enemy came too close e.g 64 pixel away
 
 

@@ -30,13 +30,37 @@ namespace IStrategizer
         int DistanceToCenter;
     };
 
+    class ArmyGroupFormation
+    {
+    public:
+        ArmyGroupFormation() :
+            CircleRadius(0),
+            SquareSide(0),
+            Center(Vector2::Inf())
+        {}
+
+        void Reset()
+        {
+            CircleRadius = 0;
+            SquareSide = 0;
+            Center = Vector2::Inf();
+            Placement.clear();
+        }
+
+        Vector2 Center;
+        std::map<TID, Vector2> Placement;
+        int SquareSide;
+        int CircleRadius;
+    };
+
     class ArmyController : public EngineObject
     {
     public:
         ArmyController(StrategySelectorPtr pConsultant);
 
         static const int FocusAreaRadius = 192;
-        static const int SightAreaRadius = 640;
+        static const int SightAreaRadius = 768;
+        static const int FormationSpacing = 16;
 
         void Update();
         void AttackArea(_In_ Vector2 pos);
@@ -51,7 +75,7 @@ namespace IStrategizer
         const StackFSM* Logic() const { return &*m_pLogic; }
         Vector2 Center() const { return m_center; }
         Circle2 FocusArea() { return Circle2(Center(), FocusAreaRadius); }
-        Circle2 SightArea() { return Circle2(Center(), SightAreaRadius); }
+        Circle2 SightArea() { return Circle2(Center(), m_boundingCircleRadius + SightAreaRadius); }
         int TotalDiedEntities() const { return m_totalDiedEntities; }
         int TotalGroundAttack() const { return m_totalGroundAttack; }
         int TotalMaxHP() const { return m_totalMaxHP; }
@@ -77,6 +101,8 @@ namespace IStrategizer
 
         const EntityControllersMap& HealthyEntities() const { return m_entities; }
 
+        void CalcGroupFormation(_Out_ ArmyGroupFormation& formation) const;
+
     private:
         DISALLOW_COPY_AND_ASSIGN(ArmyController);
 
@@ -84,6 +110,7 @@ namespace IStrategizer
         void CalcCetner();
         void CalcEnemyData();
         void CalcIsFormationInOrder();
+        void CalcBoundingCircleRadius();
 
         std::unordered_map<TID, EntityControllerPtr> m_entities;
         std::set<TID> m_currFramefleeingEntities;
@@ -97,6 +124,7 @@ namespace IStrategizer
         std::multimap<int, TID> m_closestEnemy;
 
         bool m_isFormationInOrder;
+        int m_boundingCircleRadius;
 
         // Statistics
         int m_totalDiedEntities;

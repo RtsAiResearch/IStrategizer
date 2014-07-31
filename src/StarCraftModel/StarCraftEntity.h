@@ -37,7 +37,7 @@ namespace IStrategizer
         bool CanGather(TID resourceObjectId) const;
 		std::string ToString(bool minimal = false) const;
         TID TargetId() const;
-        Vector2 GetTargetPosition() const;
+        Vector2 TargetPosition() const;
         bool Exists() const;
         bool CanAttack(_In_ TID targetId) const;
 

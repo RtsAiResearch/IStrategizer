@@ -50,7 +50,7 @@ void ArmyState::Update()
     g_Game->DebugDrawMapText(statsPos, stats);
     
     sprintf_s(stats, "HP:%d GA:%d", pController->TotalMaxHP(), pController->TotalGroundAttack());
-    statsPos.Y += 8;
+    statsPos.Y += 10;
     g_Game->DebugDrawMapText(statsPos, stats);
 
     auto focusArea = pController->FocusArea();
@@ -106,13 +106,16 @@ void RegroupArmyState::Enter()
 {
     ArmyState::Enter();
 
-    m_regroupArea = Circle2(m_targetPos1, ArmyController::FocusAreaRadius);
+    m_formation.Reset();
+
+    auto pController = (ArmyController*)m_pController;
+    m_formation.Center = TargetPosition();
+    pController->CalcGroupFormation(m_formation);
+    m_regroupArea = Circle2(TargetPosition(), m_formation.CircleRadius);
 
     for (auto& entityR : m_controlledEntities)
     {
-        //entityR.second->PushLogic(StackFSMPtr(new GuardEntityFSM(&*entityR.second)));
         entityR.second->PushIdleLogic();
-        entityR.second->Entity()->Move(m_regroupArea.RandomInside());
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -137,11 +140,18 @@ void RegroupArmyState::Update()
 
     for (auto& entityR : m_controlledEntities)
     {
-        // Re issue move to any idle out of order entity
-        if (entityR.second->Entity()->P(OP_State) == OBJSTATE_Idle &&
-            !m_regroupArea.IsInside(entityR.second->Entity()->Position()))
+        auto pEntity = entityR.second->Entity();
+
+        // Re issue move to any astray unit
+        // 1- Outside the formation area
+        // 2- Not moving and outside regroup area
+        // 3- Moving but its target pos is not its designated one
+        if ((!pEntity->P(OP_IsMoving) &&
+            !m_regroupArea.IsInside(pEntity->Position())) ||
+            (pEntity->P(OP_IsMoving) &&
+            pEntity->TargetPosition() != m_formation.Placement.at(entityR.first)))
         {
-            entityR.second->Entity()->Move(m_regroupArea.RandomInside());
+            entityR.second->Entity()->Move(m_formation.Placement.at(entityR.first));
         }
     }
 }

@@ -31,6 +31,13 @@ namespace IStrategizer
             return !(X != right.X || Y == right.Y);
         }
 
+        Vector2T& operator -=(const T n)
+        {
+            X -= n;
+            Y -= n;
+            return *this;
+        }
+
         Vector2T& operator +=(const Vector2T& right)
         {
             X += right.X;

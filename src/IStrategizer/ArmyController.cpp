@@ -20,7 +20,8 @@ m_singleTargetPos(Vector2::Inf()),
 m_isFormationInOrder(false),
 m_totalDiedEntities(0),
 m_totalGroundAttack(0),
-m_totalMaxHP(0)
+m_totalMaxHP(0),
+m_boundingCircleRadius(0)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
@@ -115,6 +116,7 @@ void ArmyController::Update()
 
     CalcCetner();
     CalcEnemyData();
+    CalcBoundingCircleRadius();
 
     m_pLogic->Update();
 
@@ -166,6 +168,26 @@ void ArmyController::CalcCetner()
     }
 
     m_center /= (int)m_entities.size();
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::CalcBoundingCircleRadius()
+{
+    m_boundingCircleRadius = 0;
+
+    if (m_entities.empty())
+        return;
+
+    int maxDist = INT_MIN;
+
+    for (auto& entityR : m_entities)
+    {
+        int dist = m_center.Distance(entityR.second->Entity()->Position());
+
+        if (dist > maxDist)
+            maxDist = dist;
+    }
+
+    m_boundingCircleRadius = maxDist;
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::CalcEnemyData()
@@ -303,4 +325,42 @@ void ArmyController::OnEntityDestroyed(_In_ TID entityId)
 void ArmyController::OnEntityFleeing(_In_ TID entityId)
 {
     m_currFramefleeingEntities.insert(entityId);
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::CalcGroupFormation(_Inout_ ArmyGroupFormation& formation) const
+{
+    static const float sqrt2 = sqrtf(2.0);
+
+    if (m_entities.empty())
+    {
+        formation.CircleRadius = 0;
+        formation.SquareSide = 0;
+        return;
+    }
+
+    // minimum nxn square formation side with 0 spacing
+    float minSquareSide = ceilf(sqrtf((float)m_entities.size()));
+    
+    formation.SquareSide = int((minSquareSide) * (float)FormationSpacing);
+    // SquareSide + 1 to add extra padding around the Square so that units placed
+    // on Square edge have less chance of being outside the closing circle when
+    // the game fail to place the unit exactly on the requested tile
+    formation.CircleRadius = (int)ceilf(sqrt2 * (float)(formation.SquareSide + 1));
+
+    Vector2 topLeft = formation.Center;
+    topLeft -= (formation.SquareSide / 2);
+
+    auto entityItr = m_entities.begin();
+
+    // Fill the formation shape with units until we are out of them
+    for (int y = 0; y < minSquareSide && entityItr != m_entities.end(); ++y)
+    {
+        for (int x = 0; x < minSquareSide && entityItr != m_entities.end(); ++x)
+        {
+            Vector2& pos = formation.Placement[entityItr->first];
+            pos.X = topLeft.X + (x * FormationSpacing);
+            pos.Y = topLeft.Y + (y * FormationSpacing);
+            ++entityItr;
+        }
+    }
 }

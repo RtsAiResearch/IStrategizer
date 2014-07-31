@@ -35,7 +35,7 @@ namespace IStrategizer
         PlayerType GetPlayer() const { return (PlayerType)P(OP_OwnerId); }
         virtual Vector2 Position() const = 0;
         virtual TID TargetId() const = 0;
-        virtual Vector2 GetTargetPosition() const = 0;
+        virtual Vector2 TargetPosition() const = 0;
         virtual int P(EntityObjectProperty attrId) const = 0;
         virtual bool IsTraining(TID traineeId) const = 0;
         virtual bool CanGather(TID resourceObjectId) const = 0;

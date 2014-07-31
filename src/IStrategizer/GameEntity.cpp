@@ -35,7 +35,7 @@ void GameEntity::CacheAttributes()
 //////////////////////////////////////////////////////////////////////////
 void GameEntity::DebugDrawTarget()
 {
-    g_Game->DebugDrawMapLine(Position(), GetTargetPosition(), GCLR_Red);
+    g_Game->DebugDrawMapLine(Position(), TargetPosition(), GCLR_Red);
 }
 //////////////////////////////////////////////////////////////////////////
 void GameEntity::DebugDrawRange()

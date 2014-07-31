@@ -3,6 +3,7 @@
 
 #include "StackFSM.h"
 #include "EntityController.h"
+#include "ArmyController.h"
 
 namespace IStrategizer
 {
@@ -96,6 +97,7 @@ namespace IStrategizer
     private:
         DISALLOW_COPY_AND_ASSIGN(RegroupArmyState);
 
+        ArmyGroupFormation m_formation;
         Circle2 m_regroupArea;
     };
 
