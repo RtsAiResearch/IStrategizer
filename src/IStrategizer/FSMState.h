@@ -22,8 +22,7 @@ namespace IStrategizer
         virtual void Enter() {}
         virtual void Exit() {}
         virtual void Update() {}
-        virtual void Reset() {}
-        std::string ToString(bool minimal = false) { return m_pName; }
+        std::string ToString(bool minimal = false) const { return m_pName; }
         static const FSMStateTypeID NullFSMState = 0;
 
     protected:

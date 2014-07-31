@@ -105,7 +105,7 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
             return m_pUnit->isBeingGathered();
 
         case OP_OrderTargetId:
-            return GetTargetId();
+            return TargetId();
 
         case OP_IsBeingHit:
             return m_pUnit->isUnderAttack();
@@ -498,18 +498,18 @@ bool StarCraftEntity::Exists() const
     return m_pUnit->exists();
 }
 //////////////////////////////////////////////////////////////////////////
-TID StarCraftEntity::GetTargetId() const
+TID StarCraftEntity::TargetId() const
 {
     int id = INVALID_TID;
 
     BWAPI::Unit target = m_pUnit->getTarget();
-    if (target == NULL)
+    if (target != NULL)
+        id = target->getID();
+    else
     {
         target = m_pUnit->getOrderTarget();
         if (target != NULL)
-        {
             id = target->getID();
-        }
     }
 
     return id;

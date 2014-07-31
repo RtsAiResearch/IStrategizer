@@ -26,12 +26,14 @@ namespace IStrategizer
         void AttackArea(_In_ Vector2 pos)
         {
             _ASSERTE(!pos.IsInf());
+            LogInfo("Attacking area %s", pos.ToString());
             m_armyCtrlr.AttackArea(pos);
         }
 
         void DefendArea(_In_ Vector2 pos)
         {
             _ASSERTE(!pos.IsInf());
+            LogInfo("Defending area %s", pos.ToString());
             m_armyCtrlr.DefendArea(pos);
         }
 

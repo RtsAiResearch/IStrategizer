@@ -110,18 +110,13 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0x6E8E8A14;
 
         RetreatEntityState(EntityController* pController) :
-            EntityState(TypeID, "Retreat", pController),
-            m_retreatAttackerId(INVALID_TID),
-            m_retreatPos(Vector2::Inf())
+            EntityState(TypeID, "Retreat", pController)
         {}
 
-        void Reset();
         void Update();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(RetreatEntityState);
-        TID m_retreatAttackerId;
-        Vector2 m_retreatPos;
     };
 
     class IdleEntityFSM : public StackFSM
@@ -130,7 +125,7 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0x081ADAD2;
 
         IdleEntityFSM(EntityController* pController) :
-            StackFSM(IdleEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
+            StackFSM("Entity-Idle", IdleEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
         {
             AddState(FSMStatePtr(new IdleEntityState(pController)));
         }
@@ -153,7 +148,7 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0x8C39CAD8;
 
         ScoutEntityFSM(Goal scoutGoal, EntityController* pController) :
-            StackFSM(ArriveEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController),
+            StackFSM("Entity-Scout", ArriveEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController),
             m_scoutGoal(scoutGoal),
             m_currTargetPosIdx(0)
         {
@@ -179,7 +174,7 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0xC5EEF702;
 
         HintNRunEntityFSM(EntityController* pController) :
-            StackFSM(AlarmEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
+            StackFSM("Entity-HnR", AlarmEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
         {
             AddState(FSMStatePtr(new FleeEntityState(pController)));
             AddState(FSMStatePtr(new AttackEntityState(pController)));
@@ -200,7 +195,7 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0x1D672B0D;
 
         GuardEntityFSM(EntityController* pController) :
-            StackFSM(AlarmEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
+            StackFSM("Entity-Guard", AlarmEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
         {
             AddState(FSMStatePtr(new IdleEntityState(pController)));
             AddState(FSMStatePtr(new ArriveEntityState(pController)));

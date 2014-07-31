@@ -18,6 +18,7 @@ namespace IStrategizer
     public:
         static const int PositionArriveRadius = 64;
         static const int MeleeAttackerSafetyRadius = 96;
+        static const int CriticalHPPercent = 20;
 
         EntityController(ArmyController* pController);
         void Update();
@@ -34,11 +35,16 @@ namespace IStrategizer
         void SoftResetLogic() { m_pLogicMemory.top()->Reset(); }
         TID Attacker() const;
 
-        GameEntity* Entity();
-        const GameEntity* Entity() const;
+        GameEntity* Entity() { return m_pEntity; }
+        const GameEntity* Entity() const { return m_pEntity; }
         TID EntityId() const { return m_entityId; }
+        EntityClassType TypeId() const { return m_typeId; }
+
+        TID CloseMeleeAttacker() const { return m_closeMeleeAttackerId; }
+
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntityInSight(); // Expensive call
+        void CalcCloseMeleeAttacker();
 
         // Controller Input Parameters
         Vector2 TargetPosition() const;
@@ -56,21 +62,25 @@ namespace IStrategizer
         bool ThreatAtTarget(_In_ Vector2 pos) const;
         bool IsTargetInSight(_In_ Vector2 pos) const;
         bool IsTargetInSight(_In_ TID entityId) const;
+        bool IsTargetInRange(_In_ TID entityId) const;
         bool EntityExists() const;
         bool EntityExists(_In_ TID entityId) const;
         bool IsAnyEnemyTargetInSight() const; // Expensive call
         bool IsAnyEnemyTargetInRange() const; // Expensive call
-        bool IsCloseToMeleeAttacker() const;
+        bool IsCloseToMeleeAttacker() const { return m_closeMeleeAttackerId != INVALID_TID; }
 
     private:
         DISALLOW_COPY_AND_ASSIGN(EntityController);
 
         TID m_entityId;
+        EntityClassType m_typeId;
+        GameEntity* m_pEntity;
         TID m_targetEntityId;
         Vector2 m_singleTargetPos;
         std::vector<Vector2> m_multiTargetPos;
         ArmyController* m_pController;
         std::stack<StackFSMPtr> m_pLogicMemory;
+        TID m_closeMeleeAttackerId;
     };
 
     typedef std::shared_ptr<EntityController> EntityControllerPtr;

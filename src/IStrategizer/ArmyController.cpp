@@ -18,7 +18,9 @@ m_pConsultant(pConsultant),
 m_targetEntityId(INVALID_TID),
 m_singleTargetPos(Vector2::Inf()),
 m_isFormationInOrder(false),
-m_totalDiedEntities(0)
+m_totalDiedEntities(0),
+m_totalGroundAttack(0),
+m_totalMaxHP(0)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
@@ -87,10 +89,18 @@ void ArmyController::ReleaseEntity(_In_ TID entityId)
 {
     if (m_entities.count(entityId) > 0)
     {
-        m_entities[entityId]->ReleaseEntity();
-        m_entities.erase(entityId);
-        auto pEntity = g_Game->Self()->GetEntity(entityId);
+        auto pCtrlr = m_entities[entityId];
+        auto pEntityType = g_Game->GetEntityType(pCtrlr->TypeId());
 
+        m_totalGroundAttack -= pEntityType->P(TP_GroundAttack);
+        _ASSERTE(m_totalGroundAttack >= 0);
+        m_totalMaxHP -= pEntityType->P(TP_MaxHp);
+        _ASSERTE(m_totalMaxHP >= 0);
+
+        pCtrlr->ReleaseEntity();
+        m_entities.erase(entityId);
+
+        auto pEntity = g_Game->Self()->GetEntity(entityId);
         if (pEntity)
             LogInfo("Release %s from army", pEntity->ToString().c_str());
         else
@@ -116,7 +126,7 @@ void ArmyController::Update()
 
     for (auto fleeingId : m_currFramefleeingEntities)
     {
-        m_entities.erase(fleeingId);
+        ReleaseEntity(fleeingId);
     }
 
     m_currFramefleeingEntities.clear();
@@ -128,6 +138,15 @@ void ArmyController::DefendArea(_In_ Vector2 pos)
     TargetPosition(pos);
 
     m_pLogic = StackFSMPtr(new GuardArmyFSM(this));
+    m_pLogic->Reset();
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::AttackArea(_In_ Vector2 pos)
+{
+    // Set the logic input position to defend
+    TargetPosition(pos);
+
+    m_pLogic = StackFSMPtr(new AttackMoveArmyFSM(this));
     m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -173,19 +192,22 @@ void ArmyController::CalcEnemyData()
             auto& dat = m_enemyData[entityR.first];
             dat.Id = entityR.first;
             dat.DistanceToCenter = dist;
-            dat.TargetEntityId = entityR.second->GetTargetId();
+            dat.TargetEntityId = entityR.second->TargetId();
 
             if (sightArea.IsInside(otherPos))
                 m_enemiesInSight.insert(entityR.first);
         }
     }
 
-    if (m_closestEnemy.empty())
+    // No enemy close to me OR
+    // There are enemies close to me, but the closest one is not in sight
+    if (m_closestEnemy.empty() ||
+        m_enemiesInSight.count(m_closestEnemy.begin()->second) == 0)
     {
         m_targetEntityId = INVALID_TID;
     }
-    else if (m_targetEntityId != m_closestEnemy.begin()->second &&
-        m_enemyData.at(m_closestEnemy.begin()->second).DistanceToCenter < SightAreaRadius)
+    // The closest enemy to me is in sight
+    else if (m_targetEntityId != m_closestEnemy.begin()->second)
     {
         m_targetEntityId = m_closestEnemy.begin()->second;
         LogInfo("New Enemy target choosen %s", g_Game->Enemy()->GetEntity(m_targetEntityId)->ToString(true).c_str());
@@ -264,6 +286,9 @@ void ArmyController::ControlEntity(_In_ TID entityId)
         m_entities[entityId] = pController;
         pController->ControlEntity(entityId);
         pController->HardResetLogic();
+
+        m_totalGroundAttack += pEntity->Type()->P(TP_GroundAttack);
+        m_totalMaxHP += pEntity->Type()->P(TP_MaxHp);
 
         LogInfo("Added %s to army, to control %d entities", pEntity->ToString().c_str(), m_entities.size());
     }

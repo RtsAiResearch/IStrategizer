@@ -39,7 +39,7 @@ namespace IStrategizer
         static const int SightAreaRadius = 640;
 
         void Update();
-        void AttackArea(_In_ Vector2 pos) {}
+        void AttackArea(_In_ Vector2 pos);
         void DefendArea(_In_ Vector2 pos);
         void NotifyMessegeSent(_In_ Message* pMsg);
         bool IsControllingArmy() const { return !m_entities.empty(); }
@@ -48,10 +48,14 @@ namespace IStrategizer
         void ControlEntity(_In_ TID entityId);
         void ControlArmy();
         void ReleaseArmy();
+        const StackFSM* Logic() const { return &*m_pLogic; }
         Vector2 Center() const { return m_center; }
         Circle2 FocusArea() { return Circle2(Center(), FocusAreaRadius); }
         Circle2 SightArea() { return Circle2(Center(), SightAreaRadius); }
         int TotalDiedEntities() const { return m_totalDiedEntities; }
+        int TotalGroundAttack() const { return m_totalGroundAttack; }
+        int TotalMaxHP() const { return m_totalMaxHP; }
+
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntity() const { _ASSERTE(!m_closestEnemy.empty()); return m_closestEnemy.begin()->second; }
         const std::multimap<int, TID>& ClosestEnemyEntities() const { return m_closestEnemy; }
@@ -93,7 +97,11 @@ namespace IStrategizer
         std::multimap<int, TID> m_closestEnemy;
 
         bool m_isFormationInOrder;
+
+        // Statistics
         int m_totalDiedEntities;
+        int m_totalGroundAttack;
+        int m_totalMaxHP;
     };
 }
 

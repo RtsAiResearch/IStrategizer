@@ -15,7 +15,9 @@ EntityController::EntityController(ArmyController* pController) :
 m_entityId(INVALID_TID),
 m_targetEntityId(INVALID_TID),
 m_singleTargetPos(Vector2::Inf()),
-m_pController(pController)
+m_pController(pController),
+m_closeMeleeAttackerId(INVALID_TID),
+m_typeId(ECLASS_END)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 }
@@ -50,6 +52,8 @@ void EntityController::ControlEntity(_In_ TID entityId)
         ReleaseEntity();
 
     m_entityId = entityId;
+    m_pEntity = g_Game->Self()->GetEntity(entityId);
+    m_typeId = m_pEntity->TypeId();
 
     auto pScout = g_Game->Self()->GetEntity(m_entityId);
     _ASSERTE(pScout);
@@ -66,6 +70,7 @@ void EntityController::ReleaseEntity()
             pScout->Unlock(this);
 
         m_entityId = INVALID_TID;
+        m_typeId = ECLASS_END;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -74,18 +79,9 @@ void EntityController::Update()
     if (m_entityId == INVALID_TID)
         return;
 
-    m_pLogicMemory.top()->Update();
-}
+    CalcCloseMeleeAttacker();
 
-//////////////////////////////////////////////////////////////////////////
-GameEntity* EntityController::Entity()
-{
-    return g_Game->Self()->GetEntity(m_entityId);
-}
-//////////////////////////////////////////////////////////////////////////
-const GameEntity* EntityController::Entity() const
-{
-    return g_Game->Self()->GetEntity(m_entityId);
+    m_pLogicMemory.top()->Update();
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::EntityExists() const
@@ -97,7 +93,7 @@ bool EntityController::IsOnCriticalHP(_In_ const GameEntity* pEntity)
 {
     auto currentHp = pEntity->P(OP_Health);
     auto maxHp = pEntity->Type()->P(TP_MaxHp);
-    auto criticalHp = int(0.15 * (float)maxHp);
+    auto criticalHp = int(((float)CriticalHPPercent / (float)100) * (float)maxHp);
 
     return currentHp <= criticalHp;
 }
@@ -164,6 +160,23 @@ bool EntityController::IsTargetInSight(_In_ TID entityId) const
 
     auto pEntity = g_Game->GetEntity(entityId);
     return IsTargetInSight(pEntity->Position());
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::IsTargetInRange(_In_ TID entityId) const
+{
+    if (!IsControllingEntity() ||
+        !EntityExists())
+        return false;
+
+    auto pTargetEntity = g_Game->GetEntity(entityId);
+
+    if (pTargetEntity == nullptr || !pTargetEntity->Exists())
+        return false;
+
+    int range = Entity()->Type()->P(TP_GroundRange);
+    Circle2 rangeArea(Entity()->Position(), range);
+
+    return rangeArea.IsInside(pTargetEntity->Position());
 }
 //////////////////////////////////////////////////////////////////////////
 TID EntityController::GetClosestEnemyEntityInSight()
@@ -309,17 +322,20 @@ TID EntityController::Attacker() const
     return closestAttacker;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsCloseToMeleeAttacker() const
+void EntityController::CalcCloseMeleeAttacker()
 {
-    // Finding my attack can be expensive, thats why it is globally computed per army
+    // Finding my attacker is an expensive calculation and its input
+    // is globally computed per army
     if (m_pController == nullptr)
-        DEBUG_THROW(NotImplementedException(XcptHere));
+        return;
+
+    m_closeMeleeAttackerId = INVALID_TID;
 
     auto& allEnemies = m_pController->EnemyData();
     auto& nearEnemies = m_pController->ClosestEnemyEntities();
 
     int minDist = INT_MAX;
-    TID closestAttacker = INVALID_TID;
+    GameEntity* closestAttacker = nullptr;
     auto selfPos = Entity()->Position();
 
     for (auto& enemy : nearEnemies)
@@ -327,23 +343,23 @@ bool EntityController::IsCloseToMeleeAttacker() const
         auto& currEnemy = allEnemies.at(enemy.second);
         auto pCurrEnemy = g_Game->Enemy()->GetEntity(currEnemy.Id);
 
+        // Either it is a ranged attacker or it is a melee attacker
+        // but it is not targeting me, Don't Panic at all!
+        if (!pCurrEnemy->Type()->P(TP_IsMelee) ||
+            currEnemy.Id != m_entityId)
+            continue;
+
         int dist = selfPos.Distance(pCurrEnemy->Position());
         if (dist < minDist)
         {
             minDist = dist;
-            closestAttacker = currEnemy.Id;
+            closestAttacker = pCurrEnemy;
         }
     }
 
-    if (closestAttacker != INVALID_TID)
+    if (closestAttacker != nullptr &&
+        minDist <= MeleeAttackerSafetyRadius)
     {
-        auto pCurrEnemy = g_Game->Enemy()->GetEntity(closestAttacker);
-
-        if (pCurrEnemy->Type()->P(TP_IsMelee) && minDist <= MeleeAttackerSafetyRadius)
-            return true;
-        else
-            return false;
+        m_closeMeleeAttackerId = closestAttacker->Id();
     }
-    else
-        return false;
 }

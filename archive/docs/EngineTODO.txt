@@ -1,11 +1,37 @@
 Resource Manager
 - If out of minerals, order gatherers to mine from other explored
-- Perioding resource rebalancing and maintainance of workers collecting from correct sources
+- Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct the assigned sources
 
 City Builing
 - Use differnent padding for producing building/buildings with add ons/non-producing buildings
+- Have a strategy in city build and make maze/wall structure
+
+Scouting
+- Perioding scouting
+- Explore other resource minerals/gas sources
 
 Micro
 - Group formation placement not randomized
-- Retreat should choose different location to retreat to if the destination is not reachable/walkable/out of map. Try in the 4 directions clock wise.
+- Retreat should choose different location to retreat to if the destination is not reachable/walkable/out of map.
+- Target selection and prioritization (supporters, melee, ranged, air)
+- Correct calculation of army sight and focus area not to hard code it (based on army size)
+- Take attack type into consideration (Air/Ground targetability and prioritization)
+- Use the more complex pro players Hit&Run: http://wiki.teamliquid.net/starcraft/Vulture_Micro
+[DONE]- Retreat for melee enemies should be more smart to retreat if the enemy came too close e.g 64 pixel away
 
+
+Macro
+- Execute push/rush
+- Realize when to retreat the whole army (i.e if combat simulation outcome is negative)
+[AIIDE]- Defend base on rush with workers if no attackers exist or too few
+- Handle city defending (SCVs run/attack and building lifting)
+
+Planner
+- Succeeding nodes dont expand, except root node, always expand
+
+Strategy
+- Detect enemy startegy from the first scouting and replan the counter
+
+Protoss:
+Zealot Rush -> 2 Gateways
+DT Expand -> Expand 1 Gatways

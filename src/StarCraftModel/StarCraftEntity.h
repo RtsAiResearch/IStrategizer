@@ -36,7 +36,7 @@ namespace IStrategizer
         bool IsNull() { return m_isOnline && m_pUnit == nullptr; }
         bool CanGather(TID resourceObjectId) const;
 		std::string ToString(bool minimal = false) const;
-        TID GetTargetId() const;
+        TID TargetId() const;
         Vector2 GetTargetPosition() const;
         bool Exists() const;
         bool CanAttack(_In_ TID targetId) const;

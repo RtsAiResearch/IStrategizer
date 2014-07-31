@@ -11,21 +11,9 @@ using namespace std;
 // States
 //
 //////////////////////////////////////////////////////////////////////////
-void ArmyState::Reset()
-{
-    m_targetPos1 = Vector2::Inf();
-    m_targetPos1 = Vector2::Inf();
-    m_targetEntity = INVALID_TID;
-    m_controlledEntities.clear();
-
-    LogInfo("%s -> Reset", ToString().c_str());
-}
-//////////////////////////////////////////////////////////////////////////
 void ArmyState::Enter()
 {
     LogInfo("%s -> Enter", ToString().c_str());
-
-    Reset();
 
     auto pController = (ArmyController*)m_pController;
     m_controlledEntities = pController->HealthyEntities();
@@ -38,9 +26,6 @@ void ArmyState::Enter()
 void ArmyState::Exit()
 {
     LogInfo("%s with %d controlled entities", ToString().c_str(), m_controlledEntities.size());
-
-    Reset();
-
     LogInfo("%s -> Exit", ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
@@ -53,13 +38,21 @@ void ArmyState::Update()
 
     g_Game->DebugDrawMapCircle(pController->Center(), 32, GCLR_Orange);
 
-    string str = ToString();
-    str += to_string(pController->HealthyEntities().size());
-    str += '/';
-    str += to_string(pController->TotalDiedEntities());
+    // <army-fsm-str><fsm-state-str><num-controlled>/<num-died>
+    char stats[64];
+    auto statsPos = pController->Center();
+
+    sprintf_s(stats, "%s%s C:%d/D:%d",
+        pController->Logic()->ToString().c_str(),
+        ToString().c_str(),
+        pController->HealthyEntities().size(),
+        pController->TotalDiedEntities());
+    g_Game->DebugDrawMapText(statsPos, stats);
     
-    g_Game->DebugDrawMapText(pController->Center(), str.c_str());
-    
+    sprintf_s(stats, "HP:%d GA:%d", pController->TotalMaxHP(), pController->TotalGroundAttack());
+    statsPos.Y += 8;
+    g_Game->DebugDrawMapText(statsPos, stats);
+
     auto focusArea = pController->FocusArea();
     g_Game->DebugDrawMapCircle(focusArea.Center, focusArea.Radius, GCLR_Blue);
 
@@ -131,6 +124,8 @@ void RegroupArmyState::Exit()
             entityR.second->PopLogic();
     }
 
+    m_regroupArea = Circle2(Vector2::Inf(), INT_MAX);
+
     ArmyState::Exit();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -147,6 +142,46 @@ void RegroupArmyState::Update()
             !m_regroupArea.IsInside(entityR.second->Entity()->Position()))
         {
             entityR.second->Entity()->Move(m_regroupArea.RandomInside());
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void ArriveArmyState::Enter()
+{
+    ArmyState::Enter();
+
+    m_arriveArea = Circle2(m_targetPos1, ArmyController::FocusAreaRadius);
+
+    for (auto& entityR : m_controlledEntities)
+    {
+        entityR.second->PushIdleLogic();
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void ArriveArmyState::Exit()
+{
+    for (auto& entityR : m_controlledEntities)
+    {
+        if (entityR.second->EntityExists())
+            entityR.second->PopLogic();
+    }
+
+    ArmyState::Exit();
+}
+//////////////////////////////////////////////////////////////////////////
+void ArriveArmyState::Update()
+{
+    ArmyState::Update();
+
+    g_Game->DebugDrawMapCircle(m_arriveArea.Center, m_arriveArea.Radius, GCLR_Purple);
+
+    for (auto& entityR : m_controlledEntities)
+    {
+        // Re issue move to any idle out of order entity
+        if (entityR.second->Entity()->P(OP_State) == OBJSTATE_Idle &&
+            !m_arriveArea.IsInside(entityR.second->Entity()->Position()))
+        {
+            entityR.second->Entity()->Move(m_arriveArea.RandomInside());
         }
     }
 }
@@ -186,4 +221,39 @@ void GuardArmyFSM::CheckTransitions()
         break;
     }
 }
+//////////////////////////////////////////////////////////////////////////
+void AttackMoveArmyFSM::CheckTransitions()
+{
+    auto pController = (ArmyController*)m_pController;
+    auto pCurrState = static_pointer_cast<ArmyState>(CurrentState());
 
+    switch (pCurrState->TypeId())
+    {
+    case AlarmArmyState::TypeID:
+        if (pController->TargetEntity() != INVALID_TID)
+        {
+            PushState(AttackArmyState::TypeID);
+        }
+        else if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
+        {
+            PushState(ArriveArmyState::TypeID);
+        }
+        break;
+    case AttackArmyState::TypeID:
+        if (pController->TargetEntity() == INVALID_TID)
+        {
+            PopState();
+        }
+        break;
+    case ArriveArmyState::TypeID:
+        if (pController->TargetEntity() != INVALID_TID)
+        {
+            PushState(AttackArmyState::TypeID);
+        }
+        else if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
+        {
+            PopState();
+        }
+        break;
+    }
+}

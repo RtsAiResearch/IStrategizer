@@ -117,23 +117,25 @@ void AlarmEntityState::Update()
     g_Game->DebugDrawMapLine(pController->Entity()->Position(), m_targetPos1, GCLR_Orange);
 }
 //////////////////////////////////////////////////////////////////////////
-void RetreatEntityState::Reset()
-{
-    EntityState::Reset();
-    m_retreatAttackerId = INVALID_TID;
-    m_retreatPos = Vector2::Inf();
-}
-//////////////////////////////////////////////////////////////////////////
 void RetreatEntityState::Update()
 {
     EntityState::Update();
 
     auto pController = (EntityController*)m_pController;
-    m_retreatAttackerId = pController->Attacker();
 
-    if (m_retreatAttackerId != INVALID_TID)
+    // I am retreating from an attacker targeting me OR
+    // from a close melee enemy
+    TID newReatreatTarget = pController->Attacker();
+
+    if (newReatreatTarget == INVALID_TID)
+        newReatreatTarget = pController->CloseMeleeAttacker();
+
+    // I am retreating from attacker targeting me
+    if (newReatreatTarget != INVALID_TID)
     {
-        auto attackerPos = g_Game->Enemy()->GetEntity(m_retreatAttackerId)->Position();
+        m_targetEntity = newReatreatTarget;
+
+        auto attackerPos = g_Game->Enemy()->GetEntity(m_targetEntity)->Position();
         auto selfPos = pController->Entity()->Position();
         Vector2F attackerPosF((float)attackerPos.X, (float)attackerPos.Y);
         Vector2F selfPosF((float)selfPos.X, (float)selfPos.Y);
@@ -316,7 +318,7 @@ void HintNRunEntityFSM::CheckTransitions()
         }
         break;
     case RetreatEntityState::TypeID:
-        if (!pController->IsAnyEnemyTargetInRange())
+        if (!pController->IsTargetInRange(pCurrState->TargetEntity()))
         {
             PopState();
         }

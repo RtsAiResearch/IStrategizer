@@ -66,17 +66,18 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
     }
     else if (msgType == MSG_PlanGoalSuccess)
     {
-        //auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
+        auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
 
-        //// Location not discovered, scouting trials seemed to fail
-        //// Needs to perform attack now, lets scout with the army itself
-        //if (enemyLoc.IsInf())
-        //{
-        //    _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
-        //    enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
-        //}
+        // Location not discovered, scouting trials seemed to fail
+        // Needs to perform attack now, lets scout with the army itself
+        if (enemyLoc.IsInf())
+        {
+            _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
+            enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
+            LogInfo("Enemy spawn location not discovered yet, will attack a suspected location %s", enemyLoc.ToString());
+        }
 
-        m_combatMgr.DefendArea(g_Game->Self()->StartLocation());
+        m_combatMgr.AttackArea(enemyLoc);
     }
     else if (msgType == MSG_BaseUnderAttack)
     {
