@@ -1,6 +1,6 @@
 Resource Manager
 - If out of minerals, order gatherers to mine from other explored
-- Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct the assigned sources
+- Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct assigned sources
 
 City Builing
 - Use differnent padding for producing building/buildings with add ons/non-producing buildings
@@ -14,7 +14,7 @@ Micro
 [DONE]- Group formation placement not randomized
 - Retreat should choose different location to retreat to if the destination is not reachable/walkable/out of map.
 - Target selection and prioritization (supporters, melee, ranged, air)
-- Correct calculation of army sight and focus area not to hard code it (based on army size)
+[DONE]- Correct calculation of army sight and focus area not to hard code it (based on army size)
 - Take attack type into consideration (Air/Ground targetability and prioritization)
 - Use the more complex pro players Hit&Run: http://wiki.teamliquid.net/starcraft/Vulture_Micro
 - Even if a unit is being hit, not always it should run especially VS weak units, it should depend on the attacker and the unit itself
@@ -22,7 +22,7 @@ Micro
 
 
 Macro
-- Execute push/rush
+- Execute push/rush (Frontlines army, Renforcement army, Broken army)
 - Realize when to retreat the whole army (i.e if combat simulation outcome is negative)
 [AIIDE]- Defend base on rush with workers if no attackers exist or too few
 - Handle city defending (SCVs run/attack and building lifting)

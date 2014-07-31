@@ -33,24 +33,32 @@ namespace IStrategizer
     class ArmyGroupFormation
     {
     public:
+        class Data
+        {
+        public:
+            Data() :
+                MinSquareSide(0),
+                SquareSide(0),
+                CircleRadius(0)
+            {}
+
+            int MinSquareSide;
+            int SquareSide;
+            int CircleRadius;
+        };
+
         ArmyGroupFormation() :
-            CircleRadius(0),
-            SquareSide(0),
             Center(Vector2::Inf())
         {}
 
         void Reset()
         {
-            CircleRadius = 0;
-            SquareSide = 0;
             Center = Vector2::Inf();
             Placement.clear();
         }
 
         Vector2 Center;
         std::map<TID, Vector2> Placement;
-        int SquareSide;
-        int CircleRadius;
     };
 
     class ArmyController : public EngineObject
@@ -60,7 +68,7 @@ namespace IStrategizer
 
         static const int FocusAreaRadius = 192;
         static const int SightAreaRadius = 768;
-        static const int FormationSpacing = 16;
+        static const int FormationSpacing = 32;
 
         void Update();
         void AttackArea(_In_ Vector2 pos);
@@ -74,11 +82,13 @@ namespace IStrategizer
         void ReleaseArmy();
         const StackFSM* Logic() const { return &*m_pLogic; }
         Vector2 Center() const { return m_center; }
-        Circle2 FocusArea() { return Circle2(Center(), FocusAreaRadius); }
+        Circle2 FormationArea() { return Circle2(Center(), m_formationData.CircleRadius); }
         Circle2 SightArea() { return Circle2(Center(), m_boundingCircleRadius + SightAreaRadius); }
         int TotalDiedEntities() const { return m_totalDiedEntities; }
         int TotalGroundAttack() const { return m_totalGroundAttack; }
         int TotalMaxHP() const { return m_totalMaxHP; }
+        const ArmyGroupFormation::Data& FormationData() const { return m_formationData; }
+        void CalcGroupFormation(_Inout_ ArmyGroupFormation& formation);
 
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntity() const { _ASSERTE(!m_closestEnemy.empty()); return m_closestEnemy.begin()->second; }
@@ -96,12 +106,8 @@ namespace IStrategizer
 
         // Controller Conditions
         bool IsAnyEnemyTargetInSight() const { return !m_enemiesInSight.empty(); }
-        //bool IsInOrder() const { return m_isInOrder; }
         static bool IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos);
-
         const EntityControllersMap& HealthyEntities() const { return m_entities; }
-
-        void CalcGroupFormation(_Out_ ArmyGroupFormation& formation) const;
 
     private:
         DISALLOW_COPY_AND_ASSIGN(ArmyController);
@@ -111,6 +117,9 @@ namespace IStrategizer
         void CalcEnemyData();
         void CalcIsFormationInOrder();
         void CalcBoundingCircleRadius();
+        void CalcGroupFormationData();
+        static ArmyGroupFormation::Data CalcGroupFormationData(_In_ int groupSize);
+
 
         std::unordered_map<TID, EntityControllerPtr> m_entities;
         std::set<TID> m_currFramefleeingEntities;
@@ -122,8 +131,9 @@ namespace IStrategizer
         std::unordered_map<TID, ArmyEnemyData> m_enemyData;
         std::set<TID> m_enemiesInSight;
         std::multimap<int, TID> m_closestEnemy;
+        ArmyGroupFormation::Data m_formationData;
+        static std::unordered_map<int, ArmyGroupFormation::Data> sm_cachedArmySizeToFormationDataMap;
 
-        bool m_isFormationInOrder;
         int m_boundingCircleRadius;
 
         // Statistics

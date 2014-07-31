@@ -13,11 +13,12 @@
 using namespace IStrategizer;
 using namespace std;
 
+std::unordered_map<int, ArmyGroupFormation::Data> ArmyController::sm_cachedArmySizeToFormationDataMap;
+
 ArmyController::ArmyController(StrategySelectorPtr pConsultant) :
 m_pConsultant(pConsultant),
 m_targetEntityId(INVALID_TID),
 m_singleTargetPos(Vector2::Inf()),
-m_isFormationInOrder(false),
 m_totalDiedEntities(0),
 m_totalGroundAttack(0),
 m_totalMaxHP(0),
@@ -100,6 +101,8 @@ void ArmyController::ReleaseEntity(_In_ TID entityId)
 
         pCtrlr->ReleaseEntity();
         m_entities.erase(entityId);
+
+        CalcGroupFormationData();
 
         auto pEntity = g_Game->Self()->GetEntity(entityId);
         if (pEntity)
@@ -236,28 +239,6 @@ void ArmyController::CalcEnemyData()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::CalcIsFormationInOrder()
-{
-    if (m_entities.empty())
-    {
-        m_isFormationInOrder = false;
-        return;
-    }
-
-    m_isFormationInOrder = true;
-    auto orderArea = FocusArea();
-
-    for (auto& entityR : m_entities)
-    {
-        // Fast return as soon as we see astray units out of focus area
-        if (!orderArea.IsInside(entityR.second->Entity()->Position()))
-        {
-            m_isFormationInOrder = false;
-            return;
-        }
-    }
-}
-//////////////////////////////////////////////////////////////////////////
 bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos)
 {
     if (entities.empty())
@@ -265,7 +246,8 @@ bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector
         return false;
     }
 
-    Circle2 orderArea(pos, FocusAreaRadius);
+    ArmyGroupFormation::Data data = CalcGroupFormationData((int)entities.size());
+    Circle2 orderArea(pos, data.CircleRadius);
 
     for (auto& entityR : entities)
     {
@@ -312,6 +294,8 @@ void ArmyController::ControlEntity(_In_ TID entityId)
         m_totalGroundAttack += pEntity->Type()->P(TP_GroundAttack);
         m_totalMaxHP += pEntity->Type()->P(TP_MaxHp);
 
+        CalcGroupFormationData();
+
         LogInfo("Added %s to army, to control %d entities", pEntity->ToString().c_str(), m_entities.size());
     }
 }
@@ -327,35 +311,54 @@ void ArmyController::OnEntityFleeing(_In_ TID entityId)
     m_currFramefleeingEntities.insert(entityId);
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::CalcGroupFormation(_Inout_ ArmyGroupFormation& formation) const
+void ArmyController::CalcGroupFormationData()
 {
+    m_formationData = CalcGroupFormationData((int)m_entities.size());
+}
+//////////////////////////////////////////////////////////////////////////
+ArmyGroupFormation::Data ArmyController::CalcGroupFormationData(_In_ int groupSize)
+{
+    if (sm_cachedArmySizeToFormationDataMap.count(groupSize) > 0)
+        return sm_cachedArmySizeToFormationDataMap.at(groupSize);
+
     static const float sqrt2 = sqrtf(2.0);
 
-    if (m_entities.empty())
+    ArmyGroupFormation::Data data;
+
+    if (groupSize == 0)
     {
-        formation.CircleRadius = 0;
-        formation.SquareSide = 0;
-        return;
+        data.CircleRadius = 0;
+        data.SquareSide = 0;
+    }
+    else
+    {
+        // minimum nxn square formation side with 0 spacing
+        data.MinSquareSide = (int)ceilf(sqrtf((float)groupSize));
+
+        data.SquareSide = int(float(data.MinSquareSide) * float(FormationSpacing));
+        // +FormationSpacing to add extra padding around the Square so that units placed
+        // on Square edge have less chance of being outside the closing circle when
+        // the game fail to place the unit exactly on the requested tile
+        data.CircleRadius = (int)ceilf(sqrt2 * ((float(data.SquareSide) * 0.5f) + float(FormationSpacing)));
     }
 
-    // minimum nxn square formation side with 0 spacing
-    float minSquareSide = ceilf(sqrtf((float)m_entities.size()));
-    
-    formation.SquareSide = int((minSquareSide) * (float)FormationSpacing);
-    // SquareSide + 1 to add extra padding around the Square so that units placed
-    // on Square edge have less chance of being outside the closing circle when
-    // the game fail to place the unit exactly on the requested tile
-    formation.CircleRadius = (int)ceilf(sqrt2 * (float)(formation.SquareSide + 1));
+    sm_cachedArmySizeToFormationDataMap[groupSize] = data;
 
+    return data;
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::CalcGroupFormation(_Inout_ ArmyGroupFormation& formation)
+{
+    // PLACEMENT
     Vector2 topLeft = formation.Center;
-    topLeft -= (formation.SquareSide / 2);
+    topLeft -= (m_formationData.SquareSide / 2);
 
     auto entityItr = m_entities.begin();
 
     // Fill the formation shape with units until we are out of them
-    for (int y = 0; y < minSquareSide && entityItr != m_entities.end(); ++y)
+    for (int y = 0; y < m_formationData.MinSquareSide && entityItr != m_entities.end(); ++y)
     {
-        for (int x = 0; x < minSquareSide && entityItr != m_entities.end(); ++x)
+        for (int x = 0; x < m_formationData.MinSquareSide && entityItr != m_entities.end(); ++x)
         {
             Vector2& pos = formation.Placement[entityItr->first];
             pos.X = topLeft.X + (x * FormationSpacing);

@@ -53,7 +53,7 @@ void ArmyState::Update()
     statsPos.Y += 10;
     g_Game->DebugDrawMapText(statsPos, stats);
 
-    auto focusArea = pController->FocusArea();
+    auto focusArea = pController->FormationArea();
     g_Game->DebugDrawMapCircle(focusArea.Center, focusArea.Radius, GCLR_Blue);
 
     auto sightArea = pController->SightArea();
@@ -111,7 +111,8 @@ void RegroupArmyState::Enter()
     auto pController = (ArmyController*)m_pController;
     m_formation.Center = TargetPosition();
     pController->CalcGroupFormation(m_formation);
-    m_regroupArea = Circle2(TargetPosition(), m_formation.CircleRadius);
+    
+    m_regroupArea = Circle2(TargetPosition(), pController->FormationData().CircleRadius);
 
     for (auto& entityR : m_controlledEntities)
     {
@@ -153,6 +154,11 @@ void RegroupArmyState::Update()
         {
             entityR.second->Entity()->Move(m_formation.Placement.at(entityR.first));
         }
+    }
+
+    for (auto& p : m_formation.Placement)
+    {
+        g_Game->DebugDrawMapRectangle(p.second, p.second + ArmyController::FormationSpacing, GCLR_Blue, false);
     }
 }
 //////////////////////////////////////////////////////////////////////////

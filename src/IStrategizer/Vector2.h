@@ -59,6 +59,11 @@ namespace IStrategizer
             return *this;
         }
 
+        Vector2T operator + (const T n)
+        {
+            return Vector2T(X + n, Y + n);
+        }
+
         Vector2T operator + (const Vector2T& right)
         {
             return Vector2T(X + right.X, Y + right.Y);
