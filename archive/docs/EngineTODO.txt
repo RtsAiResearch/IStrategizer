@@ -1,6 +1,6 @@
 Worker Manager
 - If out of minerals, order gatherers to mine from other explored
-- Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct assigned sources
+[DONE] - Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct assigned sources
 - Repair damaged mech units
 
 City Builing
@@ -37,3 +37,6 @@ Strategy
 Protoss:
 Zealot Rush -> 2 Gateways
 DT Expand -> Expand 1 Gatways
+
+Investigate:
+- FPS drop and Spike happens

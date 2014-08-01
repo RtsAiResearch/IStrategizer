@@ -1,5 +1,5 @@
-#ifndef BATTLE_H
-#define BATTLE_H
+#ifndef ARMYCONTROLLER_H
+#define ARMYCONTROLLER_H
 
 #include "StackFSM.h"
 #include "StrategySelector.h"
@@ -71,14 +71,16 @@ namespace IStrategizer
         static const int FormationSpacing = 48;
 
         void Update();
-        void AttackArea(_In_ Vector2 pos);
-        void DefendArea(_In_ Vector2 pos);
+        void Attack(_In_ Vector2 pos);
+        void Defend(_In_ Vector2 pos);
+        void Stand(_In_ Vector2 pos);
+
         void NotifyMessegeSent(_In_ Message* pMsg);
         bool IsControllingArmy() const { return !m_entities.empty(); }
         bool HasType(_In_ EntityClassType type);
         void ReleaseEntity(_In_ TID entityId);
         void TryControlEntity(_In_ TID entityId);
-        void ControlNewArmy(_In_ bool includeHealthy, _In_ bool includeBroken);
+        void ControlNewArmy();
         void ReleaseArmy();
         const StackFSM* Logic() const { return &*m_pLogic; }
         Vector2 Center() const { return m_center; }
@@ -90,6 +92,7 @@ namespace IStrategizer
         const ArmyGroupFormation::Data& FormationData() const { return m_formationData; }
         void CalcGroupFormation(_Inout_ ArmyGroupFormation& formation);
         std::string ToString(bool minimal = false) const { return m_pName; }
+        void SetControlType(_In_ bool controlHealthy, _In_ bool controlBroken, _In_ bool controlWorkers);
 
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntity() const { _ASSERTE(!m_closestEnemy.empty()); return m_closestEnemy.begin()->second; }
@@ -109,7 +112,12 @@ namespace IStrategizer
         bool IsAnyEnemyTargetInSight() const { return !m_enemiesInSight.empty(); }
         bool IsAnyEnemyInFormationAreaSight(_In_ Vector2 areaPos) const;
         static bool IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos);
-        const EntityControllersMap& HealthyEntities() const { return m_entities; }
+        const EntityControllersMap& Entities() const { return m_entities; }
+        
+        bool HasRepairers();
+        bool HasDamagedEntities() const;
+        void ControlRepairers();
+        void ReleaseRepairers();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(ArmyController);
@@ -121,7 +129,6 @@ namespace IStrategizer
         void CalcBoundingCircleRadius();
         void CalcGroupFormationData();
         static ArmyGroupFormation::Data CalcGroupFormationData(_In_ int groupSize);
-
 
         std::unordered_map<TID, EntityControllerPtr> m_entities;
         std::set<TID> m_currFramefleeingEntities;
@@ -138,6 +145,11 @@ namespace IStrategizer
 
         int m_boundingCircleRadius;
         const char* m_pName;
+        
+        // Control Type
+        bool m_controlHealthy;
+        bool m_controlBroken;
+        bool m_controlWorkers;
 
         // Statistics
         int m_totalDiedEntities;
@@ -148,4 +160,4 @@ namespace IStrategizer
     typedef std::shared_ptr<ArmyController> ArmyControllerPtr;
 }
 
-#endif // BATTLE_H
+#endif // ARMYCONTROLLER_H

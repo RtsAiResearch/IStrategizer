@@ -53,6 +53,7 @@ namespace IStrategizer
 		void CancelOrders();
 		bool CanTrain(EntityClassType type);
         bool Follow(TID entityId);
+        bool CanRepair(TID entityId);
 
         void SetOffline(RtsGame* pBelongingGame);
 

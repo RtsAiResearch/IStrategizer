@@ -559,3 +559,8 @@ void StarCraftEntity::DebugDrawMapLastGameError()
 
     LogInfo("BWAPI Game Error: %s", lastErr.c_str());
 }
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftEntity::CanRepair(TID entityId)
+{
+    return m_pUnit->canRepair(Broodwar->getUnit(entityId));
+}

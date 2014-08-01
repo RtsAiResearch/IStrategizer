@@ -7,8 +7,18 @@ using namespace IStrategizer;
 
 void CombatManager::Init()
 {
-    // By default we defend our base
-    DefendArea(g_Game->Self()->StartLocation());
+    // Each army controls a specific category of units
+    m_frontLinesArmy.SetControlType(true, false, false);
+    m_reinforcementsArmy.SetControlType(true, false, false);
+    m_brokenArmy.SetControlType(false, true, false);
+
+    auto baseLocation = g_Game->Self()->StartLocation();
+    // Broken army stand at base waiting for repair/heal
+    m_brokenArmy.Stand(baseLocation);
+
+    // FrontLines/Reinf army defend base waiting
+    m_frontLinesArmy.Defend(baseLocation);
+    m_reinforcementsArmy.Defend(baseLocation);
 }
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::Update()
@@ -19,41 +29,35 @@ void CombatManager::Update()
     // Look for new entities to control this frame
     for (auto& entityR : g_Game->Self()->Entities())
     {
-        // Only include health unit in the army, other units exclude
-        // for now
-        // Later they should self heal or be repaired by workers
-        if (!m_reinforcementsArmy.IsControllingEntity(entityR.first) &&
-            m_reinforcementsArmy.CanControl(entityR.second))
-        {
-            if (EntityController::IsOnCriticalHP(entityR.second))
-                newBrokens = true;
-            else
-                newReinforcements = true;
+        if (!newReinforcements && m_reinforcementsArmy.CanControl(entityR.second))
+            newReinforcements = true;
+        else if (!newBrokens && m_brokenArmy.CanControl(entityR.second))
+            newBrokens = true;
 
-            // We found what we are looking for, no need to continue search
-            if (newBrokens && newReinforcements)
-                break;
-        }
+        // We found what we are looking for, no need to continue search
+        if (newBrokens && newReinforcements)
+            break;
     }
 
     if (newReinforcements)
-        m_reinforcementsArmy.ControlNewArmy(true, false);
+        m_reinforcementsArmy.ControlNewArmy();
 
     if (newBrokens)
-        m_brokenArmy.ControlNewArmy(false, true);
+        m_brokenArmy.ControlNewArmy();
 
-    m_reinforcementsArmy.Update();
     m_frontLinesArmy.Update();
+    m_reinforcementsArmy.Update();
     m_brokenArmy.Update();
 }
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::AttackArea(_In_ Vector2 pos)
 {
     _ASSERTE(!pos.IsInf());
-    LogInfo("Attacking area %s", pos.ToString());
+    LogInfo("Attacking area %s", pos.ToString().c_str());
 
     m_reinforcementsArmy.ReleaseArmy();
-    m_frontLinesArmy.ControlNewArmy(true, false);
+    m_frontLinesArmy.ControlNewArmy();
+    m_frontLinesArmy.Attack(pos);
 }
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::DefendArea(_In_ Vector2 pos)
@@ -61,6 +65,6 @@ void CombatManager::DefendArea(_In_ Vector2 pos)
     _ASSERTE(!pos.IsInf());
     LogInfo("Defending area %s", pos.ToString());
 
-    m_frontLinesArmy.DefendArea(pos);
-    m_reinforcementsArmy.DefendArea(pos);
+    m_frontLinesArmy.Defend(pos);
+    m_reinforcementsArmy.Defend(pos);
 }

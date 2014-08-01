@@ -1,5 +1,5 @@
-#ifndef RESOURCE_MANAGER_H   
-#define RESOURCE_MANAGER_H
+#ifndef WORKERS_MANAGER_H   
+#define WORKERS_MANAGER_H
 
 #include "EngineObject.h"
 #include "RtsGame.h"
@@ -12,7 +12,7 @@ namespace IStrategizer
 {
 	class RtsGame;
 
-	class ResourceManager : public EngineObject
+	class WorkersManager : public EngineObject
 	{
 	public:
 		struct SourceRecord
@@ -23,7 +23,7 @@ namespace IStrategizer
 			std::set<TID> WorkersAssigned;
 		};
 
-		ResourceManager() :
+		WorkersManager() :
 			m_firstUpdate(true),
 			m_primaryOptimalAssignment(0),
 			m_secondaryOptimalAssignment(0)
@@ -61,4 +61,4 @@ namespace IStrategizer
 	};
 }
 
-#endif // RESOURCE_MANAGER_H
+#endif // WORKERS_MANAGER_H

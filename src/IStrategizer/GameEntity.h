@@ -57,6 +57,7 @@ namespace IStrategizer
 		virtual bool Stop() = 0;
 		virtual bool CanTrain(EntityClassType type) = 0;
         virtual bool Follow(TID entityId) = 0;
+        virtual bool CanRepair(TID entityId) = 0;
 
         void DebugDrawTarget();
         void DebugDrawRange();

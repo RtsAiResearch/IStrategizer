@@ -5,7 +5,7 @@
 #include "IMessagePumpObserver.h"
 #include "WorldClock.h"
 #include "CombatManager.h"
-#include "ResourceManager.h"
+#include "WorkersManager.h"
 #include "ScoutManager.h"
 #include "EngineDefs.h"
 #include <vector>
@@ -58,7 +58,7 @@ namespace IStrategizer
         std::shared_ptr<OnlineCaseBasedPlannerEx> m_pPlanner;
         CombatManager m_combatMgr;
         ScoutManager m_scoutMgr;
-		ResourceManager m_resourceMgr;
+		WorkersManager m_resourceMgr;
     };
 }
 

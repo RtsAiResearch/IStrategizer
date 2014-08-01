@@ -1,4 +1,4 @@
-#include "ResourceManager.h"
+#include "WorkersManager.h"
 #include "GamePlayer.h"
 #include "GameRace.h"
 #include "GameEntity.h"
@@ -9,7 +9,7 @@
 using namespace IStrategizer;
 using namespace std;
 
-void ResourceManager::Init()
+void WorkersManager::Init()
 {
 	g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
 	g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
@@ -19,7 +19,7 @@ void ResourceManager::Init()
 	m_secondaryOptimalAssignment = g_Game->Self()->Race()->OptimalGatherersPerSource(RESOURCE_Secondary);
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::NotifyMessegeSent(Message* pMsg)
+void WorkersManager::NotifyMessegeSent(Message* pMsg)
 {
 	LogActivity(NotifyMessegeSent);
 
@@ -100,7 +100,7 @@ void ResourceManager::NotifyMessegeSent(Message* pMsg)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::Update(_In_ RtsGame& game)
+void WorkersManager::Update(_In_ RtsGame& game)
 {
 	if (m_firstUpdate)
 	{
@@ -117,7 +117,7 @@ void ResourceManager::Update(_In_ RtsGame& game)
 	MaintainPrimaryResources(game);
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::GetResourceSources(_In_ ResourceType resource, _Out_ EntityList& sources)
+void WorkersManager::GetResourceSources(_In_ ResourceType resource, _Out_ EntityList& sources)
 {
 	auto pPlayer = (resource == RESOURCE_Primary ? g_Game->GetPlayer(PLAYER_Neutral) : g_Game->GetPlayer(PLAYER_Self));
 	_ASSERTE(pPlayer);
@@ -125,10 +125,10 @@ void ResourceManager::GetResourceSources(_In_ ResourceType resource, _Out_ Entit
 	pPlayer->Entities(g_Game->Self()->Race()->GetResourceSource(resource), sources);
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::MaintainSecondaryResources(_In_ RtsGame& game)
+void WorkersManager::MaintainSecondaryResources(_In_ RtsGame& game)
 {
 	auto lastPrimaryGatherers = m_lastFrameWorkers[OBJSTATE_GatheringPrimary];
-
+    
 	for (auto& sourceDist : m_secondarySrcDist)
 	{
 		if (game.Self()->GetEntity(sourceDist.second)->P(OP_State) != OBJSTATE_Idle)
@@ -136,21 +136,37 @@ void ResourceManager::MaintainSecondaryResources(_In_ RtsGame& game)
 
 		auto& source = m_sources.at(sourceDist.second);
 
-		while (source.WorkersAssigned.size() < m_secondaryOptimalAssignment &&
-			lastPrimaryGatherers.size() > MinPrimaryGatherers)
-		{
-			auto pWorker = *lastPrimaryGatherers.begin();
+        // Either the source is has overflow or underflow
 
-			if (pWorker->GatherResourceEntity(source.Id))
-			{
-				AssignWorker(pWorker->Id(), source.Id);
-			}
-            lastPrimaryGatherers.erase(pWorker);
-		}
+        // Overflow case
+        if (source.WorkersAssigned.size() > m_secondaryOptimalAssignment)
+        {
+            // Handle overflow by laying off secondary gatherers from this source
+            while (source.WorkersAssigned.size() > m_secondaryOptimalAssignment)
+            {
+                UnassignWorker(*source.WorkersAssigned.begin());
+            }
+        }
+        // Underflow case
+        else
+        {
+            // Handle underflow by taking from primary gatherers
+            while (source.WorkersAssigned.size() < m_secondaryOptimalAssignment &&
+                lastPrimaryGatherers.size() > MinPrimaryGatherers)
+            {
+                auto pWorker = *lastPrimaryGatherers.begin();
+
+                if (pWorker->GatherResourceEntity(source.Id))
+                {
+                    AssignWorker(pWorker->Id(), source.Id);
+                }
+                lastPrimaryGatherers.erase(pWorker);
+            }
+        }
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::MaintainPrimaryResources(_In_ RtsGame& game)
+void WorkersManager::MaintainPrimaryResources(_In_ RtsGame& game)
 {
 	auto& idleWorkers = m_lastFrameWorkers[OBJSTATE_Idle];
 
@@ -166,7 +182,7 @@ void ResourceManager::MaintainPrimaryResources(_In_ RtsGame& game)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::UpdateWorkersState(_In_ RtsGame& game)
+void WorkersManager::UpdateWorkersState(_In_ RtsGame& game)
 {
 	EntityList workers;
 	game.Self()->GetWorkers(workers);
@@ -187,7 +203,7 @@ void ResourceManager::UpdateWorkersState(_In_ RtsGame& game)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-ResourceManager::SourceRecord* ResourceManager::GetFirstAvailPrimarySource()
+WorkersManager::SourceRecord* WorkersManager::GetFirstAvailPrimarySource()
 {
 	for (auto& r : m_primarySrcDist)
 	{
@@ -198,7 +214,7 @@ ResourceManager::SourceRecord* ResourceManager::GetFirstAvailPrimarySource()
 	return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::UpdateDelayedSources(_In_ RtsGame& game)
+void WorkersManager::UpdateDelayedSources(_In_ RtsGame& game)
 {
 	LogActivity(UpdateDelayedSources);
 
@@ -209,7 +225,7 @@ void ResourceManager::UpdateDelayedSources(_In_ RtsGame& game)
 	m_delayedUpdateSources.clear();
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::AddSource(_In_ TID srcId, _In_ ResourceType type, _In_ unsigned dist)
+void WorkersManager::AddSource(_In_ TID srcId, _In_ ResourceType type, _In_ unsigned dist)
 {
 	m_sources[srcId].Id = srcId;
 	m_sources[srcId].Type = type;
@@ -223,7 +239,7 @@ void ResourceManager::AddSource(_In_ TID srcId, _In_ ResourceType type, _In_ uns
 	LogInfo("Added source %s[%d]", Enums[type], srcId);
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::RemoveSource(_In_ TID srcId)
+void WorkersManager::RemoveSource(_In_ TID srcId)
 {
 	ResourceType type = m_sources.at(srcId).Type;
 
@@ -254,7 +270,7 @@ void ResourceManager::RemoveSource(_In_ TID srcId)
 	m_sources.erase(srcId);
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::AssignWorker(_In_ TID workerId, _In_ TID sourceId)
+void WorkersManager::AssignWorker(_In_ TID workerId, _In_ TID sourceId)
 {
 	auto pWorker = g_Game->Self()->GetEntity(workerId);
 
@@ -271,7 +287,7 @@ void ResourceManager::AssignWorker(_In_ TID workerId, _In_ TID sourceId)
 	LogInfo("Assigning worker %s to source %d", pWorker->ToString().c_str(), sourceId);
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::UnassignWorker(_In_ TID workerId)
+void WorkersManager::UnassignWorker(_In_ TID workerId)
 {
 	auto oldSource = INVALID_TID;
 
@@ -290,7 +306,7 @@ void ResourceManager::UnassignWorker(_In_ TID workerId)
 		LogInfo("Unassiged non-existing worker %d from source %d", workerId, oldSource);
 }
 //////////////////////////////////////////////////////////////////////////
-void ResourceManager::UnassignAstrayWorkers(_In_ RtsGame& game)
+void WorkersManager::UnassignAstrayWorkers(_In_ RtsGame& game)
 {
 	auto prevWorkerToSourceMap = m_workerToSourceMap;
 
@@ -298,7 +314,7 @@ void ResourceManager::UnassignAstrayWorkers(_In_ RtsGame& game)
 	{
 		auto pWorker = game.Self()->GetEntity(workerToSource.first);
 
-		// Worker has a wrong assignment, unassign it and reclaim it in the next update
+		// Worker is gathering the wrong resource, unassign it and reclaim it in the next update
 		if ((pWorker->P(OP_IsGatheringSecondaryResource) &&
 			m_sources.at(workerToSource.second).Type != RESOURCE_Secondary) ||
 			(pWorker->P(OP_IsGatheringPrimaryResource) &&
@@ -309,3 +325,4 @@ void ResourceManager::UnassignAstrayWorkers(_In_ RtsGame& game)
 		}
 	}
 }
+//////////////////////////////////////////////////////////////////////////

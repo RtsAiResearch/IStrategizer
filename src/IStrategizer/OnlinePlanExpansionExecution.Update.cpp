@@ -84,9 +84,8 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
 
         for (auto goalNodeId : snippetsToDestroy)
         {
-            if (m_pOlcbpPlan->Contains(goalNodeId))
+            if (m_pOlcbpPlan->Contains(goalNodeId) && !HasActiveAction(goalNodeId))
             {
-                _ASSERTE(!HasActiveAction(goalNodeId));
                 (void)DestroyGoalSnippetIfExist(goalNodeId);
 
                 if (m_pOlcbpPlan->GetNode(goalNodeId)->GetState() != ESTATE_Succeeded)

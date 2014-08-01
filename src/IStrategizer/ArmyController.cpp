@@ -23,7 +23,10 @@ m_totalDiedEntities(0),
 m_totalGroundAttack(0),
 m_totalMaxHP(0),
 m_boundingCircleRadius(0),
-m_pName(pName)
+m_pName(pName),
+m_controlBroken(false),
+m_controlWorkers(false),
+m_controlHealthy(false)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
@@ -31,17 +34,21 @@ m_pName(pName)
     m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::ControlNewArmy(_In_ bool includeHealthy, _In_ bool includeBroken)
+void ArmyController::SetControlType(_In_ bool controlHealthy, _In_ bool controlBroken, _In_ bool controlWorkers)
+{
+    m_controlHealthy = controlHealthy;
+    m_controlBroken = controlBroken;
+    m_controlWorkers = controlWorkers;
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::ControlNewArmy()
 {
     ReleaseArmy();
 
     // For now, army controls only current free healthy attackers
     for (auto& entityR : g_Game->Self()->Entities())
     {
-        bool isBroken = EntityController::IsOnCriticalHP(entityR.second);
-        if (includeHealthy && !isBroken ||
-            (includeBroken && isBroken))
-            TryControlEntity(entityR.first);
+        TryControlEntity(entityR.first);
     }
 
     m_pLogic->Reset();
@@ -141,8 +148,11 @@ void ArmyController::Update()
     m_currFramefleeingEntities.clear();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::DefendArea(_In_ Vector2 pos)
+void ArmyController::Defend(_In_ Vector2 pos)
 {
+    _ASSERTE(!pos.IsInf());
+    LogInfo("%s -> Defend(%s)", ToString().c_str(), pos.ToString().c_str());
+
     // Set the logic input position to defend
     TargetPosition(pos);
 
@@ -150,12 +160,27 @@ void ArmyController::DefendArea(_In_ Vector2 pos)
     m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::AttackArea(_In_ Vector2 pos)
+void ArmyController::Attack(_In_ Vector2 pos)
 {
-    // Set the logic input position to defend
+    _ASSERTE(!pos.IsInf());
+    LogInfo("%s -> Attack(%s)", ToString().c_str(), pos.ToString().c_str());
+
+    // Set the logic input position to attack at
     TargetPosition(pos);
 
     m_pLogic = StackFSMPtr(new AttackMoveArmyFSM(this));
+    m_pLogic->Reset();
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::Stand(_In_ Vector2 pos)
+{
+    _ASSERTE(!pos.IsInf());
+    LogInfo("%s -> Stand(%s)", ToString().c_str(), pos.ToString().c_str());
+
+    // Set the logic input position to stand at
+    TargetPosition(pos);
+
+    m_pLogic = StackFSMPtr(new StandArmyFSM(this));
     m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -271,11 +296,16 @@ bool ArmyController::CanControl(_In_ const GameEntity* pEntity)
 
     auto pEntityType = pEntity->Type();
 
-    return pEntity->Exists() &&
-        !pEntityType->P(TP_IsWorker) &&
+    bool isBroken = EntityController::IsOnCriticalHP(pEntity);
+
+    return m_entities.count(pEntity->Id()) == 0&&
+        pEntity->Exists() &&
         !pEntityType->P(TP_IsBuilding) &&
         pEntity->P(OP_State) != OBJSTATE_BeingConstructed &&
-        !pEntity->IsLocked();
+        !pEntity->IsLocked() &&
+        (m_controlWorkers || !pEntityType->P(TP_IsWorker)) &&
+        (m_controlHealthy || isBroken) &&
+        (m_controlBroken || !isBroken);
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::TryControlEntity(_In_ TID entityId)

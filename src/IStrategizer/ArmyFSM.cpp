@@ -16,7 +16,7 @@ void ArmyState::Enter()
     LogInfo("%s -> Enter", ToString().c_str());
 
     auto pController = (ArmyController*)m_pController;
-    m_controlledEntities = pController->HealthyEntities();
+    m_controlledEntities = pController->Entities();
     m_targetPos1 = pController->TargetPosition();
     m_targetEntity = pController->TargetEntity();
 
@@ -46,7 +46,7 @@ void ArmyState::Update()
         ToString().c_str());
     g_Game->DebugDrawMapText(statsPos, stats);
     
-    sprintf_s(stats, "C:%d D:%d HP:%d GA:%d", pController->HealthyEntities().size(),
+    sprintf_s(stats, "C:%d D:%d HP:%d GA:%d", pController->Entities().size(),
         pController->TotalDiedEntities(), pController->TotalMaxHP(), pController->TotalGroundAttack());
 
     statsPos.Y += 10;
@@ -204,6 +204,30 @@ void ArriveArmyState::Update()
 //
 // Machines
 //
+void StandArmyFSM::CheckTransitions()
+{
+    auto pController = (ArmyController*)m_pController;
+    auto pCurrState = static_pointer_cast<ArmyState>(CurrentState());
+
+    (void)pController;
+
+    switch (pCurrState->TypeId())
+    {
+    case IdleArmyState::TypeID:
+        if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
+        {
+            PushState(RegroupArmyState::TypeID);
+        }
+        break;
+    case RegroupArmyState::TypeID:
+        if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
+        {
+            PopState();
+        }
+        break;
+    }
+}
+//////////////////////////////////////////////////////////////////////////
 void GuardArmyFSM::CheckTransitions()
 {
     auto pController = (ArmyController*)m_pController;

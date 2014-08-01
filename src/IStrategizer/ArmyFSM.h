@@ -137,6 +137,23 @@ namespace IStrategizer
         DISALLOW_COPY_AND_ASSIGN(IdleArmyFSM);
     };
 
+    class StandArmyFSM : public StackFSM
+    {
+    public:
+        static const FSMStateTypeID TypeID = 0x488AD1FD;
+        StandArmyFSM(ArmyController* pController) :
+            StackFSM("ARMY-STAND", IdleArmyState::TypeID, IdleArmyState::TypeID, TypeID, (EngineObject*)pController)
+        {
+            AddState(FSMStatePtr(new IdleArmyState(pController)));
+            AddState(FSMStatePtr(new RegroupArmyState(pController)));
+        }
+
+        void CheckTransitions();
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(StandArmyFSM);
+    };
+
     class GuardArmyFSM : public StackFSM
     {
     public:
