@@ -460,19 +460,20 @@ void ClientMain::UpdateStatsView()
 {
     ui.lblGameCyclesData->setText(tr("%1").arg(m_pGameModel->Clock().ElapsedGameCycles()));
 
-    EntityList workers;
     map<ObjectStateType, set<TID>> workersState;
+    auto workerType = m_pGameModel->Self()->Race()->GetWorkerType();
 
-    m_pGameModel->Self()->Entities(m_pGameModel->Self()->Race()->GetWorkerType(), workers);
-
-    ui.lblWorkersCountData->setText(QString("%1").arg(workers.size()));
-
-    for (auto workerId : workers)
+    int workerCount = 0;
+    for (auto& entityR : m_pGameModel->Self()->Entities())
     {
-        GameEntity* pWorker = m_pGameModel->Self()->GetEntity(workerId);
-        if (pWorker != nullptr)
-            workersState[(ObjectStateType)pWorker->P(OP_State)].insert(pWorker->Id());
+        if (entityR.second->TypeId() == workerType)
+        {
+            workersState[(ObjectStateType)entityR.second->P(OP_State)].insert(entityR.first);
+            ++workerCount;
+        }
     }
+
+    ui.lblWorkersCountData->setText(QString("%1").arg(workerCount));
 
     QTableWidgetItem* cell = NULL;
     for(int row = 0; row < ui.tblWorkerState->rowCount(); ++row)

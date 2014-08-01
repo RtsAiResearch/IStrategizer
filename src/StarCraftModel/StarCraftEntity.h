@@ -40,7 +40,7 @@ namespace IStrategizer
         Vector2 TargetPosition() const;
         bool Exists() const;
         bool CanAttack(_In_ TID targetId) const;
-
+        
         // Game Commands
         bool Research(IStrategizer::ResearchType p_researchId);
         bool Build(EntityClassType p_buildingClassId, Vector2 p_position);
@@ -63,6 +63,8 @@ namespace IStrategizer
         ///> type=int
         bool m_isOnline;
         BWAPI::Unit m_pUnit;
+        EntityClassType m_typeId;
+        PlayerType m_ownerId;
     };
 }
 

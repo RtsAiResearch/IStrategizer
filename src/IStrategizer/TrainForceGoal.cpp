@@ -33,17 +33,19 @@ void TrainForceGoal::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
-    EntityList entities;
-    game.Self()->Entities((EntityClassType)_params[PARAM_EntityClassId], entities);
     int entitiesCount = 0;
     int requiredCount = _params[PARAM_Amount];
+    auto typeId = _params[PARAM_EntityClassId];
+    auto& entities = game.Self()->Entities();
 
-    for (TID unitId : entities)
+    if ((int)entities.size() < requiredCount)
+        return false;
+
+    for (auto& entityR : entities)
     {
-        GameEntity *pEntity = game.Self()->GetEntity(unitId);
-        _ASSERTE(pEntity);
-
-        entitiesCount += ((g_Assist.IsEntityInState(unitId, (ObjectStateType)_params[PARAM_ObjectStateType])) ? 1 : 0);
+        if (entityR.second->TypeId() == typeId &&
+            entityR.second->P(OP_State) != OBJSTATE_BeingConstructed)
+            ++entitiesCount;
     }
 
     return entitiesCount >= requiredCount;

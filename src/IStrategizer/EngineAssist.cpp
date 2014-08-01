@@ -72,37 +72,26 @@ int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_res
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entityType, ObjectStateType state, PlayerType p_playerType)
 {
-    GamePlayer* pPlayer;
     GameEntity* pEntity;
-    EntityList entities;
     unsigned matches;
     bool exist;
     ObjectStateType currState;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
-    _ASSERTE(pPlayer);
-    pPlayer->Entities(p_entityType.first, entities);
+    auto& entities = g_Game->GetPlayer(p_playerType)->Entities();
 
     exist = false;
     matches = 0;
 
-    for (int i = 0, size = entities.size(); i < size; ++i)
+    for (auto& entityR : entities)
     {
-        pEntity = pPlayer->GetEntity(entities[i]);
-        _ASSERTE(pEntity);
-
+        pEntity = entityR.second;
         currState = (ObjectStateType)pEntity->P(OP_State);
 
         if (pEntity->TypeId() == p_entityType.first &&
+            ((state == OBJSTATE_END && currState != OBJSTATE_BeingConstructed) ||
+            (state != OBJSTATE_END && currState == state)) &&
             !pEntity->IsLocked())
-        {
-
-            if ((state == OBJSTATE_END && currState != OBJSTATE_BeingConstructed) ||
-                (state != OBJSTATE_END && currState == state))
-            {
-                ++matches;
-            }
-        }
+            ++matches;
     }
 
     exist = (matches >= p_entityType.second);
@@ -112,16 +101,11 @@ bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entity
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_entityTypes, PlayerType p_playerType)
 {
-    GamePlayer* pPlayer;
     GameEntity* pEntity;
-    GameType* pType;
-    EntityList entities;
     unsigned matches;
     bool        exist = false;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
-    _ASSERTE(pPlayer);
-    pPlayer->Entities(entities);
+    auto& entities = g_Game->GetPlayer(p_playerType)->Entities();
 
     exist = true;
 
@@ -130,25 +114,15 @@ bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_
     {
         matches = 0;
 
-        for (unsigned i = 0, size = entities.size(); i < size; ++i)
+        for (auto& entityR : entities)
         {
-            pEntity = pPlayer->GetEntity(entities[i]);
+            pEntity = entityR.second;
             _ASSERTE(pEntity);
 
-            if (pEntity->TypeId() == itr->first)
-            {
-                pType = g_Game->GetEntityType(itr->first);
-                _ASSERTE(pType);
-
-                // Building are considered exist if and only if it is constructed
-                if (pType->P(TP_IsBuilding))
-                {
-                    if (pEntity->P(OP_State) != (int)OBJSTATE_BeingConstructed)
-                        ++matches;
-                }
-                else
-                    ++matches;
-            }
+            // Units are considered exist if and only if it is constructed
+            if (pEntity->TypeId() == itr->first &&
+                pEntity->P(OP_State) != (int)OBJSTATE_BeingConstructed)
+                ++matches;
         }
 
         if (matches < itr->second)

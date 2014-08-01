@@ -25,6 +25,11 @@ GameEntity(p_unit->getID()),
 m_pUnit(p_unit),
 m_isOnline(true)
 {
+    m_typeId = g_Database.EntityMapping.GetByFirst(m_pUnit->getType().getID());
+    m_cachedAttr[OP_TypeId] = m_typeId;
+
+    m_ownerId = g_Database.PlayerMapping.GetByFirst(m_pUnit->getPlayer()->getID());
+    m_cachedAttr[OP_OwnerId] = m_ownerId;
 }
 //----------------------------------------------------------------------------------------------
 int StarCraftEntity::P(EntityObjectProperty attrId) const
@@ -84,10 +89,10 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
             return FetchState();
 
         case OP_OwnerId:
-            return g_Database.PlayerMapping.GetByFirst(m_pUnit->getPlayer()->getID());
+            return m_ownerId;
 
         case OP_TypeId:
-            return g_Database.EntityMapping.GetByFirst(m_pUnit->getType().getID());
+            return m_typeId;
 
         case OP_PosCenterX:
             return m_pUnit->getPosition().x;
@@ -125,7 +130,6 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
     }
     else
     {
-        _ASSERTE(m_cachedAttr.Contains(attrId));
         return m_cachedAttr.at(attrId);
     }
 }
@@ -172,7 +176,8 @@ bool StarCraftEntity::IsTraining(TID p_traineeId) const
     if (nullptr == pTrainee)
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
-    return MathHelper::RectangleMembership(
+    return pTrainee->P(OP_State) == OBJSTATE_BeingConstructed &&
+        MathHelper::RectangleMembership(
         P(OP_Left),
         P(OP_Top),
         P(OP_Right) - P(OP_Left),
@@ -276,7 +281,7 @@ bool StarCraftEntity::AttackGround(Vector2 p_position)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
     BWAPI::Position pos(p_position.X, p_position.Y);
-    
+
     if (m_pUnit->attack(pos))
         return true;
     else
@@ -358,7 +363,9 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
     LogInfo("%s -> Train(Trainee=%s)", ToString().c_str(), type.toString().c_str());
 
     if (building->train(type))
+    {
         return true;
+    }
     else
     {
         DebugDrawMapLastGameError();

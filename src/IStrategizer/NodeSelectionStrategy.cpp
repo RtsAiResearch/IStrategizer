@@ -60,7 +60,7 @@ void LfhdCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
                     }
                     else if (pPlan->Contains(currentActiveGoalId) &&
                         !m_pPlanner->IsNodeOpen(currentActiveGoalId) &&
-                        !m_pPlanner->HasExecutingAction(currentActiveGoalId))
+                        !m_pPlanner->HasActiveAction(currentActiveGoalId))
                     {
                         snippetsToDestroy.insert(currentActiveGoalId);
                     }
@@ -122,7 +122,7 @@ void GenCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
         // Prune the plan by destroying snippets of succeeding goals to 
         // reduce plan noise and make it easier to read/visualize the plan
         if (pPlan->GetNode(goalNodeId)->GetState() == ESTATE_Succeeded &&
-            !m_pPlanner->HasExecutingAction(goalNodeId) &&
+            !m_pPlanner->HasActiveAction(goalNodeId) &&
             m_pPlanner->IsGoalExpanded(goalNodeId))
         {
             snippetsToDestroy.insert(goalNodeId);

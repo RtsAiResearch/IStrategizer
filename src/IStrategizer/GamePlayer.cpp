@@ -307,13 +307,9 @@ MapArea GamePlayer::GetColonyMapArea()
         // No base! This is weird but for the case, we will select the first unit position as the player colony center
         else
         {
-            EntityList    playerEntities;
-
-            Entities(playerEntities);
             // This can't happen, If the player has no entities, then he must be losing
-            _ASSERTE(!playerEntities.empty());
-
-            pPlayerBase = GetEntity(playerEntities[0]);
+            _ASSERTE(!m_entities.empty());
+            pPlayerBase = m_entities.begin()->second;
         }
 
         GameType *pGameType = g_Game->GetEntityType(Race()->GetBaseType());

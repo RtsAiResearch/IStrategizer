@@ -57,8 +57,6 @@ void WorldMap::Init()
 void WorldMap::Update()
 {
     vector<PlayerType> players;
-    EntityList currPlayerEntites;
-    GameEntity *currentEntity;
     unsigned cellX, cellY;
     GroundControlIM* IM =  dynamic_cast<GroundControlIM*>(g_IMSysMgr.GetIM(IM_GroundControl));
 
@@ -77,23 +75,20 @@ void WorldMap::Update()
 
     m_pGame->Players(players);
 
+    EntityList currPlayerEntites;
+
     for (unsigned i = 0 ; i < players.size(); i++)
     {
         // Neutral units are ignored
         if (players[i] == PLAYER_Neutral)
             continue;
 
-        currPlayerEntites.clear();
-        m_pGame->GetPlayer(players[i])->Entities(currPlayerEntites); 
-
-        for (unsigned j = 0 ; j < currPlayerEntites.size(); j++)
+        for (auto& entityR : m_pGame->GetPlayer(players[i])->Entities())
         {
-            currentEntity = m_pGame->GetPlayer(players[i])->GetEntity(currPlayerEntites[j]);
+            cellX = entityR.second->P(OP_Left) / m_cellSide;
+            cellY = entityR.second->P(OP_Top) / m_cellSide;
 
-            cellX = currentEntity->P(OP_Left) / m_cellSide;
-            cellY = currentEntity->P(OP_Top) / m_cellSide;
-
-            m_cellFeatureMatrix[cellY][cellX].AddEntity(currentEntity, players[i] == PLAYER_Self);
+            m_cellFeatureMatrix[cellY][cellX].AddEntity(entityR.second, players[i] == PLAYER_Self);
         }
     }
 

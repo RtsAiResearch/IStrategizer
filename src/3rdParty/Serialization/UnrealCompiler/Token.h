@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+extern int EOFTypeId;
+
 namespace Unreal
 {
     enum
@@ -12,7 +14,7 @@ namespace Unreal
         TOKEN_Error = 1,
     };
 
-    struct TokenType
+    struct UTokenType
     {
         // the id of the token type
         int Id;
@@ -38,14 +40,13 @@ namespace Unreal
         // token identifies a reserved language keyword
         bool IsReserved;
 
-        TokenType(int p_id, const std::string& p_name) :
+        UTokenType(int p_id, const std::string& p_name) :
             Id(p_id), Name(p_name), IsError(false), IsSpecial(false), IsIdentifier(false), IsComposite(false), IsIgnored(false), IsReserved(false)
         {}
     };
 
     const int MaxTokenTypes = 128;
-    extern int EOFTypeId;
-    extern std::vector<TokenType*> g_TokenTypesMap;
+
 
     struct TokenValue
     {
@@ -84,5 +85,7 @@ namespace Unreal
         bool IsEOF() { return TypeId == EOFTypeId; }
     };
 }
+
+extern std::vector<Unreal::UTokenType*> g_TokenTypesMap;
 
 #endif // TOKEN_H

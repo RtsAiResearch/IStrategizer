@@ -86,6 +86,7 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
         {
             if (m_pOlcbpPlan->Contains(goalNodeId))
             {
+                _ASSERTE(!HasActiveAction(goalNodeId));
                 (void)DestroyGoalSnippetIfExist(goalNodeId);
 
                 if (m_pOlcbpPlan->GetNode(goalNodeId)->GetState() != ESTATE_Succeeded)
@@ -160,7 +161,7 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
                 options.ExcludedGoalHashes.insert(GetNodeData(satisfyingGoalNode).BelongingCase->Goal()->Hash());
             }
 
-            pCurrentGoalNode->AdaptParameters(*g_Game);
+            //pCurrentGoalNode->AdaptParameters(*g_Game);
             options.GoalTypeId = (GoalType)pCurrentGoalNode->StepTypeId();
             options.pGameState = g_Game;
 
@@ -223,7 +224,7 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
                 {
                     if (pCurrentGoalNode->SleepsCount() < GoalMaxSleepsCount)
                     {
-                        LogInfo("%s is still not done and all of its children are done execution, slept %d time(s) before, will send it to sleep", ToString().c_str(), pCurrentGoalNode->SleepsCount());
+                        LogInfo("%s is still not done and all of its children are done execution, slept %d time(s) before, will send it to sleep", pCurrentGoalNode->ToString().c_str(), pCurrentGoalNode->SleepsCount());
                         pCurrentGoalNode->Sleep(clock, GoalSleepTime);
                     }
                     else
@@ -247,12 +248,15 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
 
     if (!IsNodeDone(currentNode))
     {
+        
         _ASSERTE(pAction->GetState() == ESTATE_NotPrepared ||
             pAction->GetState() == ESTATE_Executing ||
             pAction->GetState() == ESTATE_END);
 
+        if (pAction->GetState() == ESTATE_END)
+            MarkActionAsActive(currentNode);
+
         pAction->Update(*g_Game, clock);
-        AddExecutingAction(currentNode);
 
         if (pAction->GetState() == ESTATE_Succeeded)
         {

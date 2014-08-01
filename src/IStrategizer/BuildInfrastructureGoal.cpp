@@ -20,7 +20,7 @@ BuildInfrastructureGoal::BuildInfrastructureGoal() : GoalEx(GOALEX_BuildInfrastr
     m_existingAmount = 0;
 }
 //----------------------------------------------------------------------------------------------
-BuildInfrastructureGoal::BuildInfrastructureGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_BuildInfrastructure, p_parameters)
+BuildInfrastructureGoal::BuildInfrastructureGoal(const PlanStepParameters& p_parameters) : GoalEx(GOALEX_BuildInfrastructure, p_parameters)
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -64,23 +64,15 @@ void BuildInfrastructureGoal::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 bool BuildInfrastructureGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
-    EntityList entities;
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
     int count = 0;
 
-    if (game.Self()->Race()->GetResourceSource(RESOURCE_Supply) == entityClassType)
+    for (auto& entityR : game.Self()->Entities())
     {
-        count = GetAvailableSupplyBuildingsCount(game);
-    }
-    else
-    {
-        game.Self()->Entities(entityClassType, entities);
-        for (auto building : entities)
+        if (entityR.second->TypeId() == entityClassType &&
+            entityR.second->P(OP_State) != OBJSTATE_BeingConstructed)
         {
-            if (game.Self()->GetEntity(building)->P(OP_State) != OBJSTATE_BeingConstructed)
-            {
-                count++;
-            }
+            count++;
         }
     }
 
@@ -92,15 +84,15 @@ void BuildInfrastructureGoal::AdaptParameters(RtsGame& game)
     EntityList entities;
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
 
-    if (game.Self()->Race()->GetResourceSource(RESOURCE_Supply) == entityClassType)
-    {
-        m_existingAmount = GetAvailableSupplyBuildingsCount(game);
-    }
-    else
-    {
-        game.Self()->Entities(entityClassType, entities);
-        m_existingAmount = entities.size();
-    }
+    /* if (game.Self()->Race()->GetResourceSource(RESOURCE_Supply) == entityClassType)
+     {
+     m_existingAmount = GetAvailableSupplyBuildingsCount(game);
+     }
+     else
+     {*/
+    game.Self()->Entities(entityClassType, entities);
+    m_existingAmount = entities.size();
+    //}
 
     _params[PARAM_Amount] = _params[PARAM_Amount] - m_existingAmount;
 }

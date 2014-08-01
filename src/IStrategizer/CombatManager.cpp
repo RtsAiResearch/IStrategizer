@@ -54,7 +54,6 @@ void CombatManager::AttackArea(_In_ Vector2 pos)
 
     m_reinforcementsArmy.ReleaseArmy();
     m_frontLinesArmy.ControlNewArmy(true, false);
-    m_frontLinesArmy.AttackArea(pos);
 }
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::DefendArea(_In_ Vector2 pos)
@@ -64,9 +63,4 @@ void CombatManager::DefendArea(_In_ Vector2 pos)
 
     m_frontLinesArmy.DefendArea(pos);
     m_reinforcementsArmy.DefendArea(pos);
-
-    // If we are defending our base, we stand or lose
-    // Use all units to survive
-    if (pos == g_Game->Self()->StartLocation())
-        m_brokenArmy.DefendArea(pos);
 }

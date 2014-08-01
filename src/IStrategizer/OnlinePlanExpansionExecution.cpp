@@ -269,18 +269,27 @@ void IStrategizer::OnlinePlanExpansionExecution::MarkCaseAsTried(_In_ IOlcbpPlan
     GetNodeData(nodeId).TriedCases.insert(pCase);
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecution::RemoveExecutingAction(IOlcbpPlan::NodeID nodeId)
+void IStrategizer::OnlinePlanExpansionExecution::MarkActionAsInactive(IOlcbpPlan::NodeID nodeId)
 {
-    for (auto& r : m_executingActions)
-        r.second.erase(nodeId);
+    bool wasActive = false;
+
+    for (auto& r : m_activeActions)
+    {
+        wasActive |= (r.second.erase(nodeId) > 0);
+    }
+
+    if (wasActive)
+        LogInfo("Action %s is not active anymore", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecution::AddExecutingAction(IOlcbpPlan::NodeID nodeId)
+void IStrategizer::OnlinePlanExpansionExecution::MarkActionAsActive(IOlcbpPlan::NodeID nodeId)
 {
     IOlcbpPlan::NodeSet ancestors;
     GetAncestorSatisfyingGoals(nodeId, ancestors);
     for (IOlcbpPlan::NodeID ancestor : ancestors)
-        m_executingActions[ancestor].insert(nodeId);
+        m_activeActions[ancestor].insert(nodeId);
+
+    LogInfo("Action %s is active", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 void OnlinePlanExpansionExecution::UpdateHistory(CaseEx* pCase)
@@ -320,17 +329,16 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
 
         IOlcbpPlan::NodeValue pCurreNode = m_pOlcbpPlan->GetNode(currentPlanStepID);
 
-        if (IsActionNode(currentPlanStepID) && !msgConsumedByAction)
+        if (IsActionNode(currentPlanStepID) &&
+            pCurreNode->GetState() == ESTATE_Executing)
         {
             pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
 
             if (msgConsumedByAction)
+            {
                 LogInfo("Message with ID=%d consumed by action node %s", pMessage->TypeId(), pCurreNode->ToString().c_str());
-        }
-
-        if (msgConsumedByAction)
-        {
-            break;
+                break;
+            }
         }
 
         AddReadyChildrenToUpdateQueue(currentPlanStepID, Q);
@@ -380,7 +388,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::No
         if (IsActionNode(visitedNodeId))
         {
             ((Action*)pCurrNode)->Abort(*g_Game);
-            RemoveExecutingAction(visitedNodeId);
+            MarkActionAsInactive(visitedNodeId);
         }
 
         // FIXME: deleting currNode crashes the execution history logic, should fix
@@ -481,7 +489,9 @@ void OnlinePlanExpansionExecution::OnActionNodeFailed(_In_ IOlcbpPlan::NodeID no
 void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
 {
     IOlcbpPlan::NodeID satisfyingGoalNode = GetNodeData(nodeId).SatisfyingGoal;
-    RemoveExecutingAction(nodeId);
+
+    if (IsActionNode(nodeId))
+        MarkActionAsInactive(nodeId);
 
     if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
     {
@@ -648,7 +658,7 @@ bool OnlinePlanExpansionExecution::IsGoalExpanded(_In_ IOlcbpPlan::NodeID snippe
 //////////////////////////////////////////////////////////////////////////
 bool OnlinePlanExpansionExecution::IsPlanDone()
 {
-    for (auto& a : m_executingActions)
+    for (auto& a : m_activeActions)
     {
         if (!a.second.empty())
             return false;

@@ -52,7 +52,7 @@ namespace IStrategizer
         bool IsCaseTried(_In_ IOlcbpPlan::NodeID nodeId, _In_ CaseEx* pCase) const { return GetNodeData(nodeId).TriedCases.count(pCase) > 0; }
         const OlcbpPlanNodeData& GetNodeData(_In_ IOlcbpPlan::NodeID nodeId) const { _ASSERTE(m_nodeData.count(nodeId) > 0); return m_nodeData.at(nodeId); }
         OlcbpPlanNodeData& GetNodeData(_In_ IOlcbpPlan::NodeID nodeId) { _ASSERTE(m_nodeData.count(nodeId) > 0); return m_nodeData[nodeId]; }
-        bool HasExecutingAction(_In_ IOlcbpPlan::NodeID snippetGoalId) { return !m_executingActions[snippetGoalId].empty(); }
+        bool HasActiveAction(_In_ IOlcbpPlan::NodeID snippetGoalId) { return !m_activeActions[snippetGoalId].empty(); }
         bool IsGoalExpanded(_In_ IOlcbpPlan::NodeID snippetGoalId);
 
     private:
@@ -81,8 +81,8 @@ namespace IStrategizer
         void OnActionNodeSucceeded(_In_ IOlcbpPlan::NodeID nodeId);
         void OnActionNodeFailed(_In_ IOlcbpPlan::NodeID nodeId);
         void OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId);
-        void RemoveExecutingAction(IOlcbpPlan::NodeID nodeId);
-        void AddExecutingAction(IOlcbpPlan::NodeID currentNode);
+        void MarkActionAsInactive(IOlcbpPlan::NodeID nodeId);
+        void MarkActionAsActive(IOlcbpPlan::NodeID currentNode);
         void ClearPlan();
         bool IsPlanDone();
 
@@ -95,7 +95,7 @@ namespace IStrategizer
         std::shared_ptr<GoalEx> m_pPlanGoalPrototype;
         IOlcbpPlan::NodeSet m_activeGoalSet;
         OlcbpPlanContext m_planContext;
-        std::map<IOlcbpPlan::NodeID, std::set<IOlcbpPlan::NodeID>> m_executingActions;
+        std::map<IOlcbpPlan::NodeID, std::set<IOlcbpPlan::NodeID>> m_activeActions;
         std::shared_ptr<NodeSelectionStrategy> m_pNodeSelector;
         bool m_inMaintenanceMode;
 

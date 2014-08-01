@@ -15,30 +15,30 @@ void CaseGenerator::GenBuildOrderCases()
 	GenCollectPrimaryResourceCases();
 	GenCollectSecondaryResourceCases();
 	GenBuildInfraCases("Terran_Barracks", 2);
-	GenBuildInfraCases("Terran_Factory", 2);
-	GenBuildInfraCases("Terran_Machine_Shop", 2);
+	GenBuildInfraCases("Terran_Factory", 4);
+	GenBuildInfraCases("Terran_Machine_Shop", 4);
     GenBuildInfraCases("Terran_Armory", 2);
     GenBuildInfraCases("Terran_Command_Center", 2);
     GenBuildInfraCases("Terran_Physics_Lab", 2);
     GenBuildInfraCases("Terran_Science_Facility", 1);
     GenBuildInfraCases("Terran_Covert_Ops", 2);
     GenBuildInfraCases("Terran_Starport", 2);
-	GenBuildInfraCases("Terran_Supply_Depot", 2);
-	GenBuildInfraCases("Terran_Bunker", 3);
+	GenBuildInfraCases("Terran_Supply_Depot", 20);
+	GenBuildInfraCases("Terran_Bunker", 4);
 	GenBuildInfraCases("Terran_Academy", 1);
-	GenBuildInfraCases("Terran_Refinery", 1);
+	GenBuildInfraCases("Terran_Refinery", 2);
     GenBuildInfraCases("Terran_Engineering_Bay", 1);
-    GenBuildInfraCases("Terran_Missile_Turret", 4);
+    GenBuildInfraCases("Terran_Missile_Turret", 6);
 }
 //////////////////////////////////////////////////////////////////////////
 void CaseGenerator::GenTrainOrderCases()
 {
 	GenTrainForceCases("Terran_SCV", MaxSCVs);
-	GenTrainForceCases("Terran_Marine", 12);
-	GenTrainForceCases("Terran_Medic", 6);
-	GenTrainForceCases("Terran_Vulture", 12);
-	GenTrainForceCases("Terran_Siege_Tank_Tank_Mode", 6);
-	GenTrainForceCases("Terran_Firebat", 9);
+	GenTrainForceCases("Terran_Marine", 18);
+	GenTrainForceCases("Terran_Medic", 9);
+	GenTrainForceCases("Terran_Vulture", 18);
+	GenTrainForceCases("Terran_Siege_Tank_Tank_Mode", 12);
+	GenTrainForceCases("Terran_Firebat", 12);
 }
 //////////////////////////////////////////////////////////////////////////
 void CaseGenerator::GenCollectPrimaryResourceCases()
