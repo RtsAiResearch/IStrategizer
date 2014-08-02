@@ -88,7 +88,7 @@ void ResearchAction::InitializePreConditions()
 	m_researcherType = g_Game->GetResearch(researchType)->SourceEntity();
 	vector<Expression*> m_terms;
 
-	m_terms.push_back(new EntityClassExist(PLAYER_Self, m_researcherType, 1));
+	m_terms.push_back(new EntityClassExist(PLAYER_Self, m_researcherType, OBJSTATE_Idle, true));
 	g_Assist.GetPrerequisites(researchType, PLAYER_Self, m_terms);
 	_preCondition = new And(m_terms);
 }

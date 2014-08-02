@@ -17,6 +17,8 @@ void WorkersManager::Init()
 
 	m_primaryOptimalAssignment = g_Game->Self()->Race()->OptimalGatherersPerSource(RESOURCE_Primary);
 	m_secondaryOptimalAssignment = g_Game->Self()->Race()->OptimalGatherersPerSource(RESOURCE_Secondary);
+
+    m_workersArmy.SetControlType(false, true);
 }
 //////////////////////////////////////////////////////////////////////////
 void WorkersManager::NotifyMessegeSent(Message* pMsg)
@@ -111,6 +113,9 @@ void WorkersManager::Update(_In_ RtsGame& game)
 	if (game.Clock().ElapsedGameCycles() % 2 != 0)
 		return;
 
+    m_workersArmy.TryControlArmy(false);
+    m_workersArmy.Update();
+
 	UpdateWorkersState(game);
 	UnassignAstrayWorkers(game);
 	MaintainSecondaryResources(game);
@@ -184,21 +189,13 @@ void WorkersManager::MaintainPrimaryResources(_In_ RtsGame& game)
 //////////////////////////////////////////////////////////////////////////
 void WorkersManager::UpdateWorkersState(_In_ RtsGame& game)
 {
-	EntityList workers;
-	game.Self()->GetWorkers(workers);
-
 	m_lastFrameWorkers.clear();
 
-	for (auto workerId : workers)
+	for (auto& workerR : m_workersArmy.Entities())
 	{
-		auto pWorker = game.Self()->GetEntity(workerId);
+        auto pWorker = workerR.second->Entity();
 
 		auto state = (ObjectStateType)pWorker->P(OP_State);
-
-		if (state == OBJSTATE_BeingConstructed ||
-			pWorker->IsLocked())
-			continue;
-
 		m_lastFrameWorkers[state].insert(pWorker);
 	}
 }
@@ -272,7 +269,7 @@ void WorkersManager::RemoveSource(_In_ TID srcId)
 //////////////////////////////////////////////////////////////////////////
 void WorkersManager::AssignWorker(_In_ TID workerId, _In_ TID sourceId)
 {
-	auto pWorker = g_Game->Self()->GetEntity(workerId);
+    auto pWorker = m_workersArmy.Entities().at(workerId)->Entity();
 
 	if (m_workerToSourceMap.count(workerId) > 0)
 	{
@@ -293,36 +290,56 @@ void WorkersManager::UnassignWorker(_In_ TID workerId)
 
 	if (m_workerToSourceMap.count(workerId) > 0)
 	{
-		auto oldSource = m_workerToSourceMap.at(workerId);
+		oldSource = m_workerToSourceMap.at(workerId);
 		m_workerToSourceMap.erase(workerId);
 
 		if (m_sources.count(oldSource) > 0)
 			m_sources[oldSource].WorkersAssigned.erase(workerId);
-	}
 
-	if (g_Game->Self()->GetEntity(workerId) != nullptr)
-		LogInfo("Unassiged worker %s from source %d", g_Game->Self()->GetEntity(workerId)->ToString().c_str(), oldSource);
-	else
-		LogInfo("Unassiged non-existing worker %d from source %d", workerId, oldSource);
+        if (g_Game->Self()->GetEntity(workerId) != nullptr)
+            LogInfo("Unassiged worker %s from source %d", g_Game->Self()->GetEntity(workerId)->ToString().c_str(), oldSource);
+        else
+            LogInfo("Unassiged non-existing worker %d from source %d", workerId, oldSource);
+	}
 }
 //////////////////////////////////////////////////////////////////////////
 void WorkersManager::UnassignAstrayWorkers(_In_ RtsGame& game)
 {
 	auto prevWorkerToSourceMap = m_workerToSourceMap;
 
-	for (auto& workerToSource : prevWorkerToSourceMap)
+	for (auto& workerR : m_workersArmy.Entities())
 	{
-		auto pWorker = game.Self()->GetEntity(workerToSource.first);
+        auto pWorker = workerR.second->Entity();
 
+        // Worker is not assigned and is doing some SHIT!, Stop it to make it idle
+        // assign it correctly next frame
+        if (m_workerToSourceMap.count(workerR.first) == 0)
+            pWorker->Stop();
 		// Worker is gathering the wrong resource, unassign it and reclaim it in the next update
-		if ((pWorker->P(OP_IsGatheringSecondaryResource) &&
-			m_sources.at(workerToSource.second).Type != RESOURCE_Secondary) ||
+		else if ((pWorker->P(OP_IsGatheringSecondaryResource) &&
+			m_sources.at(m_workerToSourceMap.at(workerR.first)).Type != RESOURCE_Secondary) ||
 			(pWorker->P(OP_IsGatheringPrimaryResource) &&
-			m_sources.at(workerToSource.second).Type != RESOURCE_Primary))
+            m_sources.at(m_workerToSourceMap.at(workerR.first)).Type != RESOURCE_Primary))
 		{
-			UnassignWorker(workerToSource.first);
+			UnassignWorker(workerR.first);
 			pWorker->Stop();
 		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////
+TID WorkersManager::RequestBuilder()
+{
+    auto& lastPrimaryGatherers = m_lastFrameWorkers[OBJSTATE_GatheringPrimary];
+
+    if (lastPrimaryGatherers.empty())
+        return INVALID_TID;
+
+    auto pWorker = (*lastPrimaryGatherers.begin());
+    
+    m_workersArmy.ReleaseEntity(pWorker->Id());
+    UnassignWorker(pWorker->Id());
+    lastPrimaryGatherers.erase(pWorker);
+
+    return pWorker->Id();
+}
+

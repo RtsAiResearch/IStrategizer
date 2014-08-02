@@ -15,7 +15,7 @@ namespace IStrategizer
         {}
 
         virtual void Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
-            _Out_ IOlcbpPlan::NodeSet& actionsToUpdate,
+            _Out_ IOlcbpPlan::NodeDQueue& actionsToUpdate,
             _Out_ IOlcbpPlan::NodeSet& snippetsToDestroy) = 0;
 
     protected:
@@ -29,7 +29,7 @@ namespace IStrategizer
             NodeSelectionStrategy(pPlanner) {}
 
         void Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
-            _Out_ IOlcbpPlan::NodeSet& actionsToUpdate,
+            _Out_ IOlcbpPlan::NodeDQueue& actionsToUpdate,
             _Out_ IOlcbpPlan::NodeSet& snippetsToDestroy);
     };
 
@@ -40,7 +40,7 @@ namespace IStrategizer
             NodeSelectionStrategy(pPlanner) {}
 
         void Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
-            _Out_ IOlcbpPlan::NodeSet& actionsToUpdate,
+            _Out_ IOlcbpPlan::NodeDQueue& actionsToUpdate,
             _Out_ IOlcbpPlan::NodeSet& snippetsToDestroy);
     };
 }

@@ -6,6 +6,8 @@
 #include "WorldClock.h"
 #include "DataMessage.h"
 #include "CrossMap.h"
+#include "ArmyController.h"
+#include "StrategySelector.h"
 #include <map>
 
 namespace IStrategizer
@@ -23,7 +25,8 @@ namespace IStrategizer
 			std::set<TID> WorkersAssigned;
 		};
 
-		WorkersManager() :
+        WorkersManager(StrategySelectorPtr pConsultant) :
+            m_workersArmy("WorkersArmy", pConsultant),
 			m_firstUpdate(true),
 			m_primaryOptimalAssignment(0),
 			m_secondaryOptimalAssignment(0)
@@ -32,6 +35,7 @@ namespace IStrategizer
 		void Init();
 		void Update(_In_ RtsGame& game);
 		void NotifyMessegeSent(Message* p_pMessage);
+        TID RequestBuilder();
 
 	private:
 		void GetResourceSources(_In_ ResourceType resource, _Out_ EntityList& sources);
@@ -46,12 +50,13 @@ namespace IStrategizer
 		void UnassignWorker(_In_ TID workerId);
 		void UnassignAstrayWorkers(_In_ RtsGame& game);
 		static const unsigned MinPrimaryGatherers = 2;
-
-		std::map<TID, TID> m_workerToSourceMap;
+   
 		std::map<TID, SourceRecord> m_sources;
 		std::multimap<unsigned, TID> m_primarySrcDist;
 		std::multimap<unsigned, TID> m_secondarySrcDist;
 
+        ArmyController m_workersArmy;
+        std::map<TID, TID> m_workerToSourceMap;
 		std::map<ObjectStateType, std::set<GameEntity*>> m_lastFrameWorkers;
 
 		unsigned m_primaryOptimalAssignment;

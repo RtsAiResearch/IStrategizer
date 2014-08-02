@@ -8,7 +8,7 @@ using namespace IStrategizer;
 using namespace std;
 
 void LfhdCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
-    _Out_ IOlcbpPlan::NodeSet& actionsToUpdate,
+    _Out_ IOlcbpPlan::NodeDQueue& actionsToUpdate,
     _Out_ IOlcbpPlan::NodeSet& snippetsToDestroy)
 {
     IOlcbpPlan* pPlan = m_pPlanner->Plan();
@@ -92,7 +92,7 @@ void LfhdCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
 
         if (satisfyingGoalActive || satisfyingGoalDone)
         {
-            actionsToUpdate.insert(actionNodeId);
+            actionsToUpdate.push_back(actionNodeId);
         }
 
         actionQ.pop();
@@ -100,7 +100,7 @@ void LfhdCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
 }
 //////////////////////////////////////////////////////////////////////////
 void GenCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
-    _Out_ IOlcbpPlan::NodeSet& actionsToUpdate,
+    _Out_ IOlcbpPlan::NodeDQueue& actionsToUpdate,
     _Out_ IOlcbpPlan::NodeSet& snippetsToDestroy)
 {
     IOlcbpPlan* pPlan = m_pPlanner->Plan();
@@ -131,14 +131,27 @@ void GenCbNodeSelector::Select(_Out_ IOlcbpPlan::NodeSet& goalsToUpdate,
         goalQ.pop();
     }
 
+    IOlcbpPlan::NodeDQueue buildQ;
+    IOlcbpPlan::NodeDQueue trainQ;
+    IOlcbpPlan::NodeDQueue researchQ;
+
     while (!actionQ.empty())
     {
         auto actionNodeId = actionQ.front();
 
         if (!m_pPlanner->IsNodeDone(actionNodeId))
         {
-            actionsToUpdate.insert(actionQ.front());
+            if (pPlan->GetNode(actionNodeId)->StepTypeId() == ACTIONEX_Build)
+                buildQ.push_front(actionQ.front());
+            else if (pPlan->GetNode(actionNodeId)->StepTypeId() == ACTIONEX_Train)
+                trainQ.push_front(actionQ.front());
+            else if (pPlan->GetNode(actionNodeId)->StepTypeId() == ACTIONEX_Research)
+                researchQ.push_back(actionQ.front());
         }
         actionQ.pop();
     }
+
+    actionsToUpdate.insert(actionsToUpdate.end(), buildQ.begin(), buildQ.end());
+    actionsToUpdate.insert(actionsToUpdate.end(), trainQ.begin(), trainQ.end());
+    actionsToUpdate.insert(actionsToUpdate.end(), researchQ.begin(), researchQ.end());
 }

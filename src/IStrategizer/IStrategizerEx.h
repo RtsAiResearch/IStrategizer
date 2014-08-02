@@ -40,6 +40,8 @@ namespace IStrategizer
         bool Init();
         const OnlineCaseBasedPlannerEx* Planner() const { return &*m_pPlanner; }
         OnlineCaseBasedPlannerEx* Planner() { return &*m_pPlanner; }
+        WorkersManager& WorkersMgr() { return m_workersMgr; }
+
         ~IStrategizerEx();
 
         static std::string sm_WorkingDir;
@@ -58,8 +60,10 @@ namespace IStrategizer
         std::shared_ptr<OnlineCaseBasedPlannerEx> m_pPlanner;
         CombatManager m_combatMgr;
         ScoutManager m_scoutMgr;
-		WorkersManager m_resourceMgr;
+        WorkersManager m_workersMgr;
     };
 }
+
+extern IStrategizer::IStrategizerEx* g_Engine;
 
 #endif // ISTRATEGIZEREX_H

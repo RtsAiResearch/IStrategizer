@@ -25,6 +25,7 @@
 using namespace IStrategizer;
 using namespace std;
 
+IStrategizer::IStrategizerEx* g_Engine = nullptr;
 std::string IStrategizerEx::sm_WorkingDir = ".\\";
 
 
@@ -34,9 +35,11 @@ m_pCaseLearning(nullptr),
 m_pPlanner(nullptr),
 m_isFirstUpdate(true),
 m_combatMgr(param.Consultant),
-m_scoutMgr(param.Consultant)
+m_scoutMgr(param.Consultant),
+m_workersMgr(param.Consultant)
 {
     g_Game = pGame;
+    g_Engine = this;
     _ASSERTE(param.Consultant);
 }
 //---------------------------------------------------------------------------------------------
@@ -101,7 +104,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
                 m_scoutMgr.Update();
             }
 
-            m_resourceMgr.Update(*g_Game);
+            m_workersMgr.Update(*g_Game);
             m_combatMgr.Update();
             m_pPlanner->Update(*g_Game);
         }
@@ -161,7 +164,7 @@ bool IStrategizerEx::Init()
         m_combatMgr.Init();
 
         // Init resource manager
-        m_resourceMgr.Init();
+        m_workersMgr.Init();
 
         g_MessagePump->RegisterForMessage(MSG_PlanGoalSuccess, this);
 

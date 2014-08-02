@@ -70,46 +70,48 @@ int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_res
     return 0;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entityType, ObjectStateType state, PlayerType p_playerType)
+bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, int> p_entityType, ObjectStateType state, bool checkFree, PlayerType p_playerType)
 {
-    GameEntity* pEntity;
-    unsigned matches;
-    bool exist;
-    ObjectStateType currState;
+    int matches = 0;
 
     auto& entities = g_Game->GetPlayer(p_playerType)->Entities();
 
-    exist = false;
-    matches = 0;
-
     for (auto& entityR : entities)
     {
-        pEntity = entityR.second;
-        currState = (ObjectStateType)pEntity->P(OP_State);
+        auto pEntity = entityR.second;
+        auto currState = (ObjectStateType)pEntity->P(OP_State);
 
         if (pEntity->TypeId() == p_entityType.first &&
-            ((state == OBJSTATE_END && currState != OBJSTATE_BeingConstructed) ||
+            (((state == OBJSTATE_END || state == DONT_CARE) && currState != OBJSTATE_BeingConstructed) ||
             (state != OBJSTATE_END && currState == state)) &&
-            !pEntity->IsLocked())
-            ++matches;
+            (!checkFree || !pEntity->IsLocked()))
+        {
+            if (p_entityType.second == DONT_CARE)
+            {
+                return true;
+            }
+            else
+                ++matches;
+        }
     }
 
-    exist = (matches >= p_entityType.second);
-
-    return exist;
+    if (p_entityType.second == DONT_CARE)
+        return matches > 0;
+    else
+        return matches >= p_entityType.second;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_entityTypes, PlayerType p_playerType)
+bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, int> &p_entityTypes, PlayerType p_playerType)
 {
     GameEntity* pEntity;
-    unsigned matches;
+    int matches;
     bool        exist = false;
 
     auto& entities = g_Game->GetPlayer(p_playerType)->Entities();
 
     exist = true;
 
-    for (map<EntityClassType, unsigned>::const_iterator itr = p_entityTypes.begin();
+    for (auto itr = p_entityTypes.begin();
         itr != p_entityTypes.end(); ++itr)
     {
         matches = 0;

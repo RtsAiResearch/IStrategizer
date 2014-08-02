@@ -80,8 +80,9 @@ void Action::Update(RtsGame& game, const WorldClock& clock)
 	else if (IsCurrentStateTimeout(clock))
 	{
 		LogInfo(
-			"State %s timed-out after %dms",
-			Enums[(int)GetState()],
+			"%s state %s timed-out after %dms",
+			ToString().c_str(),
+            Enums[(int)GetState()],
 			_stateTimeout[INDEX(GetState(), ExecutionStateType)]);
 		SetState(ESTATE_Failed, game, clock);
 		return;

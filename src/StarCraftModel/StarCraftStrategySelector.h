@@ -2,6 +2,7 @@
 #define STARCRAFTSTRATEGYSELECTOR_H
 
 #include "StrategySelector.h"
+#include "EntityController.h"
 #include "StackFSM.h"
 
 namespace IStrategizer
@@ -14,6 +15,7 @@ namespace IStrategizer
     public:
         void SelectGameOpening(_Out_ PlanStepParameters& trainArmyParams) const;
         TID SelectScout() const;
+        StackFSMPtr SelectMicroLogic(_In_ StackFSM* armyMacroLogic, _In_ EntityController* pController) const;
     };
 }
 

@@ -14,6 +14,7 @@
 #include "PlayerResources.h"
 #include "GameResearch.h"
 #include "CaseBasedReasonerEx.h"
+#include "IStrategizerEx.h"
 
 #include <cassert>
 #include <algorithm>
@@ -49,24 +50,24 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned worldX, unsigned worldY, c
     SpiralSearchData *pSearchData = (SpiralSearchData*)pParam;
     Vector2 worldPos(worldX, worldY);
 
-	Vector2 paddedSize(pSearchData->BuildingWidth + (2 * pSearchData->AllSidePadding),
-		pSearchData->BuildingHeight + (2 * pSearchData->AllSidePadding));
-	Vector2 paddedPos(worldX - pSearchData->AllSidePadding, worldY - pSearchData->AllSidePadding);
+    Vector2 paddedSize(pSearchData->BuildingWidth + (2 * pSearchData->AllSidePadding),
+        pSearchData->BuildingHeight + (2 * pSearchData->AllSidePadding));
+    Vector2 paddedPos(worldX - pSearchData->AllSidePadding, worldY - pSearchData->AllSidePadding);
 
-	// Can't build here if part of the build area including the padding
-	// will be out of the game map
-	if (!g_Game->Map()->IsInMap(paddedPos, paddedSize))
-		return false;
+    // Can't build here if part of the build area including the padding
+    // will be out of the game map
+    if (!g_Game->Map()->IsInMap(paddedPos, paddedSize))
+        return false;
 
     // If an area is not occupied then we can build there
     _ASSERTE(pBuildingIM && pSearchData);
-	bool isFree = pBuildingIM->CanBuildHere(paddedPos,
-		paddedSize.X,
-		paddedSize.Y,
-		pSearchData->BuildingType);
+    bool isFree = pBuildingIM->CanBuildHere(paddedPos,
+        paddedSize.X,
+        paddedSize.Y,
+        pSearchData->BuildingType);
 
-	if (isFree)
-		pSearchData->CandidateBuildPos = worldPos;
+    if (isFree)
+        pSearchData->CandidateBuildPos = worldPos;
 
     return isFree;
 }
@@ -102,7 +103,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         searchData.BuildingWidth = pGameType->P(TP_Width);
         searchData.BuildingHeight = pGameType->P(TP_Height);
         searchData.CandidateBuildPos = Vector2(-1, -1);
-		searchData.AllSidePadding = m_buildingSpacing;
+        searchData.AllSidePadding = m_buildingSpacing;
         searchData.BuildingType = p_buildingType;
 
         // This means to search all the map if the map is a square
@@ -118,7 +119,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         }
         else
         {
-			//_ASSERTE(g_Game->Map()->CanBuildHere(searchData.CandidateBuildPos, p_buildingType));
+            //_ASSERTE(g_Game->Map()->CanBuildHere(searchData.CandidateBuildPos, p_buildingType));
 
             return MapArea(
                 searchData.CandidateBuildPos,
@@ -132,7 +133,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::GetEntityObjectId(EntityClassType entityType,const RankedStates& rankedStates)
+TID AdapterEx::GetEntityObjectId(EntityClassType entityType, const RankedStates& rankedStates)
 {
     /*
     Entity Object Adaptation Algorithm:
@@ -141,16 +142,16 @@ TID AdapterEx::GetEntityObjectId(EntityClassType entityType,const RankedStates& 
     ELSE
     adaptation failed and return nullptr entity Id
     */
-	EntityList ladder;
-	StackRankEntitiesOfType(PLAYER_Self, entityType, rankedStates, ladder);
+    EntityList ladder;
+    StackRankEntitiesOfType(PLAYER_Self, entityType, rankedStates, ladder);
 
-	if (ladder.empty())
-		return INVALID_TID;
-	else
-		return ladder[0];
+    if (ladder.empty())
+        return INVALID_TID;
+    else
+        return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
-IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_entityType )
+IStrategizer::TID IStrategizer::AdapterEx::GetEntityObjectId(EntityClassType p_entityType)
 {
     GamePlayer            *pPlayer;
     GameEntity            *pEntity;
@@ -198,7 +199,7 @@ IStrategizer::TID IStrategizer::AdapterEx::AdaptResourceForGathering(ResourceTyp
     g_Game->Map()->Update();
 
     for (unsigned i = 0, size = resourceSourceIds.size(); i < size; ++i)
-    {	
+    {
         pEntity = pPlayer->GetEntity(resourceSourceIds[i]);
         _ASSERTE(pEntity);
 
@@ -220,37 +221,37 @@ TID AdapterEx::AdaptBuildingForResearch(ResearchType p_researchType)
 {
     EntityClassType researcherType = g_Game->GetResearch(p_researchType)->SourceEntity();
 
-	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
-	EntityList ladder;
-	StackRankEntitiesOfType(PLAYER_Self, researcherType, ProducingBuildingStatesRank, ladder);
+    // resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+    EntityList ladder;
+    StackRankEntitiesOfType(PLAYER_Self, researcherType, ProducingBuildingStatesRank, ladder);
 
-	if (ladder.empty())
-		return INVALID_TID;
-	else
-		return ladder[0];
+    if (ladder.empty())
+        return INVALID_TID;
+    else
+        return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptBuildingForTraining(EntityClassType traineeType)
 {
-	EntityClassType trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
-	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
-	EntityList ladder;
-	StackRankEntitiesOfType(PLAYER_Self, trainerType, ProducingBuildingStatesRank, ladder);
+    EntityClassType trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
+    // resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+    EntityList ladder;
+    StackRankEntitiesOfType(PLAYER_Self, trainerType, ProducingBuildingStatesRank, ladder);
 
-	TID candidateTrainer = INVALID_TID;
+    TID candidateTrainer = INVALID_TID;
 
-	for (auto trainerId : ladder)
-	{
-		auto pTrainer = g_Game->Self()->GetEntity(trainerId);
+    for (auto trainerId : ladder)
+    {
+        auto pTrainer = g_Game->Self()->GetEntity(trainerId);
 
-		if (pTrainer->CanTrain(traineeType))
-		{
-			candidateTrainer = trainerId;
-			break;
-		}
-	}
+        if (pTrainer->CanTrain(traineeType))
+        {
+            candidateTrainer = trainerId;
+            break;
+        }
+    }
 
-	return candidateTrainer;
+    return candidateTrainer;
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptTargetEntity(EntityClassType p_targetType, const PlanStepParameters& p_parameters)
@@ -298,57 +299,62 @@ Vector2 AdapterEx::AdaptPosition(const PlanStepParameters& p_parameters)
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptWorkerForGather(ResourceType resourceType, bool immediate)
 {
-	EntityClassType gathererType = g_Game->Self()->Race()->GetWorkerType();
+    EntityClassType gathererType = g_Game->Self()->Race()->GetWorkerType();
 
-	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
-	EntityList ladder;
-	if (immediate)
-		StackRankEntitiesOfType(PLAYER_Self, gathererType, ImmediateGathererStatesRank, ladder);
-	else
-		StackRankEntitiesOfType(PLAYER_Self, gathererType, FutureGathererStatesRank, ladder);
+    // resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+    EntityList ladder;
+    if (immediate)
+        StackRankEntitiesOfType(PLAYER_Self, gathererType, ImmediateGathererStatesRank, ladder);
+    else
+        StackRankEntitiesOfType(PLAYER_Self, gathererType, FutureGathererStatesRank, ladder);
 
-	if (ladder.empty())
-		return INVALID_TID;
-	else
-		return ladder[0];
+    if (ladder.empty())
+        return INVALID_TID;
+    else
+        return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
 TID AdapterEx::AdaptWorkerForBuild(EntityClassType buildingType)
 {
-	EntityClassType builderType = g_Game->GetEntityType(buildingType)->GetBuilderType();
+    auto builderType = g_Game->GetEntityType(buildingType)->GetBuilderType();
 
-	// resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
-	EntityList ladder;
-	StackRankEntitiesOfType(PLAYER_Self, builderType, BuilderStatesRank, ladder);
-
-	if (ladder.empty())
-		return INVALID_TID;
-	else
-		return ladder[0];
+    if (builderType == g_Game->Self()->Race()->GetWorkerType())
+        return g_Engine->WorkersMgr().RequestBuilder();
+    else
+    {
+        // resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+        EntityList ladder;
+        StackRankEntitiesOfType(PLAYER_Self, builderType, BuilderStatesRank, ladder);
+           
+        if (ladder.empty())
+        	return INVALID_TID;
+        else
+        	return ladder[0];
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void AdapterEx::StackRankEntitiesOfType(_In_ PlayerType playerType, _In_ EntityClassType entityType, _In_ RankedStates ranks, _Out_ EntityList& ladder)
 {
-	EntityList candidates;
-	g_Game->GetPlayer(playerType)->Entities(entityType, candidates);
+    EntityList candidates;
+    g_Game->GetPlayer(playerType)->Entities(entityType, candidates);
 
-	if (candidates.empty())
-		return;
+    if (candidates.empty())
+        return;
 
-	map<ObjectStateType, vector<TID>> clusters;
+    map<ObjectStateType, vector<TID>> clusters;
 
-	for (auto entityId : candidates)
-	{
-		auto pEntity = g_Game->GetPlayer(playerType)->GetEntity(entityId);
-		_ASSERTE(pEntity);
+    for (auto entityId : candidates)
+    {
+        auto pEntity = g_Game->GetPlayer(playerType)->GetEntity(entityId);
+        _ASSERTE(pEntity);
 
-		if (!pEntity->IsLocked())
-			clusters[(ObjectStateType)pEntity->P(OP_State)].push_back(entityId);
-	}
+        if (!pEntity->IsLocked())
+            clusters[(ObjectStateType)pEntity->P(OP_State)].push_back(entityId);
+    }
 
-	for (auto state : ranks)
-	{
-		for (auto entityId : clusters[state])
-			ladder.push_back(entityId);
-	}
+    for (auto state : ranks)
+    {
+        for (auto entityId : clusters[state])
+            ladder.push_back(entityId);
+    }
 }

@@ -20,7 +20,7 @@
 using namespace IStrategizer;
 using namespace std;
 
-const unsigned MaxPrepTime = 2000;
+const unsigned MaxPrepTime = 3000;
 // MaxExecTime should be deduced from the unit being trained
 const unsigned MaxExecTime = 5000;
 
@@ -213,7 +213,7 @@ void TrainAction::InitializePreConditions()
 	m_trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
 	vector<Expression*> m_terms;
 
-	m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, 1, OBJSTATE_Idle));
+	m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, OBJSTATE_Idle, true));
 	g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
 	_preCondition = new And(m_terms);
 }

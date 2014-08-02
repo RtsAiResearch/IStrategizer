@@ -49,15 +49,45 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
     else if (m_pOlcbpPlan->Size() > 0 &&
         game.Clock().ElapsedGameCycles() % PlanExecuteWindow == 0)
     {
-        IOlcbpPlan::NodeSet actionsToUpdate;
+        IOlcbpPlan::NodeDQueue actionsToUpdate;
         IOlcbpPlan::NodeSet& goalsToUpdate = m_activeGoalSet;
         IOlcbpPlan::NodeSet snippetsToDestroy;
+        bool expansionHappend = false;
+        unordered_set<TID> visitedGoals;
 
-        m_activeGoalSet.clear();
-        m_pNodeSelector->Select(goalsToUpdate, actionsToUpdate, snippetsToDestroy);
-
-        for (auto actionNodeId : actionsToUpdate)
+        do
         {
+            expansionHappend = false;
+            m_activeGoalSet.clear();
+            actionsToUpdate.clear();
+            snippetsToDestroy.clear();
+
+            m_pNodeSelector->Select(goalsToUpdate, actionsToUpdate, snippetsToDestroy);
+
+            for (auto goalNodeId : goalsToUpdate)
+            {
+                if (visitedGoals.count(goalNodeId) > 0)
+                    continue;
+
+                // Only update a goal node if it still exist
+                // It is normal that a previous updated goal node during this pass 
+                // failed and its snippet was destroyed, and as a result a node that
+                // was considered for update does not exist anymore
+                if (m_pOlcbpPlan->Contains(goalNodeId))
+                {
+                    // It is illogical to update already succeeding goals, there is
+                    // a problem in the node selection strategy
+                    _ASSERTE(m_pOlcbpPlan->GetNode(goalNodeId)->GetState() != ESTATE_Succeeded);
+                    expansionHappend |= UpdateGoalNode(goalNodeId, game.Clock());
+                }
+
+                visitedGoals.insert(goalNodeId);
+            }
+        } while (expansionHappend);
+
+        while (!actionsToUpdate.empty())
+        {
+            auto actionNodeId = actionsToUpdate.front();
             // Only update an action node if it still exist
             // What applies to a goal in the 3rd pass apply here
             _ASSERTE(m_pOlcbpPlan->Contains(actionNodeId));
@@ -65,21 +95,7 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
             // a problem in the node selection strategy
             _ASSERTE(m_pOlcbpPlan->GetNode(actionNodeId)->GetState() != ESTATE_Succeeded);
             UpdateActionNode(actionNodeId, game.Clock());
-        }
-
-        for (auto goalNodeId : goalsToUpdate)
-        {
-            // Only update a goal node if it still exist
-            // It is normal that a previous updated goal node during this pass 
-            // failed and its snippet was destroyed, and as a result a node that
-            // was considered for update does not exist anymore
-            if (m_pOlcbpPlan->Contains(goalNodeId))
-            {
-                // It is illogical to update already succeeding goals, there is
-                // a problem in the node selection strategy
-                _ASSERTE(m_pOlcbpPlan->GetNode(goalNodeId)->GetState() != ESTATE_Succeeded);
-                UpdateGoalNode(goalNodeId, game.Clock());
-            }
+            actionsToUpdate.pop_front();
         }
 
         for (auto goalNodeId : snippetsToDestroy)
@@ -112,8 +128,9 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock)
+bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock)
 {
+    bool expanded = false;
     GoalEx* pCurrentGoalNode = (GoalEx*)m_pOlcbpPlan->GetNode(currentNode);
 
     // fast return if node state reached a final state (i.e succeeded or failed)
@@ -178,6 +195,7 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
 
                 MarkCaseAsTried(currentNode, pCandidateCase);
                 ExpandGoal(currentNode, pCandidateCase);
+                expanded = true;
             }
             else
             {
@@ -236,6 +254,8 @@ void OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
         }
     }
 #pragma endregion
+
+    return expanded;
 }
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock)

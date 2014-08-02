@@ -79,9 +79,10 @@ namespace IStrategizer
         bool IsControllingArmy() const { return !m_entities.empty(); }
         bool HasType(_In_ EntityClassType type);
         void ReleaseEntity(_In_ TID entityId);
-        void TryControlEntity(_In_ TID entityId);
+        bool TryControlEntity(_In_ TID entityId);
+        const StrategySelector* Consultant() const { return &*m_pConsultant; }
         void ReleaseHealthyEntities();
-        void ControlNewArmy();
+        void TryControlArmy(_In_ bool fromCleanSlate);
         void ReleaseArmy();
         const StackFSM* Logic() const { return &*m_pLogic; }
         Vector2 Center() const { return m_center; }
@@ -93,7 +94,7 @@ namespace IStrategizer
         const ArmyGroupFormation::Data& FormationData() const { return m_formationData; }
         void CalcGroupFormation(_Inout_ ArmyGroupFormation& formation);
         std::string ToString(bool minimal = false) const { return m_pName; }
-        void SetControlType(_In_ bool controlHealthy, _In_ bool controlBroken, _In_ bool controlWorkers);
+        void SetControlType(_In_ bool controlBroken, _In_ bool controlWorkers);
         const EntitySet& DamagedRepairablesNearby() const { return m_damagedRepairablesNearby; }
 
         // Expensive Helpers are candidate for caching somewhere
@@ -152,7 +153,6 @@ namespace IStrategizer
         const char* m_pName;
         
         // Control Type
-        bool m_controlHealthy;
         bool m_controlBroken;
         bool m_controlWorkers;
 

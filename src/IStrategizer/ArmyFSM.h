@@ -57,9 +57,6 @@ namespace IStrategizer
             ArmyState(TypeID, "[ALARM]", pController)
         {}
 
-        void Enter();
-        void Exit();
-
     private:
         DISALLOW_COPY_AND_ASSIGN(AlarmArmyState);
     };
@@ -72,9 +69,6 @@ namespace IStrategizer
         AttackArmyState(ArmyController* pController) :
             ArmyState(TypeID, "[ATTACK]", pController)
         {}
-
-        void Enter();
-        void Exit();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(AttackArmyState);
@@ -92,7 +86,6 @@ namespace IStrategizer
 
         void Enter();
         void Update();
-        void Exit();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(RegroupArmyState);
@@ -113,7 +106,6 @@ namespace IStrategizer
 
         void Enter();
         void Update();
-        void Exit();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(ArriveArmyState);

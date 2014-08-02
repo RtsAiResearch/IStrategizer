@@ -236,14 +236,6 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
 
     LogInfo("%s -> Build(%s@<%d,%d>)", ToString().c_str(), type.toString().c_str(), pos.x, pos.y);
 
-    // if we have issued a command to this unit already this frame, 
-    // ignore this one and raise warning
-    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
-    {
-        LogWarning("Entity %s command drop, same command issued same frame %d", ToString().c_str(), Broodwar->getFrameCount());
-        return true;
-    }
-
     bool bOk = false;
 
     if (type.isAddon())
@@ -265,14 +257,6 @@ bool StarCraftEntity::Repair(_In_ TID targetId)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
     LogInfo("%s -> Repair(%s)", ToString().c_str(), g_Game->GetEntity(targetId)->ToString().c_str());
-
-    // if we have issued a command to this unit already this frame, 
-    // ignore this one and raise warning
-    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
-    {
-        LogWarning("Entity %s command drop, same command issued same frame %d", ToString().c_str(), Broodwar->getFrameCount());
-        return true;
-    }
 
     BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
 
@@ -352,14 +336,6 @@ bool StarCraftEntity::Stop()
 
     LogInfo("%s -> Stop", ToString().c_str());
 
-    // if we have issued a command to this unit already this frame, 
-    // ignore this one and raise warning
-    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
-    {
-        LogWarning("Entity %s command drop, same command issued same frame %d", ToString().c_str(), Broodwar->getFrameCount());
-        return true;
-    }
-
     if (m_pUnit->stop())
     {
         return true;
@@ -377,14 +353,6 @@ bool StarCraftEntity::AttackEntity(TID targetId)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
     LogInfo("%s -> Attack(%s)", ToString().c_str(), g_Game->GetEntity(targetId)->ToString().c_str());
-
-    // if we have issued a command to this unit already this frame, 
-    // ignore this one and raise warning
-    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
-    {
-        LogWarning("Entity %s command drop, same command issued same frame %d", ToString().c_str(), Broodwar->getFrameCount());
-        return true;
-    }
 
     BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
 
@@ -447,14 +415,6 @@ bool StarCraftEntity::Move(Vector2 targetPos)
 
     LogInfo("%s -> Move(%s)", ToString().c_str(), targetPos.ToString().c_str());
 
-    // if we have issued a command to this unit already this frame, 
-    // ignore this one and raise warning
-    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
-    {
-        LogWarning("Entity %s command drop", ToString().c_str());
-        return true;
-    }
-
     // get the unit's current command
     BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
     BWAPI::Position pos(targetPos.X, targetPos.Y);
@@ -462,8 +422,7 @@ bool StarCraftEntity::Move(Vector2 targetPos)
     // if we've already told this unit to attack this target, ignore this command
     if (currentCommand.getType() == BWAPI::UnitCommandTypes::Move &&
         currentCommand.getTargetPosition() == pos &&
-        !m_pUnit->isStuck() &&
-        !m_pUnit->isIdle())
+        m_pUnit->isMoving())
     {
         LogWarning("Entity %s command drop", ToString().c_str());
         return true;
@@ -484,22 +443,12 @@ bool StarCraftEntity::GatherResourceEntity(TID resourceId)
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-    // if we have issued a command to this unit already this frame, 
-    // ignore this one and raise warning
-    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
-    {
-        LogWarning("Entity %s command drop", ToString().c_str());
-        return true;
-    }
-
     // get the unit's current command
     BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
 
     // if we've already told this unit to attack this target, ignore this command
     if (currentCommand.getType() == BWAPI::UnitCommandTypes::Right_Click_Unit &&
-        currentCommand.getTarget()->getID() == resourceId &&
-        !m_pUnit->isStuck() &&
-        !m_pUnit->isIdle())
+        currentCommand.getTarget()->getID() == resourceId)
     {
         return true;
     }

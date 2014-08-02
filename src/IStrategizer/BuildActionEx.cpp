@@ -135,7 +135,7 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 
 			if (state != OBJSTATE_Constructing)
 			{
-				LogInfo("Builder %s of action %s is not constructing, something wrong happened, failing the build", pEntity->ToString().c_str(), ToString().c_str());
+				LogInfo("Builder %s of action %s is not constructing an expansion, something wrong happened, failing the build", pEntity->ToString().c_str(), ToString().c_str());
 				success = false;
 			}
 			//}
@@ -281,7 +281,15 @@ void BuildActionEx::InitializePreConditions()
 	_requiredResources = WorldResources::FromEntity(buildingType);
 	vector<Expression*> m_terms;
 
-	m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, 1));
+    if (g_Game->Self()->Race()->GetWorkerType() == builderType)
+    {
+	    m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, OBJSTATE_GatheringPrimary));
+    }
+    else
+    {
+        m_terms.push_back(new EntityClassExist(PLAYER_Self, builderType, OBJSTATE_Idle, true));
+    }
+
 	g_Assist.GetPrerequisites(buildingType, PLAYER_Self, m_terms);
 	_preCondition = new And(m_terms);
 }

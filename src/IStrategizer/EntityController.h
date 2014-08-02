@@ -26,10 +26,11 @@ namespace IStrategizer
         void ControlEntity(_In_ TID entityId);
         void PushLogic(_In_ StackFSMPtr pLogic) { LogInfo("Pushing %s Logic", pLogic->ToString().c_str()); m_pLogicMemory.push(pLogic); }
         void PopLogic() { LogInfo("Poping %s Logic", m_pLogicMemory.top()->ToString().c_str()); m_pLogicMemory.pop(); }
+        FSMStateTypeID CurrentLogic() const { return m_pLogicMemory.top()->TypeId(); }
         void PushIdleLogic();
         void ReleaseEntity();
         bool IsControllingEntity() const{ return m_entityId != INVALID_TID; }
-        bool IsLogicGoalAchieved() const { return m_pLogicMemory.top()->IsInFinalState(); }
+        bool IsLogicGoalAchieved() const { return IsControllingEntity() && m_pLogicMemory.top()->IsInFinalState(); }
         void OnEntityFleeing();
         void HardResetLogic();
         void SoftResetLogic() { m_pLogicMemory.top()->Reset(); }

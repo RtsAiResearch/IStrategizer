@@ -93,9 +93,6 @@
     <ClInclude Include="..\BuildActionEx.h">
       <Filter>Header Files\OLCBP\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="..\GatherResourceAction.h">
-      <Filter>Header Files\OLCBP\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="..\ResearchAction.h">
       <Filter>Header Files\OLCBP\Actions</Filter>
     </ClInclude>
@@ -449,6 +446,9 @@
     </ClInclude>
     <ClInclude Include="..\WorkersManager.h">
       <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GatherResourceAction.h">
+      <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

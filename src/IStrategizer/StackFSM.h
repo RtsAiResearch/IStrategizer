@@ -62,9 +62,11 @@ namespace IStrategizer
 
             CheckTransitions();
         }
+
+        FSMStatePtr CurrentState() { _ASSERTE(!m_states.empty()); return m_stateMap.at(m_states.top()); }
         
     protected:
-        void AddState(_In_ std::shared_ptr<FSMState> state) { m_stateMap[state->TypeId()] = state; }
+        void AddState(_In_ std::shared_ptr<FSMState> state) { m_stateMap[state->TypeId()] = state; state->Parent(this); }
         void PushState(_In_ FSMStateTypeID newState) 
         {
             if (!m_states.empty())
@@ -105,7 +107,6 @@ namespace IStrategizer
             PushState(newState);
         }
 
-        FSMStatePtr CurrentState() { _ASSERTE(!m_states.empty()); return m_stateMap.at(m_states.top()); }
 
     private:
         std::map<FSMStateTypeID, FSMStatePtr> m_stateMap;

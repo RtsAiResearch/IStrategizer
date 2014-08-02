@@ -8,9 +8,9 @@ using namespace IStrategizer;
 void CombatManager::Init()
 {
     // Each army controls a specific category of units
-    m_frontLinesArmy.SetControlType(true, false, false);
-    m_reinforcementsArmy.SetControlType(true, false, false);
-    m_brokenArmy.SetControlType(false, true, false);
+    m_frontLinesArmy.SetControlType(false, false);
+    m_reinforcementsArmy.SetControlType(false, false);
+    m_brokenArmy.SetControlType(true, false);
 
     auto baseLocation = g_Game->Self()->StartLocation();
     // Broken army stand at base waiting for repair/heal
@@ -25,12 +25,8 @@ void CombatManager::Update()
 {
     m_brokenArmy.ReleaseHealthyEntities();
 
-    // Look for new entities to control this frame
-    for (auto& entityR : g_Game->Self()->Entities())
-    {
-        m_reinforcementsArmy.TryControlEntity(entityR.second->Id());
-        m_brokenArmy.TryControlEntity(entityR.second->Id());
-    }
+    m_reinforcementsArmy.TryControlArmy(false);
+    m_brokenArmy.TryControlArmy(false);
 
     m_frontLinesArmy.Update();
     m_reinforcementsArmy.Update();
@@ -43,7 +39,7 @@ void CombatManager::AttackArea(_In_ Vector2 pos)
     LogInfo("Attacking area %s", pos.ToString().c_str());
 
     m_reinforcementsArmy.ReleaseArmy();
-    m_frontLinesArmy.ControlNewArmy();
+    m_frontLinesArmy.TryControlArmy(true);
     m_frontLinesArmy.Attack(pos);
 }
 //////////////////////////////////////////////////////////////////////////

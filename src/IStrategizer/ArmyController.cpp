@@ -25,8 +25,7 @@ m_totalMaxHP(0),
 m_boundingCircleRadius(0),
 m_pName(pName),
 m_controlBroken(false),
-m_controlWorkers(false),
-m_controlHealthy(false)
+m_controlWorkers(false)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
@@ -34,24 +33,27 @@ m_controlHealthy(false)
     m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::SetControlType(_In_ bool controlHealthy, _In_ bool controlBroken, _In_ bool controlWorkers)
+void ArmyController::SetControlType(_In_ bool controlBroken, _In_ bool controlWorkers)
 {
-    m_controlHealthy = controlHealthy;
     m_controlBroken = controlBroken;
     m_controlWorkers = controlWorkers;
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::ControlNewArmy()
+void ArmyController::TryControlArmy(_In_ bool fromCleanSlate)
 {
-    ReleaseArmy();
+    if (fromCleanSlate)
+        ReleaseArmy();
+
+    bool controlledAny = false;
 
     // For now, army controls only current free healthy attackers
     for (auto& entityR : g_Game->Self()->Entities())
     {
-        TryControlEntity(entityR.first);
+        controlledAny |= TryControlEntity(entityR.first);
     }
 
-    m_pLogic->Reset();
+    if (controlledAny)
+        m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::ReleaseArmy()
@@ -243,7 +245,8 @@ void ArmyController::CalcEnemyData()
         otherPos = entityR.second->Position();
         int dist = selfPos.Distance(otherPos);
 
-        if (entityR.second->Exists())
+        if (entityR.second->Exists() && 
+            entityR.second->P(OP_IsVisible))
         {
             m_closestEnemy.insert(make_pair(dist, entityR.first));
             auto& dat = m_enemyData[entityR.first];
@@ -293,7 +296,7 @@ bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector
     return true;
 }
 //////////////////////////////////////////////////////////////////////////
-bool ArmyController::CanControl( _In_ const GameEntity* pEntity)
+bool ArmyController::CanControl(_In_ const GameEntity* pEntity)
 {
     _ASSERTE(pEntity != nullptr);
 
@@ -301,17 +304,16 @@ bool ArmyController::CanControl( _In_ const GameEntity* pEntity)
 
     bool isBroken = EntityController::IsOnCriticalHP(pEntity);
 
-    return m_entities.count(pEntity->Id()) == 0&&
+    return m_entities.count(pEntity->Id()) == 0 &&
         pEntity->Exists() &&
         !pEntityType->P(TP_IsBuilding) &&
         pEntity->P(OP_State) != OBJSTATE_BeingConstructed &&
         !pEntity->IsLocked() &&
-        (m_controlWorkers || !pEntityType->P(TP_IsWorker)) &&
-        (m_controlHealthy || isBroken) &&
-        (m_controlBroken || !isBroken);
+        ((m_controlWorkers && pEntityType->P(TP_IsWorker)) || (!m_controlWorkers && !pEntityType->P(TP_IsWorker))) &&
+        ((m_controlBroken && isBroken) || (!m_controlBroken && !isBroken));
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::TryControlEntity(_In_ TID entityId)
+bool ArmyController::TryControlEntity(_In_ TID entityId)
 {
     auto pEntity = g_Game->Self()->GetEntity(entityId);
 
@@ -333,7 +335,11 @@ void ArmyController::TryControlEntity(_In_ TID entityId)
         CalcGroupFormationData();
 
         LogInfo("Added %s to %s, to control %d entities", pEntity->ToString().c_str(), ToString().c_str(), m_entities.size());
+
+        return true;
     }
+
+    return false;
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::ReleaseHealthyEntities()

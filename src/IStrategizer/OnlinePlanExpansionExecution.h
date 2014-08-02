@@ -23,14 +23,14 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
 
 		// Time is counted as number of game frames
-		const unsigned GoalSleepTime = 500;
+		const unsigned GoalSleepTime = 200;
 		const unsigned GoalMaxSleepsCount = 3;
-		const unsigned ActionSleepTime = 200;
-		const unsigned ActionMaxSleepsCount = 5;
+		const unsigned ActionSleepTime = 100;
+		const unsigned ActionMaxSleepsCount = 3;
         // Every 50 frame check the current goal satisfaction
         const unsigned PlanMaintenanceWindow = 50;
-        // Every 2nd frame update the plan execution
-        const unsigned PlanExecuteWindow = 2;
+        // Every 4th frame update the plan execution
+        const unsigned PlanExecuteWindow = 4;
 		
 		OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx* pCbReasoner);
         ~OnlinePlanExpansionExecution();
@@ -66,7 +66,7 @@ namespace IStrategizer
         bool DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::NodeID planGoalNodeId);
         void AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan::NodeID nodeId, _Inout_ IOlcbpPlan::NodeQueue &updateQ);
         void UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
-        void UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
+        bool UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
         void LinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId, _In_ IOlcbpPlan::NodeID dstNodeId) { m_pOlcbpPlan->AddEdge(srcNodeId, dstNodeId); }
         void UnlinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId, _In_ IOlcbpPlan::NodeID dstNodeId) { m_pOlcbpPlan->RemoveEdge(srcNodeId, dstNodeId); }
         void ComputeFreshSnippetWaitOnParentsCount(_In_ IOlcbpPlan::NodeID subGraphRootId);

@@ -20,11 +20,22 @@ void ArmyState::Enter()
     m_targetPos1 = pController->TargetPosition();
     m_targetEntity = pController->TargetEntity();
 
+    for (auto& entityR : m_controlledEntities)
+    {
+        auto pMicroLogic = pController->Consultant()->SelectMicroLogic((StackFSM*)Parent(), &*entityR.second);
+        entityR.second->PushLogic(pMicroLogic);
+    }
+
     LogInfo("%s with %d controlled entities", ToString().c_str(), m_controlledEntities.size());
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyState::Exit()
 {
+    for (auto& entityR : m_controlledEntities)
+    {
+        entityR.second->PopLogic();
+    }
+
     LogInfo("%s with %d controlled entities", ToString().c_str(), m_controlledEntities.size());
     LogInfo("%s -> Exit", ToString().c_str());
 }
@@ -36,6 +47,9 @@ void ArmyState::Update()
     if (!pController->TargetPosition().IsInf())
         g_Game->DebugDrawMapLine(pController->Center(), pController->TargetPosition(), GCLR_Orange);
 
+    if (pController->TargetEntity() != INVALID_TID)
+        g_Game->DebugDrawMapCircle(g_Game->GetEntity(pController->TargetEntity())->Position(), 16, GCLR_Red);
+
     g_Game->DebugDrawMapCircle(pController->Center(), 32, GCLR_Orange);
 
     // <army-fsm-str><fsm-state-str><num-controlled>/<num-died>
@@ -45,7 +59,7 @@ void ArmyState::Update()
     sprintf_s(stats, "%s",
         ToString().c_str());
     g_Game->DebugDrawMapText(statsPos, stats);
-    
+
     sprintf_s(stats, "C:%d D:%d HP:%d GA:%d", pController->Entities().size(),
         pController->TotalDiedEntities(), pController->TotalMaxHP(), pController->TotalGroundAttack());
 
@@ -69,38 +83,6 @@ void ArmyState::Update()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void AttackArmyState::Enter()
-{
-    ArmyState::Enter();
-
-    for (auto& entityR : m_controlledEntities)
-    {
-        entityR.second->PushLogic(StackFSMPtr(new HintNRunEntityFSM(&*entityR.second)));
-    }
-
-    LogInfo("Assigned attack logic for controlled entities");
-}
-//////////////////////////////////////////////////////////////////////////
-void AttackArmyState::Exit()
-{
-    for (auto& entityR : m_controlledEntities)
-    {
-        entityR.second->PopLogic();
-    }
-
-    ArmyState::Exit();
-}
-//////////////////////////////////////////////////////////////////////////
-void AlarmArmyState::Enter()
-{
-    ArmyState::Enter();
-}
-//////////////////////////////////////////////////////////////////////////
-void AlarmArmyState::Exit()
-{
-    ArmyState::Exit();
-}
-//////////////////////////////////////////////////////////////////////////
 void RegroupArmyState::Enter()
 {
     ArmyState::Enter();
@@ -110,26 +92,8 @@ void RegroupArmyState::Enter()
     auto pController = (ArmyController*)m_pController;
     m_formation.Center = TargetPosition();
     pController->CalcGroupFormation(m_formation);
-    
+
     m_regroupArea = Circle2(TargetPosition(), pController->FormationData().CircleRadius);
-
-    for (auto& entityR : m_controlledEntities)
-    {
-        entityR.second->PushIdleLogic();
-    }
-}
-//////////////////////////////////////////////////////////////////////////
-void RegroupArmyState::Exit()
-{
-    for (auto& entityR : m_controlledEntities)
-    {
-        if (entityR.second->EntityExists())
-            entityR.second->PopLogic();
-    }
-
-    m_regroupArea = Circle2(Vector2::Inf(), INT_MAX);
-
-    ArmyState::Exit();
 }
 //////////////////////////////////////////////////////////////////////////
 void RegroupArmyState::Update()
@@ -166,22 +130,6 @@ void ArriveArmyState::Enter()
     ArmyState::Enter();
 
     m_arriveArea = Circle2(m_targetPos1, ArmyController::FocusAreaRadius);
-
-    for (auto& entityR : m_controlledEntities)
-    {
-        entityR.second->PushIdleLogic();
-    }
-}
-//////////////////////////////////////////////////////////////////////////
-void ArriveArmyState::Exit()
-{
-    for (auto& entityR : m_controlledEntities)
-    {
-        if (entityR.second->EntityExists())
-            entityR.second->PopLogic();
-    }
-
-    ArmyState::Exit();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArriveArmyState::Update()

@@ -7,6 +7,10 @@
 #include "RtsGame.h"
 #include "GamePlayer.h"
 #include "BWAPI.h"
+#include "GameType.h"
+#include "GameEntity.h"
+#include "EntityFSM.h"
+#include "ArmyFSM.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
@@ -48,4 +52,28 @@ TID StarCraftStrategySelector::SelectScout() const
         return INVALID_TID;
     else
         return scouts[0];
+}
+//////////////////////////////////////////////////////////////////////////
+StackFSMPtr StarCraftStrategySelector::SelectMicroLogic(_In_ StackFSM* armyMacroLogic, _In_ EntityController* pController) const
+{
+    auto currLogicState = armyMacroLogic->CurrentState();
+
+    if (currLogicState->TypeId() == AttackArmyState::TypeID)
+    {
+        if (pController->Entity()->Type()->P(TP_IsWorker))
+            return  StackFSMPtr(new AutoRepairEntityFSM(pController));
+        else
+            return StackFSMPtr(new HintNRunEntityFSM(pController));
+    }
+    else if (currLogicState->TypeId() == AlarmArmyState::TypeID)
+    {
+        if (pController->Entity()->Type()->P(TP_IsWorker))
+            return  StackFSMPtr(new AutoRepairEntityFSM(pController));
+        else
+            return StackFSMPtr(new IdleEntityFSM(pController));
+    }
+    else
+    {
+        return StackFSMPtr(new IdleEntityFSM(pController));
+    }
 }

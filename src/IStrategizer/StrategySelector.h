@@ -6,14 +6,14 @@
 namespace IStrategizer
 {
     class RtsGame;
+    class EntityController;
 
     class StrategySelector : public EngineObject
     {
     public:
-        //virtual StackFSMPtr SelectArmyMacro(_In_ const Army& pArmy) const = 0;
-        //virtual StackFSMPtr SelectEntityMicro(_In_ TID entityId) const = 0;
         virtual void SelectGameOpening(_Out_ PlanStepParameters& trainArmyParams) const = 0;
         virtual TID SelectScout() const = 0;
+        virtual StackFSMPtr SelectMicroLogic(_In_ StackFSM* armyMacroLogic, _In_ EntityController* pController) const = 0;
     };
 
     typedef std::shared_ptr<StrategySelector> StrategySelectorPtr;
