@@ -119,6 +119,21 @@ namespace IStrategizer
         DISALLOW_COPY_AND_ASSIGN(RetreatEntityState);
     };
 
+    class RepairEntityState : public EntityState
+    {
+    public:
+        static const FSMStateTypeID TypeID = 0x76D4C5EC;
+
+        RepairEntityState(EntityController* pController) :
+            EntityState(TypeID, "Repair", pController)
+        {}
+
+        void Update();
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(RepairEntityState);
+    };
+
     class IdleEntityFSM : public StackFSM
     {
     public:
@@ -208,6 +223,27 @@ namespace IStrategizer
 
     private:
         DISALLOW_COPY_AND_ASSIGN(GuardEntityFSM);
+    };
+
+    class AutoRepairEntityFSM : public StackFSM
+    {
+    public:
+        static const FSMStateTypeID TypeID = 0x76D4C5EC;
+
+        AutoRepairEntityFSM(EntityController* pController) :
+            StackFSM("Entity-AutoRepair", AlarmEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
+        {
+            AddState(FSMStatePtr(new IdleEntityState(pController)));
+            AddState(FSMStatePtr(new ArriveEntityState(pController)));
+            AddState(FSMStatePtr(new FleeEntityState(pController)));
+            AddState(FSMStatePtr(new AttackEntityState(pController)));
+            AddState(FSMStatePtr(new AlarmEntityState(pController)));
+        }
+
+        void CheckTransitions();
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(AutoRepairEntityFSM);
     };
 }
 

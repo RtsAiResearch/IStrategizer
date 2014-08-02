@@ -254,7 +254,7 @@ bool EntityController::IsAnyEnemyTargetInRange() const
     return false;
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::EntityExists(_In_ TID entityId) const
+bool EntityController::EntityExists(_In_ TID entityId)
 {
     if (entityId == INVALID_TID)
         return false;
@@ -371,4 +371,32 @@ string EntityController::ToString(bool minimal) const
     sprintf_s(str, "%s.%s[%d]", (m_pController ? m_pController->ToString().c_str() : ""), Enums[m_typeId], m_entityId);
 
     return  str;
+}
+/////////////////////////////////////////////////////////////////////////
+bool EntityController::IsDamaged(_In_ const GameEntity* pEntity)
+{
+    int healthPrct = int(((float)pEntity->P(OP_Health) / (float)pEntity->Type()->P(TP_MaxHp)) * 100.0f);
+    return healthPrct < DamagedHealthPercent;
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::CanRepairNearbyEntity() const
+{
+    for (auto& entityR : m_pController->DamagedRepairablesNearby())
+    {
+        if (Entity()->CanRepair(entityR))
+            return true;
+    }
+
+    return false;
+}
+//////////////////////////////////////////////////////////////////////////
+TID EntityController::ChooseRepairTarget()
+{
+    for (auto entityId : m_pController->DamagedRepairablesNearby())
+    {
+        if (Entity()->CanRepair(entityId))
+            return entityId;
+    }
+
+    return INVALID_TID;
 }

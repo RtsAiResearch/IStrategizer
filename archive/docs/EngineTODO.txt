@@ -1,6 +1,6 @@
 Worker Manager
-- If out of minerals, order gatherers to mine from other explored
 [DONE] - Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct assigned sources
+- If out of minerals, order gatherers to mine from other explored
 - Repair damaged mech units
 
 City Builing
@@ -13,13 +13,15 @@ Scouting
 
 Micro
 [DONE]- Group formation placement not randomized
+[DONE]- Retreat for melee enemies should be more smart to retreat if the enemy came too close e.g 64 pixel away
+[DONE]- Correct calculation of army sight and focus area not to hard code it (based on army size)
 - Retreat should choose different location to retreat to if the destination is not reachable/walkable/out of map.
 - Target selection and prioritization (supporters, melee, ranged, air)
-[DONE]- Correct calculation of army sight and focus area not to hard code it (based on army size)
 - Take attack type into consideration (Air/Ground targetability and prioritization)
 - Use the more complex pro players Hit&Run: http://wiki.teamliquid.net/starcraft/Vulture_Micro
 - Even if a unit is being hit, not always it should run especially VS weak units, it should depend on the attacker and the unit itself
-[DONE]- Retreat for melee enemies should be more smart to retreat if the enemy came too close e.g 64 pixel away
+- Fix states to work on Army units directly not cached ones
+
 
 
 Macro

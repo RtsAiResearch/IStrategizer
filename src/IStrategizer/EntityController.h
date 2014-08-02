@@ -19,10 +19,10 @@ namespace IStrategizer
         static const int PositionArriveRadius = 64;
         static const int MeleeAttackerSafetyRadius = 96;
         static const int CriticalHPPercent = 20;
+        static const int DamagedHealthPercent = 95;
 
         EntityController(ArmyController* pController);
         void Update();
-        void SetController(ArmyController* pController) { m_pController = pController; }
         void ControlEntity(_In_ TID entityId);
         void PushLogic(_In_ StackFSMPtr pLogic) { LogInfo("Pushing %s Logic", pLogic->ToString().c_str()); m_pLogicMemory.push(pLogic); }
         void PopLogic() { LogInfo("Poping %s Logic", m_pLogicMemory.top()->ToString().c_str()); m_pLogicMemory.pop(); }
@@ -33,19 +33,18 @@ namespace IStrategizer
         void OnEntityFleeing();
         void HardResetLogic();
         void SoftResetLogic() { m_pLogicMemory.top()->Reset(); }
-        TID Attacker() const;
         std::string ToString(bool minimal = false) const;
-
         GameEntity* Entity() { return m_pEntity; }
         const GameEntity* Entity() const { return m_pEntity; }
         TID EntityId() const { return m_entityId; }
         EntityClassType TypeId() const { return m_typeId; }
 
-        TID CloseMeleeAttacker() const { return m_closeMeleeAttackerId; }
-
         // Expensive Helpers are candidate for caching somewhere
-        TID GetClosestEnemyEntityInSight(); // Expensive call
+        TID Attacker() const;
+        TID GetClosestEnemyEntityInSight();
         void CalcCloseMeleeAttacker();
+        TID ChooseRepairTarget();
+        TID CloseMeleeAttacker() const { return m_closeMeleeAttackerId; }
 
         // Controller Input Parameters
         Vector2 TargetPosition() const;
@@ -56,7 +55,6 @@ namespace IStrategizer
         TID TargetEntity() const;
 
         // Controller Conditions
-        static bool IsOnCriticalHP(_In_ const GameEntity* pEntity);
         bool IsOnCriticalHP() const;
         bool IsBeingHit() const;
         bool ArrivedAtTarget(_In_ Vector2 pos) const;
@@ -65,10 +63,13 @@ namespace IStrategizer
         bool IsTargetInSight(_In_ TID entityId) const;
         bool IsTargetInRange(_In_ TID entityId) const;
         bool EntityExists() const;
-        bool EntityExists(_In_ TID entityId) const;
         bool IsAnyEnemyTargetInSight() const; // Expensive call
         bool IsAnyEnemyTargetInRange() const; // Expensive call
         bool IsCloseToMeleeAttacker() const { return m_closeMeleeAttackerId != INVALID_TID; }
+        bool CanRepairNearbyEntity() const;
+        static bool IsOnCriticalHP(_In_ const GameEntity* pEntity);
+        static bool EntityExists(_In_ TID entityId);
+        static bool IsDamaged(_In_ const GameEntity* pEntity);
 
     private:
         DISALLOW_COPY_AND_ASSIGN(EntityController);

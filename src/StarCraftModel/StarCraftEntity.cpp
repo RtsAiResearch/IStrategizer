@@ -31,7 +31,7 @@ m_isOnline(true)
     m_ownerId = g_Database.PlayerMapping.GetByFirst(m_pUnit->getPlayer()->getID());
     m_cachedAttr[OP_OwnerId] = m_ownerId;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 int StarCraftEntity::P(EntityObjectProperty attrId) const
 {
     // Attributes are accessible from game directly if the entity is online in 2 cases only
@@ -124,6 +124,9 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
         case OP_IsVisible:
             return m_pUnit->isVisible() && m_pUnit->isDetected();
 
+        case OP_IsRepairing:
+            return m_pUnit->isRepairing();
+
         default:
             DEBUG_THROW(InvalidParameterException(XcptHere));
         }
@@ -133,7 +136,7 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
         return m_cachedAttr.at(attrId);
     }
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 ObjectStateType StarCraftEntity::FetchState() const
 {
     bool isIdle = m_pUnit->isIdle();
@@ -168,7 +171,7 @@ ObjectStateType StarCraftEntity::FetchState() const
     else
         return OBJSTATE_END;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::IsTraining(TID p_traineeId) const
 {
     GameEntity* pTrainee = g_Game->GetPlayer((PlayerType)P(OP_OwnerId))->GetEntity(p_traineeId);
@@ -185,7 +188,7 @@ bool StarCraftEntity::IsTraining(TID p_traineeId) const
         pTrainee->P(OP_PosCenterX),
         pTrainee->P(OP_PosCenterY));
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 string StarCraftEntity::ToString(bool minimal) const
 {
     char str[512];
@@ -201,12 +204,12 @@ string StarCraftEntity::ToString(bool minimal) const
     }
     return str;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 Vector2 StarCraftEntity::Position() const
 {
     return Vector2(P(OP_PosCenterX), P(OP_PosCenterY));
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::CanGather(TID resourceObjectId) const
 {
     if (!m_isOnline)
@@ -214,7 +217,7 @@ bool StarCraftEntity::CanGather(TID resourceObjectId) const
 
     return m_pUnit->canGather(Broodwar->getUnit(resourceObjectId));
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_position)
 {
     if (!m_isOnline)
@@ -233,6 +236,14 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
 
     LogInfo("%s -> Build(%s@<%d,%d>)", ToString().c_str(), type.toString().c_str(), pos.x, pos.y);
 
+    // if we have issued a command to this unit already this frame, 
+    // ignore this one and raise warning
+    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
+    {
+        LogWarning("Entity %s command drop, same command issued same frame %d", ToString().c_str(), Broodwar->getFrameCount());
+        return true;
+    }
+
     bool bOk = false;
 
     if (type.isAddon())
@@ -247,7 +258,50 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
 
     return bOk;
 };
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftEntity::Repair(_In_ TID targetId)
+{
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
+    LogInfo("%s -> Repair(%s)", ToString().c_str(), g_Game->GetEntity(targetId)->ToString().c_str());
+
+    // if we have issued a command to this unit already this frame, 
+    // ignore this one and raise warning
+    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
+    {
+        LogWarning("Entity %s command drop, same command issued same frame %d", ToString().c_str(), Broodwar->getFrameCount());
+        return true;
+    }
+
+    BWAPI::UnitCommand currentCommand(m_pUnit->getLastCommand());
+
+    if (currentCommand.getType() == BWAPI::UnitCommandTypes::Repair &&
+        currentCommand.getTarget()->getID() == targetId)
+    {
+        if (m_pUnit->exists())
+            LogWarning("Entity %s command drop, same target %d", ToString().c_str(), targetId);
+        else
+            LogWarning("Entity %s command drop, unit does not exist", ToString().c_str(), targetId);
+
+        return true;
+    }
+
+    auto target = Broodwar->getUnit(targetId);
+
+    _ASSERTE(m_pUnit->isDetected());
+
+    if (m_pUnit->repair(target))
+    {
+        return true;
+    }
+    else
+    {
+        DebugDrawMapLastGameError();
+        return false;
+    }
+}
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::Research(ResearchType p_researchId)
 {
     if (!m_isOnline)
@@ -274,7 +328,7 @@ bool StarCraftEntity::Research(ResearchType p_researchId)
 
     return bOk;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::AttackGround(Vector2 p_position)
 {
     if (!m_isOnline)
@@ -290,7 +344,7 @@ bool StarCraftEntity::AttackGround(Vector2 p_position)
         return false;
     }
 };
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::Stop()
 {
     if (!m_isOnline)
@@ -298,15 +352,25 @@ bool StarCraftEntity::Stop()
 
     LogInfo("%s -> Stop", ToString().c_str());
 
-    if (m_pUnit->stop())
+    // if we have issued a command to this unit already this frame, 
+    // ignore this one and raise warning
+    if (m_pUnit->getLastCommandFrame() >= BWAPI::Broodwar->getFrameCount())
+    {
+        LogWarning("Entity %s command drop, same command issued same frame %d", ToString().c_str(), Broodwar->getFrameCount());
         return true;
+    }
+
+    if (m_pUnit->stop())
+    {
+        return true;
+    }
     else
     {
         DebugDrawMapLastGameError();
         return false;
     }
 };
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::AttackEntity(TID targetId)
 {
     if (!m_isOnline)
@@ -340,14 +404,16 @@ bool StarCraftEntity::AttackEntity(TID targetId)
     _ASSERTE(m_pUnit->isDetected());
 
     if (m_pUnit->attack(target))
+    {
         return true;
+    }
     else
     {
         DebugDrawMapLastGameError();
         return false;
     }
 };
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::Train(EntityClassType p_entityClassId)
 {
     if (!m_isOnline)
@@ -372,7 +438,7 @@ bool StarCraftEntity::Train(EntityClassType p_entityClassId)
         return false;
     }
 };
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::Move(Vector2 targetPos)
 {
     _ASSERTE(!targetPos.IsInf());
@@ -412,7 +478,7 @@ bool StarCraftEntity::Move(Vector2 targetPos)
         return false;
     }
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::GatherResourceEntity(TID resourceId)
 {
     if (!m_isOnline)
@@ -450,7 +516,7 @@ bool StarCraftEntity::GatherResourceEntity(TID resourceId)
         return false;
     }
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void StarCraftEntity::SetOffline(RtsGame* pBelongingGame)
 {
     CacheAttributes();
@@ -560,7 +626,7 @@ void StarCraftEntity::DebugDrawMapLastGameError()
     LogInfo("BWAPI Game Error: %s", lastErr.c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-bool StarCraftEntity::CanRepair(TID entityId)
+bool StarCraftEntity::CanRepair(TID entityId) const
 {
     return m_pUnit->canRepair(Broodwar->getUnit(entityId));
 }

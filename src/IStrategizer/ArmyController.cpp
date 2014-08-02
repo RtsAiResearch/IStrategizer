@@ -130,7 +130,10 @@ void ArmyController::Update()
 
     CalcCetner();
     CalcEnemyData();
-    CalcBoundingCircleRadius();
+    //CalcBoundingCircleRadius();
+
+    if (m_controlWorkers)
+        CalcDamagedRepairablesNearby();
 
     m_pLogic->Update();
 
@@ -290,7 +293,7 @@ bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector
     return true;
 }
 //////////////////////////////////////////////////////////////////////////
-bool ArmyController::CanControl(_In_ const GameEntity* pEntity)
+bool ArmyController::CanControl( _In_ const GameEntity* pEntity)
 {
     _ASSERTE(pEntity != nullptr);
 
@@ -330,6 +333,24 @@ void ArmyController::TryControlEntity(_In_ TID entityId)
         CalcGroupFormationData();
 
         LogInfo("Added %s to %s, to control %d entities", pEntity->ToString().c_str(), ToString().c_str(), m_entities.size());
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::ReleaseHealthyEntities()
+{
+    if (!IsControllingArmy())
+        return;
+
+    for (auto entityItr = m_entities.begin(); entityItr != m_entities.end();)
+    {
+        if (!entityItr->second->IsOnCriticalHP())
+        {
+            auto oldItr = entityItr;
+            ++entityItr;
+            ReleaseEntity(oldItr->first);
+        }
+        else
+            ++entityItr;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -412,4 +433,18 @@ bool ArmyController::IsAnyEnemyInFormationAreaSight(_In_ Vector2 areaPos) const
     }
 
     return false;
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::CalcDamagedRepairablesNearby()
+{
+    m_damagedRepairablesNearby.clear();
+
+    auto sightArea = SightArea();
+
+    for (auto& entityR : g_Game->Enemy()->Entities())
+    {
+        if (sightArea.IsInside(entityR.second->Position()) &&
+            EntityController::IsDamaged(entityR.second))
+            m_damagedRepairablesNearby.insert(entityR.first);
+    }
 }

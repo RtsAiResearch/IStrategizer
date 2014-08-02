@@ -23,27 +23,14 @@ void CombatManager::Init()
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::Update()
 {
-    bool newReinforcements = false;
-    bool newBrokens = false;
+    m_brokenArmy.ReleaseHealthyEntities();
 
     // Look for new entities to control this frame
     for (auto& entityR : g_Game->Self()->Entities())
     {
-        if (!newReinforcements && m_reinforcementsArmy.CanControl(entityR.second))
-            newReinforcements = true;
-        else if (!newBrokens && m_brokenArmy.CanControl(entityR.second))
-            newBrokens = true;
-
-        // We found what we are looking for, no need to continue search
-        if (newBrokens && newReinforcements)
-            break;
+        m_reinforcementsArmy.TryControlEntity(entityR.second->Id());
+        m_brokenArmy.TryControlEntity(entityR.second->Id());
     }
-
-    if (newReinforcements)
-        m_reinforcementsArmy.ControlNewArmy();
-
-    if (newBrokens)
-        m_brokenArmy.ControlNewArmy();
 
     m_frontLinesArmy.Update();
     m_reinforcementsArmy.Update();

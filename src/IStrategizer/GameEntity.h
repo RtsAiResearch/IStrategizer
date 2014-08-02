@@ -44,6 +44,7 @@ namespace IStrategizer
         void CacheAttributes();
         virtual bool Exists() const = 0;
         virtual bool CanAttack(_In_ TID targetId) const = 0;
+        virtual bool CanRepair(TID entityId) const = 0;
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;
@@ -57,7 +58,7 @@ namespace IStrategizer
 		virtual bool Stop() = 0;
 		virtual bool CanTrain(EntityClassType type) = 0;
         virtual bool Follow(TID entityId) = 0;
-        virtual bool CanRepair(TID entityId) = 0;
+        virtual bool Repair(_In_ TID targetId) = 0;
 
         void DebugDrawTarget();
         void DebugDrawRange();

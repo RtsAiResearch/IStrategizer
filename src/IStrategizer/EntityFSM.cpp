@@ -153,6 +153,24 @@ void RetreatEntityState::Update()
     pController->Entity()->DebugDrawRange();
 }
 //////////////////////////////////////////////////////////////////////////
+void RepairEntityState::Update()
+{
+    auto pController = (EntityController*)m_pController;
+
+    if (m_targetEntity == INVALID_TID ||
+        !EntityController::EntityExists(m_targetEntity))
+    {
+        m_targetEntity = pController->ChooseRepairTarget();
+    }
+
+    if (m_targetEntity != INVALID_TID &&
+        !pController->Entity()->P(OP_IsRepairing))
+    {
+        pController->Entity()->Repair(m_targetEntity);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
 //
 // Machines
 //
@@ -332,6 +350,30 @@ void HintNRunEntityFSM::CheckTransitions()
             pController->IsAnyEnemyTargetInSight())
         {
             PushState(AttackEntityState::TypeID);
+        }
+        break;
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void AutoRepairEntityFSM::CheckTransitions()
+{
+    auto pController = (EntityController*)m_pController;
+
+    // Get target position in case the current state is using it
+    auto pCurrState = static_pointer_cast<EntityState>(CurrentState());
+
+    switch (pCurrState->TypeId())
+    {
+    case IdleEntityState::TypeID:
+        if (pController->CanRepairNearbyEntity())
+        {
+            PushState(RepairEntityState::TypeID);
+        }
+        break;
+    case RepairEntityState::TypeID:
+        if (!pController->CanRepairNearbyEntity())
+        {
+            PopState();
         }
         break;
     }

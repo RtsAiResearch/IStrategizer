@@ -80,12 +80,13 @@ namespace IStrategizer
         bool HasType(_In_ EntityClassType type);
         void ReleaseEntity(_In_ TID entityId);
         void TryControlEntity(_In_ TID entityId);
+        void ReleaseHealthyEntities();
         void ControlNewArmy();
         void ReleaseArmy();
         const StackFSM* Logic() const { return &*m_pLogic; }
         Vector2 Center() const { return m_center; }
         Circle2 FormationArea() { return Circle2(Center(), m_formationData.CircleRadius); }
-        Circle2 SightArea() { return Circle2(Center(), m_boundingCircleRadius + SightAreaRadius); }
+        Circle2 SightArea() { return Circle2(Center(), m_formationData.CircleRadius + SightAreaRadius); }
         int TotalDiedEntities() const { return m_totalDiedEntities; }
         int TotalGroundAttack() const { return m_totalGroundAttack; }
         int TotalMaxHP() const { return m_totalMaxHP; }
@@ -93,6 +94,7 @@ namespace IStrategizer
         void CalcGroupFormation(_Inout_ ArmyGroupFormation& formation);
         std::string ToString(bool minimal = false) const { return m_pName; }
         void SetControlType(_In_ bool controlHealthy, _In_ bool controlBroken, _In_ bool controlWorkers);
+        const EntitySet& DamagedRepairablesNearby() const { return m_damagedRepairablesNearby; }
 
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntity() const { _ASSERTE(!m_closestEnemy.empty()); return m_closestEnemy.begin()->second; }
@@ -109,7 +111,6 @@ namespace IStrategizer
         bool CanControl(_In_ const GameEntity* pEntity);
 
         // Controller Conditions
-        bool IsAnyEnemyTargetInSight() const { return !m_enemiesInSight.empty(); }
         bool IsAnyEnemyInFormationAreaSight(_In_ Vector2 areaPos) const;
         static bool IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos);
         const EntityControllersMap& Entities() const { return m_entities; }
@@ -128,6 +129,8 @@ namespace IStrategizer
         void CalcIsFormationInOrder();
         void CalcBoundingCircleRadius();
         void CalcGroupFormationData();
+        void CalcDamagedRepairablesNearby();
+
         static ArmyGroupFormation::Data CalcGroupFormationData(_In_ int groupSize);
 
         std::unordered_map<TID, EntityControllerPtr> m_entities;
@@ -141,6 +144,8 @@ namespace IStrategizer
         std::set<TID> m_enemiesInSight;
         std::multimap<int, TID> m_closestEnemy;
         ArmyGroupFormation::Data m_formationData;
+        EntitySet m_damagedRepairablesNearby;
+
         static std::unordered_map<int, ArmyGroupFormation::Data> sm_cachedArmySizeToFormationDataMap;
 
         int m_boundingCircleRadius;
