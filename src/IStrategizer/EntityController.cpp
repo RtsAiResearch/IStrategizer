@@ -381,22 +381,21 @@ bool EntityController::IsDamaged(_In_ const GameEntity* pEntity)
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::CanRepairNearbyEntity() const
 {
-    for (auto& entityR : m_pController->DamagedRepairablesNearby())
-    {
-        if (Entity()->CanRepair(entityR))
-            return true;
-    }
+    //for (auto& entityId : m_pController->DamagedRepairablesNearby())
+    //{
+    //    if (Entity()->CanRepair(entityId))
+    //    {
+    //        auto pTarget = g_Game->Self()->GetEntity(entityId);
+    //        
+    //        if (!pTarget->P(OP_IsRepairing) && !pTarget->P(OP_IsMoving))
+    //            return true;
+    //    }
+    //}
 
-    return false;
+    return m_pController->ChooseRepairTarget(Entity()) != INVALID_TID;
 }
 //////////////////////////////////////////////////////////////////////////
 TID EntityController::ChooseRepairTarget()
 {
-    for (auto entityId : m_pController->DamagedRepairablesNearby())
-    {
-        if (Entity()->CanRepair(entityId))
-            return entityId;
-    }
-
-    return INVALID_TID;
+    return m_pController->ChooseRepairTarget(Entity());
 }

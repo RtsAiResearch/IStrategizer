@@ -54,26 +54,33 @@ TID StarCraftStrategySelector::SelectScout() const
         return scouts[0];
 }
 //////////////////////////////////////////////////////////////////////////
-StackFSMPtr StarCraftStrategySelector::SelectMicroLogic(_In_ StackFSM* armyMacroLogic, _In_ EntityController* pController) const
+StackFSMPtr StarCraftStrategySelector::SelectMicroLogic(_In_ ArmyController* armyCtrlr, _In_ EntityController* entityCtrlr) const
 {
-    auto currLogicState = armyMacroLogic->CurrentState();
+    auto currLogicState = armyCtrlr->Logic()->CurrentState();
 
     if (currLogicState->TypeId() == AttackArmyState::TypeID)
     {
-        if (pController->Entity()->Type()->P(TP_IsWorker))
-            return  StackFSMPtr(new AutoRepairEntityFSM(pController));
+        if (entityCtrlr->Entity()->Type()->P(TP_IsWorker))
+            return  StackFSMPtr(new AutoRepairEntityFSM(entityCtrlr));
         else
-            return StackFSMPtr(new HintNRunEntityFSM(pController));
+            return StackFSMPtr(new HintNRunEntityFSM(entityCtrlr));
     }
     else if (currLogicState->TypeId() == AlarmArmyState::TypeID)
     {
-        if (pController->Entity()->Type()->P(TP_IsWorker))
-            return  StackFSMPtr(new AutoRepairEntityFSM(pController));
+        if (entityCtrlr->Entity()->Type()->P(TP_IsWorker))
+            return  StackFSMPtr(new AutoRepairEntityFSM(entityCtrlr));
         else
-            return StackFSMPtr(new IdleEntityFSM(pController));
+            return StackFSMPtr(new IdleEntityFSM(entityCtrlr));
+    }
+    else if (entityCtrlr->TypeId() == RegroupArmyState::TypeID)
+    {
+        return StackFSMPtr(new IdleEntityFSM(entityCtrlr));
     }
     else
     {
-        return StackFSMPtr(new IdleEntityFSM(pController));
+        if (entityCtrlr->Entity()->Type()->P(TP_IsWorker))
+            return  StackFSMPtr(new AutoRepairEntityFSM(entityCtrlr));
+        else
+            return StackFSMPtr(new IdleEntityFSM(entityCtrlr));
     }
 }

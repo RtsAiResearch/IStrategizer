@@ -128,6 +128,7 @@ namespace IStrategizer
             EntityState(TypeID, "Repair", pController)
         {}
 
+        void Enter();
         void Update();
 
     private:
@@ -231,13 +232,10 @@ namespace IStrategizer
         static const FSMStateTypeID TypeID = 0x76D4C5EC;
 
         AutoRepairEntityFSM(EntityController* pController) :
-            StackFSM("Entity-AutoRepair", AlarmEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
+            StackFSM("Entity-AutoRepair", IdleEntityState::TypeID, IdleEntityState::TypeID, TypeID, (EngineObject*)pController)
         {
             AddState(FSMStatePtr(new IdleEntityState(pController)));
-            AddState(FSMStatePtr(new ArriveEntityState(pController)));
-            AddState(FSMStatePtr(new FleeEntityState(pController)));
-            AddState(FSMStatePtr(new AttackEntityState(pController)));
-            AddState(FSMStatePtr(new AlarmEntityState(pController)));
+            AddState(FSMStatePtr(new RepairEntityState(pController)));
         }
 
         void CheckTransitions();

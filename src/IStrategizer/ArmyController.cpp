@@ -135,7 +135,9 @@ void ArmyController::Update()
     //CalcBoundingCircleRadius();
 
     if (m_controlWorkers)
+    {
         CalcDamagedRepairablesNearby();
+    }
 
     m_pLogic->Update();
 
@@ -447,10 +449,40 @@ void ArmyController::CalcDamagedRepairablesNearby()
 
     auto sightArea = SightArea();
 
-    for (auto& entityR : g_Game->Enemy()->Entities())
+    for (auto& entityR : g_Game->Self()->Entities())
     {
         if (sightArea.IsInside(entityR.second->Position()) &&
             EntityController::IsDamaged(entityR.second))
             m_damagedRepairablesNearby.insert(entityR.first);
     }
 }
+//////////////////////////////////////////////////////////////////////////
+TID ArmyController::ChooseRepairTarget(_In_ const GameEntity* pEntity)
+{
+    unordered_map<TID, TID> damagedToRepairerMap;
+
+    for (auto& entityR : m_entities)
+    {
+        auto pEntity = entityR.second->Entity();
+
+        if (pEntity->P(OP_IsRepairing))
+        {
+            damagedToRepairerMap[pEntity->TargetId()] = pEntity->Id();
+        }
+    }
+
+    for (auto entityId : DamagedRepairablesNearby())
+    {
+        if (damagedToRepairerMap.count(entityId) == 0 &&
+            pEntity->CanRepair(entityId))
+        {
+            auto pTarget = g_Game->Self()->GetEntity(entityId);
+
+            if (!pTarget->P(OP_IsRepairing) && !pTarget->P(OP_IsMoving))
+                return entityId;
+        }
+    }
+
+    return INVALID_TID;
+}
+//////////////////////////////////////////////////////////////////////////

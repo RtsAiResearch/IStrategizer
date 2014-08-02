@@ -96,6 +96,7 @@ namespace IStrategizer
         std::string ToString(bool minimal = false) const { return m_pName; }
         void SetControlType(_In_ bool controlBroken, _In_ bool controlWorkers);
         const EntitySet& DamagedRepairablesNearby() const { return m_damagedRepairablesNearby; }
+        TID ChooseRepairTarget(_In_ const GameEntity* pEntity);
 
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntity() const { _ASSERTE(!m_closestEnemy.empty()); return m_closestEnemy.begin()->second; }

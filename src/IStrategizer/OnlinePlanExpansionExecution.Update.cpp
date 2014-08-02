@@ -225,7 +225,8 @@ bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
     {
         _ASSERTE(pCurrentGoalNode->GetState() == ESTATE_NotPrepared);
 
-        if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))
+        if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game) 
+            && !HasActiveAction(currentNode))
         {
             pCurrentGoalNode->SetState(ESTATE_Succeeded, *g_Game, clock);
             OnGoalNodeSucceeded(currentNode);

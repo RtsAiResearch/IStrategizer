@@ -153,8 +153,16 @@ void RetreatEntityState::Update()
     pController->Entity()->DebugDrawRange();
 }
 //////////////////////////////////////////////////////////////////////////
+void RepairEntityState::Enter()
+{
+    EntityState::Enter();
+    m_targetEntity = INVALID_TID;
+}
+//////////////////////////////////////////////////////////////////////////
 void RepairEntityState::Update()
 {
+    EntityState::Update();
+
     auto pController = (EntityController*)m_pController;
 
     if (m_targetEntity == INVALID_TID ||
@@ -169,7 +177,6 @@ void RepairEntityState::Update()
         pController->Entity()->Repair(m_targetEntity);
     }
 }
-
 //////////////////////////////////////////////////////////////////////////
 //
 // Machines

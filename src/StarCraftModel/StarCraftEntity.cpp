@@ -101,10 +101,10 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
             return m_pUnit->getPosition().y;
 
         case OP_IsGatheringSecondaryResource:
-            return m_pUnit->isGatheringGas() || m_pUnit->isCarryingGas();
+            return m_pUnit->isGatheringGas();
 
         case OP_IsGatheringPrimaryResource:
-            return m_pUnit->isGatheringMinerals() || m_pUnit->isCarryingMinerals();
+            return m_pUnit->isGatheringMinerals();
 
         case OP_IsBeingGathered:
             return m_pUnit->isBeingGathered();
@@ -126,6 +126,12 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
 
         case OP_IsRepairing:
             return m_pUnit->isRepairing();
+
+        case OP_BuildEntityId:
+            if (m_pUnit->getBuildUnit() != nullptr)
+                return m_pUnit->getBuildUnit()->getID();
+            else
+                return INVALID_TID;
 
         default:
             DEBUG_THROW(InvalidParameterException(XcptHere));
@@ -573,6 +579,7 @@ void StarCraftEntity::DebugDrawMapLastGameError()
         Broodwar->getLatencyFrames());  // frames to run
 
     LogInfo("BWAPI Game Error: %s", lastErr.c_str());
+
 }
 //////////////////////////////////////////////////////////////////////////
 bool StarCraftEntity::CanRepair(TID entityId) const

@@ -31,6 +31,7 @@ namespace IStrategizer
         OP_IsAttacking,
         OP_IsVisible,
         OP_IsRepairing,
+        OP_BuildEntityId,
         OP_END
     };
 #define Define_EntityObjectProperty \
@@ -53,6 +54,7 @@ namespace IStrategizer
     Enums[OP_IsAttacking] = "Is Attacking"; \
     Enums[OP_IsVisible] = "Is Visible"; \
     Enums[OP_IsRepairing] = "Is Repairing"; \
+    Enums[OP_BuildEntityId] = "Build Entity ID"; \
     //---------------------------------------------------------------------------
 #define Prefix_EntityTypeProperty TP
     enum EntityTypeProperty

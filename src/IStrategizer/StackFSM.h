@@ -64,6 +64,7 @@ namespace IStrategizer
         }
 
         FSMStatePtr CurrentState() { _ASSERTE(!m_states.empty()); return m_stateMap.at(m_states.top()); }
+        ConstFSMStatePtr CurrentState() const { _ASSERTE(!m_states.empty()); return m_stateMap.at(m_states.top()); }
         
     protected:
         void AddState(_In_ std::shared_ptr<FSMState> state) { m_stateMap[state->TypeId()] = state; state->Parent(this); }

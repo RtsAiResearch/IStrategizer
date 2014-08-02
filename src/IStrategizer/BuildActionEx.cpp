@@ -128,8 +128,6 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 
 		if (pBuilderType->P((TP_IsBuilding)))
 		{
-			/*if (_buildStarted)
-			{*/
 			LogDebugInfo("Checking state of builder %s", pEntity->ToString().c_str());
 			ObjectStateType state = (ObjectStateType)pEntity->P(OP_State);
 
@@ -138,18 +136,6 @@ bool BuildActionEx::AliveConditionsSatisfied(RtsGame& game)
 				LogInfo("Builder %s of action %s is not constructing an expansion, something wrong happened, failing the build", pEntity->ToString().c_str(), ToString().c_str());
 				success = false;
 			}
-			//}
-			//else
-			//{
-			//	ObjectStateType state = (ObjectStateType)pEntity->Attr(EOATTR_State);
-
-			//	if (state != OBJSTATE_Idle)
-			//	{
-			//		LogInfo("Builder %s of action %s is not constructing, something wrong happened, failing the build", pEntity->ToString().c_str(), ToString().c_str());
-			//		success = false;
-			//	}
-			//}
-
 		}
 		// For workers, check if the worker is stuck, otherwise 
 		// If a building is building another building, then no need to check

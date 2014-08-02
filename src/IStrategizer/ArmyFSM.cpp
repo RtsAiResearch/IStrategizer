@@ -22,7 +22,7 @@ void ArmyState::Enter()
 
     for (auto& entityR : m_controlledEntities)
     {
-        auto pMicroLogic = pController->Consultant()->SelectMicroLogic((StackFSM*)Parent(), &*entityR.second);
+        auto pMicroLogic = pController->Consultant()->SelectMicroLogic(pController, &*entityR.second);
         entityR.second->PushLogic(pMicroLogic);
     }
 
