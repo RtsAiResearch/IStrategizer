@@ -133,6 +133,9 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
             else
                 return INVALID_TID;
 
+        case OP_IsTargetable:
+            return m_pUnit->isVisible() && m_pUnit->isDetected() && m_pUnit->isTargetable();
+
         default:
             DEBUG_THROW(InvalidParameterException(XcptHere));
         }
@@ -248,6 +251,14 @@ bool StarCraftEntity::Build(EntityClassType p_buildingClassId, Vector2 p_positio
         bOk = m_pUnit->buildAddon(type);
     else
     {
+        // Register an event that draws the target build location
+        Broodwar->registerEvent([pos, type](Game*) { 
+            Broodwar->drawBoxMap(BWAPI::Position(pos),
+                BWAPI::Position(pos + type.tileSize()),
+                Colors::Blue);},
+            nullptr,  // condition
+            type.buildTime() + 100);  // frames to run
+
         bOk = m_pUnit->build(type, pos);
     }
 
@@ -585,4 +596,24 @@ void StarCraftEntity::DebugDrawMapLastGameError()
 bool StarCraftEntity::CanRepair(TID entityId) const
 {
     return m_pUnit->canRepair(Broodwar->getUnit(entityId));
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftEntity::CanReach(_In_ Vector2 dest) const
+{
+    BWAPI::Position bwSrc;
+    BWAPI::Position bwDest;
+
+    auto selfPos = Position();
+
+    bwSrc.x = selfPos.X;
+    bwSrc.y = selfPos.Y;
+    bwDest.x = dest.X;
+    bwDest.y = dest.Y;
+
+    return !m_pUnit->isStuck() && Broodwar->hasPath(bwSrc, bwDest);
+}
+//////////////////////////////////////////////////////////////////////////
+int StarCraftEntity::LastCommandFrame() const
+{
+    return m_pUnit->getLastCommandFrame();
 }

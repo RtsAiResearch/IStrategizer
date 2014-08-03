@@ -137,6 +137,12 @@ bool IStrategizerEx::Init()
     SharedResource::Init();
     g_Game->Init();
 
+    Vector2 mapCenter = g_Game->Map()->Size() / 2;
+    Vector2 baseDir = mapCenter - g_Game->Self()->StartLocation();
+    m_baseFaceDir.X = (float)baseDir.X;
+    m_baseFaceDir.Y = (float)baseDir.Y;
+    m_baseFaceDir.Normalize();
+
     IMSysManagerParam imSysMgrParam;
     imSysMgrParam.OccupanceIMCellSize = m_param.OccupanceIMCellSize;
     imSysMgrParam.GrndCtrllIMCellSize = m_param.GrndCtrlIMCellSize;

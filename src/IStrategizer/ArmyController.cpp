@@ -132,7 +132,6 @@ void ArmyController::Update()
 
     CalcCetner();
     CalcEnemyData();
-    //CalcBoundingCircleRadius();
 
     if (m_controlWorkers)
     {
@@ -231,8 +230,6 @@ void ArmyController::CalcBoundingCircleRadius()
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::CalcEnemyData()
 {
-    EntityList enemies;
-
     Vector2 selfPos = Center();
     Vector2 otherPos = Vector2::Inf();
 
@@ -248,7 +245,7 @@ void ArmyController::CalcEnemyData()
         int dist = selfPos.Distance(otherPos);
 
         if (entityR.second->Exists() && 
-            entityR.second->P(OP_IsVisible))
+            entityR.second->P(OP_IsTargetable))
         {
             m_closestEnemy.insert(make_pair(dist, entityR.first));
             auto& dat = m_enemyData[entityR.first];
@@ -434,13 +431,10 @@ bool ArmyController::IsAnyEnemyInFormationAreaSight(_In_ Vector2 areaPos) const
 {
     auto sightArea = Circle2(areaPos, m_formationData.CircleRadius + SightAreaRadius);
 
-    for (auto& entityR : g_Game->Enemy()->Entities())
-    {
-        if (sightArea.IsInside(entityR.second->Position()))
-            return true;
-    }
-
-    return false;
+    if (m_closestEnemy.empty())
+        return false;
+    else
+        return m_closestEnemy.begin()->first < m_formationData.CircleRadius + SightAreaRadius;
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::CalcDamagedRepairablesNearby()

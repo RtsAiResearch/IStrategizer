@@ -30,7 +30,7 @@ namespace IStrategizer
 		unsigned Hash(bool quantified /* = true */) const;
 		virtual void Abort(RtsGame &game) { LogInfo("%s is aborting", ToString().c_str()); FreeResources(game); }
 		virtual bool Execute(RtsGame& game, const WorldClock& p_clock) = 0;
-		void Update(RtsGame& game, const WorldClock& p_clock);
+		virtual void Update(RtsGame& game, const WorldClock& p_clock);
 		void SetState(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
 
 		void Reset(RtsGame& game, const WorldClock& p_clock)

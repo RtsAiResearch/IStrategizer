@@ -45,6 +45,8 @@ namespace IStrategizer
         virtual bool Exists() const = 0;
         virtual bool CanAttack(_In_ TID targetId) const = 0;
         virtual bool CanRepair(TID entityId) const = 0;
+        virtual bool CanReach(_In_ Vector2 dest) const = 0;
+        virtual int LastCommandFrame() const = 0;
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;

@@ -68,7 +68,8 @@ void InfluenceMap::RegisterGameObj(TID objId, PlayerType ownerId)
 
         pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->TypeId());
         _ASSERTE(pObjType);
-        pNewObj->ObjWidth = pObjType->P(TP_Width);
+
+        pNewObj->ObjWidth = pObjType->P(TP_Width) + pObjType->P(TP_BuildingExpansionIncrement);
         pNewObj->ObjHeight = pObjType->P(TP_Height);
 
         m_registeredObjects[objId] = pNewObj;
@@ -100,9 +101,9 @@ void InfluenceMap::StampInfluenceShape(Vector2& p_startPosition, int p_width, in
     int idx;
     TInfluence cellInf;
 
-    for(int y = gridY; y < endY; ++y)
+    for (int y = gridY; y < endY; ++y)
     {
-        for(int x = gridX; x < endX; ++x)
+        for (int x = gridX; x < endX; ++x)
         {
             idx = y * m_gridWidth + x;
 
@@ -158,9 +159,9 @@ void InfluenceMap::StampInfluenceGradient(Vector2& p_centerPosition, int p_fastF
     int idx;
     TInfluence cellInf;
 
-    for(int y = outerTop; y <= outerBottom; ++y)
+    for (int y = outerTop; y <= outerBottom; ++y)
     {
-        for(int x = outerLeft; x <= outerRight; ++x)
+        for (int x = outerLeft; x <= outerRight; ++x)
         {
             idx = y * m_gridWidth + x;
 
@@ -243,9 +244,9 @@ TInfluence InfluenceMap::SumInfluenceShape(Vector2& p_startPosition, int p_width
     int endY = min(gridY + gridHeight, m_gridHeight);
     int idx;
 
-    for(int y = gridY; y < endY; ++y)
+    for (int y = gridY; y < endY; ++y)
     {
-        for(int x = gridX; x < endX; ++x)
+        for (int x = gridX; x < endX; ++x)
         {
             idx = y * m_gridWidth + x;
 
@@ -348,7 +349,7 @@ void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLen
 
         if (InBound(currentX, currentY))
         {
-            if(p_pfnPred(currentX * m_cellSide, currentY * m_cellSide, &m_pMap[currentY * m_gridWidth + currentX], p_pParam))
+            if (p_pfnPred(currentX * m_cellSide, currentY * m_cellSide, &m_pMap[currentY * m_gridWidth + currentX], p_pParam))
                 break;
         }
 
@@ -382,15 +383,15 @@ void InfluenceMap::ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWi
     int endY = min(gridY + gridHeight, m_gridHeight);
     int idx;
 
-    for(int y = gridY; y < endY; ++y)
+    for (int y = gridY; y < endY; ++y)
     {
-        for(int x = gridX; x < endX; ++x)
+        for (int x = gridX; x < endX; ++x)
         {
             idx = y * m_gridWidth + x;
 
             if (idx < m_numCells)
             {
-                if(p_pfnPred(x * m_cellSide, y * m_cellSide, &m_pMap[idx], p_pParam))
+                if (p_pfnPred(x * m_cellSide, y * m_cellSide, &m_pMap[idx], p_pParam))
                     return;
             }
         }

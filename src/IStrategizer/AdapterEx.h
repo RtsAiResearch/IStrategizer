@@ -61,7 +61,6 @@ namespace IStrategizer
         static bool BuildPositionSearchPredicate(unsigned p_cellX, unsigned p_cellY, const TCell* p_pCell, void *p_pParam);
         MapArea AdaptPositionForSpecialBuilding(EntityClassType p_buildingType);
 		
-        const static int DefaultBuildingSpacing;
         static bool IsRankedStatesInitialized;
         int m_buildingSpacing;
 

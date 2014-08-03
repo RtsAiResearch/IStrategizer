@@ -2,6 +2,8 @@
 #include "RtsGame.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
+#include "WorldMap.h"
+#include "IStrategizerEx.h"
 
 using namespace IStrategizer;
 
@@ -12,13 +14,17 @@ void CombatManager::Init()
     m_reinforcementsArmy.SetControlType(false, false);
     m_brokenArmy.SetControlType(true, false);
 
-    auto baseLocation = g_Game->Self()->StartLocation();
-    // Broken army stand at base waiting for repair/heal
-    m_brokenArmy.Stand(baseLocation);
+    auto baseStartLoc = g_Game->Self()->StartLocation();
+    Vector2F deltaF = (g_Engine->BaseHeadDirection() * 320.0f);
+    Vector2 delta((int)deltaF.X, (int)deltaF.Y);
+    Vector2F brokenDeltaF = (g_Engine->BaseHeadDirection() * 196.0f);
+    Vector2 brokenDelta((int)brokenDeltaF.X, (int)brokenDeltaF.Y);
 
+    // Broken army stand at base waiting for repair/heal
+    m_brokenArmy.Stand(baseStartLoc + brokenDelta);
     // FrontLines/Reinf army defend base waiting
-    m_frontLinesArmy.Defend(baseLocation);
-    m_reinforcementsArmy.Defend(baseLocation);
+    m_frontLinesArmy.Defend(baseStartLoc + delta);
+    m_reinforcementsArmy.Defend(baseStartLoc + delta);
 }
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::Update()

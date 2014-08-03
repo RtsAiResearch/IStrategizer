@@ -35,13 +35,22 @@ namespace IStrategizer
 
     struct RegObjEntry
     {
+        RegObjEntry() :
+            ObjId(TID()),
+            LastPosition(-1, -1),
+            Stamped(false),
+            IsAllSidePadded(false),
+            PaddingSize(0) 
+        {}
+
         TID ObjId;
         PlayerType OwnerId;
         Vector2 LastPosition;
         bool Stamped;
         int ObjWidth;
         int ObjHeight;
-        RegObjEntry() : ObjId(TID()), LastPosition(-1, -1), Stamped(false) {}
+        bool IsAllSidePadded;
+        int PaddingSize;
     };
 
     struct IMStatistics

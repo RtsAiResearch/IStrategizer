@@ -347,7 +347,7 @@ void EntityController::CalcCloseMeleeAttacker()
         // Either it is a ranged attacker or it is a melee attacker
         // but it is not targeting me, Don't Panic at all!
         if (!pCurrEnemy->Type()->P(TP_IsMelee) ||
-            currEnemy.Id != m_entityId)
+            currEnemy.TargetEntityId != m_entityId)
             continue;
 
         int dist = selfPos.Distance(pCurrEnemy->Position());

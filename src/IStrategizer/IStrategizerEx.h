@@ -41,6 +41,7 @@ namespace IStrategizer
         const OnlineCaseBasedPlannerEx* Planner() const { return &*m_pPlanner; }
         OnlineCaseBasedPlannerEx* Planner() { return &*m_pPlanner; }
         WorkersManager& WorkersMgr() { return m_workersMgr; }
+        Vector2F BaseHeadDirection() const { return m_baseFaceDir; }
 
         ~IStrategizerEx();
 
@@ -61,6 +62,7 @@ namespace IStrategizer
         CombatManager m_combatMgr;
         ScoutManager m_scoutMgr;
         WorkersManager m_workersMgr;
+        Vector2F m_baseFaceDir;
     };
 }
 

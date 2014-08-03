@@ -40,7 +40,9 @@ namespace IStrategizer
         Vector2 TargetPosition() const;
         bool Exists() const;
         bool CanAttack(_In_ TID targetId) const;
-        bool CanRepair(TID entityId) const;
+        bool CanRepair(_In_ TID entityId) const;
+        bool CanReach(_In_ Vector2 dest) const;
+        int LastCommandFrame() const;
 
         // Game Commands
         bool Research(IStrategizer::ResearchType p_researchId);
@@ -55,6 +57,7 @@ namespace IStrategizer
 		bool CanTrain(EntityClassType type);
         bool Follow(TID entityId);
         bool Repair(_In_ TID targetId);
+        
 
         void SetOffline(RtsGame* pBelongingGame);
 

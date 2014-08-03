@@ -4,6 +4,8 @@
 #include "WorldMap.h"
 #include "GameEntity.h"
 #include "Vector2.h"
+#include "GameType.h"
+#include "GamePlayer.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -13,43 +15,85 @@ const TInfluence NegativeInfluence = -1;
 const TInfluence NullInfluence = 0;
 
 //////////////////////////////////////////////////////////////////////////
-void UnstampDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
+void UnstampDirtyObj(InfluenceMap *pCaller, RegObjEntry *pObjEntry)
 {
     GameEntity *pGameObj = nullptr;
     Vector2 currentPosition;
 
-    pGameObj = p_pCaller->GetObj(p_pObjEntry);
+    pGameObj = pCaller->GetObj(pObjEntry);
     _ASSERTE(pGameObj);
     currentPosition.X = pGameObj->P(OP_Left);
     currentPosition.Y = pGameObj->P(OP_Top);
 
+    auto stampWidth = pObjEntry->ObjWidth;
+    auto stampHeight = pObjEntry->ObjHeight;
+
+    if (pObjEntry->IsAllSidePadded)
+    {
+        currentPosition.X -= pObjEntry->PaddingSize;
+        if (currentPosition.X < 0)
+        {
+            currentPosition.X = 0;
+            stampWidth -= pObjEntry->PaddingSize;
+        }
+
+        currentPosition.Y -= pObjEntry->PaddingSize;
+        if (currentPosition.Y < 0)
+        {
+            currentPosition.Y = 0;
+            stampHeight -= pObjEntry->PaddingSize;
+        }
+    }
+
     // If not dirty, then skip
-    if (currentPosition == p_pObjEntry->LastPosition)
+    if (currentPosition == pObjEntry->LastPosition)
         return;
 
     // Unstamp dirty object
-    if (p_pObjEntry->Stamped)
-        p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, NegativeInfluence);
+    if (pObjEntry->Stamped)
+        pCaller->StampInfluenceShape(pObjEntry->LastPosition, stampWidth, stampHeight, NegativeInfluence);
 }
 //////////////////////////////////////////////////////////////////////////
-void StampNonDirtyObj(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry)
+void StampNonDirtyObj(InfluenceMap *pCaller, RegObjEntry *pObjEntry)
 {
     GameEntity *pGameObj = nullptr;
     Vector2 currentPosition;
 
-    pGameObj = p_pCaller->GetObj(p_pObjEntry);
+    pGameObj = pCaller->GetObj(pObjEntry);
     _ASSERTE(pGameObj);
+
     currentPosition.X = pGameObj->P(OP_Left);
     currentPosition.Y = pGameObj->P(OP_Top);
+    auto stampWidth = pObjEntry->ObjWidth;
+    auto stampHeight = pObjEntry->ObjHeight;
+
+    // Apply padding and make sure that the new coordinates is within map
+    // and apply the required trimming for width and height
+    if (pObjEntry->IsAllSidePadded)
+    {
+        currentPosition.X -= pObjEntry->PaddingSize;
+        if (currentPosition.X < 0)
+        {
+            currentPosition.X = 0;
+            stampWidth -= pObjEntry->PaddingSize;
+        }
+
+        currentPosition.Y -= pObjEntry->PaddingSize;
+        if (currentPosition.Y < 0)
+        {
+            currentPosition.Y = 0;
+            stampHeight -= pObjEntry->PaddingSize;
+        }
+    }
 
     // If not dirty, then skip
     // Note that objects added for the first time will have an invalid position and is considered as dirty
-    if (currentPosition == p_pObjEntry->LastPosition)
+    if (currentPosition == pObjEntry->LastPosition)
         return;
 
-    p_pObjEntry->Stamped = true;
-    p_pObjEntry->LastPosition = currentPosition;
-    p_pCaller->StampInfluenceShape(p_pObjEntry->LastPosition, p_pObjEntry->ObjWidth, p_pObjEntry->ObjHeight, PositiveInfluence);
+    pObjEntry->Stamped = true;
+    pObjEntry->LastPosition = currentPosition;
+    pCaller->StampInfluenceShape(pObjEntry->LastPosition, stampWidth, stampHeight, PositiveInfluence);
 }
 //////////////////////////////////////////////////////////////////////////
 void OccupanceDataIM::Update(const WorldClock& p_clock)
@@ -173,4 +217,43 @@ bool OccupanceDataIM::FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_
 bool OccupanceDataIM::CanBuildHere(Vector2 p_worldPos, int p_buildingWidth, int p_buildingHeight, EntityClassType p_buildingType)
 {
     return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight);
+}
+//////////////////////////////////////////////////////////////////////////
+void OccupanceDataIM::RegisterGameObj(TID objId, PlayerType ownerId)
+{
+    if (m_registeredObjects.count(objId) == 0)
+        UnregisterGameObj(objId);
+
+    RegObjEntry *pNewObj = new RegObjEntry;
+    GameEntity *pGameObj = nullptr;
+    GameType *pObjType = nullptr;
+
+    pNewObj->ObjId = objId;
+    pNewObj->OwnerId = ownerId;
+    pNewObj->Stamped = false;
+
+    pGameObj = g_Game->GetPlayer(ownerId)->GetEntity(objId);
+    _ASSERTE(pGameObj);
+    pNewObj->LastPosition = Vector2(-1, -1);
+
+    pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->TypeId());
+    _ASSERTE(pObjType);
+
+    pNewObj->ObjWidth = pObjType->P(TP_Width) + pObjType->P(TP_BuildingExpansionIncrement);
+    pNewObj->ObjHeight = pObjType->P(TP_Height);
+
+    if ((pNewObj->OwnerId == PLAYER_Self &&
+        (pObjType->P(TP_IsResoureDepot) ||
+        g_Game->Self()->Race()->GetResourceSource(RESOURCE_Secondary) == pGameObj->TypeId())) ||
+        pObjType->P(TP_IsSecondaryResource) ||
+        pObjType->P(TP_IsPrimaryResource))
+    {
+        pNewObj->IsAllSidePadded = true;
+        pNewObj->PaddingSize = m_cellSide;
+
+        pNewObj->ObjWidth += (2 * pNewObj->PaddingSize);
+        pNewObj->ObjHeight += (2 * pNewObj->PaddingSize);
+    }
+
+    m_registeredObjects[objId] = pNewObj;
 }

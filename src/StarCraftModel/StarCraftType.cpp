@@ -45,6 +45,13 @@ void StarCraftType::Init()
     // FIXME: mention critical buildings
     P(TP_LineOfSight, m_type.sightRange());
 	P(TP_BuildTime, m_type.buildTime());
+    P(TP_CanBuildingExpand, m_type.canBuildAddon());
+    P(TP_IsResoureDepot, m_type.isResourceDepot());
+
+    if (m_type.canBuildAddon())
+        P(TP_BuildingExpansionIncrement, 64);
+    else
+        P(TP_BuildingExpansionIncrement, 0);
 
     // Convert build tiles to walk tiles
     if (m_type.isBuilding())

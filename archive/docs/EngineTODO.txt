@@ -1,7 +1,7 @@
 Worker Manager
 [DONE] - Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct assigned sources
 - If out of minerals, order gatherers to mine from other explored
-- Repair damaged mech units
+[DONE] - Repair damaged mech units
 
 City Builing
 - Use differnent padding for producing building/buildings with add ons/non-producing buildings
@@ -31,6 +31,7 @@ Macro
 - Handle city defending (SCVs run/attack and building lifting)
 
 Planner
+[DONE] - Fix planner goal resource sharing and synchronization bugs
 - Succeeding nodes dont expand, except root node, always expand
 
 Strategy

@@ -35,13 +35,13 @@ RankedStates AdapterEx::EntityToMoveStatesRank = { OBJSTATE_Idle, OBJSTATE_Under
 RankedStates AdapterEx::ProducingBuildingStatesRank = { OBJSTATE_Idle, OBJSTATE_Training };
 
 // Minimum number of build cells to be between colony buildings
-const int AdapterEx::DefaultBuildingSpacing = 64;
+const int MazeBuildingSpacing = 0;
 
 bool AdapterEx::IsRankedStatesInitialized = false;
 
 AdapterEx::AdapterEx()
 {
-    m_buildingSpacing = DefaultBuildingSpacing;
+    m_buildingSpacing = MazeBuildingSpacing;
 }
 //////////////////////////////////////////////////////////////////////////
 bool AdapterEx::BuildPositionSearchPredicate(unsigned worldX, unsigned worldY, const TCell* pCell, void *pParam)
@@ -72,9 +72,9 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned worldX, unsigned worldY, c
     return isFree;
 }
 //////////////////////////////////////////////////////////////////////////
-MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
+MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType buildingType)
 {
-    if (!g_Game->GetEntityType(p_buildingType)->P(TP_IsSpecialBuilding))
+    if (!g_Game->GetEntityType(buildingType)->P(TP_IsSpecialBuilding))
     {
         /*
         Position Adaptation Algorithm Outline:
@@ -96,15 +96,16 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
         SpiralSearchData searchData;
         SpiralMovePredicate searchPredicate = BuildPositionSearchPredicate;
 
-        pGameType = g_Game->GetEntityType(p_buildingType);
+        pGameType = g_Game->GetEntityType(buildingType);
         _ASSERTE(pGameType);
 
         // Append building width with padding of free space to achieve building spacing
-        searchData.BuildingWidth = pGameType->P(TP_Width);
+
+        searchData.BuildingWidth = pGameType->P(TP_Width) + pGameType->P(TP_BuildingExpansionIncrement);
         searchData.BuildingHeight = pGameType->P(TP_Height);
         searchData.CandidateBuildPos = Vector2(-1, -1);
         searchData.AllSidePadding = m_buildingSpacing;
-        searchData.BuildingType = p_buildingType;
+        searchData.BuildingType = buildingType;
 
         // This means to search all the map if the map is a square
         // Else if the map is a rectangle, we take the square part of it
@@ -123,13 +124,13 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType p_buildingType)
 
             return MapArea(
                 searchData.CandidateBuildPos,
-                pGameType->P(TP_Width),
-                pGameType->P(TP_Height));
+                searchData.BuildingWidth,
+                searchData.BuildingHeight);
         }
     }
     else
     {
-        return g_Game->Map()->GetSpecialBuildingPosition(p_buildingType);
+        return g_Game->Map()->GetSpecialBuildingPosition(buildingType);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -325,11 +326,11 @@ TID AdapterEx::AdaptWorkerForBuild(EntityClassType buildingType)
         // resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
         EntityList ladder;
         StackRankEntitiesOfType(PLAYER_Self, builderType, BuilderStatesRank, ladder);
-           
+
         if (ladder.empty())
-        	return INVALID_TID;
+            return INVALID_TID;
         else
-        	return ladder[0];
+            return ladder[0];
     }
 }
 //////////////////////////////////////////////////////////////////////////

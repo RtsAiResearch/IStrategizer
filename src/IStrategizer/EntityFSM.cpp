@@ -122,6 +122,11 @@ void RetreatEntityState::Update()
 
     auto pController = (EntityController*)m_pController;
 
+    // maintain the retreat every nth frame
+    if (m_targetEntity != INVALID_TID &&
+        pController->Entity()->LastCommandFrame() % 20 != 0)
+        return;
+
     // I am retreating from an attacker targeting me OR
     // from a close melee enemy
     TID newReatreatTarget = pController->Attacker();
@@ -143,11 +148,21 @@ void RetreatEntityState::Update()
         retreatkDir.Normalize();
 
         int groundRange = pController->Entity()->Type()->P(TP_GroundRange);
-        float retreatDistance = (float)groundRange * 1.5f;
+        float retreatDistance = (float)groundRange;
 
         Vector2F newPos = selfPosF + retreatkDir * retreatDistance;
+        
+        // If destination not reachable, try opposite direction
+        if (!pController->Entity()->CanReach(Vector2((int)newPos.X, (int)newPos.Y)))
+        {
+            newPos *= -1;
+        }
 
         pController->Entity()->Move(Vector2((int)newPos.X, (int)newPos.Y));
+    }
+    else
+    {
+        m_targetEntity = INVALID_TID;
     }
 
     pController->Entity()->DebugDrawRange();
@@ -342,7 +357,8 @@ void HintNRunEntityFSM::CheckTransitions()
         }
         break;
     case RetreatEntityState::TypeID:
-        if (!pController->IsTargetInRange(pCurrState->TargetEntity()))
+        if (pController->Attacker() == INVALID_TID ||
+            pController->CloseMeleeAttacker() == INVALID_TID)
         {
             PopState();
         }
