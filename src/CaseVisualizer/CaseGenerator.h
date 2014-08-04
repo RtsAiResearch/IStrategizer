@@ -24,7 +24,7 @@ namespace IStrategizer
         void CalcTrainArmyCaseParams(_In_ CaseEx* pCase);
 
 	private:
-		const unsigned MaxSCVs = 15;
+		const unsigned MaxSCVs = 20;
 
 		void GenCollectPrimaryResourceCases();
 		void GenCollectSecondaryResourceCases();

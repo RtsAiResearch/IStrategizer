@@ -617,3 +617,15 @@ int StarCraftEntity::LastCommandFrame() const
 {
     return m_pUnit->getLastCommandFrame();
 }
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftEntity::CanBuild(_In_ EntityClassType typeId) const
+{
+    TID unitTypeId = g_Database.EntityMapping.GetBySecond(typeId);
+    string typeName = g_Database.EntityIdentMapping.GetByFirst(unitTypeId);
+    UnitType type = BWAPI::UnitType::getType(typeName);
+
+    if (type.isAddon())
+        return m_pUnit->canBuildAddon(type);
+    else
+        return m_pUnit->canBuild(type);
+}

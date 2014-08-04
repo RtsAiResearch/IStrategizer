@@ -11,11 +11,11 @@ PlayerAttributeExist::PlayerAttributeExist(PlayerType playerType, PlayerAttribut
     switch (p_attribute)
     {
     case PATTR_AlliedAttackersTotalHP:
-        _conditionParameters[PARAM_AlliedAttackersTotalHP] = 1;
+        m_params[PARAM_AlliedAttackersTotalHP] = 1;
         break;
 
     case PATTR_AlliedAttackersTotalDamage:
-        _conditionParameters[PARAM_AlliedAttackersTotalDamage] = 1;
+        m_params[PARAM_AlliedAttackersTotalDamage] = 1;
         break;
 
     default:
@@ -23,22 +23,22 @@ PlayerAttributeExist::PlayerAttributeExist(PlayerType playerType, PlayerAttribut
         break;
     }
 
-    _conditionParameters[PARAM_Amount] = amount;
+    m_params[PARAM_Amount] = amount;
 }
 //////////////////////////////////////////////////////////////////////////
 bool PlayerAttributeExist::Consume(int p_amount)
 {
-    if (p_amount == 0 || _conditionParameters[PARAM_Amount] == 0)
+    if (p_amount == 0 || m_params[PARAM_Amount] == 0)
     {
         return false;
     }
-    else if (p_amount > _conditionParameters[PARAM_Amount])
+    else if (p_amount > m_params[PARAM_Amount])
     {
         return false;
     }
     else
     {
-        _conditionParameters[PARAM_Amount] -= p_amount;
+        m_params[PARAM_Amount] -= p_amount;
         return true;
     }
 }
@@ -47,11 +47,11 @@ bool PlayerAttributeExist::Evaluate(RtsGame& game)
 {
     if (_playerType == PLAYER_Self)
     {
-        return game.Self()->Attr(m_attribute) > _conditionParameters[PARAM_Amount];
+        return game.Self()->Attr(m_attribute) > m_params[PARAM_Amount];
     }
     else if (_playerType == PLAYER_Enemy)
     {
-        return game.Enemy()->Attr(m_attribute) > _conditionParameters[PARAM_Amount];
+        return game.Enemy()->Attr(m_attribute) > m_params[PARAM_Amount];
     }
     else
     {

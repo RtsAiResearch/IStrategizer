@@ -98,11 +98,13 @@ namespace IStrategizer
         const EntitySet& DamagedRepairablesNearby() const { return m_damagedRepairablesNearby; }
         TID ChooseRepairTarget(_In_ const GameEntity* pEntity);
         void DebugDraw() { if (m_pLogic) m_pLogic->DebugDraw(); }
+        void ResetCache();
+        void ResetLogicParams();
 
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntity() const { _ASSERTE(!m_closestEnemy.empty()); return m_closestEnemy.begin()->second; }
         const std::multimap<int, TID>& ClosestEnemyEntities() const { return m_closestEnemy; }
-        void OnEntityDestroyed(_In_ TID entityId);
+        void OnEntityLost(_In_ TID entityId);
         void OnEntityFleeing(_In_ TID entityId);
         bool IsControllingEntity(_In_ TID entityId) const { return m_entities.count(entityId) > 0; }
         const std::unordered_map<TID, ArmyEnemyData>& EnemyData() const { return m_enemyData; }
@@ -118,6 +120,9 @@ namespace IStrategizer
         static bool IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos);
         const EntityControllersMap& Entities() const { return m_entities; }
         
+        TID ClosestEntityToCenter() const { return m_closestEntityToCenter; }
+        TID FarthestEntityToCenter() const { return m_farthestEntityToCenter; }
+
         bool HasRepairers();
         bool HasDamagedEntities() const;
         void ControlRepairers();
@@ -129,39 +134,42 @@ namespace IStrategizer
         ArmyGroup Classify(const GameType* pType);
         void CalcCetner();
         void CalcEnemyData();
-        void CalcIsFormationInOrder();
-        void CalcBoundingCircleRadius();
+        void CalcBoundries();
         void CalcGroupFormationData();
         void CalcDamagedRepairablesNearby();
 
         static ArmyGroupFormation::Data CalcGroupFormationData(_In_ int groupSize);
 
-        std::unordered_map<TID, EntityControllerPtr> m_entities;
-        std::set<TID> m_currFramefleeingEntities;
-        StackFSMPtr m_pLogic;
-        TID m_targetEntityId;
+        // Permanent
         StrategySelectorPtr m_pConsultant;
-        Vector2 m_singleTargetPos;
-        Vector2 m_center;
-        std::unordered_map<TID, ArmyEnemyData> m_enemyData;
-        std::set<TID> m_enemiesInSight;
-        std::multimap<int, TID> m_closestEnemy;
-        ArmyGroupFormation::Data m_formationData;
-        EntitySet m_damagedRepairablesNearby;
-
-        static std::unordered_map<int, ArmyGroupFormation::Data> sm_cachedArmySizeToFormationDataMap;
-
-        int m_boundingCircleRadius;
         const char* m_pName;
-        
-        // Control Type
-        bool m_controlBroken;
-        bool m_controlWorkers;
-
-        // Statistics
         int m_totalDiedEntities;
         int m_totalGroundAttack;
         int m_totalMaxHP;
+        bool m_controlBroken;
+        bool m_controlWorkers;
+
+        // Per Army
+        std::unordered_map<TID, EntityControllerPtr> m_entities;
+        std::set<TID> m_currFramefleeingEntities;
+        StackFSMPtr m_pLogic;
+
+        // Parameters
+        TID m_targetEntityId;
+        Vector2 m_singleTargetPos;
+        
+        // Cache
+        std::unordered_map<TID, ArmyEnemyData> m_enemyData;
+        std::multimap<int, TID> m_closestEnemy;
+        ArmyGroupFormation::Data m_formationData;
+        EntitySet m_damagedRepairablesNearby;
+        int m_boundingCircleRadius;
+        Vector2 m_center;
+        TID m_closestEntityToCenter;
+        TID m_farthestEntityToCenter;
+
+        // Global Cache
+        static std::unordered_map<int, ArmyGroupFormation::Data> sm_cachedArmySizeToFormationDataMap;
     };
 
     typedef std::shared_ptr<ArmyController> ArmyControllerPtr;

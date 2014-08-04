@@ -85,12 +85,10 @@
       <AdditionalOptions>/ignore:4099 </AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>
-      </Message>
+      <Message>Copying engine assets</Message>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -109,10 +107,12 @@
       </Message>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreLinkEvent>
-      <Message>Copying engine assets</Message>
+      <Message>
+      </Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

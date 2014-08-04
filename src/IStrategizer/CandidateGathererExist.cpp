@@ -18,12 +18,12 @@ DECL_SERIALIZABLE(CandidateGathererExist);
 CandidateGathererExist::CandidateGathererExist(PlayerType player, ResourceType resourceType) : 
 ConditionEx(player, CONDEX_CandidateGathererExist)
 {
-	_conditionParameters[PARAM_ResourceId] = resourceType;
+	m_params[PARAM_ResourceId] = resourceType;
 }
 //---------------------------------------------------------------------------------------------------
 bool CandidateGathererExist::Evaluate(RtsGame& game)
 {
-	ResourceType resourceType = (ResourceType)_conditionParameters[PARAM_ResourceId];
+	ResourceType resourceType = (ResourceType)m_params[PARAM_ResourceId];
 	AbstractAdapter* pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
 
 	// Adapt gatherer

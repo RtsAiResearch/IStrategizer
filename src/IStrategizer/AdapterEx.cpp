@@ -327,10 +327,20 @@ TID AdapterEx::AdaptWorkerForBuild(EntityClassType buildingType)
         EntityList ladder;
         StackRankEntitiesOfType(PLAYER_Self, builderType, BuilderStatesRank, ladder);
 
-        if (ladder.empty())
-            return INVALID_TID;
-        else
-            return ladder[0];
+        TID candidateBuilder = INVALID_TID;
+
+        for (auto builderId : ladder)
+        {
+            auto pTrainer = g_Game->Self()->GetEntity(builderId);
+
+            if (pTrainer->CanBuild(buildingType))
+            {
+                candidateBuilder = builderId;
+                break;
+            }
+        }
+
+        return candidateBuilder;
     }
 }
 //////////////////////////////////////////////////////////////////////////

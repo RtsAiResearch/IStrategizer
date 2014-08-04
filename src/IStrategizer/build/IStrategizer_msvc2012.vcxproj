@@ -24,6 +24,7 @@
     <ClInclude Include="..\ArmyFSM.h" />
     <ClInclude Include="..\AttackEntityAction.h" />
     <ClInclude Include="..\AttackGroundAction.h" />
+    <ClInclude Include="..\BuilderExist.h" />
     <ClInclude Include="..\CombatManager.h" />
     <ClInclude Include="..\AttributesMetaData.h" />
     <ClInclude Include="..\BasicAttackFSMState.h" />
@@ -58,6 +59,7 @@
     <ClInclude Include="..\EngineDefs.h" />
     <ClInclude Include="..\EngineObject.h" />
     <ClInclude Include="..\CandidateGathererExist.h" />
+    <ClInclude Include="..\TrainerExist.h" />
     <ClInclude Include="..\WorkersManager.h" />
     <ClInclude Include="..\StrategySelector.h" />
     <ClInclude Include="..\TargetFSMState.h" />
@@ -151,6 +153,7 @@
     <ClCompile Include="..\AttackGroundAction.cpp" />
     <ClCompile Include="..\BotStatistics.cpp" />
     <ClCompile Include="..\BuildActionEx.cpp" />
+    <ClCompile Include="..\BuilderExist.cpp" />
     <ClCompile Include="..\BuildInfrastructureGoal.cpp" />
     <ClCompile Include="..\BuildingDescription.cpp" />
     <ClCompile Include="..\CaseBasedReasonerEx.cpp" />
@@ -206,6 +209,7 @@
     <ClCompile Include="..\ResearchDone.cpp" />
     <ClCompile Include="..\ResourceDescription.cpp" />
     <ClCompile Include="..\ResourceExist.cpp" />
+    <ClCompile Include="..\TrainerExist.cpp" />
     <ClCompile Include="..\WorkersManager.cpp" />
     <ClCompile Include="..\RetainerEx.cpp" />
     <ClCompile Include="..\RetrieverEx.cpp" />

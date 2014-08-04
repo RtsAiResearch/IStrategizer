@@ -73,10 +73,6 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
     {
         SelectNextStrategyGoal();
     }
-    else if (msgType == MSG_BaseUnderAttack)
-    {
-        m_combatMgr.DefendArea(*((DataMessage<Vector2>*)pMsg)->Data());
-    }
 }
 //--------------------------------------------------------------------------------
 void IStrategizerEx::Update(unsigned p_gameCycle)
@@ -114,11 +110,11 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
                     LogInfo("Enemy spawn location not discovered yet, will attack a suspected location %s", enemyLoc.ToString());
                 }
 
-                m_combatMgr.AttackArea(enemyLoc);
+                m_combatMgr.AttackEnemy(enemyLoc);
             }
             else if (m_situation == SITUATION_UnderSiegePushing)
             {
-                m_combatMgr.DefendArea(g_Game->Self()->StartLocation());
+                m_combatMgr.DefendBase();
             }
 
             m_combatMgr.Update();
@@ -182,13 +178,10 @@ bool IStrategizerEx::Init()
         m_pPlanner = shared_ptr<OnlineCaseBasedPlannerEx>(new OnlineCaseBasedPlannerEx());
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
         m_pPlanner->Init();
-
         // Init scout manager
         m_scoutMgr.Init();
-
         // Init combat manager
         m_combatMgr.Init();
-
         // Init resource manager
         m_workersMgr.Init();
 
@@ -216,8 +209,8 @@ void IStrategizerEx::SelectNextStrategyGoal()
         m_param.Consultant->SelectNextStrategy();
     }
 
-    _ASSERTE(!params.empty());
     params = m_param.Consultant->CurrStrategyGoalParams();
+    _ASSERTE(!params.empty());
     m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
 }
 //////////////////////////////////////////////////////////////////////////
@@ -225,6 +218,13 @@ void IStrategizerEx::DebugDraw()
 {
     m_combatMgr.DebugDraw();
     g_Game->DebugDraw();
+
+    g_Game->DebugDrawMapCircle(g_Game->Self()->StartLocation(), BordersRadius, GCLR_Purple);
+    g_Game->DebugDrawMapCircle(g_Game->Self()->StartLocation(), BordersRadius + 2, GCLR_Purple);
+
+    char str[128];
+    sprintf_s(str, "Situation: %s", Enums[m_situation]);
+    g_Game->DebugDrawScreenText(Vector2(5, 5), str, GCLR_White);
 }
 //////////////////////////////////////////////////////////////////////////
 void IStrategizerEx::ReviseSituation()

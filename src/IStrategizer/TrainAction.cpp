@@ -16,6 +16,7 @@
 #include "EntityClassExist.h"
 #include "PlayerAttributeExist.h"
 #include "Logger.h"
+#include "TrainerExist.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -213,7 +214,7 @@ void TrainAction::InitializePreConditions()
 	m_trainerType = g_Game->GetEntityType(traineeType)->SourceEntity();
 	vector<Expression*> m_terms;
 
-	m_terms.push_back(new EntityClassExist(PLAYER_Self, m_trainerType, OBJSTATE_Idle, true));
+	m_terms.push_back(new TrainerExist(traineeType));
 	g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
 	_preCondition = new And(m_terms);
 }

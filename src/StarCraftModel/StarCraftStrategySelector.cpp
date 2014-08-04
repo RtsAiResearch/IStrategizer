@@ -21,7 +21,7 @@ void StarCraftStrategySelector::SelectGameOpening()
 
     AbstractRetriever::RetrieveOptions opt;
 
-    opt.CaseName = STRATEGY_TvP_GundamRush;
+    opt.CaseName = STRATEGYNAME_TvP_GundamRush;
 
     auto pCase = g_OnlineCaseBasedPlanner->Reasoner()->Retriever()->Retrieve(opt);
 
@@ -48,9 +48,9 @@ bool StarCraftStrategySelector::IsGoodTimeToPush()
             Broodwar->self()->completedUnitCount(UnitTypes::Terran_Siege_Tank_Tank_Mode);
         int marinesCount = Broodwar->self()->completedUnitCount(UnitTypes::Terran_Marine);
 
-        return vulturesCount > 1 &&
-            tanksCount > 1 &&
-            marinesCount > 1;
+        return vulturesCount >= 1 &&
+            tanksCount >= 1 &&
+            marinesCount >= 1;
     }
 
     DEBUG_THROW(NotImplementedException(XcptHere));

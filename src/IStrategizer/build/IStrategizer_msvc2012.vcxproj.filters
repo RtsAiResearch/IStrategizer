@@ -234,9 +234,6 @@
     <ClInclude Include="..\True.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
-    <ClInclude Include="..\ResourceExist.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="..\AbstractionMetaData.h">
       <Filter>Header Files\Defs</Filter>
     </ClInclude>
@@ -449,6 +446,15 @@
     </ClInclude>
     <ClInclude Include="..\EntityFSM.h">
       <Filter>Header Files\Managers\CombatManager\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BuilderExist.h">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TrainerExist.h">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ResourceExist.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -691,6 +697,12 @@
     </ClCompile>
     <ClCompile Include="..\WorkersManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BuilderExist.cpp">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TrainerExist.cpp">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

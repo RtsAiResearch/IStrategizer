@@ -26,12 +26,16 @@ m_totalMaxHP(0),
 m_boundingCircleRadius(0),
 m_pName(pName),
 m_controlBroken(false),
-m_controlWorkers(false)
+m_controlWorkers(false),
+m_closestEntityToCenter(INVALID_TID),
+m_farthestEntityToCenter(INVALID_TID)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
+    g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
 
     m_pLogic = StackFSMPtr(new IdleArmyFSM(this));
-    m_pLogic->Reset();
+
+    ResetLogicParams();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::SetControlType(_In_ bool controlBroken, _In_ bool controlWorkers)
@@ -74,7 +78,19 @@ void ArmyController::NotifyMessegeSent(_In_ Message* pMsg)
 
         if (pDestroyMsg->Data()->OwnerId == PLAYER_Self)
         {
-            OnEntityDestroyed(pDestroyMsg->Data()->EntityId);
+            OnEntityLost(pDestroyMsg->Data()->EntityId);
+        }
+    }
+    else if (pMsg->TypeId() == MSG_EntityRenegade)
+    {
+        EntityDestroyMessage* pDestroyMsg = static_cast<EntityDestroyMessage*>(pMsg);
+        _ASSERTE(pDestroyMsg && pDestroyMsg->Data());
+
+        // One of my units changed control to another player
+        if (pDestroyMsg->Data()->OwnerId != PLAYER_Self &&
+            m_entities.count(pDestroyMsg->Data()->EntityId) > 0)
+        {
+            OnEntityLost(pDestroyMsg->Data()->EntityId);
         }
     }
 }
@@ -123,6 +139,11 @@ void ArmyController::ReleaseEntity(_In_ TID entityId)
 
         pCtrlr->ReleaseEntity();
         m_entities.erase(entityId);
+
+        if (m_entities.empty())
+        {
+            ResetCache();
+        }
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -132,12 +153,11 @@ void ArmyController::Update()
         return;
 
     CalcCetner();
+    CalcBoundries();
     CalcEnemyData();
 
     if (m_controlWorkers)
-    {
         CalcDamagedRepairablesNearby();
-    }
 
     m_pLogic->Update();
 
@@ -160,6 +180,8 @@ void ArmyController::Defend(_In_ Vector2 pos)
     _ASSERTE(!pos.IsInf());
     LogInfo("%s -> Defend(%s)", ToString().c_str(), pos.ToString().c_str());
 
+    ResetLogicParams();
+
     // Set the logic input position to defend
     TargetPosition(pos);
 
@@ -172,6 +194,8 @@ void ArmyController::Attack(_In_ Vector2 pos)
     _ASSERTE(!pos.IsInf());
     LogInfo("%s -> Attack(%s)", ToString().c_str(), pos.ToString().c_str());
 
+    ResetLogicParams();
+
     // Set the logic input position to attack at
     TargetPosition(pos);
 
@@ -183,6 +207,8 @@ void ArmyController::Stand(_In_ Vector2 pos)
 {
     _ASSERTE(!pos.IsInf());
     LogInfo("%s -> Stand(%s)", ToString().c_str(), pos.ToString().c_str());
+
+    ResetLogicParams();
 
     // Set the logic input position to stand at
     TargetPosition(pos);
@@ -209,21 +235,32 @@ void ArmyController::CalcCetner()
     m_center /= (int)m_entities.size();
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::CalcBoundingCircleRadius()
+void ArmyController::CalcBoundries()
 {
     m_boundingCircleRadius = 0;
+    m_closestEntityToCenter = INVALID_TID;
 
     if (m_entities.empty())
         return;
 
     int maxDist = INT_MIN;
+    int minDist = INT_MAX;
 
     for (auto& entityR : m_entities)
     {
         int dist = m_center.Distance(entityR.second->Entity()->Position());
 
         if (dist > maxDist)
+        {
             maxDist = dist;
+            m_farthestEntityToCenter = entityR.first;
+        }
+
+        if (dist < minDist)
+        {
+            minDist = dist;
+            m_closestEntityToCenter = entityR.first;
+        }
     }
 
     m_boundingCircleRadius = maxDist;
@@ -239,7 +276,7 @@ void ArmyController::CalcEnemyData()
 
     for (auto& entityR : g_Game->Enemy()->Entities())
     {
-        if (entityR.second->Exists() && 
+        if (entityR.second->Exists() &&
             entityR.second->P(OP_IsTargetable))
         {
             otherPos = entityR.second->Position();
@@ -352,7 +389,7 @@ void ArmyController::ReleaseHealthyEntities()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyController::OnEntityDestroyed(_In_ TID entityId)
+void ArmyController::OnEntityLost(_In_ TID entityId)
 {
     ReleaseEntity(entityId);
     ++m_totalDiedEntities;
@@ -473,3 +510,21 @@ TID ArmyController::ChooseRepairTarget(_In_ const GameEntity* pEntity)
     return INVALID_TID;
 }
 //////////////////////////////////////////////////////////////////////////
+void ArmyController::ResetLogicParams()
+{
+    // Parameters
+    m_targetEntityId = INVALID_TID;
+    m_singleTargetPos = Vector2::Inf();
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::ResetCache()
+{
+    m_enemyData.clear();
+    m_closestEnemy.clear();
+    m_formationData = ArmyGroupFormation::Data();
+    m_damagedRepairablesNearby.clear();
+    m_boundingCircleRadius = 0;
+    m_center = Vector2::Inf();
+    m_closestEntityToCenter = INVALID_TID;
+    m_farthestEntityToCenter = INVALID_TID;
+}

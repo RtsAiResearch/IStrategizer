@@ -17,36 +17,36 @@ EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitCl
 ConditionEx(p_player, CONDEX_EntityClassExist),
 m_checkFree(checkFree)
 {
-    _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
-    _conditionParameters[PARAM_Amount] = p_amount;
-    _conditionParameters[PARAM_ObjectStateType] = state;
+    m_params[PARAM_EntityClassId] = p_unitClassId;
+    m_params[PARAM_Amount] = p_amount;
+    m_params[PARAM_ObjectStateType] = state;
 }
 //---------------------------------------------------------------------------------------------------
 EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, ObjectStateType state, bool checkFree) :
 ConditionEx(p_player, CONDEX_EntityClassExist),
 m_checkFree(checkFree)
 {
-    _conditionParameters[PARAM_EntityClassId] = p_unitClassId;
-    _conditionParameters[PARAM_Amount] = DONT_CARE;
-    _conditionParameters[PARAM_ObjectStateType] = state;
+    m_params[PARAM_EntityClassId] = p_unitClassId;
+    m_params[PARAM_Amount] = DONT_CARE;
+    m_params[PARAM_ObjectStateType] = state;
 }
 //---------------------------------------------------------------------------------------------------
 EntityClassExist::EntityClassExist(PlayerType p_player) :
 ConditionEx(p_player, CONDEX_EntityClassExist),
 m_checkFree(false)
 {
-    _conditionParameters[PARAM_EntityClassId] = OBJSTATE_END;
-    _conditionParameters[PARAM_Amount] = DONT_CARE;
+    m_params[PARAM_EntityClassId] = OBJSTATE_END;
+    m_params[PARAM_Amount] = DONT_CARE;
 }
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Evaluate(RtsGame& game)
 {
-    if (_conditionParameters[PARAM_EntityClassId] != OBJSTATE_END)
+    if (m_params[PARAM_EntityClassId] != OBJSTATE_END)
     {
-        EntityClassType entityClassId = (EntityClassType)_conditionParameters[PARAM_EntityClassId];
-        int amount = _conditionParameters[PARAM_Amount];
-        auto state = (ObjectStateType)_conditionParameters[PARAM_ObjectStateType];
-        PlayerType playerId = (PlayerType)_conditionParameters[PARAM_PlayerId];
+        EntityClassType entityClassId = (EntityClassType)m_params[PARAM_EntityClassId];
+        int amount = m_params[PARAM_Amount];
+        auto state = (ObjectStateType)m_params[PARAM_ObjectStateType];
+        PlayerType playerId = (PlayerType)m_params[PARAM_PlayerId];
 
         ConditionEx::Evaluate(game);
         _isSatisfied = g_Assist.DoesEntityClassExist(make_pair(entityClassId, amount), state, m_checkFree, playerId);
@@ -57,30 +57,30 @@ bool EntityClassExist::Evaluate(RtsGame& game)
 //---------------------------------------------------------------------------------------------------
 bool EntityClassExist::Consume(int p_amount)
 {
-    if (p_amount > 0 || _conditionParameters[PARAM_Amount] == DONT_CARE)
+    if (p_amount > 0 || m_params[PARAM_Amount] == DONT_CARE)
     {
         // (1) The entity is reusable so return true
         // There is no required amount to so return true.
         // (2) The source is infinite so always return true
         return true;
     }
-    else if (p_amount == 0 || _conditionParameters[PARAM_Amount] == 0)
+    else if (p_amount == 0 || m_params[PARAM_Amount] == 0)
     {
         // The current available amount is 0 so can not consume anything.
         return false;
     }
-    else if (p_amount == DONT_CARE && _conditionParameters[PARAM_Amount] != DONT_CARE)
+    else if (p_amount == DONT_CARE && m_params[PARAM_Amount] != DONT_CARE)
     {
         // The request is infinite source, consume all available amount
-        _ASSERTE(_conditionParameters[PARAM_Amount] > 0);
-        _conditionParameters[PARAM_Amount] = 0;
+        _ASSERTE(m_params[PARAM_Amount] > 0);
+        m_params[PARAM_Amount] = 0;
 
         return true;
     }
     else
     {
-        _ASSERTE(p_amount > 0 && _conditionParameters[PARAM_Amount] > 0);
-        _conditionParameters[PARAM_Amount] -= p_amount;
+        _ASSERTE(p_amount > 0 && m_params[PARAM_Amount] > 0);
+        m_params[PARAM_Amount] -= p_amount;
 
         return true;
     }

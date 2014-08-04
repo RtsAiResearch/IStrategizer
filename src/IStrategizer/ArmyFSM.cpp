@@ -2,6 +2,7 @@
 #include "ArmyController.h"
 #include "EntityFSM.h"
 #include "GameEntity.h"
+#include "WorldMap.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -47,7 +48,8 @@ void ArmyState::DebugDraw()
     if (!pController->TargetPosition().IsInf())
         g_Game->DebugDrawMapLine(pController->Center(), pController->TargetPosition(), GCLR_Orange);
 
-    if (pController->TargetEntity() != INVALID_TID)
+    if (pController->TargetEntity() != INVALID_TID &&
+        g_Game->GetEntity(pController->TargetEntity()) != nullptr)
         g_Game->DebugDrawMapCircle(g_Game->GetEntity(pController->TargetEntity())->Position(), 16, GCLR_Red);
 
     g_Game->DebugDrawMapCircle(pController->Center(), 32, GCLR_Orange);
@@ -95,7 +97,10 @@ void RegroupArmyState::Enter()
     auto pController = (ArmyController*)m_pController;
 
     if (m_regroupAtArmyCenter)
-        m_targetPos1 = pController->Center();
+    {
+        TID closestToCenterId = pController->ClosestEntityToCenter();
+        m_targetPos1 = g_Game->Map()->GetClosestReachableRegionCenter(closestToCenterId);
+    }
     else
         m_targetPos1 = pController->TargetPosition();
 

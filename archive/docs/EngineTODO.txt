@@ -1,6 +1,6 @@
 Worker Manager
 [DONE] - Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct assigned sources
-- If out of minerals, order gatherers to mine from other explored
+[DONE] - If out of minerals, order gatherers to mine from other explored
 [DONE] - Repair damaged mech units
 
 City Builing
@@ -31,6 +31,7 @@ Macro
 Planner
 [DONE] - Fix planner goal resource sharing and synchronization bugs
 - Succeeding nodes dont expand, except root node, always expand
+- Perioding maintainance of the already succeeding goals, if failed reopen them
 
 Strategy
 - Detect enemy startegy from the first scouting and replan the counter

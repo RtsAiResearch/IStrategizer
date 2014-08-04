@@ -51,6 +51,7 @@ namespace IStrategizer
         virtual int LastCommandFrame() const = 0;
         void SetController(_In_ EntityController* pController) { m_pController = pController; }
         virtual void DebugDraw();
+        virtual bool CanBuild(_In_ EntityClassType typeId) const = 0;
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;

@@ -303,12 +303,12 @@ void StarCraftGame::DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ Game
     Broodwar->drawLineMap(p1.X, p1.Y, p2.X, p2.Y, BwapiColorFrom(c));
 }
 //////////////////////////////////////////////////////////////////////////
-void StarCraftGame::DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c)
+void StarCraftGame::DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c, _In_ bool fill)
 {
     if (p.IsInf() || r <= 0)
         return;
 
-    Broodwar->drawCircleMap(p.X, p.Y, r, BwapiColorFrom(c), false);
+    Broodwar->drawCircleMap(p.X, p.Y, r, BwapiColorFrom(c), fill);
 }
 //////////////////////////////////////////////////////////////////////////
 void StarCraftGame::DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt)
@@ -327,3 +327,10 @@ void StarCraftGame::DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bot
     Broodwar->drawBoxMap(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y, BwapiColorFrom(c), fill);
 }
 //////////////////////////////////////////////////////////////////////////
+void StarCraftGame::DebugDrawScreenText(_In_ Vector2 p, _In_ const std::string& txt, _In_ GameDrawColor c)
+{
+    if (p.IsInf())
+        return;
+
+    Broodwar->drawTextScreen(p.X, p.Y, txt.c_str());
+}

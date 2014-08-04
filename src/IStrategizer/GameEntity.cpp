@@ -36,7 +36,18 @@ void GameEntity::CacheAttributes()
 //////////////////////////////////////////////////////////////////////////
 void GameEntity::DebugDrawTarget()
 {
-    g_Game->DebugDrawMapLine(Position(), TargetPosition(), GCLR_Red);
+    auto targetPos = TargetPosition();
+
+    if (targetPos.IsInf())
+        return;
+
+    auto selfPos = Position();
+
+    if (selfPos == targetPos)
+        return;
+
+    g_Game->DebugDrawMapLine(selfPos, targetPos, GCLR_Red);
+    g_Game->DebugDrawMapCircle(targetPos, 3, GCLR_Red, true);
 }
 //////////////////////////////////////////////////////////////////////////
 void GameEntity::DebugDrawRange()

@@ -13,37 +13,37 @@
 #endif
 using namespace IStrategizer;
 
-EventTriggered::EventTriggered(MessageType p_eventTypeId, const PlanStepParameters& p_eventArgs) : _triggered(false) 
+EventTriggered::EventTriggered(MessageType p_eventTypeId, const PlanStepParameters& p_eventArgs) : _triggered(false)
 {
     g_MessagePump->RegisterForMessage(p_eventTypeId, this);
 
-    _conditionParameters = p_eventArgs;
-    _conditionParameters[PARAM_MessageTypeId] = (int)p_eventTypeId;
+    m_params = p_eventArgs;
+    m_params[PARAM_MessageTypeId] = (int)p_eventTypeId;
 }
 //----------------------------------------------------------------------------------------------
 void EventTriggered::NotifyMessegeSent(Message* p_message)
 {
-    if(_triggered)
+    if (_triggered)
         return;
 
-    if(p_message->TypeId() == _conditionParameters[PARAM_MessageTypeId])
+    if (p_message->TypeId() == m_params[PARAM_MessageTypeId])
     {
         DataMessage<PlanStepParameters>* m_concMsg = static_cast<DataMessage<PlanStepParameters>*>(p_message);
-        const PlanStepParameters* m_params = m_concMsg->Data();
+        const PlanStepParameters* params = m_concMsg->Data();
 
         // excluding message type id from params
         //assert(m_params->size() == _conditionParameters.size() - 1);
 
         _triggered = true;
-        for(PlanStepParameters::const_iterator itr =  m_params->begin();
-            itr != m_params->end();
+        for (PlanStepParameters::const_iterator itr = params->begin();
+            itr != params->end();
             ++itr)
         {
-            if(_conditionParameters.find(itr->first) != _conditionParameters.end()) 
+            if (m_params.find(itr->first) != m_params.end())
             {
-                _triggered &= (itr->second == _conditionParameters[itr->first]);
+                _triggered &= (itr->second == m_params[itr->first]);
 
-                if(!_triggered)
+                if (!_triggered)
                     break;
             }
         }
@@ -65,5 +65,5 @@ void EventTriggered::Copy(IClonable* p_dest)
 //----------------------------------------------------------------------------------------------
 EventTriggered::~EventTriggered()
 {
-    g_MessagePump->UnRegisterForMessage((MessageType)_conditionParameters[PARAM_MessageTypeId], this);
+    g_MessagePump->UnRegisterForMessage((MessageType)m_params[PARAM_MessageTypeId], this);
 }

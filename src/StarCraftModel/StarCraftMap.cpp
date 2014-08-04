@@ -119,6 +119,18 @@ bool StarCraftMap::IsLocationExplored(Vector2 loc) const
     return Broodwar->isExplored(TilePositionFromUnitPosition(loc.X), TilePositionFromUnitPosition(loc.Y));
 }
 //////////////////////////////////////////////////////////////////////////
+Vector2 StarCraftMap::GetClosestReachableRegionCenter(_In_ TID entityId) const
+{
+    auto pUnit = Broodwar->getUnit(entityId);
+
+    if (pUnit == nullptr)
+        return Vector2::Inf();
+
+    auto regionCenter = pUnit->getRegion()->getCenter();
+
+    return Vector2(regionCenter.x, regionCenter.y);
+}
+//////////////////////////////////////////////////////////////////////////
 void StarCraftMap::DebugDraw()
 {
     for (auto regionR : Broodwar->getAllRegions())

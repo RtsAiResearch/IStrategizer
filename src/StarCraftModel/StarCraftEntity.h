@@ -42,6 +42,7 @@ namespace IStrategizer
         bool CanAttack(_In_ TID targetId) const;
         bool CanRepair(_In_ TID entityId) const;
         bool CanReach(_In_ Vector2 dest) const;
+        bool CanBuild(_In_ EntityClassType typeId) const;
         int LastCommandFrame() const;
 
         // Game Commands

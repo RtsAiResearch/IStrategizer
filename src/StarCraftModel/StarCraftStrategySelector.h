@@ -12,7 +12,7 @@ namespace IStrategizer
         STRATEGY_TvP_GundamRush,
     };
 
-#define STRATEGYNAME_TvP_GundamRush_Opening "TvP-GundamRush"
+#define STRATEGYNAME_TvP_GundamRush "Terran-GundamRush"
 
     class StarCraftStrategySelector : public StrategySelector
     {

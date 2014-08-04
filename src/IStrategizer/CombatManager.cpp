@@ -12,7 +12,6 @@ void CombatManager::Init()
 {
     // Each army controls a specific category of units
     m_frontLinesArmy.SetControlType(false, false);
-    m_reinforcementsArmy.SetControlType(false, false);
     m_brokenArmy.SetControlType(true, false);
 
     //
@@ -29,18 +28,17 @@ void CombatManager::Init()
     Vector2F othersTranslateF = (g_Engine->BaseHeadDirection() * 320.0f);
     Vector2 othersTranslate((int)othersTranslateF.X, (int)othersTranslateF.Y);
     m_armiesBaseLoc = baseStartLoc + othersTranslate;
-    DefendArea(m_armiesBaseLoc);
+    DefendBase();
 }
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::Update()
 {
     m_brokenArmy.ReleaseHealthyEntities();
 
-    m_reinforcementsArmy.TryControlArmy(false);
+    m_frontLinesArmy.TryControlArmy(false);
     m_brokenArmy.TryControlArmy(false);
 
     m_frontLinesArmy.Update();
-    m_reinforcementsArmy.Update();
     m_brokenArmy.Update();
 
     // Army defeated, bring it back
@@ -51,32 +49,27 @@ void CombatManager::Update()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void CombatManager::AttackArea(_In_ Vector2 pos)
+void CombatManager::AttackEnemy(_In_ Vector2 pos)
 {
     _ASSERTE(!pos.IsInf());
     LogInfo("Attacking area %s", pos.ToString().c_str());
 
-    m_reinforcementsArmy.ReleaseArmy();
     m_frontLinesArmy.TryControlArmy(true);
     m_frontLinesArmy.Attack(pos);
 
     m_currOrder = CMBTMGR_Attack;
 }
 //////////////////////////////////////////////////////////////////////////
-void CombatManager::DefendArea(_In_ Vector2 pos)
+void CombatManager::DefendBase()
 {
-    _ASSERTE(!pos.IsInf());
-    LogInfo("Defending area %s", pos.ToString());
+    LogInfo("Defending area %s", m_armiesBaseLoc.ToString());
 
-    m_frontLinesArmy.Defend(pos);
-    m_reinforcementsArmy.Defend(pos);
-
+    m_frontLinesArmy.Defend(m_armiesBaseLoc);
     m_currOrder = CMBTMGR_Defend;
 }
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::DebugDraw()
 {
-    m_reinforcementsArmy.DebugDraw();
     m_frontLinesArmy.DebugDraw();
     m_brokenArmy.DebugDraw();
 }

@@ -23,7 +23,6 @@ namespace IStrategizer
     public:
         CombatManager(StrategySelectorPtr pConsultant) :
             m_pConsultant(pConsultant),
-            m_reinforcementsArmy("ReinforcementsArmy", pConsultant),
             m_frontLinesArmy("FrontLinesArmy", pConsultant),
             m_brokenArmy("BrokenArmy", pConsultant),
             m_currOrder(CMBTMGR_Defend),
@@ -32,8 +31,8 @@ namespace IStrategizer
 
         void Init();
         void Update();
-        void AttackArea(_In_ Vector2 pos);
-        void DefendArea(_In_ Vector2 pos);
+        void AttackEnemy(_In_ Vector2 pos);
+        void DefendBase();
         void DebugDraw();
         CombatManagerOrder CurrentOrder() const { return m_currOrder; }
 
@@ -41,7 +40,6 @@ namespace IStrategizer
         Vector2 m_armiesBaseLoc;
         StrategySelectorPtr m_pConsultant;
         ArmyController m_frontLinesArmy;
-        ArmyController m_reinforcementsArmy;
         ArmyController m_brokenArmy;
         CombatManagerOrder m_currOrder;
     };

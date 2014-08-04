@@ -16,6 +16,7 @@ namespace IStrategizer
         MapArea GetSpecialBuildingPosition(EntityClassType p_buildingType) const;
         void SpawnLocations(_Out_ std::vector<Vector2>& spawnPoints) const;
         bool IsLocationExplored(Vector2 loc) const;
+        Vector2 GetClosestReachableRegionCenter(_In_ TID entityId) const;
         void DebugDraw();
     };
 }

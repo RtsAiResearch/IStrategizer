@@ -20,7 +20,6 @@ m_pController(pController),
 m_closeMeleeAttackerId(INVALID_TID),
 m_typeId(ECLASS_END)
 {
-    g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 }
 
 Vector2 EntityController::TargetPosition() const
