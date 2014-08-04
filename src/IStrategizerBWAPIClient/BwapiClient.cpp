@@ -111,7 +111,7 @@ void BwapiClient::ConnectToBwapiServer()
 {
     while(!m_bShutdown && !BWAPIClient.connect())
     {
-        Sleep(250);
+        Sleep(500);
     }
 }
 //////////////////////////////////////////////////////////////////////////

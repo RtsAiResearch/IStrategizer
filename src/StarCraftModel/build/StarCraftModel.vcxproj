@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\BWAPI;$(SolutionDir)\IStrategizer;$(SolutionDir)\3rdParty\Serialization\UnrealCompiler;$(SolutionDir)\3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BWAPI_DIR)\include;$(SolutionDir)\IStrategizer;$(SolutionDir)\3rdParty\Serialization\UnrealCompiler;$(SolutionDir)\3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Lib />
@@ -114,7 +114,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\BWAPI;$(SolutionDir)\IStrategizer;$(SolutionDir)\3rdParty\Serialization\UnrealCompiler;$(SolutionDir)\3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BWAPI_DIR)\include;$(SolutionDir)\IStrategizer;$(SolutionDir)\3rdParty\Serialization\UnrealCompiler;$(SolutionDir)\3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PreBuildEvent>
       <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" "$(SolutionDir)$(ProjectName)" "$(SolutionDir)..\engine\$(PlatformName)$(Configuration)"</Command>

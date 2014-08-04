@@ -28,7 +28,6 @@
 #endif
 #include "IStrategizerException.h"
 #include "Logger.h"
-#include "GmlHelper.h"
 #include <list>
 
 using namespace IStrategizer;
@@ -267,12 +266,12 @@ void GraphScene::ConnectGraphNodes()
 //----------------------------------------------------------------------------------------------
 void GraphScene::LayoutGraphInHierarchy()
 {
-    if(m_pGraph == nullptr)
-        return;
+    //if(m_pGraph == nullptr)
+    //    return;
 
-    GmlHelper gml;
-    gml.Load(m_pGraph);
-    gml.Layout();
+    //GmlHelper gml;
+    //gml.Load(m_pGraph);
+    //gml.Layout();
 };
 //----------------------------------------------------------------------------------------------
 void GraphScene::LayoutGraph()
