@@ -426,14 +426,8 @@
     <ClInclude Include="..\CombatManager.h">
       <Filter>Header Files\Managers\CombatManager</Filter>
     </ClInclude>
-    <ClInclude Include="..\ScoutManager.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
     <ClInclude Include="..\EntityController.h">
       <Filter>Header Files\Managers\CombatManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\EntityFSM.h">
-      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\StrategySelector.h">
       <Filter>Header Files</Filter>
@@ -449,6 +443,12 @@
     </ClInclude>
     <ClInclude Include="..\GatherResourceAction.h">
       <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScoutManager.h">
+      <Filter>Header Files\Managers\CombatManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EntityFSM.h">
+      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

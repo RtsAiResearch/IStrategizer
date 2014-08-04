@@ -126,7 +126,7 @@ int StarCraftEntity::P(EntityObjectProperty attrId) const
 
         case OP_IsRepairing:
             return m_pUnit->isRepairing();
-
+            
         case OP_BuildEntityId:
             if (m_pUnit->getBuildUnit() != nullptr)
                 return m_pUnit->getBuildUnit()->getID();

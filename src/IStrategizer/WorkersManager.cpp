@@ -102,24 +102,24 @@ void WorkersManager::NotifyMessegeSent(Message* pMsg)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void WorkersManager::Update(_In_ RtsGame& game)
+void WorkersManager::Update()
 {
 	if (m_firstUpdate)
 	{
 		m_firstUpdate = false;
-		UpdateDelayedSources(game);
+		UpdateDelayedSources();
 	}
 
-	if (game.Clock().ElapsedGameCycles() % 2 != 0)
+	if (g_Game->GameFrame() % 2 != 0)
 		return;
 
     m_workersArmy.TryControlArmy(false);
     m_workersArmy.Update();
 
-	UpdateWorkersState(game);
-	UnassignAstrayWorkers(game);
-	MaintainSecondaryResources(game);
-	MaintainPrimaryResources(game);
+	UpdateWorkersState();
+	UnassignAstrayWorkers();
+	MaintainSecondaryResources();
+	MaintainPrimaryResources();
 }
 //////////////////////////////////////////////////////////////////////////
 void WorkersManager::GetResourceSources(_In_ ResourceType resource, _Out_ EntityList& sources)
@@ -130,13 +130,13 @@ void WorkersManager::GetResourceSources(_In_ ResourceType resource, _Out_ Entity
 	pPlayer->Entities(g_Game->Self()->Race()->GetResourceSource(resource), sources);
 }
 //////////////////////////////////////////////////////////////////////////
-void WorkersManager::MaintainSecondaryResources(_In_ RtsGame& game)
+void WorkersManager::MaintainSecondaryResources()
 {
 	auto lastPrimaryGatherers = m_lastFrameWorkers[OBJSTATE_GatheringPrimary];
     
 	for (auto& sourceDist : m_secondarySrcDist)
 	{
-		if (game.Self()->GetEntity(sourceDist.second)->P(OP_State) != OBJSTATE_Idle)
+		if (g_Game->Self()->GetEntity(sourceDist.second)->P(OP_State) != OBJSTATE_Idle)
 			continue;
 
 		auto& source = m_sources.at(sourceDist.second);
@@ -171,7 +171,7 @@ void WorkersManager::MaintainSecondaryResources(_In_ RtsGame& game)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void WorkersManager::MaintainPrimaryResources(_In_ RtsGame& game)
+void WorkersManager::MaintainPrimaryResources()
 {
 	auto& idleWorkers = m_lastFrameWorkers[OBJSTATE_Idle];
 
@@ -187,7 +187,7 @@ void WorkersManager::MaintainPrimaryResources(_In_ RtsGame& game)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void WorkersManager::UpdateWorkersState(_In_ RtsGame& game)
+void WorkersManager::UpdateWorkersState()
 {
 	m_lastFrameWorkers.clear();
 
@@ -211,7 +211,7 @@ WorkersManager::SourceRecord* WorkersManager::GetFirstAvailPrimarySource()
 	return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-void WorkersManager::UpdateDelayedSources(_In_ RtsGame& game)
+void WorkersManager::UpdateDelayedSources()
 {
 	LogActivity(UpdateDelayedSources);
 
@@ -303,7 +303,7 @@ void WorkersManager::UnassignWorker(_In_ TID workerId)
 	}
 }
 //////////////////////////////////////////////////////////////////////////
-void WorkersManager::UnassignAstrayWorkers(_In_ RtsGame& game)
+void WorkersManager::UnassignAstrayWorkers()
 {
 	auto prevWorkerToSourceMap = m_workerToSourceMap;
 
@@ -325,6 +325,11 @@ void WorkersManager::UnassignAstrayWorkers(_In_ RtsGame& game)
 			pWorker->Stop();
 		}
 	}
+}
+//////////////////////////////////////////////////////////////////////////
+TID WorkersManager::RequestScout()
+{
+    return RequestBuilder();
 }
 //////////////////////////////////////////////////////////////////////////
 TID WorkersManager::RequestBuilder()

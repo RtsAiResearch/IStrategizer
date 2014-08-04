@@ -25,6 +25,7 @@ namespace IStrategizer
         virtual void Update() {}
         void Parent(_In_ FSMState* pParent) { m_pParent = pParent; }
         const FSMState* Parent() { return m_pParent; }
+        virtual void DebugDraw() {}
 
         std::string ToString(bool minimal = false) const
         {

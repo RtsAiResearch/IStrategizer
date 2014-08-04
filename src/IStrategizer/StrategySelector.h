@@ -9,12 +9,31 @@ namespace IStrategizer
     class EntityController;
     class ArmyController;
 
+    struct Strategy
+    {
+        int Id;
+        std::string Name;
+    };
+
     class StrategySelector : public EngineObject
     {
     public:
-        virtual void SelectGameOpening(_Out_ PlanStepParameters& trainArmyParams) const = 0;
-        virtual TID SelectScout() const = 0;
+        StrategySelector() :
+            m_currStrategy({ -1, "" })
+        {}
+
+        virtual void SelectGameOpening() = 0;
+        virtual void SelectNextStrategy() = 0;
+        virtual bool IsGoodTimeToPush() = 0;
+        virtual bool IsGoodTimeToScout() = 0;
         virtual StackFSMPtr SelectMicroLogic(_In_ ArmyController* armyCtrlr, _In_ EntityController* pController) const = 0;
+
+        const Strategy& CurrStrategy() const { return m_currStrategy; }
+        const PlanStepParameters& CurrStrategyGoalParams() const { return m_currStrategyGoalParams; }
+
+    protected:
+        Strategy m_currStrategy;
+        PlanStepParameters m_currStrategyGoalParams;
     };
 
     typedef std::shared_ptr<StrategySelector> StrategySelectorPtr;

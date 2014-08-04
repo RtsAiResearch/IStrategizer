@@ -54,6 +54,7 @@ void EntityController::ControlEntity(_In_ TID entityId)
 
     m_entityId = entityId;
     m_pEntity = g_Game->Self()->GetEntity(entityId);
+    m_pEntity->SetController(this);
     m_typeId = m_pEntity->TypeId();
 
     auto pScout = g_Game->Self()->GetEntity(m_entityId);
@@ -65,10 +66,15 @@ void EntityController::ReleaseEntity()
 {
     if (m_entityId != INVALID_TID)
     {
-        auto pScout = g_Game->Self()->GetEntity(m_entityId);
+        auto pEntity = g_Game->Self()->GetEntity(m_entityId);
 
-        if (pScout && pScout->IsLocked())
-            pScout->Unlock(this);
+        if (pEntity)
+        {
+            pEntity->SetController(nullptr);
+
+            if (pEntity->IsLocked())
+                pEntity->Unlock(this);
+        }
 
         m_entityId = INVALID_TID;
         m_typeId = ECLASS_END;

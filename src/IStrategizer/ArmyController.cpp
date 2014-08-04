@@ -19,6 +19,7 @@ ArmyController::ArmyController(const char* pName, StrategySelectorPtr pConsultan
 m_pConsultant(pConsultant),
 m_targetEntityId(INVALID_TID),
 m_singleTargetPos(Vector2::Inf()),
+m_center(Vector2::Inf()),
 m_totalDiedEntities(0),
 m_totalGroundAttack(0),
 m_totalMaxHP(0),
@@ -235,37 +236,29 @@ void ArmyController::CalcEnemyData()
 
     m_closestEnemy.clear();
     m_enemyData.clear();
-    m_enemiesInSight.clear();
-
-    auto sightArea = SightArea();
 
     for (auto& entityR : g_Game->Enemy()->Entities())
     {
-        otherPos = entityR.second->Position();
-        int dist = selfPos.Distance(otherPos);
-
         if (entityR.second->Exists() && 
             entityR.second->P(OP_IsTargetable))
         {
+            otherPos = entityR.second->Position();
+            int dist = selfPos.Distance(otherPos);
             m_closestEnemy.insert(make_pair(dist, entityR.first));
+
             auto& dat = m_enemyData[entityR.first];
             dat.Id = entityR.first;
             dat.DistanceToCenter = dist;
             dat.TargetEntityId = entityR.second->TargetId();
-
-            if (sightArea.IsInside(otherPos))
-                m_enemiesInSight.insert(entityR.first);
         }
     }
 
-    // No enemy close to me OR
-    // There are enemies close to me, but the closest one is not in sight
-    if (m_closestEnemy.empty() ||
-        m_enemiesInSight.count(m_closestEnemy.begin()->second) == 0)
+    // No enemy close to me
+    if (m_closestEnemy.empty())
     {
         m_targetEntityId = INVALID_TID;
     }
-    // The closest enemy to me is in sight
+    // The closest enemy to me is in sight, and it is not my last chosen one
     else if (m_targetEntityId != m_closestEnemy.begin()->second)
     {
         m_targetEntityId = m_closestEnemy.begin()->second;

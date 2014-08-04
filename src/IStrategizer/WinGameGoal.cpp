@@ -13,7 +13,7 @@ using namespace std;
 
 WinGameGoal::WinGameGoal() : GoalEx(GOALEX_WinGame)
 {
-    _params[PARAM_StrategyTypeId] = STRTYPE_START;
+    _params[PARAM_StrategyTypeId] = DONT_CARE;
 }
 //----------------------------------------------------------------------------------------------
 WinGameGoal::WinGameGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_WinGame, p_parameters)
@@ -43,7 +43,7 @@ vector<GoalEx*> WinGameGoal::GetSucceededInstances(RtsGame &game)
     if (enemyEntities.empty())
     {
         PlanStepParameters params;
-        params[PARAM_StrategyTypeId] = STRTYPE_EarlyTierRush;
+        params[PARAM_StrategyTypeId] = DONT_CARE;
         succeededGoals.push_back(g_GoalFactory.GetGoal(GOALEX_WinGame, params, true));
         LogInfo("WinGameGoal succeeded with strategt type='%s'", Enums[params[PARAM_StrategyTypeId]]);
     }

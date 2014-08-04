@@ -291,16 +291,6 @@ namespace IStrategizer
     Enums[OBJSTATE_UnderAttack] = "Under Attack"; \
 	Enums[OBJSTATE_DontCare] = "Don't Care State";
     //---------------------------------------------------------------------------
-#define Prefix_StrategyType STRTYPE
-    enum StrategyType
-    {
-        STRTYPE_EarlyTierRush    = 0x20e00,
-        STRTYPE_START            = 0x20e00,
-        STRTYPE_END
-    };
-#define Define_StrategyType \
-    Enums[STRTYPE_EarlyTierRush] = "Early Tier Rush";
-    //---------------------------------------------------------------------------
 #define Prefix_BaseType BASETYPE
     enum BaseType
     {
@@ -332,16 +322,19 @@ namespace IStrategizer
 #define Prefix_SituationType SITUATION
     enum SituationType
     {
-        SITUATION_Misc    = 0x21200,
+        SITUATION_UnderSiegeDefending = 0x21200,
         SITUATION_START    = 0x21200,
-        SITUATION_Beginning,
-        SITUATION_Defense,
-        SITUATION_Attack,
-        SITUATION_DevDefense,
-        SITUATION_DevAttack,
-        SITUATION_BaseDevelopment,
+        SITUATION_UnderSiegePushing,
+        SITUATION_SafeDevelopmentDefending,
+        SITUATION_SafeDevelopmentPushing,
         SITUATION_END,
     };
+#define Define_SituationType \
+    Enums[SITUATION_UnderSiegeDefending] = "UnderSiegeDefending"; \
+    Enums[SITUATION_UnderSiegePushing] = "UnderSiegePushing"; \
+    Enums[SITUATION_SafeDevelopmentDefending] = "SafeDevelopmentDefending"; \
+    Enums[SITUATION_SafeDevelopmentPushing] = "SafeDevelopmentPushing"; \
+
     //---------------------------------------------------------------------------
 #define Prefix_PercentageType PRCNT
     enum PercentageType

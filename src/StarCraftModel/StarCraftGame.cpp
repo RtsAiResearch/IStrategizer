@@ -326,3 +326,4 @@ void StarCraftGame::DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bot
 
     Broodwar->drawBoxMap(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y, BwapiColorFrom(c), fill);
 }
+//////////////////////////////////////////////////////////////////////////

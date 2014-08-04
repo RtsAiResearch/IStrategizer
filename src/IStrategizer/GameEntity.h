@@ -16,6 +16,7 @@ namespace IStrategizer
     enum PlayerType;
     class RtsGame;
     class GameType;
+    class EntityController;
 
     ///> class=GameEntity
 	class GameEntity : public SharedResource
@@ -24,7 +25,8 @@ namespace IStrategizer
     public:
         GameEntity(TID id) :
             m_id(id),
-            m_cacheFrame(-1)
+            m_cacheFrame(-1),
+            m_pController(nullptr)
         {}
         virtual ~GameEntity() {}
 
@@ -47,6 +49,8 @@ namespace IStrategizer
         virtual bool CanRepair(TID entityId) const = 0;
         virtual bool CanReach(_In_ Vector2 dest) const = 0;
         virtual int LastCommandFrame() const = 0;
+        void SetController(_In_ EntityController* pController) { m_pController = pController; }
+        virtual void DebugDraw();
 
         // Game Commands
         virtual bool Research(ResearchType researchId) = 0;
@@ -77,6 +81,7 @@ namespace IStrategizer
         ///> type=map(pair(int,int))
         Serialization::SMap<EntityObjectProperty, int> m_cachedAttr;
         int m_cacheFrame;
+        EntityController* m_pController;
     };
 }
 

@@ -20,6 +20,7 @@
 #include "CaseBasedReasonerEx.h"
 #include "SharedResource.h"
 #include "GamePlayer.h"
+#include "GameEntity.h"
 #include <iostream>
 
 using namespace IStrategizer;
@@ -36,7 +37,8 @@ m_pPlanner(nullptr),
 m_isFirstUpdate(true),
 m_combatMgr(param.Consultant),
 m_scoutMgr(param.Consultant),
-m_workersMgr(param.Consultant)
+m_workersMgr(param.Consultant),
+m_situation(SITUATION_SafeDevelopmentDefending)
 {
     g_Game = pGame;
     g_Engine = this;
@@ -69,18 +71,7 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
     }
     else if (msgType == MSG_PlanGoalSuccess)
     {
-        auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
-
-        // Location not discovered, scouting trials seemed to fail
-        // Needs to perform attack now, lets scout with the army itself
-        if (enemyLoc.IsInf())
-        {
-            _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
-            enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
-            LogInfo("Enemy spawn location not discovered yet, will attack a suspected location %s", enemyLoc.ToString());
-        }
-
-        m_combatMgr.AttackArea(enemyLoc);
+        SelectNextStrategyGoal();
     }
     else if (msgType == MSG_BaseUnderAttack)
     {
@@ -98,16 +89,43 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 
         if (m_param.Phase == PHASE_Online)
         {
-            // Time to kick scouting
-            if (g_Game->Clock().ElapsedGameCycles() >= ScoutStartFrame)
+            if (g_Game->GameFrame() % ReviseSituationInterval == 0)
+                ReviseSituation();
+
+            // Time to kick scouting to know what the enemy is up to
+            if (!m_scoutMgr.IsActive() &&
+                m_param.Consultant->IsGoodTimeToScout())
+                m_scoutMgr.Activate();
+
+            m_scoutMgr.Update();
+            m_workersMgr.Update();
+
+            if (m_situation == SITUATION_SafeDevelopmentDefending &&
+                m_param.Consultant->IsGoodTimeToPush())
             {
-                m_scoutMgr.Update();
+                auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
+
+                // Location not discovered, scouting trials seemed to fail
+                // Needs to perform attack now, lets scout with the army itself
+                if (enemyLoc.IsInf())
+                {
+                    _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
+                    enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
+                    LogInfo("Enemy spawn location not discovered yet, will attack a suspected location %s", enemyLoc.ToString());
+                }
+
+                m_combatMgr.AttackArea(enemyLoc);
+            }
+            else if (m_situation == SITUATION_UnderSiegePushing)
+            {
+                m_combatMgr.DefendArea(g_Game->Self()->StartLocation());
             }
 
-            m_workersMgr.Update(*g_Game);
             m_combatMgr.Update();
             m_pPlanner->Update(*g_Game);
         }
+
+        DebugDraw();
     }
     catch (IStrategizer::Exception &e)
     {
@@ -143,6 +161,8 @@ bool IStrategizerEx::Init()
     m_baseFaceDir.Y = (float)baseDir.Y;
     m_baseFaceDir.Normalize();
 
+    m_borders = Circle2(g_Game->Self()->StartLocation(), BordersRadius);
+
     IMSysManagerParam imSysMgrParam;
     imSysMgrParam.OccupanceIMCellSize = m_param.OccupanceIMCellSize;
     imSysMgrParam.GrndCtrllIMCellSize = m_param.GrndCtrlIMCellSize;
@@ -174,7 +194,7 @@ bool IStrategizerEx::Init()
 
         g_MessagePump->RegisterForMessage(MSG_PlanGoalSuccess, this);
 
-        SelectNextProductionGoal();
+        SelectNextStrategyGoal();
     }
 
     g_MessagePump->RegisterForMessage(MSG_GameEnd, this);
@@ -182,15 +202,52 @@ bool IStrategizerEx::Init()
     return true;
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizerEx::SelectNextProductionGoal()
+void IStrategizerEx::SelectNextStrategyGoal()
 {
+    PlanStepParameters params;
+
     // Game opening plan selection
     if (g_Game->GameFrame() == 0)
     {
-        PlanStepParameters params;
-        m_param.Consultant->SelectGameOpening(params);
-        _ASSERTE(!params.empty());
-        m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
+        m_param.Consultant->SelectGameOpening();
     }
-    // TODO: Incremental power armies should be trained
+    else
+    {
+        m_param.Consultant->SelectNextStrategy();
+    }
+
+    _ASSERTE(!params.empty());
+    params = m_param.Consultant->CurrStrategyGoalParams();
+    m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::DebugDraw()
+{
+    m_combatMgr.DebugDraw();
+    g_Game->DebugDraw();
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::ReviseSituation()
+{
+    bool enemyInBorder = false;
+
+    for (auto& entityR : g_Game->Enemy()->Entities())
+    {
+        if (m_borders.IsInside(entityR.second->Position()))
+        {
+            enemyInBorder = true;
+            break;
+        }
+    }
+
+    if (enemyInBorder && m_combatMgr.CurrentOrder() == CMBTMGR_Defend)
+        m_situation = SITUATION_UnderSiegeDefending;
+    else if (enemyInBorder && m_combatMgr.CurrentOrder() == CMBTMGR_Attack)
+        m_situation = SITUATION_UnderSiegePushing;
+    else if (!enemyInBorder && m_combatMgr.CurrentOrder() == CMBTMGR_Attack)
+        m_situation = SITUATION_SafeDevelopmentPushing;
+    else if (!enemyInBorder && m_combatMgr.CurrentOrder() == CMBTMGR_Defend)
+        m_situation = SITUATION_SafeDevelopmentDefending;
+    else
+        DEBUG_THROW(NotImplementedException(XcptHere));
 }

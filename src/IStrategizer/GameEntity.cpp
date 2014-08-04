@@ -1,6 +1,7 @@
 #include "GameEntity.h"
 #include "RtsGame.h"
 #include "GameType.h"
+#include "EntityController.h"
 
 using namespace IStrategizer;
 
@@ -65,4 +66,13 @@ void GameEntity::DebugDrawHealthBar()
     Vector2 fillBottomRight(barTopLeft.X + (int)(healthPrct * (float)barWidth), fillTopLeft.Y + fillHeight);
 
     g_Game->DebugDrawMapRectangle(fillTopLeft, fillBottomRight, GCLR_Red, true);
+}
+//////////////////////////////////////////////////////////////////////////
+void GameEntity::DebugDraw()
+{
+    DebugDrawHealthBar();
+    DebugDrawTarget();
+
+    if (m_pController)
+        m_pController->DebugDraw();
 }

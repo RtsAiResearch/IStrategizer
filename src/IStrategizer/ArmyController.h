@@ -97,6 +97,7 @@ namespace IStrategizer
         void SetControlType(_In_ bool controlBroken, _In_ bool controlWorkers);
         const EntitySet& DamagedRepairablesNearby() const { return m_damagedRepairablesNearby; }
         TID ChooseRepairTarget(_In_ const GameEntity* pEntity);
+        void DebugDraw() { if (m_pLogic) m_pLogic->DebugDraw(); }
 
         // Expensive Helpers are candidate for caching somewhere
         TID GetClosestEnemyEntity() const { _ASSERTE(!m_closestEnemy.empty()); return m_closestEnemy.begin()->second; }

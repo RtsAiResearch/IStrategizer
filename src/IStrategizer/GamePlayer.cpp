@@ -90,6 +90,19 @@ void GamePlayer::GetWorkers(_Out_ EntityList& workers)
     Entities(typeId, workers);
 }
 //////////////////////////////////////////////////////////////////////////
+int GamePlayer::WorkersCount() const
+{
+    int count = 0;
+
+    for (auto& entityR : m_entities)
+    {
+        if (entityR.second->Type()->P(TP_IsWorker))
+            ++count;
+    }
+
+    return count;
+}
+//////////////////////////////////////////////////////////////////////////
 void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds, bool checkReadyOnly, bool checkFree)
 {
     entityIds.clear();
@@ -384,4 +397,12 @@ int GamePlayer::CountEntityTypes(_In_ EntityTypeProperty attr, _In_ int val) con
     }
 
     return count;
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::DebugDraw()
+{
+    for (auto& entityR : m_entities)
+    {
+        entityR.second->DebugDraw();
+    }
 }

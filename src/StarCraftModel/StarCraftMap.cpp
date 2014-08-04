@@ -118,3 +118,25 @@ bool StarCraftMap::IsLocationExplored(Vector2 loc) const
 {
     return Broodwar->isExplored(TilePositionFromUnitPosition(loc.X), TilePositionFromUnitPosition(loc.Y));
 }
+//////////////////////////////////////////////////////////////////////////
+void StarCraftMap::DebugDraw()
+{
+    for (auto regionR : Broodwar->getAllRegions())
+    {
+        Broodwar->drawBoxMap(
+            regionR->getBoundsLeft(),
+            regionR->getBoundsTop(),
+            regionR->getBoundsRight(),
+            regionR->getBoundsBottom(),
+            (regionR->isAccessible() ? BWAPI::Colors::Yellow : BWAPI::Colors::Grey),
+            false);
+
+        Broodwar->drawTextMap(regionR->getCenter(), "ID:%d RGRP-ID:%d", regionR->getID(), regionR->getRegionGroupID());
+
+        for (auto nRegionR : regionR->getNeighbors())
+        {
+            if (nRegionR->isAccessible())
+                Broodwar->drawLineMap(regionR->getCenter(), nRegionR->getCenter(), BWAPI::Colors::Green);
+        }
+    }
+}

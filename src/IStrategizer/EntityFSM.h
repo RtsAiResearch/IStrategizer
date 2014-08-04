@@ -21,9 +21,9 @@ namespace IStrategizer
 
         Vector2 TargetPosition() const { return m_targetPos1; }
         TID TargetEntity() const { return m_targetEntity; }
-        void Update();
         void Enter();
         void Exit();
+        void DebugDraw();
 
     protected:
         Vector2 m_targetPos1;
@@ -52,6 +52,7 @@ namespace IStrategizer
             EntityState(TypeID, "Arrive", pController)
         {}
 
+        void DebugDraw();
         void Update();
 
     private:
@@ -69,6 +70,7 @@ namespace IStrategizer
 
         void Enter();
         void Update();
+        void DebugDraw();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(FleeEntityState);
@@ -98,7 +100,7 @@ namespace IStrategizer
             EntityState(TypeID, "Alarm", pController)
         {}
 
-        void Update();
+        void DebugDraw();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(AlarmEntityState);
@@ -113,6 +115,7 @@ namespace IStrategizer
             EntityState(TypeID, "Retreat", pController)
         {}
 
+        void DebugDraw();
         void Update();
 
     private:

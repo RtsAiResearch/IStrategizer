@@ -24,11 +24,14 @@ namespace IStrategizer
 
         void Init();
         void Update();
-        bool IsScouting() const { return m_scoutController.EntityId() != INVALID_TID; }
-        Vector2 GetEnemySpawnLocation() const { return m_otherSpawnLocations.at(m_knownEnemySpawnLocIdx).Location; }
+        Vector2 GetEnemySpawnLocation() const { return (IsEnemySpawnLocationKnown() ? m_otherSpawnLocations.at(m_knownEnemySpawnLocIdx).Location : Vector2::Inf()); }
         bool IsEnemySpawnLocationKnown() const;
         void NotifyMessegeSent(_In_ Message* pMsg);
         Vector2 GetSuspectedEnemySpawnLocation();
+        bool IsScounting() const { return m_scoutController.IsControllingEntity(); }
+        bool IsActive() const { return m_active; }
+        void Activate() { m_active = true; }
+        void Deactivate() { m_active = false; }
 
     private:
         int GetNearestSpawnLocationIdx(_In_ bool checkNotDiscovered = false, _In_ bool checkEnemyNotExist = false);

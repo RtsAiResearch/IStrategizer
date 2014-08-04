@@ -23,7 +23,7 @@ namespace IStrategizer
         StarCraftPlayer(BWAPI::Player p_pPlayer);
         void SetOffline(RtsGame* pBelongingGame);
         Vector2 StartLocation() const;
-
+        
     protected:
         GameEntity* FetchEntity(TID p_id);
         const GameRace* Race() const;

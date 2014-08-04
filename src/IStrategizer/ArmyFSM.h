@@ -27,6 +27,7 @@ namespace IStrategizer
         void Update();
         void Enter();
         void Exit();
+        void DebugDraw();
 
     protected:
         Vector2 m_targetPos1;
@@ -79,19 +80,22 @@ namespace IStrategizer
     public:
         static const FSMStateTypeID TypeID = 0x4EFF3C4E;
 
-        RegroupArmyState(ArmyController* pController) :
+        RegroupArmyState(bool regrouAtArmyCenter, ArmyController* pController) :
             ArmyState(TypeID, "[REGROUP]", pController),
-            m_regroupArea(Circle2(Vector2::Inf(), INT_MAX))
+            m_regroupArea(Circle2(Vector2::Inf(), INT_MAX)),
+            m_regroupAtArmyCenter(regrouAtArmyCenter)
         {}
 
         void Enter();
         void Update();
+        void DebugDraw();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(RegroupArmyState);
 
         ArmyGroupFormation m_formation;
         Circle2 m_regroupArea;
+        bool m_regroupAtArmyCenter;
     };
 
     class ArriveArmyState : public ArmyState
@@ -106,6 +110,7 @@ namespace IStrategizer
 
         void Enter();
         void Update();
+        void DebugDraw();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(ArriveArmyState);
@@ -137,7 +142,7 @@ namespace IStrategizer
             StackFSM("ARMY-STAND", IdleArmyState::TypeID, IdleArmyState::TypeID, TypeID, (EngineObject*)pController)
         {
             AddState(FSMStatePtr(new IdleArmyState(pController)));
-            AddState(FSMStatePtr(new RegroupArmyState(pController)));
+            AddState(FSMStatePtr(new RegroupArmyState(false, pController)));
         }
 
         void CheckTransitions();
@@ -155,7 +160,7 @@ namespace IStrategizer
         {
             AddState(FSMStatePtr(new AlarmArmyState(pController)));
             AddState(FSMStatePtr(new AttackArmyState(pController)));
-            AddState(FSMStatePtr(new RegroupArmyState(pController)));
+            AddState(FSMStatePtr(new RegroupArmyState(false, pController)));
         }
 
         void CheckTransitions();
@@ -174,6 +179,7 @@ namespace IStrategizer
             AddState(FSMStatePtr(new AlarmArmyState(pController)));
             AddState(FSMStatePtr(new AttackArmyState(pController)));
             AddState(FSMStatePtr(new ArriveArmyState(pController)));
+            AddState(FSMStatePtr(new RegroupArmyState(true, pController)));
         }
 
         void CheckTransitions();

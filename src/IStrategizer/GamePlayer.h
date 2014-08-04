@@ -44,12 +44,13 @@ namespace IStrategizer
         float Distance(const GamePlayer* pOther, const SimilarityWeightModel* pModel) const { return 0.0f; }
 		int Attr(PlayerAttribute attribute);
         virtual Vector2 StartLocation() const = 0;
-
+        virtual int WorkersCount() const;
         PlayerResources* Resources() { _ASSERTE(m_pResources != nullptr); return m_pResources;}
         const PlayerResources* Resources() const { _ASSERTE(m_pResources != nullptr); return m_pResources;}
         GameTechTree* TechTree() const { _ASSERTE(m_pTechTree != nullptr); return m_pTechTree; }
         // Count number of entities which have their type attribute [attr] equals [val]
         int CountEntityTypes(_In_ EntityTypeProperty attr, _In_ int val) const;
+        virtual void DebugDraw();
 
     protected:
         virtual GameEntity* FetchEntity(TID p_id) = 0;

@@ -34,6 +34,9 @@ namespace IStrategizer
     class IStrategizerEx : public EngineObject
     {
     public:
+        static const int BordersRadius = 1024;
+        static const int ReviseSituationInterval = 16;
+
         IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame);
         void Update(unsigned gameCycle);
         void NotifyMessegeSent(Message* pMsg);
@@ -41,7 +44,12 @@ namespace IStrategizer
         const OnlineCaseBasedPlannerEx* Planner() const { return &*m_pPlanner; }
         OnlineCaseBasedPlannerEx* Planner() { return &*m_pPlanner; }
         WorkersManager& WorkersMgr() { return m_workersMgr; }
+        ScoutManager& ScoutMgr() { return m_scoutMgr; }
         Vector2F BaseHeadDirection() const { return m_baseFaceDir; }
+        SituationType Situation() const { return m_situation; }
+        void ReviseSituation();
+
+        void DebugDraw();
 
         ~IStrategizerEx();
 
@@ -51,7 +59,7 @@ namespace IStrategizer
         DISALLOW_COPY_AND_ASSIGN(IStrategizerEx);
 
         const unsigned ScoutStartFrame = 2000;
-        void SelectNextProductionGoal();
+        void SelectNextStrategyGoal();
 
         bool m_isFirstUpdate;
         std::shared_ptr<LearningFromHumanDemonstration> m_pCaseLearning;
@@ -63,6 +71,8 @@ namespace IStrategizer
         ScoutManager m_scoutMgr;
         WorkersManager m_workersMgr;
         Vector2F m_baseFaceDir;
+        SituationType m_situation;
+        Circle2 m_borders;
     };
 }
 

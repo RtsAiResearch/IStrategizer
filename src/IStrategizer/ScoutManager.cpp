@@ -8,6 +8,7 @@
 #include "MessagePump.h"
 #include "IMSystemManager.h"
 #include "GroundControlIM.h"
+#include "IStrategizerEx.h"
 #include <algorithm>
 
 using namespace IStrategizer;
@@ -49,10 +50,13 @@ void ScoutManager::Init()
 //////////////////////////////////////////////////////////////////////////
 void ScoutManager::Update()
 {
+    if (!m_active)
+        return;
+
     // For now we scout only if the enemy base location is not known to us
-    if (!IsEnemySpawnLocationKnown() && !IsScouting())
+    if (!IsEnemySpawnLocationKnown() && !IsScounting())
     {
-        TID scoutEntityId = m_pConsultant->SelectScout();
+        TID scoutEntityId = g_Engine->WorkersMgr().RequestScout();
 
         if (scoutEntityId != INVALID_TID)
         {
@@ -94,7 +98,10 @@ void ScoutManager::Update()
     }
 
     if (m_scoutController.IsLogicGoalAchieved())
+    {
         m_scoutController.ReleaseEntity();
+        Deactivate();
+    }
     else
         m_scoutController.Update();
 }

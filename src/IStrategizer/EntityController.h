@@ -39,6 +39,7 @@ namespace IStrategizer
         const GameEntity* Entity() const { return m_pEntity; }
         TID EntityId() const { return m_entityId; }
         EntityClassType TypeId() const { return m_typeId; }
+        void DebugDraw() { if (!m_pLogicMemory.empty()) m_pLogicMemory.top()->DebugDraw(); }
 
         // Expensive Helpers are candidate for caching somewhere
         TID Attacker() const;

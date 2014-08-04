@@ -3,7 +3,6 @@
 #include "CaseBasedReasonerEx.h"
 #include "AbstractRetriever.h"
 #include "CaseEx.h"
-#include "DefinitionCrossMapping.h"
 #include "RtsGame.h"
 #include "GamePlayer.h"
 #include "BWAPI.h"
@@ -11,47 +10,56 @@
 #include "GameEntity.h"
 #include "EntityFSM.h"
 #include "ArmyFSM.h"
+#include "IStrategizerEx.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
 
-void StarCraftStrategySelector::SelectGameOpening(_Out_ PlanStepParameters& trainArmyParams) const
+void StarCraftStrategySelector::SelectGameOpening()
 {
     LogActivity(SelectGameOpening);
 
     AbstractRetriever::RetrieveOptions opt;
 
-    opt.CaseName = STRATEGY_TVP_Vultures_Rush;
+    opt.CaseName = STRATEGY_TvP_GundamRush;
 
     auto pCase = g_OnlineCaseBasedPlanner->Reasoner()->Retriever()->Retrieve(opt);
 
     if (pCase != nullptr)
     {
-        trainArmyParams = pCase->Goal()->Parameters();
+        m_currStrategyGoalParams = pCase->Goal()->Parameters();
+        m_currStrategy.Id = STRATEGY_TvP_GundamRush;
+        m_currStrategy.Name = pCase->Name();
     }
 }
 //////////////////////////////////////////////////////////////////////////
-TID StarCraftStrategySelector::SelectScout() const
+void StarCraftStrategySelector::SelectNextStrategy()
 {
-    // For Terran, vultures are best scout
-    // then comes a marine
-    // then comes an SCV
+    LogActivity(SelectNextStrategy);
 
-    EntityList scouts;
-    auto vulturesType = (EntityClassType)g_Database.EntityMapping.GetByFirst(UnitTypes::Terran_Vulture.getID());
-    g_Game->Self()->Entities(vulturesType, scouts, true, true);
-
-    // No vultures, try SCVs
-    if (scouts.empty())
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftStrategySelector::IsGoodTimeToPush()
+{
+    if (m_currStrategy.Id == STRATEGY_TvP_GundamRush)
     {
-        auto scvType = (EntityClassType)g_Database.EntityMapping.GetByFirst(UnitTypes::Terran_SCV.getID());
-        g_Game->Self()->Entities(scvType, scouts, true, true);
+        int vulturesCount = Broodwar->self()->completedUnitCount(UnitTypes::Terran_Vulture);
+        int tanksCount = Broodwar->self()->completedUnitCount(UnitTypes::Terran_Siege_Tank_Siege_Mode) +
+            Broodwar->self()->completedUnitCount(UnitTypes::Terran_Siege_Tank_Tank_Mode);
+        int marinesCount = Broodwar->self()->completedUnitCount(UnitTypes::Terran_Marine);
+
+        return vulturesCount > 1 &&
+            tanksCount > 1 &&
+            marinesCount > 1;
     }
 
-    if (scouts.empty())
-        return INVALID_TID;
-    else
-        return scouts[0];
+    DEBUG_THROW(NotImplementedException(XcptHere));
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarCraftStrategySelector::IsGoodTimeToScout()
+{
+    return (!g_Engine->ScoutMgr().IsEnemySpawnLocationKnown() &&
+        g_Game->Self()->WorkersCount() >= 9);
 }
 //////////////////////////////////////////////////////////////////////////
 StackFSMPtr StarCraftStrategySelector::SelectMicroLogic(_In_ ArmyController* armyCtrlr, _In_ EntityController* entityCtrlr) const

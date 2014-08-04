@@ -28,11 +28,9 @@ void EntityState::Exit()
     LogInfo("%s: Exit", ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-void EntityState::Update()
+void EntityState::DebugDraw()
 {
     auto pController = (EntityController*)m_pController;
-    pController->Entity()->DebugDrawTarget();
-    pController->Entity()->DebugDrawHealthBar();
 
     string str = m_pName;
     str += '_';
@@ -41,11 +39,13 @@ void EntityState::Update()
     g_Game->DebugDrawMapText(pController->Entity()->Position(), str);
 }
 //////////////////////////////////////////////////////////////////////////
+void ArriveEntityState::DebugDraw()
+{
+    g_Game->DebugDrawMapCircle(m_targetPos1, EntityController::PositionArriveRadius, GCLR_Yellow);
+}
 void ArriveEntityState::Update()
 {
     EntityState::Update();
-
-    g_Game->DebugDrawMapCircle(m_targetPos1, EntityController::PositionArriveRadius, GCLR_Yellow);
 
     if (g_Game->GameFrame() % 4 != 0)
         return;
@@ -64,22 +64,28 @@ void FleeEntityState::Enter()
 
     auto pController = (EntityController*)m_pController;
     pController->OnEntityFleeing();
+    m_targetPos1 = Vector2::Inf();
+}
+//////////////////////////////////////////////////////////////////////////
+void FleeEntityState::DebugDraw()
+{
+    g_Game->DebugDrawMapCircle(m_targetPos1, EntityController::PositionArriveRadius, GCLR_Yellow);
 }
 //////////////////////////////////////////////////////////////////////////
 void FleeEntityState::Update()
 {
     EntityState::Update();
 
-    g_Game->DebugDrawMapCircle(m_targetPos1, EntityController::PositionArriveRadius, GCLR_Yellow);
-
     if (g_Game->GameFrame() % 4 != 0)
         return;
 
     auto pController = (EntityController*)m_pController;
-    if (!pController->Entity()->P(OP_IsMoving))
+
+    if (!pController->Entity()->P(OP_IsMoving) ||
+        (pController->Entity()->P(OP_IsMoving) && pController->Entity()->TargetPosition() != m_targetPos1))
     {
         m_targetPos1 = Circle2(g_Game->Self()->StartLocation(), EntityController::PositionArriveRadius).RandomInside();
-        pController->Entity()->Move(m_targetPos1);
+        pController->Entity()->Move(TargetPosition());
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -107,13 +113,18 @@ void AttackEntityState::Update()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void AlarmEntityState::Update()
+void AlarmEntityState::DebugDraw()
 {
-    EntityState::Update();
-
     auto pController = (EntityController*)m_pController;
 
     g_Game->DebugDrawMapLine(pController->Entity()->Position(), m_targetPos1, GCLR_Orange);
+}
+//////////////////////////////////////////////////////////////////////////
+void RetreatEntityState::DebugDraw()
+{
+    auto pController = (EntityController*)m_pController;
+
+    pController->Entity()->DebugDrawRange();
 }
 //////////////////////////////////////////////////////////////////////////
 void RetreatEntityState::Update()
@@ -164,8 +175,6 @@ void RetreatEntityState::Update()
     {
         m_targetEntity = INVALID_TID;
     }
-
-    pController->Entity()->DebugDrawRange();
 }
 //////////////////////////////////////////////////////////////////////////
 void RepairEntityState::Enter()

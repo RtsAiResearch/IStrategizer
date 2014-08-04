@@ -28,7 +28,7 @@ namespace IStrategizer
 
         bool operator !=(const Vector2T& right) const
         {
-            return !(X != right.X || Y == right.Y);
+            return (X != right.X || Y != right.Y);
         }
 
         Vector2T& operator -=(const T n)

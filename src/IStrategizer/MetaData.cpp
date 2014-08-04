@@ -38,10 +38,10 @@ namespace IStrategizer
         DEFINE(PlayerType);
         DEFINE(ResourceType);
         DEFINE(StepLevelType);
-        DEFINE(StrategyType);
         DEFINE(ExecutionStateType);
         DEFINE(DeployType);
 		DEFINE(MessageType);
+        DEFINE(SituationType);
     };
     //---------------------------------------------------------------------------
     void InitAttributesMetaData()

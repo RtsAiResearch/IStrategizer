@@ -47,6 +47,7 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>QT_THREAD_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -84,11 +85,35 @@
       <AdditionalOptions>/ignore:4099 </AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copying engine assets</Message>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>
+      </Message>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y</Command>
+    </PreLinkEvent>
+    <PreLinkEvent>
+      <Message>Copying engine assets</Message>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BwapiClient.cpp" />

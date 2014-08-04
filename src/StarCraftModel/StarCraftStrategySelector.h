@@ -7,14 +7,20 @@
 
 namespace IStrategizer
 {
-#define STRATEGY_TVP_Marines_Rush "TvP-Marines-Rush"
-#define STRATEGY_TVP_Vultures_Rush "TvP-Vultures-Rush"
+    enum StrategyType
+    {
+        STRATEGY_TvP_GundamRush,
+    };
+
+#define STRATEGYNAME_TvP_GundamRush_Opening "TvP-GundamRush"
 
     class StarCraftStrategySelector : public StrategySelector
     {
     public:
-        void SelectGameOpening(_Out_ PlanStepParameters& trainArmyParams) const;
-        TID SelectScout() const;
+        void SelectGameOpening();
+        void SelectNextStrategy();
+        bool IsGoodTimeToPush();
+        bool IsGoodTimeToScout();
         StackFSMPtr SelectMicroLogic(_In_ ArmyController* armyCtrlr, _In_ EntityController* pController) const;
     };
 }

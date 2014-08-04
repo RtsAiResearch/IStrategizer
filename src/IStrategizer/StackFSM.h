@@ -63,6 +63,12 @@ namespace IStrategizer
             CheckTransitions();
         }
 
+        void DebugDraw()
+        {
+            if (!m_states.empty())
+                CurrentState()->DebugDraw();
+        }
+
         FSMStatePtr CurrentState() { _ASSERTE(!m_states.empty()); return m_stateMap.at(m_states.top()); }
         ConstFSMStatePtr CurrentState() const { _ASSERTE(!m_states.empty()); return m_stateMap.at(m_states.top()); }
         

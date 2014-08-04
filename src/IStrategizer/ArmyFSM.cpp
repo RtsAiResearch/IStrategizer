@@ -40,7 +40,7 @@ void ArmyState::Exit()
     LogInfo("%s -> Exit", ToString().c_str());
 }
 //////////////////////////////////////////////////////////////////////////
-void ArmyState::Update()
+void ArmyState::DebugDraw()
 {
     auto pController = (ArmyController*)m_pController;
 
@@ -71,7 +71,10 @@ void ArmyState::Update()
 
     auto sightArea = pController->SightArea();
     g_Game->DebugDrawMapCircle(sightArea.Center, sightArea.Radius, GCLR_Cyan);
-
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyState::Update()
+{
     // Remove non-existing entities
     for (EntityControllersMap::iterator entitryRItr = m_controlledEntities.begin();
         entitryRItr != m_controlledEntities.end();)
@@ -90,17 +93,30 @@ void RegroupArmyState::Enter()
     m_formation.Reset();
 
     auto pController = (ArmyController*)m_pController;
+
+    if (m_regroupAtArmyCenter)
+        m_targetPos1 = pController->Center();
+    else
+        m_targetPos1 = pController->TargetPosition();
+
     m_formation.Center = TargetPosition();
     pController->CalcGroupFormation(m_formation);
-
     m_regroupArea = Circle2(TargetPosition(), pController->FormationData().CircleRadius);
+}
+//////////////////////////////////////////////////////////////////////////
+void RegroupArmyState::DebugDraw()
+{
+    g_Game->DebugDrawMapCircle(m_regroupArea.Center, m_regroupArea.Radius, GCLR_Purple);
+
+    for (auto& p : m_formation.Placement)
+    {
+        g_Game->DebugDrawMapRectangle(p.second, p.second + ArmyController::FormationSpacing, GCLR_Blue, false);
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void RegroupArmyState::Update()
 {
     ArmyState::Update();
-
-    g_Game->DebugDrawMapCircle(m_regroupArea.Center, m_regroupArea.Radius, GCLR_Purple);
 
     for (auto& entityR : m_controlledEntities)
     {
@@ -118,11 +134,6 @@ void RegroupArmyState::Update()
             entityR.second->Entity()->Move(m_formation.Placement.at(entityR.first));
         }
     }
-
-    for (auto& p : m_formation.Placement)
-    {
-        g_Game->DebugDrawMapRectangle(p.second, p.second + ArmyController::FormationSpacing, GCLR_Blue, false);
-    }
 }
 //////////////////////////////////////////////////////////////////////////
 void ArriveArmyState::Enter()
@@ -132,11 +143,14 @@ void ArriveArmyState::Enter()
     m_arriveArea = Circle2(m_targetPos1, ArmyController::FocusAreaRadius);
 }
 //////////////////////////////////////////////////////////////////////////
+void ArriveArmyState::DebugDraw()
+{
+    g_Game->DebugDrawMapCircle(m_arriveArea.Center, m_arriveArea.Radius, GCLR_Purple);
+}
+//////////////////////////////////////////////////////////////////////////
 void ArriveArmyState::Update()
 {
     ArmyState::Update();
-
-    g_Game->DebugDrawMapCircle(m_arriveArea.Center, m_arriveArea.Radius, GCLR_Purple);
 
     for (auto& entityR : m_controlledEntities)
     {
@@ -219,6 +233,7 @@ void AttackMoveArmyFSM::CheckTransitions()
     case AlarmArmyState::TypeID:
         if (pController->TargetEntity() != INVALID_TID)
         {
+            PushState(RegroupArmyState::TypeID);
             PushState(AttackArmyState::TypeID);
         }
         else if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
@@ -236,8 +251,16 @@ void AttackMoveArmyFSM::CheckTransitions()
         if (pController->TargetEntity() != INVALID_TID)
         {
             PushState(AttackArmyState::TypeID);
+            PushState(RegroupArmyState::TypeID);
         }
         else if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
+        {
+            PopState();
+            PushState(AlarmArmyState::TypeID);
+        }
+        break;
+    case RegroupArmyState::TypeID:
+        if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
         {
             PopState();
         }

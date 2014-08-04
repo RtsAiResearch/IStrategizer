@@ -280,3 +280,14 @@ GameEntity* RtsGame::GetEntity(_In_ TID entityId)
 
     return nullptr;
 }
+//////////////////////////////////////////////////////////////////////////
+void RtsGame::DebugDraw()
+{
+    for (auto& playerR : m_players)
+    {
+        if (playerR.first == PLAYER_Neutral)
+            continue;
+
+        playerR.second->DebugDraw();
+    }
+}

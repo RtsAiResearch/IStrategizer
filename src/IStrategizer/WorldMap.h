@@ -40,6 +40,7 @@ namespace IStrategizer
 		bool IsInMap(Vector2 pos, Vector2 size);
         virtual void SpawnLocations(_Out_ std::vector<Vector2>& spawnPoints) const = 0;
         virtual bool IsLocationExplored(Vector2 loc) const = 0;
+        virtual void DebugDraw() = 0;
 
     protected:
         CellFeature** m_cellFeatureMatrix;
