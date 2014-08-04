@@ -68,7 +68,7 @@ namespace IStrategizer
 
         static const int FocusAreaRadius = 192;
         static const int SightAreaRadius = 768;
-        static const int FormationSpacing = 48;
+        static const int FormationSpacing = 64;
 
         void Update();
         void Attack(_In_ Vector2 pos);

@@ -70,6 +70,7 @@ void ArmyState::DebugDraw()
 
     auto focusArea = pController->FormationArea();
     g_Game->DebugDrawMapCircle(focusArea.Center, focusArea.Radius, GCLR_Blue);
+    g_Game->DebugDrawMapCircle(focusArea.Center, focusArea.Radius + 5, GCLR_Blue);
 
     auto sightArea = pController->SightArea();
     g_Game->DebugDrawMapCircle(sightArea.Center, sightArea.Radius, GCLR_Cyan);
@@ -111,6 +112,8 @@ void RegroupArmyState::Enter()
 //////////////////////////////////////////////////////////////////////////
 void RegroupArmyState::DebugDraw()
 {
+    ArmyState::DebugDraw();
+
     g_Game->DebugDrawMapCircle(m_regroupArea.Center, m_regroupArea.Radius, GCLR_Purple);
 
     for (auto& p : m_formation.Placement)
@@ -150,6 +153,8 @@ void ArriveArmyState::Enter()
 //////////////////////////////////////////////////////////////////////////
 void ArriveArmyState::DebugDraw()
 {
+    ArmyState::DebugDraw();
+
     g_Game->DebugDrawMapCircle(m_arriveArea.Center, m_arriveArea.Radius, GCLR_Purple);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -256,7 +261,11 @@ void AttackMoveArmyFSM::CheckTransitions()
         if (pController->TargetEntity() != INVALID_TID)
         {
             PushState(AttackArmyState::TypeID);
-            PushState(RegroupArmyState::TypeID);
+
+            if (!pController->IsInOrder(pCurrState->Entities(), pController->Center()))
+            {
+                PushState(RegroupArmyState::TypeID);
+            }
         }
         else if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
         {
