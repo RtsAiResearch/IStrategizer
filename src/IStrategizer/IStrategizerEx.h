@@ -11,6 +11,9 @@
 #include <vector>
 #include <memory>
 
+extern std::string ENGINE_IO_READ_DIR;
+extern std::string ENGINE_IO_WRITE_DIR;
+
 namespace IStrategizer
 {
     class MessagePump;
@@ -52,8 +55,6 @@ namespace IStrategizer
         void DebugDraw();
 
         ~IStrategizerEx();
-
-        static std::string sm_WorkingDir;
 
     private:
         DISALLOW_COPY_AND_ASSIGN(IStrategizerEx);

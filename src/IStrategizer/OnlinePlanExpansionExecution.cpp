@@ -279,7 +279,9 @@ void IStrategizer::OnlinePlanExpansionExecution::MarkActionAsInactive(IOlcbpPlan
     }
 
     if (wasActive)
+    {
         LogInfo("Action %s is not active anymore", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void IStrategizer::OnlinePlanExpansionExecution::MarkActionAsActive(IOlcbpPlan::NodeID nodeId)

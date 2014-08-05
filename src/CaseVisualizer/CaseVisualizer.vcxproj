@@ -33,11 +33,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\props\IStrategizer.Exe.props" />
     <Import Project="..\props\QT.props" />
+    <Import Project="..\props\BWAPI.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\props\IStrategizer.Exe.props" />
     <Import Project="..\props\QT.props" />
+    <Import Project="..\props\BWAPI.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -52,12 +54,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)\IStrategizer;$(SolutionDir)3rdParty\Serialization\UnrealCompiler;$(SolutionDir)3rdParty\Serialization\ObjectSerializer;$(SolutionDir)PlanVisualizerWidget;$(SolutionDir)PlanVisualizerWidget\GeneratedFiles;$(SolutionDir)\StarCraftModel;$(SolutionDir)\3rdParty\BWAPI;.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\IStrategizer;$(SolutionDir)PlanVisualizerWidget;$(SolutionDir)PlanVisualizerWidget\GeneratedFiles;$(SolutionDir)\StarCraftModel;.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>IStrategizer.lib;ObjectSerializer.lib;PlanVisualizerWidget.lib;StarCraftModel.lib;BWAPI.lib;BWAPIClient.lib;ogdf.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IStrategizer.lib;ObjectSerializer.lib;PlanVisualizerWidget.lib;StarCraftModel.lib;BWAPI.lib;BWAPIClient.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -80,11 +82,11 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>$(SolutionDir)\IStrategizer;$(SolutionDir)3rdParty\Serialization\UnrealCompiler;$(SolutionDir)3rdParty\Serialization\ObjectSerializer;$(SolutionDir)PlanVisualizerWidget;$(SolutionDir)PlanVisualizerWidget\GeneratedFiles;$(SolutionDir)\StarCraftModel;$(SolutionDir)\3rdParty\BWAPI;.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\IStrategizer;$(SolutionDir)PlanVisualizerWidget;$(SolutionDir)PlanVisualizerWidget\GeneratedFiles;$(SolutionDir)\StarCraftModel;.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>IStrategizer.lib;ObjectSerializer.lib;PlanVisualizerWidget.lib;StarCraftModel.lib;BWAPId.lib;BWAPIClientd.lib;ogdf.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IStrategizer.lib;ObjectSerializer.lib;PlanVisualizerWidget.lib;StarCraftModel.lib;BWAPId.lib;BWAPIClientd.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <ShowProgress>NotSet</ShowProgress>
@@ -110,9 +112,9 @@
   <ItemGroup>
     <CustomBuild Include="CaseView.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing CaseView.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DWIN32  "-I$(SolutionDir)\IStrategizer" "-I$(SolutionDir)3rdParty\Serialization\UnrealCompiler" "-I$(SolutionDir)3rdParty\Serialization\ObjectSerializer" "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I$(SolutionDir)\StarCraftModel" "-I$(SolutionDir)\3rdParty\BWAPI" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)3rdParty"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DWIN32  "-I$(SolutionDir)\IStrategizer" "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I$(SolutionDir)\StarCraftModel" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing CaseView.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DWIN32  "-I$(SolutionDir)\IStrategizer" "-I$(SolutionDir)3rdParty\Serialization\UnrealCompiler" "-I$(SolutionDir)3rdParty\Serialization\ObjectSerializer" "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I$(SolutionDir)\StarCraftModel" "-I$(SolutionDir)\3rdParty\BWAPI" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)3rdParty"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DWIN32  "-I$(SolutionDir)\IStrategizer" "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I$(SolutionDir)\StarCraftModel" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -120,9 +122,9 @@
     </CustomBuild>
     <CustomBuild Include="CaseVisualizer.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing CaseVisualizer.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DWIN32  "-I$(SolutionDir)\IStrategizer" "-I$(SolutionDir)3rdParty\Serialization\UnrealCompiler" "-I$(SolutionDir)3rdParty\Serialization\ObjectSerializer" "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I$(SolutionDir)\StarCraftModel" "-I$(SolutionDir)\3rdParty\BWAPI" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)3rdParty"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DWIN32  "-I$(SolutionDir)\IStrategizer" "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I$(SolutionDir)\StarCraftModel" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing CaseVisualizer.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DWIN32  "-I$(SolutionDir)\IStrategizer" "-I$(SolutionDir)3rdParty\Serialization\UnrealCompiler" "-I$(SolutionDir)3rdParty\Serialization\ObjectSerializer" "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I$(SolutionDir)\StarCraftModel" "-I$(SolutionDir)\3rdParty\BWAPI" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)3rdParty"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DWIN32  "-I$(SolutionDir)\IStrategizer" "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I$(SolutionDir)\StarCraftModel" "-I.\GeneratedFiles" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

@@ -76,6 +76,7 @@
 #include "ExecutionTrial.h"
 #include "TrainArmyGoal.h"
 #include "PlayerAttributeExist.h"
+#include "IStrategizerEx.h"
 
 using namespace IStrategizer;
 
@@ -119,6 +120,8 @@ void SerializationEssentials::Init()
     if (initialized)
         return;
     
+    g_SerializationSystemWorkingDir = ENGINE_IO_READ_DIR;
+
     g_ObjectFormatter.FinalizeTypeTable(g_ObjectSerializer.TypeTable(), g_ObjectFactory.GetObjectTable());
     
     initialized = true;

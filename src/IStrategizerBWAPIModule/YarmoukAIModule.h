@@ -1,13 +1,10 @@
 #pragma once
-
 #include "ObjectFormatter.h"
 #include "BWAPI.h"
 #include "BWAPI\Client.h"
 
 #include "IStrategizerEx.h"
 #include "GameTraceCollector.h"
-
-#define AIIDE_IO_DIR "bwapi-data\\write\\"
 
 class YarmoukAIModule : public BWAPI::AIModule
 {

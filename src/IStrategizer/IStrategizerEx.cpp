@@ -23,12 +23,13 @@
 #include "GameEntity.h"
 #include <iostream>
 
+std::string ENGINE_IO_READ_DIR = ".\\";
+std::string ENGINE_IO_WRITE_DIR = ".\\";
+
 using namespace IStrategizer;
 using namespace std;
 
 IStrategizer::IStrategizerEx* g_Engine = nullptr;
-std::string IStrategizerEx::sm_WorkingDir = ".\\";
-
 
 IStrategizerEx::IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame) :
 m_param(param),
@@ -54,6 +55,7 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
         {
             m_pCaseLearning->Learn();
         }
+#ifdef AIIDE
         else
         {
             GameEndMessage* pEndMsg = static_cast<GameEndMessage*>(pMsg);
@@ -68,6 +70,7 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
                 pEndMsg->Data()->EnemyRace);
             m_pStatistics->Add(stats);
         }
+#endif
     }
     else if (msgType == MSG_PlanGoalSuccess)
     {
@@ -107,7 +110,7 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
                 {
                     _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
                     enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
-                    LogInfo("Enemy spawn location not discovered yet, will attack a suspected location %s", enemyLoc.ToString());
+                    LogInfo("Enemy spawn location not discovered yet, will attack a suspected location %s", enemyLoc.ToString().c_str());
                 }
 
                 m_combatMgr.AttackEnemy(enemyLoc);
@@ -121,7 +124,10 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
             m_pPlanner->Update(*g_Game);
         }
 
+#ifdef _DEBUG
         DebugDraw();
+#endif // _DEBUG
+
     }
     catch (IStrategizer::Exception &e)
     {

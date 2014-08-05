@@ -1,7 +1,6 @@
-#ifndef LOGGER_H
 #include "Logger.h"
-#endif
-
+#include "Console.h"
+#include "IStrategizerEx.h"
 #include <fstream>
 #include <cassert>
 #include <crtdefs.h>
@@ -12,6 +11,13 @@
 
 using namespace IStrategizer;
 using namespace std;
+
+#define LOG_FILENAME (ENGINE_IO_WRITE_DIR + "IStrategizerLog.txt")
+
+#ifdef ENABLE_LOG
+CConsole console;
+#endif // _DEBUG
+
 
 void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
 {

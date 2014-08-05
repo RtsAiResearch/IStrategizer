@@ -18,6 +18,7 @@ void CombatManager::Init()
     // Compute the armies locations
     //
     auto baseStartLoc = g_Game->Self()->StartLocation();
+    LogInfo("BaseLocation: %s", baseStartLoc.ToString().c_str());
     
     // Broken army stand at base waiting for repair/heal all the time
     Vector2F brokenTranslateF = (g_Engine->BaseHeadDirection() * 196.0f);
@@ -62,7 +63,7 @@ void CombatManager::AttackEnemy(_In_ Vector2 pos)
 //////////////////////////////////////////////////////////////////////////
 void CombatManager::DefendBase()
 {
-    LogInfo("Defending area %s", m_armiesBaseLoc.ToString());
+    LogInfo("Defending area %s", m_armiesBaseLoc.ToString().c_str());
 
     m_frontLinesArmy.Defend(m_armiesBaseLoc);
     m_currOrder = CMBTMGR_Defend;

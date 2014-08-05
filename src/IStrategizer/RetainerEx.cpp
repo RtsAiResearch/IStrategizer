@@ -12,33 +12,24 @@ using namespace std;
 using namespace IStrategizer;
 
 RetainerEx::RetainerEx() :
-    m_caseBasePath(IStrategizerEx::sm_WorkingDir + CASEBASE_FILENAME), 
     m_caseBaseLoaded(false)
 {
 }
 //----------------------------------------------------------------------------------------------
 void RetainerEx::ReadCaseBase()
 {
-    LogInfo("Reading case-base %s", m_caseBasePath.c_str());
+    LogInfo("Reading case-base %s", CASEBASE_IO_READ_PATH);
 
     fstream file;
 
-    file.open(m_caseBasePath.c_str(), ios::in | ios::binary);
+    file.open(CASEBASE_IO_READ_PATH, ios::in | ios::binary);
 
     // Read existing case-base
     if (file.is_open())
     {
         file.close();
-        g_ObjectSerializer.Deserialize(&m_casebase, m_caseBasePath);
+        g_ObjectSerializer.Deserialize(&m_casebase, CASEBASE_IO_READ_PATH);
         m_caseBaseLoaded = true;
-    }
-    // Create case-base if not found
-    else
-    {
-        file.open(m_caseBasePath.c_str(), ios::out | ios::binary);
-        file.close();
-        m_caseBaseLoaded = true;
-        Flush();
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -53,7 +44,7 @@ void RetainerEx::Flush()
     if (m_caseBaseLoaded)
     {
         LogInfo("Flushing case-base");
-        g_ObjectSerializer.Serialize(&m_casebase, m_caseBasePath);
+        g_ObjectSerializer.Serialize(&m_casebase, CASEBASE_IO_WRITE_PATH);
     }
     else
     {

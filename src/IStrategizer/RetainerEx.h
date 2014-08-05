@@ -2,16 +2,18 @@
 #define RETAINEREX_H
 
 #include "AbstractRetainer.h"
+#include "IStrategizerEx.h"
 #include <string>
 
 namespace IStrategizer
 {
 #define  CASEBASE_FILENAME "IStrategizerEx.cb"
+#define CASEBASE_IO_WRITE_PATH (ENGINE_IO_WRITE_DIR + CASEBASE_FILENAME)
+#define CASEBASE_IO_READ_PATH (ENGINE_IO_READ_DIR + CASEBASE_FILENAME)
 
     class RetainerEx : public AbstractRetainer
     {
     private:
-        std::string m_caseBasePath;
         bool m_caseBaseLoaded;
 
     protected:

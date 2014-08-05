@@ -5,8 +5,6 @@
 
 namespace IStrategizer
 {
-#define LOG_FILENAME "IStrategizerLog.txt"
-
     class Logger
     {
     public:
@@ -37,10 +35,32 @@ namespace IStrategizer
     };
 
 #define g_Logger IStrategizer::Logger::Instance()
+
+#define ENABLE_LOG
+
+#if defined(_DEBUG)
+#define ENABLE_LOG
+#endif
+
+#ifdef ENABLE_LOG
 #define LogWarning(Format, ...) g_Logger.Log(IStrategizer::Logger::LOG_Warning, __FUNCTION__, Format, __VA_ARGS__)
+#else
+#define LogWarning(Format, ...)
+#endif
+
+#ifdef ENABLE_LOG
 #define LogError(Format, ...) g_Logger.Log(IStrategizer::Logger::LOG_Error, __FUNCTION__, Format, __VA_ARGS__)
+#else
+#define LogError(Format, ...)
+#endif
+
+#ifdef ENABLE_LOG
 #define LogInfo(Format, ...) g_Logger.Log(IStrategizer::Logger::LOG_Info, __FUNCTION__, Format, __VA_ARGS__)
-#ifdef LOG_DEBUG_INFO
+#else
+#define LogInfo(Format, ...)
+#endif
+
+#if defined(ENABLE_LOG) && defined(LOG_DEBUG_INFO)
 #define LogDebugInfo(Format, ...) g_Logger.Log(IStrategizer::Logger::LOG_Info, __FUNCTION__, Format, __VA_ARGS__)
 #else
 #define LogDebugInfo(Format, ...)
@@ -71,7 +91,7 @@ namespace IStrategizer
         const char* m_pFunName;
         char m_txt[TxtSize];
     };
-#ifdef LOG_ACTIVITY
+#if defined(ENABLE_LOG) && defined(LOG_ACTIVITY)
 #define LogActivity(Name) ActivityLogMarker __##Name##_Activity(__FUNCTION__, #Name)
 #else
 #define LogActivity(Name)

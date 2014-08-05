@@ -9,20 +9,20 @@
 #include "GamePlayer.h"
 #include "StarCraftEntity.h"
 #include "StarCraftStrategySelector.h"
-#include "Console.h"
 #include <iostream>
 
 using namespace std;
 using namespace BWAPI;
 using namespace IStrategizer;
 
-CConsole console;
-
 void YarmoukAIModule::onStart()
 {
+    ENGINE_IO_READ_DIR = "bwapi-data\\read\\";
+    ENGINE_IO_WRITE_DIR = "bwapi-data\\write\\";
+
     // Print the map name.
     // BWAPI returns std::string when retrieving a string, don't forget to add .c_str() when printing!
-    Broodwar << "The map is " << Broodwar->mapName() << "!" << std::endl;
+    // Broodwar << "The map is " << Broodwar->mapName() << "!" << std::endl;
 
     // Enable the UserInput flag, which allows us to control the bot and type messages.
     Broodwar->enableFlag(Flag::UserInput);
@@ -39,8 +39,6 @@ void YarmoukAIModule::onStart()
     if (Broodwar->enemy()) // First make sure there is an enemy
         Broodwar << "The matchup is " << Broodwar->self()->getRace() << " vs " << Broodwar->enemy()->getRace() << std::endl;
 
-    IStrategizer::IStrategizerEx::sm_WorkingDir = AIIDE_IO_DIR;
-    g_SerializationSystemWorkingDir = AIIDE_IO_DIR;
     IStrategizer::Init();
 
     FinalizeIStrategizer();
@@ -125,12 +123,12 @@ void YarmoukAIModule::InitIStrategizer()
 
         if (Broodwar->isReplay())
         {
-            LogInfo("Learning from replay map: %s", Broodwar->mapFileName().c_str());
+            Broodwar->sendText("Learning from replay map: %s", Broodwar->mapFileName().c_str());
 
             Playerset players = Broodwar->getPlayers();
             for (auto player : players)
             {
-                LogInfo("Replay Player[%d]: %s", player->getID(), player->getName().c_str());
+                Broodwar->sendText("Replay Player[%d]: %s", player->getID(), player->getName().c_str());
             }
 
             param.Phase = PHASE_Offline;

@@ -103,8 +103,10 @@ bool GatherResourceAction::AliveConditionsSatisfied(RtsGame& game)
 				_ASSERTE(!"Invalid resource id");
 			}
 
-			if (!resourceEntityExist)
+            if (!resourceEntityExist)
+            {
 				LogInfo("%s resource[%d] does not exist", ToString().c_str(), m_gathererId);
+            }
 
 			// If resource doesn't exist a new unit should have been gathered by handleMessage
 			// if no resource has been assigned, this means it failed to find suitable resource
