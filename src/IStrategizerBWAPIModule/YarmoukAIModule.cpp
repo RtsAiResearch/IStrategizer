@@ -17,8 +17,8 @@ using namespace IStrategizer;
 
 void YarmoukAIModule::onStart()
 {
-    ENGINE_IO_READ_DIR = "bwapi-data\\read\\";
-    ENGINE_IO_WRITE_DIR = "bwapi-data\\write\\";
+    ENGINE_IO_READ_DIR = "bwapi-data\\AI\\";
+    ENGINE_IO_WRITE_DIR = "bwapi-data\\AI\\";
 
     // Print the map name.
     // BWAPI returns std::string when retrieving a string, don't forget to add .c_str() when printing!

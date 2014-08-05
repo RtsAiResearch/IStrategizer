@@ -81,7 +81,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)IStrategizer;$(SolutionDir)StarCraftModel;$(SolutionDir)PlanVisualizerWidget;$(SolutionDir)PlanVisualizerWidget\GeneratedFiles;$(BWAPI_DIR)\include;$(SolutionDir)3rdParty\Serialization\UnrealCompiler;$(SolutionDir)3rdParty\Serialization\ObjectSerializer;.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>BWAPId.lib;BWAPIClientd.lib;StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;PlanVisualizerWidget.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;PlanVisualizerWidget.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalOptions>/ignore:4099 </AdditionalOptions>

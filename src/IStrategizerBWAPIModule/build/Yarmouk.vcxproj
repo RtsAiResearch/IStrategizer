@@ -65,7 +65,8 @@
       <AdditionalDependencies>BWAPId.lib;BWAPIClientd.lib;StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(OutDir)$(ProjectName).dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
+      <Command>xcopy $(OutDir)*.dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
+      <Message>Copy binaries to SC</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -87,7 +88,8 @@
       <AdditionalDependencies>BWAPI.lib;BWAPIClient.lib;StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(OutDir)$(ProjectName).dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
+      <Command>xcopy $(OutDir)*.dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
+      <Message>Copy binaries to SC</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
