@@ -1,19 +1,14 @@
 #pragma once
-#include "ObjectFormatter.h"
+#include "RtsAiEngine.h"
 #include "BWAPI.h"
 #include "BWAPI\Client.h"
-
-#include "IStrategizerEx.h"
-#include "GameTraceCollector.h"
 
 class YarmoukAIModule : public BWAPI::AIModule
 {
 public:
     YarmoukAIModule() :
-        m_pIStrategizer(nullptr),
-        m_pGameModel(nullptr),
-        m_pTraceCollector(nullptr),
-        m_isLearning(false)
+        m_pAiEngine(nullptr),
+        m_pGameModel(nullptr)
     {}
 
     // Virtual functions for callbacks, leave these as they are.
@@ -37,12 +32,10 @@ public:
     // Everything below this line is safe to modify.
 
 protected:
+    void OnEntityMessage(BWAPI::Unit unit, IStrategizer::MessageType msgType);
     void InitIStrategizer();
     void FinalizeIStrategizer();
 
-    IStrategizer::IStrategizerEx* m_pIStrategizer;
-    IStrategizer::RtsGame* m_pGameModel;
-    IStrategizer::GameTraceCollector *m_pTraceCollector;
-    bool m_isLearning;
-
+    IStrategizer::IRtsAiEngine* m_pAiEngine;
+    IStrategizer::IRtsGame* m_pGameModel;
 };

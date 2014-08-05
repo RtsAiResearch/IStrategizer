@@ -57,12 +57,12 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ISTRATEGIZERBWAPIMODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)IStrategizer;$(SolutionDir)StarCraftModel;$(SolutionDir)3rdParty\Serialization\UnrealCompiler;$(SolutionDir)3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)IStrategizer;$(SolutionDir)StarCraftModel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>BWAPId.lib;BWAPIClientd.lib;StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BWAPId.lib;BWAPIClientd.lib;IStrategizer.lib;StarCraftModel.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(OutDir)*.dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
@@ -77,15 +77,14 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;ISTRATEGIZERBWAPIMODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)IStrategizer;$(SolutionDir)StarCraftModel;$(SolutionDir)PlanVisualizerWidget;$(SolutionDir)PlanVisualizerWidget\GeneratedFiles;$(BWAPI_DIR)\include;$(SolutionDir)3rdParty\Serialization\UnrealCompiler;$(SolutionDir)3rdParty\Serialization\ObjectSerializer;.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)IStrategizer;$(SolutionDir)StarCraftModel;$(BWAPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>BWAPI.lib;BWAPIClient.lib;StarCraftModel.lib;IStrategizer.lib;ObjectSerializer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IStrategizer.lib;BWAPI.lib;BWAPIClient.lib;StarCraftModel.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(OutDir)*.dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
@@ -98,6 +97,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\YarmoukAIModule.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\IStrategizer\build\IStrategizer_msvc2012.vcxproj">
+      <Project>{0e83c355-2feb-4072-a99e-38882d5fbcbb}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

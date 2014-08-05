@@ -13,6 +13,7 @@ namespace IStrategizer
             m_gameFrame(gameFrame),
             m_typeId(typeId)
         {}
+
         unsigned GameFrame() const { return m_gameFrame; }
         MessageType TypeId() const { return m_typeId; }
         bool Delivered() const { return m_delivered; }

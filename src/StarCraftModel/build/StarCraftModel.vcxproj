@@ -55,6 +55,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -109,7 +111,7 @@
       <Message>Building TypeInfo Database</Message>
     </PreBuildEvent>
     <Link>
-      <AdditionalDependencies>BWAPId.lib;BWAPIClientd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IStrategizer.lib;BWAPId.lib;BWAPIClientd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -131,7 +133,7 @@
       <AdditionalDependencies>BWAPId.lib;BWAPIClientd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Link>
-      <AdditionalDependencies>BWAPI.lib;BWAPIClient.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IStrategizer.lib;BWAPI.lib;BWAPIClient.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

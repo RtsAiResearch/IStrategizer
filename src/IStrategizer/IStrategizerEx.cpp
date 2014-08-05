@@ -31,19 +31,20 @@ using namespace std;
 
 IStrategizer::IStrategizerEx* g_Engine = nullptr;
 
-IStrategizerEx::IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame) :
+IStrategizerEx::IStrategizerEx(const EngineParams &param, RtsGame* pGame) :
 m_param(param),
 m_pCaseLearning(nullptr),
 m_pPlanner(nullptr),
 m_isFirstUpdate(true),
-m_combatMgr(param.Consultant),
-m_scoutMgr(param.Consultant),
-m_workersMgr(param.Consultant),
+m_pConsultant((StrategySelector*)param.Consultant),
+m_combatMgr(m_pConsultant),
+m_scoutMgr(m_pConsultant),
+m_workersMgr(m_pConsultant),
 m_situation(SITUATION_SafeDevelopmentDefending)
 {
     g_Game = pGame;
     g_Engine = this;
-    _ASSERTE(param.Consultant);
+    _ASSERTE(m_pConsultant);
 }
 //---------------------------------------------------------------------------------------------
 void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
@@ -78,7 +79,7 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
     }
 }
 //--------------------------------------------------------------------------------
-void IStrategizerEx::Update(unsigned p_gameCycle)
+void IStrategizerEx::Update()
 {
     try
     {
@@ -93,14 +94,14 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
 
             // Time to kick scouting to know what the enemy is up to
             if (!m_scoutMgr.IsActive() &&
-                m_param.Consultant->IsGoodTimeToScout())
+                m_pConsultant->IsGoodTimeToScout())
                 m_scoutMgr.Activate();
 
             m_scoutMgr.Update();
             m_workersMgr.Update();
 
             if (m_situation == SITUATION_SafeDevelopmentDefending &&
-                m_param.Consultant->IsGoodTimeToPush())
+                m_pConsultant->IsGoodTimeToPush())
             {
                 auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
 
@@ -149,6 +150,8 @@ IStrategizerEx::~IStrategizerEx()
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
 {
+    IStrategizer::Init();
+    
     srand((unsigned)time(nullptr));
 
     // Note that the order of the engine components initialization is intended
@@ -208,14 +211,14 @@ void IStrategizerEx::SelectNextStrategyGoal()
     // Game opening plan selection
     if (g_Game->GameFrame() == 0)
     {
-        m_param.Consultant->SelectGameOpening();
+        m_pConsultant->SelectGameOpening();
     }
     else
     {
-        m_param.Consultant->SelectNextStrategy();
+        m_pConsultant->SelectNextStrategy();
     }
 
-    params = m_param.Consultant->CurrStrategyGoalParams();
+    params = m_pConsultant->CurrStrategyGoalParams();
     _ASSERTE(!params.empty());
     m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
 }
@@ -256,4 +259,20 @@ void IStrategizerEx::ReviseSituation()
         m_situation = SITUATION_SafeDevelopmentDefending;
     else
         DEBUG_THROW(NotImplementedException(XcptHere));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::SendEngineMessage(_In_ MessageType msgTypeId)
+{
+    g_MessagePump->Send(new Message(g_Game->GameFrame(), msgTypeId));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::SendEngineEntityMessage(_In_ MessageType msgTypeId, _In_ const EntityMessageData& msgData)
+{
+    g_MessagePump->Send(new DataMessage<EntityMessageData>(g_Game->GameFrame(), msgTypeId, new EntityMessageData(msgData)));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath)
+{
+    ENGINE_IO_READ_DIR = pReadPath;
+    ENGINE_IO_WRITE_DIR = pWritePath;
 }

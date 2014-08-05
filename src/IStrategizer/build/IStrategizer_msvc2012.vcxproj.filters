@@ -456,6 +456,12 @@
     <ClInclude Include="..\ResourceExist.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\RtsAiEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IStrategizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Action.cpp">
@@ -704,5 +710,16 @@
     <ClCompile Include="..\TrainerExist.cpp">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClCompile>
+    <ClCompile Include="..\IStrategizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\IStrategizer.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\IStrategizerDll.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

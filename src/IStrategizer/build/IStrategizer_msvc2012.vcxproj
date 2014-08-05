@@ -52,6 +52,8 @@
     <ClInclude Include="..\Delegate.h" />
     <ClInclude Include="..\EntityController.h" />
     <ClInclude Include="..\EntityFSM.h" />
+    <ClInclude Include="..\IStrategizer.h" />
+    <ClInclude Include="..\RtsAiEngine.h" />
     <ClInclude Include="..\ScoutManager.h" />
     <ClInclude Include="..\NodeSelectionStrategy.h" />
     <ClInclude Include="..\DeployArmyGoal.h" />
@@ -209,6 +211,7 @@
     <ClCompile Include="..\ResearchDone.cpp" />
     <ClCompile Include="..\ResourceDescription.cpp" />
     <ClCompile Include="..\ResourceExist.cpp" />
+    <ClCompile Include="..\IStrategizer.cpp" />
     <ClCompile Include="..\TrainerExist.cpp" />
     <ClCompile Include="..\WorkersManager.cpp" />
     <ClCompile Include="..\RetainerEx.cpp" />
@@ -226,6 +229,10 @@
     <ClCompile Include="..\WorldMap.cpp" />
     <ClCompile Include="..\WorldResources.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\IStrategizer.def" />
+    <None Include="..\IStrategizerDll.def" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E83C355-2FEB-4072-A99E-38882D5FBCBB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -234,12 +241,12 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -250,11 +257,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\props\IStrategizer.Lib.props" />
+    <Import Project="..\..\props\IStrategizer.Exe.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\props\IStrategizer.Lib.props" />
+    <Import Project="..\..\props\IStrategizer.Exe.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -301,6 +308,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
     </Link>
     <PreBuildEvent>
       <Command>

@@ -41,7 +41,6 @@ namespace IStrategizer
     typedef std::string TUpgrade;
 
     typedef int TPlayer;
-    typedef int TID;
 
     typedef std::unordered_set<TID> EntitySet;
     typedef std::vector<TID> EntityList;

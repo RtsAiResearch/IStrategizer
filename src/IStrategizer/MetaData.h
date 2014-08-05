@@ -7,6 +7,8 @@
 
 namespace IStrategizer
 {
+    typedef int TID;
+
     void Init();
     void InitAbstractionMetaData();
     void InitTypesMetaData();

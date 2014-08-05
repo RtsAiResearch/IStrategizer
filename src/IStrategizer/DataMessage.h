@@ -3,6 +3,7 @@
 
 #include "Message.h"
 
+#include "RtsAiEngine.h"
 #ifndef ENGINEDATA_H
 #include "EngineData.h"
 #endif
@@ -46,14 +47,6 @@ namespace IStrategizer
     //----------------------------------------------------------------------------------------------
     typedef DataMessage<std::string> TextMessage;
     //----------------------------------------------------------------------------------------------
-    struct EntityMessageData
-    {
-        EntityClassType EntityType;
-        TID EntityId;
-        PlayerType OwnerId;
-        int X;
-        int Y;
-    };
     typedef DataMessage<EntityMessageData> EntityCreateMessage;
     typedef DataMessage<EntityMessageData> EntityDestroyMessage;
     typedef DataMessage<EntityMessageData> EntityShowMessage;

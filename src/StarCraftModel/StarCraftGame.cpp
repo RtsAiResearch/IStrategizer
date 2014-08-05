@@ -35,6 +35,7 @@
 #include "ObjectFactory.h"
 #include "ObjectSerializer.h"
 #include "BWAPI.h"
+#include "IStrategizer.h"
 
 using namespace IStrategizer;
 using namespace BWAPI;
