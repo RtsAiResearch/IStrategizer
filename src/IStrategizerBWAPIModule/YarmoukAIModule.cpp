@@ -81,7 +81,7 @@ void YarmoukAIModule::InitIStrategizer()
     try
     {
         // FIXME
-        m_pGameModel = new BwapiGame;
+        m_pGameModel = nullptr;
         m_pGameModel->Init();
 
         param.OccupanceIMCellSize = TILE_SIZE;

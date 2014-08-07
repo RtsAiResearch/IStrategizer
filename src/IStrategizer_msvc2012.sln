@@ -41,9 +41,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Yarmouk", "IStrategizerBWAP
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{75688934-4CA0-461A-8A39-3127F2391B4D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjectSerializer", "..\..\Serialization\ObjectSerializer\ObjectSerializer.vcxproj", "{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjectSerializer", "ObjectSerializer\ObjectSerializer.vcxproj", "{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnrealCompiler", "..\..\Serialization\UnrealCompiler\UnrealCompiler.vcxproj", "{F31617ED-0C0C-4D22-96A0-1779F9E366F5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnrealCompiler", "UnrealCompiler\UnrealCompiler.vcxproj", "{F31617ED-0C0C-4D22-96A0-1779F9E366F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
