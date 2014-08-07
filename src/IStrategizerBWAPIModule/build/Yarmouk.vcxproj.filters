@@ -24,7 +24,7 @@
     <ClCompile Include="..\DefinitionCrossMapping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\BwapiWrapper.cpp">
+    <ClCompile Include="..\BwapiGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClInclude Include="..\DefinitionCrossMapping.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\BwapiWrapper.h">
+    <ClInclude Include="..\BwapiGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

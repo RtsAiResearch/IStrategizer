@@ -94,12 +94,12 @@
   <ItemGroup>
     <ClCompile Include="..\DefinitionCrossMapping.cpp" />
     <ClCompile Include="..\Dll.cpp" />
-    <ClCompile Include="..\BwapiWrapper.cpp" />
+    <ClCompile Include="..\BwapiGame.cpp" />
     <ClCompile Include="..\YarmoukAIModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DefinitionCrossMapping.h" />
-    <ClInclude Include="..\BwapiWrapper.h" />
+    <ClInclude Include="..\BwapiGame.h" />
     <ClInclude Include="..\YarmoukAIModule.h" />
   </ItemGroup>
   <ItemGroup>

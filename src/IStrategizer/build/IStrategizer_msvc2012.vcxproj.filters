@@ -219,9 +219,6 @@
     <ClInclude Include="..\AdjListDigraph.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\CrossMap.h">
-      <Filter>Header Files\Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\Collection.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
@@ -230,9 +227,6 @@
     </ClInclude>
     <ClInclude Include="..\True.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AttributesMetaData.h">
-      <Filter>Header Files\Defs</Filter>
     </ClInclude>
     <ClInclude Include="..\EngineData.h">
       <Filter>Header Files\Defs</Filter>
@@ -318,9 +312,6 @@
     <ClInclude Include="..\SetOperator.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Vector2.h">
-      <Filter>Header Files\Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\Logger.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
@@ -336,20 +327,8 @@
     <ClInclude Include="..\PlayerAttributeExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
-    <ClInclude Include="..\MetaData.h">
-      <Filter>Header Files\Defs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\EngineDefs.h">
-      <Filter>Header Files\Defs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\IStrategizerException.h">
-      <Filter>Header Files\System</Filter>
-    </ClInclude>
     <ClInclude Include="..\Predicate.h">
       <Filter>Header Files\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\RootMetaData.h">
-      <Filter>Header Files\Defs</Filter>
     </ClInclude>
     <ClInclude Include="..\RtsGame.h">
       <Filter>Header Files\GameModel</Filter>
@@ -441,12 +420,6 @@
     <ClInclude Include="..\ResourceExist.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\RtsAiEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\IStrategizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\BotStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -459,7 +432,37 @@
     <ClInclude Include="..\GameTrace.h">
       <Filter>Header Files\OLCBP\LFHD</Filter>
     </ClInclude>
-    <ClInclude Include="..\SmartPtr.h">
+    <ClInclude Include="..\Include\IStrategizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\RtsAiEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\TypesMetaData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\AttributesMetaData.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\CrossMap.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\EngineDefs.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IStrategizerException.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\MetaData.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\RootMetaData.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\SmartPtr.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Vector2.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
   </ItemGroup>
