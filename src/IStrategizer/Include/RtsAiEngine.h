@@ -103,8 +103,8 @@ namespace IStrategizer
         virtual bool IsWorker() const = 0;
         virtual bool CanProduce() const = 0;
         virtual bool CanBuildAddOn() const = 0;
-        virtual bool MaxHitpoints() const = 0;
-        virtual bool BuildTime() const = 0;
+        virtual int MaxHitpoints() const = 0;
+        virtual int BuildTime() const = 0;
         virtual bool IsResourceDepot() const = 0;
         virtual int SupplyProvided() const = 0;
         virtual int TileWidth() const = 0;
