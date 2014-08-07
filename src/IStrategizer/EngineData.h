@@ -36,12 +36,6 @@ namespace IStrategizer
     class ConditionEx;
     class GoalEx;
 
-    typedef std::string TAction;
-    typedef std::string TEntity;
-    typedef std::string TUpgrade;
-
-    typedef int TPlayer;
-
     typedef std::unordered_set<TID> EntitySet;
     typedef std::vector<TID> EntityList;
 
@@ -57,8 +51,5 @@ namespace IStrategizer
     ///> alias=DeepFeaturesEx(vector(float))
     typedef Serialization::SVector<float> DeepFeaturesEx;
 }
-
-#define INVALID_TID -1
-#define DONT_CARE -1
 
 #endif // ENGINEDATA_H

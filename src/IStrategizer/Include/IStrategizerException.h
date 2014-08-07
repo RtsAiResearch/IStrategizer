@@ -14,15 +14,15 @@ namespace IStrategizer
         const char* File;
         int Line;
         ExceptionLocation(const char* p_file, const char* p_function, int p_line) :
-        File(p_file), Function(p_function), Line(p_line) {}
+            File(p_file), Function(p_function), Line(p_line) {}
     };
 
 #define XcptHere ExceptionLocation(__FILE__, __FUNCTION__, __LINE__)
 
-/*
-Use DEBUG_THROW macro to control thrown exceptions behavior between really throwing it or replace it with assert
-If DEBUG_ISTRATEGIZER_EXCEPTION is defined, DEBUG_THROW replaces the throw call with _ASSERTE(!<exception-string>)
-*/
+    /*
+    Use DEBUG_THROW macro to control thrown exceptions behavior between really throwing it or replace it with assert
+    If DEBUG_ISTRATEGIZER_EXCEPTION is defined, DEBUG_THROW replaces the throw call with _ASSERTE(!<exception-string>)
+    */
 #define DEBUG_ISTRATEGIZER_EXCEPTION
 
 #ifdef DEBUG_ISTRATEGIZER_EXCEPTION
@@ -35,18 +35,26 @@ If DEBUG_ISTRATEGIZER_EXCEPTION is defined, DEBUG_THROW replaces the throw call 
     {
     public:
         Exception(ExceptionLocation p_location)
-            : std::exception("Exception"), m_location(p_location) 
+            : std::exception("Exception"), m_location(p_location)
         {
-            Init();
-        }
+                Init();
+            }
 
         Exception(ExceptionLocation p_location, const char* p_pWhat)
-            : std::exception(p_pWhat), m_location(p_location) 
+            : std::exception(p_pWhat), m_location(p_location)
         {
-            Init();
+                Init();
+            }
+
+        void To(std::ostream& p_out) const
+        {
+            p_out
+                << "[" << m_location.File
+                << " @Function: " << m_location.Function
+                << " @Line: " << m_location.Line << "] "
+                << std::exception::what() << std::endl;
         }
 
-        void To(std::ostream& p_out) const;
         const char* what() const { return m_formattedXcpt.c_str(); }
 
     protected:

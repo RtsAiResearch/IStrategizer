@@ -21,17 +21,18 @@
 #define ISREALVAL(ENAME, EVALUE) (EVALUE >= REALVALSTART(ENAME) && EVALUE < REALVALEND(ENAME)) 
 #define ENUMS_SIZE 0xfffff
 
-namespace IStrategizer
-{
-    /*
-    ID format:
-    [f       ][ff  ][ff  ]
-    [Category][Type][Idx ]
+#ifndef METADATAAPI
+#define METADATAAPI extern "C" __declspec(dllimport)
+#endif // METADATAAPI
 
-    Example: 0x20200
-    Category: 0x2 | Type: 0x02 | Idx = 0x00
-    */
-    extern const char* Enums[ENUMS_SIZE];
-}
+/*
+ID format:
+[f       ][ff  ][ff  ]
+[Category][Type][Idx ]
+
+Example: 0x20200
+Category: 0x2 | Type: 0x02 | Idx = 0x00
+*/
+METADATAAPI const char* Enums[ENUMS_SIZE];
 
 #endif // ROOTMETADATA_H

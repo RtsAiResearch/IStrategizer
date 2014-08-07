@@ -12,7 +12,7 @@ using namespace std;
 using namespace IStrategizer;
 
 RetainerEx::RetainerEx() :
-    m_caseBaseLoaded(false)
+m_caseBaseLoaded(false)
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -54,16 +54,14 @@ void RetainerEx::Flush()
 //----------------------------------------------------------------------------------------------
 void RetainerEx::ExecuteCommand(const char* p_cmd)
 {
-    if(!strcmp(p_cmd, "flush"))
+    if (!strcmp(p_cmd, "flush"))
     {
         Flush();
-        g_Game->DisplayMessage("flushing case-base has be performed successfully");
+        LogInfo("flushing case-base has be performed successfully");
     }
-    else if(!strcmp(p_cmd, "info"))
+    else if (!strcmp(p_cmd, "info"))
     {
-        char buffer[128];
-        sprintf_s(buffer, "retriever has %d cases", m_casebase.CaseContainer.size());
-        g_Game->DisplayMessage(buffer);
+        LogInfo("retriever has %d cases", m_casebase.CaseContainer.size());
     }
 }
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -71,5 +69,5 @@ RetainerEx::~RetainerEx()
 {
     Flush();
 
-	m_casebase.DeleteAll();
+    m_casebase.DeleteAll();
 }

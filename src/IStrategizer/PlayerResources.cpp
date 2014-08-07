@@ -1,8 +1,11 @@
 #include "PlayerResources.h"
 #include "Action.h"
 #include "Logger.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
+
+DECL_SERIALIZABLE(PlayerResources);
 
 bool PlayerResources::HasEnough(const WorldResources* pResources)
 {
@@ -91,3 +94,37 @@ void PlayerResources::SetOffline(RtsGame* pBelongingGame)
 
     m_isOnline = false;
 }
+//////////////////////////////////////////////////////////////////////////
+int PlayerResources::Supply() const
+{
+    if (m_isOnline)
+    {
+        // The amount of supply is doubled because of an issue with the Zerg supply
+        // that's why we divide the supplyTotal over 2.
+        // For more info check documentation for supplyTotal API.
+        int bwapiTotalSupply = g_GameImpl->PlayerSupplyTotal(m_playerId);
+        int bwapiUsedSupply = g_GameImpl->PlayerSupplyUsed(m_playerId);
+        int totalSupply = bwapiTotalSupply / 2;
+        int usedSupply = (bwapiUsedSupply / 2);
+        return totalSupply - usedSupply;
+    }
+    else
+        return m_cachedSupply;
+}
+//////////////////////////////////////////////////////////////////////////
+int PlayerResources::Secondary() const
+{
+    if (m_isOnline)
+        return g_GameImpl->PlayerGas(m_playerId);
+    else
+        return m_cachedSecondary;
+}
+//////////////////////////////////////////////////////////////////////////
+int PlayerResources::Primary() const
+{
+    if (m_isOnline)
+        return g_GameImpl->PlayerMinerals(m_playerId);
+    else
+        return m_cachedPrimary;
+}
+

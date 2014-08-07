@@ -4,6 +4,7 @@
 
 #include "WorldResources.h"
 #include "EngineObject.h"
+#include "MetaData.h"
 
 namespace IStrategizer
 {
@@ -16,6 +17,15 @@ namespace IStrategizer
             &m_isOnline, &m_cachedPrimary, &m_cachedSecondary, &m_cachedSupply);
     public:
         PlayerResources() :
+            m_playerId(INVALID_TID),
+            m_lockedPrimary(0),
+            m_lockedSecondary(0),
+            m_lockedSupply(0),
+            m_isOnline(true)
+        { }
+
+        PlayerResources(TID playerId) :
+            m_playerId(playerId),
             m_lockedPrimary(0),
             m_lockedSecondary(0),
             m_lockedSupply(0),
@@ -30,9 +40,9 @@ namespace IStrategizer
 
         virtual ~PlayerResources() {}
         virtual bool HasEnough(const WorldResources* p_resources);
-        virtual int Supply() const = 0;
-        virtual int Secondary() const = 0;
-        virtual int Primary() const = 0;
+        virtual int Supply() const;
+        virtual int Secondary() const;
+        virtual int Primary() const;
         void SetOffline(RtsGame* pBelongingGame);
 
     protected:
@@ -50,6 +60,8 @@ namespace IStrategizer
         int m_cachedSecondary;
         ///> type=int
         int m_cachedSupply;
+
+        TID m_playerId;
     };
 }
 

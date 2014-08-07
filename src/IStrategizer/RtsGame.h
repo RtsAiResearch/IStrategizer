@@ -8,6 +8,7 @@
 #include "WorldClock.h"
 #include "Vector2.h"
 #include <vector>
+#include "RtsAiEngine.h"
 
 namespace IStrategizer
 {
@@ -21,6 +22,7 @@ namespace IStrategizer
     class GameRace;
     class WorldMap;
     class SimilarityWeightModel;
+    class IRtsGame;
 
     typedef Serialization::SMap<EntityClassType, GameType*> EntiyTypesMap;
     typedef Serialization::SMap<ResearchType, GameResearch*> ResearchTypesMap;
@@ -43,18 +45,6 @@ namespace IStrategizer
         RaceTypesMap RaceTypes;
     };
 
-    enum GameDrawColor
-    {
-        GCLR_Red,
-        GCLR_Green,
-        GCLR_Blue,
-        GCLR_Yellow,
-        GCLR_White,
-        GCLR_Orange,
-        GCLR_Cyan,
-        GCLR_Purple,
-        GCLR_Black
-    };
 
     ///> class=RtsGame
     class RtsGame : public EngineObject
@@ -70,60 +60,56 @@ namespace IStrategizer
             m_firstUpdate(true)
         {}
 
+        ~RtsGame();
+        bool Init();
         static void FinalizeStaticData();
-        virtual bool InitStaticData() = 0;
-        virtual ~RtsGame();
-        virtual void Init();
-        virtual void DisplayMessage(const char* p_msg) = 0;
         void ExportStaticData();
-
-        void Players(std::vector<PlayerType>& p_playerIds) const { m_players.Keys(p_playerIds); }
-        void EntityTypes(std::vector<EntityClassType>& p_entityTypeIds) const { sm_pGameStatics->EntityTypes.Keys(p_entityTypeIds); }
-        void Researches(std::vector<ResearchType>& p_researchTypeIds) const { sm_pGameStatics->ResearchTypes.Keys(p_researchTypeIds); }
 
         const EntiyTypesMap& EntityTypes() const { return sm_pGameStatics->EntityTypes; }
         const ResearchTypesMap& ResearchTypes() const { return sm_pGameStatics->ResearchTypes; }
         const RaceTypesMap& RaceTypes() const { return sm_pGameStatics->RaceTypes; }
+        const Serialization::SMap<PlayerType, GamePlayer*>& Players() const { return m_players; }
 
         GamePlayer* GetPlayer(PlayerType p_id) const;
         GameType* GetEntityType(EntityClassType p_id);
         GameResearch* GetResearch(ResearchType p_id);
         GameRace* GetRace(TID raceID);
+        GameEntity* GetEntity(_In_ TID entityId);
+
         GamePlayer* Self() { return GetPlayer(PLAYER_Self); }
         const GamePlayer* Self() const { return GetPlayer(PLAYER_Self); }
         GamePlayer* Enemy() { return GetPlayer(PLAYER_Enemy); }
+
         WorldMap* Map() { _ASSERTE(m_isInitialized); return m_pMap; }
         const WorldMap* Map() const { _ASSERTE(m_isInitialized); return m_pMap; }
+
         RtsGame* Snapshot() const;
-        virtual size_t GetMaxTrainingQueueCount() const = 0;
-        virtual unsigned GameFrame() const = 0;
+        virtual int GameFrame() const;
         float Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const;
         const WorldClock& Clock() const { return m_clock; }
         void Update();
-        GameEntity* GetEntity(_In_ TID entityId);
 
         // Debugging Draw Helpers
-        virtual void DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c) = 0;
-        virtual void DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c, _In_ bool fill = false) = 0;
-        virtual void DebugDrawMapText(_In_ Vector2 p, _In_ const std::string& txt) = 0;
-        virtual void DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bottomRight, _In_ GameDrawColor c, _In_ bool fill = false) = 0;
-        virtual void DebugDrawScreenText(_In_ Vector2 p, _In_ const std::string& txt, _In_ GameDrawColor c) = 0;
+        virtual void DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c);
+        virtual void DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c, _In_ bool fill = false);
+        virtual void DebugDrawMapText(_In_ Vector2 p, _In_ const char* pTxt);
+        virtual void DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bottomRight, _In_ GameDrawColor c, _In_ bool fill = false);
+        virtual void DebugDrawScreenText(_In_ Vector2 p, _In_ const char* pTxt, _In_ GameDrawColor c);
         virtual void DebugDraw();
 
         static SimilarityWeightModel DefaultWeightModel;
+        // Game types are shared across all RtsGame instances
+        static RtsGameStaticData* sm_pGameStatics;
 
     protected:
         void SetOffline();
-        virtual void InitPlayers() = 0;
-        virtual void InitMap() = 0;
-        virtual GameType* FetchEntityType(EntityClassType p_id) = 0;
-        virtual GameResearch* FetchResearch(ResearchType p_id) = 0;
-        virtual GamePlayer* FetchPlayer(PlayerType p_id) = 0;
-        virtual int GetMaxForceSize() const = 0;
+        virtual void InitPlayers();
+        virtual void InitMap();
         virtual void Finalize();
-
-        // Game types are shared across all RtsGame instances
-        static RtsGameStaticData* sm_pGameStatics;
+        void InitEntityTypes();
+        void InitResearchTypes();
+        void InitRaceTypes();
+        bool InitStaticData();
 
         ///> type=bool
         bool m_isOnline;
@@ -179,5 +165,6 @@ namespace IStrategizer
 }
 
 extern IStrategizer::RtsGame* g_Game;
+extern IStrategizer::IRtsGame* g_GameImpl;
 
 #endif // RTSGAME_H

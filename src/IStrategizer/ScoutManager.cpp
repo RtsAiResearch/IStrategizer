@@ -60,10 +60,6 @@ void ScoutManager::Update()
 
         if (scoutEntityId != INVALID_TID)
         {
-            auto pScout = g_Game->Self()->GetEntity(scoutEntityId);
-            _ASSERTE(pScout);
-            _ASSERTE(!pScout->IsLocked());
-            _ASSERTE(pScout->P(OP_State) != OBJSTATE_BeingConstructed);
             m_scoutController.ControlEntity(scoutEntityId);
             m_scoutController.PushLogic(make_shared<ScoutEntityFSM>(ScoutEntityFSM::SCTGL_Explore, &m_scoutController));
 

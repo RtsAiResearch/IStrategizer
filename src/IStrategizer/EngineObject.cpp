@@ -1,6 +1,7 @@
 #include "EngineObject.h"
 #include "EngineDefs.h"
 #include "MessagePump.h"
+#include "Logger.h"
 #include <unordered_set>
 #define VC_EXTRALEAN
 #define WIN32_LEAN_AND_MEAN

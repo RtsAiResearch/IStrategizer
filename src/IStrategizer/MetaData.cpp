@@ -1,28 +1,24 @@
+#define METADATAAPI extern "C" __declspec(dllexport)
 #include "MetaData.h"
-#include "SerializationEssentials.h"
 
 namespace IStrategizer
 {
-    const char* Enums[ENUMS_SIZE] = { nullptr };
+    METADATAAPI const char* Enums[ENUMS_SIZE] = { nullptr };
 
-    void Init()
+    void InitAttributesMetaData();
+    void InitTypesMetaData();
+
+    void IStrategizer::Init()
     {
         static bool initialized = false;
 
         if (initialized)
             return;
 
-        SerializationEssentials::Init();
-        InitAbstractionMetaData();
         InitTypesMetaData();
         InitAttributesMetaData();
 
         initialized = true;
-    }
-    //---------------------------------------------------------------------------
-    void InitAbstractionMetaData()
-    {
-
     }
     //----------------------------------------------------------------------------------------------
     void InitTypesMetaData()

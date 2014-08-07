@@ -5,13 +5,18 @@
 #include <string>
 
 #include "CrossMap.h"
-#include "EngineData.h"
+#include "MetaData.h"
 
 using namespace IStrategizer;
 
 typedef std::string TName;
 
 extern const int TechIdOffset;
+
+typedef std::string TAction;
+typedef std::string TEntity;
+typedef std::string TUpgrade;
+typedef int TPlayer;
 
 class DefinitionCrossMapping
 {

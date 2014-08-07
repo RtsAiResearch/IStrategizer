@@ -2,7 +2,6 @@
 #define ENGINEDEFS_H
 
 #include <process.h>       // For _beginthreadex
-#include "Logger.h"
 
 #ifndef CBRB
 #define CBRB(x)                                               \

@@ -161,8 +161,10 @@ void DefinitionCrossMapping::InitPlayers()
 
     auto allPlayers = Broodwar->getPlayers();
 
-    for (auto pPlayer : allPlayers)
+    for (auto itr = allPlayers.begin();
+        itr != allPlayers.end(); ++itr)
     {
+        auto pPlayer = (*itr);
         if (pPlayer->isNeutral())
         {
             m_players.push_back(make_pair(pPlayer->getID(), PLAYER_Neutral));

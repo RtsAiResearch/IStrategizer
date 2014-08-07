@@ -9,7 +9,7 @@ class RtsAiEngineFactory
 public:
     IRtsAiEngine* CreateEngine(_In_ const EngineParams& params, _In_ IRtsGame* pGame)
     {
-        return new IStrategizerEx(params, (RtsGame*)pGame);
+        return new IStrategizerEx(params, pGame);
     }
 
     void DestroyEngine(_In_ IRtsAiEngine* pInstance)
@@ -24,3 +24,8 @@ IStrategizer::IRtsAiEngineFactory* GetRtsAiEngineFactory()
     return (IRtsAiEngineFactory*)&instance;
 }
 
+void RtsAiEngineSystemInit()
+{
+    /*SerializationEssentials::Init();
+    IStrategizer::Init();*/
+}

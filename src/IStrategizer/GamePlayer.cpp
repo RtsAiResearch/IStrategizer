@@ -27,18 +27,43 @@
 using namespace IStrategizer;
 using namespace std;
 
-GamePlayer::GamePlayer(TID raceId) :
+GamePlayer::GamePlayer() :
+m_playerId(INVALID_TID),
 m_pResources(nullptr),
 m_pTechTree(nullptr),
-m_raceId(raceId),
-m_isOnline(true)
-{
-    m_colonyCenter = MapArea::Null();
-}
+m_isOnline(true),
+m_raceId(INVALID_TID),
+m_type(PLAYER_END),
+m_pRace(nullptr)
+{}
+//////////////////////////////////////////////////////////////////////////
+GamePlayer::GamePlayer(TID playerId) :
+m_playerId(playerId),
+m_pResources(new PlayerResources(playerId)),
+m_pTechTree(new GameTechTree(playerId)),
+m_isOnline(true),
+m_colonyCenter(MapArea::Null()),
+m_raceId(g_GameImpl->PlayerRace(playerId)->GameId()),
+m_pRace(g_Game->GetRace(m_raceId)),
+m_type(g_GameImpl->PlayerGetType(playerId))
+{}
 //////////////////////////////////////////////////////////////////////////
 GamePlayer::~GamePlayer()
 {
     Finalize();
+}
+//////////////////////////////////////////////////////////////////////////
+const GameRace* GamePlayer::Race() const
+{
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
+    return m_pRace;
+}
+//////////////////////////////////////////////////////////////////////////
+Vector2 GamePlayer::StartLocation() const
+{
+    return g_GameImpl->PlayerStartLocation(m_playerId);
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::Init()
@@ -157,7 +182,7 @@ void GamePlayer::OnEntityCreate(Message* pMsg)
         if (!m_entities.Contains(entityId))
         {
             LogInfo("Entity %d does not exist in Player %s units, will fetch it from game", entityId, Enums[m_type]);
-            pEntity = FetchEntity(entityId);
+            pEntity = new GameEntity(entityId);
             _ASSERTE(pEntity);
             m_entities[entityId] = pEntity;
             pEntity->CacheAttributes();
@@ -216,7 +241,7 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
     {
         if (!m_entities.Contains(entityId))
         {
-            pEntity = FetchEntity(entityId);
+            pEntity = new GameEntity(entityId);
             _ASSERTE(pEntity);
             m_entities[entityId] = pEntity;
         }
@@ -267,7 +292,7 @@ void GamePlayer::OnEntityShow(Message* pMsg)
         else
         {
             LogInfo("Entity %d does not exist in Player %s units, adding it", entityId, Enums[m_type]);
-            pEntity = FetchEntity(entityId);
+            pEntity = new GameEntity(entityId);
             _ASSERTE(pEntity);
             m_entities[entityId] = pEntity;
         }

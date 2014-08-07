@@ -281,12 +281,12 @@ bool BuildActionEx::Equals(PlanStepEx* p_planStep)
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::Abort(RtsGame &game)
 {
-    if (_builderId != INVALID_TID)
+    if (_buildingId != INVALID_TID)
     {
-        auto pGameBuilder = game.Self()->GetEntity(_builderId);
+        auto pGameBuilder = g_Game->Self()->GetEntity(_builderId);
 
-        if (pGameBuilder != nullptr)
-            pGameBuilder->CancelOrders();
+        if (pGameBuilder != NULL)
+            pGameBuilder->CancelConstruction();
     }
 
     Action::Abort(game);

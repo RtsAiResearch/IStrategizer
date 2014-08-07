@@ -144,9 +144,6 @@
     <ClInclude Include="..\GameTechTree.h">
       <Filter>Header Files\GameModel</Filter>
     </ClInclude>
-    <ClInclude Include="..\GameTrace.h">
-      <Filter>Header Files\GameModel</Filter>
-    </ClInclude>
     <ClInclude Include="..\GoalEx.h">
       <Filter>Header Files\OLCBP\Goals</Filter>
     </ClInclude>
@@ -234,9 +231,6 @@
     <ClInclude Include="..\True.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
-    <ClInclude Include="..\AbstractionMetaData.h">
-      <Filter>Header Files\Defs</Filter>
-    </ClInclude>
     <ClInclude Include="..\AttributesMetaData.h">
       <Filter>Header Files\Defs</Filter>
     </ClInclude>
@@ -254,9 +248,6 @@
     </ClInclude>
     <ClInclude Include="..\EntityClassExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BotStatistics.h">
-      <Filter>Header Files\GameModel</Filter>
     </ClInclude>
     <ClInclude Include="..\EventTriggered.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
@@ -315,9 +306,6 @@
     <ClInclude Include="..\Not.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
-    <ClInclude Include="..\GameStatistics.h">
-      <Filter>Header Files\GameModel</Filter>
-    </ClInclude>
     <ClInclude Include="..\PlayerResources.h">
       <Filter>Header Files\GameModel</Filter>
     </ClInclude>
@@ -368,9 +356,6 @@
     </ClInclude>
     <ClInclude Include="..\ResourceDescription.h">
       <Filter>Header Files\InfluenceMaps</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SimilarityWeightModel.h">
-      <Filter>Header Files\GameModel</Filter>
     </ClInclude>
     <ClInclude Include="..\TypesMetaData.h">
       <Filter>Header Files\Defs</Filter>
@@ -461,6 +446,21 @@
     </ClInclude>
     <ClInclude Include="..\IStrategizer.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BotStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SimilarityWeightModel.h">
+      <Filter>Header Files\OLCBP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameTrace.h">
+      <Filter>Header Files\OLCBP\LFHD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SmartPtr.h">
+      <Filter>Header Files\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -561,9 +561,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\IStrategizerEx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\IStrategizerException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\LearningFromHumanDemonstration.cpp">
@@ -713,13 +710,20 @@
     <ClCompile Include="..\IStrategizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\IStrategizer.def">
+    <ClCompile Include="..\GameRace.cpp">
       <Filter>Source Files</Filter>
-    </None>
-    <None Include="..\IStrategizerDll.def">
+    </ClCompile>
+    <ClCompile Include="..\GameTechTree.cpp">
       <Filter>Source Files</Filter>
-    </None>
+    </ClCompile>
+    <ClCompile Include="..\GameResearch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

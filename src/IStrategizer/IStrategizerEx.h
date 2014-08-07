@@ -25,13 +25,13 @@ namespace IStrategizer
     class RtsGame;
     class BotStatistics;
 
-    class IStrategizerEx : public EngineObject, public IRtsAiEngine
+    class IStrategizerEx : public IRtsAiEngine, public EngineObject
     {
     public:
         static const int BordersRadius = 1024;
         static const int ReviseSituationInterval = 16;
 
-        IStrategizerEx(const EngineParams &param, RtsGame* pGame);
+        IStrategizerEx(const EngineParams &param, IRtsGame* pGameImpl);
         void Update();
         bool Init();
         void NotifyMessegeSent(Message* pMsg);
@@ -43,7 +43,7 @@ namespace IStrategizer
         SituationType Situation() const { return m_situation; }
         void ReviseSituation();
         ~IStrategizerEx();
-
+        const EngineParams& Params() const { return m_param; }
         void SendEngineMessage(_In_ MessageType msgTypeId);
         void SendEngineEntityMessage(_In_ MessageType msgTypeId, _In_ const EntityMessageData& msgData);
         void SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath);

@@ -36,7 +36,7 @@ void EntityState::DebugDraw()
     str += '_';
     str += to_string(pController->Entity()->Id());
 
-    g_Game->DebugDrawMapText(pController->Entity()->Position(), str);
+    g_Game->DebugDrawMapText(pController->Entity()->Position(), str.c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 void ArriveEntityState::DebugDraw()

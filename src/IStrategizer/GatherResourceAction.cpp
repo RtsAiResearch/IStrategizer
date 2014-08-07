@@ -144,7 +144,9 @@ bool GatherResourceAction::SuccessConditionsSatisfied(RtsGame& game)
 			if (_params[PARAM_Amount] == DONT_CARE)
 				return true;
 
-			m_gatheredAmount += game.Self()->Race()->GetResourceConsumbtionRatePerWorker((ResourceType)_params[PARAM_ResourceId]);
+            //FIXME
+            _ASSERTE("Not implemented");
+			//m_gatheredAmount += game.Self()->Race()->GetResourceConsumbtionRatePerWorker((ResourceType)_params[PARAM_ResourceId]);
 		}
 	}
 

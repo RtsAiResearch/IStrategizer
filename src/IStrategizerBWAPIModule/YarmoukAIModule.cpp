@@ -12,7 +12,7 @@ void YarmoukAIModule::onStart()
 {
     // Print the map name.
     // BWAPI returns std::string when retrieving a string, don't forget to add .c_str() when printing!
-    // Broodwar << "The map is " << Broodwar->mapName() << "!" << std::endl;
+    Broodwar << "The map is " << Broodwar->mapName().c_str() << "!" << std::endl;
 
     // Enable the UserInput flag, which allows us to control the bot and type messages.
     Broodwar->enableFlag(Flag::UserInput);
@@ -36,6 +36,7 @@ void YarmoukAIModule::onStart()
 
 void YarmoukAIModule::onEnd(bool isWinner)
 {
+    // FIXME:
     //GameEndMessageData    *pData = nullptr;
     //GameEndMessage        *pMsg = nullptr;
 
@@ -79,7 +80,7 @@ void YarmoukAIModule::InitIStrategizer()
 
     try
     {
-        _ASSERTE(!"Assignt here");
+        // FIXME
         m_pGameModel = nullptr;
 
         param.OccupanceIMCellSize = TILE_SIZE;
@@ -87,27 +88,27 @@ void YarmoukAIModule::InitIStrategizer()
         param.OccupanceIMUpdateInterval = 1;
         param.GrndCtrlIMUpdateInterval = 32;
 
-        _ASSERTE(!"Assignt here");
+        // FIXME
         param.Consultant = nullptr;
 
         if (Broodwar->isReplay())
         {
             Broodwar->sendText("Watching replay map: %s", Broodwar->mapFileName().c_str());
+            param.Phase = PHASE_Offline;
         }
+        else
+            param.Phase = PHASE_Online;
 
-        param.Phase = PHASE_Online;
         Broodwar->setLocalSpeed(0);
 
         m_pAiEngine = GetRtsAiEngineFactory()->CreateEngine(param, m_pGameModel);
         _ASSERTE(m_pAiEngine);
         m_pAiEngine->SetEngineReadWriteDir("bwapi-data\\AI\\", "bwapi-data\\AI\\");
 
-
         g_Database.Init();
 
         if (!m_pAiEngine->Init())
         {
-            LogError("Failed to initialize IStrategizer");
             return;
         }
     }
@@ -122,9 +123,10 @@ void YarmoukAIModule::FinalizeIStrategizer()
     GetRtsAiEngineFactory()->DestroyEngine(m_pAiEngine);
     m_pAiEngine = nullptr;
 
-    _ASSERTE(!"Move somewhere");
-    // RtsGame::FinalizeStaticData();
-    SAFE_DELETE(m_pGameModel);
+    // FIXME
+    //RtsGame::FinalizeStaticData();
+    // FIXME
+    //SAFE_DELETE(m_pGameModel);
 }
 //////////////////////////////////////////////////////////////////////////
 void YarmoukAIModule::OnEntityMessage(BWAPI::Unit pUnit, MessageType msgType)
@@ -151,30 +153,59 @@ void YarmoukAIModule::OnEntityMessage(BWAPI::Unit pUnit, MessageType msgType)
 //////////////////////////////////////////////////////////////////////////
 void YarmoukAIModule::onUnitCreate(BWAPI::Unit pUnit)
 {
-    LogInfo("OnUnitCreate -> %s[%d]", pUnit->getType().toString().c_str(), pUnit->getID());
     OnEntityMessage(pUnit, MSG_EntityCreate);
 }
 //////////////////////////////////////////////////////////////////////////
 void YarmoukAIModule::onUnitDestroy(BWAPI::Unit pUnit)
 {
-    LogInfo("OnUnitDestroy -> %s[%d]", pUnit->getType().toString().c_str(), pUnit->getID());
     OnEntityMessage(pUnit, MSG_EntityDestroy);
 }
 //////////////////////////////////////////////////////////////////////////
 void YarmoukAIModule::onUnitRenegade(BWAPI::Unit pUnit)
 {
-    LogInfo("OnUnitRenegade -> %s[%d]", pUnit->getType().toString().c_str(), pUnit->getID());
     OnEntityMessage(pUnit, MSG_EntityRenegade);
 }
 //////////////////////////////////////////////////////////////////////////
 void YarmoukAIModule::onUnitShow(BWAPI::Unit pUnit)
 {
-    LogInfo("OnUnitShow -> %s[%d]", pUnit->getType().toString().c_str(), pUnit->getID());
     OnEntityMessage(pUnit, MSG_EntityShow);
 }
 //////////////////////////////////////////////////////////////////////////
 void YarmoukAIModule::onUnitHide(BWAPI::Unit pUnit)
 {
-    LogInfo("OnUnitHide -> %s[%d] @ Frame %d", pUnit->getType().toString().c_str(), pUnit->getID(), Broodwar->getFrameCount());
     OnEntityMessage(pUnit, MSG_EntityHide);
 }
+//////////////////////////////////////////////////////////////////////////
+void YarmoukAIModule::onSendText(std::string text)
+{
+    static const char* commands[] = {
+        "export-all-ids",
+        "export-game-ids",
+        "export-statics"
+    };
+
+    unsigned cmdLen;
+    const char* cmdParam;
+
+    if (!strncmp(text.c_str(), commands[0], strlen(commands[0])))
+    {
+        cmdLen = strlen(commands[0]);
+        cmdParam = text.c_str() + cmdLen + 1;
+
+        if (g_Database.ExportAllIds(cmdParam))
+            Broodwar->sendText("All ids exported successfully");
+        else
+            Broodwar->sendText("Failed to export all ids");
+    }
+    else if (!strncmp(text.c_str(), commands[1], strlen(commands[1])))
+    {
+        cmdLen = strlen(commands[1]);
+        cmdParam = text.c_str() + cmdLen + 1;
+
+        if (g_Database.ExportGameIds(cmdParam))
+            Broodwar->sendText("Game ids exported successfully");
+        else
+            Broodwar->sendText("Failed to export game ids");
+    }
+}
+//////////////////////////////////////////////////////////////////////////

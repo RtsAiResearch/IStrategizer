@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AbstractAdapter.h" />
-    <ClInclude Include="..\AbstractionMetaData.h" />
     <ClInclude Include="..\AbstractRetainer.h" />
     <ClInclude Include="..\AbstractRetriever.h" />
     <ClInclude Include="..\AbstractReviser.h" />
@@ -61,6 +60,7 @@
     <ClInclude Include="..\EngineDefs.h" />
     <ClInclude Include="..\EngineObject.h" />
     <ClInclude Include="..\CandidateGathererExist.h" />
+    <ClInclude Include="..\SmartPtr.h" />
     <ClInclude Include="..\TrainerExist.h" />
     <ClInclude Include="..\WorkersManager.h" />
     <ClInclude Include="..\StrategySelector.h" />
@@ -170,6 +170,7 @@
     <ClCompile Include="..\Console.cpp" />
     <ClCompile Include="..\DeployArmyGoal.cpp" />
     <ClCompile Include="..\DestroyEntityTypeGoal.cpp" />
+    <ClCompile Include="..\dllmain.cpp" />
     <ClCompile Include="..\EngineAssist.cpp" />
     <ClCompile Include="..\EngineObject.cpp" />
     <ClCompile Include="..\EntityClassExist.cpp" />
@@ -182,15 +183,18 @@
     <ClCompile Include="..\ForceDescription.cpp" />
     <ClCompile Include="..\GameEntity.cpp" />
     <ClCompile Include="..\GamePlayer.cpp" />
+    <ClCompile Include="..\GameRace.cpp" />
+    <ClCompile Include="..\GameResearch.cpp" />
+    <ClCompile Include="..\GameTechTree.cpp" />
     <ClCompile Include="..\GameTrace.cpp" />
     <ClCompile Include="..\CandidateGathererExist.cpp" />
+    <ClCompile Include="..\GameType.cpp" />
     <ClCompile Include="..\GatherResourceAction.cpp" />
     <ClCompile Include="..\GoalFactory.cpp" />
     <ClCompile Include="..\GroundControlIM.cpp" />
     <ClCompile Include="..\IMSystemManager.cpp" />
     <ClCompile Include="..\InfluenceMap.cpp" />
     <ClCompile Include="..\IStrategizerEx.cpp" />
-    <ClCompile Include="..\IStrategizerException.cpp" />
     <ClCompile Include="..\LearningFromHumanDemonstration.cpp" />
     <ClCompile Include="..\Logger.cpp" />
     <ClCompile Include="..\MapArea.cpp" />
@@ -229,10 +233,6 @@
     <ClCompile Include="..\WorldMap.cpp" />
     <ClCompile Include="..\WorldResources.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\IStrategizer.def" />
-    <None Include="..\IStrategizerDll.def" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E83C355-2FEB-4072-A99E-38882D5FBCBB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -244,6 +244,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -258,20 +259,21 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\props\IStrategizer.Exe.props" />
+    <Import Project="..\..\props\Serialization.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\props\IStrategizer.Exe.props" />
+    <Import Project="..\..\props\Serialization.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\Serialization\UnrealCompiler;$(SolutionDir)\3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ISTRATEGIZER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -294,14 +296,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\Serialization\UnrealCompiler;$(SolutionDir)\3rdParty\Serialization\ObjectSerializer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -310,6 +310,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PreBuildEvent>
       <Command>

@@ -31,7 +31,7 @@ using namespace std;
 
 IStrategizer::IStrategizerEx* g_Engine = nullptr;
 
-IStrategizerEx::IStrategizerEx(const EngineParams &param, RtsGame* pGame) :
+IStrategizerEx::IStrategizerEx(const EngineParams &param, IRtsGame* pGameImpl) :
 m_param(param),
 m_pCaseLearning(nullptr),
 m_pPlanner(nullptr),
@@ -42,7 +42,8 @@ m_scoutMgr(m_pConsultant),
 m_workersMgr(m_pConsultant),
 m_situation(SITUATION_SafeDevelopmentDefending)
 {
-    g_Game = pGame;
+    g_Game = new RtsGame;
+    g_GameImpl = pGameImpl;
     g_Engine = this;
     _ASSERTE(m_pConsultant);
 }
@@ -150,8 +151,6 @@ IStrategizerEx::~IStrategizerEx()
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
 {
-    IStrategizer::Init();
-    
     srand((unsigned)time(nullptr));
 
     // Note that the order of the engine components initialization is intended
