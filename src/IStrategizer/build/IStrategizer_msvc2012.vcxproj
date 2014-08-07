@@ -288,10 +288,10 @@
       </Message>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
+      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets" &amp; xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Generating engine objects TypeInfo</Message>
+      <Message>Deploying Engine Assets</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -321,10 +321,10 @@
       </Message>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets"</Command>
+      <Command>"$(SolutionDir)..\tools\TypeInfoCollector.exe" $(SolutionDir) "$(SolutionDir)..\assets" &amp; xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Generating engine objects TypeInfo</Message>
+      <Message>Deploying Engine Assets</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
