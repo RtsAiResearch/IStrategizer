@@ -4,7 +4,7 @@
 #include "EngineObject.h"
 #include "DataMessage.h"
 #include "ArmyController.h"
-#include "StrategySelector.h"
+#include "StrategyManager.h"
 #include <map>
 
 namespace IStrategizer

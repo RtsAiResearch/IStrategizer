@@ -64,6 +64,9 @@
     <Filter Include="Header Files\Obsolete">
       <UniqueIdentifier>{27878e90-ac18-4317-83d3-4d9ed3edbda0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\DomainKnowledge">
+      <UniqueIdentifier>{36922a5b-325e-4a01-b5c1-eb40b9b54f50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\IStrategizerEx.h">
@@ -336,9 +339,6 @@
     <ClInclude Include="..\ResourceDescription.h">
       <Filter>Header Files\InfluenceMaps</Filter>
     </ClInclude>
-    <ClInclude Include="..\TypesMetaData.h">
-      <Filter>Header Files\Defs</Filter>
-    </ClInclude>
     <ClInclude Include="..\SerializationEssentials.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
@@ -390,9 +390,6 @@
     <ClInclude Include="..\EntityController.h">
       <Filter>Header Files\Managers\CombatManager</Filter>
     </ClInclude>
-    <ClInclude Include="..\StrategySelector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\ArmyFSM.h">
       <Filter>Header Files\Managers\CombatManager\FSM</Filter>
     </ClInclude>
@@ -404,9 +401,6 @@
     </ClInclude>
     <ClInclude Include="..\GatherResourceAction.h">
       <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ScoutManager.h">
-      <Filter>Header Files\Managers\CombatManager</Filter>
     </ClInclude>
     <ClInclude Include="..\EntityFSM.h">
       <Filter>Header Files\Managers\CombatManager\FSM</Filter>
@@ -435,9 +429,6 @@
     <ClInclude Include="..\Include\RtsAiEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\TypesMetaData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\AttributesMetaData.h">
       <Filter>Header Files\Defs</Filter>
     </ClInclude>
@@ -463,6 +454,18 @@
       <Filter>Header Files\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\IStrategizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScoutManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\TypesMetaData.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StarcraftStrategyManager.h">
+      <Filter>Header Files\DomainKnowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StrategyManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -726,6 +729,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\IStrategizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StarcraftStrategyManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

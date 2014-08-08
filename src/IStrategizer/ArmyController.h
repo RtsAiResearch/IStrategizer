@@ -2,7 +2,7 @@
 #define ARMYCONTROLLER_H
 
 #include "StackFSM.h"
-#include "StrategySelector.h"
+#include "StrategyManager.h"
 #include "EntityController.h"
 #include <unordered_map>
 
@@ -80,7 +80,7 @@ namespace IStrategizer
         bool HasType(_In_ EntityClassType type);
         void ReleaseEntity(_In_ TID entityId);
         bool TryControlEntity(_In_ TID entityId);
-        const StrategySelector* Consultant() const { return &*m_pConsultant; }
+        const StrategyManager* Consultant() const { return &*m_pConsultant; }
         void ReleaseHealthyEntities();
         void TryControlArmy(_In_ bool fromCleanSlate);
         void ReleaseArmy();

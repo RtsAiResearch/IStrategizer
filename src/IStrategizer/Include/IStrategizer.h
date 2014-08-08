@@ -9,5 +9,6 @@
 
 RTSAIENGINEAPI IStrategizer::IRtsAiEngineFactory* GetRtsAiEngineFactory();
 RTSAIENGINEAPI void RtsAiEngineSystemInit();
+RTSAIENGINEAPI void RtsAiEngineSystemDeinit();
 
 #endif // ISTRATEGIZER_H

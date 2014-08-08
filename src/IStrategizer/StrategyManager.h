@@ -15,13 +15,14 @@ namespace IStrategizer
         std::string Name;
     };
 
-    class StrategySelector : public EngineObject
+    class StrategyManager : public EngineObject
     {
     public:
-        StrategySelector() :
+        StrategyManager() :
             m_currStrategy({ -1, "" })
         {}
 
+        virtual void Init() = 0;
         virtual void SelectGameOpening() = 0;
         virtual void SelectNextStrategy() = 0;
         virtual bool IsGoodTimeToPush() = 0;
@@ -36,7 +37,7 @@ namespace IStrategizer
         PlanStepParameters m_currStrategyGoalParams;
     };
 
-    typedef std::shared_ptr<StrategySelector> StrategySelectorPtr;
+    typedef std::shared_ptr<StrategyManager> StrategySelectorPtr;
 }
 
 #endif // STRATEGYSELECTOR_H

@@ -21,6 +21,7 @@
 #include "SharedResource.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
+#include "StarcraftStrategyManager.h"
 #include <iostream>
 
 std::string ENGINE_IO_READ_DIR = ".\\";
@@ -36,7 +37,7 @@ m_param(param),
 m_pCaseLearning(nullptr),
 m_pPlanner(nullptr),
 m_isFirstUpdate(true),
-m_pConsultant((StrategySelector*)param.Consultant),
+m_pConsultant(new StarcraftStrategyManager),
 m_combatMgr(m_pConsultant),
 m_scoutMgr(m_pConsultant),
 m_workersMgr(m_pConsultant),

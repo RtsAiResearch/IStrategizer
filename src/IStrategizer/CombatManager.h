@@ -4,7 +4,7 @@
 #include "ArmyController.h"
 #include "MessagePump.h"
 #include "RtsGame.h"
-#include "StrategySelector.h"
+#include "StrategyManager.h"
 #include <set>
 #include <vector>
 

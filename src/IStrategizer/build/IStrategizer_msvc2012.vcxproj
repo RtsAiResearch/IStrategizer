@@ -66,9 +66,10 @@
     <ClInclude Include="..\DeployFSMState.h" />
     <ClInclude Include="..\EngineObject.h" />
     <ClInclude Include="..\CandidateGathererExist.h" />
+    <ClInclude Include="..\StarcraftStrategyManager.h" />
     <ClInclude Include="..\TrainerExist.h" />
     <ClInclude Include="..\WorkersManager.h" />
-    <ClInclude Include="..\StrategySelector.h" />
+    <ClInclude Include="..\StrategyManager.h" />
     <ClInclude Include="..\TargetFSMState.h" />
     <ClInclude Include="..\DestroyEntityTypeGoal.h" />
     <ClInclude Include="..\EngineAssist.h" />
@@ -139,7 +140,6 @@
     <ClInclude Include="..\TrainArmyGoal.h" />
     <ClInclude Include="..\TrainForceGoal.h" />
     <ClInclude Include="..\True.h" />
-    <ClInclude Include="..\TypesMetaData.h" />
     <ClInclude Include="..\WinGameGoal.h" />
     <ClInclude Include="..\WorldClock.h" />
     <ClInclude Include="..\WorldMap.h" />
@@ -217,6 +217,7 @@
     <ClCompile Include="..\ResourceDescription.cpp" />
     <ClCompile Include="..\ResourceExist.cpp" />
     <ClCompile Include="..\IStrategizer.cpp" />
+    <ClCompile Include="..\StarcraftStrategyManager.cpp" />
     <ClCompile Include="..\TrainerExist.cpp" />
     <ClCompile Include="..\WorkersManager.cpp" />
     <ClCompile Include="..\RetainerEx.cpp" />

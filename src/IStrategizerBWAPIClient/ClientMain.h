@@ -80,7 +80,7 @@ protected:
     void OnUnitShow(BWAPI::Unit pUnit);
     void OnUnitHide(BWAPI::Unit pUnit);
     void OnSendText(const std::string &p_text);
-    void OnGameFrame();
+    //void OnGameFrame();
     void timerEvent(QTimerEvent *pEvt);
     bool event(QEvent * pEvt);
     void OnUiInit();

@@ -167,6 +167,7 @@ namespace IStrategizer
         virtual TID EnemyPlayer() const = 0;
         virtual TID NeutralPlayer() const = 0;
         virtual int GameFrame() const = 0;
+        virtual const IGameUnitType* GetUnitTypeByName(_In_ const char* pName) const = 0;
         virtual const IGameUnitType* GetUnitTypeByEngineId(_In_ EntityClassType id) const = 0;
         virtual const IGameTechType* GetTechTypeByEngineId(_In_ ResearchType id) const = 0;
         virtual const IGameUpgradeType* GetUpgradeTypeByEngineId(_In_ ResearchType id) const = 0;
@@ -211,6 +212,7 @@ namespace IStrategizer
         virtual int PlayerMaxUpgradeLevel(_In_ TID playerId, const IGameUpgradeType* pUpgradeType) const = 0;
         virtual bool PlayerIsResearchAvailable(_In_ TID playerId, const IGameTechType* pTechType) const = 0;
         virtual bool PlayerIsNeutral(_In_ TID playerId) const = 0;
+        virtual int PlayerCompletedUnitCount(_In_ TID playerId, const IGameUnitType* pUnitType) const = 0;
 
         // Unit APIs
         virtual Vector2 UnitTilePosition(_In_ TID unitId) const = 0;
@@ -279,7 +281,6 @@ namespace IStrategizer
         int OccupanceIMCellSize;
         int GrndCtrlIMCellSize;
         PhaseType Phase;
-        void* Consultant;
     };
 
     class IRtsAiEngine

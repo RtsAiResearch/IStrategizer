@@ -3,7 +3,7 @@
 
 #include "Vector2.h"
 #include "EngineObject.h"
-#include "StrategySelector.h"
+#include "StrategyManager.h"
 #include "EntityController.h"
 
 namespace IStrategizer

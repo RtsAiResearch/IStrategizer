@@ -5,22 +5,18 @@
 #include "IStrategizerEx.h"
 #include "DataMessage.h"
 #include "MessagePump.h"
-#include "DefinitionCrossMapping.h"
-#include "StarCraftGame.h"
 #include "IMSystemManager.h"
 #include "InfluenceMap.h"
 #include "IMViewWidget.h"
 #include "WorldClock.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "OnlinePlanExpansionExecution.h"
-#include "GameTraceCollector.h"
 #include "GraphScene.h"
 #include "PlanGraphView.h"
 #include "ObjectSerializer.h"
 #include "WorldMap.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
-#include "StarCraftStrategySelector.h"
 
 #include <stdio.h>
 #include <string>
@@ -551,15 +547,15 @@ void ClientMain::UpdateViews()
     for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->update();
 }
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::OnGameFrame()
-{
-    if (Broodwar->isReplay())
-    {
-        _ASSERTE(m_pTraceCollector);
-        m_pTraceCollector->OnGameFrame();
-    }
-}
+////////////////////////////////////////////////////////////////////////////
+//void ClientMain::OnGameFrame()
+//{
+//    if (Broodwar->isReplay())
+//    {
+//        _ASSERTE(m_pTraceCollector);
+//        m_pTraceCollector->OnGameFrame();
+//    }
+//}
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 {

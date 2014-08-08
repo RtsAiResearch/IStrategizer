@@ -32,7 +32,8 @@ void YarmoukAIModule::onStart()
     InitIStrategizer();
 
     if (m_pAiEngine)
-        m_pAiEngine->SendEngineMessage(MSG_GameStart);}
+        m_pAiEngine->SendEngineMessage(MSG_GameStart);
+}
 
 void YarmoukAIModule::onEnd(bool isWinner)
 {
@@ -89,9 +90,6 @@ void YarmoukAIModule::InitIStrategizer()
         param.OccupanceIMUpdateInterval = 1;
         param.GrndCtrlIMUpdateInterval = 32;
 
-        // FIXME
-        param.Consultant = nullptr;
-
         if (Broodwar->isReplay())
         {
             Broodwar->sendText("Watching replay map: %s", Broodwar->mapFileName().c_str());
@@ -124,10 +122,8 @@ void YarmoukAIModule::FinalizeIStrategizer()
     GetRtsAiEngineFactory()->DestroyEngine(m_pAiEngine);
     m_pAiEngine = nullptr;
 
-    // FIXME
-    //RtsGame::FinalizeStaticData();
-    // FIXME
-    //SAFE_DELETE(m_pGameModel);
+    RtsAiEngineSystemDeinit();
+    SAFE_DELETE(m_pGameModel);
 }
 //////////////////////////////////////////////////////////////////////////
 void YarmoukAIModule::OnEntityMessage(BWAPI::Unit pUnit, MessageType msgType)
@@ -140,8 +136,8 @@ void YarmoukAIModule::OnEntityMessage(BWAPI::Unit pUnit, MessageType msgType)
 
     if (pUnit->getType().isBuilding())
     {
-        data.X = pUnit->getTilePosition().x * 32;
-        data.Y = pUnit->getTilePosition().y * 32;
+        data.X = pUnit->getTilePosition().x * TILE_SIZE;
+        data.Y = pUnit->getTilePosition().y * TILE_SIZE;
     }
     else
     {
