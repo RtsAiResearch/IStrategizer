@@ -658,35 +658,35 @@ bool BwapiGame::UnitGather(_In_ TID unitId, _In_ TID targetId) const
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitAttackMove(_In_ TID unitId, _In_ Vector2 pos) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->attack(Position(pos.X, pos.Y));
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitMove(_In_ TID unitId, _In_ Vector2 pos) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->move(Position(pos.X, pos.Y));
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitBuildAddon(_In_ TID unitId, _In_ const IGameUnitType* pUnitType) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->buildAddon(((BwapiUnitType*)pUnitType)->GetBwapiUnitType());
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitBuild(_In_ TID unitId, _In_ const IGameUnitType* pUnitType, _In_ Vector2 pos) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->build(((BwapiUnitType*)pUnitType)->GetBwapiUnitType(), TilePosition(pos.X, pos.Y));
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitTrain(_In_ TID unitId, _In_ const IGameUnitType* pUnitType) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->train(((BwapiUnitType*)pUnitType)->GetBwapiUnitType());
 }
 //////////////////////////////////////////////////////////////////////////
-bool BwapiGame::UnitResearch(_In_ TID unitId, _In_ const IGameTechType* pUnitType) const
+bool BwapiGame::UnitResearch(_In_ TID unitId, _In_ const IGameTechType* pTechType) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->research(((BwapiTechType*)pTechType)->GetBwapiTechType());
 }
 //////////////////////////////////////////////////////////////////////////
-bool BwapiGame::UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUnitType) const
+bool BwapiGame::UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUpgradeType) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->upgrade(((BwapiUpgradeType*)pUpgradeType)->GetBwapiUpgradeType());
 }
