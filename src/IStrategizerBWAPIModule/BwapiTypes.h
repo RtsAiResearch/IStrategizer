@@ -15,10 +15,7 @@ namespace IStrategizer
 
         }
 
-        BWAPI::UnitType GetBwapiUnitType()
-        {
-            return m_type;
-        }
+        BWAPI::UnitType GetBwapiUnitType() const { return m_type; }
 
         virtual TID GameId() const
         {
@@ -202,6 +199,8 @@ namespace IStrategizer
 
         }
 
+        BWAPI::UpgradeType GetBwapiUpgradeType() const { return m_type; }
+
         virtual TID GameId() const
         {
             return m_type.getID();
@@ -245,6 +244,8 @@ namespace IStrategizer
 
         }
 
+        BWAPI::Race GetBwapiRace() const { return m_race; }
+
         virtual TID GameId() const
         {
             return m_race.getID();
@@ -286,6 +287,8 @@ namespace IStrategizer
         {
 
         }
+
+        BWAPI::TechType GetBwapiTechType() const { return m_type; }
 
         virtual TID GameId() const
         {
