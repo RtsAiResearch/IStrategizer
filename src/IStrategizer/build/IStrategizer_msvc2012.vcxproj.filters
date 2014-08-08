@@ -432,9 +432,6 @@
     <ClInclude Include="..\GameTrace.h">
       <Filter>Header Files\OLCBP\LFHD</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\IStrategizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\RtsAiEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -464,6 +461,9 @@
     </ClInclude>
     <ClInclude Include="..\Include\Vector2.h">
       <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IStrategizer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -710,9 +710,6 @@
     <ClCompile Include="..\TrainerExist.cpp">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClCompile>
-    <ClCompile Include="..\IStrategizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GameRace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -726,6 +723,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IStrategizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
