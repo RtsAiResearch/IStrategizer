@@ -285,7 +285,7 @@ void WorldMap::SpawnLocations(_Out_ std::vector<Vector2>& spawnPoints) const
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
-    auto pLocations = g_GameImpl->MapSpawnLocations();
+    auto pLocations = g_GameImpl->GetStartLocations();
 
     for (int i = 0; i < pLocations->Size(); ++i)
     {

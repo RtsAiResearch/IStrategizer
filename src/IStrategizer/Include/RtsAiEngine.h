@@ -195,7 +195,7 @@ namespace IStrategizer
         // Map APIs
         virtual int MapWidth() const = 0;
         virtual int MapHeight() const = 0;
-        virtual SmartPtr< ArrayList<Vector2> > MapSpawnLocations() = 0;
+        virtual SmartPtr< ArrayList<Vector2> > GetStartLocations() = 0;
         virtual Vector2 MapGetClosestReachableRegionCenter(_In_ TID entityId) const = 0;
         virtual bool MapIsExplored(_In_ Vector2 loc) const = 0;
         virtual bool MapIsBuildable(_In_ Vector2 loc, _In_ bool checkCanBuild) const = 0;

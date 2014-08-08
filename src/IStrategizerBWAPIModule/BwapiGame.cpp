@@ -7,6 +7,11 @@ using namespace BWAPI;
 using namespace IStrategizer;
 using namespace std;
 
+std::map<TID, IGameUnitType*> IStrategizer::g_BwapiUnitTypes;
+std::map<TID, IGameTechType*> IStrategizer::g_BwapiTechTypes;
+std::map<TID, IGameUpgradeType*> IStrategizer::g_BwapiUpgradeTypes;
+std::map<TID, IGameRace*> IStrategizer::g_BwapiRaces;
+
 BWAPI::Color BwapiColorFrom(GameDrawColor c)
 {
     switch (c)
@@ -132,132 +137,223 @@ bool BwapiGame::Init() const
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::IsInGame() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->isInGame();
 }
 //////////////////////////////////////////////////////////////////////////
 TID BwapiGame::SelfPlayer() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->self()->getID();
 }
 //////////////////////////////////////////////////////////////////////////
 TID BwapiGame::EnemyPlayer() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->enemy()->getID();
 }
 //////////////////////////////////////////////////////////////////////////
 TID BwapiGame::NeutralPlayer() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->neutral()->getID();
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::GameFrame() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getFrameCount();
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameUnitType* BwapiGame::GetUnitTypeByEngineId(_In_ EntityClassType id) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    for each(auto item in g_BwapiUnitTypes)
+    {
+        if (item.second->EngineId() == id)
+        {
+            return item.second;
+        }
+    }
+
+    return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameTechType* BwapiGame::GetTechTypeByEngineId(_In_ ResearchType id) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    for each(auto item in g_BwapiTechTypes)
+    {
+        if (item.second->EngineId() == id)
+        {
+            return item.second;
+        }
+    }
+
+    return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameUpgradeType* BwapiGame::GetUpgradeTypeByEngineId(_In_ ResearchType id) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    for each(auto item in g_BwapiUpgradeTypes)
+    {
+        if (item.second->EngineId() == id)
+        {
+            return item.second;
+        }
+    }
+
+    return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameRace* BwapiGame::GetRace(_In_ TID raceId) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return g_BwapiRaces[raceId];
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameTechType* BwapiGame::GetResearch(_In_ TID researchId) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return g_BwapiTechTypes[researchId];
 }
 //////////////////////////////////////////////////////////////////////////
 GameRaceListPtr BwapiGame::GetRaces() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    auto list = GameRaceListPtr(new GameRaceList(g_BwapiRaces.size()));
+    int count = 0;
+
+    for each(auto item in g_BwapiRaces)
+    {
+        list->At(count++) = item.second;
+;   }
+
+    return list;
 }
 //////////////////////////////////////////////////////////////////////////
 GameTechTypeListPtr BwapiGame::GetTechTypes() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    auto list = GameTechTypeListPtr(new GameTechTypeList(g_BwapiTechTypes.size()));
+    int count = 0;
+
+    for each(auto item in g_BwapiTechTypes)
+    {
+        list->At(count++) = item.second;
+    }
+
+    return list;
 }
 //////////////////////////////////////////////////////////////////////////
 GameUpgradeTypeListPtr BwapiGame::GetUpgradeTypes() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    auto list = GameUpgradeTypeListPtr(new GameUpgradeTypeList(g_BwapiUpgradeTypes.size()));
+    int count = 0;
+
+    for each(auto item in g_BwapiUpgradeTypes)
+    {
+        list->At(count++) = item.second;
+    }
+
+    return list;
 }
 //////////////////////////////////////////////////////////////////////////
 GameUnitTypeListPtr BwapiGame::GetUnitTypes() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    auto list = GameUnitTypeListPtr(new GameUnitTypeList(g_BwapiUnitTypes.size()));
+    int count = 0;
+
+    for each(auto item in g_BwapiUnitTypes)
+    {
+        list->At(count++) = item.second;
+    }
+
+    return list;
 }
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    if (p1.IsInf() || p2.IsInf())
+        return;
+
+    Broodwar->drawLineMap(p1.X, p1.Y, p2.X, p2.Y, BwapiColorFrom(c));
 }
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c, _In_ bool fill /*= false*/) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    if (p.IsInf() || r <= 0)
+        return;
+
+    Broodwar->drawCircleMap(p.X, p.Y, r, BwapiColorFrom(c), fill);
 }
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::DebugDrawMapText(_In_ Vector2 p, _In_ const char* pTxt) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    if (p.IsInf())
+        return;
+
+    Broodwar->drawTextMap(p.X, p.Y, pTxt);
 }
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bottomRight, _In_ GameDrawColor c, _In_ bool fill /*= false*/) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    if (topLeft.IsInf() || bottomRight.IsInf())
+        return;
+    
+    Broodwar->drawBoxMap(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y, BwapiColorFrom(c), fill);
 }
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::DebugDrawScreenText(_In_ Vector2 p, _In_ const char* pTxt, _In_ GameDrawColor c) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    if (p.IsInf())
+        return;
+
+    Broodwar->drawTextScreen(p.X, p.Y, pTxt);
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::MapWidth() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->mapWidth();
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::MapHeight() const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->mapHeight();
 }
 //////////////////////////////////////////////////////////////////////////
-SmartPtr< ArrayList<Vector2> > BwapiGame::MapSpawnLocations()
+SmartPtr< ArrayList<Vector2> > BwapiGame::GetStartLocations()
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    auto bwapiLocations = Broodwar->getStartLocations();
+    auto locations = SmartPtr< ArrayList<Vector2> >(new ArrayList<Vector2>(bwapiLocations.size()));
+    int count = 0;
+
+    for each (auto location in bwapiLocations)
+    {
+        locations->At(count++).X = location.x;
+        locations->At(count++).Y = location.y;
+    }
+
+    return locations;
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 BwapiGame::MapGetClosestReachableRegionCenter(_In_ TID entityId) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    auto pUnit = Broodwar->getUnit(entityId);
+    if (pUnit == nullptr)
+        return Vector2::Inf();
+    auto regionCenter = pUnit->getRegion()->getCenter();
+    return Vector2(regionCenter.x, regionCenter.y);
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapIsExplored(_In_ Vector2 loc) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    Broodwar->isExplored(loc.X, loc.Y);
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapIsBuildable(_In_ Vector2 loc, _In_ bool checkCanBuild) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->isBuildable(loc.X, loc.Y, checkCanBuild);
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapCanBuildHere(_In_ Vector2 loc, const IGameUnitType* pUnitType)
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    TilePosition position;
+    UnitType type = ((BwapiUnitType*)pUnitType)->GetBwapiUnitType();
+
+    position.x = loc.X;
+    position.y = loc.Y;
+
+    return Broodwar->canBuildHere(position, type);
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::MapTileSize() const

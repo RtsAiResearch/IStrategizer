@@ -61,7 +61,7 @@ namespace IStrategizer
 
         virtual int MapHeight() const;
 
-        virtual SmartPtr< ArrayList<Vector2> > MapSpawnLocations();
+        virtual SmartPtr< ArrayList<Vector2> > GetStartLocations();
 
         virtual Vector2 MapGetClosestReachableRegionCenter(_In_ TID entityId) const;
 
@@ -200,14 +200,13 @@ namespace IStrategizer
         virtual bool UnitResearch(_In_ TID unitId, _In_ const IGameTechType* pUnitType) const;
 
         virtual bool UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUnitType) const;
-
     };
 
     // Global static types initialized once per BWAPI client lifetime
-    std::map<TID, IGameUnitType*> g_BwapiUnitTypes;
-    std::map<TID, IGameTechType*> g_BwapiTechTypes;
-    std::map<TID, IGameUpgradeType*> g_BwapiUpgradeTypes;
-    std::map<TID, IGameRace*> g_BwapiRaces;
+    extern std::map<TID, IGameUnitType*> g_BwapiUnitTypes;
+    extern std::map<TID, IGameTechType*> g_BwapiTechTypes;
+    extern std::map<TID, IGameUpgradeType*> g_BwapiUpgradeTypes;
+    extern std::map<TID, IGameRace*> g_BwapiRaces;
 }
 
 #endif // BWAPIWRAPPER_H

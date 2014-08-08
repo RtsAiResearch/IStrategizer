@@ -15,6 +15,11 @@ namespace IStrategizer
 
         }
 
+        BWAPI::UnitType GetBwapiUnitType()
+        {
+            return m_type;
+        }
+
         virtual TID GameId() const
         {
             return m_type.getID();
