@@ -1,100 +1,18 @@
-#ifndef BWAPIUNITTYPE_H
-#define BWAPIUNITTYPE_H
+#ifndef BWAPITYPES_H
+#define BWAPITYPES_H
 
 #include "RtsAiEngine.h"
 #include "BWAPI.h"
+#include "BwapiGame.h"
 
 namespace IStrategizer
 {
-    class BwapiRace : public IGameRace
-    {
-    public:
-        BwapiRace(BWAPI::Race race) : m_race(race)
-        {
-
-        }
-
-        virtual TID GameId() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual const IGameUnitType* WorkerType() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual const IGameUnitType* BaseType() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual const IGameUnitType* SupplyProvider() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual const IGameUnitType* GasProvider() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual const IGameUnitType* MineralsProvider() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-    private:
-        BWAPI::Race m_race;
-    };
-
-    class BwapiTechType : public IGameTechType
-    {
-    public:
-        BwapiTechType(BWAPI::TechType type) : m_type(type)
-        {
-
-        }
-
-        virtual TID GameId() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual ResearchType EngineId() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual int GasPrice() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual int MineralsPrice() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual const IGameUnitType* WhatsRequired() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-        virtual const IGameUnitType* WhatResearches() const
-        {
-            throw std::logic_error("The method or operation is not implemented.");
-        }
-
-    private:
-        BWAPI::TechType m_type;
-    };
-
     class BwapiUnitType : public IGameUnitType
     {
     public:
         BwapiUnitType(BWAPI::UnitType type) : m_type(type)
         {
+
         }
 
         virtual TID GameId() const
@@ -109,29 +27,29 @@ namespace IStrategizer
 
         virtual const IGameUnitType* WhatBuilds() const
         {
-            return new BwapiUnitType(m_type.whatBuilds().first);
+            
+            return g_BwapiUnitTypes[m_type.whatBuilds().first.getID()];
         }
 
         virtual const IGameTechType* RequiredTech() const
         {
-            return new BwapiTechType(m_type.requiredTech());
+            return g_BwapiTechTypes[m_type.requiredTech().getID()];
         }
 
-        virtual GameUnitTypeToCountList RequiredUnits() const
+        virtual GameUnitTypeToCountListPtr RequiredUnits() const
         {
             const std::map<BWAPI::UnitType, int>& requiredUnits = m_type.requiredUnits();
-            ArrayList<Pair<const IGameUnitType*, int>>* arrayList = new ArrayList<Pair<const IGameUnitType*, int>>(requiredUnits.size());
-            GameUnitTypeToCountList result(arrayList);
+            auto pArray = GameUnitTypeToCountListPtr(new GameUnitTypeToCountList(requiredUnits.size()));
             int count = 0;
             for each(auto item in requiredUnits)
             {
                 Pair<const IGameUnitType*, int> itemPair;
                 itemPair.Key = new BwapiUnitType(item.first);
                 itemPair.Value = item.second;
-                result->At(count++) = itemPair;
+                pArray->At(count++) = itemPair;
             }
 
-            return result;
+            return pArray;
         }
 
         virtual bool IsAddon() const
@@ -146,7 +64,7 @@ namespace IStrategizer
 
         virtual const IGameRace* Race() const
         {
-            return new BwapiRace(m_type.getRace());
+            return g_BwapiRaces[m_type.getRace().getID()];
         }
 
         virtual int SupplyRequired() const
@@ -221,7 +139,7 @@ namespace IStrategizer
 
         virtual bool IsGasField() const
         {
-            return (m_type.getID() == BWAPI::UnitTypes::Resource_Vespene_Geyser.getID())
+            return (m_type.getID() == BWAPI::UnitTypes::Resource_Vespene_Geyser.getID());
         }
 
         virtual int SightRange() const
@@ -270,5 +188,129 @@ namespace IStrategizer
     private:
         BWAPI::UnitType m_type;
     };
+
+    class BwapiUpgradeType : public IGameUpgradeType
+    {
+    public:
+        BwapiUpgradeType(BWAPI::UpgradeType type) : m_type(type)
+        {
+
+        }
+
+        virtual TID GameId() const
+        {
+            return m_type.getID();
+        }
+
+        virtual ResearchType EngineId() const
+        {
+            return (ResearchType)((int)RESEARCH_START + m_type.getID());
+        }
+
+        virtual int GasPrice() const
+        {
+            return m_type.gasPrice();
+        }
+
+        virtual int MineralsPrice() const
+        {
+            return m_type.mineralPrice();
+        }
+
+        virtual const IGameUnitType* WhatsRequired() const
+        {
+            return g_BwapiUnitTypes[m_type.whatsRequired().getID()];
+        }
+
+        virtual const IGameUnitType* WhatUpgrades() const
+        {
+            return g_BwapiUnitTypes[m_type.whatUpgrades().getID()];
+        }
+
+    private:
+        BWAPI::UpgradeType m_type;
+
+    };
+
+    class BwapiRace : public IGameRace
+    {
+    public:
+        BwapiRace(BWAPI::Race race) : m_race(race)
+        {
+
+        }
+
+        virtual TID GameId() const
+        {
+            return m_race.getID();
+        }
+
+        virtual const IGameUnitType* WorkerType() const
+        {
+            return g_BwapiUnitTypes[m_race.getWorker().getID()];
+        }
+
+        virtual const IGameUnitType* BaseType() const
+        {
+            return g_BwapiUnitTypes[m_race.getCenter().getID()];
+        }
+
+        virtual const IGameUnitType* SupplyProvider() const
+        {
+            return g_BwapiUnitTypes[m_race.getSupplyProvider().getID()];
+        }
+
+        virtual const IGameUnitType* GasProvider() const
+        {
+            return g_BwapiUnitTypes[m_race.getRefinery().getID()];
+        }
+
+        virtual const IGameUnitType* MineralsProvider() const
+        {
+            return g_BwapiUnitTypes[BWAPI::UnitTypes::Resource_Mineral_Field.getID()];
+        }
+
+    private:
+        BWAPI::Race m_race;
+    };
+
+    class BwapiTechType : public IGameTechType
+    {
+    public:
+        BwapiTechType(BWAPI::TechType type) : m_type(type)
+        {
+
+        }
+
+        virtual TID GameId() const
+        {
+            return m_type.getID();
+        }
+
+        virtual ResearchType EngineId() const
+        {
+            return (ResearchType)((int)RESEARCH_START + TechOffset + m_type.getID());
+        }
+
+        virtual int GasPrice() const
+        {
+            return m_type.gasPrice();
+        }
+
+        virtual int MineralsPrice() const
+        {
+            return m_type.mineralPrice();
+        }
+
+        virtual const IGameUnitType* WhatResearches() const
+        {
+            return g_BwapiUnitTypes[m_type.whatResearches().getID()];
+        }
+
+    private:
+        static const int TechOffset = 127;
+
+        BWAPI::TechType m_type;
+    };
 }
-#endif // BWAPIUNITTYPE_H
+#endif // BWAPITYPES_H

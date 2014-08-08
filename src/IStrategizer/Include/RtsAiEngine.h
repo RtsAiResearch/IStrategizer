@@ -72,12 +72,20 @@ namespace IStrategizer
     class IGameUpgradeType;
     class IGameUnitType;
 
-    typedef SmartPtr< ArrayList<const IGameRace*> > GameRaceList;
-    typedef SmartPtr< ArrayList<const IGameTechType*> > GameTechTypeList;
-    typedef SmartPtr< ArrayList<const IGameUpgradeType*> > GameUpgradeTypeList;
-    typedef SmartPtr< ArrayList<const IGameUnitType*> > GameUnitTypeList;
-    typedef SmartPtr< ArrayList< Pair<const IGameUnitType*, int> > > GameUnitTypeToCountList;
-    typedef SmartPtr< ArrayList<TID> > GameUnitList;
+    typedef ArrayList<const IGameRace*> GameRaceList;
+    typedef ArrayList<const IGameTechType*> GameTechTypeList;
+    typedef ArrayList<const IGameUpgradeType*> GameUpgradeTypeList;
+    typedef ArrayList<const IGameUnitType*> GameUnitTypeList;
+    typedef ArrayList<TID> GameUnitList;
+    typedef Pair<const IGameUnitType*, int> GameUnitTypeToCount;
+    typedef ArrayList< GameUnitTypeToCount > GameUnitTypeToCountList;
+
+    typedef SmartPtr< GameRaceList > GameRaceListPtr;
+    typedef SmartPtr< GameTechTypeList > GameTechTypeListPtr;
+    typedef SmartPtr< GameUpgradeTypeList > GameUpgradeTypeListPtr;
+    typedef SmartPtr< GameUnitTypeList > GameUnitTypeListPtr;
+    typedef SmartPtr< GameUnitList > GameUnitListPtr;
+    typedef SmartPtr< GameUnitTypeToCountList > GameUnitTypeToCountListPtr;
 
     struct GameWeaponType
     {
@@ -92,7 +100,7 @@ namespace IStrategizer
         virtual EntityClassType EngineId() const = 0;
         virtual const IGameUnitType* WhatBuilds() const = 0;
         virtual const IGameTechType* RequiredTech() const = 0;
-        virtual GameUnitTypeToCountList RequiredUnits() const = 0;
+        virtual GameUnitTypeToCountListPtr RequiredUnits() const = 0;
         virtual bool IsAddon() const = 0;
         virtual bool IsBuilding() const = 0;
         virtual const IGameRace* Race() const = 0;
@@ -127,7 +135,6 @@ namespace IStrategizer
         virtual ResearchType EngineId() const = 0;
         virtual int GasPrice() const = 0;
         virtual int MineralsPrice() const = 0;
-        virtual const IGameUnitType* WhatsRequired() const = 0;
         virtual const IGameUnitType* WhatResearches() const = 0;
     };
 
@@ -172,10 +179,10 @@ namespace IStrategizer
         virtual const IGameUpgradeType* GetUpgradeTypeByEngineId(_In_ ResearchType id) const = 0;
         virtual const IGameRace* GetRace(_In_ TID raceId) const = 0;
         virtual const IGameTechType* GetResearch(_In_ TID researchId) const = 0;
-        virtual GameRaceList GetRaces() const = 0;
-        virtual GameTechTypeList GetTechTypes() const = 0;
-        virtual GameUpgradeTypeList GetUpgradeTypes() const = 0;
-        virtual GameUnitTypeList GetUnitTypes() const = 0;
+        virtual GameRaceListPtr GetRaces() const = 0;
+        virtual GameTechTypeListPtr GetTechTypes() const = 0;
+        virtual GameUpgradeTypeListPtr GetUpgradeTypes() const = 0;
+        virtual GameUnitTypeListPtr GetUnitTypes() const = 0;
 
         virtual void DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c) const = 0;
         virtual void DebugDrawMapCircle(_In_ Vector2 p, _In_ int r, _In_ GameDrawColor c, _In_ bool fill = false) const = 0;
@@ -194,7 +201,7 @@ namespace IStrategizer
         virtual bool MapIsBuildable(_In_ Vector2 loc, _In_ bool checkCanBuild) const = 0;
         virtual bool MapCanBuildHere(_In_ Vector2 loc, const IGameUnitType* pUnitType) = 0;
         virtual int MapTileSize() const = 0; // hit: return TILE_SIZE
-        virtual GameUnitList MapGasFields() const = 0;
+        virtual GameUnitListPtr MapGasFields() const = 0;
         virtual bool MapHasPath(_In_ Vector2 srcPos, _In_ Vector2 dstPos) const = 0;
         virtual void MapDebugDraw() const = 0;
 
