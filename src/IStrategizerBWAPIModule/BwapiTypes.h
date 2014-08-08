@@ -46,7 +46,7 @@ namespace IStrategizer
             for each(auto item in requiredUnits)
             {
                 Pair<const IGameUnitType*, int> itemPair;
-                itemPair.Key = new BwapiUnitType(item.first);
+                itemPair.Key = g_BwapiUnitTypes[item.first];
                 itemPair.Value = item.second;
                 pArray->At(count++) = itemPair;
             }
