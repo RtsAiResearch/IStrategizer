@@ -88,7 +88,7 @@ void BwapiGame::MapDebugDraw() const
 
 int BwapiGame::ClientVersion() const
 {
-    Broodwar->getRevision();
+    return Broodwar->getRevision();
 }
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::LastError(_Inout_ char* pTxtBuff, _In_ int buffMax) const
@@ -132,6 +132,8 @@ bool BwapiGame::Init() const
     {
         g_BwapiUpgradeTypes[(*i).getID()] = new BwapiUpgradeType(*i);
     }
+
+    return true;
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -337,7 +339,7 @@ Vector2 BwapiGame::MapGetClosestReachableRegionCenter(_In_ TID entityId) const
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapIsExplored(_In_ Vector2 loc) const
 {
-    Broodwar->isExplored(loc.X, loc.Y);
+    return Broodwar->isExplored(loc.X, loc.Y);
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapIsBuildable(_In_ Vector2 loc, _In_ bool checkCanBuild) const
