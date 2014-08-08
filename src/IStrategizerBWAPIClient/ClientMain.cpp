@@ -1,7 +1,5 @@
 #include "ClientMain.h"
 #include "IMView.h"
-#include "BWAPI.h"
-#include "BWAPI\Client.h"
 #include "IStrategizerEx.h"
 #include "DataMessage.h"
 #include "MessagePump.h"
@@ -31,7 +29,6 @@
 #include <Windows.h>
 
 using namespace IStrategizer;
-using namespace BWAPI;
 using namespace std;
 
 #define TilePositionFromUnitPosition(UnitPos)    (UnitPos / 32)

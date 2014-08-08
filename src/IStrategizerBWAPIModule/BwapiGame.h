@@ -35,6 +35,8 @@ namespace IStrategizer
 
         virtual const IGameUpgradeType* GetUpgradeTypeByEngineId(_In_ ResearchType id) const;
 
+        virtual const IGameUnitType* GetUnitTypeByName(_In_ const char* pName) const;
+
         virtual const IGameRace* GetRace(_In_ TID raceId) const;
 
         virtual const IGameTechType* GetResearch(_In_ TID researchId) const;
@@ -100,6 +102,8 @@ namespace IStrategizer
         virtual bool PlayerIsResearchAvailable(_In_ TID playerId, const IGameTechType* pTechType) const;
 
         virtual bool PlayerIsNeutral(_In_ TID playerId) const;
+
+        virtual int PlayerCompletedUnitCount(_In_ TID playerId, const IGameUnitType* pUnitType) const;
 
         virtual Vector2 UnitTilePosition(_In_ TID unitId) const;
 

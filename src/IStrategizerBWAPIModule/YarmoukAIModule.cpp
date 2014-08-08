@@ -2,11 +2,18 @@
 #include "IStrategizer.h"
 #include "EngineDefs.h"
 #include "DefinitionCrossMapping.h"
+#include "BwapiGame.h"
 #include <iostream>
 
 using namespace std;
 using namespace BWAPI;
 using namespace IStrategizer;
+
+#ifdef AIIDE
+#define ENGINE_IO_DIR "bwapi-data\\AI\\"
+#else
+#define ENGINE_IO_DIR ".\\"
+#endif
 
 void YarmoukAIModule::onStart()
 {
@@ -81,8 +88,9 @@ void YarmoukAIModule::InitIStrategizer()
 
     try
     {
-        // FIXME
-        m_pGameModel = nullptr;
+        g_Database.Init();
+
+        m_pGameModel = new BwapiGame;
         m_pGameModel->Init();
 
         param.OccupanceIMCellSize = TILE_SIZE;
@@ -102,9 +110,7 @@ void YarmoukAIModule::InitIStrategizer()
 
         m_pAiEngine = GetRtsAiEngineFactory()->CreateEngine(param, m_pGameModel);
         _ASSERTE(m_pAiEngine);
-        m_pAiEngine->SetEngineReadWriteDir("bwapi-data\\AI\\", "bwapi-data\\AI\\");
-
-        g_Database.Init();
+        m_pAiEngine->SetEngineReadWriteDir(ENGINE_IO_DIR, ENGINE_IO_DIR);
 
         if (!m_pAiEngine->Init())
         {

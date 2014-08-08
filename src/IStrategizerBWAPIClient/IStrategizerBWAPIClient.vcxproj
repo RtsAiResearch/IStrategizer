@@ -211,11 +211,14 @@
     <ProjectReference Include="..\IStrategizer\build\IStrategizer_msvc2012.vcxproj">
       <Project>{0e83c355-2feb-4072-a99e-38882d5fbcbb}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\ObjectSerializer\ObjectSerializer.vcxproj">
+      <Project>{dd11fdae-53ea-4613-ad3a-1e5d636c90d2}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\PlanVisualizerWidget\PlanVisualizerWidget.vcxproj">
       <Project>{9c288a8b-af2e-4a26-8573-a7a68e23a8bd}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\StarCraftModel\build\StarCraftModel.vcxproj">
-      <Project>{0819f5f6-a4f3-4a71-b5ff-4eefb15daf28}</Project>
+    <ProjectReference Include="..\UnrealCompiler\UnrealCompiler.vcxproj">
+      <Project>{f31617ed-0c0c-4d22-96a0-1779f9e366f5}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

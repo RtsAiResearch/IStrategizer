@@ -1,7 +1,8 @@
 #include "BwapiGame.h"
 #include "BwapiTypes.h"
+#include "DefinitionCrossMapping.h"
+#include "BWAPI.h"
 #include <map>
-#include <BWAPI.h>
 
 using namespace BWAPI;
 using namespace IStrategizer;
@@ -88,7 +89,7 @@ void BwapiGame::MapDebugDraw() const
 
 int BwapiGame::ClientVersion() const
 {
-    Broodwar->getRevision();
+    return Broodwar->getRevision();
 }
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::LastError(_Inout_ char* pTxtBuff, _In_ int buffMax) const
@@ -132,6 +133,8 @@ bool BwapiGame::Init() const
     {
         g_BwapiUpgradeTypes[(*i).getID()] = new BwapiUpgradeType(*i);
     }
+
+    return true;
 
 }
 //////////////////////////////////////////////////////////////////////////
@@ -217,7 +220,8 @@ GameRaceListPtr BwapiGame::GetRaces() const
     for each(auto item in g_BwapiRaces)
     {
         list->At(count++) = item.second;
-;   }
+        ;
+    }
 
     return list;
 }
@@ -289,7 +293,7 @@ void BwapiGame::DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bottomR
 {
     if (topLeft.IsInf() || bottomRight.IsInf())
         return;
-    
+
     Broodwar->drawBoxMap(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y, BwapiColorFrom(c), fill);
 }
 //////////////////////////////////////////////////////////////////////////
@@ -337,7 +341,7 @@ Vector2 BwapiGame::MapGetClosestReachableRegionCenter(_In_ TID entityId) const
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapIsExplored(_In_ Vector2 loc) const
 {
-    Broodwar->isExplored(loc.X, loc.Y);
+    return Broodwar->isExplored(loc.X, loc.Y);
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapIsBuildable(_In_ Vector2 loc, _In_ bool checkCanBuild) const
@@ -392,6 +396,23 @@ Vector2 BwapiGame::PlayerStartLocation(_In_ TID playerId) const
 {
     auto startPos = Broodwar->getPlayer(playerId)->getStartLocation();
     return Vector2(startPos.x, startPos.y);
+}
+//////////////////////////////////////////////////////////////////////////
+IStrategizer::PlayerType BwapiGame::PlayerGetType(_In_ TID playerId) const
+{
+    auto pPlayer = Broodwar->getPlayer(playerId);
+
+    if (Broodwar->self()->isEnemy(pPlayer))
+        return PLAYER_Enemy;
+    else if (Broodwar->self()->getID() == playerId)
+        return PLAYER_Self;
+    else
+        return PLAYER_Neutral;
+}
+//////////////////////////////////////////////////////////////////////////
+int BwapiGame::PlayerMinerals(_In_ TID playerId) const
+{
+    return Broodwar->getPlayer(playerId)->minerals();
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerGas(_In_ TID playerId) const
@@ -658,35 +679,46 @@ bool BwapiGame::UnitGather(_In_ TID unitId, _In_ TID targetId) const
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitAttackMove(_In_ TID unitId, _In_ Vector2 pos) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->attack(Position(pos.X, pos.Y));
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitMove(_In_ TID unitId, _In_ Vector2 pos) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->move(Position(pos.X, pos.Y));
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitBuildAddon(_In_ TID unitId, _In_ const IGameUnitType* pUnitType) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->buildAddon(((BwapiUnitType*)pUnitType)->GetBwapiUnitType());
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitBuild(_In_ TID unitId, _In_ const IGameUnitType* pUnitType, _In_ Vector2 pos) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->build(((BwapiUnitType*)pUnitType)->GetBwapiUnitType(), TilePosition(pos.X, pos.Y));
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitTrain(_In_ TID unitId, _In_ const IGameUnitType* pUnitType) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->train(((BwapiUnitType*)pUnitType)->GetBwapiUnitType());
 }
 //////////////////////////////////////////////////////////////////////////
-bool BwapiGame::UnitResearch(_In_ TID unitId, _In_ const IGameTechType* pUnitType) const
+bool BwapiGame::UnitResearch(_In_ TID unitId, _In_ const IGameTechType* pTechType) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->research(((BwapiTechType*)pTechType)->GetBwapiTechType());
 }
 //////////////////////////////////////////////////////////////////////////
-bool BwapiGame::UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUnitType) const
+bool BwapiGame::UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUpgradeType) const
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    return Broodwar->getUnit(unitId)->upgrade(((BwapiUpgradeType*)pUpgradeType)->GetBwapiUpgradeType());
+}
+//////////////////////////////////////////////////////////////////////////
+const IGameUnitType* BwapiGame::GetUnitTypeByName(_In_ const char* pName) const
+{
+    TID typeId = g_Database.EntityIdentMapping.GetBySecond(pName);
+    return g_BwapiUnitTypes.at(typeId);
+}
+//////////////////////////////////////////////////////////////////////////
+int BwapiGame::PlayerCompletedUnitCount(_In_ TID playerId, const IGameUnitType* pUnitType) const
+{
+    return Broodwar->getPlayer(playerId)->completedUnitCount(((BwapiUnitType*)pUnitType)->GetBwapiUnitType());
 }
