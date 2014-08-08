@@ -234,6 +234,14 @@
     <ClCompile Include="..\WorldMap.cpp" />
     <ClCompile Include="..\WorldResources.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ObjectSerializer\ObjectSerializer.vcxproj">
+      <Project>{dd11fdae-53ea-4613-ad3a-1e5d636c90d2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UnrealCompiler\UnrealCompiler.vcxproj">
+      <Project>{f31617ed-0c0c-4d22-96a0-1779f9e366f5}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E83C355-2FEB-4072-A99E-38882D5FBCBB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -268,17 +276,24 @@
     <Import Project="..\..\props\Serialization.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ISTRATEGIZER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -306,7 +321,6 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>
