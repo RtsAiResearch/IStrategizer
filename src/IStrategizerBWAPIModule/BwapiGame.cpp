@@ -164,41 +164,17 @@ int BwapiGame::GameFrame() const
 //////////////////////////////////////////////////////////////////////////
 const IGameUnitType* BwapiGame::GetUnitTypeByEngineId(_In_ EntityClassType id) const
 {
-    for each(auto item in g_BwapiUnitTypes)
-    {
-        if (item.second->EngineId() == id)
-        {
-            return item.second;
-        }
-    }
-
-    return nullptr;
+    return g_BwapiUnitTypes[BwapiUnitType::GetGameId(id)];
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameTechType* BwapiGame::GetTechTypeByEngineId(_In_ ResearchType id) const
 {
-    for each(auto item in g_BwapiTechTypes)
-    {
-        if (item.second->EngineId() == id)
-        {
-            return item.second;
-        }
-    }
-
-    return nullptr;
+    return g_BwapiTechTypes[BwapiTechType::GetGameId(id)];
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameUpgradeType* BwapiGame::GetUpgradeTypeByEngineId(_In_ ResearchType id) const
 {
-    for each(auto item in g_BwapiUpgradeTypes)
-    {
-        if (item.second->EngineId() == id)
-        {
-            return item.second;
-        }
-    }
-
-    return nullptr;
+    return g_BwapiUpgradeTypes[BwapiUpgradeType::GetGameId(id)];
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameRace* BwapiGame::GetRace(_In_ TID raceId) const

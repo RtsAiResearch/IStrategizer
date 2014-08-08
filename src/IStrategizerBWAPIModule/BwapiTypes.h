@@ -10,6 +10,11 @@ namespace IStrategizer
     class BwapiUnitType : public IGameUnitType
     {
     public:
+        static int GetGameId(EntityClassType engineId)
+        {
+            return engineId - (int)ECLASS_START;
+        }
+
         BwapiUnitType(BWAPI::UnitType type) : m_type(type)
         {
 
@@ -194,6 +199,11 @@ namespace IStrategizer
     class BwapiUpgradeType : public IGameUpgradeType
     {
     public:
+        static int GetGameId(ResearchType engineId)
+        {
+            return engineId - (int)RESEARCH_START;
+        }
+
         BwapiUpgradeType(BWAPI::UpgradeType type) : m_type(type)
         {
 
@@ -283,6 +293,11 @@ namespace IStrategizer
     class BwapiTechType : public IGameTechType
     {
     public:
+        static int GetGameId(ResearchType engineId)
+        {
+            return engineId - TechOffset - (int)RESEARCH_START;
+        }
+
         BwapiTechType(BWAPI::TechType type) : m_type(type)
         {
 
