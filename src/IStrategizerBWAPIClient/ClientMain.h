@@ -3,7 +3,6 @@
 
 #include "ui_ClientMain.h"
 #include "CrossMap.h"
-#include "BwapiClient.h"
 #include "IMessagePumpObserver.h"
 #include "EngineData.h"
 #include <memory>
@@ -28,9 +27,9 @@ class PlanSnapshot
 public:
     PlanSnapshot(unsigned gameFrame,
         std::shared_ptr<IStrategizer::IOlcbpPlan> pPlan,
-        IStrategizer::ConstOlcbpPlanNodeDataMapRef data, 
+        IStrategizer::ConstOlcbpPlanNodeDataMapRef data,
         IStrategizer::IOlcbpPlan::NodeSet activeGoalSet) :
-    m_context(m_data, m_activeGoalSet),
+        m_context(m_data, m_activeGoalSet),
         m_gameFrame(gameFrame),
         m_pPlan(pPlan),
         m_data(data),
@@ -51,7 +50,7 @@ private:
     std::shared_ptr<IStrategizer::IOlcbpPlan> m_pPlan;
 };
 
-class ClientMain : public QMainWindow, public BwapiClient, public IStrategizer::IMessagePumpObserver
+class ClientMain : public QMainWindow, public IStrategizer::IMessagePumpObserver
 {
     Q_OBJECT
 
@@ -64,23 +63,12 @@ public:
     };
 
     ClientMain(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~ClientMain();
+    void OnMatchStart();
+    void OnMatchEnd(bool p_isWinner);
 
 protected:
     void showEvent(QShowEvent *p_pEvent);
     void closeEvent(QCloseEvent *p_pEvent);
-    void OnClientUpdate();
-    void OnClientLoopStart();
-    void OnClientLoopEnd();
-    void OnMatchStart();
-    void OnMatchEnd(bool p_isWinner);
-    void OnUnitCreate(BWAPI::Unit p_pUnit);
-    void OnUnitDestroy(BWAPI::Unit p_pUnit);
-    void OnUnitRenegade(BWAPI::Unit p_pUnit);
-    void OnUnitShow(BWAPI::Unit pUnit);
-    void OnUnitHide(BWAPI::Unit pUnit);
-    void OnSendText(const std::string &p_text);
-    //void OnGameFrame();
     void timerEvent(QTimerEvent *pEvt);
     bool event(QEvent * pEvt);
     void OnUiInit();
@@ -88,12 +76,10 @@ protected:
     size_t GetProcessUsedMemoryKB();
 
 private:
-    void InitIStrategizer();
     void InitIMView();
     void InitStatsView();
     void InitPlannerView();
     void InitPlanHistoryView();
-    void FinalizeIStrategizer();
     void UpdateViews();
     void UpdateStatsView();
     void InitIdLookup();
@@ -112,13 +98,12 @@ private:
     IStrategizer::PlanGraphView *m_pPlanGraphView;
     IStrategizer::PlanGraphView *m_pPlanHistoryView;
     std::vector<std::shared_ptr<PlanSnapshot>> m_planHistory;
-    bool m_enemyPlayerUnitsCollected;
     int m_updateTimerId;
     unsigned m_numGamesPlayed;
     size_t m_startMemoryUsage;
 
     private slots:
-        void OneHistorySliderValueChanged();
+    void OneHistorySliderValueChanged();
 };
 
 #endif // CLIENTMAIN_H

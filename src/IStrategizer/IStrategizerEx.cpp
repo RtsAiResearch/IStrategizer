@@ -22,6 +22,7 @@
 #include "GamePlayer.h"
 #include "GameEntity.h"
 #include "StarcraftStrategyManager.h"
+#include "IMSystemManager.h"
 #include <iostream>
 
 std::string ENGINE_IO_READ_DIR = ".\\";
@@ -41,11 +42,22 @@ m_pStrategyMgr(new StarcraftStrategyManager),
 m_situation(SITUATION_SafeDevelopmentDefending)
 {
     g_Engine = this;
-    g_Game = new RtsGame;
+
     g_GameImpl = pGameImpl;
-    _ASSERTE(m_pStrategyMgr);
+    m_pGameModelImpl = pGameImpl;
+
+    m_pGameModel = new RtsGame();
+    g_Game = m_pGameModel;
+
+    m_pImSysMgr = &g_IMSysMgr;
 }
-//---------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+RtsGame* IStrategizerEx::GameModel() { return m_pGameModel; }
+//////////////////////////////////////////////////////////////////////////
+IRtsGame* IStrategizerEx::GameModelImpl() { return m_pGameModelImpl; }
+//////////////////////////////////////////////////////////////////////////
+IMSystemManager* IStrategizerEx::IMSysMgr() { return m_pImSysMgr; }
+//////////////////////////////////////////////////////////////////////////
 void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
 {
     auto msgType = pMsg->TypeId();
@@ -140,14 +152,14 @@ void IStrategizerEx::Update()
         throw e;
     }
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////-
 IStrategizerEx::~IStrategizerEx()
 {
     SAFE_DELETE(m_pStrategyMgr);
     SAFE_DELETE(g_Game);
     g_IMSysMgr.Finalize();
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////-
 bool IStrategizerEx::Init()
 {
     srand((unsigned)time(nullptr));
@@ -259,6 +271,11 @@ void IStrategizerEx::ReviseSituation()
         m_situation = SITUATION_SafeDevelopmentDefending;
     else
         DEBUG_THROW(NotImplementedException(XcptHere));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::RegisterForMessage(_In_ MessageType msgTypeId, _In_ IStrategizer::IMessagePumpObserver* pObserver)
+{
+    g_MessagePump->RegisterForMessage(msgTypeId, pObserver);
 }
 //////////////////////////////////////////////////////////////////////////
 void IStrategizerEx::SendEngineMessage(_In_ MessageType msgTypeId)

@@ -52,20 +52,12 @@ namespace IStrategizer
         OBJECT_SERIALIZABLE(RtsGame, &m_isOnline, &m_players, &m_cachedGameFrame, &m_cachedWorldWidth, &m_cachedWorldHeight);
 
     public:
-        RtsGame() :
-            m_pMap(nullptr),
-            m_isInitialized(false),
-            m_isOnline(true),
-            m_cachedGameFrame(0),
-            m_firstUpdate(true)
-        {}
-
+        RtsGame();
         ~RtsGame();
         bool Init();
         bool InitStaticData();
         static void FinalizeStaticData();
         void ExportStaticData();
-
         const EntiyTypesMap& EntityTypes() const { return sm_pGameStatics->EntityTypes; }
         const ResearchTypesMap& ResearchTypes() const { return sm_pGameStatics->ResearchTypes; }
         const RaceTypesMap& RaceTypes() const { return sm_pGameStatics->RaceTypes; }

@@ -24,6 +24,7 @@ namespace IStrategizer
     class OnlineCaseBasedPlannerEx;
     class RtsGame;
     class BotStatistics;
+    class IMSystemManager;
 
     class IStrategizerEx : public IRtsAiEngine, public EngineObject
     {
@@ -40,12 +41,16 @@ namespace IStrategizer
         WorkersManager& WorkersMgr() { return m_workersMgr; }
         ScoutManager& ScoutMgr() { return m_scoutMgr; }
         StrategyManagerPtr StrategyMgr() { return m_pStrategyMgr; }
+        RtsGame* GameModel();
+        IRtsGame* GameModelImpl();
+        IMSystemManager* IMSysMgr();
 
         Vector2F BaseHeadDirection() const { return m_baseFaceDir; }
         SituationType Situation() const { return m_situation; }
         void ReviseSituation();
         ~IStrategizerEx();
         const EngineParams& Params() const { return m_param; }
+        void RegisterForMessage(_In_ MessageType  msgTypeId, _In_ IStrategizer::IMessagePumpObserver* pObserver);
         void SendEngineMessage(_In_ MessageType msgTypeId);
         void SendEngineEntityMessage(_In_ MessageType msgTypeId, _In_ const EntityMessageData& msgData);
         void SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath);
@@ -70,6 +75,9 @@ namespace IStrategizer
         SituationType m_situation;
         Circle2 m_borders;
         StrategyManagerPtr m_pStrategyMgr;
+        RtsGame* m_pGameModel;
+        IRtsGame* m_pGameModelImpl;
+        IMSystemManager* m_pImSysMgr;
     };
 }
 

@@ -345,9 +345,6 @@
     <ClInclude Include="..\Colony.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\IMessagePumpObserver.h">
-      <Filter>Header Files\System</Filter>
-    </ClInclude>
     <ClInclude Include="..\CandidateGathererExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
@@ -467,6 +464,9 @@
     </ClInclude>
     <ClInclude Include="..\StrategyManager.h">
       <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMessagePumpObserver.h">
+      <Filter>Header Files\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

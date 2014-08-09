@@ -60,6 +60,8 @@ void YarmoukAIModule::onEnd(bool isWinner)
     //_ASSERTE(pMsg);
 
     //g_MessagePump->Send(pMsg);
+
+    FinalizeIStrategizer();
 }
 
 void YarmoukAIModule::onFrame()

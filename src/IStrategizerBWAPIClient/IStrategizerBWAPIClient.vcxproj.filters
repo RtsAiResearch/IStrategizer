@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="BwapiClient.cpp" />
     <ClCompile Include="ClientMain.cpp" />
     <ClCompile Include="IMDrawingStrategy.cpp" />
     <ClCompile Include="IMView.cpp" />
@@ -18,7 +17,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BwapiClient.h" />
     <ClInclude Include="CmnHdr.h" />
     <ClInclude Include="IMDrawingStrategy.h" />
     <ClInclude Include="GeneratedFiles\ui_ClientMain.h" />
@@ -35,6 +33,16 @@
   <ItemGroup>
     <Filter Include="Generated Files">
       <UniqueIdentifier>{4cef7cb3-90e8-4f47-8c59-c5b3da7b9b2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+      <ParseFiles>true</ParseFiles>
     </Filter>
   </ItemGroup>
 </Project>

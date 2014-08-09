@@ -5,8 +5,8 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Deubg-Engine-Lib|Win32">
-      <Configuration>Deubg-Engine-Lib</Configuration>
+    <ProjectConfiguration Include="Debug-Engine-Lib|Win32">
+      <Configuration>Debug-Engine-Lib</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -56,6 +56,7 @@
     <ClInclude Include="..\Include\AttributesMetaData.h" />
     <ClInclude Include="..\Include\CrossMap.h" />
     <ClInclude Include="..\Include\EngineDefs.h" />
+    <ClInclude Include="..\Include\IMessagePumpObserver.h" />
     <ClInclude Include="..\Include\IStrategizer.h" />
     <ClInclude Include="..\Include\IStrategizerException.h" />
     <ClInclude Include="..\Include\MetaData.h" />
@@ -113,7 +114,6 @@
     <ClInclude Include="..\MathHelper.h" />
     <ClInclude Include="..\Message.h" />
     <ClInclude Include="..\MessagePump.h" />
-    <ClInclude Include="..\IMessagePumpObserver.h" />
     <ClInclude Include="..\MessagePumpSubject.h" />
     <ClInclude Include="..\MoveAction.h" />
     <ClInclude Include="..\MultiIndex.h" />
@@ -260,7 +260,7 @@
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
@@ -281,7 +281,7 @@
     <Import Project="..\..\props\Serialization.props" />
     <Import Project="..\..\props\IStrategizer.Exe.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\props\Serialization.props" />
     <Import Project="..\..\props\IStrategizer.Lib.props" />
@@ -298,7 +298,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -329,7 +329,7 @@
       <Message>Deploying Engine Assets</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>

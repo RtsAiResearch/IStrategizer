@@ -4,6 +4,7 @@
 #include "MetaData.h"
 #include "Vector2.h"
 #include "SmartPtr.h"
+#include "IMessagePumpObserver.h"
 #undef min
 #undef max
 
@@ -297,6 +298,7 @@ namespace IStrategizer
         virtual ~IRtsAiEngine() {}
         virtual void Update() = 0;
         virtual bool Init() = 0;
+        virtual void RegisterForMessage(_In_ IStrategizer::MessageType msgTypeId, _In_ IStrategizer::IMessagePumpObserver* pObserver) = 0;
         virtual void SendEngineMessage(_In_ IStrategizer::MessageType msgTypeId) = 0;
         virtual void SendEngineEntityMessage(_In_ IStrategizer::MessageType msgTypeId, _In_ const IStrategizer::EntityMessageData& msgData) = 0;
         virtual void SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath) = 0;

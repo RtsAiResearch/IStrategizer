@@ -53,18 +53,26 @@ SimilarityWeightModel RtsGame::DefaultWeightModel = GetDefaultWeightModel();
 
 RtsGameStaticData::~RtsGameStaticData()
 {
-	for (auto& entityType : EntityTypes)
-		SAFE_DELETE(entityType.second);
-	EntityTypes.clear();
+    for (auto& entityType : EntityTypes)
+        SAFE_DELETE(entityType.second);
+    EntityTypes.clear();
 
-	for (auto& researchType : ResearchTypes)
-		SAFE_DELETE(researchType.second);
-	ResearchTypes.clear();
+    for (auto& researchType : ResearchTypes)
+        SAFE_DELETE(researchType.second);
+    ResearchTypes.clear();
 
-	for (auto& raceType : RaceTypes)
-		SAFE_DELETE(raceType.second);
-	RaceTypes.clear();
+    for (auto& raceType : RaceTypes)
+        SAFE_DELETE(raceType.second);
+    RaceTypes.clear();
 }
+//////////////////////////////////////////////////////////////////////////
+RtsGame::RtsGame() :
+m_pMap(nullptr),
+m_isInitialized(false),
+m_isOnline(true),
+m_cachedGameFrame(0),
+m_firstUpdate(true)
+{}
 //////////////////////////////////////////////////////////////////////////
 RtsGame::~RtsGame()
 {
@@ -79,7 +87,7 @@ bool RtsGame::Init()
 
         if (InitStaticData())
         {
-			_ASSERTE(sm_pGameStatics);
+            _ASSERTE(sm_pGameStatics);
             LogInfo("Game static data initialized successfully");
         }
         else
@@ -143,7 +151,7 @@ GameType* RtsGame::GetEntityType(EntityClassType p_id)
 //////////////////////////////////////////////////////////////////////////
 GameResearch* RtsGame::GetResearch(ResearchType p_id)
 {
-	_ASSERTE(sm_pGameStatics);
+    _ASSERTE(sm_pGameStatics);
     if (!sm_pGameStatics->ResearchTypes.Contains(p_id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
@@ -152,7 +160,7 @@ GameResearch* RtsGame::GetResearch(ResearchType p_id)
 //////////////////////////////////////////////////////////////////////////
 GameRace* RtsGame::GetRace(TID id)
 {
-	_ASSERTE(sm_pGameStatics);
+    _ASSERTE(sm_pGameStatics);
     if (!sm_pGameStatics->RaceTypes.Contains(id))
         DEBUG_THROW(ItemNotFoundException(XcptHere));
 
@@ -259,7 +267,7 @@ void RtsGame::ExportStaticData()
 //////////////////////////////////////////////////////////////////////////
 void RtsGame::FinalizeStaticData()
 {
-	SAFE_DELETE(sm_pGameStatics);
+    SAFE_DELETE(sm_pGameStatics);
 }
 //////////////////////////////////////////////////////////////////////////
 void RtsGame::Update()

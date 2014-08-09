@@ -22,3 +22,14 @@ extern "C" __declspec(dllexport) BWAPI::AIModule* newAIModule()
 {
     return new YarmoukAIModule();
 }
+
+extern "C" __declspec(dllexport) void deleteAIModule(BWAPI::AIModule* pModule)
+{
+    delete pModule;
+}
+
+extern "C" __declspec(dllexport) void* getYarmoukEngine(BWAPI::AIModule* pModule)
+{
+    return ((YarmoukAIModule*)pModule)->Engine();
+}
+
