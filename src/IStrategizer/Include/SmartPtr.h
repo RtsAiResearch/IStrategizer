@@ -1,5 +1,9 @@
 #pragma once
 
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
 namespace IStrategizer
 {
     class RC
@@ -33,7 +37,8 @@ namespace IStrategizer
         SmartPtr() : pData(0), reference(0)
         {
             // Create a new reference 
-            reference = new RC();
+            reference = (RC*)HeapAlloc(GetProcessHeap(), 0, sizeof(RC));
+            ZeroMemory(&reference, sizeof(reference));
             // Increment the reference count
             reference->AddRef();
         }
@@ -41,7 +46,7 @@ namespace IStrategizer
         SmartPtr(T* pValue) : pData(pValue), reference(0)
         {
             // Create a new reference 
-            reference = new RC();
+            reference = (RC*)HeapAlloc(GetProcessHeap(), 0, sizeof(RC));
             // Increment the reference count
             reference->AddRef();
         }
@@ -61,8 +66,8 @@ namespace IStrategizer
             // if reference become zero delete the data
             if (reference->Release() == 0)
             {
-                delete pData;
-                delete reference;
+                HeapFree(GetProcessHeap(), 0, pData);
+                HeapFree(GetProcessHeap(), 0, reference);
             }
         }
 
@@ -85,8 +90,8 @@ namespace IStrategizer
                 // if reference become zero delete the old data
                 if (reference->Release() == 0)
                 {
-                    delete pData;
-                    delete reference;
+                    HeapFree(GetProcessHeap(), 0, pData);
+                    HeapFree(GetProcessHeap(), 0, reference);
                 }
 
                 // Copy the data and reference pointer

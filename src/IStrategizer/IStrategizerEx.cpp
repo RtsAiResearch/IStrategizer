@@ -37,16 +37,13 @@ m_param(param),
 m_pCaseLearning(nullptr),
 m_pPlanner(nullptr),
 m_isFirstUpdate(true),
-m_pConsultant(new StarcraftStrategyManager),
-m_combatMgr(m_pConsultant),
-m_scoutMgr(m_pConsultant),
-m_workersMgr(m_pConsultant),
+m_pStrategyMgr(new StarcraftStrategyManager),
 m_situation(SITUATION_SafeDevelopmentDefending)
 {
+    g_Engine = this;
     g_Game = new RtsGame;
     g_GameImpl = pGameImpl;
-    g_Engine = this;
-    _ASSERTE(m_pConsultant);
+    _ASSERTE(m_pStrategyMgr);
 }
 //---------------------------------------------------------------------------------------------
 void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
@@ -96,14 +93,14 @@ void IStrategizerEx::Update()
 
             // Time to kick scouting to know what the enemy is up to
             if (!m_scoutMgr.IsActive() &&
-                m_pConsultant->IsGoodTimeToScout())
+                m_pStrategyMgr->IsGoodTimeToScout())
                 m_scoutMgr.Activate();
 
             m_scoutMgr.Update();
             m_workersMgr.Update();
 
             if (m_situation == SITUATION_SafeDevelopmentDefending &&
-                m_pConsultant->IsGoodTimeToPush())
+                m_pStrategyMgr->IsGoodTimeToPush())
             {
                 auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
 
@@ -146,8 +143,9 @@ void IStrategizerEx::Update()
 //----------------------------------------------------------------------------------------------
 IStrategizerEx::~IStrategizerEx()
 {
+    SAFE_DELETE(m_pStrategyMgr);
+    SAFE_DELETE(g_Game);
     g_IMSysMgr.Finalize();
-    g_Game = nullptr;
 }
 //----------------------------------------------------------------------------------------------
 bool IStrategizerEx::Init()
@@ -187,11 +185,13 @@ bool IStrategizerEx::Init()
         m_pPlanner = shared_ptr<OnlineCaseBasedPlannerEx>(new OnlineCaseBasedPlannerEx());
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
         m_pPlanner->Init();
-        // Init scout manager
+        // Init Strategy manager
+        m_pStrategyMgr->Init();
+        // Init Scout manager
         m_scoutMgr.Init();
-        // Init combat manager
+        // Init Combat manager
         m_combatMgr.Init();
-        // Init resource manager
+        // Init Workers manager
         m_workersMgr.Init();
 
         g_MessagePump->RegisterForMessage(MSG_PlanGoalSuccess, this);
@@ -211,14 +211,14 @@ void IStrategizerEx::SelectNextStrategyGoal()
     // Game opening plan selection
     if (g_Game->GameFrame() == 0)
     {
-        m_pConsultant->SelectGameOpening();
+        m_pStrategyMgr->SelectGameOpening();
     }
     else
     {
-        m_pConsultant->SelectNextStrategy();
+        m_pStrategyMgr->SelectNextStrategy();
     }
 
-    params = m_pConsultant->CurrStrategyGoalParams();
+    params = m_pStrategyMgr->CurrStrategyGoalParams();
     _ASSERTE(!params.empty());
     m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
 }

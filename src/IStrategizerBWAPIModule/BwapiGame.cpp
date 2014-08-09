@@ -86,7 +86,7 @@ void BwapiGame::MapDebugDraw() const
         }
     }
 }
-
+//////////////////////////////////////////////////////////////////////////
 int BwapiGame::ClientVersion() const
 {
     return Broodwar->getRevision();
@@ -95,9 +95,7 @@ int BwapiGame::ClientVersion() const
 void BwapiGame::LastError(_Inout_ char* pTxtBuff, _In_ int buffMax) const
 {
     string error = Broodwar->getLastError().toString();
-
-    error.copy(pTxtBuff, buffMax - 1);
-    pTxtBuff[buffMax - 1] = '\0';
+    strcpy_s(pTxtBuff, buffMax, error.c_str());
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::Init() const
@@ -107,7 +105,9 @@ bool BwapiGame::Init() const
         i != UnitTypes::allUnitTypes().end();
         ++i)
     {
-        g_BwapiUnitTypes[(*i).getID()] = new BwapiUnitType(*i);
+        auto pType = new BwapiUnitType(*i);
+        g_BwapiUnitTypes[(*i).getID()] = pType;
+        Enums[pType->EngineId()] = _strdup(pType->ToString());
     }
 
     // Init tech types
@@ -115,7 +115,9 @@ bool BwapiGame::Init() const
         i != TechTypes::allTechTypes().end();
         ++i)
     {
-        g_BwapiTechTypes[(*i).getID()] = new BwapiTechType(*i);
+        auto pType = new BwapiTechType(*i);
+        g_BwapiTechTypes[(*i).getID()] = pType;
+        Enums[pType->EngineId()] = _strdup(pType->ToString());
     }
 
     // Init game races
@@ -123,7 +125,8 @@ bool BwapiGame::Init() const
         i != Races::allRaces().end();
         ++i)
     {
-        g_BwapiRaces[(*i).getID()] = new BwapiRace(*i);
+        auto pType = new BwapiRace(*i);
+        g_BwapiRaces[(*i).getID()] = pType;
     }
 
     // Init game upgrade types
@@ -131,7 +134,9 @@ bool BwapiGame::Init() const
         i != UpgradeTypes::allUpgradeTypes().end();
         ++i)
     {
-        g_BwapiUpgradeTypes[(*i).getID()] = new BwapiUpgradeType(*i);
+        auto pType = new BwapiUpgradeType(*i);
+        g_BwapiUpgradeTypes[(*i).getID()] = pType;
+        Enums[pType->EngineId()] = _strdup(pType->ToString());
     }
 
     return true;
@@ -446,13 +451,13 @@ Vector2 BwapiGame::UnitPosition(_In_ TID unitId) const
 Vector2 BwapiGame::UnitTopLeft(_In_ TID unitId) const
 {
     auto unit = Broodwar->getUnit(unitId);
-    return Vector2(unit->getTop(), unit->getLeft());
+    return Vector2(unit->getLeft(), unit->getTop());
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 BwapiGame::UnitBottomRight(_In_ TID unitId) const
 {
     auto unit = Broodwar->getUnit(unitId);
-    return Vector2(unit->getBottom(), unit->getRight());
+    return Vector2(unit->getRight(), unit->getBottom());
 }
 //////////////////////////////////////////////////////////////////////////
 const IGameUnitType* BwapiGame::UnitGetType(_In_ TID unitId) const
@@ -593,12 +598,20 @@ bool BwapiGame::UnitCanTrain(_In_ TID unitId, _In_ const IGameUnitType* pUnitTyp
 //////////////////////////////////////////////////////////////////////////
 TID BwapiGame::UnitTarget(_In_ TID unitId) const
 {
-    return Broodwar->getUnit(unitId)->getTarget()->getID();
+    auto pTarget = Broodwar->getUnit(unitId)->getTarget();
+    if (pTarget)
+        return pTarget->getID();
+    else
+        return INVALID_TID;
 }
 //////////////////////////////////////////////////////////////////////////
 TID BwapiGame::UnitOrderTarget(_In_ TID unitId) const
 {
-    return Broodwar->getUnit(unitId)->getOrderTarget()->getID();
+    auto pTarget = Broodwar->getUnit(unitId)->getOrderTarget();
+    if (pTarget)
+        return pTarget->getID();
+    else
+        return INVALID_TID;
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 BwapiGame::UnitTargetPosition(_In_ TID unitId) const
@@ -625,7 +638,11 @@ int BwapiGame::UnitHitpoints(_In_ TID unitId) const
 //////////////////////////////////////////////////////////////////////////
 TID BwapiGame::UnitBuildUnit(_In_ TID unitId) const
 {
-    return Broodwar->getUnit(unitId)->getBuildUnit()->getID();
+    auto pUnit = Broodwar->getUnit(unitId)->getBuildUnit();
+    if (pUnit)
+        return pUnit->getID();
+    else
+        return INVALID_TID;
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitStop(_In_ TID unitId) const

@@ -22,8 +22,8 @@ namespace IStrategizer
 			std::set<TID> WorkersAssigned;
 		};
 
-        WorkersManager(StrategySelectorPtr pConsultant) :
-            m_workersArmy("WorkersArmy", pConsultant),
+        WorkersManager() :
+            m_workersArmy("WorkersArmy"),
 			m_firstUpdate(true),
 			m_primaryOptimalAssignment(0),
 			m_secondaryOptimalAssignment(0)

@@ -21,10 +21,9 @@ namespace IStrategizer
     class CombatManager : public EngineObject
     {
     public:
-        CombatManager(StrategySelectorPtr pConsultant) :
-            m_pConsultant(pConsultant),
-            m_frontLinesArmy("FrontLinesArmy", pConsultant),
-            m_brokenArmy("BrokenArmy", pConsultant),
+        CombatManager() :
+            m_frontLinesArmy("FrontLinesArmy"),
+            m_brokenArmy("BrokenArmy"),
             m_currOrder(CMBTMGR_Defend),
             m_armiesBaseLoc(Vector2::Inf())
         {}
@@ -38,7 +37,7 @@ namespace IStrategizer
 
     private:
         Vector2 m_armiesBaseLoc;
-        StrategySelectorPtr m_pConsultant;
+        StrategyManagerPtr m_pConsultant;
         ArmyController m_frontLinesArmy;
         ArmyController m_brokenArmy;
         CombatManagerOrder m_currOrder;

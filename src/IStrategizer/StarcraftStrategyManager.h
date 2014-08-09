@@ -17,6 +17,14 @@ namespace IStrategizer
     class StarcraftStrategyManager : public StrategyManager
     {
     public:
+        StarcraftStrategyManager() :
+            m_pTerranVulture(nullptr),
+            m_pTerranSiegeTankTankMode(nullptr),
+            m_pTerranSiegeTankSiegeMode(nullptr),
+            m_pTerranMarine(nullptr)
+        {
+            
+        }
         void Init();
         void SelectGameOpening();
         void SelectNextStrategy();

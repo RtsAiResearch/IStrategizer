@@ -16,7 +16,7 @@ void GameResearch::Init()
     }
     else
     {
-        m_pRequiredResources = WorldResources(0, m_pUpgrade->GasPrice(), m_pTech->MineralsPrice());
+        m_pRequiredResources = WorldResources(0, m_pUpgrade->GasPrice(), m_pUpgrade->MineralsPrice());
     }
 }
 //////////////////////////////////////////////////////////////////////////

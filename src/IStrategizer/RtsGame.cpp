@@ -324,9 +324,19 @@ void RtsGame::InitPlayers()
     Toolbox::MemoryClean(oldPlayers);
     m_players.clear();
 
-    m_players[PLAYER_Self] = new GamePlayer(g_GameImpl->SelfPlayer());
-    m_players[PLAYER_Enemy] = new GamePlayer(g_GameImpl->EnemyPlayer());
-    m_players[PLAYER_Neutral] = new GamePlayer(g_GameImpl->NeutralPlayer());
+    GamePlayer* pPlayer = nullptr;
+
+    pPlayer = new GamePlayer(g_GameImpl->SelfPlayer());
+    pPlayer->Init();
+    m_players[PLAYER_Self] = pPlayer;
+
+    pPlayer = new GamePlayer(g_GameImpl->EnemyPlayer());
+    pPlayer->Init();
+    m_players[PLAYER_Enemy] = pPlayer;
+
+    pPlayer = new GamePlayer(g_GameImpl->NeutralPlayer());
+    pPlayer->Init();
+    m_players[PLAYER_Neutral] = pPlayer;
 }
 //////////////////////////////////////////////////////////////////////////
 bool RtsGame::InitStaticData()
@@ -377,11 +387,14 @@ void RtsGame::InitEntityTypes()
     sm_pGameStatics->EntityTypes.clear();
 
     auto gameTypes = g_GameImpl->GetUnitTypes();
+    GameType* pType = nullptr;
 
     for (int i = 0; i < gameTypes->Size(); ++i)
     {
         auto pGameType = gameTypes->At(i);
-        sm_pGameStatics->EntityTypes[pGameType->EngineId()] = new GameType(pGameType);
+        pType = new GameType(pGameType);
+        pType->Init();
+        sm_pGameStatics->EntityTypes[pGameType->EngineId()] = pType;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -395,17 +408,22 @@ void RtsGame::InitResearchTypes()
 
     auto gameTechTypes = g_GameImpl->GetTechTypes();
     auto gameUpgradeTypes = g_GameImpl->GetUpgradeTypes();
+    GameResearch* pType = nullptr;
 
     for (int i = 0; i < gameTechTypes->Size(); ++i)
     {
         auto pResearchType = gameTechTypes->At(i);
-        sm_pGameStatics->ResearchTypes[pResearchType->EngineId()] = new GameResearch(pResearchType);
+        pType = new GameResearch(pResearchType);;
+        pType->Init();
+        sm_pGameStatics->ResearchTypes[pResearchType->EngineId()] = pType;
     }
 
     for (int i = 0; i < gameUpgradeTypes->Size(); ++i)
     {
-        auto pTechType = gameTechTypes->At(i);
-        sm_pGameStatics->ResearchTypes[pTechType->EngineId()] = new GameResearch(pTechType);
+        auto pUpgradeType = gameUpgradeTypes->At(i);
+        pType = new GameResearch(pUpgradeType);
+        pType->Init();
+        sm_pGameStatics->ResearchTypes[pUpgradeType->EngineId()] = pType;
     }
 }
 //////////////////////////////////////////////////////////////////////////

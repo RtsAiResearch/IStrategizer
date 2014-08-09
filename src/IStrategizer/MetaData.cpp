@@ -1,4 +1,7 @@
+#ifdef ISTRATEGIZER_EXPORTS
 #define METADATAAPI extern "C" __declspec(dllexport)
+#endif
+
 #include "MetaData.h"
 
 namespace IStrategizer

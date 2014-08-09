@@ -18,7 +18,7 @@ m_caseBaseLoaded(false)
 //----------------------------------------------------------------------------------------------
 void RetainerEx::ReadCaseBase()
 {
-    LogInfo("Reading case-base %s", CASEBASE_IO_READ_PATH);
+    LogInfo("Reading case-base %s", CASEBASE_IO_READ_PATH.c_str());
 
     fstream file;
 

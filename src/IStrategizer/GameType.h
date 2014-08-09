@@ -23,7 +23,8 @@ namespace IStrategizer
         {}
 
         GameType(const IGameUnitType* pUnit) :
-            m_id(m_pUnitType->EngineId()),
+            m_id(pUnit->EngineId()),
+            m_pUnitType(pUnit),
             m_attributes(COUNT(EntityTypeProperty), 0)
         {}
 
@@ -35,6 +36,7 @@ namespace IStrategizer
         virtual EntityClassType SourceEntity() const;
         virtual void GetRequirements(std::vector<ResearchType>& researches, std::map<EntityClassType, unsigned>& buildings) const;
         virtual EntityClassType GetBuilderType() const;
+        std::string ToString(bool minimal = false) const { return m_pUnitType->ToString(); }
 
     protected:
         void P(EntityTypeProperty attrId, int val) { m_attributes[INDEX(attrId, EntityTypeProperty)] = val; }

@@ -149,13 +149,13 @@ int GameEntity::P(EntityObjectProperty attrId) const
 
         case OP_Left:
             if (m_pUnitType->IsBuilding())
-                return UnitCoordFromTileCoord(g_GameImpl->UnitPosition(m_id).X);
+                return UnitCoordFromTileCoord(g_GameImpl->UnitTilePosition(m_id).X);
             else
                 return g_GameImpl->UnitTopLeft(m_id).X;
 
         case OP_Top:
             if (m_pUnitType->IsBuilding())
-                return UnitCoordFromTileCoord(g_GameImpl->UnitPosition(m_id).Y);
+                return UnitCoordFromTileCoord(g_GameImpl->UnitTilePosition(m_id).Y);
             else
                 return g_GameImpl->UnitTopLeft(m_id).Y;
 

@@ -88,6 +88,8 @@ void YarmoukAIModule::InitIStrategizer()
 
     try
     {
+        RtsAiEngineSystemInit();
+
         g_Database.Init();
 
         m_pGameModel = new BwapiGame;
@@ -137,8 +139,8 @@ void YarmoukAIModule::OnEntityMessage(BWAPI::Unit pUnit, MessageType msgType)
     EntityMessageData data;
 
     data.EntityId = pUnit->getID();
-    data.OwnerId = g_Database.PlayerMapping.GetByFirst(pUnit->getPlayer()->getID());
-    data.EntityType = g_Database.EntityMapping.GetByFirst(pUnit->getType());
+    data.OwnerId = m_pGameModel->PlayerGetType(pUnit->getPlayer()->getID());
+    data.EntityType = g_BwapiUnitTypes.at(pUnit->getType().getID())->EngineId();
 
     if (pUnit->getType().isBuilding())
     {
@@ -209,6 +211,11 @@ void YarmoukAIModule::onSendText(std::string text)
             Broodwar->sendText("Game ids exported successfully");
         else
             Broodwar->sendText("Failed to export game ids");
+    }
+    else if (!strncmp(text.c_str(), commands[2], strlen(commands[2])))
+    {
+        Broodwar->sendText("Exporting game IDs ...");
+        RtsAiEngineExportGameStaticData();
     }
 }
 //////////////////////////////////////////////////////////////////////////

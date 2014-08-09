@@ -281,7 +281,7 @@ bool BuildActionEx::Equals(PlanStepEx* p_planStep)
 //////////////////////////////////////////////////////////////////////////
 void BuildActionEx::Abort(RtsGame &game)
 {
-    if (_buildingId != INVALID_TID)
+    if (_builderId != INVALID_TID)
     {
         auto pGameBuilder = g_Game->Self()->GetEntity(_builderId);
 

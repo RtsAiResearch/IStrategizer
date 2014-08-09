@@ -3,6 +3,7 @@
 #include "EntityFSM.h"
 #include "GameEntity.h"
 #include "WorldMap.h"
+#include "IStrategizerEx.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -23,7 +24,7 @@ void ArmyState::Enter()
 
     for (auto& entityR : m_controlledEntities)
     {
-        auto pMicroLogic = pController->Consultant()->SelectMicroLogic(pController, &*entityR.second);
+        auto pMicroLogic = g_Engine->StrategyMgr()->SelectMicroLogic(pController, &*entityR.second);
         entityR.second->PushLogic(pMicroLogic);
     }
 

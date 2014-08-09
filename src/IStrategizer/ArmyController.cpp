@@ -15,8 +15,7 @@ using namespace std;
 
 std::unordered_map<int, ArmyGroupFormation::Data> ArmyController::sm_cachedArmySizeToFormationDataMap;
 
-ArmyController::ArmyController(const char* pName, StrategySelectorPtr pConsultant) :
-m_pConsultant(pConsultant),
+ArmyController::ArmyController(const char* pName) :
 m_targetEntityId(INVALID_TID),
 m_singleTargetPos(Vector2::Inf()),
 m_center(Vector2::Inf()),

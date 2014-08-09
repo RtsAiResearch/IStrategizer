@@ -4,9 +4,6 @@
 #include "MetaData.h"
 #include "Vector2.h"
 #include "SmartPtr.h"
-#define VC_EXTRALEAN
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
 #undef min
 #undef max
 
@@ -46,13 +43,15 @@ namespace IStrategizer
     {
     public:
         ArrayList(int size) :
-            m_pArr(new T[size]),
+            m_pArr((T*)HeapAlloc(GetProcessHeap(), 0, sizeof(T) * size)),
             m_size(size)
-        {}
+        {
+            ZeroMemory(m_pArr, sizeof(T)*size);
+        }
 
         ~ArrayList()
         {
-            delete m_pArr;
+            HeapFree(GetProcessHeap(), 0, m_pArr);
         }
 
         T& At(_In_ int i) { return m_pArr[i]; }
@@ -136,6 +135,7 @@ namespace IStrategizer
         virtual int GasPrice() const = 0;
         virtual int MineralsPrice() const = 0;
         virtual const IGameUnitType* WhatResearches() const = 0;
+        virtual const char* ToString() const = 0;
     };
 
     class IGameUpgradeType
@@ -147,6 +147,7 @@ namespace IStrategizer
         virtual int MineralsPrice() const = 0;
         virtual const IGameUnitType* WhatsRequired() const = 0;
         virtual const IGameUnitType* WhatUpgrades() const = 0;
+        virtual const char* ToString() const = 0;
     };
 
     class IGameRace

@@ -45,12 +45,12 @@
 #ifndef GRAPHSCENE_H
 #include "GraphScene.h"
 #endif
-#include "StarCraftGame.h"
 #include "Action.h"
 #include "GoalEx.h"
 #include "ActionFactory.h"
 #include "GoalFactory.h"
 #include "CaseEx.h"
+#include "IStrategizer.h"
 
 using namespace std;
 using namespace IStrategizer;
@@ -63,7 +63,7 @@ CaseVisualizer::CaseVisualizer(QWidget *parent, Qt::WindowFlags flags)
 	ui.setupUi(this);
 	CreateToolBox();
 
-	IStrategizer::Init();
+    RtsAiEngineSystemInit();
 
 	if (InitIdLookup())
 	{
@@ -78,7 +78,7 @@ CaseVisualizer::CaseVisualizer(QWidget *parent, Qt::WindowFlags flags)
 		SelectCase(0);
 	}
 
-	RtsGame* pDummGame = new StarCraftGame;
+	RtsGame* pDummGame = new RtsGame;
     pDummGame->InitStaticData();
     g_Game = pDummGame;
 }

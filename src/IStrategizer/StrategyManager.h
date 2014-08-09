@@ -37,7 +37,7 @@ namespace IStrategizer
         PlanStepParameters m_currStrategyGoalParams;
     };
 
-    typedef std::shared_ptr<StrategyManager> StrategySelectorPtr;
+    typedef StrategyManager* StrategyManagerPtr;
 }
 
 #endif // STRATEGYSELECTOR_H

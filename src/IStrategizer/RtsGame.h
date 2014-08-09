@@ -62,6 +62,7 @@ namespace IStrategizer
 
         ~RtsGame();
         bool Init();
+        bool InitStaticData();
         static void FinalizeStaticData();
         void ExportStaticData();
 
@@ -109,7 +110,6 @@ namespace IStrategizer
         void InitEntityTypes();
         void InitResearchTypes();
         void InitRaceTypes();
-        bool InitStaticData();
 
         ///> type=bool
         bool m_isOnline;

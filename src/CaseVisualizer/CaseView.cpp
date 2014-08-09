@@ -30,7 +30,6 @@
 #include "GraphScene.h"
 #include "GoalEx.h"
 #include "ParameterEdit.h"
-#include "StarCraftEntity.h"
 #include "WorldMap.h"
 
 using namespace std;
@@ -208,8 +207,8 @@ void CaseView::ViewGameState(RtsGame* p_gameState)
         if (attr == RTSMODATTR_MapArea)
         {
             char buff[32];
-            sprintf_s(buff, "%dx%d", TilePositionFromUnitPosition(p_gameState->Map()->Width()),
-                TilePositionFromUnitPosition(p_gameState->Map()->Height()));
+            sprintf_s(buff, "%dx%d", TileCoordFromUnitCoord(p_gameState->Map()->Width()),
+                TileCoordFromUnitCoord(p_gameState->Map()->Height()));
             cell = new QTableWidgetItem(QString::fromLocal8Bit(buff));
         }
         else

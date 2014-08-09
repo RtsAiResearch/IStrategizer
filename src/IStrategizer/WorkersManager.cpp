@@ -39,7 +39,9 @@ void WorkersManager::NotifyMessegeSent(Message* pMsg)
 				return;
 			}
 
-			auto pType = g_Game->GetEntityType(g_Game->GetPlayer(pData->OwnerId)->GetEntity(pData->EntityId)->TypeId());
+            auto pPlayer = g_Game->GetPlayer(pData->OwnerId);
+            auto pEntity = pPlayer->GetEntity(pData->EntityId);
+			auto pType = g_Game->GetEntityType(pEntity->TypeId());
 
 			if (pType->P(TP_IsPrimaryResource))
 			{

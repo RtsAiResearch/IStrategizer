@@ -14,9 +14,8 @@ namespace IStrategizer
     class ScoutManager : public EngineObject
     {
     public:
-        ScoutManager(StrategySelectorPtr pConsultant) :
+        ScoutManager() :
             m_scoutController(nullptr),
-            m_pConsultant(pConsultant),
             m_active(false),
             m_knownEnemySpawnLocIdx(-1),
             m_currSpawnLocIdxToScout(-1)
@@ -35,7 +34,6 @@ namespace IStrategizer
 
     private:
         int GetNearestSpawnLocationIdx(_In_ bool checkNotDiscovered = false, _In_ bool checkEnemyNotExist = false);
-        StrategySelectorPtr m_pConsultant;
         bool m_active;
         EntityController m_scoutController;
 

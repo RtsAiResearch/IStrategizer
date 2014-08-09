@@ -34,13 +34,15 @@ namespace IStrategizer
 
         virtual const IGameUnitType* WhatBuilds() const
         {
-            
             return g_BwapiUnitTypes[m_type.whatBuilds().first.getID()];
         }
 
         virtual const IGameTechType* RequiredTech() const
         {
-            return g_BwapiTechTypes[m_type.requiredTech().getID()];
+            if (m_type.requiredTech() != BWAPI::TechTypes::None)
+                return g_BwapiTechTypes[m_type.requiredTech().getID()];
+            else
+                return nullptr;
         }
 
         virtual GameUnitTypeToCountListPtr RequiredUnits() const
@@ -221,6 +223,8 @@ namespace IStrategizer
             return (ResearchType)((int)RESEARCH_START + m_type.getID());
         }
 
+        virtual const char* ToString() const { return m_type.c_str(); }
+
         virtual int GasPrice() const
         {
             return m_type.gasPrice();
@@ -314,6 +318,8 @@ namespace IStrategizer
         {
             return (ResearchType)((int)RESEARCH_START + TechOffset + m_type.getID());
         }
+
+        virtual const char* ToString() const { return m_type.c_str(); }
 
         virtual int GasPrice() const
         {

@@ -466,7 +466,7 @@
       <Filter>Header Files\DomainKnowledge</Filter>
     </ClInclude>
     <ClInclude Include="..\StrategyManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

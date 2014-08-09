@@ -145,8 +145,8 @@ std::string PlanStepEx::ToString(bool minimal) const
             // Use the Enums lookup table to translate it to string
             else
             {
-                _ASSERTE(Enums[itr->second] != nullptr);
-                paramDesc += Enums[itr->second];
+                //_ASSERTE(Enums[itr->second] != nullptr);
+                paramDesc += (Enums[itr->second] != nullptr ? Enums[itr->second] : "(null)");
             }
 
             stepDescription += paramDesc;

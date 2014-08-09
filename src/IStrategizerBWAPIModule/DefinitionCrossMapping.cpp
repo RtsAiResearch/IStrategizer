@@ -12,20 +12,20 @@ DefinitionCrossMapping::DefinitionCrossMapping() : m_initialized(false) {}
 //---------------------------------------------------------------------------------------------
 void DefinitionCrossMapping::Init()
 {
-    if (m_initialized)
-    {
-        // Because we depend on player actual Id in the game, and this class is singleton
-        // The starcraft game may change player ids from game run to another
-        PlayerMapping.Clear();
-        InitPlayers();
-        return;
-    }
+    //if (m_initialized)
+    //{
+    //    // Because we depend on player actual Id in the game, and this class is singleton
+    //    // The starcraft game may change player ids from game run to another
+    //    PlayerMapping.Clear();
+    //    InitPlayers();
+    //    return;
+    //}
 
-    InitEntities();
+    /*InitEntities();
     InitUpgrades();
     InitTeches();
     InitPlayers();
-    InitActions();
+    InitActions();*/
     InitEntityIdents();
     InitUpgradeIdents();
     InitTechIdents();

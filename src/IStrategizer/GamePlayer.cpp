@@ -23,6 +23,7 @@
 #include "GameType.h"
 #include "IStrategizerException.h"
 #include "SimilarityWeightModel.h"
+#include "WorldMap.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -63,7 +64,7 @@ const GameRace* GamePlayer::Race() const
 //////////////////////////////////////////////////////////////////////////
 Vector2 GamePlayer::StartLocation() const
 {
-    return g_GameImpl->PlayerStartLocation(m_playerId);
+    return UnitPositionFromTilePosition(g_GameImpl->PlayerStartLocation(m_playerId));
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::Init()
@@ -133,9 +134,13 @@ void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds, bool ch
     entityIds.clear();
     for (EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
     {
-        if (itr->second->TypeId() == typeId &&
-            (!checkReadyOnly || itr->second->P(OP_State) != OBJSTATE_BeingConstructed) &&
-            (!checkFree || !itr->second->IsLocked()))
+        auto currTypeId = itr->second->TypeId();
+        ObjectStateType currState = (ObjectStateType)itr->second->P(OP_State);
+        bool currIsLocked = !itr->second->IsLocked();
+
+        if (currTypeId == typeId &&
+            (!checkReadyOnly || currState != OBJSTATE_BeingConstructed) &&
+            (!checkFree || !currIsLocked))
             entityIds.push_back(itr->first);
     }
 }

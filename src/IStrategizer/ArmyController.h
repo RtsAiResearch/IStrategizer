@@ -64,7 +64,7 @@ namespace IStrategizer
     class ArmyController : public EngineObject
     {
     public:
-        ArmyController(const char* pName, StrategySelectorPtr pConsultant);
+        ArmyController(const char* pName);
 
         static const int FocusAreaRadius = 192;
         static const int SightAreaRadius = 768;
@@ -80,7 +80,6 @@ namespace IStrategizer
         bool HasType(_In_ EntityClassType type);
         void ReleaseEntity(_In_ TID entityId);
         bool TryControlEntity(_In_ TID entityId);
-        const StrategyManager* Consultant() const { return &*m_pConsultant; }
         void ReleaseHealthyEntities();
         void TryControlArmy(_In_ bool fromCleanSlate);
         void ReleaseArmy();
@@ -141,7 +140,6 @@ namespace IStrategizer
         static ArmyGroupFormation::Data CalcGroupFormationData(_In_ int groupSize);
 
         // Permanent
-        StrategySelectorPtr m_pConsultant;
         const char* m_pName;
         int m_totalDiedEntities;
         int m_totalGroundAttack;

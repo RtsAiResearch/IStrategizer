@@ -87,7 +87,7 @@ void GameType::GetRequirements(vector<ResearchType>& researches, map<EntityClass
     }
 
     auto requiredUnits = m_pUnitType->RequiredUnits();
-    for (int i = 0; i < requiredUnits->Size();)
+    for (int i = 0; i < requiredUnits->Size(); ++i)
     {
         auto unitR = requiredUnits->At(i);
         buildings[unitR.Key->EngineId()] = unitR.Value;

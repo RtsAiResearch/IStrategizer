@@ -39,6 +39,8 @@ namespace IStrategizer
         OnlineCaseBasedPlannerEx* Planner() { return &*m_pPlanner; }
         WorkersManager& WorkersMgr() { return m_workersMgr; }
         ScoutManager& ScoutMgr() { return m_scoutMgr; }
+        StrategyManagerPtr StrategyMgr() { return m_pStrategyMgr; }
+
         Vector2F BaseHeadDirection() const { return m_baseFaceDir; }
         SituationType Situation() const { return m_situation; }
         void ReviseSituation();
@@ -67,7 +69,7 @@ namespace IStrategizer
         Vector2F m_baseFaceDir;
         SituationType m_situation;
         Circle2 m_borders;
-        StrategySelectorPtr m_pConsultant;
+        StrategyManagerPtr m_pStrategyMgr;
     };
 }
 

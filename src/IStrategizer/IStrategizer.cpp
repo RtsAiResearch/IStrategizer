@@ -1,11 +1,14 @@
+#ifdef ISTRATEGIZER_EXPORTS
 #define RTSAIENGINEAPI extern "C" __declspec(dllexport)
+#endif
+
 #include "IStrategizer.h"
 #include "IStrategizerEx.h"
 #include "SerializationEssentials.h"
 
 using namespace IStrategizer;
 
-class RtsAiEngineFactory
+class RtsAiEngineFactory : public IRtsAiEngineFactory
 {
 public:
     IRtsAiEngine* CreateEngine(_In_ const EngineParams& params, _In_ IRtsGame* pGame)
@@ -34,4 +37,10 @@ void RtsAiEngineSystemInit()
 void RtsAiEngineSystemDeinit()
 {
     RtsGame::FinalizeStaticData();
+}
+
+void RtsAiEngineExportGameStaticData()
+{
+    if (!g_Game)
+        g_Game->ExportStaticData();
 }

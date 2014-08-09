@@ -37,14 +37,14 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\moc_CaseView.cpp">
-      <Filter>Generated Files</Filter>
+    <ClCompile Include="CaseGenerator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\moc_CaseVisualizer.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="CaseGenerator.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GeneratedFiles\moc_CaseView.cpp">
+      <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
