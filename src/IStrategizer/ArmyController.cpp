@@ -32,9 +32,8 @@ m_farthestEntityToCenter(INVALID_TID)
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
     g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
 
-    m_pLogic = StackFSMPtr(new IdleArmyFSM(this));
-
     ResetLogicParams();
+    m_pLogic = StackFSMPtr(new IdleArmyFSM(this));
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::SetControlType(_In_ bool controlBroken, _In_ bool controlWorkers)
@@ -45,19 +44,11 @@ void ArmyController::SetControlType(_In_ bool controlBroken, _In_ bool controlWo
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::TryControlArmy(_In_ bool fromCleanSlate)
 {
-    if (fromCleanSlate)
-        ReleaseArmy();
-
-    bool controlledAny = false;
-
     // For now, army controls only current free healthy attackers
     for (auto& entityR : g_Game->Self()->Entities())
     {
-        controlledAny |= TryControlEntity(entityR.first);
+        (void)TryControlEntity(entityR.first);
     }
-
-    if (controlledAny)
-        m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::ReleaseArmy()
@@ -185,7 +176,6 @@ void ArmyController::Defend(_In_ Vector2 pos)
     TargetPosition(pos);
 
     m_pLogic = StackFSMPtr(new GuardArmyFSM(this));
-    m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::Attack(_In_ Vector2 pos)
@@ -199,7 +189,6 @@ void ArmyController::Attack(_In_ Vector2 pos)
     TargetPosition(pos);
 
     m_pLogic = StackFSMPtr(new AttackMoveArmyFSM(this));
-    m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::Stand(_In_ Vector2 pos)
@@ -213,7 +202,6 @@ void ArmyController::Stand(_In_ Vector2 pos)
     TargetPosition(pos);
 
     m_pLogic = StackFSMPtr(new StandArmyFSM(this));
-    m_pLogic->Reset();
 }
 //////////////////////////////////////////////////////////////////////////
 void ArmyController::CalcCetner()
@@ -302,19 +290,19 @@ void ArmyController::CalcEnemyData()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos, _In_ float orderPrcnt)
+bool ArmyController::IsInOrder(_In_ Vector2 pos, _In_ float orderPrcnt)
 {
-    if (entities.empty())
+    if (m_entities.empty())
     {
         return false;
     }
 
     _ASSERTE(orderPrcnt <= 1.0f && orderPrcnt > 0.0f);
 
-    ArmyGroupFormation::Data data = CalcGroupFormationData((int)entities.size());
+    ArmyGroupFormation::Data data = CalcGroupFormationData((int)m_entities.size());
     Circle2 orderArea(pos, data.CircleRadius);
     int numInOrder = 0;
-    for (auto& entityR : entities)
+    for (auto& entityR : m_entities)
     {
         // Fast return as soon as we see astray units out of focus area
         if (orderArea.IsInside(entityR.second->Entity()->Position()))
@@ -323,7 +311,7 @@ bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector
         }
     }
 
-    return ((float)numInOrder / (float)entities.size()) >= orderPrcnt;
+    return ((float)numInOrder / (float)m_entities.size()) >= orderPrcnt;
 }
 //////////////////////////////////////////////////////////////////////////
 bool ArmyController::CanControl(_In_ const GameEntity* pEntity)
@@ -332,7 +320,7 @@ bool ArmyController::CanControl(_In_ const GameEntity* pEntity)
 
     auto pEntityType = pEntity->Type();
 
-    bool isBroken = EntityController::IsOnCriticalHP(pEntity);
+    bool isBroken = !EntityController::IsHpAboveThreshold(pEntity, EntityController::CriticalHpPercent);
 
     return m_entities.count(pEntity->Id()) == 0 &&
         pEntity->Exists() &&
@@ -357,14 +345,13 @@ bool ArmyController::TryControlEntity(_In_ TID entityId)
 
         m_entities[entityId] = pController;
         pController->ControlEntity(entityId);
-        pController->HardResetLogic();
 
         m_totalGroundAttack += pEntity->Type()->P(TP_GroundAttack);
         m_totalMaxHP += pEntity->Type()->P(TP_MaxHp);
 
         CalcGroupFormationData();
 
-        LogInfo("Added %s to %s, to control %d entities", pEntity->ToString().c_str(), ToString().c_str(), m_entities.size());
+        LogInfo("%s Control->(%s). Controlling %d entities", ToString().c_str(), pEntity->ToString().c_str(), m_entities.size());
 
         return true;
     }
@@ -379,7 +366,7 @@ void ArmyController::ReleaseHealthyEntities()
 
     for (auto entityItr = m_entities.begin(); entityItr != m_entities.end();)
     {
-        if (!entityItr->second->IsOnCriticalHP())
+        if (entityItr->second->IsOnHealthyHP())
         {
             auto oldItr = entityItr;
             ++entityItr;

@@ -24,6 +24,8 @@ namespace IStrategizer
 
         virtual void Reset()
         {
+            LogInfo("Resetting %s logic", ToString().c_str());
+
             while (!m_states.empty())
                 PopState();
 

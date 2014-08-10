@@ -32,7 +32,7 @@ namespace IStrategizer
 		void Init();
 		void Update();
 		void NotifyMessegeSent(Message* p_pMessage);
-        TID RequestBuilder();
+        TID RequestBuilder(bool requstRelease);
         TID RequestScout();
         size_t WorkersCount() const { return m_workersArmy.Entities().size(); }
 
@@ -48,6 +48,7 @@ namespace IStrategizer
 		void AssignWorker(_In_ TID workerId, _In_ TID sourceId);
 		void UnassignWorker(_In_ TID workerId);
 		void UnassignAstrayWorkers();
+
 		static const unsigned MinPrimaryGatherers = 2;
 
 		std::map<TID, SourceRecord> m_sources;

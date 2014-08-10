@@ -18,14 +18,19 @@ namespace IStrategizer
     public:
         static const int PositionArriveRadius = 64;
         static const int MeleeAttackerSafetyRadius = 96;
-        static const int CriticalHPPercent = 20;
-        static const int DamagedHealthPercent = 95;
+        static const float CriticalHpPercent;
+        static const float DamagedHealthPercent;
+        static const float HealthyHpPercent;
 
         EntityController(ArmyController* pController);
         void Update();
         void ControlEntity(_In_ TID entityId);
         void PushLogic(_In_ StackFSMPtr pLogic) { LogInfo("Pushing %s Logic", pLogic->ToString().c_str()); m_pLogicMemory.push(pLogic); }
-        void PopLogic() { LogInfo("Poping %s Logic", m_pLogicMemory.top()->ToString().c_str()); m_pLogicMemory.pop(); }
+        void PopLogic() 
+        {
+            LogInfo("Poping %s logic", m_pLogicMemory.top()->ToString().c_str()); m_pLogicMemory.pop();
+            LogInfo("Current logic is %s", (m_pLogicMemory.empty() ? "not-assigned" : m_pLogicMemory.top()->ToString().c_str()));
+        }
         FSMStateTypeID CurrentLogic() const { return m_pLogicMemory.top()->TypeId(); }
         void PushIdleLogic();
         void ReleaseEntity();
@@ -58,6 +63,7 @@ namespace IStrategizer
 
         // Controller Conditions
         bool IsOnCriticalHP() const;
+        bool IsOnHealthyHP() const;
         bool IsBeingHit() const;
         bool ArrivedAtTarget(_In_ Vector2 pos) const;
         bool ThreatAtTarget(_In_ Vector2 pos) const;
@@ -69,7 +75,7 @@ namespace IStrategizer
         bool IsAnyEnemyTargetInRange() const; // Expensive call
         bool IsCloseToMeleeAttacker() const { return m_closeMeleeAttackerId != INVALID_TID; }
         bool CanRepairNearbyEntity() const;
-        static bool IsOnCriticalHP(_In_ const GameEntity* pEntity);
+        static bool IsHpAboveThreshold(_In_ const GameEntity* pEntity, _In_ float hpThresholdPrcnt);
         static bool EntityExists(_In_ TID entityId);
         static bool IsDamaged(_In_ const GameEntity* pEntity);
 

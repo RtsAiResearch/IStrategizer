@@ -19,7 +19,7 @@ Micro
 - Target selection and prioritization (supporters, melee, ranged, air)
 - Take attack type into consideration (Air/Ground targetability and prioritization)
 - Even if a unit is being hit, not always it should run especially VS weak units, it should depend on the attacker and the unit itself
-- Fix army states to work on Army units directly not cached ones
+[DONE] - Fix army states to work on Army units directly not cached ones
 - Use the more complex pro players Hit&Run: http://wiki.teamliquid.net/starcraft/Vulture_Micro
 
 Macro
@@ -32,6 +32,7 @@ Planner
 [DONE] - Fix planner goal resource sharing and synchronization bugs
 - Succeeding nodes dont expand, except root node, always expand
 - Perioding maintainance of the already succeeding goals, if failed reopen them
+- Need to identify Train Army goals with more strong parameters (e.g map of each unit type and its count)
 
 Strategy
 - Detect enemy startegy from the first scouting and replan the counter

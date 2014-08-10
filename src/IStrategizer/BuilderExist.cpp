@@ -24,7 +24,7 @@ ConditionEx(PLAYER_Self, CONDEX_CandidateGathererExist)
 bool BuilderExist::Evaluate(RtsGame& game)
 {
     auto builderTypeId = (EntityClassType)m_params[PARAM_EntityClassId];
-    auto candidateId = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptWorkerForBuild(builderTypeId);
+    auto candidateId = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptBuilder(builderTypeId, false);
     _isEvaluated = _isSatisfied = candidateId != INVALID_TID;
     return _isSatisfied;
 }

@@ -214,7 +214,7 @@ bool BuildActionEx::Execute(RtsGame& game, const WorldClock& p_clock)
     bool bOk = false;
 
     // Adapt builder
-    _builderId = pAdapter->AdaptWorkerForBuild(buildingType);
+    _builderId = pAdapter->AdaptBuilder(buildingType, true);
     // Adapt build position
     _buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
 

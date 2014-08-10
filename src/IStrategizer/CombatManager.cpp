@@ -55,7 +55,7 @@ void CombatManager::AttackEnemy(_In_ Vector2 pos)
     _ASSERTE(!pos.IsInf());
     LogInfo("Attacking area %s", pos.ToString().c_str());
 
-    m_frontLinesArmy.TryControlArmy(true);
+    m_frontLinesArmy.TryControlArmy(false);
     m_frontLinesArmy.Attack(pos);
 
     m_currOrder = CMBTMGR_Attack;

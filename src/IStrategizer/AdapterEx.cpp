@@ -315,12 +315,14 @@ TID AdapterEx::AdaptWorkerForGather(ResourceType resourceType, bool immediate)
         return ladder[0];
 }
 //////////////////////////////////////////////////////////////////////////
-TID AdapterEx::AdaptWorkerForBuild(EntityClassType buildingType)
+TID AdapterEx::AdaptBuilder(EntityClassType buildingType, bool requestFromOwner)
 {
     auto builderType = g_Game->GetEntityType(buildingType)->GetBuilderType();
 
     if (builderType == g_Game->Self()->Race()->GetWorkerType())
-        return g_Engine->WorkersMgr().RequestBuilder();
+    {
+        return g_Engine->WorkersMgr().RequestBuilder(requestFromOwner);
+    }
     else
     {
         // resourceType in the future can be used such that the ranking differ from primary to secondary gatherer

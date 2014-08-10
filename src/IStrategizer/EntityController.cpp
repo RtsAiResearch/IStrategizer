@@ -12,6 +12,10 @@
 using namespace IStrategizer;
 using namespace std;
 
+const float EntityController::CriticalHpPercent = .20f;
+const float EntityController::DamagedHealthPercent = .95f;
+const float EntityController::HealthyHpPercent = 0.50f;
+
 EntityController::EntityController(ArmyController* pController) :
 m_entityId(INVALID_TID),
 m_targetEntityId(INVALID_TID),
@@ -87,7 +91,8 @@ void EntityController::Update()
 
     CalcCloseMeleeAttacker();
 
-    m_pLogicMemory.top()->Update();
+    if (!m_pLogicMemory.empty())
+        m_pLogicMemory.top()->Update();
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::EntityExists() const
@@ -95,13 +100,13 @@ bool EntityController::EntityExists() const
     return EntityExists(m_entityId);
 }
 //////////////////////////////////////////////////////////////////////////
-bool EntityController::IsOnCriticalHP(_In_ const GameEntity* pEntity)
+bool EntityController::IsHpAboveThreshold(_In_ const GameEntity* pEntity, _In_ float hpThresholdPrcnt)
 {
-    auto currentHp = pEntity->P(OP_Health);
-    auto maxHp = pEntity->Type()->P(TP_MaxHp);
-    auto criticalHp = int(((float)CriticalHPPercent / (float)100) * (float)maxHp);
+    float currentHp = (float)pEntity->P(OP_Health);
+    float maxHp = (float)pEntity->Type()->P(TP_MaxHp);
+    float currHpPrcnt = currentHp / maxHp;
 
-    return currentHp <= criticalHp;
+    return currHpPrcnt >= hpThresholdPrcnt;
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::IsOnCriticalHP() const
@@ -110,7 +115,16 @@ bool EntityController::IsOnCriticalHP() const
         !EntityExists())
         return false;
 
-    return IsOnCriticalHP(Entity());
+    return !IsHpAboveThreshold(Entity(), CriticalHpPercent);
+}
+//////////////////////////////////////////////////////////////////////////
+bool EntityController::IsOnHealthyHP() const
+{
+    if (!IsControllingEntity() ||
+        !EntityExists())
+        return false;
+
+    return IsHpAboveThreshold(Entity(), HealthyHpPercent);
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::IsBeingHit() const
@@ -380,8 +394,7 @@ string EntityController::ToString(bool minimal) const
 /////////////////////////////////////////////////////////////////////////
 bool EntityController::IsDamaged(_In_ const GameEntity* pEntity)
 {
-    int healthPrct = int(((float)pEntity->P(OP_Health) / (float)pEntity->Type()->P(TP_MaxHp)) * 100.0f);
-    return healthPrct < DamagedHealthPercent;
+    return !IsHpAboveThreshold(pEntity, DamagedHealthPercent);
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::CanRepairNearbyEntity() const

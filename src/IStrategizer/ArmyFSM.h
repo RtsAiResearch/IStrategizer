@@ -4,6 +4,7 @@
 #include "StackFSM.h"
 #include "EntityController.h"
 #include "ArmyController.h"
+#include <hash_set>
 
 namespace IStrategizer
 {
@@ -17,13 +18,14 @@ namespace IStrategizer
             FSMState(typeId, pName, (EngineObject*)pController),
             m_targetPos1(Vector2::Inf()),
             m_targetPos2(Vector2::Inf()),
-            m_targetEntity(INVALID_TID)
+            m_targetEntity(INVALID_TID),
+            m_newControlledCurrFrame(false)
         {}
 
         Vector2 TargetPosition() const { return m_targetPos1; }
         Vector2 TargetPosition2() const { return m_targetPos2; }
         TID TargetEntity() const { return m_targetEntity; }
-        const EntityControllersMap& Entities() const { return m_controlledEntities; }
+        const std::hash_set<TID>& Entities() const { return m_lastControlled; }
         void Update();
         void Enter();
         void Exit();
@@ -33,7 +35,12 @@ namespace IStrategizer
         Vector2 m_targetPos1;
         Vector2 m_targetPos2;
         TID m_targetEntity;
-        EntityControllersMap m_controlledEntities;
+        bool m_newControlledCurrFrame;
+
+    private:
+        // Used by the ArmyState class to keep new army controlled units each
+        // frame in sync with the current concrete army state logic
+        std::hash_set<TID> m_lastControlled;
     };
 
     class IdleArmyState : public ArmyState

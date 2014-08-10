@@ -331,10 +331,10 @@ void WorkersManager::UnassignAstrayWorkers()
 //////////////////////////////////////////////////////////////////////////
 TID WorkersManager::RequestScout()
 {
-    return RequestBuilder();
+    return RequestBuilder(true);
 }
 //////////////////////////////////////////////////////////////////////////
-TID WorkersManager::RequestBuilder()
+TID WorkersManager::RequestBuilder(bool requstRelease)
 {
     auto& lastPrimaryGatherers = m_lastFrameWorkers[OBJSTATE_GatheringPrimary];
 
@@ -343,9 +343,12 @@ TID WorkersManager::RequestBuilder()
 
     auto pWorker = (*lastPrimaryGatherers.begin());
     
-    m_workersArmy.ReleaseEntity(pWorker->Id());
-    UnassignWorker(pWorker->Id());
-    lastPrimaryGatherers.erase(pWorker);
+    if (requstRelease)
+    {
+        m_workersArmy.ReleaseEntity(pWorker->Id());
+        UnassignWorker(pWorker->Id());
+        lastPrimaryGatherers.erase(pWorker);
+    }
 
     return pWorker->Id();
 }
