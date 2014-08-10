@@ -290,6 +290,8 @@ namespace IStrategizer
             return g_BwapiUnitTypes[BWAPI::UnitTypes::Resource_Mineral_Field.getID()];
         }
 
+        virtual const char* ToString() const { return m_race.c_str(); }
+
     private:
         BWAPI::Race m_race;
     };

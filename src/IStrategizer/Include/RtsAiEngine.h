@@ -176,6 +176,7 @@ namespace IStrategizer
         virtual const IGameUnitType* SupplyProvider() const = 0;
         virtual const IGameUnitType* GasProvider() const = 0;
         virtual const IGameUnitType* MineralsProvider() const = 0;
+        virtual const char* ToString() const = 0;
     };
 
     class IRtsGame

@@ -114,7 +114,7 @@ void IStrategizerEx::Update()
             m_workersMgr.Update();
 
             if (m_situation == SITUATION_SafeDevelopmentDefending &&
-                m_pStrategyMgr->IsGoodTimeToPush())
+                m_pStrategyMgr->IsArmyGoodToPush())
             {
                 auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
 
@@ -251,6 +251,8 @@ void IStrategizerEx::DebugDraw()
     char str[128];
     sprintf_s(str, "Situation: %s", Enums[m_situation]);
     g_Game->DebugDrawScreenText(Vector2(5, 5), str, GCLR_White);
+
+    m_pStrategyMgr->DebugDraw();
 }
 //////////////////////////////////////////////////////////////////////////
 void IStrategizerEx::ReviseSituation()

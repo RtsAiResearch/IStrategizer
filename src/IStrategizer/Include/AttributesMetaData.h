@@ -169,6 +169,20 @@ namespace IStrategizer
         RTSMODATTRWGHT_Player_Resources_Supply,
         RTSMODATTRWGHT_END
     };
+
+#define Prefix_GameStage GSTAGE
+    enum GameStage
+    {
+        GSTAGE_Early,
+        GSTAGE_START = GSTAGE_Early,
+        GSTAGE_Mid,
+        GSTAGE_Late,
+        GSTAGE_END
+    };
+#define Define_GameStage \
+    Enums[GSTAGE_Early] = "EarlyGame"; \
+    Enums[GSTAGE_Mid] = "MidGame"; \
+    Enums[GSTAGE_Late] = "LateGame";
 }
 
 #endif // ATTRIBUTESMETADATA_H

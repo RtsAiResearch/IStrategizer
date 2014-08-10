@@ -19,23 +19,39 @@ void StarcraftStrategyManager::Init()
     m_pTerranSiegeTankTankMode = g_GameImpl->GetUnitTypeByName("Terran_Siege_Tank_Tank_Mode");
     m_pTerranSiegeTankSiegeMode = g_GameImpl->GetUnitTypeByName("Terran_Siege_Tank_Siege_Mode");
     m_pTerranMarine = g_GameImpl->GetUnitTypeByName("Terran_Marine");
+
+    FindEnemyRace();
 }
 //////////////////////////////////////////////////////////////////////////
 void StarcraftStrategyManager::SelectGameOpening()
 {
     LogActivity(SelectGameOpening);
 
-    AbstractRetriever::RetrieveOptions opt;
+    Strategy openingStrategy;
 
-    opt.CaseName = STRATEGYNAME_TvP_GundamRush;
+    if (m_enemyRace == RACE_Terran ||
+        m_enemyRace == RACE_Zerg)
+    {
+        openingStrategy.Id = STRATEGY_TvT_GundamRush;
+        openingStrategy.Name = STRATEGYNAME_TvT_GundamRush;
+    }
+    else if (m_enemyRace == RACE_Protoss ||
+        m_enemyRace == RACE_Unknown)
+    {
+        openingStrategy.Id = STRATEGY_TvP_GundamRush;
+        openingStrategy.Name = STRATEGYNAME_TvP_GundamRush;
+    }
+
+    AbstractRetriever::RetrieveOptions opt;
+    opt.CaseName = openingStrategy.Name;
 
     auto pCase = g_OnlineCaseBasedPlanner->Reasoner()->Retriever()->Retrieve(opt);
 
     if (pCase != nullptr)
     {
+        _ASSERTE(openingStrategy.Name == pCase->Name());
         m_currStrategyGoalParams = pCase->Goal()->Parameters();
-        m_currStrategy.Id = STRATEGY_TvP_GundamRush;
-        m_currStrategy.Name = pCase->Name();
+        m_currStrategy = openingStrategy;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -44,18 +60,25 @@ void StarcraftStrategyManager::SelectNextStrategy()
     LogActivity(SelectNextStrategy);
 }
 //////////////////////////////////////////////////////////////////////////
-bool StarcraftStrategyManager::IsGoodTimeToPush()
+int StarcraftStrategyManager::Count(const IGameUnitType* pUnitType)
 {
-    if (m_currStrategy.Id == STRATEGY_TvP_GundamRush)
-    {
-        int vulturesCount = g_GameImpl->PlayerCompletedUnitCount(g_GameImpl->SelfPlayer(), m_pTerranVulture);
-        int tanksCount = g_GameImpl->PlayerCompletedUnitCount(g_GameImpl->SelfPlayer(), m_pTerranSiegeTankTankMode) +
-            g_GameImpl->PlayerCompletedUnitCount(g_GameImpl->SelfPlayer(), m_pTerranSiegeTankSiegeMode);
-        int marinesCount = g_GameImpl->PlayerCompletedUnitCount(g_GameImpl->SelfPlayer(), m_pTerranMarine);
+    return g_GameImpl->PlayerCompletedUnitCount(g_GameImpl->SelfPlayer(), pUnitType);
+}
+//////////////////////////////////////////////////////////////////////////
+bool StarcraftStrategyManager::IsArmyGoodToPush()
+{
+    auto stage = FindGameStage();
+    auto cTanks = Count(m_pTerranSiegeTankTankMode) + Count(m_pTerranSiegeTankTankMode);
+    auto cVults = Count(m_pTerranVulture);
+    auto cMarines = Count(m_pTerranMarine);
 
-        return vulturesCount >= 1 &&
-            tanksCount >= 1 &&
-            marinesCount >= 1;
+    if (m_currStrategy.Id == STRATEGY_TvT_GundamRush ||
+        m_currStrategy.Id == STRATEGY_TvP_GundamRush)
+    {
+        if (stage == GSTAGE_Early)
+            return cMarines > 3 && cTanks > 0 && cVults > 0;
+        else
+            return cTanks > 2 && cVults > 3;
     }
 
     DEBUG_THROW(NotImplementedException(XcptHere));
@@ -96,4 +119,40 @@ StackFSMPtr StarcraftStrategyManager::SelectMicroLogic(_In_ ArmyController* army
         else
             return StackFSMPtr(new IdleEntityFSM(entityCtrlr));
     }
+}
+//////////////////////////////////////////////////////////////////////////
+void StarcraftStrategyManager::FindEnemyRace()
+{
+    auto pEnemyRace = g_GameImpl->PlayerRace(g_GameImpl->EnemyPlayer());
+
+    if (!strcmp(pEnemyRace->ToString(), RACENAME_Terran))
+        m_enemyRace = RACE_Terran;
+    else if (!strcmp(pEnemyRace->ToString(), RACENAME_Protoss))
+        m_enemyRace = RACE_Protoss;
+    else if (!strcmp(pEnemyRace->ToString(), RACENAME_Zerg))
+        m_enemyRace = RACE_Zerg;
+    else
+        m_enemyRace = RACE_Unknown;
+}
+//////////////////////////////////////////////////////////////////////////
+GameStage StarcraftStrategyManager::FindGameStage()
+{
+    auto elapsedGameFrames = g_GameImpl->GameFrame();
+
+    if (elapsedGameFrames < 10000)
+        return GSTAGE_Early;
+    else if (elapsedGameFrames < 20000)
+        return GSTAGE_Mid;
+    else
+        return GSTAGE_Late;
+}
+//////////////////////////////////////////////////////////////////////////
+void StarcraftStrategyManager::DebugDraw()
+{
+    char str[128];
+    sprintf_s(str, "Stage: %s", Enums[FindGameStage()]);
+    g_Game->DebugDrawScreenText(Vector2(5, 15), str, GCLR_White);
+
+    sprintf_s(str, "Strategy: %s", m_currStrategy.Name.c_str());
+    g_Game->DebugDrawScreenText(Vector2(5, 25), str, GCLR_White);
 }

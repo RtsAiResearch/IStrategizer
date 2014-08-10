@@ -25,10 +25,10 @@ namespace IStrategizer
         virtual void Init() = 0;
         virtual void SelectGameOpening() = 0;
         virtual void SelectNextStrategy() = 0;
-        virtual bool IsGoodTimeToPush() = 0;
+        virtual bool IsArmyGoodToPush() = 0;
         virtual bool IsGoodTimeToScout() = 0;
         virtual StackFSMPtr SelectMicroLogic(_In_ ArmyController* armyCtrlr, _In_ EntityController* pController) const = 0;
-
+        virtual void DebugDraw() = 0;
         const Strategy& CurrStrategy() const { return m_currStrategy; }
         const PlanStepParameters& CurrStrategyGoalParams() const { return m_currStrategyGoalParams; }
 

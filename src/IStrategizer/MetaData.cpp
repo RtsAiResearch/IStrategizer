@@ -45,5 +45,6 @@ namespace IStrategizer
         DEFINE(EntityObjectProperty);
         DEFINE(PlayerAttribute);
         DEFINE(RtsGameModelAttribute);
+        DEFINE(GameStage);
     }
 }
