@@ -119,8 +119,8 @@ namespace IStrategizer
         bool IsInOrder(_In_ Vector2 pos, _In_ float orderPrcnt = 0.9f);
         const EntityControllersMap& Entities() const { return m_entities; }
         
-        TID ClosestEntityToCenter() const { return m_closestEntityToCenter; }
-        TID FarthestEntityToCenter() const { return m_farthestEntityToCenter; }
+        GameEntity* ClosestEntityToCenter() const { return m_closestEntityToCenter; }
+        GameEntity* FarthestEntityToCenter() const { return m_farthestEntityToCenter; }
 
         bool HasRepairers();
         bool HasDamagedEntities() const;
@@ -163,8 +163,8 @@ namespace IStrategizer
         EntitySet m_damagedRepairablesNearby;
         int m_boundingCircleRadius;
         Vector2 m_center;
-        TID m_closestEntityToCenter;
-        TID m_farthestEntityToCenter;
+        GameEntity* m_closestEntityToCenter;
+        GameEntity* m_farthestEntityToCenter;
 
         // Global Cache
         static std::unordered_map<int, ArmyGroupFormation::Data> sm_cachedArmySizeToFormationDataMap;

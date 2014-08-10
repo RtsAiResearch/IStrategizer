@@ -47,16 +47,16 @@ void BwapiGame::DebugDrawMapLastGameError(_In_ TID unitId) const
         Broodwar->getLatencyFrames());  // frames to run
 }
 //////////////////////////////////////////////////////////////////////////
-void BwapiGame::DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos) const
+void BwapiGame::DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos, _In_ GameDrawColor c) const
 {
     TilePosition tilePos(pos.X, pos.Y);
     auto type = ((BwapiUnitType*)pUnitType)->GetBwapiUnitType();
 
     // Register an event that draws the target build location
-    Broodwar->registerEvent([tilePos, type](Game*) {
+    Broodwar->registerEvent([tilePos, type, c](Game*) {
         Broodwar->drawBoxMap(BWAPI::Position(tilePos),
             BWAPI::Position(tilePos + type.tileSize()),
-            Colors::Blue); },
+            BwapiColorFrom(c)); },
             nullptr,  // condition
             type.buildTime() + 100);  // frames to run
 }

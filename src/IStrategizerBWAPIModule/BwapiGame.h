@@ -15,7 +15,7 @@ namespace IStrategizer
 
         void DebugDrawMapLastGameError(_In_ TID unitId) const;
 
-        void DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos) const;
+        void DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos, _In_ GameDrawColor c) const;
 
         void MapDebugDraw() const;
 

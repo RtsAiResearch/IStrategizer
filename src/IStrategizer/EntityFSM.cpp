@@ -93,19 +93,16 @@ void AttackEntityState::Update()
 {
     EntityState::Update();
 
-
     if (g_Game->GameFrame() % 4 != 0)
         return;
-
-    TID prevTargetEntityId = m_targetEntity;
 
     auto pController = (EntityController*)m_pController;
     m_targetEntity = pController->TargetEntity();
 
     // When the unit can attack the target and it is not attacking or
     // it is attacking but a different target, then order it to attack our target
-    if (m_targetEntity != prevTargetEntityId &&
-        m_targetEntity != INVALID_TID &&
+    if (m_targetEntity != INVALID_TID &&
+        pController->Entity()->TargetId() != m_targetEntity &&
         pController->Entity()->CanAttack(m_targetEntity))
     {
         LogInfo("%s choose to attack %s", pController->Entity()->ToString().c_str(), g_Game->GetEntity(m_targetEntity)->ToString().c_str());

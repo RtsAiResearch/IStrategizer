@@ -82,7 +82,15 @@ void ArmyState::DebugDraw()
 
     if (pController->TargetEntity() != INVALID_TID &&
         g_Game->GetEntity(pController->TargetEntity()) != nullptr)
-        g_Game->DebugDrawMapCircle(g_Game->GetEntity(pController->TargetEntity())->Position(), 16, GCLR_Red, true);
+    {
+        auto pTargetPos = g_Game->GetEntity(pController->TargetEntity())->Position();
+
+        // Draw a target cross symbol
+        g_Game->DebugDrawMapCircle(pTargetPos, 3, GCLR_Red, true);
+        g_Game->DebugDrawMapCircle(pTargetPos, 10, GCLR_Red, false);
+        g_Game->DebugDrawMapLine(pTargetPos - Vector2(14, 0), pTargetPos + Vector2(14, 0), GCLR_Red);
+        g_Game->DebugDrawMapLine(pTargetPos - Vector2(0, 14), pTargetPos + Vector2(0, 14), GCLR_Red);
+    }
 
     g_Game->DebugDrawMapCircle(pController->Center(), 32, GCLR_Orange);
     g_Game->DebugDrawMapCircle(pController->Center(), 30, GCLR_Orange);
@@ -125,8 +133,8 @@ void RegroupArmyState::Update()
     {
         if (m_regroupAtArmyCenter)
         {
-            TID closestToCenterId = pController->ClosestEntityToCenter();
-            m_targetPos1 = g_Game->Map()->GetClosestReachableRegionCenter(closestToCenterId);
+            auto pClosestToCenter = pController->ClosestEntityToCenter();
+            m_targetPos1 = g_Game->Map()->GetClosestReachableRegionCenter(pClosestToCenter->Id());
         }
         else
             m_targetPos1 = pController->TargetPosition();
@@ -279,7 +287,7 @@ void AttackMoveArmyFSM::CheckTransitions()
         {
             PopState();
         }
-        else if (!pController->IsInOrder(pController->Center(), 0.5f))
+        else if (!pController->IsInOrder(pController->ClosestEntityToCenter()->Position(), 0.60f))
         {
             PushState(RegroupArmyState::TypeID);
         }
@@ -296,7 +304,7 @@ void AttackMoveArmyFSM::CheckTransitions()
         }
         break;
     case RegroupArmyState::TypeID:
-        if (pController->IsInOrder(pCurrState->TargetPosition(), 0.75f))
+        if (pController->IsInOrder(pCurrState->TargetPosition(), 0.80f))
         {
             PopState();
         }

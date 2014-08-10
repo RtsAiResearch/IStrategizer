@@ -6,6 +6,7 @@ Worker Manager
 City Builing
 [DONE] - Use differnent padding for producing building/buildings with add ons/non-producing buildings
 [DONE] - Have a strategy in city build and make maze/wall structure
+- Find out how to choose another build area if the choosen on is blocked always or find out the reason for choosing blocked areay? Bug maybe?
 
 Scouting
 - Perioding scouting
@@ -23,10 +24,11 @@ Micro
 - Use the more complex pro players Hit&Run: http://wiki.teamliquid.net/starcraft/Vulture_Micro
 
 Macro
-- Execute push/rush (Frontlines, Reinforcements, and Broken army)
+- Handle city defending (SCVs run/attack and building lifting)
+[DONE] - Execute push/rush (Frontlines, Reinforcements, and Broken army)
 - Realize when to retreat the whole army (i.e if combat simulation outcome is negative)
 [AIIDE]- Defend base on rush with workers if no attackers exist or too few
-- Handle city defending (SCVs run/attack and building lifting)
+
 
 Planner
 [DONE] - Fix planner goal resource sharing and synchronization bugs

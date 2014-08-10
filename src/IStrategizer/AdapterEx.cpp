@@ -111,7 +111,7 @@ MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType buildingType)
         // Else if the map is a rectangle, we take the square part of it
         searchRadius = (int)((float)min(mapeSize.X, mapeSize.Y) / 2.0);
 
-        colonyCenter = g_Game->Self()->GetColonyMapArea().Pos();
+        colonyCenter = g_Game->Self()->StartLocation();
         pBuildingIM->SpiralMove(colonyCenter, searchRadius, searchPredicate, &searchData);
 
         if (searchData.CandidateBuildPos == Vector2(-1, -1))

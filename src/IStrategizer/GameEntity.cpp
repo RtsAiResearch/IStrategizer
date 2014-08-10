@@ -327,8 +327,7 @@ bool GameEntity::Build(EntityClassType typeId, Vector2 pos)
         Vector2 tilePos = TilePositionFromUnitPosition(pos);
         bOk = g_GameImpl->UnitBuild(m_id, pUnitType, tilePos);
 
-        if (bOk)
-            g_GameImpl->DebugDrawUnitBuildBox(pUnitType, tilePos);
+        g_GameImpl->DebugDrawUnitBuildBox(pUnitType, tilePos, (bOk ? GCLR_Blue : GCLR_Purple));
     }
 
     if (!bOk)

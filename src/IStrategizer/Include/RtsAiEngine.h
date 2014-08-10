@@ -209,7 +209,7 @@ namespace IStrategizer
         virtual void DebugDrawMapRectangle(_In_ Vector2 topLeft, _In_ Vector2 bottomRight, _In_ GameDrawColor c, _In_ bool fill = false) const = 0;
         virtual void DebugDrawScreenText(_In_ Vector2 p, _In_ const char* pTxt, _In_ GameDrawColor c) const = 0;
         virtual void DebugDrawMapLastGameError(_In_ TID unitId) const = 0;
-        virtual void DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos) const = 0;
+        virtual void DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos,  _In_ GameDrawColor c) const = 0;
 
         // Map APIs
         virtual int MapWidth() const = 0;

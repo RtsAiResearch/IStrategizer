@@ -26,8 +26,8 @@ m_boundingCircleRadius(0),
 m_pName(pName),
 m_controlBroken(false),
 m_controlWorkers(false),
-m_closestEntityToCenter(INVALID_TID),
-m_farthestEntityToCenter(INVALID_TID)
+m_closestEntityToCenter(nullptr),
+m_farthestEntityToCenter(nullptr)
 {
     g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
     g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
@@ -225,7 +225,7 @@ void ArmyController::CalcCetner()
 void ArmyController::CalcBoundries()
 {
     m_boundingCircleRadius = 0;
-    m_closestEntityToCenter = INVALID_TID;
+    m_closestEntityToCenter = nullptr;
 
     if (m_entities.empty())
         return;
@@ -240,13 +240,13 @@ void ArmyController::CalcBoundries()
         if (dist > maxDist)
         {
             maxDist = dist;
-            m_farthestEntityToCenter = entityR.first;
+            m_farthestEntityToCenter = entityR.second->Entity();
         }
 
         if (dist < minDist)
         {
             minDist = dist;
-            m_closestEntityToCenter = entityR.first;
+            m_closestEntityToCenter = entityR.second->Entity();
         }
     }
 
@@ -513,6 +513,6 @@ void ArmyController::ResetCache()
     m_damagedRepairablesNearby.clear();
     m_boundingCircleRadius = 0;
     m_center = Vector2::Inf();
-    m_closestEntityToCenter = INVALID_TID;
-    m_farthestEntityToCenter = INVALID_TID;
+    m_closestEntityToCenter = nullptr;
+    m_farthestEntityToCenter = nullptr;
 }
