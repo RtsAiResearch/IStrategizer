@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <fstream>
 
 #include "RtsGame.h"
 #include "GamePlayer.h"
@@ -397,4 +398,25 @@ void InfluenceMap::ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWi
         }
     }
 }
+//////////////////////////////////////////////////////////////////////////
+void InfluenceMap::DebugDump(const char* pFilename)
+{
+    ofstream pen;
+    pen.open(pFilename, ios::out);
 
+    if (!pen.is_open())
+        return;
+
+    for (int y = 0; y < GridHeight(); ++y)
+    {
+        for (int x = 0; x < GridWidth(); ++x)
+        {
+            int idx = y * GridWidth() + x;
+            pen << m_pMap[idx].Inf;
+        }
+
+        pen << std::endl;
+    }
+
+    pen.close();
+}

@@ -66,7 +66,7 @@ namespace IStrategizer
             // if reference become zero delete the data
             if (reference->Release() == 0)
             {
-                HeapFree(GetProcessHeap(), 0, pData);
+                pData->Dtor();
                 HeapFree(GetProcessHeap(), 0, reference);
             }
         }
@@ -90,7 +90,7 @@ namespace IStrategizer
                 // if reference become zero delete the old data
                 if (reference->Release() == 0)
                 {
-                    HeapFree(GetProcessHeap(), 0, pData);
+                    pData->Dtor();
                     HeapFree(GetProcessHeap(), 0, reference);
                 }
 

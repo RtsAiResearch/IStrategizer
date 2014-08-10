@@ -188,7 +188,8 @@ void YarmoukAIModule::onSendText(std::string text)
     static const char* commands[] = {
         "export-all-ids",
         "export-game-ids",
-        "export-statics"
+        "export-statics",
+        "debug-dumpim"
     };
 
     unsigned cmdLen;
@@ -218,6 +219,11 @@ void YarmoukAIModule::onSendText(std::string text)
     {
         Broodwar->sendText("Exporting game IDs ...");
         RtsAiEngineExportGameStaticData();
+    }
+    else if (!strncmp(text.c_str(), commands[3], strlen(commands[3])))
+    {
+        Broodwar->sendText("Dumping Influence Maps ...");
+        m_pAiEngine->DebugDumpIMs();
     }
 }
 //////////////////////////////////////////////////////////////////////////

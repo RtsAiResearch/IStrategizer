@@ -10,6 +10,23 @@
 using namespace IStrategizer;
 using namespace std;
 
+void IMSystemManager::DebugDumpIMs()
+{
+    for (IMContainer::iterator itr = m_managedMaps.begin(); itr != m_managedMaps.end(); ++itr)
+    {
+        switch (itr->first)
+        {
+        case IM_BuildingData:
+            itr->second->DebugDump("BuildingData.IM.txt");
+            break;
+
+        case IM_GroundControl:
+            itr->second->DebugDump("GroundControl.IM.txt");
+            break;
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////
 void IMSystemManager::Update(const WorldClock& p_clock)
 {
     for (IMContainer::iterator itr = m_managedMaps.begin(); itr != m_managedMaps.end(); ++itr)

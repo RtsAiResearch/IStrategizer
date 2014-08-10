@@ -89,6 +89,7 @@ namespace IStrategizer
         const TCell* Map() const { return m_pMap; }
         void SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLength, SpiralMovePredicate p_pfnPred, void *p_pParam);
         void ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWidth, int p_areaHeight, CellPredicate p_pfnPred, void *p_pParam);
+        void DebugDump(const char* pFilename);
 
     protected:
         void FromWorldToGrid(const Vector2 &p_worldPosition, Vector2 &p_gridPosition);

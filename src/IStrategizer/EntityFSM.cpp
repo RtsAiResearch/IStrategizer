@@ -273,8 +273,17 @@ void ScoutEntityFSM::Reset()
     StackFSM::Reset();
 
     auto pController = (EntityController*)m_pController;
-    pController->TargetPosition(pController->MultiTargetPosition()[0]);
-    m_currTargetPosIdx = 0;
+
+    if (pController->MultiTargetPosition().empty())
+    {
+        pController->TargetPosition(Vector2::Inf());
+        m_currTargetPosIdx = -1;
+    }
+    else
+    {
+        pController->TargetPosition(pController->MultiTargetPosition()[0]);
+        m_currTargetPosIdx = 0;
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 void GuardEntityFSM::CheckTransitions()

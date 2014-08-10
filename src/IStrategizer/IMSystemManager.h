@@ -35,6 +35,7 @@ namespace IStrategizer
         void Init(const IMSysManagerParam& p_param);
         void Finalize();
         InfluenceMap* GetIM(IMType p_mapTypeId);
+        void DebugDumpIMs();
         static IMSystemManager& Instance() { static IMSystemManager inst; return inst; }
 
     private:

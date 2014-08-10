@@ -145,7 +145,6 @@ void BwapiClient::BwapiMainThread()
 
     assert(BWAPIClient.isConnected() == false);
     ConnectToBwapiServer();
-    assert(BroodwarPtr != nullptr);
 
     while (!m_bShutdown)
     {

@@ -49,8 +49,8 @@ void BwapiGame::DebugDrawMapLastGameError(_In_ TID unitId) const
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos) const
 {
-    TilePosition tilePos(pos.X / TILE_SIZE, pos.Y / TILE_SIZE);
-    auto type = UnitTypes::allUnitTypes()[pUnitType->GameId()];
+    TilePosition tilePos(pos.X, pos.Y);
+    auto type = ((BwapiUnitType*)pUnitType)->GetBwapiUnitType();
 
     // Register an event that draws the target build location
     Broodwar->registerEvent([tilePos, type](Game*) {
@@ -195,7 +195,7 @@ const IGameTechType* BwapiGame::GetResearch(_In_ TID researchId) const
 //////////////////////////////////////////////////////////////////////////
 GameRaceListPtr BwapiGame::GetRaces() const
 {
-    auto list = GameRaceListPtr(new GameRaceList(g_BwapiRaces.size()));
+    auto list = GameRaceListPtr(GameRaceList::New(g_BwapiRaces.size()));
     int count = 0;
 
     for each(auto item in g_BwapiRaces)
@@ -209,7 +209,7 @@ GameRaceListPtr BwapiGame::GetRaces() const
 //////////////////////////////////////////////////////////////////////////
 GameTechTypeListPtr BwapiGame::GetTechTypes() const
 {
-    auto list = GameTechTypeListPtr(new GameTechTypeList(g_BwapiTechTypes.size()));
+    auto list = GameTechTypeListPtr(GameTechTypeList::New(g_BwapiTechTypes.size()));
     int count = 0;
 
     for each(auto item in g_BwapiTechTypes)
@@ -222,7 +222,7 @@ GameTechTypeListPtr BwapiGame::GetTechTypes() const
 //////////////////////////////////////////////////////////////////////////
 GameUpgradeTypeListPtr BwapiGame::GetUpgradeTypes() const
 {
-    auto list = GameUpgradeTypeListPtr(new GameUpgradeTypeList(g_BwapiUpgradeTypes.size()));
+    auto list = GameUpgradeTypeListPtr(GameUpgradeTypeList::New(g_BwapiUpgradeTypes.size()));
     int count = 0;
 
     for each(auto item in g_BwapiUpgradeTypes)
@@ -235,7 +235,7 @@ GameUpgradeTypeListPtr BwapiGame::GetUpgradeTypes() const
 //////////////////////////////////////////////////////////////////////////
 GameUnitTypeListPtr BwapiGame::GetUnitTypes() const
 {
-    auto list = GameUnitTypeListPtr(new GameUnitTypeList(g_BwapiUnitTypes.size()));
+    auto list = GameUnitTypeListPtr(GameUnitTypeList::New(g_BwapiUnitTypes.size()));
     int count = 0;
 
     for each(auto item in g_BwapiUnitTypes)
@@ -299,13 +299,14 @@ int BwapiGame::MapHeight() const
 SmartPtr< ArrayList<Vector2> > BwapiGame::GetStartLocations()
 {
     auto bwapiLocations = Broodwar->getStartLocations();
-    auto locations = SmartPtr< ArrayList<Vector2> >(new ArrayList<Vector2>(bwapiLocations.size()));
+    auto locations = SmartPtr< ArrayList<Vector2> >(ArrayList<Vector2>::New(bwapiLocations.size()));
     int count = 0;
 
     for each (auto location in bwapiLocations)
     {
-        locations->At(count++).X = location.x;
-        locations->At(count++).Y = location.y;
+        locations->At(count).X = location.x;
+        locations->At(count).Y = location.y;
+        ++count;
     }
 
     return locations;
@@ -349,7 +350,7 @@ int BwapiGame::MapTileSize() const
 GameUnitListPtr BwapiGame::MapGasFields() const
 {
     auto& geysers = Broodwar->getGeysers();
-    GameUnitListPtr geysersList(new GameUnitList(geysers.size()));
+    GameUnitListPtr geysersList(GameUnitList::New(geysers.size()));
     int count = 0;
 
     for each(auto geyser in geysers)

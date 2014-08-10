@@ -88,7 +88,6 @@ private:
     void NotifyPlanHistoryChanged();
     Ui::ClientMainClass                ui;
     IStrategizer::IStrategizerEx    *m_pIStrategizer;
-    IStrategizer::RtsGame            *m_pGameModel;
     IMViewWidget                    *m_pBldngDataIMWdgt;
     IMViewWidget                    *m_pGrndCtrlIMWdgt;
     std::vector<IMViewWidget*>        m_IMViews;
@@ -101,6 +100,7 @@ private:
     int m_updateTimerId;
     unsigned m_numGamesPlayed;
     size_t m_startMemoryUsage;
+    bool m_isInGame;
 
     private slots:
     void OneHistorySliderValueChanged();

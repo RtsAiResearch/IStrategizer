@@ -43,16 +43,31 @@ namespace IStrategizer
     class ArrayList
     {
     public:
-        ArrayList(int size) :
-            m_pArr((T*)HeapAlloc(GetProcessHeap(), 0, sizeof(T) * size)),
-            m_size(size)
+        static ArrayList<T>* New(int size)
         {
+            ArrayList<T>* pArr = (ArrayList<T>*)HeapAlloc(GetProcessHeap(), 0, sizeof(ArrayList<T>));
+            pArr->Ctor(size);
+            return pArr;
+        }
+
+        ArrayList() :
+            m_pArr(nullptr),
+            m_size(0)
+        {}
+
+        void Ctor(int size)
+        {
+            m_pArr = (T*)HeapAlloc(GetProcessHeap(), 0, sizeof(T)* size);
+            m_size = size;
             ZeroMemory(m_pArr, sizeof(T)*size);
         }
 
-        ~ArrayList()
+        void Dtor()
         {
             HeapFree(GetProcessHeap(), 0, m_pArr);
+            m_size = 0;
+            HeapFree(GetProcessHeap(), 0, this);
+            // Object not valid after this line
         }
 
         T& At(_In_ int i) { return m_pArr[i]; }
@@ -302,6 +317,7 @@ namespace IStrategizer
         virtual void SendEngineMessage(_In_ IStrategizer::MessageType msgTypeId) = 0;
         virtual void SendEngineEntityMessage(_In_ IStrategizer::MessageType msgTypeId, _In_ const IStrategizer::EntityMessageData& msgData) = 0;
         virtual void SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath) = 0;
+        virtual void DebugDumpIMs() = 0;
     };
 
     class IRtsAiEngineFactory

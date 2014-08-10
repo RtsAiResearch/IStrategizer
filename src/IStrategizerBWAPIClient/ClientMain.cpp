@@ -47,12 +47,12 @@ void ModuleOnMatchEnd(bool isWinner)
 ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags),
     m_pIStrategizer(nullptr),
-    m_pGameModel(nullptr),
     m_isLearning(false),
     m_pTraceCollector(nullptr),
     m_pPlanGraphView(nullptr),
     m_pPlanHistoryView(nullptr),
-    m_numGamesPlayed(0)
+    m_numGamesPlayed(0),
+    m_isInGame(false)
 {
     g_pClientInst = this;
     ui.setupUi(this);
@@ -158,8 +158,8 @@ void ClientMain::closeEvent(QCloseEvent *pEvent)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchStart()
 {
+    m_isInGame = true;
     m_pIStrategizer = (IStrategizerEx*)AIModuleLoaderGetEngine();
-    m_pGameModel = m_pIStrategizer->GameModel();
     InitIdLookup();
     m_pIStrategizer->RegisterForMessage(MSG_PlanStructureChange, this);
 
@@ -168,6 +168,7 @@ void ClientMain::OnMatchStart()
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::OnMatchEnd(bool p_isWinner)
 {
+    m_isInGame = false;
     ++m_numGamesPlayed;
 
     QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiFinalize));
@@ -181,30 +182,39 @@ void ClientMain::OnMatchEnd(bool p_isWinner)
 
     // Hard Reset is always a bad idea and can cause inconsistency
     // EngineObject::FreeMemoryPool();
-
-    QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiInit));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::timerEvent(QTimerEvent *pEvt)
 {
-    if (m_pIStrategizer && 
-        m_pIStrategizer->GameModelImpl() &&
-        m_pIStrategizer->GameModelImpl()->IsInGame())
+    if (m_isInGame &&
+        m_pIStrategizer &&
+        m_pIStrategizer->Planner() &&
+        m_pIStrategizer->Planner()->ExpansionExecution() &&
+        m_pIStrategizer->Planner()->ExpansionExecution()->Plan())
     {
-        UpdateViews();
-        UpdateStatsView();
+        m_pIStrategizer->Planner()->ExpansionExecution()->Plan()->Lock();
+
+        if (m_pIStrategizer->GameModelImpl() &&
+            m_pIStrategizer->GameModelImpl()->IsInGame() &&
+            m_pIStrategizer->GameModel()->Self() != nullptr)
+        {
+            UpdateViews();
+            UpdateStatsView();
+        }
+
+        m_pIStrategizer->Planner()->ExpansionExecution()->Plan()->Unlock();
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateStatsView()
 {
-    ui.lblGameCyclesData->setText(tr("%1").arg(m_pGameModel->Clock().ElapsedGameCycles()));
+    ui.lblGameCyclesData->setText(tr("%1").arg(m_pIStrategizer->GameModel()->Clock().ElapsedGameCycles()));
 
     map<ObjectStateType, set<TID>> workersState;
-    auto workerType = m_pGameModel->Self()->Race()->GetWorkerType();
+    auto workerType = m_pIStrategizer->GameModel()->Self()->Race()->GetWorkerType();
 
     int workerCount = 0;
-    for (auto& entityR : m_pGameModel->Self()->Entities())
+    for (auto& entityR : m_pIStrategizer->GameModel()->Self()->Entities())
     {
         if (entityR.second->TypeId() == workerType)
         {
@@ -224,7 +234,7 @@ void ClientMain::UpdateStatsView()
         QString txt =QString("[%1]{").arg(workersState[state].size());
         for (auto workerId : workersState[state])
         {
-            auto pEntity = m_pGameModel->Self()->GetEntity(workerId);
+            auto pEntity = m_pIStrategizer->GameModel()->Self()->GetEntity(workerId);
             if (pEntity != nullptr)
             {
                 bool isLocked = pEntity->IsLocked();

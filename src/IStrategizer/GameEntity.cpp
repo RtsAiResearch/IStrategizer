@@ -325,7 +325,7 @@ bool GameEntity::Build(EntityClassType typeId, Vector2 pos)
     {
 
         Vector2 tilePos = TilePositionFromUnitPosition(pos);
-        bOk = g_GameImpl->UnitBuild(m_id, pUnitType, pos);
+        bOk = g_GameImpl->UnitBuild(m_id, pUnitType, tilePos);
 
         if (bOk)
             g_GameImpl->DebugDrawUnitBuildBox(pUnitType, tilePos);
@@ -600,7 +600,7 @@ bool GameEntity::CanRepair(TID entityId) const
 bool GameEntity::CanReach(_In_ Vector2 dest) const
 {
     auto selfPos = Position();
-    return g_GameImpl->UnitIsStuck(m_typeId) &&
+    return !g_GameImpl->UnitIsStuck(m_id) &&
         g_GameImpl->MapHasPath(selfPos, dest);
 }
 //////////////////////////////////////////////////////////////////////////

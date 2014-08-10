@@ -54,6 +54,7 @@ namespace IStrategizer
         void SendEngineMessage(_In_ MessageType msgTypeId);
         void SendEngineEntityMessage(_In_ MessageType msgTypeId, _In_ const EntityMessageData& msgData);
         void SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath);
+        virtual void DebugDumpIMs();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(IStrategizerEx);

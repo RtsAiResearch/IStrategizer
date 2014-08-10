@@ -96,7 +96,7 @@ void IStrategizerEx::Update()
     {
         g_Game->Update();
         g_MessagePump->Update(g_Game->Clock());
-        g_IMSysMgr.Update(g_Game->Clock());
+        m_pImSysMgr->Update(g_Game->Clock());
 
         if (m_param.Phase == PHASE_Online)
         {
@@ -156,8 +156,11 @@ void IStrategizerEx::Update()
 IStrategizerEx::~IStrategizerEx()
 {
     SAFE_DELETE(m_pStrategyMgr);
-    SAFE_DELETE(g_Game);
-    g_IMSysMgr.Finalize();
+    SAFE_DELETE(m_pGameModel);
+    g_Game = nullptr;
+    m_pGameModelImpl = nullptr;
+    g_GameImpl = nullptr;
+    m_pImSysMgr->Finalize();
 }
 //////////////////////////////////////////////////////////////////////////-
 bool IStrategizerEx::Init()
@@ -183,7 +186,7 @@ bool IStrategizerEx::Init()
     imSysMgrParam.GrndCtrllIMCellSize = m_param.GrndCtrlIMCellSize;
     imSysMgrParam.OccupanceIMUpdateInterval = m_param.OccupanceIMUpdateInterval;
     imSysMgrParam.GrndCtrlIMUpdateInterval = m_param.GrndCtrlIMUpdateInterval;
-    g_IMSysMgr.Init(imSysMgrParam);
+    m_pImSysMgr->Init(imSysMgrParam);
 
     if (m_param.Phase == PHASE_Offline)
     {
@@ -292,4 +295,10 @@ void IStrategizerEx::SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ cons
 {
     ENGINE_IO_READ_DIR = pReadPath;
     ENGINE_IO_WRITE_DIR = pWritePath;
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::DebugDumpIMs()
+{
+    if (m_pStrategyMgr)
+        m_pImSysMgr->DebugDumpIMs();
 }

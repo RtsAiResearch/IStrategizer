@@ -134,7 +134,7 @@ GamePlayer* RtsGame::GetPlayer(PlayerType p_id) const
     _ASSERTE(m_isInitialized);
 
     if (!m_players.Contains(p_id))
-        DEBUG_THROW(ItemNotFoundException(XcptHere));
+        return nullptr;
 
     return m_players.at(p_id);
 }
@@ -307,17 +307,16 @@ void RtsGame::DebugDraw()
 //////////////////////////////////////////////////////////////////////////
 void RtsGame::InitMap()
 {
-    auto mapCellSize = g_Engine->Params().OccupanceIMCellSize * 8;
+    auto mapCellSize = g_GameImpl->MapTileSize();
 
     if (m_isOnline)
     {
-        // Set the world map grid cell size to be a square of size 8 build tiles
         m_pMap = new WorldMap(this, mapCellSize, g_GameImpl->MapWidth() * mapCellSize, g_GameImpl->MapHeight() * mapCellSize);
     }
     else
     {
         // Set the world map grid cell size to be a square of size 8 build tiles
-        m_pMap = new WorldMap(this, mapCellSize * 8, m_cachedWorldWidth, m_cachedWorldHeight);
+        m_pMap = new WorldMap(this, mapCellSize, m_cachedWorldWidth, m_cachedWorldHeight);
     }
     m_pMap->Init();
 }

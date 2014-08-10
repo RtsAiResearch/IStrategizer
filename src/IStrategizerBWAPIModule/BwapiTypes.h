@@ -48,7 +48,7 @@ namespace IStrategizer
         virtual GameUnitTypeToCountListPtr RequiredUnits() const
         {
             const std::map<BWAPI::UnitType, int>& requiredUnits = m_type.requiredUnits();
-            auto pArray = GameUnitTypeToCountListPtr(new GameUnitTypeToCountList(requiredUnits.size()));
+            auto pArray = GameUnitTypeToCountListPtr(GameUnitTypeToCountList::New(requiredUnits.size()));
             int count = 0;
             for each(auto item in requiredUnits)
             {
