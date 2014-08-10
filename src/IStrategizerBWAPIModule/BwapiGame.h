@@ -9,6 +9,10 @@ namespace IStrategizer
     class BwapiGame : public IRtsGame
     {
     public:
+        BwapiGame(const char** pEngineIdsName)
+            : m_pEngineIdsName(pEngineIdsName)
+        {}
+
         void DebugDrawMapLastGameError(_In_ TID unitId) const;
 
         void DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos) const;
@@ -206,6 +210,9 @@ namespace IStrategizer
         virtual bool UnitResearch(_In_ TID unitId, _In_ const IGameTechType* pUnitType) const;
 
         virtual bool UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUnitType) const;
+
+    private:
+        const char** m_pEngineIdsName;
     };
 
     // Global static types initialized once per BWAPI client lifetime

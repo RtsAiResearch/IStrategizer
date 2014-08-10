@@ -131,12 +131,11 @@ bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, T
     _ASSERTE(p_pParam);
     bool *pAllCellsFree = (bool*)p_pParam;
 
-    bool isBuildable = g_Game->Map()->CanBuildHere(Vector2(p_worldX, p_worldY));
+    //bool isBuildable = g_Game->Map()->CanBuildHere(Vector2(p_worldX, p_worldY));
 
     _ASSERTE(p_pCell);
     if (p_pCell->Inf != NullInfluence ||
-        p_pCell->Data != CELL_Free ||
-        !isBuildable)
+        p_pCell->Data != CELL_Free)
     {
         stopSearch = true;
         *pAllCellsFree = false;
@@ -216,7 +215,8 @@ bool OccupanceDataIM::FreeArea(const Vector2& p_areaPos, int p_areaWidth, int p_
 //////////////////////////////////////////////////////////////////////////
 bool OccupanceDataIM::CanBuildHere(Vector2 p_worldPos, int p_buildingWidth, int p_buildingHeight, EntityClassType p_buildingType)
 {
-    return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight);
+    return !this->IsAreaOccupied(p_worldPos, p_buildingWidth, p_buildingHeight) &&
+        g_Game->Map()->CanBuildHere(p_worldPos, p_buildingType);
 }
 //////////////////////////////////////////////////////////////////////////
 void OccupanceDataIM::RegisterGameObj(TID objId, PlayerType ownerId)

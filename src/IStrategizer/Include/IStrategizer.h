@@ -18,5 +18,6 @@ RTSAIENGINEAPI IStrategizer::IRtsAiEngineFactory* GetRtsAiEngineFactory();
 RTSAIENGINEAPI void RtsAiEngineSystemInit();
 RTSAIENGINEAPI void RtsAiEngineSystemDeinit();
 RTSAIENGINEAPI void RtsAiEngineExportGameStaticData();
+RTSAIENGINEAPI const char** RtsAiEngineIdsName();
 
 #endif // ISTRATEGIZER_H

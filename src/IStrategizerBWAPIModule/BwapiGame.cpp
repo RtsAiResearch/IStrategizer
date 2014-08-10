@@ -107,7 +107,7 @@ bool BwapiGame::Init() const
     {
         auto pType = new BwapiUnitType(*i);
         g_BwapiUnitTypes[(*i).getID()] = pType;
-        Enums[pType->EngineId()] = _strdup(pType->ToString());
+        m_pEngineIdsName[pType->EngineId()] = _strdup(pType->ToString());
     }
 
     // Init tech types
@@ -117,7 +117,7 @@ bool BwapiGame::Init() const
     {
         auto pType = new BwapiTechType(*i);
         g_BwapiTechTypes[(*i).getID()] = pType;
-        Enums[pType->EngineId()] = _strdup(pType->ToString());
+        m_pEngineIdsName[pType->EngineId()] = _strdup(pType->ToString());
     }
 
     // Init game races
@@ -136,7 +136,7 @@ bool BwapiGame::Init() const
     {
         auto pType = new BwapiUpgradeType(*i);
         g_BwapiUpgradeTypes[(*i).getID()] = pType;
-        Enums[pType->EngineId()] = _strdup(pType->ToString());
+        m_pEngineIdsName[pType->EngineId()] = _strdup(pType->ToString());
     }
 
     return true;

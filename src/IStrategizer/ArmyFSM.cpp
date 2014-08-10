@@ -244,7 +244,6 @@ void AttackMoveArmyFSM::CheckTransitions()
     case AlarmArmyState::TypeID:
         if (pController->TargetEntity() != INVALID_TID)
         {
-            PushState(RegroupArmyState::TypeID);
             PushState(AttackArmyState::TypeID);
         }
         else if (!pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
@@ -257,16 +256,15 @@ void AttackMoveArmyFSM::CheckTransitions()
         {
             PopState();
         }
+        else if (!pController->IsInOrder(pCurrState->Entities(), pController->Center(), 0.5f))
+        {
+            PushState(RegroupArmyState::TypeID);
+        }
         break;
     case ArriveArmyState::TypeID:
         if (pController->TargetEntity() != INVALID_TID)
         {
             PushState(AttackArmyState::TypeID);
-
-            if (!pController->IsInOrder(pCurrState->Entities(), pController->Center()))
-            {
-                PushState(RegroupArmyState::TypeID);
-            }
         }
         else if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
         {
@@ -275,7 +273,7 @@ void AttackMoveArmyFSM::CheckTransitions()
         }
         break;
     case RegroupArmyState::TypeID:
-        if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition()))
+        if (pController->IsInOrder(pCurrState->Entities(), pCurrState->TargetPosition(), 0.75f))
         {
             PopState();
         }

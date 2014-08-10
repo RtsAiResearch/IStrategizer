@@ -4,6 +4,7 @@
 #include "DefinitionCrossMapping.h"
 #include "BwapiGame.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 using namespace BWAPI;
@@ -94,7 +95,7 @@ void YarmoukAIModule::InitIStrategizer()
 
         g_Database.Init();
 
-        m_pGameModel = new BwapiGame;
+        m_pGameModel = new BwapiGame(RtsAiEngineIdsName());
         m_pGameModel->Init();
 
         param.OccupanceIMCellSize = TILE_SIZE;
@@ -200,7 +201,7 @@ void YarmoukAIModule::onSendText(std::string text)
         cmdLen = strlen(commands[0]);
         cmdParam = text.c_str() + cmdLen + 1;
 
-        if (g_Database.ExportAllIds(cmdParam))
+        if (ExportAllIds(cmdParam))
             Broodwar->sendText("All ids exported successfully");
         else
             Broodwar->sendText("Failed to export all ids");
@@ -210,7 +211,7 @@ void YarmoukAIModule::onSendText(std::string text)
         cmdLen = strlen(commands[1]);
         cmdParam = text.c_str() + cmdLen + 1;
 
-        if (g_Database.ExportGameIds(cmdParam))
+        if (ExportGameIds(cmdParam))
             Broodwar->sendText("Game ids exported successfully");
         else
             Broodwar->sendText("Failed to export game ids");
@@ -227,3 +228,62 @@ void YarmoukAIModule::onSendText(std::string text)
     }
 }
 //////////////////////////////////////////////////////////////////////////
+bool YarmoukAIModule::ExportGameIds(string p_exportPath)
+{
+    fstream pen;
+    stringstream stream;
+    const char* name;
+    pen.open(p_exportPath.c_str(), ios::out);
+
+    if (!pen.is_open())
+        return false;
+
+    // TODO: Looping can be smart than this by looping only on required types
+    // without looping on the while ENUMS_SIZE
+    for (unsigned id = 0; id < ENUMS_SIZE; ++id)
+    {
+        if (BELONG(EntityClassType, id) ||
+            BELONG(ResearchType, id))
+        {
+            name = RtsAiEngineIdsName()[id];
+
+            // Has a name defined
+            if (name != nullptr)
+            {
+                stream << id << ' ' << name << endl;
+            }
+        }
+    }
+
+    pen << stream.str();
+    pen.close();
+
+    return true;
+}
+//////////////////////////////////////////////////////////////////////////-
+bool YarmoukAIModule::ExportAllIds(string p_exportPath)
+{
+    fstream pen;
+    stringstream stream;
+    const char* name;
+    pen.open(p_exportPath.c_str(), ios::out);
+
+    if (!pen.is_open())
+        return false;
+
+    for (unsigned id = 0; id < ENUMS_SIZE; ++id)
+    {
+        name = RtsAiEngineIdsName()[id];
+
+        // Has a name defined
+        if (name != nullptr)
+        {
+            stream << id << ' ' << name << endl;
+        }
+    }
+
+    pen << stream.str();
+    pen.close();
+
+    return true;
+}

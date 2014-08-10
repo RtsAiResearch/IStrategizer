@@ -56,7 +56,6 @@ ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
 {
     g_pClientInst = this;
     ui.setupUi(this);
-    IStrategizer::Init();
 
     connect(ui.sldHistoryFrame, SIGNAL(valueChanged(int)), SLOT(OneHistorySliderValueChanged()));
 }
@@ -130,9 +129,9 @@ void ClientMain::InitIdLookup()
 {
     for (unsigned currID = 0; currID < ENUMS_SIZE; ++currID)
     {
-        if (Enums[currID] != nullptr)
+        if (m_pIStrategizer->EngineIdsName()[currID] != nullptr)
         {
-            string enumStr(Enums[currID]);
+            string enumStr(m_pIStrategizer->EngineIdsName()[currID]);
             m_idLookup.SetByFirst(currID, enumStr);
         }
     }
@@ -318,7 +317,7 @@ void ClientMain::InitStatsView()
             workerState != END(ObjectStateType);
             workerState = (ObjectStateType)((int)workerState + 1))
         {
-            QTableWidgetItem* cell = new QTableWidgetItem(QString::fromLocal8Bit(Enums[(int)workerState]));
+            QTableWidgetItem* cell = new QTableWidgetItem(QString::fromLocal8Bit(m_pIStrategizer->EngineIdsName()[(int)workerState]));
             cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             QVariant objStateType((int)workerState);
             ui.tblWorkerState->setItem(row, 0, cell);

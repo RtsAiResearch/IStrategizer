@@ -1,12 +1,8 @@
-#ifdef ISTRATEGIZER_EXPORTS
-#define METADATAAPI extern "C" __declspec(dllexport)
-#endif
-
 #include "MetaData.h"
 
 namespace IStrategizer
 {
-    METADATAAPI const char* Enums[ENUMS_SIZE] = { nullptr };
+    const char* Enums[ENUMS_SIZE] = { nullptr };
 
     void InitAttributesMetaData();
     void InitTypesMetaData();

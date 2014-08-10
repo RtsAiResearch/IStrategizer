@@ -12,7 +12,11 @@ namespace IStrategizer
         STRATEGY_TvP_GundamRush,
     };
 
-#define STRATEGYNAME_TvP_GundamRush "Terran-GundamRush"
+
+#define STRATEGYNAME_TvT_GundamRush "TvT-GundamRush"
+#define STRATEGYNAME_TvP_GundamRush "TvP-GundamRush"
+#define STRATEGYNAME_Terran_2FactVultMines "Terran-2FactVultMines"
+#define STRATEGYNAME_Terran_BionicPlay "Terran-BionicPlay"
 
     class StarcraftStrategyManager : public StrategyManager
     {

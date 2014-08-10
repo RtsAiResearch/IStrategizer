@@ -1,16 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Deubg-Engine-Lib|Win32">
-      <Configuration>Deubg-Engine-Lib</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
+    <ProjectConfiguration Include="Debug-Engine-Lib|Win32">
+      <Configuration>Debug-Engine-Lib</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -20,37 +12,15 @@
     <Keyword>Qt4VSv1.0</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <PlatformToolset>v120</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\props\QT.props" />
-    <Import Project="..\props\Serialization.props" />
-    <Import Project="..\props\IStrategizer.Exe.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\props\QT.props" />
-    <Import Project="..\props\Serialization.props" />
-    <Import Project="..\props\IStrategizer.Exe.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\props\QT.props" />
     <Import Project="..\props\Serialization.props" />
@@ -59,66 +29,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'" />
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'" />
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)PlanVisualizerWidget;$(SolutionDir)PlanVisualizerWidget\GeneratedFiles;.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>IStrategizer.lib;PlanVisualizerWidget.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-    </Link>
-    <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copying engine assets</Message>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <MinimalRebuild>false</MinimalRebuild>
-      <SmallerTypeCheck>true</SmallerTypeCheck>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>$(SolutionDir)PlanVisualizerWidget;$(SolutionDir)PlanVisualizerWidget\GeneratedFiles;.\GeneratedFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>IStrategizer.lib;PlanVisualizerWidget.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <ShowProgress>NotSet</ShowProgress>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>false</EnableCOMDATFolding>
-    </Link>
-    <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Copying engine assets</Message>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -158,32 +73,24 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CaseView.h">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing CaseView.h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">Moc%27ing CaseView.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I.\GeneratedFiles" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)$(ProjectName)\Include" "-I$(SolutionDir)IStrategizer\Include" "-I$(SolutionDir)IStrategizer" "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">Moc%27ing CaseView.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I.\GeneratedFiles" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)$(ProjectName)\Include" "-I$(SolutionDir)IStrategizer\Include" "-I$(SolutionDir)IStrategizer" "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I.\GeneratedFiles" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)$(ProjectName)\Include" "-I$(SolutionDir)IStrategizer\Include" "-I$(SolutionDir)IStrategizer" "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing CaseView.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I.\GeneratedFiles" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)$(ProjectName)\Include" "-I$(SolutionDir)IStrategizer\Include" "-I$(SolutionDir)IStrategizer" "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">Moc%27ing CaseView.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="CaseVisualizer.h">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing CaseVisualizer.h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">Moc%27ing CaseVisualizer.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I.\GeneratedFiles" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)$(ProjectName)\Include" "-I$(SolutionDir)IStrategizer\Include" "-I$(SolutionDir)IStrategizer" "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">Moc%27ing CaseVisualizer.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I.\GeneratedFiles" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)$(ProjectName)\Include" "-I$(SolutionDir)IStrategizer\Include" "-I$(SolutionDir)IStrategizer" "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I.\GeneratedFiles" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)$(ProjectName)\Include" "-I$(SolutionDir)IStrategizer\Include" "-I$(SolutionDir)IStrategizer" "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing CaseVisualizer.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I$(SolutionDir)PlanVisualizerWidget" "-I$(SolutionDir)PlanVisualizerWidget\GeneratedFiles" "-I.\GeneratedFiles" "-I$(SolutionDir)$(ProjectName)\." "-I$(SolutionDir)$(ProjectName)\Include" "-I$(SolutionDir)IStrategizer\Include" "-I$(SolutionDir)IStrategizer" "-I$(SolutionDir)ObjectSerializer\Include" "-I$(SolutionDir)UnrealCompiler" "-I.\GeneratedFiles\$(Configuration)\." "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtOpenGL"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">Moc%27ing CaseVisualizer.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <ClInclude Include="CaseGenerator.h" />
     <ClInclude Include="GeneratedFiles\ui_CaseView.h" />
@@ -192,59 +99,27 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="CaseView.ui">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(FullPath)...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">Uic%27ing %(FullPath)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_CaseView.h" "%(FullPath)"
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">Uic%27ing %(FullPath)...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_CaseView.h" "%(FullPath)"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_CaseView.h" "%(FullPath)"
-</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_CaseView.h;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">.\GeneratedFiles\ui_CaseView.h;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(FullPath)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_CaseView.h" "%(FullPath)"
-</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_CaseView.h;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">.\GeneratedFiles\ui_CaseView.h;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="CaseVisualizer.ui">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(FullPath)...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">Uic%27ing %(FullPath)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_CaseVisualizer.h" "%(FullPath)"
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">Uic%27ing %(FullPath)...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_CaseVisualizer.h" "%(FullPath)"
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_CaseVisualizer.h" "%(FullPath)"
-</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_CaseVisualizer.h;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">.\GeneratedFiles\ui_CaseVisualizer.h;%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(FullPath)...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_CaseVisualizer.h" "%(FullPath)"
-</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_CaseVisualizer.h;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">.\GeneratedFiles\ui_CaseVisualizer.h;%(Outputs)</Outputs>
       <SubType>Designer</SubType>
     </CustomBuild>
     <CustomBuild Include="CaseVisualizer.qrc">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">
       </Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">
-      </Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">
       </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">
-      </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Deubg-Engine-Lib|Win32'">%(Outputs)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug-Engine-Lib|Win32'">%(Outputs)</Outputs>
     </CustomBuild>
     <None Include="CaseVisualizer.ico" />
   </ItemGroup>

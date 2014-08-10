@@ -36,6 +36,8 @@ protected:
     void OnEntityMessage(BWAPI::Unit unit, IStrategizer::MessageType msgType);
     void InitIStrategizer();
     void FinalizeIStrategizer();
+    bool ExportGameIds(std::string p_exportPath);
+    bool ExportAllIds(std::string p_exportPath);
 
     IStrategizer::IRtsAiEngine* m_pAiEngine;
     IStrategizer::IRtsGame* m_pGameModel;

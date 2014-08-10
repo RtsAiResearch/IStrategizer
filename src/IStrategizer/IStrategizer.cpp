@@ -44,3 +44,8 @@ void RtsAiEngineExportGameStaticData()
     if (!g_Game)
         g_Game->ExportStaticData();
 }
+
+const char** RtsAiEngineIdsName()
+{
+    return Enums;
+}

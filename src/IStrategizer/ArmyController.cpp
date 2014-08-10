@@ -302,26 +302,28 @@ void ArmyController::CalcEnemyData()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos)
+bool ArmyController::IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos, _In_ float orderPrcnt)
 {
     if (entities.empty())
     {
         return false;
     }
 
+    _ASSERTE(orderPrcnt <= 1.0f && orderPrcnt > 0.0f);
+
     ArmyGroupFormation::Data data = CalcGroupFormationData((int)entities.size());
     Circle2 orderArea(pos, data.CircleRadius);
-
+    int numInOrder = 0;
     for (auto& entityR : entities)
     {
         // Fast return as soon as we see astray units out of focus area
-        if (!orderArea.IsInside(entityR.second->Entity()->Position()))
+        if (orderArea.IsInside(entityR.second->Entity()->Position()))
         {
-            return false;
+            ++numInOrder;
         }
     }
 
-    return true;
+    return ((float)numInOrder / (float)entities.size()) >= orderPrcnt;
 }
 //////////////////////////////////////////////////////////////////////////
 bool ArmyController::CanControl(_In_ const GameEntity* pEntity)

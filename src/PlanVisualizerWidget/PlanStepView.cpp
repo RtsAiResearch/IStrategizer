@@ -60,7 +60,7 @@ void PlanStepView::ViewPerformance(const PlanStepEx* p_planStep) const
             ui.txtActionTrailCount->setText(QString::number(((Action*)p_planStep)->GetExecutionHistory().TrialCount()));
 
             ConditionEx* condition = ((Action*)p_planStep)->GetExecutionHistory().GetMostVulnerableAliveCondition();
-            const char* conditionName = condition ? Enums[condition->Type()] : "";
+            const char* conditionName = condition ? condition->ToString().c_str(): "";
             ui.txtVulnerableCondition->setText(QString::fromLocal8Bit(conditionName));
         }
     }

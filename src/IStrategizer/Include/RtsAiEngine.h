@@ -317,6 +317,7 @@ namespace IStrategizer
         virtual void SendEngineMessage(_In_ IStrategizer::MessageType msgTypeId) = 0;
         virtual void SendEngineEntityMessage(_In_ IStrategizer::MessageType msgTypeId, _In_ const IStrategizer::EntityMessageData& msgData) = 0;
         virtual void SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath) = 0;
+        virtual const char** EngineIdsName() = 0;
         virtual void DebugDumpIMs() = 0;
     };
 

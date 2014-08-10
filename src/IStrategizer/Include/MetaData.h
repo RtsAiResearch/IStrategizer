@@ -8,7 +8,7 @@
 namespace IStrategizer
 {
     typedef int TID;
-    METADATAAPI void Init();
+    void Init();
 }
 
 #define INVALID_TID -1

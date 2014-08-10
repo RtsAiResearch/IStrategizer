@@ -116,7 +116,7 @@ namespace IStrategizer
 
         // Controller Conditions
         bool IsAnyEnemyInFormationAreaSight(_In_ Vector2 areaPos) const;
-        static bool IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos);
+        static bool IsInOrder(const EntityControllersMap& entities, _In_ Vector2 pos, _In_ float orderPrcnt = 0.9f);
         const EntityControllersMap& Entities() const { return m_entities; }
         
         TID ClosestEntityToCenter() const { return m_closestEntityToCenter; }
