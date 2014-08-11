@@ -23,10 +23,10 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
 
 		// Time is counted as number of game frames
-		const unsigned GoalSleepTime = 200;
+		const unsigned GoalSleepTime = 100;
 		const unsigned GoalMaxSleepsCount = 3;
-		const unsigned ActionSleepTime = 100;
-		const unsigned ActionMaxSleepsCount = 3;
+		const unsigned ActionSleepTime = 50;
+		const unsigned ActionMaxSleepsCount = 6;
         // Every 50 frame check the current goal satisfaction
         const unsigned PlanMaintenanceWindow = 50;
         // Every 4th frame update the plan execution

@@ -78,6 +78,8 @@ namespace IStrategizer
             ArmyState(TypeID, "[ATTACK]", pController)
         {}
 
+        void DebugDraw();
+
     private:
         DISALLOW_COPY_AND_ASSIGN(AttackArmyState);
     };

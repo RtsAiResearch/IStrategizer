@@ -25,26 +25,37 @@ namespace IStrategizer
         EntityController(ArmyController* pController);
         void Update();
         void ControlEntity(_In_ TID entityId);
-        void PushLogic(_In_ StackFSMPtr pLogic) { LogInfo("Pushing %s Logic", pLogic->ToString().c_str()); m_pLogicMemory.push(pLogic); }
-        void PopLogic() 
+
+        void PushLogic(_In_ StackFSMPtr pLogic, _In_ const EngineObject* pLogicOwner) 
         {
-            LogInfo("Poping %s logic", m_pLogicMemory.top()->ToString().c_str()); m_pLogicMemory.pop();
-            LogInfo("Current logic is %s", (m_pLogicMemory.empty() ? "not-assigned" : m_pLogicMemory.top()->ToString().c_str()));
+            LogInfo("Push %s, logic memory size = %d", pLogic->ToString().c_str(), m_pLogicMemory.size() + 1);
+            m_pLogicMemory.push(make_pair(pLogic, pLogicOwner)); 
         }
-        FSMStateTypeID CurrentLogic() const { return m_pLogicMemory.top()->TypeId(); }
+
+        void PopLogic(_In_ const EngineObject* pLogicOwner)
+        {
+            _ASSERTE(m_pLogicMemory.size() > 0);
+            // Who pushes a logic should be the one who pop it, this is to keep object in good state
+            _ASSERTE(m_pLogicMemory.top().second == pLogicOwner);
+            LogInfo("Pop %s, logic memory size = %d", m_pLogicMemory.top().first->ToString().c_str(), m_pLogicMemory.size() - 1);
+            m_pLogicMemory.pop();
+            LogInfo("Current logic is %s", (m_pLogicMemory.empty() ? "not-assigned" : m_pLogicMemory.top().first->ToString().c_str()));
+        }
+        size_t LogicMemorySize() const { return m_pLogicMemory.size(); }
+        std::pair<StackFSMPtr, const EngineObject*> CurrentLogic() const { return m_pLogicMemory.top(); }
         void PushIdleLogic();
         void ReleaseEntity();
         bool IsControllingEntity() const{ return m_entityId != INVALID_TID; }
-        bool IsLogicGoalAchieved() const { return IsControllingEntity() && m_pLogicMemory.top()->IsInFinalState(); }
+        bool IsLogicGoalAchieved() const { return IsControllingEntity() && m_pLogicMemory.top().first->IsInFinalState(); }
         void OnEntityFleeing();
         void HardResetLogic();
-        void SoftResetLogic() { m_pLogicMemory.top()->Reset(); }
+        void SoftResetLogic() { m_pLogicMemory.top().first->Reset(); }
         std::string ToString(bool minimal = false) const;
         GameEntity* Entity() { return m_pEntity; }
         const GameEntity* Entity() const { return m_pEntity; }
         TID EntityId() const { return m_entityId; }
         EntityClassType TypeId() const { return m_typeId; }
-        void DebugDraw() { if (!m_pLogicMemory.empty()) m_pLogicMemory.top()->DebugDraw(); }
+        void DebugDraw() { if (!m_pLogicMemory.empty()) m_pLogicMemory.top().first->DebugDraw(); }
 
         // Expensive Helpers are candidate for caching somewhere
         TID Attacker() const;
@@ -89,7 +100,7 @@ namespace IStrategizer
         Vector2 m_singleTargetPos;
         std::vector<Vector2> m_multiTargetPos;
         ArmyController* m_pController;
-        std::stack<StackFSMPtr> m_pLogicMemory;
+        std::stack<std::pair<StackFSMPtr, const EngineObject*>> m_pLogicMemory;
         TID m_closeMeleeAttackerId;
     };
 

@@ -568,8 +568,7 @@ bool BwapiGame::UnitIsInterruptible(_In_ TID unitId) const
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitCanAttackUnit(_In_ TID unitId, _In_ TID targetId) const
 {
-    PositionOrUnit unit = Broodwar->getUnit(targetId);
-    return Broodwar->getUnit(unitId)->canAttack(unit);
+    return Broodwar->getUnit(unitId)->canAttackUnit(Broodwar->getUnit(targetId));
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::UnitCanBuildAddOn(_In_ TID unitId, _In_ const IGameUnitType* pUnitType) const
@@ -715,4 +714,9 @@ const IGameUnitType* BwapiGame::GetUnitTypeByName(_In_ const char* pName) const
 int BwapiGame::PlayerCompletedUnitCount(_In_ TID playerId, const IGameUnitType* pUnitType) const
 {
     return Broodwar->getPlayer(playerId)->completedUnitCount(((BwapiUnitType*)pUnitType)->GetBwapiUnitType());
+}
+//////////////////////////////////////////////////////////////////////////
+bool BwapiGame::UnitTargetInWeaponRage(_In_ TID unitId, _In_ TID targetId) const 
+{
+    return Broodwar->getUnit(unitId)->isInWeaponRange(Broodwar->getUnit(targetId));
 }

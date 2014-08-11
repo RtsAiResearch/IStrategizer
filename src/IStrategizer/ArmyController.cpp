@@ -144,10 +144,17 @@ void ArmyController::Update()
 
     CalcCetner();
     CalcBoundries();
-    CalcEnemyData();
 
+    // Workers need the auto repair data, check for them
     if (m_controlWorkers)
         CalcDamagedRepairablesNearby();
+
+    // Only aggressive logic needs enemy data, otherwise
+    // peaceful ones don't target enemies intentionally
+    // eg. workers army or broken army
+    if (m_pLogic->TypeId() != StandArmyFSM::TypeID &&
+        m_pLogic->TypeId() != IdleArmyFSM::TypeID)
+        CalcEnemyData();
 
     m_pLogic->Update();
 
@@ -271,9 +278,21 @@ void ArmyController::CalcEnemyData()
             m_closestEnemy.insert(make_pair(dist, entityR.first));
 
             auto& dat = m_enemyData[entityR.first];
-            dat.Id = entityR.first;
+            dat.E = entityR.second;
             dat.DistanceToCenter = dist;
             dat.TargetEntityId = entityR.second->TargetId();
+
+            if (m_entities.count(dat.TargetEntityId))
+                dat.IsAttackingArmy = true;
+
+            for (auto& selfEntityR : m_entities)
+            {
+                if (selfEntityR.second->Entity()->IsTargetInWeaponRage(entityR.first))
+                {
+                    dat.IsInApproxRange = true;
+                    break;
+                }
+            }
         }
     }
 
@@ -282,11 +301,122 @@ void ArmyController::CalcEnemyData()
     {
         m_targetEntityId = INVALID_TID;
     }
-    // The closest enemy to me is in sight, and it is not my last chosen one
-    else if (m_targetEntityId != m_closestEnemy.begin()->second)
+    // Apply a smart target selection algorithm
+    else
     {
-        m_targetEntityId = m_closestEnemy.begin()->second;
-        LogInfo("%s chosen enemy target %s", ToString().c_str(), g_Game->Enemy()->GetEntity(m_targetEntityId)->ToString(true).c_str());
+        ChooseArmyTarget();
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void ArmyController::ChooseArmyTarget()
+{
+    _ASSERTE(!m_enemyData.empty());
+
+    multimap<int, GameEntity*> penalitiesMap;
+
+    for (auto& enemyR : m_enemyData)
+    {
+        int penalty = AssignPenaltyToEnemyEntity(enemyR.second);
+        enemyR.second.SelectionPenalty = penalty;
+        penalitiesMap.insert(make_pair(penalty, enemyR.second.E));
+    }
+
+    if (m_targetEntityId != penalitiesMap.begin()->second->Id())
+    {
+        m_targetEntityId = penalitiesMap.begin()->second->Id();
+        LogInfo("%s chosen a new enemy target %s", ToString().c_str(), g_Game->Enemy()->GetEntity(m_targetEntityId)->ToString(true).c_str());
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+int ArmyController::AssignPenaltyToEnemyEntity(_In_ const ArmyEnemyData& dat)
+{
+    // Hard coded decision tree
+    // TODO: Convert the rules to an ID3 or C3 or similar ones
+
+    if (dat.IsInApproxRange)
+    {
+        if (dat.E->Type()->P(TP_IsSupporter))
+        {
+            float hpPrcnt = dat.E->HitpointsPercentage();
+
+            if (hpPrcnt < EntityController::CriticalHpPercent)
+                return 1;
+            else if (hpPrcnt < EntityController::HealthyHpPercent)
+                return 2;
+            else
+                return 3;
+        }
+        else
+        {
+            if (dat.IsAttackingArmy)
+            {
+                if (dat.E->Type()->P(TP_IsBuilding))
+                {
+                    float hpPrcnt = dat.E->HitpointsPercentage();
+
+                    if (hpPrcnt < EntityController::CriticalHpPercent)
+                        return 4;
+                    else if (hpPrcnt < EntityController::HealthyHpPercent)
+                        return 5;
+                    else
+                        return 6;
+                }
+                else
+                {
+                    float hpPrcnt = dat.E->HitpointsPercentage();
+
+                    if (hpPrcnt < EntityController::CriticalHpPercent)
+                        return 7;
+                    else if (hpPrcnt < EntityController::HealthyHpPercent)
+                        return 8;
+                    else
+                        return 9;
+                }
+            }
+            else
+            {
+                if (dat.E->Type()->P(TP_IsAttacker))
+                {
+                    float hpPrcnt = dat.E->HitpointsPercentage();
+
+                    if (hpPrcnt < EntityController::CriticalHpPercent)
+                        return 10;
+                    else if (hpPrcnt < EntityController::HealthyHpPercent)
+                        return 11;
+                    else
+                        return 12;
+                }
+                else
+                {
+                    if (dat.E->Type()->P(TP_IsWorker))
+                    {
+                        float hpPrcnt = dat.E->HitpointsPercentage();
+
+                        if (hpPrcnt < EntityController::CriticalHpPercent)
+                            return 13;
+                        else if (hpPrcnt < EntityController::HealthyHpPercent)
+                            return 14;
+                        else
+                            return 15;
+                    }
+                    else
+                    {
+                        float hpPrcnt = dat.E->HitpointsPercentage();
+
+                        if (hpPrcnt < EntityController::CriticalHpPercent)
+                            return 16;
+                        else if (hpPrcnt < EntityController::HealthyHpPercent)
+                            return 17;
+                        else
+                            return 18;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        return 19;
     }
 }
 //////////////////////////////////////////////////////////////////////////

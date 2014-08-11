@@ -211,6 +211,8 @@ namespace IStrategizer
 
         virtual bool UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUnitType) const;
 
+        virtual bool UnitTargetInWeaponRage(_In_ TID unitId, _In_ TID targetId) const;
+
     private:
         const char** m_pEngineIdsName;
     };

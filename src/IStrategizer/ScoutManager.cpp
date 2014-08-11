@@ -61,7 +61,7 @@ void ScoutManager::Update()
         if (scoutEntityId != INVALID_TID)
         {
             m_scoutController.ControlEntity(scoutEntityId);
-            m_scoutController.PushLogic(make_shared<ScoutEntityFSM>(ScoutEntityFSM::SCTGL_Explore, &m_scoutController));
+            m_scoutController.PushLogic(make_shared<ScoutEntityFSM>(ScoutEntityFSM::SCTGL_Explore, &m_scoutController), this);
 
             vector<Vector2> suspectLocations;
             for (auto& locR : m_otherSpawnLocations)

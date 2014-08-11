@@ -52,6 +52,8 @@ namespace IStrategizer
         void SetController(_In_ EntityController* pController) { m_pController = pController; }
         virtual void DebugDraw();
         virtual bool CanBuild(_In_ EntityClassType typeId) const;
+        virtual float HitpointsPercentage() const;
+        virtual bool IsTargetInWeaponRage(_In_ TID entityId) const;
 
         // Game Commands
         virtual bool Research(ResearchType researchId);

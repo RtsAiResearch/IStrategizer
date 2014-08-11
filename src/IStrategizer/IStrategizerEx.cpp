@@ -137,11 +137,6 @@ void IStrategizerEx::Update()
             m_combatMgr.Update();
             m_pPlanner->Update(*g_Game);
         }
-
-#ifdef _DEBUG
-        DebugDraw();
-#endif // _DEBUG
-
     }
     catch (IStrategizer::Exception &e)
     {
@@ -261,7 +256,8 @@ void IStrategizerEx::ReviseSituation()
 
     for (auto& entityR : g_Game->Enemy()->Entities())
     {
-        if (m_borders.IsInside(entityR.second->Position()))
+        if (entityR.second->P(OP_IsVisible) &&
+            m_borders.IsInside(entityR.second->Position()))
         {
             enemyInBorder = true;
             break;

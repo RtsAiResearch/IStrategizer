@@ -29,7 +29,7 @@ namespace IStrategizer
     class IStrategizerEx : public IRtsAiEngine, public EngineObject
     {
     public:
-        static const int BordersRadius = 1024;
+        static const int BordersRadius = 768;
         static const int ReviseSituationInterval = 16;
 
         IStrategizerEx(const EngineParams &param, IRtsGame* pGameImpl);
@@ -56,12 +56,12 @@ namespace IStrategizer
         void SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath);
         virtual void DebugDumpIMs();
         const char** EngineIdsName();
+        void DebugDraw();
 
     private:
         DISALLOW_COPY_AND_ASSIGN(IStrategizerEx);
 
         const unsigned ScoutStartFrame = 2000;
-        void DebugDraw();
         void SelectNextStrategyGoal();
 
         bool m_isFirstUpdate;

@@ -20,14 +20,24 @@ namespace IStrategizer
     {
     public:
         ArmyEnemyData() :
-            Id(INVALID_TID),
+            E(nullptr),
+            DistanceToCenter(INT_MAX),
             TargetEntityId(INVALID_TID),
-            DistanceToCenter(INT_MAX)
+            IsInApproxRange(false),
+            IsAttackingArmy(false)
         {}
 
-        TID Id;
-        TID TargetEntityId;
+        GameEntity* E;
         int DistanceToCenter;
+        TID TargetEntityId;
+        bool IsInApproxRange;
+        bool IsAttackingArmy;
+
+        // The penalty incurred to the army if chosen this unit
+        // to attack next frame
+        // This value is computed for every army reachable unit
+        // every frame based on a hard coded rules
+        int SelectionPenalty;
     };
 
     class ArmyGroupFormation
@@ -136,6 +146,9 @@ namespace IStrategizer
         void CalcBoundries();
         void CalcGroupFormationData();
         void CalcDamagedRepairablesNearby();
+
+        void ChooseArmyTarget();
+        int AssignPenaltyToEnemyEntity(_In_ const ArmyEnemyData& dat);
 
         static ArmyGroupFormation::Data CalcGroupFormationData(_In_ int groupSize);
 

@@ -32,7 +32,7 @@ void ArmyState::Exit()
     for (auto& entityR : pController->Entities())
     {
         if (m_lastControlled.count(entityR.first))
-            entityR.second->PopLogic();
+            entityR.second->PopLogic(this);
     }
 
     LogInfo("%s with %d controlled entities", ToString().c_str(), m_lastControlled.size());
@@ -60,12 +60,16 @@ void ArmyState::Update()
     // Include new controlled army entities
     for (auto& entityR : pController->Entities())
     {
-        if (m_lastControlled.count(entityR.first) == 0)
+        if (m_lastControlled.count(entityR.first) == 0 ||
+            entityR.second->LogicMemorySize() == 0 ||
+            entityR.second->CurrentLogic().second != this)
         {
             LogInfo("Pushing proper logic to a new controlled entity %s", entityR.second->ToString().c_str());
+            
             m_lastControlled.insert(entityR.first);
+            
             auto pMicroLogic = g_Engine->StrategyMgr()->SelectMicroLogic(pController, &*entityR.second);
-            entityR.second->PushLogic(pMicroLogic);
+            entityR.second->PushLogic(pMicroLogic, this);
 
             if (!m_newControlledCurrFrame)
                 m_newControlledCurrFrame = true;
@@ -205,6 +209,22 @@ void ArriveArmyState::Update()
     }
 }
 //////////////////////////////////////////////////////////////////////////
+void AttackArmyState::DebugDraw()
+{
+    ArmyState::DebugDraw();
+
+    auto pController = (ArmyController*)m_pController;
+
+    char str[64];
+
+    for (auto& enemyR : pController->EnemyData())
+    {
+        auto enemyPos = enemyR.second.E->Position();
+        sprintf_s(str, "P[%d]=%d", enemyR.second.E->Id(), enemyR.second.SelectionPenalty);
+        g_Game->DebugDrawMapText(enemyPos, str);
+    }
+}
+//////////////////////////////////////////////////////////////////////////
 //
 // Machines
 //
@@ -287,7 +307,8 @@ void AttackMoveArmyFSM::CheckTransitions()
         {
             PopState();
         }
-        else if (!pController->IsInOrder(pController->ClosestEntityToCenter()->Position(), 0.60f))
+        else if (pController->Entities().size() > 1 &&
+            !pController->IsInOrder(pController->ClosestEntityToCenter()->Position(), 0.50f))
         {
             PushState(RegroupArmyState::TypeID);
         }

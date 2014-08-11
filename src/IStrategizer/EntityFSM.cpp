@@ -351,7 +351,8 @@ void HintNRunEntityFSM::CheckTransitions()
     case FleeEntityState::TypeID:
         if (pController->ArrivedAtTarget(targetPos))
         {
-            PopAllAndPushState(IdleEntityState::TypeID);
+            PopState();
+            PushState(IdleEntityState::TypeID);
         }
         break;
     case AttackEntityState::TypeID:
@@ -360,12 +361,12 @@ void HintNRunEntityFSM::CheckTransitions()
             PopState();
             PushState(FleeEntityState::TypeID);
         }
-        else if (pController->TargetEntity() == INVALID_TID &&
-            !pController->IsAnyEnemyTargetInSight())
+        else if (pController->TargetEntity() == INVALID_TID)
         {
             PopState();
         }
-        else if (pController->Entity()->P(OP_IsBeingHit) ||
+        else if ((pController->Entity()->P(OP_IsBeingHit) &&
+            pController->Entity()->HitpointsPercentage() < EntityController::HealthyHpPercent) ||
             pController->IsCloseToMeleeAttacker())
         {
             PushState(RetreatEntityState::TypeID);
@@ -384,8 +385,7 @@ void HintNRunEntityFSM::CheckTransitions()
             PopState();
             PushState(FleeEntityState::TypeID);
         }
-        else if (pController->TargetEntity() != INVALID_TID ||
-            pController->IsAnyEnemyTargetInSight())
+        else if (pController->TargetEntity() != INVALID_TID)
         {
             PushState(AttackEntityState::TypeID);
         }

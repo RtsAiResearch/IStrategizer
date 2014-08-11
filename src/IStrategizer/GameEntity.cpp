@@ -576,7 +576,7 @@ Vector2 GameEntity::TargetPosition() const
 //////////////////////////////////////////////////////////////////////////
 bool GameEntity::CanAttack(_In_ TID targetId) const
 {
-    return g_GameImpl->UnitExists(m_isOnline) &&
+    return g_GameImpl->UnitExists(targetId) &&
         g_GameImpl->UnitCanAttackUnit(m_id, targetId) &&
         g_GameImpl->UnitIsVisible(m_id) &&
         g_GameImpl->UnitIsDetected(m_id);
@@ -616,4 +616,14 @@ bool GameEntity::CanBuild(_In_ EntityClassType typeId) const
         return g_GameImpl->UnitCanBuildAddOn(m_id, pUnitType);
     else
         return g_GameImpl->UnitCanBuild(m_id, pUnitType);
+}
+//////////////////////////////////////////////////////////////////////////
+float GameEntity::HitpointsPercentage() const
+{
+    return (float)P(OP_Health) / (float)m_pType->P(TP_MaxHp);
+}
+//////////////////////////////////////////////////////////////////////////
+bool GameEntity::IsTargetInWeaponRage(_In_ TID entityId) const
+{
+    return g_GameImpl->UnitTargetInWeaponRage(m_id, entityId);
 }

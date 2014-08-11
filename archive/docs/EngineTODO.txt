@@ -17,7 +17,7 @@ Micro
 [DONE]- Retreat for melee enemies should be more smart to retreat if the enemy came too close e.g 64 pixel away
 [DONE]- Correct calculation of army sight and focus area not to hard code it (based on army size)
 [DONE]- Retreat should choose different location to retreat to if the destination is not reachable/walkable/out of map.
-- Target selection and prioritization (supporters, melee, ranged, air)
+[DONE]- Target selection and prioritization (supporterts, defensive structures, units HP, etc..)
 - Take attack type into consideration (Air/Ground targetability and prioritization)
 - Even if a unit is being hit, not always it should run especially VS weak units, it should depend on the attacker and the unit itself
 [DONE] - Fix army states to work on Army units directly not cached ones
@@ -32,7 +32,6 @@ Macro
 
 Planner
 [DONE] - Fix planner goal resource sharing and synchronization bugs
-- Succeeding nodes dont expand, except root node, always expand
 - Perioding maintainance of the already succeeding goals, if failed reopen them
 - Need to identify Train Army goals with more strong parameters (e.g map of each unit type and its count)
 

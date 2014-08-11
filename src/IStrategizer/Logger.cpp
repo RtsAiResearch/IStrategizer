@@ -35,12 +35,18 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
     vsprintf_s(buffer1, p_pFormat, formatArgs);
     va_end(formatArgs);
 
-    SYSTEMTIME sysTime;
-    GetLocalTime(&sysTime);
+    //SYSTEMTIME sysTime;
+    //GetLocalTime(&sysTime);
 
-    sprintf_s(buffer2, LogBufferMax, "[%s@%02d:%02d:%02d.%03d@%s] %s\n",
+    //sprintf_s(buffer2, LogBufferMax, "[%s@%02d:%02d:%02d.%03d@%s] %s\n",
+    //    logTypeName[(unsigned)p_type],
+    //    sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
+    //    p_pFun,
+    //    buffer1);
+
+    sprintf_s(buffer2, LogBufferMax, "[%s@%d@%s] %s\n",
         logTypeName[(unsigned)p_type],
-        sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
+        (g_Game ? g_Game->GameFrame() : 0),
         p_pFun,
         buffer1);
 

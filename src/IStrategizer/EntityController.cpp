@@ -13,8 +13,8 @@ using namespace IStrategizer;
 using namespace std;
 
 const float EntityController::CriticalHpPercent = .20f;
-const float EntityController::DamagedHealthPercent = .95f;
-const float EntityController::HealthyHpPercent = 0.50f;
+const float EntityController::DamagedHealthPercent = .90f;
+const float EntityController::HealthyHpPercent = 0.60f;
 
 EntityController::EntityController(ArmyController* pController) :
 m_entityId(INVALID_TID),
@@ -92,7 +92,7 @@ void EntityController::Update()
     CalcCloseMeleeAttacker();
 
     if (!m_pLogicMemory.empty())
-        m_pLogicMemory.top()->Update();
+        m_pLogicMemory.top().first->Update();
 }
 //////////////////////////////////////////////////////////////////////////
 bool EntityController::EntityExists() const
@@ -295,19 +295,6 @@ void EntityController::OnEntityFleeing()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void EntityController::HardResetLogic()
-{
-    while (!m_pLogicMemory.empty())
-        m_pLogicMemory.pop();
-
-    m_pLogicMemory.push(StackFSMPtr(new IdleEntityFSM(this)));
-}
-//////////////////////////////////////////////////////////////////////////
-void EntityController::PushIdleLogic()
-{
-    PushLogic(StackFSMPtr(new IdleEntityFSM(this)));
-}
-//////////////////////////////////////////////////////////////////////////
 TID EntityController::Attacker() const
 {
     // Finding my attack can be expensive, thats why it is globally computed per army
@@ -325,16 +312,14 @@ TID EntityController::Attacker() const
     {
         auto& currEnemy = allEnemies.at(enemy.second);
 
-        auto pCurrEnemy = g_Game->Enemy()->GetEntity(currEnemy.Id);
-
         if (currEnemy.TargetEntityId == m_entityId &&
-            pCurrEnemy->P(OP_IsAttacking))
+            currEnemy.E->P(OP_IsAttacking))
         {
-            int dist = selfPos.Distance(pCurrEnemy->Position());
+            int dist = selfPos.Distance(currEnemy.E->Position());
             if (dist < minDist)
             {
                 minDist = dist;
-                closestAttacker = currEnemy.Id;
+                closestAttacker = currEnemy.E->Id();
             }
         }
     }
@@ -361,7 +346,7 @@ void EntityController::CalcCloseMeleeAttacker()
     for (auto& enemy : nearEnemies)
     {
         auto& currEnemy = allEnemies.at(enemy.second);
-        auto pCurrEnemy = g_Game->Enemy()->GetEntity(currEnemy.Id);
+        auto pCurrEnemy = g_Game->Enemy()->GetEntity(currEnemy.E->Id());
 
         // Either it is a ranged attacker or it is a melee attacker
         // but it is not targeting me, Don't Panic at all!

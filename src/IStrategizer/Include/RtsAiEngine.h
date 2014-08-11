@@ -283,6 +283,7 @@ namespace IStrategizer
         virtual int UnitLastCommandFrame(_In_ TID unitId) const = 0;
         virtual int UnitHitpoints(_In_ TID unitId) const = 0;
         virtual TID UnitBuildUnit(_In_ TID unitId) const = 0;
+        virtual bool UnitTargetInWeaponRage(_In_ TID unitId, _In_ TID targetId) const = 0;
 
         // Unit Commands
         virtual bool UnitStop(_In_ TID unitId) const = 0;
@@ -320,6 +321,7 @@ namespace IStrategizer
         virtual void SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath) = 0;
         virtual const char** EngineIdsName() = 0;
         virtual void DebugDumpIMs() = 0;
+        virtual void DebugDraw() = 0;
     };
 
     class IRtsAiEngineFactory
