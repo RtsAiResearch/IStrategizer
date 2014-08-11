@@ -21,15 +21,15 @@ namespace IStrategizer
     class Message;
 
     ///> class=PlanStepEx
-	class PlanStepEx : public EngineObject, public IComparable, public IClonable
+    class PlanStepEx : public EngineObject, public IComparable, public IClonable
     {
         OBJECT_SERIALIZABLE(PlanStepEx, &_params, &_id);
     public:
         static unsigned GenerateID();
         
-		~PlanStepEx();
-		void Parameter(ParameterType key, int val) { _params[key] = val; }
-		void Parameters(const PlanStepParameters& p_val);
+        ~PlanStepEx();
+        void Parameter(ParameterType key, int val) { _params[key] = val; }
+        void Parameters(const PlanStepParameters& p_val);
         void Copy(IClonable* p_dest);
         int StepTypeId() const { return _stepTypeId; }
         int Parameter(int p_parameterName) const { return ContainsParameter(p_parameterName) ? _params.at((ParameterType)p_parameterName) : 0; }
@@ -38,7 +38,7 @@ namespace IStrategizer
         const PlanStepParameters& Parameters() const { return _params; }
         virtual void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed) {}
         virtual void InitializeConditions();
-		virtual ExecutionStateType GetState() const { return _state; }
+        virtual ExecutionStateType GetState() const { return _state; }
         virtual void SetState(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
         virtual bool Equals(PlanStepEx* p_planStep) = 0;
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
@@ -49,15 +49,15 @@ namespace IStrategizer
         IClonable* Clone();
         unsigned Id() const { return _id; }
         void Id(unsigned id) { _id = id; }
-		void Sleep(const WorldClock& clock, unsigned numGameFrames);
-		bool IsSleeping(const WorldClock& p_clock) const { return p_clock.ElapsedGameCycles() < m_sleepEndGameFrame; }
-		unsigned SleepsCount() const { return m_sleepsCount; }
+        void Sleep(const WorldClock& clock, unsigned numGameFrames);
+        bool IsSleeping(const WorldClock& p_clock) const { return p_clock.ElapsedGameCycles() < m_sleepEndGameFrame; }
+        unsigned SleepsCount() const { return m_sleepsCount; }
 
     protected:
-		PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
-		PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
-		bool IsCurrentStateTimeout(const WorldClock& p_clock);
-		virtual void InitializePostConditions() = 0;
+        PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
+        PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
+        bool IsCurrentStateTimeout(const WorldClock& p_clock);
+        virtual void InitializePostConditions() = 0;
 
         ///> type=PlanStepParameters
         PlanStepParameters _params;
@@ -67,9 +67,9 @@ namespace IStrategizer
         CompositeExpression* _postCondition;
         bool _firstUpdate;
         static unsigned s_lastPlanstepID;
-		unsigned m_sleepStartGameFrame;
-		unsigned m_sleepEndGameFrame;
-		unsigned m_sleepsCount;
+        unsigned m_sleepStartGameFrame;
+        unsigned m_sleepEndGameFrame;
+        unsigned m_sleepsCount;
         ExecutionStateType _state;
     };
     
