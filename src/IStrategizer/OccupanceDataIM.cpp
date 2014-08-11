@@ -124,18 +124,19 @@ void OccupanceDataIM::UnregisterGameObj(TID objId)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool OccupanceDataIM::OccupancePredicate(unsigned p_worldX, unsigned p_worldY, TCell* p_pCell, void *p_pParam)
+bool OccupanceDataIM::OccupancePredicate(unsigned worldX, unsigned worldY, TCell* pCell, void *pParam)
 {
     bool stopSearch = false;
 
-    _ASSERTE(p_pParam);
-    bool *pAllCellsFree = (bool*)p_pParam;
+    _ASSERTE(pParam);
+    bool *pAllCellsFree = (bool*)pParam;
 
-    //bool isBuildable = g_Game->Map()->CanBuildHere(Vector2(p_worldX, p_worldY));
+    bool isTileBuildable = g_Game->Map()->CanBuildHere(Vector2(worldX, worldY));
 
-    _ASSERTE(p_pCell);
-    if (p_pCell->Inf != NullInfluence ||
-        p_pCell->Data != CELL_Free)
+    _ASSERTE(pCell);
+    if (pCell->Inf != NullInfluence ||
+        pCell->Data != CELL_Free ||
+        !isTileBuildable)
     {
         stopSearch = true;
         *pAllCellsFree = false;

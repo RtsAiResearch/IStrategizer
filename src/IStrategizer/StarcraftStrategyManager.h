@@ -11,6 +11,7 @@ namespace IStrategizer
     {
         STRATEGY_TvP_GundamRush,
         STRATEGY_TvT_GundamRush,
+        STRATEGY_TvT_2FactVultMines,
     };
 
     enum ScRace
@@ -27,7 +28,7 @@ namespace IStrategizer
 
 #define STRATEGYNAME_TvT_GundamRush "TvT-GundamRush"
 #define STRATEGYNAME_TvP_GundamRush "TvP-GundamRush"
-#define STRATEGYNAME_Terran_2FactVultMines "Terran-2FactVultMines"
+#define STRATEGYNAME_TvT_2FactVultMines "TvT-2FactVultMines"
 #define STRATEGYNAME_Terran_BionicPlay "Terran-BionicPlay"
 
     class StarcraftStrategyManager : public StrategyManager
@@ -56,10 +57,15 @@ namespace IStrategizer
 
     private:
         int Count(const IGameUnitType* pUnitType);
+
         const IGameUnitType* m_pTerranVulture;
         const IGameUnitType* m_pTerranSiegeTankTankMode;
         const IGameUnitType* m_pTerranSiegeTankSiegeMode;
         const IGameUnitType* m_pTerranMarine;
+        const IGameTechType* m_pSpiderMines;
+        const IGameUpgradeType* m_pIonThrusters;
+        const IGameTechType* m_pTankSiegeMode;
+
         ScRace m_enemyRace;
     };
 }

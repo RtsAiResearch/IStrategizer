@@ -350,6 +350,8 @@ TID WorkersManager::RequestBuilder(bool requstRelease)
         lastPrimaryGatherers.erase(pWorker);
     }
 
+    pWorker->Stop();
+
     return pWorker->Id();
 }
 

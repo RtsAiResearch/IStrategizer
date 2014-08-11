@@ -19,6 +19,9 @@ void StarcraftStrategyManager::Init()
     m_pTerranSiegeTankTankMode = g_GameImpl->GetUnitTypeByName("Terran_Siege_Tank_Tank_Mode");
     m_pTerranSiegeTankSiegeMode = g_GameImpl->GetUnitTypeByName("Terran_Siege_Tank_Siege_Mode");
     m_pTerranMarine = g_GameImpl->GetUnitTypeByName("Terran_Marine");
+    m_pSpiderMines = g_GameImpl->GetTechTypeByName("Spider_Mines");
+    m_pIonThrusters = g_GameImpl->GetUpgradeTypeByName("Ion_Thrusters");
+    m_pTankSiegeMode = g_GameImpl->GetTechTypeByName("Tank_Siege_Mode");
 
     FindEnemyRace();
 }
@@ -32,8 +35,9 @@ void StarcraftStrategyManager::SelectGameOpening()
     if (m_enemyRace == RACE_Terran ||
         m_enemyRace == RACE_Zerg)
     {
-        openingStrategy.Id = STRATEGY_TvT_GundamRush;
-        openingStrategy.Name = STRATEGYNAME_TvT_GundamRush;
+
+        openingStrategy.Id = STRATEGY_TvT_2FactVultMines;
+        openingStrategy.Name = STRATEGYNAME_TvT_2FactVultMines;
     }
     else if (m_enemyRace == RACE_Protoss ||
         m_enemyRace == RACE_Unknown)
@@ -76,9 +80,21 @@ bool StarcraftStrategyManager::IsArmyGoodToPush()
         m_currStrategy.Id == STRATEGY_TvP_GundamRush)
     {
         if (stage == GSTAGE_Early)
-            return cMarines > 3 && cTanks > 0 && cVults > 0;
+            return cMarines > 3 &&
+            cTanks > 0 &&
+            cVults > 0 &&
+            g_GameImpl->PlayerHasResearched(PLAYER_Self, m_pSpiderMines);
         else
-            return cTanks > 2 && cVults > 3;
+            return cTanks > 2 &&
+            cVults > 3 &&
+            g_GameImpl->PlayerHasResearched(PLAYER_Self, m_pTankSiegeMode) &&
+            g_GameImpl->PlayerHasResearched(PLAYER_Self, m_pSpiderMines);
+
+    }
+    else if (m_currStrategy.Id == STRATEGY_TvT_2FactVultMines)
+    {
+        return cVults > 6 &&
+            g_GameImpl->PlayerHasResearched(PLAYER_Self, m_pSpiderMines);
     }
 
     DEBUG_THROW(NotImplementedException(XcptHere));

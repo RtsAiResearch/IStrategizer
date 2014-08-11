@@ -67,6 +67,12 @@
     <Filter Include="Header Files\DomainKnowledge">
       <UniqueIdentifier>{36922a5b-325e-4a01-b5c1-eb40b9b54f50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\OLCBP\Conditions\Framework">
+      <UniqueIdentifier>{8894476c-c5cb-4a5b-b80f-bcfef283a037}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\OLCBP\Conditions\Obsolete">
+      <UniqueIdentifier>{ff0d77ff-cb88-45b9-8f7a-6686c752b229}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\IStrategizerEx.h">
@@ -198,18 +204,6 @@
     <ClInclude Include="..\WinGameGoal.h">
       <Filter>Header Files\OLCBP\Goals</Filter>
     </ClInclude>
-    <ClInclude Include="..\CompositeExpression.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\And.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CheckColonyFilterCount.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Comparer.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="..\BuildingDescription.h">
       <Filter>Header Files\InfluenceMaps</Filter>
     </ClInclude>
@@ -225,12 +219,6 @@
     <ClInclude Include="..\Collection.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\ConditionEx.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\True.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="..\EngineData.h">
       <Filter>Header Files\Defs</Filter>
     </ClInclude>
@@ -244,15 +232,6 @@
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="..\EntityClassExist.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\EventTriggered.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Expression.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\False.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="..\IClonable.h">
@@ -297,12 +276,6 @@
     <ClInclude Include="..\OnlinePlanExpansionExecution.h">
       <Filter>Header Files\OLCBP</Filter>
     </ClInclude>
-    <ClInclude Include="..\Or.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Not.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="..\PlayerResources.h">
       <Filter>Header Files\GameModel</Filter>
     </ClInclude>
@@ -344,9 +317,6 @@
     </ClInclude>
     <ClInclude Include="..\Colony.h">
       <Filter>Header Files\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CandidateGathererExist.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="..\MoveAction.h">
       <Filter>Header Files\OLCBP\Actions\Obsolete</Filter>
@@ -467,6 +437,45 @@
     </ClInclude>
     <ClInclude Include="..\Include\IMessagePumpObserver.h">
       <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\And.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Comparer.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Not.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Or.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\False.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Expression.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\True.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CandidateGathererExist.h">
+      <Filter>Header Files\OLCBP\Conditions\Obsolete</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CheckColonyFilterCount.h">
+      <Filter>Header Files\OLCBP\Conditions\Obsolete</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CompositeExpression.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ConditionEx.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EventTriggered.h">
+      <Filter>Header Files\OLCBP\Conditions\Obsolete</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ResearcherExist.h">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -707,12 +716,6 @@
     <ClCompile Include="..\WorkersManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\BuilderExist.cpp">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TrainerExist.cpp">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClCompile>
     <ClCompile Include="..\GameRace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -732,6 +735,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\StarcraftStrategyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BuilderExist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TrainerExist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ResearcherExist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

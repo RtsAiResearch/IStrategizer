@@ -373,7 +373,7 @@ void HintNRunEntityFSM::CheckTransitions()
         }
         break;
     case RetreatEntityState::TypeID:
-        if (pController->Attacker() == INVALID_TID ||
+        if (pController->Attacker() == INVALID_TID &&
             pController->CloseMeleeAttacker() == INVALID_TID)
         {
             PopState();

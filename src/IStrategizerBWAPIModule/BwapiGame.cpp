@@ -328,7 +328,8 @@ bool BwapiGame::MapIsExplored(_In_ Vector2 loc) const
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapIsBuildable(_In_ Vector2 loc, _In_ bool checkCanBuild) const
 {
-    return Broodwar->isBuildable(loc.X, loc.Y, checkCanBuild);
+    return Broodwar->isBuildable(loc.X, loc.Y, checkCanBuild) &&
+        Broodwar->getUnitsOnTile(loc.X, loc.Y).size() == 0;
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::MapCanBuildHere(_In_ Vector2 loc, const IGameUnitType* pUnitType)
@@ -709,6 +710,18 @@ const IGameUnitType* BwapiGame::GetUnitTypeByName(_In_ const char* pName) const
 {
     TID typeId = g_Database.EntityIdentMapping.GetBySecond(pName);
     return g_BwapiUnitTypes.at(typeId);
+}
+//////////////////////////////////////////////////////////////////////////
+const IGameTechType* BwapiGame::GetTechTypeByName(_In_ const char* pName) const
+{
+    TID typeId = g_Database.TechIdentMapping.GetBySecond(pName);
+    return g_BwapiTechTypes.at(typeId);
+}
+//////////////////////////////////////////////////////////////////////////
+const IGameUpgradeType* BwapiGame::GetUpgradeTypeByName(_In_ const char* pName) const
+{
+    TID typeId = g_Database.UpgradeIdentMapping.GetBySecond(pName);
+    return g_BwapiUpgradeTypes.at(typeId);
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerCompletedUnitCount(_In_ TID playerId, const IGameUnitType* pUnitType) const

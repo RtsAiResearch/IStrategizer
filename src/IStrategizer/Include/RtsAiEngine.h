@@ -194,7 +194,9 @@ namespace IStrategizer
         virtual int GameFrame() const = 0;
         virtual const IGameUnitType* GetUnitTypeByName(_In_ const char* pName) const = 0;
         virtual const IGameUnitType* GetUnitTypeByEngineId(_In_ EntityClassType id) const = 0;
+        virtual const IGameTechType* GetTechTypeByName(_In_ const char* pName) const = 0;
         virtual const IGameTechType* GetTechTypeByEngineId(_In_ ResearchType id) const = 0;
+        virtual const IGameUpgradeType* GetUpgradeTypeByName(_In_ const char* pName) const = 0;
         virtual const IGameUpgradeType* GetUpgradeTypeByEngineId(_In_ ResearchType id) const = 0;
         virtual const IGameRace* GetRace(_In_ TID raceId) const = 0;
         virtual const IGameTechType* GetResearch(_In_ TID researchId) const = 0;

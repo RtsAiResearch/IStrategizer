@@ -208,7 +208,6 @@ bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector
 void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_playerType, vector<Expression*>& p_prerequisites)
 {
     WorldResources pReqResources;
-    EntityClassType sourceEntity;
     vector<ResearchType> reqResearches;
     map<EntityClassType, unsigned> reqEntities;
 
@@ -230,14 +229,14 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
     }
 
     // 3. Source building exist
-    if (BELONG(EntityClassType, p_entityOrResearchType))
-        sourceEntity = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType)->SourceEntity();
-    else
-        sourceEntity = g_Game->GetResearch((ResearchType)p_entityOrResearchType)->SourceEntity();
+    //if (BELONG(EntityClassType, p_entityOrResearchType))
+    //    sourceEntity = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType)->SourceEntity();
+    //else
+    //    sourceEntity = g_Game->GetResearch((ResearchType)p_entityOrResearchType)->SourceEntity();
 
-    _ASSERTE(sourceEntity != ECLASS_END);
+    //_ASSERTE(sourceEntity != ECLASS_END);
 
-    p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1));
+    //p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1));
 
     // 4. Required resources exist
     GetPrerequisiteResources(p_entityOrResearchType, p_playerType, pReqResources);

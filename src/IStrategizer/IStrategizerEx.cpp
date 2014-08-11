@@ -141,7 +141,6 @@ void IStrategizerEx::Update()
     catch (IStrategizer::Exception &e)
     {
         e.To(cout);
-        throw e;
     }
     catch (std::exception &e)
     {

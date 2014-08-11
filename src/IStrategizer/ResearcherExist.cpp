@@ -1,4 +1,4 @@
-#include "TrainerExist.h"
+#include "ResearcherExist.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
 #include "RtsGame.h"
@@ -12,23 +12,23 @@ using namespace IStrategizer;
 using namespace Serialization;
 using namespace std;
 
-DECL_SERIALIZABLE(TrainerExist);
+DECL_SERIALIZABLE(ResearcherExist);
 
-TrainerExist::TrainerExist(EntityClassType traineeTypeId) :
-ConditionEx(PLAYER_Self, CONDEX_TrainerExist)
+ResearcherExist::ResearcherExist(ResearchType researchTypeId) :
+ConditionEx(PLAYER_Self, CONDEX_ResearcherExist)
 {
-    m_params[PARAM_EntityClassId] = traineeTypeId;
+    m_params[PARAM_ResearchId] = researchTypeId;
 }
 //////////////////////////////////////////////////////////////////////////
-bool TrainerExist::Evaluate(RtsGame& game)
+bool ResearcherExist::Evaluate(RtsGame& game)
 {
-    auto traineeTypeId = (EntityClassType)m_params[PARAM_EntityClassId];
-    auto candidateId = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptBuildingForTraining(traineeTypeId);
+    auto researchTypeId = (ResearchType)m_params[PARAM_ResearchId];
+    auto candidateId = g_OnlineCaseBasedPlanner->Reasoner()->Adapter()->AdaptBuildingForResearch(researchTypeId);
     _isEvaluated = _isSatisfied = candidateId != INVALID_TID;
     return _isSatisfied;
 }
 //////////////////////////////////////////////////////////////////////////
-bool TrainerExist::Consume(int p_amount)
+bool ResearcherExist::Consume(int p_amount)
 {
     DEBUG_THROW(NotImplementedException(XcptHere));
 }

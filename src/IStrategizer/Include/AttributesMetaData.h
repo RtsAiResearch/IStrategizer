@@ -175,7 +175,7 @@ namespace IStrategizer
 #define Prefix_GameStage GSTAGE
     enum GameStage
     {
-        GSTAGE_Early,
+        GSTAGE_Early = 0x30500,
         GSTAGE_START = GSTAGE_Early,
         GSTAGE_Mid,
         GSTAGE_Late,

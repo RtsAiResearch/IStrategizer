@@ -126,7 +126,10 @@ namespace IStrategizer
         CONDEX_EntityClassNearArea,
         CONDEX_False,
         CONDEX_PlayerAttributeExist,
-		CONDEX_CandidateGathererExist,
+        CONDEX_CandidateGathererExist,
+        CONDEX_TrainerExist,
+        CONDEX_BuilderExist,
+        CONDEX_ResearcherExist,
         CONDEX_END
     };
 #define Define_ConditionType \
@@ -136,7 +139,9 @@ namespace IStrategizer
     Enums[CONDEX_EntityClassNearArea] = "Entity Class Near Area"; \
     Enums[CONDEX_False] = "False"; \
 	Enums[CONDEX_PlayerAttributeExist] = "Player Attribute Exist"; \
-	Enums[CONDEX_CandidateGathererExist] = "Candidate Gatherer Exist";
+    Enums[CONDEX_TrainerExist] = "Trainer Exist"; \
+    Enums[CONDEX_BuilderExist] = "Builder Exist"; \
+    Enums[CONDEX_ResearcherExist] = "Researcher Exist";
     //---------------------------------------------------------------------------
 #define Prefix_ParameterType PARAM
     enum ParameterType

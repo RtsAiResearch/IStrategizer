@@ -14,13 +14,12 @@ using namespace std;
 
 DECL_SERIALIZABLE(BuilderExist);
 
-//---------------------------------------------------------------------------------------------------
 BuilderExist::BuilderExist(EntityClassType builderTypeId) :
-ConditionEx(PLAYER_Self, CONDEX_CandidateGathererExist)
+ConditionEx(PLAYER_Self, CONDEX_BuilderExist)
 {
     m_params[PARAM_EntityClassId] = builderTypeId;
 }
-//---------------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool BuilderExist::Evaluate(RtsGame& game)
 {
     auto builderTypeId = (EntityClassType)m_params[PARAM_EntityClassId];
@@ -28,7 +27,7 @@ bool BuilderExist::Evaluate(RtsGame& game)
     _isEvaluated = _isSatisfied = candidateId != INVALID_TID;
     return _isSatisfied;
 }
-//---------------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool BuilderExist::Consume(int p_amount)
 {
     DEBUG_THROW(NotImplementedException(XcptHere));

@@ -65,6 +65,7 @@
     <ClInclude Include="..\Include\SmartPtr.h" />
     <ClInclude Include="..\Include\TypesMetaData.h" />
     <ClInclude Include="..\Include\Vector2.h" />
+    <ClInclude Include="..\ResearcherExist.h" />
     <ClInclude Include="..\ScoutManager.h" />
     <ClInclude Include="..\NodeSelectionStrategy.h" />
     <ClInclude Include="..\DeployArmyGoal.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="..\PlayerResources.cpp" />
     <ClCompile Include="..\ResearchAction.cpp" />
     <ClCompile Include="..\ResearchDone.cpp" />
+    <ClCompile Include="..\ResearcherExist.cpp" />
     <ClCompile Include="..\ResourceDescription.cpp" />
     <ClCompile Include="..\ResourceExist.cpp" />
     <ClCompile Include="..\IStrategizer.cpp" />

@@ -237,7 +237,10 @@ namespace IStrategizer
 
         virtual const IGameUnitType* WhatsRequired() const
         {
-            return g_BwapiUnitTypes[m_type.whatsRequired().getID()];
+            if (m_type.whatsRequired() != BWAPI::UnitTypes::None)
+                return g_BwapiUnitTypes[m_type.whatsRequired().getID()];
+            else
+                return nullptr;
         }
 
         virtual const IGameUnitType* WhatUpgrades() const

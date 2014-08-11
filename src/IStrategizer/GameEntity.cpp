@@ -5,6 +5,7 @@
 #include "WorldMap.h"
 #include "GamePlayer.h"
 #include "MathHelper.h"
+#include "GameResearch.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -362,22 +363,24 @@ bool GameEntity::Repair(_In_ TID targetId)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool GameEntity::Research(ResearchType p_researchId)
+bool GameEntity::Research(ResearchType researchId)
 {
     if (!m_isOnline)
         DEBUG_THROW(InvalidOperationException(XcptHere));
 
+    LogInfo("%s -> Research(%s)", ToString().c_str(), g_Game->GetResearch(researchId)->ToString().c_str());
+
     bool bOk = false;
 
     // Is tech
-    if (g_GameImpl->GetTechTypeByEngineId(p_researchId) != nullptr)
+    if (g_GameImpl->GetTechTypeByEngineId(researchId) != nullptr)
     {
-        bOk = g_GameImpl->UnitResearch(m_id, g_GameImpl->GetTechTypeByEngineId(p_researchId));
+        bOk = g_GameImpl->UnitResearch(m_id, g_GameImpl->GetTechTypeByEngineId(researchId));
     }
     // Is upgrade
     else
     {
-        bOk = g_GameImpl->UnitUpgrade(m_id, g_GameImpl->GetUpgradeTypeByEngineId(p_researchId));
+        bOk = g_GameImpl->UnitUpgrade(m_id, g_GameImpl->GetUpgradeTypeByEngineId(researchId));
     }
 
     if (!bOk)

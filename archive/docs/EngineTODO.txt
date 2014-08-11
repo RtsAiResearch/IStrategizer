@@ -28,13 +28,13 @@ Macro
 [DONE] - Execute push/rush (Frontlines, Reinforcements, and Broken army)
 - Realize when to retreat the whole army (i.e if combat simulation outcome is negative)
 [AIIDE]- Defend base on rush with workers if no attackers exist or too few
-
+- Switch to Siege Expand if enemy is playing defensive
 
 Planner
 [DONE] - Fix planner goal resource sharing and synchronization bugs
 - Perioding maintainance of the already succeeding goals, if failed reopen them
 - Need to identify Train Army goals with more strong parameters (e.g map of each unit type and its count)
-
+- Train adaptation to train Vultures from Factories with no machine shops first before trying to train from ones with Machines shops
 Strategy
 - Detect enemy startegy from the first scouting and replan the counter
 

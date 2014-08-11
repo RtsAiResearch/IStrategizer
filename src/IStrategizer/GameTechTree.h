@@ -20,11 +20,13 @@ namespace IStrategizer
 
     public:
         GameTechTree() :
-            m_playerId(INVALID_TID)
+            m_playerId(INVALID_TID),
+            m_isOnline(true)
         {}
 
         GameTechTree(TID playerId) :
-            m_playerId(playerId)
+            m_playerId(playerId),
+            m_isOnline(true)
         {}
 
         virtual ~GameTechTree() {}

@@ -213,6 +213,10 @@ namespace IStrategizer
 
         virtual bool UnitTargetInWeaponRage(_In_ TID unitId, _In_ TID targetId) const;
 
+        const IGameTechType* GetTechTypeByName(_In_ const char* pName) const;
+
+        const IGameUpgradeType* GetUpgradeTypeByName(_In_ const char* pName) const;
+
     private:
         const char** m_pEngineIdsName;
     };

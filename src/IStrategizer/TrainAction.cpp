@@ -21,9 +21,9 @@
 using namespace IStrategizer;
 using namespace std;
 
-const unsigned MaxPrepTime = 3000;
+const unsigned MaxPrepTime = 0;
 // MaxExecTime should be deduced from the unit being trained
-const unsigned MaxExecTime = 5000;
+const unsigned MaxExecTime = 0;
 
 TrainAction::TrainAction()
 : Action(ACTIONEX_Train, MaxPrepTime, MaxExecTime),
@@ -33,14 +33,14 @@ m_trainerId(INVALID_TID)
 	_params[PARAM_EntityClassId] = ECLASS_START;
 	CellFeature::Null().To(_params);
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 TrainAction::TrainAction(const PlanStepParameters& params)
 : Action(ACTIONEX_Train, params, MaxPrepTime, MaxExecTime),
 m_traineeId(INVALID_TID),
 m_trainerId(INVALID_TID)
 {
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
 {
 	if (PlanStepEx::GetState() == ESTATE_Executing && pMsg->TypeId() == MSG_EntityCreate)
@@ -78,7 +78,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
 		}
 	}
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
 {
 	bool trainerExist = false;
@@ -134,7 +134,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
 
 	return success;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
 {
 	bool success = false;
@@ -163,7 +163,7 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
 
 	return success;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool TrainAction::Execute(RtsGame& game, const WorldClock& clock)
 {
 	LogActivity(Execute);
@@ -191,7 +191,7 @@ bool TrainAction::Execute(RtsGame& game, const WorldClock& clock)
 
 	return executed;
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void TrainAction::InitializePostConditions()
 {
 	vector<Expression*> m_terms;
@@ -207,7 +207,7 @@ void TrainAction::InitializePostConditions()
 	m_terms.push_back(new EntityClassExist(PLAYER_Self, entityTypeId, 1));
 	_postCondition = new And(m_terms);
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void TrainAction::InitializePreConditions()
 {
 	EntityClassType traineeType = (EntityClassType)_params[PARAM_EntityClassId];
@@ -218,7 +218,7 @@ void TrainAction::InitializePreConditions()
 	g_Assist.GetPrerequisites(traineeType, PLAYER_Self, m_terms);
 	_preCondition = new And(m_terms);
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 void TrainAction::FreeResources(RtsGame& game)
 {
 	if (m_traineeId != INVALID_TID)
@@ -241,7 +241,7 @@ void TrainAction::FreeResources(RtsGame& game)
         m_trainerId = INVALID_TID;
     }
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 bool TrainAction::Equals(PlanStepEx* p_planStep)
 {
 	return StepTypeId() == p_planStep->StepTypeId() &&
