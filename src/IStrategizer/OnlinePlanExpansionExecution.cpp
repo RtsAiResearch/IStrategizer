@@ -515,7 +515,7 @@ void OnlinePlanExpansionExecution::GetSnippetOrphanNodes(_In_ IOlcbpPlan::NodeID
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ)
+void OnlinePlanExpansionExecution::GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ) const
 {
     IOlcbpPlan::NodeQueue Q;
     IOlcbpPlan::NodeID currNodeId;
@@ -546,12 +546,6 @@ void OnlinePlanExpansionExecution::GetReachableReadyNodes(_Out_ IOlcbpPlan::Node
         {
             if (visitedNodes.count(childNodeId) == 0)
             {
-                if (IsGoalNode(childNodeId) && IsFailedDoneNode(childNodeId))
-                {
-                    OpenNode(childNodeId);
-                    m_pOlcbpPlan->GetNode(childNodeId)->SetState(ESTATE_NotPrepared, *g_Game, g_Game->Clock());
-                }
-
                 if (IsNodeReady(childNodeId))
                 {
                     if (IsGoalNode(childNodeId))

@@ -22,17 +22,17 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue CaseNodeValue;
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
 
-        // Time is counted as number of game frames
-        const unsigned GoalSleepTime = 100;
-        const unsigned GoalMaxSleepsCount = 3;
-        const unsigned ActionSleepTime = 50;
-        const unsigned ActionMaxSleepsCount = 6;
+		// Time is counted as number of game frames
+		const unsigned GoalSleepTime = 100;
+		const unsigned GoalMaxSleepsCount = 3;
+		const unsigned ActionSleepTime = 50;
+		const unsigned ActionMaxSleepsCount = 6;
         // Every 50 frame check the current goal satisfaction
         const unsigned PlanMaintenanceWindow = 50;
         // Every 4th frame update the plan execution
         const unsigned PlanExecuteWindow = 4;
-        
-        OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx* pCbReasoner);
+		
+		OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx* pCbReasoner);
         ~OnlinePlanExpansionExecution();
 
         void Update(_In_ RtsGame& game);
@@ -42,10 +42,9 @@ namespace IStrategizer
         IOlcbpPlan* Plan() { return &*m_pOlcbpPlan; }
         ConstOlcbpPlanContextRef GetContext() const { return m_planContext; }
         OlcbpPlanContextRef GetContext(){ return m_planContext; }
-        void GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ);
+        void GetReachableReadyNodes(_Out_ IOlcbpPlan::NodeQueue& actionQ, _Out_ IOlcbpPlan::NodeQueue& goalQ) const;
         void GetAncestorSatisfyingGoals(_In_ IOlcbpPlan::NodeID nodeId, _Out_ IOlcbpPlan::NodeSet& ancestors) const;
         bool IsNodeDone(_In_ IOlcbpPlan::NodeID nodeId) const { auto state = m_pOlcbpPlan->GetNode(nodeId)->GetState(); return state == ESTATE_Succeeded || state == ESTATE_Failed; }
-        bool IsFailedDoneNode(_In_ IOlcbpPlan::NodeID nodeId) const { return IsNodeDone(nodeId) && !m_pOlcbpPlan->GetNode(nodeId)->SuccessConditionsSatisfied(*g_Game); }
         bool IsGoalNode(_In_ IOlcbpPlan::NodeID nodeId) const { return BELONG(GoalType, m_pOlcbpPlan->GetNode(nodeId)->StepTypeId()); }
         bool IsActionNode(_In_ IOlcbpPlan::NodeID nodeId) const { return BELONG(ActionType, m_pOlcbpPlan->GetNode(nodeId)->StepTypeId()); }
         bool IsNodeOpen(_In_ IOlcbpPlan::NodeID nodeId) const { return GetNodeData(nodeId).IsOpen == true; }

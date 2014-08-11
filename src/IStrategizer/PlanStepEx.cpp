@@ -26,9 +26,9 @@ PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state)
     _postCondition(nullptr), 
     _firstUpdate(true),
     _id(GenerateID()),
-    m_sleepStartGameFrame(0),
-    m_sleepEndGameFrame(0),
-    m_sleepsCount(0)
+	m_sleepStartGameFrame(0),
+	m_sleepEndGameFrame(0),
+	m_sleepsCount(0)
 {
     
 }
@@ -40,21 +40,21 @@ PlanStepEx::PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanS
     _postCondition(nullptr),
     _firstUpdate(true),
     _id(GenerateID()),
-    m_sleepStartGameFrame(0),
-    m_sleepEndGameFrame(0),
-    m_sleepsCount(0)
+	m_sleepStartGameFrame(0),
+	m_sleepEndGameFrame(0),
+	m_sleepsCount(0)
 {
 }
 //////////////////////////////////////////////////////////////////////////
 PlanStepEx::~PlanStepEx()
 {
-    SAFE_DELETE(_postCondition);
+	SAFE_DELETE(_postCondition);
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::Parameters(const PlanStepParameters& p_val)
 {
-    for (auto& r : p_val)
-        _params[r.first] = p_val.at(r.first);
+	for (auto& r : p_val)
+		_params[r.first] = p_val.at(r.first);
 }
 //////////////////////////////////////////////////////////////////////////
 void PlanStepEx::InitializeConditions()
@@ -188,12 +188,12 @@ unsigned PlanStepEx::Hash(bool quantified) const
 //----------------------------------------------------------------------------------------------
 void PlanStepEx::Sleep(const WorldClock& clock, unsigned numGameFrames)
 {
-    _ASSERTE(!IsSleeping(clock));
+	_ASSERTE(!IsSleeping(clock));
 
-    m_sleepStartGameFrame = clock.ElapsedGameCycles();
-    m_sleepEndGameFrame = m_sleepStartGameFrame + numGameFrames;
-    ++m_sleepsCount;
-    LogInfo("%s is sent for sleep in the GameFrame range=[%d,%d], slept %d times so far", ToString().c_str(),
-        m_sleepStartGameFrame, m_sleepEndGameFrame, m_sleepsCount);
+	m_sleepStartGameFrame = clock.ElapsedGameCycles();
+	m_sleepEndGameFrame = m_sleepStartGameFrame + numGameFrames;
+	++m_sleepsCount;
+	LogInfo("%s is sent for sleep in the GameFrame range=[%d,%d], slept %d times so far", ToString().c_str(),
+		m_sleepStartGameFrame, m_sleepEndGameFrame, m_sleepsCount);
 }
 //----------------------------------------------------------------------------------------------
