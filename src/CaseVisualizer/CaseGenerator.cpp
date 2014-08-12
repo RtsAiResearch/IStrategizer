@@ -37,7 +37,7 @@ void CaseGenerator::GenTrainOrderCases()
 	GenTrainForceCases("Terran_SCV", MaxSCVs);
 	GenTrainForceCases("Terran_Marine", 15);
     GenTrainForceCases("Terran_Medic", 6);
-    GenTrainForceCases("Terran_Vulture", 15);
+    GenTrainForceCases("Terran_Vulture", 20);
 	GenTrainForceCases("Terran_Siege_Tank_Tank_Mode", 15);
     GenTrainForceCases("Terran_Firebat", 12);
     GenTrainForceCases("Terran_Science_Vessel", 2);

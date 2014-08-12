@@ -313,7 +313,7 @@ bool WorldMap::IsUnitOnlyOnTileOrFree(_In_ Vector2 pos, _In_ TID entityId) const
     auto pUnits = g_GameImpl->MapUnitsOnTile(TilePositionFromUnitPosition(pos));
 
     if (pUnits->Size() == 0)
-        return false;
+        return true;
     else
     {
         for (int i = 0; i < pUnits->Size(); ++i)
