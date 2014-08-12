@@ -92,11 +92,14 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
             auto actionNodeId = actionsToUpdate.front();
             // Only update an action node if it still exist
             // What applies to a goal in the 3rd pass apply here
-            _ASSERTE(m_pOlcbpPlan->Contains(actionNodeId));
-            // It is illogical to update already succeeding actions, there is
-            // a problem in the node selection strategy
-            _ASSERTE(m_pOlcbpPlan->GetNode(actionNodeId)->GetState() != ESTATE_Succeeded);
-            UpdateActionNode(actionNodeId, game.Clock());
+            if (m_pOlcbpPlan->Contains(actionNodeId))
+            {
+                // It is illogical to update already succeeding actions, there is
+                // a problem in the node selection strategy
+                _ASSERTE(m_pOlcbpPlan->GetNode(actionNodeId)->GetState() != ESTATE_Succeeded);
+                UpdateActionNode(actionNodeId, game.Clock());
+            }
+
             actionsToUpdate.pop_front();
         }
 

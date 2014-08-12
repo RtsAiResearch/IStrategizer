@@ -22,6 +22,7 @@
 
 using namespace std;
 using namespace IStrategizer;
+using namespace Serialization;
 
 OnlinePlanExpansionExecution::OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx *pCasedBasedReasoner) :
     m_planStructureChangedThisFrame(false),
@@ -495,13 +496,6 @@ void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
     if (IsActionNode(nodeId))
         MarkActionAsInactive(nodeId);
 
-    if (IsGoalNode(nodeId) && m_backupNodes.count(nodeId) != 0)
-    {
-        LogInfo("Deleting backup node %s", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
-        m_pOlcbpPlan->RemoveNode(nodeId);
-        return;
-    }
-
     if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
     {
         LogInfo("On '%s' DONE, notifying its satisfying goal '%s'",
@@ -509,6 +503,15 @@ void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
 
         _ASSERTE(GetNodeData(satisfyingGoalNode).WaitOnChildrenCount > 0);
         GetNodeData(satisfyingGoalNode).DecWaitOnChildrenCount();
+    }
+
+    if (IsGoalNode(nodeId) && m_backupNodes.count(nodeId) != 0)
+    {
+        LogInfo("A backup node is done %s", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
+        if (DestroyGoalSnippetIfExist(nodeId))
+            m_pOlcbpPlan->RemoveNode(nodeId);
+        m_coverGoals.erase(m_backupNodes[nodeId]);
+        m_backupNodes.erase(nodeId);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -571,14 +574,16 @@ void OnlinePlanExpansionExecution::CoverFailedGoals()
     for (auto nodeId : toCover)
     {
         auto goalNode = m_pOlcbpPlan->GetNode(nodeId);
-        GoalEx* newGoalNode = (GoalEx*)goalNode->Clone();
-        m_backupNodes.insert(newGoalNode->Id());
-        newGoalNode->SetState(ESTATE_NotPrepared, *g_Game, g_Game->Clock());
-        m_pOlcbpPlan->AddNode(newGoalNode, newGoalNode->Id());
-        m_nodeData[newGoalNode->Id()] = OlcbpPlanNodeData();
-        m_nodeData[newGoalNode->Id()].ID = newGoalNode->Id();
-        SetNodeSatisfyingGoal(newGoalNode->Id(), m_planRootNodeId);
-        LinkNodes(m_planRootNodeId, newGoalNode->Id());
+        GoalEx* backupNode = (GoalEx*)goalNode->Clone();
+        m_backupNodes.insert(MakePair(backupNode->Id(), nodeId));
+        backupNode->SetState(ESTATE_NotPrepared, *g_Game, g_Game->Clock());
+        m_pOlcbpPlan->AddNode(backupNode, backupNode->Id());
+        m_nodeData[backupNode->Id()] = OlcbpPlanNodeData();
+        m_nodeData[backupNode->Id()].ID = backupNode->Id();
+        SetNodeSatisfyingGoal(backupNode->Id(), m_planRootNodeId);
+        LinkNodes(m_planRootNodeId, backupNode->Id());
+        auto& rootNodeData = GetNodeData(m_planRootNodeId);
+        rootNodeData.SetWaitOnChildrenCount(rootNodeData.WaitOnChildrenCount + 1);
     }
 }
 //////////////////////////////////////////////////////////////////////////

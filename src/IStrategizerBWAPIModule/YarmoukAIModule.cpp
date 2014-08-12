@@ -10,12 +10,6 @@ using namespace std;
 using namespace BWAPI;
 using namespace IStrategizer;
 
-#ifdef AIIDE
-#define ENGINE_IO_DIR "bwapi-data\\AI\\"
-#else
-#define ENGINE_IO_DIR ".\\"
-#endif
-
 void YarmoukAIModule::onStart()
 {
     // Print the map name.
@@ -97,6 +91,7 @@ void YarmoukAIModule::InitIStrategizer()
 
     try
     {
+        RtsAiSetEngineReadWriteDir(ENGINE_IO_DIR, ENGINE_IO_DIR);
         RtsAiEngineSystemInit();
 
         g_Database.Init();
@@ -121,7 +116,6 @@ void YarmoukAIModule::InitIStrategizer()
 
         m_pAiEngine = GetRtsAiEngineFactory()->CreateEngine(param, m_pGameModel);
         _ASSERTE(m_pAiEngine);
-        m_pAiEngine->SetEngineReadWriteDir(ENGINE_IO_DIR, ENGINE_IO_DIR);
 
         if (!m_pAiEngine->Init())
         {

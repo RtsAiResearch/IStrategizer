@@ -11,6 +11,7 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
+        SetDllDirectoryA(ENGINE_IO_DIR);
         break;
     case DLL_PROCESS_DETACH:
         break;

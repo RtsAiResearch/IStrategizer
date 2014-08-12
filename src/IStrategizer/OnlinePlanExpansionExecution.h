@@ -99,7 +99,7 @@ namespace IStrategizer
         std::map<IOlcbpPlan::NodeID, std::set<IOlcbpPlan::NodeID>> m_activeActions;
         std::shared_ptr<NodeSelectionStrategy> m_pNodeSelector;
         IOlcbpPlan::NodeSet m_coverGoals;
-        IOlcbpPlan::NodeSet m_backupNodes;
+        std::map<IOlcbpPlan::NodeID, IOlcbpPlan::NodeID> m_backupNodes;
         bool m_inMaintenanceMode;
 
     };

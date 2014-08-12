@@ -140,8 +140,8 @@ void GraphScene::ConstructGraph()
         for (NodeID nodeId : m_graphLevels[level])
         {
             GraphNodeView* pNodeView = new GraphNodeView(m_pGraph->GetNode(nodeId),
-				(m_pPlanContext != nullptr ? &m_pPlanContext->Data.at(nodeId) : nullptr)
-				, m_pNodeMenu, nullptr);
+                (m_pPlanContext != nullptr ? &m_pPlanContext->Data.at(nodeId) : nullptr)
+                , m_pNodeMenu, nullptr);
             m_nodeIdToNodeViewMap[nodeId] = pNodeView;
             addItem(pNodeView);
         }
@@ -168,8 +168,8 @@ void IStrategizer::GraphScene::ComputeGraphLevels()
         m_graphLevels[i].clear();
     m_graphLevels.clear();
 
-	list<NodeID> orderedCaseChildren;
-	list<NodeID> orderedSnippetChildren;
+    list<NodeID> orderedCaseChildren;
+    list<NodeID> orderedSnippetChildren;
 
     while(!Q.empty())
     {
@@ -181,55 +181,55 @@ void IStrategizer::GraphScene::ComputeGraphLevels()
         if(nodeLevel >= m_graphLevels.size())
             m_graphLevels.resize(nodeLevel + 1);
 
-		m_graphLevels[nodeLevel].push_back(currNodeId);
+        m_graphLevels[nodeLevel].push_back(currNodeId);
 
-		IOlcbpPlan::NodeSerializedSet children = m_pGraph->GetAdjacentNodes(currNodeId);
+        IOlcbpPlan::NodeSerializedSet children = m_pGraph->GetAdjacentNodes(currNodeId);
 
-		if (m_pPlanContext != nullptr)
-		{
-			orderedCaseChildren.clear();
-			orderedSnippetChildren.clear();
+        if (m_pPlanContext != nullptr)
+        {
+            orderedCaseChildren.clear();
+            orderedSnippetChildren.clear();
 
-			for (NodeID nodeId : children)
-			{
-				if (visitedNodes.count(nodeId) == 0)
-				{
-					visitedNodes.insert(nodeId);
+            for (NodeID nodeId : children)
+            {
+                if (visitedNodes.count(nodeId) == 0)
+                {
+                    visitedNodes.insert(nodeId);
 
-					if (m_pPlanContext->Data.at(nodeId).SatisfyingGoal != currNodeId)
-					{
-						if (IsGoalNode(nodeId))
-							orderedCaseChildren.push_front(nodeId);
-						else
-							orderedCaseChildren.push_back(nodeId);
-					}
-					else
-					{
-						if (IsGoalNode(nodeId))
-							orderedSnippetChildren.push_front(nodeId);
-						else
-							orderedSnippetChildren.push_back(nodeId);
-					}
-				}
-			}
+                    if (m_pPlanContext->Data.at(nodeId).SatisfyingGoal != currNodeId)
+                    {
+                        if (IsGoalNode(nodeId))
+                            orderedCaseChildren.push_front(nodeId);
+                        else
+                            orderedCaseChildren.push_back(nodeId);
+                    }
+                    else
+                    {
+                        if (IsGoalNode(nodeId))
+                            orderedSnippetChildren.push_front(nodeId);
+                        else
+                            orderedSnippetChildren.push_back(nodeId);
+                    }
+                }
+            }
 
-			for (auto nodeId : orderedCaseChildren)
-				Q.push_back(make_pair(nodeId, nodeLevel + 1));
+            for (auto nodeId : orderedCaseChildren)
+                Q.push_back(make_pair(nodeId, nodeLevel + 1));
 
-			for (auto nodeId : orderedSnippetChildren)
-				Q.push_back(make_pair(nodeId, nodeLevel + 1));
-		}
-		else
-		{
-			for (NodeID nodeId : children)
-			{
-				if (visitedNodes.count(nodeId) == 0)
-				{
-					visitedNodes.insert(nodeId);
-					Q.push_back(make_pair(nodeId, nodeLevel + 1));
-				}
-			}
-		}
+            for (auto nodeId : orderedSnippetChildren)
+                Q.push_back(make_pair(nodeId, nodeLevel + 1));
+        }
+        else
+        {
+            for (NodeID nodeId : children)
+            {
+                if (visitedNodes.count(nodeId) == 0)
+                {
+                    visitedNodes.insert(nodeId);
+                    Q.push_back(make_pair(nodeId, nodeLevel + 1));
+                }
+            }
+        }
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -439,8 +439,8 @@ void GraphScene::NewNode()
         NodeID nodeId = m_pGraph->AddNode(pNodeModel, pNodeModel->Id());
 
         GraphNodeView *pNodeView = new GraphNodeView(pNodeModel,
-			(m_pPlanContext != nullptr ? &m_pPlanContext->Data.at(nodeId) : nullptr),
-			m_pNodeMenu, nullptr);
+            (m_pPlanContext != nullptr ? &m_pPlanContext->Data.at(nodeId) : nullptr),
+            m_pNodeMenu, nullptr);
 
         pNodeView->setPos(m_lastCtxtMenuScreenPos.x(), m_lastCtxtMenuScreenPos.y());
 
@@ -591,16 +591,16 @@ void GraphScene::OnGraphUpdate()
 
         for (auto& record : m_nodeIdToNodeViewMap)
         {
-			if (m_pPlanContext->ActiveGoalSet.count(record.first) > 0)
-				record.second->MarkAsActive();
-			else
-				record.second->MarkAsInactive();
+            if (m_pPlanContext->ActiveGoalSet.count(record.first) > 0)
+                record.second->MarkAsActive();
+            else
+                record.second->MarkAsInactive();
 
-			if (m_pGraph->Contains(record.first))
-				record.second->OnUpdate();
+            if (m_pGraph->Contains(record.first))
+                record.second->OnUpdate();
         }
 
-		m_pGraph->Unlock();
+        m_pGraph->Unlock();
     }
 
     update();
