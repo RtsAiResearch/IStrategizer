@@ -495,6 +495,13 @@ void OnlinePlanExpansionExecution::OnNodeDone(_In_ IOlcbpPlan::NodeID nodeId)
     if (IsActionNode(nodeId))
         MarkActionAsInactive(nodeId);
 
+    if (IsGoalNode(nodeId) && m_backupNodes.count(nodeId) != 0)
+    {
+        LogInfo("Deleting backup node %s", m_pOlcbpPlan->GetNode(nodeId)->ToString().c_str());
+        m_pOlcbpPlan->RemoveNode(nodeId);
+        return;
+    }
+
     if (satisfyingGoalNode != IOlcbpPlan::NullNodeID)
     {
         LogInfo("On '%s' DONE, notifying its satisfying goal '%s'",
@@ -512,6 +519,66 @@ void OnlinePlanExpansionExecution::GetSnippetOrphanNodes(_In_ IOlcbpPlan::NodeID
     {
         if (GetNodeData(nodeId).SatisfyingGoal == snippetGoalId)
             orphans.insert(nodeId);
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void OnlinePlanExpansionExecution::CoverFailedGoals()
+{
+    IOlcbpPlan::NodeQueue Q;
+    IOlcbpPlan::NodeID currNodeId;
+    IOlcbpPlan::NodeSerializedSet planRoots;
+    IOlcbpPlan::NodeSet visitedNodes;
+    IOlcbpPlan::NodeSet toCover;
+
+    _ASSERTE(m_planRootNodeId != IOlcbpPlan::NullNodeID);
+
+    Q.push(m_planRootNodeId);
+    visitedNodes.insert(m_planRootNodeId);
+
+    while (!Q.empty())
+    {
+        currNodeId = Q.front();
+        Q.pop();
+
+        if (!m_pOlcbpPlan->Contains(currNodeId))
+        {
+            LogWarning("A non existing node was there in the update queue, skipping it");
+            continue;
+        }
+
+        for (auto childNodeId : m_pOlcbpPlan->GetAdjacentNodes(currNodeId))
+        {
+            if (visitedNodes.count(childNodeId) == 0)
+            {
+                if (IsGoalNode(childNodeId) && IsNodeDone(childNodeId))
+                {
+                    auto goalNode = m_pOlcbpPlan->GetNode(childNodeId);
+                    if (m_coverGoals.count(childNodeId) == 0 && 
+                        !goalNode->SuccessConditionsSatisfied(*g_Game) &&
+                        m_backupNodes.count(childNodeId) == 0)
+                    {
+                        m_coverGoals.insert(childNodeId);
+                        toCover.insert(childNodeId);
+                    }
+                }
+
+                visitedNodes.insert(childNodeId);
+                Q.push(childNodeId);
+            }
+        }
+    }
+
+    for (auto nodeId : toCover)
+    {
+        auto goalNode = m_pOlcbpPlan->GetNode(nodeId);
+        GoalEx* newGoalNode = (GoalEx*)goalNode->Clone();
+        m_backupNodes.insert(newGoalNode->Id());
+        newGoalNode->SetState(ESTATE_NotPrepared, *g_Game, g_Game->Clock());
+        m_pOlcbpPlan->AddNode(newGoalNode, newGoalNode->Id());
+        m_nodeData[newGoalNode->Id()] = OlcbpPlanNodeData();
+        m_nodeData[newGoalNode->Id()].ID = newGoalNode->Id();
+        SetNodeSatisfyingGoal(newGoalNode->Id(), m_planRootNodeId);
+        LinkNodes(m_planRootNodeId, newGoalNode->Id());
     }
 }
 //////////////////////////////////////////////////////////////////////////
