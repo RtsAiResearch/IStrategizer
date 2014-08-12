@@ -429,9 +429,6 @@
     <ClInclude Include="..\Include\TypesMetaData.h">
       <Filter>Header Files\Defs</Filter>
     </ClInclude>
-    <ClInclude Include="..\StarcraftStrategyManager.h">
-      <Filter>Header Files\DomainKnowledge</Filter>
-    </ClInclude>
     <ClInclude Include="..\StrategyManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
@@ -476,6 +473,12 @@
     </ClInclude>
     <ClInclude Include="..\ResearcherExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScFSM.h">
+      <Filter>Header Files\DomainKnowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScStrategyManager.h">
+      <Filter>Header Files\DomainKnowledge</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -734,9 +737,6 @@
     <ClCompile Include="..\IStrategizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\StarcraftStrategyManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\BuilderExist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -744,6 +744,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\ResearcherExist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScEntityFSM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScStrategyManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

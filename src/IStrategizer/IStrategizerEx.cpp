@@ -21,7 +21,7 @@
 #include "SharedResource.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
-#include "StarcraftStrategyManager.h"
+#include "ScStrategyManager.h"
 #include "IMSystemManager.h"
 #include <iostream>
 
@@ -38,7 +38,7 @@ m_param(param),
 m_pCaseLearning(nullptr),
 m_pPlanner(nullptr),
 m_isFirstUpdate(true),
-m_pStrategyMgr(new StarcraftStrategyManager),
+m_pStrategyMgr(new ScStrategyManager),
 m_situation(SITUATION_SafeDevelopmentDefending)
 {
     g_Engine = this;

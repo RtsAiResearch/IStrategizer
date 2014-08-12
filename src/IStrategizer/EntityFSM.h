@@ -204,6 +204,11 @@ namespace IStrategizer
 
         void CheckTransitions();
 
+    protected:
+        HintNRunEntityFSM(const char* pName, FSMStateTypeID initialState, FSMStateTypeID finalState, FSMStateTypeID typeId, EngineObject* pController) :
+            StackFSM(pName, initialState, finalState, typeId, pController)
+        {}
+
     private:
         DISALLOW_COPY_AND_ASSIGN(HintNRunEntityFSM);
     };

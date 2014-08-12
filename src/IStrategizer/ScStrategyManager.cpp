@@ -1,4 +1,4 @@
-#include "StarcraftStrategyManager.h"
+#include "ScStrategyManager.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "CaseBasedReasonerEx.h"
 #include "AbstractRetriever.h"
@@ -10,25 +10,34 @@
 #include "EntityFSM.h"
 #include "ArmyFSM.h"
 #include "IStrategizerEx.h"
+#include "ScFSM.h"
 
 using namespace IStrategizer;
 
-void StarcraftStrategyManager::Init()
+const IGameUnitType* ScStrategyManager::TerranVulture = nullptr;
+const IGameUnitType* ScStrategyManager::TerranSiegeTankTankMode = nullptr;
+const IGameUnitType* ScStrategyManager::TerranSiegeTankSiegeMode = nullptr;
+const IGameUnitType* ScStrategyManager::TerranMarine = nullptr;
+const IGameTechType* ScStrategyManager::SpiderMine = nullptr;
+const IGameUpgradeType* ScStrategyManager::IonThrusters = nullptr;
+const IGameTechType* ScStrategyManager::TankSiegeMode = nullptr;
+
+void ScStrategyManager::Init()
 {
-    m_pTerranVulture = g_GameImpl->GetUnitTypeByName("Terran_Vulture");
-    m_pTerranSiegeTankTankMode = g_GameImpl->GetUnitTypeByName("Terran_Siege_Tank_Tank_Mode");
-    m_pTerranSiegeTankSiegeMode = g_GameImpl->GetUnitTypeByName("Terran_Siege_Tank_Siege_Mode");
-    m_pTerranMarine = g_GameImpl->GetUnitTypeByName("Terran_Marine");
-    m_pSpiderMines = g_GameImpl->GetTechTypeByName("Spider_Mines");
-    m_pIonThrusters = g_GameImpl->GetUpgradeTypeByName("Ion_Thrusters");
-    m_pTankSiegeMode = g_GameImpl->GetTechTypeByName("Tank_Siege_Mode");
+    TerranVulture = g_GameImpl->GetUnitTypeByName("Terran_Vulture");
+    TerranSiegeTankTankMode = g_GameImpl->GetUnitTypeByName("Terran_Siege_Tank_Tank_Mode");
+    TerranSiegeTankSiegeMode = g_GameImpl->GetUnitTypeByName("Terran_Siege_Tank_Siege_Mode");
+    TerranMarine = g_GameImpl->GetUnitTypeByName("Terran_Marine");
+    SpiderMine = g_GameImpl->GetTechTypeByName("Spider_Mines");
+    IonThrusters = g_GameImpl->GetUpgradeTypeByName("Ion_Thrusters");
+    TankSiegeMode = g_GameImpl->GetTechTypeByName("Tank_Siege_Mode");
 
     m_selfId = g_GameImpl->SelfPlayer();
 
     FindEnemyRace();
 }
 //////////////////////////////////////////////////////////////////////////
-void StarcraftStrategyManager::SelectGameOpening()
+void ScStrategyManager::SelectGameOpening()
 {
     LogActivity(SelectGameOpening);
 
@@ -61,22 +70,22 @@ void StarcraftStrategyManager::SelectGameOpening()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void StarcraftStrategyManager::SelectNextStrategy()
+void ScStrategyManager::SelectNextStrategy()
 {
     LogActivity(SelectNextStrategy);
 }
 //////////////////////////////////////////////////////////////////////////
-int StarcraftStrategyManager::Count(const IGameUnitType* pUnitType)
+int ScStrategyManager::Count(const IGameUnitType* pUnitType)
 {
     return g_GameImpl->PlayerCompletedUnitCount(g_GameImpl->SelfPlayer(), pUnitType);
 }
 //////////////////////////////////////////////////////////////////////////
-bool StarcraftStrategyManager::IsArmyGoodToPush()
+bool ScStrategyManager::IsArmyGoodToPush()
 {
     auto stage = FindGameStage();
-    auto cTanks = Count(m_pTerranSiegeTankTankMode) + Count(m_pTerranSiegeTankTankMode);
-    auto cVults = Count(m_pTerranVulture);
-    auto cMarines = Count(m_pTerranMarine);
+    auto cTanks = Count(TerranSiegeTankTankMode) + Count(TerranSiegeTankTankMode);
+    auto cVults = Count(TerranVulture);
+    auto cMarines = Count(TerranMarine);
 
     if (m_currStrategy.Id == STRATEGY_TvT_GundamRush ||
         m_currStrategy.Id == STRATEGY_TvP_GundamRush)
@@ -85,61 +94,63 @@ bool StarcraftStrategyManager::IsArmyGoodToPush()
             return cMarines > 3 &&
             cTanks > 0 &&
             cVults > 0 &&
-            g_GameImpl->PlayerHasResearched(m_selfId, m_pSpiderMines);
+            g_GameImpl->PlayerHasResearched(m_selfId, SpiderMine);
         else
             return cTanks > 2 &&
             cVults > 3 &&
-            g_GameImpl->PlayerHasResearched(m_selfId, m_pTankSiegeMode) &&
-            g_GameImpl->PlayerHasResearched(m_selfId, m_pSpiderMines);
+            g_GameImpl->PlayerHasResearched(m_selfId, TankSiegeMode) &&
+            g_GameImpl->PlayerHasResearched(m_selfId, SpiderMine);
 
     }
     else if (m_currStrategy.Id == STRATEGY_TvT_2FactVultMines)
     {
-        return cVults > 6 &&
-            g_GameImpl->PlayerHasResearched(m_selfId, m_pSpiderMines);
+        return cVults > 7 &&
+            g_GameImpl->PlayerHasResearched(m_selfId, SpiderMine);
     }
     
     DEBUG_THROW(NotImplementedException(XcptHere));
 }
 //////////////////////////////////////////////////////////////////////////
-bool StarcraftStrategyManager::IsGoodTimeToScout()
+bool ScStrategyManager::IsGoodTimeToScout()
 {
     return (!g_Engine->ScoutMgr().IsEnemySpawnLocationKnown() &&
         g_Game->Self()->WorkersCount() >= 9);
 }
 //////////////////////////////////////////////////////////////////////////
-StackFSMPtr StarcraftStrategyManager::SelectMicroLogic(_In_ ArmyController* armyCtrlr, _In_ EntityController* entityCtrlr) const
+StackFSMPtr ScStrategyManager::SelectMicroLogic(_In_ ArmyController* armyCtrlr, _In_ EntityController* pEntityCtrlr) const
 {
     auto currLogicState = armyCtrlr->Logic()->CurrentState();
 
     if (currLogicState->TypeId() == AttackArmyState::TypeID)
     {
-        if (entityCtrlr->Entity()->Type()->P(TP_IsWorker))
-            return  StackFSMPtr(new AutoRepairEntityFSM(entityCtrlr));
+        if (pEntityCtrlr->Entity()->Type()->P(TP_IsWorker))
+            return  StackFSMPtr(new AutoRepairEntityFSM(pEntityCtrlr));
         else
-            return StackFSMPtr(new HintNRunEntityFSM(entityCtrlr));
+            return StackFSMPtr(new HintNRunEntityFSM(pEntityCtrlr));
     }
     else if (currLogicState->TypeId() == AlarmArmyState::TypeID)
     {
-        if (entityCtrlr->Entity()->Type()->P(TP_IsWorker))
-            return  StackFSMPtr(new AutoRepairEntityFSM(entityCtrlr));
+        if (pEntityCtrlr->Entity()->Type()->P(TP_IsWorker))
+            return  StackFSMPtr(new AutoRepairEntityFSM(pEntityCtrlr));
+        else if (pEntityCtrlr->Entity()->TypeId() == TerranVulture->EngineId())
+            return StackFSMPtr(new VultureHintNRunEntityFSM(pEntityCtrlr));
         else
-            return StackFSMPtr(new IdleEntityFSM(entityCtrlr));
+            return StackFSMPtr(new IdleEntityFSM(pEntityCtrlr));
     }
-    else if (entityCtrlr->TypeId() == RegroupArmyState::TypeID)
+    else if (pEntityCtrlr->TypeId() == RegroupArmyState::TypeID)
     {
-        return StackFSMPtr(new IdleEntityFSM(entityCtrlr));
+        return StackFSMPtr(new IdleEntityFSM(pEntityCtrlr));
     }
     else
     {
-        if (entityCtrlr->Entity()->Type()->P(TP_IsWorker))
-            return  StackFSMPtr(new AutoRepairEntityFSM(entityCtrlr));
+        if (pEntityCtrlr->Entity()->Type()->P(TP_IsWorker))
+            return  StackFSMPtr(new AutoRepairEntityFSM(pEntityCtrlr));
         else
-            return StackFSMPtr(new IdleEntityFSM(entityCtrlr));
+            return StackFSMPtr(new IdleEntityFSM(pEntityCtrlr));
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void StarcraftStrategyManager::FindEnemyRace()
+void ScStrategyManager::FindEnemyRace()
 {
     auto pEnemyRace = g_GameImpl->PlayerRace(g_GameImpl->EnemyPlayer());
 
@@ -153,7 +164,7 @@ void StarcraftStrategyManager::FindEnemyRace()
         m_enemyRace = RACE_Unknown;
 }
 //////////////////////////////////////////////////////////////////////////
-GameStage StarcraftStrategyManager::FindGameStage()
+GameStage ScStrategyManager::FindGameStage()
 {
     auto elapsedGameFrames = g_GameImpl->GameFrame();
 
@@ -165,7 +176,7 @@ GameStage StarcraftStrategyManager::FindGameStage()
         return GSTAGE_Late;
 }
 //////////////////////////////////////////////////////////////////////////
-void StarcraftStrategyManager::DebugDraw()
+void ScStrategyManager::DebugDraw()
 {
     char str[128];
     sprintf_s(str, "Stage: %s", Enums[FindGameStage()]);

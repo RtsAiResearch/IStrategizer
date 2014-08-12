@@ -83,6 +83,8 @@ namespace IStrategizer
 
         virtual SmartPtr< ArrayList<TID> > MapUnitsOnTile(_In_ Vector2 loc) const;
 
+        virtual SmartPtr< ArrayList<TID> > MapUnitsInRegion(_In_ Vector2 loc) const;
+
         virtual GameUnitListPtr MapGasFields() const;
 
         virtual bool MapHasPath(_In_ Vector2 srcPos, _In_ Vector2 dstPos) const;
@@ -218,6 +220,10 @@ namespace IStrategizer
         const IGameTechType* GetTechTypeByName(_In_ const char* pName) const;
 
         const IGameUpgradeType* GetUpgradeTypeByName(_In_ const char* pName) const;
+
+        bool UnitCanUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const;
+
+        bool UnitUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const;
 
     private:
         const char** m_pEngineIdsName;

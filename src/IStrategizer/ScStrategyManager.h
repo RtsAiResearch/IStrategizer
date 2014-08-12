@@ -31,14 +31,10 @@ namespace IStrategizer
 #define STRATEGYNAME_TvT_2FactVultMines "TvT-2FactVultMines"
 #define STRATEGYNAME_Terran_BionicPlay "Terran-BionicPlay"
 
-    class StarcraftStrategyManager : public StrategyManager
+    class ScStrategyManager : public StrategyManager
     {
     public:
-        StarcraftStrategyManager() :
-            m_pTerranVulture(nullptr),
-            m_pTerranSiegeTankTankMode(nullptr),
-            m_pTerranSiegeTankSiegeMode(nullptr),
-            m_pTerranMarine(nullptr),
+        ScStrategyManager() :
             m_enemyRace(RACE_Unknown)
         {
             
@@ -55,16 +51,16 @@ namespace IStrategizer
         StackFSMPtr SelectMicroLogic(_In_ ArmyController* armyCtrlr, _In_ EntityController* pController) const;
         void DebugDraw();
 
+        static const IGameUnitType* TerranVulture;
+        static const IGameUnitType* TerranSiegeTankTankMode;
+        static const IGameUnitType* TerranSiegeTankSiegeMode;
+        static const IGameUnitType* TerranMarine;
+        static const IGameTechType* SpiderMine;
+        static const IGameUpgradeType* IonThrusters;
+        static const IGameTechType* TankSiegeMode;
+
     private:
         int Count(const IGameUnitType* pUnitType);
-
-        const IGameUnitType* m_pTerranVulture;
-        const IGameUnitType* m_pTerranSiegeTankTankMode;
-        const IGameUnitType* m_pTerranSiegeTankSiegeMode;
-        const IGameUnitType* m_pTerranMarine;
-        const IGameTechType* m_pSpiderMines;
-        const IGameUpgradeType* m_pIonThrusters;
-        const IGameTechType* m_pTankSiegeMode;
 
         ScRace m_enemyRace;
         TID m_selfId;
