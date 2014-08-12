@@ -10,7 +10,7 @@ using namespace std;
 
 int PlantSpiderMinesState::MinesCountInRegion(_In_ Vector2 pos)
 {
-    auto pTileUnits = g_GameImpl->MapUnitsInRegion(TilePositionFromUnitPosition(pos));
+    auto pTileUnits = g_GameImpl->MapUnitsInRegion(pos);
 
     int count = 0;
 
@@ -55,7 +55,7 @@ void PlantSpiderMinesState::Enter()
     else
     {
         _ASSERTE(pController->TargetPosition() != Vector2::Inf());
-        minePos = Circle2(pController->TargetPosition(), 64).RandomInside();
+        minePos = Circle2(pController->TargetPosition(), 128).RandomInside();
     }
 
     if (g_GameImpl->UnitCanUseTechPosition(pController->EntityId(),
@@ -97,14 +97,13 @@ void VultureHintNRunEntityFSM::CheckTransitions()
         {
             PopState();
         }
-        else if ((pController->Entity()->P(OP_IsBeingHit) &&
-            pController->Entity()->HitpointsPercentage() < EntityController::HealthyHpPercent) ||
+        else if (pController->Entity()->P(OP_IsBeingHit) ||
             pController->IsCloseToMeleeAttacker())
         {
             PushState(RetreatEntityState::TypeID);
         }
         else if (g_GameImpl->GameFrame() % 25 == 0 &&
-            PlantSpiderMinesState::IsMineOnTile(pController->TargetEntity()))
+            !PlantSpiderMinesState::IsMineOnTile(pController->TargetEntity()))
         {
             PushState(PlantSpiderMinesState::TypeID);
         }

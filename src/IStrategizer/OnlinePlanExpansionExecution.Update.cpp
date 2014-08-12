@@ -49,7 +49,7 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
     else if (m_pOlcbpPlan->Size() > 0 &&
         game.Clock().ElapsedGameCycles() % PlanExecuteWindow == 0)
     {
-        CoverFailedGoals();
+        //CoverFailedGoals();
 
         IOlcbpPlan::NodeDQueue actionsToUpdate;
         IOlcbpPlan::NodeSet& goalsToUpdate = m_activeGoalSet;

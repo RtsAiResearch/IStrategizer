@@ -160,6 +160,13 @@ TID BwapiGame::EnemyPlayer() const
 //////////////////////////////////////////////////////////////////////////
 TID BwapiGame::NeutralPlayer() const
 {
+    for each(auto p in Broodwar->getPlayers())
+    {
+        if (p->getID() != EnemyPlayer() &&
+            p->getID() != SelfPlayer())
+            return p->getID();
+    }
+
     return Broodwar->neutral()->getID();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -399,23 +406,25 @@ bool BwapiGame::MapHasPath(_In_ Vector2 srcPos, _In_ Vector2 dstPos) const
 
     return Broodwar->hasPath(p1, p2);
 }
+
+#define PLAYER(playerId) (playerId == -1 ? Broodwar->neutral() : Broodwar->getPlayer(playerId))
+//#define PLAYER(playerId) (Broodwar->getPlayer(playerId))
+
 //////////////////////////////////////////////////////////////////////////
 const IGameRace* BwapiGame::PlayerRace(_In_ TID playerId) const
 {
-    return g_BwapiRaces[Broodwar->getPlayer(playerId)->getRace().getID()];
+    return g_BwapiRaces[PLAYER(playerId)->getRace().getID()];
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 BwapiGame::PlayerStartLocation(_In_ TID playerId) const
 {
-    auto startPos = Broodwar->getPlayer(playerId)->getStartLocation();
+    auto startPos = PLAYER(playerId)->getStartLocation();
     return Vector2(startPos.x, startPos.y);
 }
 //////////////////////////////////////////////////////////////////////////
 IStrategizer::PlayerType BwapiGame::PlayerGetType(_In_ TID playerId) const
 {
-    auto pPlayer = Broodwar->getPlayer(playerId);
-
-    if (Broodwar->self()->isEnemy(pPlayer))
+    if (Broodwar->enemy()->getID() == playerId)
         return PLAYER_Enemy;
     else if (Broodwar->self()->getID() == playerId)
         return PLAYER_Self;
@@ -425,47 +434,53 @@ IStrategizer::PlayerType BwapiGame::PlayerGetType(_In_ TID playerId) const
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerMinerals(_In_ TID playerId) const
 {
-    return Broodwar->getPlayer(playerId)->minerals();
+    return PLAYER(playerId)->minerals();
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerGas(_In_ TID playerId) const
 {
-    return Broodwar->getPlayer(playerId)->gas();
+    return PLAYER(playerId)->gas();
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerSupplyUsed(_In_ TID playerId) const
 {
-    return Broodwar->getPlayer(playerId)->supplyUsed();
+    return PLAYER(playerId)->supplyUsed();
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerSupplyTotal(_In_ TID playerId) const
 {
-    return Broodwar->getPlayer(playerId)->supplyTotal();
+    return PLAYER(playerId)->supplyTotal();
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::PlayerHasResearched(_In_ TID playerId, const IGameTechType* pTechType) const
 {
-    return Broodwar->getPlayer(playerId)->hasResearched(((BwapiTechType*)pTechType)->GetBwapiTechType());
+    return PLAYER(playerId)->hasResearched(((BwapiTechType*)pTechType)->GetBwapiTechType());
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerUpgradeLevel(_In_ TID playerId, const IGameUpgradeType* pUpgradeType) const
 {
-    return Broodwar->getPlayer(playerId)->getUpgradeLevel(((BwapiUpgradeType*)pUpgradeType)->GetBwapiUpgradeType());
+    return PLAYER(playerId)->getUpgradeLevel(((BwapiUpgradeType*)pUpgradeType)->GetBwapiUpgradeType());
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerMaxUpgradeLevel(_In_ TID playerId, const IGameUpgradeType* pUpgradeType) const
 {
-    return Broodwar->getPlayer(playerId)->getMaxUpgradeLevel(((BwapiUpgradeType*)pUpgradeType)->GetBwapiUpgradeType());
+    return PLAYER(playerId)->getMaxUpgradeLevel(((BwapiUpgradeType*)pUpgradeType)->GetBwapiUpgradeType());
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::PlayerIsResearchAvailable(_In_ TID playerId, const IGameTechType* pTechType) const
 {
-    return Broodwar->getPlayer(playerId)->isResearchAvailable(((BwapiTechType*)pTechType)->GetBwapiTechType());
+    return PLAYER(playerId)->isResearchAvailable(((BwapiTechType*)pTechType)->GetBwapiTechType());
 }
 //////////////////////////////////////////////////////////////////////////
 bool BwapiGame::PlayerIsNeutral(_In_ TID playerId) const
 {
-    return Broodwar->getPlayer(playerId)->isNeutral();
+    //if (Broodwar->self()->getID() != playerId &&
+    //    Broodwar->enemy()->getID() != playerId)
+    //    return true;
+
+    //return false;
+
+    return PLAYER(playerId)->isNeutral();
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 BwapiGame::UnitTilePosition(_In_ TID unitId) const
@@ -756,10 +771,10 @@ const IGameUpgradeType* BwapiGame::GetUpgradeTypeByName(_In_ const char* pName) 
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::PlayerCompletedUnitCount(_In_ TID playerId, const IGameUnitType* pUnitType) const
 {
-    return Broodwar->getPlayer(playerId)->completedUnitCount(((BwapiUnitType*)pUnitType)->GetBwapiUnitType());
+    return PLAYER(playerId)->completedUnitCount(((BwapiUnitType*)pUnitType)->GetBwapiUnitType());
 }
 //////////////////////////////////////////////////////////////////////////
-bool BwapiGame::UnitTargetInWeaponRage(_In_ TID unitId, _In_ TID targetId) const 
+bool BwapiGame::UnitTargetInWeaponRage(_In_ TID unitId, _In_ TID targetId) const
 {
     return Broodwar->getUnit(unitId)->isInWeaponRange(Broodwar->getUnit(targetId));
 }

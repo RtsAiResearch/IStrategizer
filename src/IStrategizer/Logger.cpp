@@ -62,6 +62,7 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
 
 void Logger::InitLogFile()
 {
+#ifdef ENABLE_LOG
     if (!m_isLogFileInitialized)
     {
         m_pen.open(LOG_FILENAME, ios::out);
@@ -69,6 +70,7 @@ void Logger::InitLogFile()
         if (m_pen.is_open())
             m_isLogFileInitialized = true;
     }
+#endif // LOG_ENABLED
 }
 
 void Logger::FinalizeLogFile()

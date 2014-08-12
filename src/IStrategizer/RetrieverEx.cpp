@@ -222,12 +222,11 @@ CaseEx* RetrieverEx::Retrieve(const AbstractRetriever::RetrieveOptions& options)
     }
 
     CaseEx* bestCase = caseRelevanceTable.begin()->second;
-    float bestCasePerformance = (float)bestCase->SuccessCount() / (float)bestCase->TrialCount();
 
     LogInfo("Retrieved case '%s' for goal %s with performance=%f",
         bestCase->Goal()->ToString().c_str(),
         goalDesc.c_str(),
-        bestCasePerformance);
+        (float)bestCase->SuccessCount() / (float)bestCase->TrialCount());
 
     return bestCase;
 }

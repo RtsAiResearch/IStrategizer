@@ -129,7 +129,9 @@ int GameEntity::P(EntityObjectProperty attrId) const
     // 2- Unit belongs to neutral and game frame is 0
     // 3- Unit is about to hide and this frame is marked as cache frame
     bool isVisible = g_GameImpl->UnitIsVisible(m_id);
-    bool isNeutralAtFrame0 = g_GameImpl->PlayerIsNeutral(g_GameImpl->UnitPlayer(m_id)) && g_Game->GameFrame() == 0;
+    int frame = g_Game->GameFrame();
+    TID unitPlayerId = g_GameImpl->UnitPlayer(m_id);
+    bool isNeutralAtFrame0 = g_GameImpl->PlayerIsNeutral(unitPlayerId) && frame == 0;
     bool isCacheFrame = (int)g_Game->GameFrame() == m_cacheFrame;
 
     if (m_isOnline &&

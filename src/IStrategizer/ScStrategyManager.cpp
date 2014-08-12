@@ -11,6 +11,7 @@
 #include "ArmyFSM.h"
 #include "IStrategizerEx.h"
 #include "ScEntityFSM.h"
+#include "WorldMap.h"
 
 using namespace IStrategizer;
 
@@ -42,8 +43,17 @@ void ScStrategyManager::SelectGameOpening()
     LogActivity(SelectGameOpening);
     Strategy openingStrategy;
 
-    openingStrategy.Id = STRATEGY_TvR_MarineRush;
-    openingStrategy.Name = STRATEGYNAME_TvR_MarineRush;
+    if (g_Game->Map()->Area() <= (64 * 64))
+    {
+        openingStrategy.Id = STRATEGY_TvR_MarineRush;
+        openingStrategy.Name = STRATEGYNAME_TvR_MarineRush;
+    }
+    else
+    {
+
+        openingStrategy.Id = STRATEGY_TvT_2FactVultMines;
+        openingStrategy.Name = STRATEGYNAME_TvT_2FactVultMines;
+    }
 
     AbstractRetriever::RetrieveOptions opt;
     opt.CaseName = openingStrategy.Name;
@@ -115,7 +125,7 @@ bool ScStrategyManager::IsArmyGoodToPush()
     {
         return cMarines > 3;
     }
-    
+
     DEBUG_THROW(NotImplementedException(XcptHere));
 }
 //////////////////////////////////////////////////////////////////////////

@@ -365,8 +365,7 @@ void HintNRunEntityFSM::CheckTransitions()
         {
             PopState();
         }
-        else if ((pController->Entity()->P(OP_IsBeingHit) &&
-            pController->Entity()->HitpointsPercentage() < EntityController::HealthyHpPercent) ||
+        else if (pController->Entity()->P(OP_IsBeingHit) ||
             pController->IsCloseToMeleeAttacker())
         {
             PushState(RetreatEntityState::TypeID);

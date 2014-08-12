@@ -36,7 +36,7 @@ namespace IStrategizer
 
 #define g_Logger IStrategizer::Logger::Instance()
 
-#define ENABLE_LOG
+// #define ENABLE_LOG
 
 #if defined(_DEBUG)
 #define ENABLE_LOG
