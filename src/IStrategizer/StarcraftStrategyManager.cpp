@@ -23,6 +23,8 @@ void StarcraftStrategyManager::Init()
     m_pIonThrusters = g_GameImpl->GetUpgradeTypeByName("Ion_Thrusters");
     m_pTankSiegeMode = g_GameImpl->GetTechTypeByName("Tank_Siege_Mode");
 
+    m_selfId = g_GameImpl->SelfPlayer();
+
     FindEnemyRace();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -83,20 +85,20 @@ bool StarcraftStrategyManager::IsArmyGoodToPush()
             return cMarines > 3 &&
             cTanks > 0 &&
             cVults > 0 &&
-            g_GameImpl->PlayerHasResearched(PLAYER_Self, m_pSpiderMines);
+            g_GameImpl->PlayerHasResearched(m_selfId, m_pSpiderMines);
         else
             return cTanks > 2 &&
             cVults > 3 &&
-            g_GameImpl->PlayerHasResearched(PLAYER_Self, m_pTankSiegeMode) &&
-            g_GameImpl->PlayerHasResearched(PLAYER_Self, m_pSpiderMines);
+            g_GameImpl->PlayerHasResearched(m_selfId, m_pTankSiegeMode) &&
+            g_GameImpl->PlayerHasResearched(m_selfId, m_pSpiderMines);
 
     }
     else if (m_currStrategy.Id == STRATEGY_TvT_2FactVultMines)
     {
         return cVults > 6 &&
-            g_GameImpl->PlayerHasResearched(PLAYER_Self, m_pSpiderMines);
+            g_GameImpl->PlayerHasResearched(m_selfId, m_pSpiderMines);
     }
-
+    
     DEBUG_THROW(NotImplementedException(XcptHere));
 }
 //////////////////////////////////////////////////////////////////////////

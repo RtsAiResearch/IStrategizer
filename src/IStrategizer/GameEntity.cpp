@@ -220,6 +220,9 @@ int GameEntity::P(EntityObjectProperty attrId) const
         case OP_IsTargetable:
             return g_GameImpl->UnitIsVisible(m_id) && g_GameImpl->UnitIsDetected(m_id) && g_GameImpl->UnitIsTargetable(m_id);
 
+        case OP_IsTraining:
+            return g_GameImpl->UnitIsTraining(m_id);
+
         default:
             DEBUG_THROW(InvalidParameterException(XcptHere));
         }
@@ -331,8 +334,7 @@ bool GameEntity::Build(EntityClassType typeId, Vector2 pos)
         g_GameImpl->DebugDrawUnitBuildBox(pUnitType, tilePos, (bOk ? GCLR_Blue : GCLR_Purple));
     }
 
-    if (!bOk)
-        DebugDrawMapLastGameError();
+    DebugDrawMapLastGameError();
 
     return bOk;
 };
@@ -383,8 +385,7 @@ bool GameEntity::Research(ResearchType researchId)
         bOk = g_GameImpl->UnitUpgrade(m_id, g_GameImpl->GetUpgradeTypeByEngineId(researchId));
     }
 
-    if (!bOk)
-        DebugDrawMapLastGameError();
+    DebugDrawMapLastGameError();
 
     return bOk;
 }
@@ -455,15 +456,11 @@ bool GameEntity::Train(EntityClassType p_entityClassId)
     auto pUnitType = g_GameImpl->GetUnitTypeByEngineId(p_entityClassId);
     LogInfo("%s -> Train(Trainee=%s)", ToString().c_str(), pUnitType->ToString());
 
-    if (g_GameImpl->UnitTrain(m_id, pUnitType))
-    {
-        return true;
-    }
-    else
-    {
-        DebugDrawMapLastGameError();
-        return false;
-    }
+    bool bOk = g_GameImpl->UnitTrain(m_id, pUnitType);
+
+    DebugDrawMapLastGameError();
+
+    return bOk;
 };
 //////////////////////////////////////////////////////////////////////////
 bool GameEntity::Move(Vector2 targetPos)
@@ -591,7 +588,7 @@ void GameEntity::DebugDrawMapLastGameError()
 
     char buff[128];
     g_GameImpl->LastError(buff, 128);
-    LogInfo("Game Error: %s", buff);
+    LogInfo("Game Last Error: %s", buff);
 }
 //////////////////////////////////////////////////////////////////////////
 bool GameEntity::CanRepair(TID entityId) const

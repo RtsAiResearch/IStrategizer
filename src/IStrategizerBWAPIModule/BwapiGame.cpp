@@ -44,7 +44,7 @@ void BwapiGame::DebugDrawMapLastGameError(_In_ TID unitId) const
 
     Broodwar->registerEvent([unitPos, lastErr](Game*){ Broodwar->drawTextMap(unitPos, "%c%s", Text::Red, lastErr.c_str()); },   // action
         nullptr,    // condition
-        Broodwar->getLatencyFrames());  // frames to run
+        100);  // frames to run
 }
 //////////////////////////////////////////////////////////////////////////
 void BwapiGame::DebugDrawUnitBuildBox(_In_ const IGameUnitType* pUnitType, _In_ Vector2 pos, _In_ GameDrawColor c) const
@@ -296,9 +296,9 @@ int BwapiGame::MapHeight() const
     return Broodwar->mapHeight();
 }
 //////////////////////////////////////////////////////////////////////////
-SmartPtr< ArrayList<Vector2> > BwapiGame::GetStartLocations()
+SmartPtr< ArrayList<Vector2> > BwapiGame::GetStartLocations() const
 {
-    auto bwapiLocations = Broodwar->getStartLocations();
+    auto& bwapiLocations = Broodwar->getStartLocations();
     auto locations = SmartPtr< ArrayList<Vector2> >(ArrayList<Vector2>::New(bwapiLocations.size()));
     int count = 0;
 
@@ -310,6 +310,21 @@ SmartPtr< ArrayList<Vector2> > BwapiGame::GetStartLocations()
     }
 
     return locations;
+}
+//////////////////////////////////////////////////////////////////////////
+SmartPtr< ArrayList<TID> > BwapiGame::MapUnitsOnTile(_In_ Vector2 loc) const
+{
+    auto unitsOnTile = Broodwar->getUnitsOnTile(loc.X, loc.Y);
+    auto pUnits = SmartPtr< ArrayList<TID> >(ArrayList<TID>::New(unitsOnTile.size()));
+    int count = 0;
+
+    for each (auto pUnit in unitsOnTile)
+    {
+        pUnits->At(count) = pUnit->getID();
+        ++count;
+    }
+
+    return pUnits;
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 BwapiGame::MapGetClosestReachableRegionCenter(_In_ TID entityId) const

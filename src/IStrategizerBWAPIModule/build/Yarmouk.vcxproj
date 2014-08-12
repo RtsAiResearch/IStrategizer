@@ -66,8 +66,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(OutDir)*.dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>
-      <Message>Copy binaries to SC</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

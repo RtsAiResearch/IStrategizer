@@ -220,6 +220,36 @@ bool OccupanceDataIM::CanBuildHere(Vector2 p_worldPos, int p_buildingWidth, int 
         g_Game->Map()->CanBuildHere(p_worldPos, p_buildingType);
 }
 //////////////////////////////////////////////////////////////////////////
+bool OccupanceDataIM::BuildingExpansionOccupancePredicate(unsigned worldX, unsigned worldY, TCell* pCell, void *pParam)
+{
+    bool stopSearch = false;
+
+    _ASSERTE(pParam);
+    pair<TID, bool>* p = (pair<TID, bool>*)pParam;
+
+    bool isTileBuilderBelonging = g_Game->Map()->IsUnitOnlyOnTileOrFree(Vector2(worldX, worldY), p->first);
+
+    if (!isTileBuilderBelonging)
+    {
+        stopSearch = true;
+        p->second = false;
+    }
+
+    return stopSearch;
+}
+//////////////////////////////////////////////////////////////////////////
+bool OccupanceDataIM::CanBuildExpansion(GameEntity* pBuilding)
+{
+    pair<TID, bool> p = { pBuilding->Id(), true };
+
+    auto width = pBuilding->Type()->P(TP_Width) + pBuilding->Type()->P(TP_BuildingExpansionIncrement);
+    auto height = pBuilding->Type()->P(TP_Height);
+
+    ForEachCellInArea(Vector2(pBuilding->P(OP_Left), pBuilding->P(OP_Top)), width, height, BuildingExpansionOccupancePredicate, &p);
+
+    return p.second;
+}
+//////////////////////////////////////////////////////////////////////////
 void OccupanceDataIM::RegisterGameObj(TID objId, PlayerType ownerId)
 {
     if (m_registeredObjects.count(objId) == 0)

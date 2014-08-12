@@ -33,6 +33,7 @@ namespace IStrategizer
         OP_IsRepairing,
         OP_BuildEntityId,
         OP_IsTargetable,
+        OP_IsTraining,
         OP_END
     };
 #define Define_EntityObjectProperty \
@@ -57,6 +58,8 @@ namespace IStrategizer
     Enums[OP_IsRepairing] = "Is Repairing"; \
     Enums[OP_BuildEntityId] = "Build Entity ID"; \
     Enums[OP_IsTargetable] = "Is Targetable"; \
+    Enums[OP_IsTraining] = "Is Training"; \
+    
     //---------------------------------------------------------------------------
 #define Prefix_EntityTypeProperty TP
     enum EntityTypeProperty
@@ -86,6 +89,7 @@ namespace IStrategizer
         TP_BuildingExpansionIncrement,
         TP_IsResoureDepot,
         TP_IsSupporter,
+        TP_IsBuildingExpansion,
 		TP_END
 	};
 #define Define_EntityTypeProperty \
@@ -112,8 +116,9 @@ namespace IStrategizer
     Enums[TP_CanBuildingExpand] = "CanBuildingExpand"; \
     Enums[TP_BuildingExpansionIncrement] = "BuildingExpansionIncrement"; \
     Enums[TP_IsResoureDepot] = "Is Resoure Depot"; \
-    Enums[TP_IsSupporter] = "Is Supporter";
-    
+    Enums[TP_IsSupporter] = "Is Supporter"; \
+    Enums[TP_IsBuildingExpansion] = "Is Building Expansion";
+
     //---------------------------------------------------------------------------
 #define Prefix_PlayerAttribute PATTR
     enum PlayerAttribute

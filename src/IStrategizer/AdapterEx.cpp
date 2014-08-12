@@ -72,6 +72,52 @@ bool AdapterEx::BuildPositionSearchPredicate(unsigned worldX, unsigned worldY, c
     return isFree;
 }
 //////////////////////////////////////////////////////////////////////////
+pair<TID, MapArea> AdapterEx::AdaptBuilderAndPosition(EntityClassType buildingType, bool requestFromOwner)
+{
+    GameType* pType = g_Game->GetEntityType(buildingType);
+
+    if (pType->P(TP_IsBuildingExpansion))
+    {
+        auto builderType = g_Game->GetEntityType(buildingType)->GetBuilderType();
+
+        // resourceType in the future can be used such that the ranking differ from primary to secondary gatherer
+        EntityList ladder;
+        StackRankEntitiesOfType(PLAYER_Self, builderType, BuilderStatesRank, ladder);
+
+        for (auto currBuilderId : ladder)
+        {
+            auto pBuilder = g_Game->Self()->GetEntity(currBuilderId);
+            Vector2 builderPos = pBuilder->Position();
+
+            auto pTypeImpl = g_GameImpl->GetUnitTypeByEngineId(buildingType);
+
+            if (g_GameImpl->UnitCanBuildAddOn(currBuilderId, pTypeImpl))
+            {
+                OccupanceDataIM *pBuildingIM = (OccupanceDataIM*)g_IMSysMgr.GetIM(IM_BuildingData);
+
+                if (pBuildingIM->CanBuildExpansion(pBuilder))
+                    return make_pair(currBuilderId, MapArea::Null());
+            }
+        }
+    }
+    else
+    {
+        auto buildArea = AdaptPositionForBuilding(buildingType);
+
+        if (!buildArea.IsNull())
+        {
+            auto builderId = AdaptBuilder(buildingType, requestFromOwner);
+
+            if (builderId != INVALID_TID)
+            {
+                return make_pair(builderId, buildArea);
+            }
+        }
+    }
+
+    return make_pair(INVALID_TID, MapArea::Null());
+}
+//////////////////////////////////////////////////////////////////////////
 MapArea AdapterEx::AdaptPositionForBuilding(EntityClassType buildingType)
 {
     if (!g_Game->GetEntityType(buildingType)->P(TP_IsSpecialBuilding))

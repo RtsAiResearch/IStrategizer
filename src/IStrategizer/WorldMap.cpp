@@ -262,10 +262,10 @@ bool WorldMap::CanBuildHere(Vector2 pos, EntityClassType buildingType) const
 
     auto pUnitType = g_GameImpl->GetUnitTypeByEngineId(buildingType);
 
-    if (pUnitType->IsAddon())
-    {
-        pUnitType = pUnitType->WhatBuilds();
-    }
+    //if (pUnitType->IsAddon())
+    //{
+    //    pUnitType = pUnitType->WhatBuilds();
+    //}
 
     return g_GameImpl->MapCanBuildHere(TilePositionFromUnitPosition(pos), pUnitType) &&
         g_GameImpl->MapIsExplored(TilePositionFromUnitPosition(pos));
@@ -306,4 +306,22 @@ void WorldMap::DebugDraw()
 Vector2 WorldMap::GetClosestReachableRegionCenter(_In_ TID entityId) const
 {
     return g_GameImpl->MapGetClosestReachableRegionCenter(entityId);
+}
+//////////////////////////////////////////////////////////////////////////
+bool WorldMap::IsUnitOnlyOnTileOrFree(_In_ Vector2 pos, _In_ TID entityId) const
+{
+    auto pUnits = g_GameImpl->MapUnitsOnTile(TilePositionFromUnitPosition(pos));
+
+    if (pUnits->Size() == 0)
+        return false;
+    else
+    {
+        for (int i = 0; i < pUnits->Size(); ++i)
+        {
+            if (pUnits->At(i) != entityId)
+                return false;
+        }
+
+        return true;
+    }
 }
