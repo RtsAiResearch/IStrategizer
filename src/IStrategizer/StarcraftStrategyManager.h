@@ -67,6 +67,7 @@ namespace IStrategizer
         const IGameTechType* m_pTankSiegeMode;
 
         ScRace m_enemyRace;
+        TID m_selfId;
     };
 }
 

@@ -41,6 +41,7 @@ namespace IStrategizer
         virtual bool IsLocationExplored(Vector2 loc) const;
         virtual Vector2 GetClosestReachableRegionCenter(_In_ TID entityId) const;
         virtual void DebugDraw();
+        bool IsUnitOnlyOnTileOrFree(_In_ Vector2 pos, _In_ TID entityId) const;
 
     protected:
         CellFeature** m_cellFeatureMatrix;

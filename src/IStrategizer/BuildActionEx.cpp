@@ -213,10 +213,16 @@ bool BuildActionEx::Execute(RtsGame& game, const WorldClock& p_clock)
     AbstractAdapter *pAdapter = g_OnlineCaseBasedPlanner->Reasoner()->Adapter();
     bool bOk = false;
 
+    //// Adapt builder
+    //_builderId = pAdapter->AdaptBuilder(buildingType, true);
+    //// Adapt build position
+    //_buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
+
     // Adapt builder
-    _builderId = pAdapter->AdaptBuilder(buildingType, true);
     // Adapt build position
-    _buildArea = pAdapter->AdaptPositionForBuilding(buildingType);
+    auto adaptedParams = pAdapter->AdaptBuilderAndPosition(buildingType, true);
+    _builderId = adaptedParams.first;
+    _buildArea = adaptedParams.second;
 
     if (_builderId != INVALID_TID)
     {

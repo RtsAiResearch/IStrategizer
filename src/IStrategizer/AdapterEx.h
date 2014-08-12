@@ -45,7 +45,8 @@ namespace IStrategizer
         Vector2 AdaptPosition(const PlanStepParameters& p_parameters);
         Vector2 AdaptEnemyBorder();
 		TID AdaptWorkerForGather(ResourceType resourceType, bool immediate);
-        TID AdaptBuilder(EntityClassType buildingType, bool requestFromOwner = false);
+        TID AdaptBuilder(EntityClassType buildingType, bool requestFromOwner);
+        std::pair<TID, MapArea> AdaptBuilderAndPosition(EntityClassType buildingType, bool requestFromOwner);
 
         static RankedStates BuilderStatesRank;
 		static RankedStates AttackerStatesRank;

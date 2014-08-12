@@ -69,7 +69,7 @@ namespace IStrategizer
 
         virtual int MapHeight() const;
 
-        virtual SmartPtr< ArrayList<Vector2> > GetStartLocations();
+        virtual SmartPtr< ArrayList<Vector2> > GetStartLocations() const;
 
         virtual Vector2 MapGetClosestReachableRegionCenter(_In_ TID entityId) const;
 
@@ -80,6 +80,8 @@ namespace IStrategizer
         virtual bool MapCanBuildHere(_In_ Vector2 loc, const IGameUnitType* pUnitType);
 
         virtual int MapTileSize() const;
+
+        virtual SmartPtr< ArrayList<TID> > MapUnitsOnTile(_In_ Vector2 loc) const;
 
         virtual GameUnitListPtr MapGasFields() const;
 
