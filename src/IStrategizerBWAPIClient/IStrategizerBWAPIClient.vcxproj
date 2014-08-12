@@ -50,10 +50,12 @@
       <AdditionalOptions>/ignore:4099 </AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y &amp; xcopy $(SolutionDir)..\engine\$(PlatformName)Debug\*.dll $(OutDir)*.dll /e /y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copying engine assets</Message>
+      <Message>
+      </Message>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -64,12 +66,10 @@
       </Message>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy $(SolutionDir)..\assets\*.* $(OutDir) /e /y &amp; xcopy $(SolutionDir)..\engine\$(PlatformName)Debug\*.dll $(OutDir)*.dll /e /y</Command>
     </PreBuildEvent>
     <PreBuildEvent>
-      <Message>
-      </Message>
+      <Message>Copying engine assets</Message>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>

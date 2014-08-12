@@ -255,7 +255,8 @@ void IStrategizerEx::ReviseSituation()
 
     for (auto& entityR : g_Game->Enemy()->Entities())
     {
-        if (entityR.second->P(OP_IsVisible) &&
+        if (entityR.second->Exists() &&
+            entityR.second->P(OP_IsVisible) &&
             m_borders.IsInside(entityR.second->Position()))
         {
             enemyInBorder = true;
