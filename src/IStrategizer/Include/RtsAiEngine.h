@@ -141,6 +141,7 @@ namespace IStrategizer
         virtual GameWeaponType GroundWeapon() const = 0;
         virtual GameWeaponType AirWeapon() const = 0;
         virtual const char* ToString() const = 0;
+        virtual bool CanMove() const = 0;
     };
 
     class IGameTechType
@@ -217,7 +218,7 @@ namespace IStrategizer
         virtual int MapWidth() const = 0;
         virtual int MapHeight() const = 0;
         virtual SmartPtr< ArrayList<Vector2> > GetStartLocations() const = 0;
-        virtual Vector2 MapGetClosestReachableRegionCenter(_In_ TID entityId) const = 0;
+        virtual Vector2 MapGetRegionCenter(_In_ TID entityId) const = 0;
         virtual bool MapIsExplored(_In_ Vector2 loc) const = 0;
         virtual bool MapIsBuildable(_In_ Vector2 loc, _In_ bool checkCanBuild) const = 0;
         virtual bool MapCanBuildHere(_In_ Vector2 loc, const IGameUnitType* pUnitType) = 0;
@@ -304,6 +305,7 @@ namespace IStrategizer
         virtual bool UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUnitType) const = 0;
         virtual bool UnitCanUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const = 0;
         virtual bool UnitUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const = 0;
+        virtual bool UnitIsPlantingMine(_In_ TID unitId) const = 0;
     };
 
     struct EngineParams

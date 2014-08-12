@@ -342,7 +342,7 @@ SmartPtr< ArrayList<TID> > BwapiGame::MapUnitsInRegion(_In_ Vector2 loc) const
     return pUnits;
 }
 //////////////////////////////////////////////////////////////////////////
-Vector2 BwapiGame::MapGetClosestReachableRegionCenter(_In_ TID entityId) const
+Vector2 BwapiGame::MapGetRegionCenter(_In_ TID entityId) const
 {
     auto pUnit = Broodwar->getUnit(entityId);
     if (pUnit == nullptr)
@@ -772,4 +772,9 @@ bool BwapiGame::UnitCanUseTechPosition(_In_ TID unitId, _In_ const IGameTechType
 bool BwapiGame::UnitUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const
 {
     return Broodwar->getUnit(unitId)->useTech(((BwapiTechType*)pTechType)->GetBwapiTechType(), Position(pos.X, pos.Y));
+}
+//////////////////////////////////////////////////////////////////////////
+bool BwapiGame::UnitIsPlantingMine(_In_ TID unitId) const
+{
+    return Broodwar->getUnit(unitId)->getOrder() == Orders::VultureMine;
 }

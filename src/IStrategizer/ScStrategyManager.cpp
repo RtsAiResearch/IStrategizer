@@ -10,7 +10,7 @@
 #include "EntityFSM.h"
 #include "ArmyFSM.h"
 #include "IStrategizerEx.h"
-#include "ScFSM.h"
+#include "ScEntityFSM.h"
 
 using namespace IStrategizer;
 

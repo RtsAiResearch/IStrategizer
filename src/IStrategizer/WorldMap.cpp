@@ -305,7 +305,7 @@ void WorldMap::DebugDraw()
 //////////////////////////////////////////////////////////////////////////
 Vector2 WorldMap::GetClosestReachableRegionCenter(_In_ TID entityId) const
 {
-    return g_GameImpl->MapGetClosestReachableRegionCenter(entityId);
+    return g_GameImpl->MapGetRegionCenter(entityId);
 }
 //////////////////////////////////////////////////////////////////////////
 bool WorldMap::IsUnitOnlyOnTileOrFree(_In_ Vector2 pos, _In_ TID entityId) const

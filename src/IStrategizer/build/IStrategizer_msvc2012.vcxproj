@@ -66,7 +66,7 @@
     <ClInclude Include="..\Include\TypesMetaData.h" />
     <ClInclude Include="..\Include\Vector2.h" />
     <ClInclude Include="..\ResearcherExist.h" />
-    <ClInclude Include="..\ScFSM.h" />
+    <ClInclude Include="..\ScEntityFSM.h" />
     <ClInclude Include="..\ScoutManager.h" />
     <ClInclude Include="..\NodeSelectionStrategy.h" />
     <ClInclude Include="..\DeployArmyGoal.h" />

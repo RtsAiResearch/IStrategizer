@@ -71,7 +71,7 @@ namespace IStrategizer
 
         virtual SmartPtr< ArrayList<Vector2> > GetStartLocations() const;
 
-        virtual Vector2 MapGetClosestReachableRegionCenter(_In_ TID entityId) const;
+        virtual Vector2 MapGetRegionCenter(_In_ TID entityId) const;
 
         virtual bool MapIsExplored(_In_ Vector2 loc) const;
 
@@ -224,6 +224,8 @@ namespace IStrategizer
         bool UnitCanUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const;
 
         bool UnitUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const;
+
+        bool UnitIsPlantingMine(_In_ TID unitId) const;
 
     private:
         const char** m_pEngineIdsName;

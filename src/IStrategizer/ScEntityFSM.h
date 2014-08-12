@@ -17,6 +17,9 @@ namespace IStrategizer
             EntityState(TypeID, "PlantSpiderMines", pController)
         {}
 
+        static bool IsMineOnTile(_In_ TID entityId);
+        static int MinesCountInRegion(_In_ Vector2 pos);
+
         void Enter();
 
     private:

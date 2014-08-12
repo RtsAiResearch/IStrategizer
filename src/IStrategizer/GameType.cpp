@@ -39,6 +39,7 @@ void GameType::Init()
     P(TP_IsResoureDepot, m_pUnitType->IsResourceDepot());
     P(TP_IsSupporter, !m_pUnitType->IsWorker() && !m_pUnitType->IsBuilding() && !m_pUnitType->CanAttack());
     P(TP_IsBuildingExpansion, m_pUnitType->IsAddon());
+    P(TP_CanMove, m_pUnitType->CanMove());
 
     if (m_pUnitType->CanBuildAddOn())
         P(TP_BuildingExpansionIncrement, 64);

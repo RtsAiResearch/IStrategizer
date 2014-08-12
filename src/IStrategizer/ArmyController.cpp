@@ -458,7 +458,8 @@ bool ArmyController::CanControl(_In_ const GameEntity* pEntity)
         pEntity->P(OP_State) != OBJSTATE_BeingConstructed &&
         !pEntity->IsLocked() &&
         ((m_controlWorkers && pEntityType->P(TP_IsWorker)) || (!m_controlWorkers && !pEntityType->P(TP_IsWorker))) &&
-        ((m_controlBroken && isBroken) || (!m_controlBroken && !isBroken));
+        ((m_controlBroken && isBroken) || (!m_controlBroken && !isBroken)) &&
+        pEntityType->P(TP_CanMove);
 }
 //////////////////////////////////////////////////////////////////////////
 bool ArmyController::TryControlEntity(_In_ TID entityId)

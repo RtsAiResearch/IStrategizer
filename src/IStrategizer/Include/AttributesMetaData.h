@@ -90,6 +90,7 @@ namespace IStrategizer
         TP_IsResoureDepot,
         TP_IsSupporter,
         TP_IsBuildingExpansion,
+        TP_CanMove,
 		TP_END
 	};
 #define Define_EntityTypeProperty \
@@ -117,7 +118,8 @@ namespace IStrategizer
     Enums[TP_BuildingExpansionIncrement] = "BuildingExpansionIncrement"; \
     Enums[TP_IsResoureDepot] = "Is Resoure Depot"; \
     Enums[TP_IsSupporter] = "Is Supporter"; \
-    Enums[TP_IsBuildingExpansion] = "Is Building Expansion";
+    Enums[TP_IsBuildingExpansion] = "Is Building Expansion"; \
+    Enums[TP_CanMove] = "Can Move";
 
     //---------------------------------------------------------------------------
 #define Prefix_PlayerAttribute PATTR

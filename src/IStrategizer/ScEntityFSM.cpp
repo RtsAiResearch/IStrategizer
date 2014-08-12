@@ -1,19 +1,33 @@
-#include "ScFSM.h"
+#include "ScEntityFSM.h"
 #include "EntityController.h"
 #include "GameEntity.h"
 #include "RtsGame.h"
 #include "ScStrategyManager.h"
+#include "WorldMap.h"
 
 using namespace IStrategizer;
 using namespace std;
 
-void PlantSpiderMinesState::Enter()
+int PlantSpiderMinesState::MinesCountInRegion(_In_ Vector2 pos)
 {
-    EntityState::Enter();
+    auto pTileUnits = g_GameImpl->MapUnitsInRegion(TilePositionFromUnitPosition(pos));
 
-    auto pController = (EntityController*)m_pController;
+    int count = 0;
 
-    auto pTileUnits = g_GameImpl->MapUnitsOnTile(pController->Entity()->Position());
+    for (int i = 0; i < pTileUnits->Size(); ++i)
+    {
+        if (g_GameImpl->UnitGetType(pTileUnits->At(i))->GameId() == ScStrategyManager::SpiderMine->GameId())
+        {
+            ++count;
+        }
+    }
+
+    return count;
+}
+//////////////////////////////////////////////////////////////////////////
+bool PlantSpiderMinesState::IsMineOnTile(_In_ TID entityId)
+{
+    auto pTileUnits = g_GameImpl->MapUnitsOnTile(TilePositionFromUnitPosition(g_GameImpl->UnitPosition(entityId)));
 
     bool anyMineOnTile = false;
 
@@ -26,13 +40,34 @@ void PlantSpiderMinesState::Enter()
         }
     }
 
+    return anyMineOnTile;
+}
+//////////////////////////////////////////////////////////////////////////
+void PlantSpiderMinesState::Enter()
+{
+    EntityState::Enter();
+
+    auto pController = (EntityController*)m_pController;
+    Vector2 minePos;
+    
+    if (pController->TargetEntity() != INVALID_TID)
+        minePos = g_GameImpl->UnitPosition(pController->TargetEntity());
+    else
+    {
+        _ASSERTE(pController->TargetPosition() != Vector2::Inf());
+        minePos = Circle2(pController->TargetPosition(), 64).RandomInside();
+    }
+
     if (g_GameImpl->UnitCanUseTechPosition(pController->EntityId(),
         ScStrategyManager::SpiderMine,
-        g_GameImpl->UnitTilePosition(pController->EntityId())))
+        minePos))
     {
-        g_GameImpl->UnitUseTechPosition(pController->EntityId(),
+        if (g_GameImpl->UnitUseTechPosition(pController->EntityId(),
             ScStrategyManager::SpiderMine,
-            g_GameImpl->UnitTilePosition(pController->EntityId()));
+            minePos))
+        {
+            LogInfo("%s is planting mine at %s", pController->Entity()->ToString().c_str(), minePos.ToString().c_str());
+        }
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -68,6 +103,11 @@ void VultureHintNRunEntityFSM::CheckTransitions()
         {
             PushState(RetreatEntityState::TypeID);
         }
+        else if (g_GameImpl->GameFrame() % 25 == 0 &&
+            PlantSpiderMinesState::IsMineOnTile(pController->TargetEntity()))
+        {
+            PushState(PlantSpiderMinesState::TypeID);
+        }
         break;
     case RetreatEntityState::TypeID:
         if (pController->Attacker() == INVALID_TID &&
@@ -82,17 +122,21 @@ void VultureHintNRunEntityFSM::CheckTransitions()
             PopState();
             PushState(FleeEntityState::TypeID);
         }
-        else if (pController->TargetEntity() == INVALID_TID)
-        {
-            PushState(PlantSpiderMinesState::TypeID);
-        }
         else if (pController->TargetEntity() != INVALID_TID)
         {
             PushState(AttackEntityState::TypeID);
         }
+        else if (g_GameImpl->GameFrame() % 50 == 0 &&
+            PlantSpiderMinesState::MinesCountInRegion(pController->TargetPosition()) < 4)
+        {
+            PushState(PlantSpiderMinesState::TypeID);
+        }
         break;
     case PlantSpiderMinesState::TypeID:
-        PopState();
+        if (!g_GameImpl->UnitIsPlantingMine(pController->EntityId()))
+        {
+            PopState();
+        }
         break;
     }
 }

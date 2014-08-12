@@ -474,10 +474,10 @@
     <ClInclude Include="..\ResearcherExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
-    <ClInclude Include="..\ScFSM.h">
+    <ClInclude Include="..\ScStrategyManager.h">
       <Filter>Header Files\DomainKnowledge</Filter>
     </ClInclude>
-    <ClInclude Include="..\ScStrategyManager.h">
+    <ClInclude Include="..\ScEntityFSM.h">
       <Filter>Header Files\DomainKnowledge</Filter>
     </ClInclude>
   </ItemGroup>

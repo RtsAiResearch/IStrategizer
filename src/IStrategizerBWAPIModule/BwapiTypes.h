@@ -180,6 +180,11 @@ namespace IStrategizer
             return gameWeaponType;
         }
 
+        virtual bool CanMove() const
+        {
+            return m_type.canMove() && m_type != BWAPI::UnitTypes::Terran_Vulture_Spider_Mine;
+        }
+
         virtual GameWeaponType AirWeapon() const
         {
             GameWeaponType gameWeaponType;
