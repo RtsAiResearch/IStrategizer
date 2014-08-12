@@ -10,12 +10,6 @@ using namespace std;
 using namespace BWAPI;
 using namespace IStrategizer;
 
-#ifdef AIIDE
-#define ENGINE_IO_DIR "bwapi-data\\AI\\"
-#else
-#define ENGINE_IO_DIR ".\\"
-#endif
-
 void YarmoukAIModule::onStart()
 {
     // Print the map name.
@@ -36,11 +30,6 @@ void YarmoukAIModule::onStart()
     // If you wish to deal with multiple enemies then you must use enemies().
     if (Broodwar->enemy()) // First make sure there is an enemy
         Broodwar << "The matchup is " << Broodwar->self()->getRace() << " vs " << Broodwar->enemy()->getRace() << std::endl;
-
-    InitIStrategizer();
-
-    if (m_pAiEngine)
-        m_pAiEngine->SendEngineMessage(MSG_GameStart);
 }
 
 void YarmoukAIModule::onEnd(bool isWinner)
@@ -67,6 +56,13 @@ void YarmoukAIModule::onEnd(bool isWinner)
 
 void YarmoukAIModule::onFrame()
 {
+    if (Broodwar->getFrameCount() == 0)
+    {
+        InitIStrategizer();
+
+        if (m_pAiEngine)
+            m_pAiEngine->SendEngineMessage(MSG_GameStart);
+    }
     // Called once every game frame
 
     // Display the game frame rate as text in the upper left area of the screen
@@ -97,6 +93,7 @@ void YarmoukAIModule::InitIStrategizer()
 
     try
     {
+        RtsAiSetEngineReadWriteDir(ENGINE_IO_DIR, ENGINE_IO_DIR);
         RtsAiEngineSystemInit();
 
         g_Database.Init();
@@ -121,7 +118,6 @@ void YarmoukAIModule::InitIStrategizer()
 
         m_pAiEngine = GetRtsAiEngineFactory()->CreateEngine(param, m_pGameModel);
         _ASSERTE(m_pAiEngine);
-        m_pAiEngine->SetEngineReadWriteDir(ENGINE_IO_DIR, ENGINE_IO_DIR);
 
         if (!m_pAiEngine->Init())
         {

@@ -49,3 +49,9 @@ const char** RtsAiEngineIdsName()
 {
     return Enums;
 }
+
+void RtsAiSetEngineReadWriteDir(const char* pReadPath, const char* pWritePath)
+{
+    ENGINE_IO_READ_DIR = pReadPath;
+    ENGINE_IO_WRITE_DIR = pWritePath;
+}

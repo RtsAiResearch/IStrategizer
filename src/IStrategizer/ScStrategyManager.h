@@ -12,6 +12,7 @@ namespace IStrategizer
         STRATEGY_TvP_GundamRush,
         STRATEGY_TvT_GundamRush,
         STRATEGY_TvT_2FactVultMines,
+        STRATEGY_TvR_MarineRush,
     };
 
     enum ScRace
@@ -30,6 +31,7 @@ namespace IStrategizer
 #define STRATEGYNAME_TvP_GundamRush "TvP-GundamRush"
 #define STRATEGYNAME_TvT_2FactVultMines "TvT-2FactVultMines"
 #define STRATEGYNAME_Terran_BionicPlay "Terran-BionicPlay"
+#define STRATEGYNAME_TvR_MarineRush "TvR-MarineRush"
 
     class ScStrategyManager : public StrategyManager
     {

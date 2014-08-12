@@ -3,6 +3,12 @@
 #include "BWAPI.h"
 #include "BWAPI\Client.h"
 
+#ifdef AIIDE
+#define ENGINE_IO_DIR "bwapi-data\\AI\\"
+#else
+#define ENGINE_IO_DIR ".\\"
+#endif
+
 class YarmoukAIModule : public BWAPI::AIModule
 {
 public:

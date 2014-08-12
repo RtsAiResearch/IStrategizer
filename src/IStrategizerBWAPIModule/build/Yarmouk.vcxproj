@@ -55,7 +55,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ISTRATEGIZER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ISTRATEGIZER_EXPORTS;AIIDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)IStrategizer\Include;$(BWAPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -64,6 +64,7 @@
       <AdditionalDependencies>IStrategizer.lib;BWAPId.lib;BWAPIClientd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <DelayLoadDLLs>IStrategizer.dll</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -79,7 +80,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;ISTRATEGIZER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;ISTRATEGIZER_EXPORTS;AIIDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)IStrategizer\Include;$(BWAPI_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -88,6 +89,7 @@
       <AdditionalDependencies>IStrategizer.lib;BWAPI.lib;BWAPIClient.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <SubSystem>NotSet</SubSystem>
+      <DelayLoadDLLs>IStrategizer.dll</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(OutDir)*.dll $(SolutionDir)\..\..\Starcraft\bwapi-data\AI\*.* /e /y</Command>

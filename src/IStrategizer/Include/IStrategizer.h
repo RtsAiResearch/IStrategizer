@@ -19,5 +19,6 @@ RTSAIENGINEAPI void RtsAiEngineSystemInit();
 RTSAIENGINEAPI void RtsAiEngineSystemDeinit();
 RTSAIENGINEAPI void RtsAiEngineExportGameStaticData();
 RTSAIENGINEAPI const char** RtsAiEngineIdsName();
+RTSAIENGINEAPI void RtsAiSetEngineReadWriteDir(const char* pReadPath, const char* pWritePath);
 
 #endif // ISTRATEGIZER_H

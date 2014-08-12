@@ -40,24 +40,10 @@ void ScStrategyManager::Init()
 void ScStrategyManager::SelectGameOpening()
 {
     LogActivity(SelectGameOpening);
-
     Strategy openingStrategy;
 
-    if (m_enemyRace == RACE_Terran ||
-        m_enemyRace == RACE_Zerg)
-    {
-
-        openingStrategy.Id = STRATEGY_TvT_2FactVultMines;
-        openingStrategy.Name = STRATEGYNAME_TvT_2FactVultMines;
-    }
-    else if (m_enemyRace == RACE_Protoss ||
-        m_enemyRace == RACE_Unknown)
-    {
-        /*openingStrategy.Id = STRATEGY_TvP_GundamRush;
-        openingStrategy.Name = STRATEGYNAME_TvP_GundamRush;*/
-        openingStrategy.Id = STRATEGY_TvT_2FactVultMines;
-        openingStrategy.Name = STRATEGYNAME_TvT_2FactVultMines;
-    }
+    openingStrategy.Id = STRATEGY_TvR_MarineRush;
+    openingStrategy.Name = STRATEGYNAME_TvR_MarineRush;
 
     AbstractRetriever::RetrieveOptions opt;
     opt.CaseName = openingStrategy.Name;
@@ -75,6 +61,22 @@ void ScStrategyManager::SelectGameOpening()
 void ScStrategyManager::SelectNextStrategy()
 {
     LogActivity(SelectNextStrategy);
+    Strategy openingStrategy;
+
+    openingStrategy.Id = STRATEGY_TvT_2FactVultMines;
+    openingStrategy.Name = STRATEGYNAME_TvT_2FactVultMines;
+
+    AbstractRetriever::RetrieveOptions opt;
+    opt.CaseName = openingStrategy.Name;
+
+    auto pCase = g_OnlineCaseBasedPlanner->Reasoner()->Retriever()->Retrieve(opt);
+
+    if (pCase != nullptr)
+    {
+        _ASSERTE(openingStrategy.Name == pCase->Name());
+        m_currStrategyGoalParams = pCase->Goal()->Parameters();
+        m_currStrategy = openingStrategy;
+    }
 }
 //////////////////////////////////////////////////////////////////////////
 int ScStrategyManager::Count(const IGameUnitType* pUnitType)
@@ -108,6 +110,10 @@ bool ScStrategyManager::IsArmyGoodToPush()
     {
         return cVults > 7 &&
             g_GameImpl->PlayerHasResearched(m_selfId, SpiderMine);
+    }
+    else if (m_currStrategy.Id == STRATEGY_TvR_MarineRush)
+    {
+        return cMarines > 3;
     }
     
     DEBUG_THROW(NotImplementedException(XcptHere));
