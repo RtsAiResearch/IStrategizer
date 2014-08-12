@@ -327,6 +327,21 @@ SmartPtr< ArrayList<TID> > BwapiGame::MapUnitsOnTile(_In_ Vector2 loc) const
     return pUnits;
 }
 //////////////////////////////////////////////////////////////////////////
+SmartPtr< ArrayList<TID> > BwapiGame::MapUnitsInRegion(_In_ Vector2 loc) const
+{
+    auto unitsInRegion = Broodwar->getRegionAt(loc.X, loc.Y)->getUnits();
+    auto pUnits = SmartPtr< ArrayList<TID> >(ArrayList<TID>::New(unitsInRegion.size()));
+    int count = 0;
+
+    for each (auto pUnit in unitsInRegion)
+    {
+        pUnits->At(count) = pUnit->getID();
+        ++count;
+    }
+
+    return pUnits;
+}
+//////////////////////////////////////////////////////////////////////////
 Vector2 BwapiGame::MapGetClosestReachableRegionCenter(_In_ TID entityId) const
 {
     auto pUnit = Broodwar->getUnit(entityId);
@@ -747,4 +762,14 @@ int BwapiGame::PlayerCompletedUnitCount(_In_ TID playerId, const IGameUnitType* 
 bool BwapiGame::UnitTargetInWeaponRage(_In_ TID unitId, _In_ TID targetId) const 
 {
     return Broodwar->getUnit(unitId)->isInWeaponRange(Broodwar->getUnit(targetId));
+}
+//////////////////////////////////////////////////////////////////////////
+bool BwapiGame::UnitCanUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const
+{
+    return Broodwar->getUnit(unitId)->canUseTechPosition(((BwapiTechType*)pTechType)->GetBwapiTechType(), Position(pos.X, pos.Y));
+}
+//////////////////////////////////////////////////////////////////////////
+bool BwapiGame::UnitUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const
+{
+    return Broodwar->getUnit(unitId)->useTech(((BwapiTechType*)pTechType)->GetBwapiTechType(), Position(pos.X, pos.Y));
 }

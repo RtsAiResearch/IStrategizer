@@ -226,6 +226,7 @@ namespace IStrategizer
         virtual bool MapHasPath(_In_ Vector2 srcPos, _In_ Vector2 dstPos) const = 0;
         virtual void MapDebugDraw() const = 0;
         virtual SmartPtr< ArrayList<TID> > MapUnitsOnTile(_In_ Vector2 loc) const = 0;
+        virtual SmartPtr< ArrayList<TID> > MapUnitsInRegion(_In_ Vector2 loc) const = 0;
 
         // Player APIs
         virtual const IGameRace* PlayerRace(_In_ TID playerId) const = 0;
@@ -301,6 +302,8 @@ namespace IStrategizer
         virtual bool UnitTrain(_In_ TID unitId, _In_ const IGameUnitType* pUnitType) const = 0;
         virtual bool UnitResearch(_In_ TID unitId, _In_ const IGameTechType* pUnitType) const = 0;
         virtual bool UnitUpgrade(_In_ TID unitId, _In_ const IGameUpgradeType* pUnitType) const = 0;
+        virtual bool UnitCanUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const = 0;
+        virtual bool UnitUseTechPosition(_In_ TID unitId, _In_ const IGameTechType* pTechType, _In_ Vector2 pos) const = 0;
     };
 
     struct EngineParams

@@ -66,13 +66,14 @@
     <ClInclude Include="..\Include\TypesMetaData.h" />
     <ClInclude Include="..\Include\Vector2.h" />
     <ClInclude Include="..\ResearcherExist.h" />
+    <ClInclude Include="..\ScFSM.h" />
     <ClInclude Include="..\ScoutManager.h" />
     <ClInclude Include="..\NodeSelectionStrategy.h" />
     <ClInclude Include="..\DeployArmyGoal.h" />
     <ClInclude Include="..\DeployFSMState.h" />
     <ClInclude Include="..\EngineObject.h" />
     <ClInclude Include="..\CandidateGathererExist.h" />
-    <ClInclude Include="..\StarcraftStrategyManager.h" />
+    <ClInclude Include="..\ScStrategyManager.h" />
     <ClInclude Include="..\TrainerExist.h" />
     <ClInclude Include="..\WorkersManager.h" />
     <ClInclude Include="..\StrategyManager.h" />
@@ -223,7 +224,8 @@
     <ClCompile Include="..\ResourceDescription.cpp" />
     <ClCompile Include="..\ResourceExist.cpp" />
     <ClCompile Include="..\IStrategizer.cpp" />
-    <ClCompile Include="..\StarcraftStrategyManager.cpp" />
+    <ClCompile Include="..\ScEntityFSM.cpp" />
+    <ClCompile Include="..\ScStrategyManager.cpp" />
     <ClCompile Include="..\TrainerExist.cpp" />
     <ClCompile Include="..\WorkersManager.cpp" />
     <ClCompile Include="..\RetainerEx.cpp" />
