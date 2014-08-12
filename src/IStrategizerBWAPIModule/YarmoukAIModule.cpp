@@ -30,6 +30,11 @@ void YarmoukAIModule::onStart()
     // If you wish to deal with multiple enemies then you must use enemies().
     if (Broodwar->enemy()) // First make sure there is an enemy
         Broodwar << "The matchup is " << Broodwar->self()->getRace() << " vs " << Broodwar->enemy()->getRace() << std::endl;
+
+    InitIStrategizer();
+
+    if (m_pAiEngine)
+        m_pAiEngine->SendEngineMessage(MSG_GameStart);
 }
 
 void YarmoukAIModule::onEnd(bool isWinner)
@@ -56,13 +61,6 @@ void YarmoukAIModule::onEnd(bool isWinner)
 
 void YarmoukAIModule::onFrame()
 {
-    if (Broodwar->getFrameCount() == 0)
-    {
-        InitIStrategizer();
-
-        if (m_pAiEngine)
-            m_pAiEngine->SendEngineMessage(MSG_GameStart);
-    }
     // Called once every game frame
 
     // Display the game frame rate as text in the upper left area of the screen
