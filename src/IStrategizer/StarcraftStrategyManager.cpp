@@ -44,8 +44,10 @@ void StarcraftStrategyManager::SelectGameOpening()
     else if (m_enemyRace == RACE_Protoss ||
         m_enemyRace == RACE_Unknown)
     {
-        openingStrategy.Id = STRATEGY_TvP_GundamRush;
-        openingStrategy.Name = STRATEGYNAME_TvP_GundamRush;
+        /*openingStrategy.Id = STRATEGY_TvP_GundamRush;
+        openingStrategy.Name = STRATEGYNAME_TvP_GundamRush;*/
+        openingStrategy.Id = STRATEGY_TvT_2FactVultMines;
+        openingStrategy.Name = STRATEGYNAME_TvT_2FactVultMines;
     }
 
     AbstractRetriever::RetrieveOptions opt;
