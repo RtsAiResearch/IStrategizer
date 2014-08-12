@@ -27,7 +27,7 @@ namespace IStrategizer
     template<class TNodeValue, class TNodeValueTraits = AdjListDigraphNodeValueTraits<TNodeValue>>
     class AdjListDigraph :  public Serialization::ISerializable, public IDigraph<TNodeValue>
     {
-		OBJECT_SERIALIZABLE(AdjListDigraph, &m_lastNodeId, &m_adjList);
+        OBJECT_SERIALIZABLE(AdjListDigraph, &m_lastNodeId, &m_adjList);
 
     public:
         ///> alias=NodeEntry(pair(NodeValue,NodeSerializedSet))

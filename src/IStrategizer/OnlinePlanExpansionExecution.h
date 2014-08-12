@@ -22,17 +22,17 @@ namespace IStrategizer
         typedef IOlcbpPlan::NodeValue CaseNodeValue;
         typedef IOlcbpPlan::NodeValue ClonedCaseNodeValue;
 
-		// Time is counted as number of game frames
-		const unsigned GoalSleepTime = 100;
-		const unsigned GoalMaxSleepsCount = 3;
-		const unsigned ActionSleepTime = 50;
-		const unsigned ActionMaxSleepsCount = 6;
+        // Time is counted as number of game frames
+        const unsigned GoalSleepTime = 100;
+        const unsigned GoalMaxSleepsCount = 3;
+        const unsigned ActionSleepTime = 50;
+        const unsigned ActionMaxSleepsCount = 6;
         // Every 50 frame check the current goal satisfaction
         const unsigned PlanMaintenanceWindow = 50;
         // Every 4th frame update the plan execution
         const unsigned PlanExecuteWindow = 4;
-		
-		OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx* pCbReasoner);
+        
+        OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx* pCbReasoner);
         ~OnlinePlanExpansionExecution();
 
         void Update(_In_ RtsGame& game);
@@ -84,6 +84,7 @@ namespace IStrategizer
         void MarkActionAsInactive(IOlcbpPlan::NodeID nodeId);
         void MarkActionAsActive(IOlcbpPlan::NodeID currentNode);
         void ClearPlan();
+        void CoverFailedGoals();
         bool IsPlanDone();
 
         CaseBasedReasonerEx *m_pCbReasoner;
@@ -97,6 +98,8 @@ namespace IStrategizer
         OlcbpPlanContext m_planContext;
         std::map<IOlcbpPlan::NodeID, std::set<IOlcbpPlan::NodeID>> m_activeActions;
         std::shared_ptr<NodeSelectionStrategy> m_pNodeSelector;
+        IOlcbpPlan::NodeSet m_coverGoals;
+        IOlcbpPlan::NodeSet m_backupNodes;
         bool m_inMaintenanceMode;
 
     };
