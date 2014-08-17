@@ -72,15 +72,10 @@ void YarmoukAIModule::onFrame()
     if (Broodwar->isReplay() || Broodwar->isPaused() || !Broodwar->self())
         return;
 
-    // Prevent spamming by only running our onFrame once every number of latency frames.
-    // Latency frames are the number of frames before commands are processed.
-    //if (Broodwar->getFrameCount() % Broodwar->getLatencyFrames() == 0)
-    //{
-        m_pAiEngine->Update();
-    //}
+    m_pAiEngine->Update();
 
 #ifdef _DEBUG
-    //m_pAiEngine->DebugDraw();
+    m_pAiEngine->DebugDraw();
 #endif
 
 }

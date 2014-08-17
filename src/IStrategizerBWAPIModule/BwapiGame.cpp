@@ -408,7 +408,6 @@ bool BwapiGame::MapHasPath(_In_ Vector2 srcPos, _In_ Vector2 dstPos) const
 }
 
 #define PLAYER(playerId) (playerId == -1 ? Broodwar->neutral() : Broodwar->getPlayer(playerId))
-//#define PLAYER(playerId) (Broodwar->getPlayer(playerId))
 
 //////////////////////////////////////////////////////////////////////////
 const IGameRace* BwapiGame::PlayerRace(_In_ TID playerId) const
@@ -663,13 +662,25 @@ TID BwapiGame::UnitOrderTarget(_In_ TID unitId) const
 Vector2 BwapiGame::UnitTargetPosition(_In_ TID unitId) const
 {
     auto pos = Broodwar->getUnit(unitId)->getTargetPosition();
-    return Vector2(pos.x, pos.y);
+
+    if (pos == BWAPI::Positions::Unknown ||
+        pos == BWAPI::Positions::Invalid ||
+        pos == BWAPI::Positions::None)
+        return Vector2::Inf();
+    else
+        return Vector2(pos.x, pos.y);
 }
 //////////////////////////////////////////////////////////////////////////
 Vector2 BwapiGame::UnitOrderTargetPosition(_In_ TID unitId) const
 {
     auto pos = Broodwar->getUnit(unitId)->getOrderTargetPosition();
-    return Vector2(pos.x, pos.y);
+    
+    if (pos == BWAPI::Positions::Unknown ||
+        pos == BWAPI::Positions::Invalid ||
+        pos == BWAPI::Positions::None)
+        return Vector2::Inf();
+    else
+        return Vector2(pos.x, pos.y);
 }
 //////////////////////////////////////////////////////////////////////////
 int BwapiGame::UnitLastCommandFrame(_In_ TID unitId) const

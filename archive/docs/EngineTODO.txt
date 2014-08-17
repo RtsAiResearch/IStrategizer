@@ -30,6 +30,8 @@ Macro
 [AIIDE]- Defend base on rush with workers if no attackers exist or too few
 - Switch to Siege Expand if enemy is playing defensive
 
+#define PLAYER(playerId) (playerId == -1 ? Broodwar->neutral() : Broodwar->getPlayer(playerId))
+
 Planner
 [DONE] - Fix planner goal resource sharing and synchronization bugs
 - Perioding maintainance of the already succeeding goals, if failed reopen them
