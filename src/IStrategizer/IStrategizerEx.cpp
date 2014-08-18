@@ -8,7 +8,6 @@
 #include "IMSystemManager.h"
 #include "DataMessage.h"
 #include "IStrategizerException.h"
-#include "WorldClock.h"
 #include "RtsGame.h"
 #include "Toolbox.h"
 #include "IMSystemManager.h"
@@ -78,7 +77,7 @@ void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
                 pEndMsg->Data()->MapName,
                 g_Game->Map()->Width(),
                 g_Game->Map()->Height(),
-                g_Game->Clock().ElapsedGameCycles(),
+                g_Game->GameFrame(),
                 m_pPlanner->Reasoner()->Retainer()->CaseBase()->CaseContainer.size(),
                 pEndMsg->Data()->Score,
                 pEndMsg->Data()->EnemyRace);
@@ -96,9 +95,8 @@ void IStrategizerEx::Update()
 {
     try
     {
-        g_Game->Update();
-        g_MessagePump->Update(g_Game->Clock());
-        m_pImSysMgr->Update(g_Game->Clock());
+        g_MessagePump->Update(g_Game->GameFrame());
+        m_pImSysMgr->Update();
 
         if (m_param.Phase == PHASE_Online)
         {
@@ -135,7 +133,7 @@ void IStrategizerEx::Update()
             }
 
             m_combatMgr.Update();
-            m_pPlanner->Update(*g_Game);
+            m_pPlanner->Update();
         }
     }
     catch (IStrategizer::Exception &e)

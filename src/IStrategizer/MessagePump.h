@@ -2,7 +2,6 @@
 #define MESSAGEPUMP_H
 
 #include "MessagePumpSubject.h"
-#include "WorldClock.h"
 #include <queue>
 
 namespace IStrategizer
@@ -17,7 +16,7 @@ namespace IStrategizer
         MessageQueue _messageQueue;
     public:
         static MessagePump* Instance();
-        void Update(const WorldClock& p_clock);
+        void Update(int gameFrame);
         void Send(Message* p_message, bool p_immediate = false);
 
     protected:

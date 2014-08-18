@@ -75,23 +75,15 @@ namespace IStrategizer
 #define Prefix_GoalType GOALEX
     enum GoalType
     {
-        GOALEX_WinGame = 0x20700,                                
+        GOALEX_TrainForce = 0x20700,
         GOALEX_START   = 0x20700,
-        GOALEX_CollectResource,
-        GOALEX_TrainForce,
         GOALEX_BuildInfrastructure,
-        GOALEX_DestroyEntityType,
-        GOALEX_DeployArmy,
         GOALEX_TrainArmy,
         GOALEX_END
     };
 #define Define_GoalType \
-    Enums[GOALEX_WinGame] = "Win Game"; \
-    Enums[GOALEX_CollectResource] = "Collect Resource"; \
     Enums[GOALEX_TrainForce] = "Train Force"; \
     Enums[GOALEX_BuildInfrastructure] = "Build Infrastructure";\
-    Enums[GOALEX_DestroyEntityType] = "Destroy Entity Type"; \
-    Enums[GOALEX_DeployArmy] = "Deploy Army"; \
     Enums[GOALEX_TrainArmy] = "Train Army";
     //---------------------------------------------------------------------------
 #define Prefix_ActionType ACTIONEX
@@ -101,20 +93,12 @@ namespace IStrategizer
         ACTIONEX_START = 0x20800,
         ACTIONEX_Build,
         ACTIONEX_Research,
-        ACTIONEX_AttackGround,
-        ACTIONEX_AttackEntity,
-        ACTIONEX_Move,
-        ACTIONEX_GatherResource,
         ACTIONEX_END
     };
 #define Define_ActionType \
     Enums[ACTIONEX_Train] = "Train"; \
     Enums[ACTIONEX_Build] = "Build"; \
     Enums[ACTIONEX_Research] = "Research"; \
-    Enums[ACTIONEX_AttackGround] = "Attack Ground"; \
-    Enums[ACTIONEX_AttackEntity] = "Attack Entity"; \
-    Enums[ACTIONEX_Move] = "Move"; \
-    Enums[ACTIONEX_GatherResource] = "Gather Resource";
     //---------------------------------------------------------------------------
 #define Prefix_ConditionType CONDEX
     enum ConditionType

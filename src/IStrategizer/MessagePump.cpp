@@ -55,7 +55,7 @@ void MessagePump::DeliverMessage(Message* p_message)
     delete p_message;
 }
 //----------------------------------------------------------------------------------------------
-void MessagePump::Update(const WorldClock& p_clock)
+void MessagePump::Update(int gameFrame)
 {
     Message* m_message;
 

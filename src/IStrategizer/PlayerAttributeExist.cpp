@@ -1,8 +1,11 @@
 #include "PlayerAttributeExist.h"
 #include "EngineData.h"
 #include "GamePlayer.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
+
+DECL_SERIALIZABLE(PlayerAttributeExist);
 
 PlayerAttributeExist::PlayerAttributeExist(PlayerType playerType, PlayerAttribute p_attribute, int amount) : 
     m_attribute(p_attribute),

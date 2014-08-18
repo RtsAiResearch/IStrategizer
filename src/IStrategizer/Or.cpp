@@ -1,7 +1,10 @@
 #include "Or.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
+
+DECL_SERIALIZABLE(Or);
 
 bool Or::Evaluate(RtsGame& game)
 {

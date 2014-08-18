@@ -9,9 +9,12 @@
 #include "RtsGame.h"
 #include "PlayerResources.h"
 #include "DataMessage.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
+
+DECL_SERIALIZABLE(BuildInfrastructureGoal);
 
 BuildInfrastructureGoal::BuildInfrastructureGoal() : GoalEx(GOALEX_BuildInfrastructure)
 {

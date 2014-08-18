@@ -270,17 +270,6 @@ void RtsGame::FinalizeStaticData()
     SAFE_DELETE(sm_pGameStatics);
 }
 //////////////////////////////////////////////////////////////////////////
-void RtsGame::Update()
-{
-    if (m_firstUpdate)
-    {
-        m_clock.Reset();
-        m_firstUpdate = false;
-    }
-
-    m_clock.Update(GameFrame());
-}
-//////////////////////////////////////////////////////////////////////////
 GameEntity* RtsGame::GetEntity(_In_ TID entityId)
 {
     for (auto& playerR : m_players)

@@ -2,7 +2,6 @@
 #define ONLINEPLANEXPANSIONEXECUTION_H
 
 #include "EngineObject.h"
-#include "WorldClock.h"
 #include "GoalEx.h"
 #include "OlcbpPlanNodeData.h"
 #include "CaseEx.h"
@@ -35,7 +34,7 @@ namespace IStrategizer
         OnlinePlanExpansionExecution(_In_ CaseBasedReasonerEx* pCbReasoner);
         ~OnlinePlanExpansionExecution();
 
-        void Update(_In_ RtsGame& game);
+        void Update();
         void NotifyMessegeSent(_In_ Message* pMessage);
         void StartNewPlan(_In_ GoalEx* pPlanGoal);
         const IOlcbpPlan* Plan() const { return &*m_pOlcbpPlan; }
@@ -65,8 +64,8 @@ namespace IStrategizer
         void UpdateBelongingSubplanChildrenWithParentReadiness(_In_ IOlcbpPlan::NodeID nodeId);
         bool DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::NodeID planGoalNodeId);
         void AddReadyChildrenToUpdateQueue(_In_ IOlcbpPlan::NodeID nodeId, _Inout_ IOlcbpPlan::NodeQueue &updateQ);
-        void UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
-        bool UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock);
+        void UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode);
+        bool UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode);
         void LinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId, _In_ IOlcbpPlan::NodeID dstNodeId) { m_pOlcbpPlan->AddEdge(srcNodeId, dstNodeId); }
         void UnlinkNodes(_In_ IOlcbpPlan::NodeID srcNodeId, _In_ IOlcbpPlan::NodeID dstNodeId) { m_pOlcbpPlan->RemoveEdge(srcNodeId, dstNodeId); }
         void ComputeFreshSnippetWaitOnParentsCount(_In_ IOlcbpPlan::NodeID subGraphRootId);

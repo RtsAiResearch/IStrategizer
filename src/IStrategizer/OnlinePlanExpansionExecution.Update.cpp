@@ -1,6 +1,5 @@
 #include "OnlinePlanExpansionExecution.h"
 #include "CaseBasedReasonerEx.h"
-#include "WinGameGoal.h"
 #include "CaseEx.h"
 #include "RtsGame.h"
 #include "Action.h"
@@ -23,7 +22,7 @@ using namespace std;
 using namespace IStrategizer;
 
 //////////////////////////////////////////////////////////////////////////
-void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
+void OnlinePlanExpansionExecution::Update()
 {
     m_pOlcbpPlan->Lock();
 
@@ -31,7 +30,7 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
     // Then check if the root goal is not satisfied and try to re expand it
     if (m_pOlcbpPlan->Size() > 0 &&
         m_inMaintenanceMode &&
-        game.Clock().ElapsedGameCycles() % PlanMaintenanceWindow == 0)
+        g_Game->GameFrame() % PlanMaintenanceWindow == 0)
     {
         auto pPlanGoal = m_pOlcbpPlan->GetNode(m_planRootNodeId);
 
@@ -47,7 +46,7 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
         }
     }
     else if (m_pOlcbpPlan->Size() > 0 &&
-        game.Clock().ElapsedGameCycles() % PlanExecuteWindow == 0)
+        g_Game->GameFrame() % PlanExecuteWindow == 0)
     {
         //CoverFailedGoals();
 
@@ -80,7 +79,7 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
                     // It is illogical to update already succeeding goals, there is
                     // a problem in the node selection strategy
                     _ASSERTE(m_pOlcbpPlan->GetNode(goalNodeId)->GetState() != ESTATE_Succeeded);
-                    expansionHappend |= UpdateGoalNode(goalNodeId, game.Clock());
+                    expansionHappend |= UpdateGoalNode(goalNodeId);
                 }
 
                 visitedGoals.insert(goalNodeId);
@@ -97,7 +96,7 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
                 // It is illogical to update already succeeding actions, there is
                 // a problem in the node selection strategy
                 _ASSERTE(m_pOlcbpPlan->GetNode(actionNodeId)->GetState() != ESTATE_Succeeded);
-                UpdateActionNode(actionNodeId, game.Clock());
+                UpdateActionNode(actionNodeId);
             }
 
             actionsToUpdate.pop_front();
@@ -128,12 +127,12 @@ void OnlinePlanExpansionExecution::Update(_In_ RtsGame& game)
 
     if (m_planStructureChangedThisFrame)
     {
-        g_MessagePump->Send(new Message(game.Clock().ElapsedGameCycles(), MSG_PlanStructureChange));
+        g_MessagePump->Send(new Message(g_Game->GameFrame(), MSG_PlanStructureChange));
         m_planStructureChangedThisFrame = false;
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock)
+bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID currentNode)
 {
     bool expanded = false;
     GoalEx* pCurrentGoalNode = (GoalEx*)m_pOlcbpPlan->GetNode(currentNode);
@@ -164,7 +163,7 @@ bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
         if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game))
         {
             LogInfo("Goal %s already satisfied, no need to expand it, closing the node", pCurrentGoalNode->ToString().c_str());
-            pCurrentGoalNode->SetState(ESTATE_Succeeded, *g_Game, clock);
+            pCurrentGoalNode->SetState(ESTATE_Succeeded);
             CloseNode(currentNode);
             OnGoalNodeSucceeded(currentNode);
         }
@@ -217,7 +216,7 @@ bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
                 else
                 {
                     LogInfo("Goal=%s exhausted all possible cases, failing it", pCurrentGoalNode->ToString().c_str());
-                    pCurrentGoalNode->SetState(ESTATE_Failed, *g_Game, clock);
+                    pCurrentGoalNode->SetState(ESTATE_Failed);
                     CloseNode(currentNode);
                     OnGoalNodeFailed(currentNode);
                 }
@@ -233,7 +232,7 @@ bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
         if (pCurrentGoalNode->SuccessConditionsSatisfied(*g_Game) 
             && !HasActiveAction(currentNode))
         {
-            pCurrentGoalNode->SetState(ESTATE_Succeeded, *g_Game, clock);
+            pCurrentGoalNode->SetState(ESTATE_Succeeded);
             OnGoalNodeSucceeded(currentNode);
         }
         else
@@ -243,12 +242,12 @@ bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
             // this goal should fail, it has no future
             if (GetNodeData(currentNode).WaitOnChildrenCount == 0)
             {
-                if (!pCurrentGoalNode->IsSleeping(clock))
+                if (!pCurrentGoalNode->IsSleeping())
                 {
                     if (pCurrentGoalNode->SleepsCount() < GoalMaxSleepsCount)
                     {
                         LogInfo("%s is still not done and all of its children are done execution, slept %d time(s) before, will send it to sleep", pCurrentGoalNode->ToString().c_str(), pCurrentGoalNode->SleepsCount());
-                        pCurrentGoalNode->Sleep(clock, GoalSleepTime);
+                        pCurrentGoalNode->Sleep(GoalSleepTime);
                     }
                     else
                     {
@@ -264,7 +263,7 @@ bool OnlinePlanExpansionExecution::UpdateGoalNode(_In_ IOlcbpPlan::NodeID curren
     return expanded;
 }
 //////////////////////////////////////////////////////////////////////////
-void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode, _In_ const WorldClock& clock)
+void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPlan::NodeID currentNode)
 {
     _ASSERTE(IsNodeReady(currentNode));
     _ASSERTE(IsActionNode(currentNode));
@@ -281,7 +280,7 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
         if (pAction->GetState() == ESTATE_END)
             MarkActionAsActive(currentNode);
 
-        pAction->Update(*g_Game, clock);
+        pAction->Update();
 
         if (pAction->GetState() == ESTATE_Succeeded)
         {
@@ -293,9 +292,9 @@ void IStrategizer::OnlinePlanExpansionExecution::UpdateActionNode(_In_ IOlcbpPla
             {
                 LogInfo("%s failed execution, but will reset it and send it to sleep", pAction->ToString().c_str(), pAction->SleepsCount());
 
-                pAction->Abort(*g_Game);
-                pAction->Reset(*g_Game, clock);
-                pAction->Sleep(clock, ActionSleepTime);
+                pAction->Abort();
+                pAction->Reset();
+                pAction->Sleep(ActionSleepTime);
             }
             else
             {

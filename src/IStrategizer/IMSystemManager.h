@@ -2,7 +2,6 @@
 #define IMSYSTEMMANAGER_H
 
 #include "EngineData.h"
-#include "WorldClock.h"
 #include <vector>
 
 namespace IStrategizer
@@ -28,7 +27,7 @@ namespace IStrategizer
     class IMSystemManager
     {
     public:
-        void Update(const WorldClock& p_clock);
+        void Update();
         void RegisterGameObj(TID p_objId, PlayerType p_ownerId);
         void UnregisterGameObj(TID p_objId);
         void RegisterIM(InfluenceMap *p_pMap, IMType p_mapTypeId);

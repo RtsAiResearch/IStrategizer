@@ -15,7 +15,7 @@ namespace IStrategizer
         };
 
         OccupanceDataIM(IMType p_typeId) : InfluenceMap(p_typeId) {}
-        void Update(const WorldClock& p_clock);
+        void Update();
         void UnregisterGameObj(TID p_objectId);
         bool IsAreaOccupied(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight);
         bool ReserveArea(const Vector2& p_areaPos, int p_areaWidth, int p_areaHeight);

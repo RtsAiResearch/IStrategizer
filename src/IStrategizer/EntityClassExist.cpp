@@ -8,10 +8,13 @@
 #ifndef RTSGAME_H
 #include "RtsGame.h"
 #endif
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace Serialization;
 using namespace std;
+
+DECL_SERIALIZABLE(EntityClassExist);
 
 EntityClassExist::EntityClassExist(PlayerType p_player, EntityClassType p_unitClassId, int p_amount, ObjectStateType state, bool checkFree) :
 ConditionEx(p_player, CONDEX_EntityClassExist),

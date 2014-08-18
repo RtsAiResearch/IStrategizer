@@ -9,9 +9,12 @@
 #include "GamePlayer.h"
 #include "GameType.h"
 #include "GoalFactory.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
+
+DECL_SERIALIZABLE(TrainForceGoal);
 
 TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce), m_firstUpdate(true)
 {

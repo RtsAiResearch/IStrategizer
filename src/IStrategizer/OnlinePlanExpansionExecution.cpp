@@ -1,6 +1,5 @@
 #include "OnlinePlanExpansionExecution.h"
 #include "CaseBasedReasonerEx.h"
-#include "WinGameGoal.h"
 #include "CaseEx.h"
 #include "RtsGame.h"
 #include "Action.h"
@@ -335,7 +334,7 @@ void OnlinePlanExpansionExecution::NotifyMessegeSent(_In_ Message* pMessage)
         if (IsActionNode(currentPlanStepID) &&
             pCurreNode->GetState() == ESTATE_Executing)
         {
-            pCurreNode->HandleMessage(*g_Game, pMessage, msgConsumedByAction);
+            pCurreNode->HandleMessage(pMessage, msgConsumedByAction);
 
             if (msgConsumedByAction)
             {
@@ -390,7 +389,7 @@ bool OnlinePlanExpansionExecution::DestroyGoalSnippetIfExist(_In_ IOlcbpPlan::No
 
         if (IsActionNode(visitedNodeId))
         {
-            ((Action*)pCurrNode)->Abort(*g_Game);
+            ((Action*)pCurrNode)->Abort();
             MarkActionAsInactive(visitedNodeId);
         }
 
@@ -576,7 +575,7 @@ void OnlinePlanExpansionExecution::CoverFailedGoals()
         auto goalNode = m_pOlcbpPlan->GetNode(nodeId);
         GoalEx* backupNode = (GoalEx*)goalNode->Clone();
         m_backupNodes.insert(MakePair(backupNode->Id(), nodeId));
-        backupNode->SetState(ESTATE_NotPrepared, *g_Game, g_Game->Clock());
+        backupNode->SetState(ESTATE_NotPrepared);
         m_pOlcbpPlan->AddNode(backupNode, backupNode->Id());
         m_nodeData[backupNode->Id()] = OlcbpPlanNodeData();
         m_nodeData[backupNode->Id()].ID = backupNode->Id();

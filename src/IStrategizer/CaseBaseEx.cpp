@@ -1,9 +1,14 @@
 #include "CaseBaseEx.h"
 #include "GoalFactory.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
 using namespace Serialization;
+
+DECL_SERIALIZABLE(CaseEx);
+DECL_SERIALIZABLE_NAMED(OlcbpPlan, "AdjListDigraph(PlanStepEx*)");
+DECL_SERIALIZABLE(CaseBaseEx);
 
 CaseEx* CaseBaseEx::NewCase(_In_ GoalType caseGoal)
 {

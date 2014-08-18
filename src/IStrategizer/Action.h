@@ -23,29 +23,29 @@ namespace IStrategizer
 		CompositeExpression* PreCondition() { _ASSERTE(_preCondition); return _preCondition; }
 		void InitializeConditions();
 		void Copy(IClonable* p_dest);
-		bool PreconditionsSatisfied(RtsGame& game);
+		bool PreconditionsSatisfied();
 		ExecutionHistory GetExecutionHistory() const { return m_history; }
 		void SetExecutionHistory(ExecutionHistory history) { m_history.AddRange(history); }
-		virtual bool AliveConditionsSatisfied(RtsGame& game) = 0;
+		virtual bool AliveConditionsSatisfied() = 0;
 		unsigned Hash(bool quantified /* = true */) const;
-		virtual void Abort(RtsGame &game) { LogInfo("%s is aborting", ToString().c_str()); FreeResources(game); }
-		virtual bool Execute(RtsGame& game, const WorldClock& p_clock) = 0;
-		virtual void Update(RtsGame& game, const WorldClock& p_clock);
-		void SetState(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
+		virtual void Abort() { LogInfo("%s is aborting", ToString().c_str()); FreeResources(); }
+		virtual bool Execute() = 0;
+		virtual void Update();
+		void SetState(ExecutionStateType p_state);
 
-		void Reset(RtsGame& game, const WorldClock& p_clock)
+		void Reset()
 		{
 			if (GetState() != ESTATE_NotPrepared)
-				SetState(ESTATE_NotPrepared, game, p_clock);
+				SetState(ESTATE_NotPrepared);
 		}
 
     protected:
 		Action(ActionType p_actionType, unsigned p_maxPrepTime = 0, unsigned p_maxExecTime = 0);
         Action(ActionType p_actionType, const PlanStepParameters& p_parameters, unsigned p_maxPrepTime = 0, unsigned p_maxExecTime = 0);
         virtual void InitializePreConditions() = 0;
-        virtual void OnSucccess(RtsGame& game, const WorldClock& p_clock) { FreeResources(game); };
-        virtual void OnFailure(RtsGame& game, const WorldClock& p_clock) { FreeResources(game); };
-        virtual void FreeResources(RtsGame& game) {}
+        virtual void OnSucccess() { FreeResources(); };
+        virtual void OnFailure() { FreeResources(); };
+        virtual void FreeResources() {}
 
 		void SetStateTimeout(ExecutionStateType state, unsigned timeout) 
 		{
@@ -53,8 +53,8 @@ namespace IStrategizer
 			_stateTimeout[INDEX(state, ExecutionStateType)] = timeout; 
 		}
 
-		unsigned CurrentStateElapsedTime(const WorldClock& clock) const { return clock.ElapsedGameCycles() - _stateStartTime[INDEX(_state, ExecutionStateType)]; }
-		bool IsCurrentStateTimeout(const WorldClock& p_clock);
+		unsigned CurrentStateElapsedTime() const { return g_Game->GameFrame() - _stateStartTime[INDEX(_state, ExecutionStateType)]; }
+		bool IsCurrentStateTimeout();
 
 		CompositeExpression* _preCondition;
 		///> type=ExecutionHistory

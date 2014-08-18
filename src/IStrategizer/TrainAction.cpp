@@ -17,9 +17,12 @@
 #include "PlayerAttributeExist.h"
 #include "Logger.h"
 #include "TrainerExist.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
+
+DECL_SERIALIZABLE(TrainAction);
 
 const unsigned MaxPrepTime = 0;
 // MaxExecTime should be deduced from the unit being trained
@@ -41,7 +44,7 @@ m_trainerId(INVALID_TID)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
+void TrainAction::HandleMessage(Message* pMsg, bool& consumed)
 {
     if (PlanStepEx::GetState() == ESTATE_Executing && pMsg->TypeId() == MSG_EntityCreate)
     {
@@ -52,7 +55,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
             return;
 
         TID entityId = pEntityMsg->Data()->EntityId;
-        GameEntity *pEntity = game.Self()->GetEntity(entityId);
+        GameEntity *pEntity = g_Game->Self()->GetEntity(entityId);
         _ASSERTE(pEntity);
 
         // We are interested only in free trainees that have not been locked before
@@ -61,7 +64,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
             !pEntity->IsLocked())
         {
             // Check if the trainer is training that entity
-            GameEntity* pTrainer = game.Self()->GetEntity(m_trainerId);
+            GameEntity* pTrainer = g_Game->Self()->GetEntity(m_trainerId);
             _ASSERTE(pTrainer);
 
             if (pTrainer->IsTraining(entityId))
@@ -79,7 +82,7 @@ void TrainAction::HandleMessage(RtsGame& game, Message* pMsg, bool& consumed)
     }
 }
 //////////////////////////////////////////////////////////////////////////
-bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
+bool TrainAction::AliveConditionsSatisfied()
 {
     bool trainerExist = false;
     //bool traineeExist = false;
@@ -93,7 +96,7 @@ bool TrainAction::AliveConditionsSatisfied(RtsGame& game)
     if (trainerExist)
     {
         // 2. Trainer building is busy or in the training state
-        GameEntity* pTrainer = game.Self()->GetEntity(m_trainerId);
+        GameEntity* pTrainer = g_Game->Self()->GetEntity(m_trainerId);
 
         if (pTrainer->P(OP_IsTraining))
         {
@@ -164,7 +167,7 @@ bool TrainAction::SuccessConditionsSatisfied(RtsGame& game)
     return success;
 }
 //////////////////////////////////////////////////////////////////////////
-bool TrainAction::Execute(RtsGame& game, const WorldClock& clock)
+bool TrainAction::Execute()
 {
     LogActivity(Execute);
 
@@ -179,7 +182,7 @@ bool TrainAction::Execute(RtsGame& game, const WorldClock& clock)
     if (m_trainerId != INVALID_TID)
     {
         // Issue train order
-        pGameTrainer = game.Self()->GetEntity(m_trainerId);
+        pGameTrainer = g_Game->Self()->GetEntity(m_trainerId);
         _ASSERTE(pGameTrainer);
         executed = pGameTrainer->Train(traineeType);
 
@@ -219,11 +222,11 @@ void TrainAction::InitializePreConditions()
     _preCondition = new And(m_terms);
 }
 //////////////////////////////////////////////////////////////////////////
-void TrainAction::FreeResources(RtsGame& game)
+void TrainAction::FreeResources()
 {
     if (m_traineeId != INVALID_TID)
     {
-        GameEntity* pTrainee = game.Self()->GetEntity(m_traineeId);
+        GameEntity* pTrainee = g_Game->Self()->GetEntity(m_traineeId);
 
         if (pTrainee && pTrainee->IsLocked())
             pTrainee->Unlock(this);
@@ -233,7 +236,7 @@ void TrainAction::FreeResources(RtsGame& game)
 
     if (m_trainerId != INVALID_TID)
     {
-        GameEntity* pTrainer = game.Self()->GetEntity(m_trainerId);
+        GameEntity* pTrainer = g_Game->Self()->GetEntity(m_trainerId);
 
         if (pTrainer && pTrainer->IsLocked())
             pTrainer->Unlock(this);

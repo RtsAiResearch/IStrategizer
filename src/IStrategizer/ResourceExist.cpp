@@ -1,9 +1,11 @@
 #include "ResourceExist.h"
-
+#include "ObjectFormatter.h"
 #include "GamePlayer.h"
 #include "PlayerResources.h"
 
 using namespace IStrategizer;
+
+DECL_SERIALIZABLE(ResourceExist);
 
 ResourceExist::ResourceExist(PlayerType p_player, int p_resourceId, int p_amount) : ConditionEx(p_player, CONDEX_ResourceExist)
 {

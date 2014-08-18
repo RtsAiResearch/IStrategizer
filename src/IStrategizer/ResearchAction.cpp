@@ -17,9 +17,12 @@
 #include "ResearchDone.h"
 #include "GameResearch.h"
 #include "ResearcherExist.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
+
+DECL_SERIALIZABLE(ResearchAction);
 
 const unsigned MaxPrepTime = 0;
 // MaxExecTime should be deduced from the research being researched
@@ -39,7 +42,7 @@ m_researcherId(INVALID_TID)
 {
 }
 //////////////////////////////////////////////////////////////////////////
-bool ResearchAction::AliveConditionsSatisfied(RtsGame& game)
+bool ResearchAction::AliveConditionsSatisfied()
 {
     _ASSERTE(m_researcherId != INVALID_TID);
 	bool researcherExists = g_Assist.DoesEntityObjectExist(m_researcherId);
@@ -58,11 +61,11 @@ bool ResearchAction::SuccessConditionsSatisfied(RtsGame& game)
 	return game.Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]);
 }
 //////////////////////////////////////////////////////////////////////////
-bool ResearchAction::Execute(RtsGame& game, const WorldClock& p_clock)
+bool ResearchAction::Execute()
 {
 	// FIXME: because we don't have a goal for Research for now, we can use the action as a goal
 	// at the same time, by not issuing the research action if it is already done
-	if (game.Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]))
+	if (g_Game->Self()->TechTree()->ResearchDone((ResearchType)_params[PARAM_ResearchId]))
 		return true;
 
 	ResearchType researchType = (ResearchType)_params[PARAM_ResearchId];
@@ -77,7 +80,7 @@ bool ResearchAction::Execute(RtsGame& game, const WorldClock& p_clock)
     if (m_researcherId != INVALID_TID)
     {
         // Issue research order
-        pGameResearcher = game.Self()->GetEntity(m_researcherId);
+        pGameResearcher = g_Game->Self()->GetEntity(m_researcherId);
         _ASSERTE(pGameResearcher);
 
         executed = pGameResearcher->Research(researchType);
@@ -114,11 +117,11 @@ bool ResearchAction::Equals(PlanStepEx* p_planStep)
 		_params[PARAM_ResearchId] == p_planStep->Parameter(PARAM_ResearchId);
 }
 //////////////////////////////////////////////////////////////////////////
-void ResearchAction::FreeResources(RtsGame& game)
+void ResearchAction::FreeResources()
 {
     if (m_researcherId != INVALID_TID)
     {
-        GameEntity* pResearcher = game.Self()->GetEntity(m_researcherId);
+        GameEntity* pResearcher = g_Game->Self()->GetEntity(m_researcherId);
 
         if (pResearcher && pResearcher->IsLocked())
             pResearcher->Unlock(this);

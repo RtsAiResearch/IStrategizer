@@ -1,7 +1,3 @@
-#include "WinGameGoal.h"
-#include "DeployArmyGoal.h"
-#include "DestroyEntityTypeGoal.h"
-#include "CollectResourceGoal.h"
 #include "TrainForceGoal.h"
 #include "GoalFactory.h"
 #include "BuildInfrastructureGoal.h"
@@ -16,24 +12,8 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, const PlanStepParameters& p_pa
 
     switch(p_goalType)
     {
-    case GOALEX_CollectResource:
-        goal = new CollectResourceGoal(p_parameters);
-        break;
-
-    case GOALEX_WinGame:
-        goal = new WinGameGoal(p_parameters);
-        break;
-
     case GOALEX_TrainForce:
         goal = new TrainForceGoal(p_parameters);
-        break;
-
-    case GOALEX_DeployArmy:
-        goal = new DeployArmyGoal(p_parameters);
-        break;
-
-    case GOALEX_DestroyEntityType:
-        goal = new DestroyEntityTypeGoal(p_parameters);
         break;
 
     case GOALEX_BuildInfrastructure:
@@ -63,24 +43,8 @@ GoalEx* GoalFactory::GetGoal(GoalType p_goalType, bool p_initConditions)
 
     switch(p_goalType)
     {
-    case GOALEX_CollectResource:
-        goal = new CollectResourceGoal();
-        break;
-
-    case GOALEX_WinGame:
-        goal = new WinGameGoal();
-        break;
-
     case GOALEX_TrainForce:
         goal = new TrainForceGoal();
-        break;
-
-    case GOALEX_DeployArmy:
-        goal = new DeployArmyGoal();
-        break;
-
-    case GOALEX_DestroyEntityType:
-        goal = new DestroyEntityTypeGoal();
         break;
 
     case GOALEX_BuildInfrastructure:

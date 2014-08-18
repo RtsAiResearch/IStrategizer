@@ -4,7 +4,6 @@
 #include "RtsAiEngine.h"
 #include "MetaData.h"
 #include "IMessagePumpObserver.h"
-#include "WorldClock.h"
 #include "CombatManager.h"
 #include "WorkersManager.h"
 #include "ScoutManager.h"

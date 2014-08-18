@@ -80,7 +80,7 @@ void PlanStepEx::Copy(IClonable* p_dest)
     m_dest->_postCondition = _postCondition ? static_cast<CompositeExpression*>(_postCondition->Clone()) : nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-void PlanStepEx::SetState(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)
+void PlanStepEx::SetState(ExecutionStateType p_state)
 {
     _ASSERTE(p_state != _state);
 
@@ -186,11 +186,11 @@ unsigned PlanStepEx::Hash(bool quantified) const
     return h;
 }
 //----------------------------------------------------------------------------------------------
-void PlanStepEx::Sleep(const WorldClock& clock, unsigned numGameFrames)
+void PlanStepEx::Sleep(unsigned numGameFrames)
 {
-    _ASSERTE(!IsSleeping(clock));
+    _ASSERTE(!IsSleeping());
 
-    m_sleepStartGameFrame = clock.ElapsedGameCycles();
+    m_sleepStartGameFrame = g_Game->GameFrame();
     m_sleepEndGameFrame = m_sleepStartGameFrame + numGameFrames;
     ++m_sleepsCount;
     LogInfo("%s is sent for sleep in the GameFrame range=[%d,%d], slept %d times so far", ToString().c_str(),

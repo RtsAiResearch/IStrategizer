@@ -27,16 +27,16 @@ namespace IStrategizer
     public:
         TrainAction();
         TrainAction(const PlanStepParameters& params);
-        bool AliveConditionsSatisfied(RtsGame& game);
+        bool AliveConditionsSatisfied();
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
 
     protected:
-        bool Execute(RtsGame& game, const WorldClock& clock);
-        void HandleMessage(RtsGame& game, Message* pMsg, bool& consumed);
+        bool Execute();
+        void HandleMessage(Message* pMsg, bool& consumed);
         void InitializePostConditions();
         void InitializePreConditions();
-        void FreeResources(RtsGame& game);
+        void FreeResources();
 
     private:
         TID m_trainerId;

@@ -20,7 +20,7 @@ namespace IStrategizer
 
     public:
         OnlineCaseBasedPlannerEx();
-        void Update(_In_ RtsGame& game);
+        void Update();
         bool Init();
         const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
         const OnlinePlanExpansionExecution* ExpansionExecution() const { return _onlineExpansionExecution; }

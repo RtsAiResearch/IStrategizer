@@ -12,7 +12,6 @@
 #include "EngineObject.h"
 #include "IClonable.h"
 #include "CellFeature.h"
-#include "WorldClock.h"
 #include "RtsGame.h"
 
 namespace IStrategizer
@@ -36,10 +35,10 @@ namespace IStrategizer
         int ContainsParameter(int p_parameterName) const { return _params.find((ParameterType)p_parameterName) != _params.end(); }
         int Compare(IComparable* p_rhs) { return !Equals((PlanStepEx*)p_rhs); }
         const PlanStepParameters& Parameters() const { return _params; }
-        virtual void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed) {}
+        virtual void HandleMessage(Message* p_msg, bool& p_consumed) {}
         virtual void InitializeConditions();
 		virtual ExecutionStateType GetState() const { return _state; }
-        virtual void SetState(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
+        virtual void SetState(ExecutionStateType p_state);
         virtual bool Equals(PlanStepEx* p_planStep) = 0;
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
         virtual unsigned Hash(bool quantified = true) const;
@@ -49,14 +48,14 @@ namespace IStrategizer
         IClonable* Clone();
         unsigned Id() const { return _id; }
         void Id(unsigned id) { _id = id; }
-		void Sleep(const WorldClock& clock, unsigned numGameFrames);
-		bool IsSleeping(const WorldClock& p_clock) const { return p_clock.ElapsedGameCycles() < m_sleepEndGameFrame; }
+		void Sleep(unsigned numGameFrames);
+		bool IsSleeping() const { return g_Game->GameFrame() < m_sleepEndGameFrame; }
 		unsigned SleepsCount() const { return m_sleepsCount; }
 
     protected:
 		PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
 		PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
-		bool IsCurrentStateTimeout(const WorldClock& p_clock);
+		bool IsCurrentStateTimeout();
 		virtual void InitializePostConditions() = 0;
 
         ///> type=PlanStepParameters

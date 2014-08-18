@@ -5,7 +5,6 @@
 #include "EngineData.h"
 #include "EngineObject.h"
 #include "SMap.h"
-#include "WorldClock.h"
 #include "Vector2.h"
 #include <vector>
 #include "RtsAiEngine.h"
@@ -79,8 +78,6 @@ namespace IStrategizer
         RtsGame* Snapshot() const;
         virtual int GameFrame() const;
         float Distance(const RtsGame* pOther, const SimilarityWeightModel* pModel) const;
-        const WorldClock& Clock() const { return m_clock; }
-        void Update();
 
         // Debugging Draw Helpers
         virtual void DebugDrawMapLine(_In_ Vector2 p1, _In_ Vector2 p2, _In_ GameDrawColor c);
@@ -116,7 +113,6 @@ namespace IStrategizer
 
         bool m_isInitialized;
         WorldMap* m_pMap;
-        WorldClock m_clock;
         bool m_firstUpdate;
     };
 

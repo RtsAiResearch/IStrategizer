@@ -27,23 +27,23 @@ void IMSystemManager::DebugDumpIMs()
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void IMSystemManager::Update(const WorldClock& p_clock)
+void IMSystemManager::Update()
 {
     for (IMContainer::iterator itr = m_managedMaps.begin(); itr != m_managedMaps.end(); ++itr)
     {
         switch (itr->first)
         {
         case IM_BuildingData:
-            if (p_clock.ElapsedGameCycles() % m_params.OccupanceIMUpdateInterval != 0)
+            if (g_Game->GameFrame() % m_params.OccupanceIMUpdateInterval != 0)
                 continue;
             break;
         case IM_GroundControl:
-            if (p_clock.ElapsedGameCycles() % m_params.GrndCtrlIMUpdateInterval != 0)
+            if (g_Game->GameFrame() % m_params.GrndCtrlIMUpdateInterval != 0)
                 continue;
             break;
         }
 
-        itr->second->Update(p_clock);
+        itr->second->Update();
     }
 }
 //////////////////////////////////////////////////////////////////////////

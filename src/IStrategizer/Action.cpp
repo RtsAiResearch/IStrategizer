@@ -37,26 +37,27 @@ Action::~Action()
     SAFE_DELETE(_preCondition);
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::SetState(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)
+void Action::SetState(ExecutionStateType p_state)
 {
-    PlanStepEx::SetState(p_state, game, p_clock);
+    PlanStepEx::SetState(p_state);
 
-    _stateStartTime[INDEX(p_state, ExecutionStateType)] = p_clock.ElapsedGameCycles();
+    _stateStartTime[INDEX(p_state, ExecutionStateType)] = g_Game->GameFrame();
 
     switch (p_state)
     {
     case ESTATE_Succeeded:
-        OnSucccess(game, p_clock);
+        OnSucccess();
         break;
     case ESTATE_Failed:
-        OnFailure(game, p_clock);
+        OnFailure();
         break;
     }
 }
-bool Action::PreconditionsSatisfied(RtsGame& game)
+//////////////////////////////////////////////////////////////////////////
+bool Action::PreconditionsSatisfied()
 {
     if (_preCondition == nullptr) { InitializeConditions(); }
-    bool satisfied = _preCondition->Evaluate(game);
+    bool satisfied = _preCondition->Evaluate(*g_Game);
 
     return satisfied;
 }
@@ -67,24 +68,24 @@ void Action::InitializeConditions()
     InitializePreConditions();
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::Update(RtsGame& game, const WorldClock& clock)
+void Action::Update()
 {
     if (_firstUpdate)
     {
-        Reset(game, clock);
+        Reset();
         _firstUpdate = false;
     }
 
-    if (IsSleeping(clock))
+    if (IsSleeping())
         return;
-    else if (IsCurrentStateTimeout(clock))
+    else if (IsCurrentStateTimeout())
     {
         LogInfo(
             "%s state %s timed-out after %dms",
             ToString().c_str(),
             Enums[(int)GetState()],
             _stateTimeout[INDEX(GetState(), ExecutionStateType)]);
-        SetState(ESTATE_Failed, game, clock);
+        SetState(ESTATE_Failed);
         return;
     }
 
@@ -93,34 +94,34 @@ void Action::Update(RtsGame& game, const WorldClock& clock)
     switch (state)
     {
     case ESTATE_NotPrepared:
-        if (PreconditionsSatisfied(game))
+        if (PreconditionsSatisfied())
         {
             LogInfo("Preconditions satisfied, trying to execute action %s", ToString().c_str());
 
             LogInfo("Trying to execute action %s", ToString().c_str());
 
-            if (Execute(game, clock))
+            if (Execute())
             {
-                SetState(ESTATE_Executing, game, clock);
+                SetState(ESTATE_Executing);
             }
             else
             {
-                SetState(ESTATE_Failed, game, clock);
+                SetState(ESTATE_Failed);
             }
         }
         break;
 
     case ESTATE_Executing:
 
-        if (SuccessConditionsSatisfied(game))
+        if (SuccessConditionsSatisfied(*g_Game))
         {
-            SetState(ESTATE_Succeeded, game, clock);
+            SetState(ESTATE_Succeeded);
             m_history.Add(ESTATE_Succeeded);
         }
-        else if (!AliveConditionsSatisfied(game))
+        else if (!AliveConditionsSatisfied())
         {
             LogInfo("%s alive conditions not satisfied", ToString().c_str());
-            SetState(ESTATE_Failed, game, clock);
+            SetState(ESTATE_Failed);
         }
         break;
     }
@@ -161,7 +162,7 @@ unsigned Action::Hash(bool quantified) const
     return h;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Action::IsCurrentStateTimeout(const WorldClock& p_clock)
+bool Action::IsCurrentStateTimeout()
 {
     unsigned timeout = _stateTimeout[INDEX(_state, ExecutionStateType)];
     unsigned startTime = _stateStartTime[INDEX(_state, ExecutionStateType)];
@@ -170,6 +171,6 @@ bool Action::IsCurrentStateTimeout(const WorldClock& p_clock)
     if (timeout == 0)
         return false;
     else
-        return ((p_clock.ElapsedGameCycles() - startTime) > timeout);
+        return ((g_Game->GameFrame() - startTime) > timeout);
 }
 
