@@ -21,6 +21,9 @@ namespace IStrategizer
     class CombatManager : public EngineObject
     {
     public:
+        static const int FrontlinesArmyBaseDistance = 400;
+        static const int BrokenArmyBaseDistance = 200;
+
         CombatManager() :
             m_frontLinesArmy("FrontLinesArmy"),
             m_brokenArmy("BrokenArmy"),

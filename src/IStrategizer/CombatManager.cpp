@@ -21,12 +21,12 @@ void CombatManager::Init()
     LogInfo("BaseLocation: %s", baseStartLoc.ToString().c_str());
     
     // Broken army stand at base waiting for repair/heal all the time
-    Vector2F brokenTranslateF = (g_Engine->BaseHeadDirection() * 196.0f);
+    Vector2F brokenTranslateF = (g_Engine->BaseHeadDirection() * float(BrokenArmyBaseDistance));
     Vector2 brokenTranslate((int)brokenTranslateF.X, (int)brokenTranslateF.Y);
     m_brokenArmy.Stand(baseStartLoc + brokenTranslate);
 
     // FrontLines/Reinforcements army defend base at the armies base
-    Vector2F othersTranslateF = (g_Engine->BaseHeadDirection() * 320.0f);
+    Vector2F othersTranslateF = (g_Engine->BaseHeadDirection() * float(FrontlinesArmyBaseDistance));
     Vector2 othersTranslate((int)othersTranslateF.X, (int)othersTranslateF.Y);
     m_armiesBaseLoc = baseStartLoc + othersTranslate;
     DefendBase();

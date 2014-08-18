@@ -186,9 +186,9 @@ GameStage ScStrategyManager::FindGameStage()
 {
     auto elapsedGameFrames = g_GameImpl->GameFrame();
 
-    if (elapsedGameFrames < 10000)
+    if (elapsedGameFrames < EarlyGameEndFrame)
         return GSTAGE_Early;
-    else if (elapsedGameFrames < 20000)
+    else if (elapsedGameFrames < MidGameEndFrame)
         return GSTAGE_Mid;
     else
         return GSTAGE_Late;

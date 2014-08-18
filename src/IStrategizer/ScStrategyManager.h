@@ -36,6 +36,9 @@ namespace IStrategizer
     class ScStrategyManager : public StrategyManager
     {
     public:
+        static const int EarlyGameEndFrame = 10000;
+        static const int MidGameEndFrame = 20000;
+
         ScStrategyManager() :
             m_enemyRace(RACE_Unknown)
         {
