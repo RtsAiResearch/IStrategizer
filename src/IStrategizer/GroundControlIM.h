@@ -9,7 +9,7 @@ namespace IStrategizer
     {
     public:
         GroundControlIM(IMType p_typeId) : InfluenceMap(p_typeId) {}
-        void Update(const WorldClock& p_clock);
+        void Update();
         TInfluence GetCellInfluenceFromWorldPosition(const Vector2 p_worldPosition);
 
     private:

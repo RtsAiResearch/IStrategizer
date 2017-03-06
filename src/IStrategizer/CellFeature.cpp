@@ -15,8 +15,8 @@ CellFeature::CellFeature(const PlanStepParameters& p_parameters)
     m_alliedBuildingDescription.m_numberOfBuildings = p_parameters.at(PARAM_AlliedBuildingsCount);
     m_alliedBuildingDescription.m_numberOfCriticalBuildings = p_parameters.at(PARAM_AlliedCriticalBuildingsCount);
     m_alliedForceDescription.m_numberOfUnits = p_parameters.at(PARAM_AlliedUnitsCount);
-    m_alliedForceDescription.m_totalDamage = p_parameters.at(PARAM_AlliedUnitsTotalDamage);
-    m_alliedForceDescription.m_totalHP = p_parameters.at(PARAM_AlliedUnitsTotalHP);
+    m_alliedForceDescription.m_totalDamage = p_parameters.at(PARAM_AlliedAttackersTotalDamage);
+    m_alliedForceDescription.m_totalHP = p_parameters.at(PARAM_AlliedAttackersTotalHP);
     m_enemyBuildingDescription.m_numberOfBuildings = p_parameters.at(PARAM_EnemyBuildingsCount);
     m_enemyBuildingDescription.m_numberOfCriticalBuildings = p_parameters.at(PARAM_EnemyCriticalBuildingsCount);
     m_enemyForceDescription.m_numberOfUnits = p_parameters.at(PARAM_EnemyUnitsCount);
@@ -35,8 +35,8 @@ void CellFeature::To(PlanStepParameters& p_parameters) const
     p_parameters[PARAM_AlliedBuildingsCount] = m_alliedBuildingDescription.m_numberOfBuildings;
     p_parameters[PARAM_AlliedCriticalBuildingsCount] = m_alliedBuildingDescription.m_numberOfCriticalBuildings;
     p_parameters[PARAM_AlliedUnitsCount] = m_alliedForceDescription.m_numberOfUnits;
-    p_parameters[PARAM_AlliedUnitsTotalDamage] = m_alliedForceDescription.m_totalDamage;
-    p_parameters[PARAM_AlliedUnitsTotalHP] = m_alliedForceDescription.m_totalHP;
+    p_parameters[PARAM_AlliedAttackersTotalDamage] = m_alliedForceDescription.m_totalDamage;
+    p_parameters[PARAM_AlliedAttackersTotalHP] = m_alliedForceDescription.m_totalHP;
     p_parameters[PARAM_EnemyBuildingsCount] = m_enemyBuildingDescription.m_numberOfBuildings;
     p_parameters[PARAM_EnemyCriticalBuildingsCount] = m_enemyBuildingDescription.m_numberOfCriticalBuildings;
     p_parameters[PARAM_EnemyUnitsCount] = m_enemyForceDescription.m_numberOfUnits;
@@ -52,7 +52,7 @@ void CellFeature::To(PlanStepParameters& p_parameters) const
 //----------------------------------------------------------------------------------------------
 void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
 {
-    if(g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_IsBuilding))
+    if(g_Game->GetEntityType(p_entity->TypeId())->P(TP_IsBuilding))
     {
         if(p_isAllied)
             m_alliedBuildingDescription.AddEntity(p_entity);
@@ -60,7 +60,7 @@ void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
             m_enemyBuildingDescription.AddEntity(p_entity);
             
     }
-    else if(g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_CanAttack))
+    else if(g_Game->GetEntityType(p_entity->TypeId())->P(TP_CanAttack))
     {
         if(p_isAllied)
             m_alliedForceDescription.AddEntity(p_entity);
@@ -75,7 +75,7 @@ void CellFeature::AddEntity(GameEntity *p_entity, bool p_isAllied)
 //----------------------------------------------------------------------------------------------
 void CellFeature::RemoveEntity(GameEntity *p_entity, bool p_isAllied)
 {
-    if(g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_IsBuilding))
+    if(g_Game->GetEntityType(p_entity->TypeId())->P(TP_IsBuilding))
     {
         if(p_isAllied)
             m_alliedBuildingDescription.RemoveEntity(p_entity);
@@ -83,7 +83,7 @@ void CellFeature::RemoveEntity(GameEntity *p_entity, bool p_isAllied)
             m_enemyBuildingDescription.RemoveEntity(p_entity);
 
     }
-    else if(g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_CanAttack))
+    else if(g_Game->GetEntityType(p_entity->TypeId())->P(TP_CanAttack))
     {
         if(p_isAllied)
             m_alliedForceDescription.RemoveEntity(p_entity);
@@ -154,7 +154,7 @@ void CellFeature::CalculateDistanceToBasesAux(Vector2 cellWorldPosition, const E
 
         _ASSERTE(pBase);
 
-        distance = cellWorldPosition.Distance(pBase->GetPosition());
+        distance = cellWorldPosition.Distance(pBase->Position());
     }
 }
 //----------------------------------------------------------------------------------------------

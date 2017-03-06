@@ -1,9 +1,11 @@
 #include "And.h"
+#include "ObjectFactory.h"
 
 using namespace std;
 using namespace IStrategizer;
 
-//----------------------------------------------------------------------------------------------
+DECL_SERIALIZABLE(And);
+
 bool And::Evaluate(RtsGame& game)
 {
     if(_shortCircuit)

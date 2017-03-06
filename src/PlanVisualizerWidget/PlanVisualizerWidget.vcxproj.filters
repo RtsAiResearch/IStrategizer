@@ -52,22 +52,19 @@
     <ClCompile Include="GraphGraphicsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GmlHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\moc_PlanStepView.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\moc_PlanGraphView.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\moc_ParameterEdit.cpp">
+    <ClCompile Include="GeneratedFiles\moc_ChoosePlanStepDialog.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\moc_GraphScene.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\moc_ChoosePlanStepDialog.cpp">
+    <ClCompile Include="GeneratedFiles\moc_ParameterEdit.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\moc_PlanGraphView.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\moc_PlanStepView.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,9 +92,6 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_ParameterEdit.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GmlHelper.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

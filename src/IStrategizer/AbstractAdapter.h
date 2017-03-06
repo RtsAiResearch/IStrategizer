@@ -10,7 +10,6 @@
 
 namespace IStrategizer
 {
-    class Vector2;
     class CellFeature;
 
     class AbstractAdapter
@@ -25,8 +24,10 @@ namespace IStrategizer
         virtual TID GetEntityObjectId(EntityClassType p_entityType) = 0;
         virtual Vector2 AdaptPosition(const PlanStepParameters& p_parameters) = 0;
         virtual Vector2 AdaptEnemyBorder() = 0;
-		virtual TID AdaptWorkerForGather(ResourceType resourceType) = 0;
-		virtual TID AdaptWorkerForBuild() = 0;
+		virtual TID AdaptWorkerForGather(ResourceType resourceType, bool immediate) = 0;
+        virtual TID AdaptBuilder(EntityClassType buildingType, bool requestFromOwner) = 0;
+        virtual std::pair<TID, MapArea> AdaptBuilderAndPosition(EntityClassType buildingType, bool requestFromOwner) = 0;
+
     };
 }
 

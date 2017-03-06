@@ -1,23 +1,25 @@
 #include "ResourceExist.h"
-
+#include "ObjectFormatter.h"
 #include "GamePlayer.h"
 #include "PlayerResources.h"
 
 using namespace IStrategizer;
 
+DECL_SERIALIZABLE(ResourceExist);
+
 ResourceExist::ResourceExist(PlayerType p_player, int p_resourceId, int p_amount) : ConditionEx(p_player, CONDEX_ResourceExist)
 {
-    _conditionParameters[PARAM_ResourceId] = p_resourceId;
-    _conditionParameters[PARAM_Amount] = p_amount;
+    m_params[PARAM_ResourceId] = p_resourceId;
+    m_params[PARAM_Amount] = p_amount;
 }
 //---------------------------------------------------------------------------------------------------
 bool ResourceExist::Evaluate(RtsGame& game)
 {
-    int requiredAmount = _conditionParameters[PARAM_Amount];
-    g_Assist.GetResourceAmount((PlayerType)_conditionParameters[PARAM_PlayerId], (ResourceType)_conditionParameters[PARAM_ResourceId], _availableAmount);
+    int requiredAmount = m_params[PARAM_Amount];
+    g_Assist.GetResourceAmount((PlayerType)m_params[PARAM_PlayerId], (ResourceType)m_params[PARAM_ResourceId], _availableAmount);
     
     ConditionEx::Evaluate(game);
-    _isSatisfied = _isEvaluated && (_availableAmount >= requiredAmount);
+    _isSatisfied = _isEvaluated && (requiredAmount == 0 || _availableAmount >= requiredAmount);
 
     return _isEvaluated && _isSatisfied;
 }
@@ -33,7 +35,7 @@ void ResourceExist::Copy(IClonable* p_dest)
 //----------------------------------------------------------------------------------------------
 bool ResourceExist::Consume(int p_amount)
 {
-    if (_conditionParameters[PARAM_Amount] == DONT_CARE)
+    if (m_params[PARAM_Amount] == DONT_CARE)
     {
         // I am infinite source so always return true.
         return true;
@@ -41,10 +43,10 @@ bool ResourceExist::Consume(int p_amount)
     else if (p_amount == DONT_CARE)
     {
         // DONT_CARE amount means infinite required amount, so return true and consume all amount the condition has.
-        _conditionParameters[PARAM_Amount] = 0;
+        m_params[PARAM_Amount] = 0;
         return true;
     }
-    else if (p_amount == 0 || _conditionParameters[PARAM_Amount] == 0)
+    else if (p_amount == 0 || m_params[PARAM_Amount] == 0)
     {
         // The required amount is 0, return false as there's nothing to consume
         // The current available amount is 0 so can not consume anything.
@@ -52,12 +54,12 @@ bool ResourceExist::Consume(int p_amount)
     }
     else
     {
-        _ASSERTE(p_amount > 0 && _conditionParameters[PARAM_Amount] > 0);
+        _ASSERTE(p_amount > 0 && m_params[PARAM_Amount] > 0);
         // Consider consuming supply resources only as for primary and secondary
         // we don't use exact numbers.
-        if (_conditionParameters[PARAM_ResourceId] == RESOURCE_Supply)
+        if (m_params[PARAM_ResourceId] == RESOURCE_Supply)
         {
-            _conditionParameters[PARAM_Amount] -= p_amount;
+            m_params[PARAM_Amount] -= p_amount;
         }
 
         return true;

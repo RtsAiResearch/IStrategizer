@@ -27,23 +27,22 @@ namespace IStrategizer
     public:
         TrainAction();
         TrainAction(const PlanStepParameters& params);
-        bool AliveConditionsSatisfied(RtsGame& game);
+        bool AliveConditionsSatisfied();
         bool SuccessConditionsSatisfied(RtsGame& game);
         bool Equals(PlanStepEx* p_planStep);
 
     protected:
-        bool ExecuteAux(RtsGame& game, const WorldClock& clock);
-        void HandleMessage(RtsGame& game, Message* pMsg, bool& consumed);
+        bool Execute();
+        void HandleMessage(Message* pMsg, bool& consumed);
         void InitializePostConditions();
         void InitializePreConditions();
-        void FreeResources(RtsGame& game);
+        void FreeResources();
 
     private:
         TID m_trainerId;
         TID m_traineeId;
-        GameEntity* m_pTrainee;
         bool m_trainStarted;
-        WorldResources m_requiredResources;
+        //WorldResources m_requiredResources;
         EntityClassType m_trainerType;
     };
 }

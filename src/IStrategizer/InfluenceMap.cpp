@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <fstream>
 
 #include "RtsGame.h"
 #include "GamePlayer.h"
@@ -44,50 +45,49 @@ void InfluenceMap::Reset()
     if (m_registeredObjects.empty())
         return;
 
-    for_each(m_registeredObjects.begin(), m_registeredObjects.end(), DeleteObjCallback);
+    for (auto& objEntry : m_registeredObjects)
+        DeleteObjCallback(objEntry.second);
+
     m_registeredObjects.clear();
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::RegisterGameObj(TID p_objId, PlayerType p_ownerId)
+void InfluenceMap::RegisterGameObj(TID objId, PlayerType ownerId)
 {
-    RegObjEntry *pNewObj = new RegObjEntry;
-    GameEntity *pGameObj = nullptr;
-    GameType *pObjType = nullptr;
+    if (m_registeredObjects.count(objId) == 0)
+    {
+        RegObjEntry *pNewObj = new RegObjEntry;
+        GameEntity *pGameObj = nullptr;
+        GameType *pObjType = nullptr;
 
-    pNewObj->ObjId = p_objId;
-    pNewObj->OwnerId = p_ownerId;
-    pNewObj->Stamped = false;
+        pNewObj->ObjId = objId;
+        pNewObj->OwnerId = ownerId;
+        pNewObj->Stamped = false;
 
-    pGameObj = g_Game->GetPlayer(p_ownerId)->GetEntity(p_objId);
-    _ASSERTE(pGameObj);
-    pNewObj->LastPosition = Vector2::Null();
+        pGameObj = g_Game->GetPlayer(ownerId)->GetEntity(objId);
+        _ASSERTE(pGameObj);
+        pNewObj->LastPosition = Vector2(-1, -1);
 
-    pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->Type());
-    _ASSERTE(pObjType);
-    pNewObj->ObjWidth = pObjType->Attr(ECATTR_Width);
-    pNewObj->ObjHeight = pObjType->Attr(ECATTR_Height);
+        pObjType = g_Game->GetEntityType((EntityClassType)pGameObj->TypeId());
+        _ASSERTE(pObjType);
 
-    m_registeredObjects.push_back(pNewObj);
+        pNewObj->ObjWidth = pObjType->P(TP_Width) + pObjType->P(TP_BuildingExpansionIncrement);
+        pNewObj->ObjHeight = pObjType->P(TP_Height);
+
+        m_registeredObjects[objId] = pNewObj;
+    }
 }
 //////////////////////////////////////////////////////////////////////////
-void InfluenceMap::UnregisterGameObj(TID p_objId)
+void InfluenceMap::UnregisterGameObj(TID objId)
 {
     if (m_registeredObjects.empty())
         return;
 
-    RegObjectList::iterator objItr;
-    RegObjEntry* pObjEntry;
-
-    for (objItr = m_registeredObjects.begin(); objItr != m_registeredObjects.end(); ++objItr)
+    if (m_registeredObjects.count(objId) > 0)
     {
-        pObjEntry = *objItr;
+        auto pObjEntry = m_registeredObjects[objId];
 
-        if (pObjEntry->ObjId == p_objId)
-        {
-            m_registeredObjects.erase(objItr);
-            delete pObjEntry;
-            return;
-        }
+        m_registeredObjects.erase(objId);
+        delete pObjEntry;
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -102,9 +102,9 @@ void InfluenceMap::StampInfluenceShape(Vector2& p_startPosition, int p_width, in
     int idx;
     TInfluence cellInf;
 
-    for(int y = gridY; y < endY; ++y)
+    for (int y = gridY; y < endY; ++y)
     {
-        for(int x = gridX; x < endX; ++x)
+        for (int x = gridX; x < endX; ++x)
         {
             idx = y * m_gridWidth + x;
 
@@ -160,9 +160,9 @@ void InfluenceMap::StampInfluenceGradient(Vector2& p_centerPosition, int p_fastF
     int idx;
     TInfluence cellInf;
 
-    for(int y = outerTop; y <= outerBottom; ++y)
+    for (int y = outerTop; y <= outerBottom; ++y)
     {
-        for(int x = outerLeft; x <= outerRight; ++x)
+        for (int x = outerLeft; x <= outerRight; ++x)
         {
             idx = y * m_gridWidth + x;
 
@@ -245,9 +245,9 @@ TInfluence InfluenceMap::SumInfluenceShape(Vector2& p_startPosition, int p_width
     int endY = min(gridY + gridHeight, m_gridHeight);
     int idx;
 
-    for(int y = gridY; y < endY; ++y)
+    for (int y = gridY; y < endY; ++y)
     {
-        for(int x = gridX; x < endX; ++x)
+        for (int x = gridX; x < endX; ++x)
         {
             idx = y * m_gridWidth + x;
 
@@ -275,11 +275,11 @@ GameEntity* InfluenceMap::GetObj(RegObjEntry* p_pObjEntry)
 //////////////////////////////////////////////////////////////////////////
 void InfluenceMap::ForEachObj(RegObjCallback p_pfnCallback)
 {
-    RegObjectList::iterator objItr;
+    RegObjectMap::iterator objItr;
 
-    for (objItr = m_registeredObjects.begin(); objItr != m_registeredObjects.end(); ++objItr)
+    for (auto& objEntry : m_registeredObjects)
     {
-        p_pfnCallback(this, *objItr);
+        p_pfnCallback(this, objEntry.second);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -350,7 +350,7 @@ void InfluenceMap::SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLen
 
         if (InBound(currentX, currentY))
         {
-            if(p_pfnPred(currentX * m_cellSide, currentY * m_cellSide, &m_pMap[currentY * m_gridWidth + currentX], p_pParam))
+            if (p_pfnPred(currentX * m_cellSide, currentY * m_cellSide, &m_pMap[currentY * m_gridWidth + currentX], p_pParam))
                 break;
         }
 
@@ -384,18 +384,39 @@ void InfluenceMap::ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWi
     int endY = min(gridY + gridHeight, m_gridHeight);
     int idx;
 
-    for(int y = gridY; y < endY; ++y)
+    for (int y = gridY; y < endY; ++y)
     {
-        for(int x = gridX; x < endX; ++x)
+        for (int x = gridX; x < endX; ++x)
         {
             idx = y * m_gridWidth + x;
 
             if (idx < m_numCells)
             {
-                if(p_pfnPred(x * m_cellSide, y * m_cellSide, &m_pMap[idx], p_pParam))
+                if (p_pfnPred(x * m_cellSide, y * m_cellSide, &m_pMap[idx], p_pParam))
                     return;
             }
         }
     }
 }
+//////////////////////////////////////////////////////////////////////////
+void InfluenceMap::DebugDump(const char* pFilename)
+{
+    ofstream pen;
+    pen.open(pFilename, ios::out);
 
+    if (!pen.is_open())
+        return;
+
+    for (int y = 0; y < GridHeight(); ++y)
+    {
+        for (int x = 0; x < GridWidth(); ++x)
+        {
+            int idx = y * GridWidth() + x;
+            pen << m_pMap[idx].Inf;
+        }
+
+        pen << std::endl;
+    }
+
+    pen.close();
+}

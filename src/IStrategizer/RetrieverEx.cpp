@@ -159,6 +159,12 @@ float RetrieverEx::CaseDistance(const CaseEx* pCase, const AbstractRetriever::Re
 //----------------------------------------------------------------------------------------------
 CaseEx* RetrieverEx::Retrieve(const AbstractRetriever::RetrieveOptions& options)
 {
+    if (!options.CaseName.empty())
+    {
+        LogInfo("Retreiving case by name '%s'", options.CaseName.c_str());
+        return m_pRetainer->CaseBase()->FindByName(options.CaseName.c_str());
+    }
+
     string goalDesc;
 
     if (!options.Parameters.empty())
@@ -216,12 +222,11 @@ CaseEx* RetrieverEx::Retrieve(const AbstractRetriever::RetrieveOptions& options)
     }
 
     CaseEx* bestCase = caseRelevanceTable.begin()->second;
-    float bestCasePerformance = (float)bestCase->SuccessCount() / (float)bestCase->TrialCount();
 
     LogInfo("Retrieved case '%s' for goal %s with performance=%f",
         bestCase->Goal()->ToString().c_str(),
         goalDesc.c_str(),
-        bestCasePerformance);
+        (float)bestCase->SuccessCount() / (float)bestCase->TrialCount());
 
     return bestCase;
 }

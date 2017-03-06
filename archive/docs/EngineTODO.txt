@@ -1,25 +1,48 @@
-- If goal suceeded continue executing children
-- If action failed dont fail goal if goal succeeded
+Worker Manager
+[DONE] - Periodic resource rebalancing and maintainance of workers to make sure each one is collecting from correct assigned sources
+[DONE] - If out of minerals, order gatherers to mine from other explored
+[DONE] - Repair damaged mech units
 
-- Goal failure means all children finished executing and goal is not succeeded yet
+City Builing
+[DONE] - Use differnent padding for producing building/buildings with add ons/non-producing buildings
+[DONE] - Have a strategy in city build and make maze/wall structure
+- Find out how to choose another build area if the choosen on is blocked always or find out the reason for choosing blocked areay? Bug maybe?
 
-- If Goal parent in the belonging case is satisfied, then execute this goal
+Scouting
+- Perioding scouting
+- Explore other resource minerals/gas sources
 
-- Goal should be in executing state, if goal expanded
+Micro
+[DONE]- Group formation placement not randomized
+[DONE]- Retreat for melee enemies should be more smart to retreat if the enemy came too close e.g 64 pixel away
+[DONE]- Correct calculation of army sight and focus area not to hard code it (based on army size)
+[DONE]- Retreat should choose different location to retreat to if the destination is not reachable/walkable/out of map.
+[DONE]- Target selection and prioritization (supporterts, defensive structures, units HP, etc..)
+- Take attack type into consideration (Air/Ground targetability and prioritization)
+- Even if a unit is being hit, not always it should run especially VS weak units, it should depend on the attacker and the unit itself
+[DONE] - Fix army states to work on Army units directly not cached ones
+- Use the more complex pro players Hit&Run: http://wiki.teamliquid.net/starcraft/Vulture_Micro
 
+Macro
+- Handle city defending (SCVs run/attack and building lifting)
+[DONE] - Execute push/rush (Frontlines, Reinforcements, and Broken army)
+- Realize when to retreat the whole army (i.e if combat simulation outcome is negative)
+[AIIDE]- Defend base on rush with workers if no attackers exist or too few
+- Switch to Siege Expand if enemy is playing defensive
 
+#define PLAYER(playerId) (playerId == -1 ? Broodwar->neutral() : Broodwar->getPlayer(playerId))
 
-1
-2 3 4
-4 5 6
+Planner
+[DONE] - Fix planner goal resource sharing and synchronization bugs
+- Perioding maintainance of the already succeeding goals, if failed reopen them
+- Need to identify Train Army goals with more strong parameters (e.g map of each unit type and its count)
+- Train adaptation to train Vultures from Factories with no machine shops first before trying to train from ones with Machines shops
+Strategy
+- Detect enemy startegy from the first scouting and replan the counter
 
-[Fixed] - When a goal fail and exhaust all its cases, we should not open it again, and it should remain failed
-[Fixed] - Gather action always failing for renegading resources like Gas
+Protoss:
+Zealot Rush -> 2 Gateways
+DT Expand -> Expand 1 Gatways
 
-- 2 build infra(barrack) goals start update at the same time
-
-
-- At each update cycle there is a set of goals active where a goal is (goaltype, params excluding the amount)
-- If a goal node considered for udpate exist in the set, then don't consider it
-
-Champion Women's Freedom Seamless Racerback Sports Bra, Sulphur Spring, Large 
+Investigate:
+- FPS drop and Spike happens

@@ -62,8 +62,17 @@
           <property name="frameShadow">
            <enum>QFrame::Plain</enum>
           </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
           <property name="spacing">
            <number>2</number>
+          </property>
+          <property name="selectionRectVisible">
+           <bool>true</bool>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -144,7 +153,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btnGenSCVPlans">
+         <widget class="QPushButton" name="btnGenCases">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -158,10 +167,48 @@
            </size>
           </property>
           <property name="text">
-           <string>Gen SCV Cases</string>
+           <string>Gen Cases</string>
           </property>
           <property name="autoDefault">
            <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnDelGenCases">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Del Gen Cases</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnCalcArmyPower">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Calc Army Power</string>
           </property>
          </widget>
         </item>
@@ -189,7 +236,7 @@
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
-    <addaction name="actionShow"/>
+    <addaction name="actionRefresh"/>
    </widget>
    <addaction name="menuCaseBase"/>
   </widget>
@@ -217,12 +264,12 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionShow">
+  <action name="actionRefresh">
    <property name="text">
-    <string>Show Explorer</string>
+    <string>Refresh</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+B</string>
+    <string>F5</string>
    </property>
   </action>
   <action name="actionSaveAs">

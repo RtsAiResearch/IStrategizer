@@ -8,7 +8,6 @@
 #include "IMSystemManager.h"
 #include "DataMessage.h"
 #include "IStrategizerException.h"
-#include "WorldClock.h"
 #include "RtsGame.h"
 #include "Toolbox.h"
 #include "IMSystemManager.h"
@@ -19,91 +18,127 @@
 #include "GameStatistics.h"
 #include "CaseBasedReasonerEx.h"
 #include "SharedResource.h"
+#include "GamePlayer.h"
+#include "GameEntity.h"
+#include "ScStrategyManager.h"
+#include "IMSystemManager.h"
 #include <iostream>
+
+std::string ENGINE_IO_READ_DIR = ".\\";
+std::string ENGINE_IO_WRITE_DIR = ".\\";
 
 using namespace IStrategizer;
 using namespace std;
 
-IStrategizerEx::IStrategizerEx(const IStrategizerParam &param, RtsGame* pGame) :
-    m_param(param),
-    m_pCaseLearning(nullptr),
-    m_pPlanner(nullptr),
-    m_isFirstUpdate(true),
-    m_armyTrainOrderInx(0)
-{
-    g_Game = pGame;
-}
-//---------------------------------------------------------------------------------------------
-void IStrategizerEx::NotifyMessegeSent(Message* p_message)
-{
-    switch(p_message->MessageTypeID())
-    {
-    case MSG_GameStart:
-        m_clock.Reset();
-        break;
+IStrategizer::IStrategizerEx* g_Engine = nullptr;
 
-    case MSG_GameEnd:
+IStrategizerEx::IStrategizerEx(const EngineParams &param, IRtsGame* pGameImpl) :
+m_param(param),
+m_pCaseLearning(nullptr),
+m_pPlanner(nullptr),
+m_isFirstUpdate(true),
+m_pStrategyMgr(new ScStrategyManager),
+m_situation(SITUATION_SafeDevelopmentDefending)
+{
+    g_Engine = this;
+
+    g_GameImpl = pGameImpl;
+    m_pGameModelImpl = pGameImpl;
+
+    m_pGameModel = new RtsGame();
+    g_Game = m_pGameModel;
+
+    m_pImSysMgr = &g_IMSysMgr;
+}
+//////////////////////////////////////////////////////////////////////////
+RtsGame* IStrategizerEx::GameModel() { return m_pGameModel; }
+//////////////////////////////////////////////////////////////////////////
+IRtsGame* IStrategizerEx::GameModelImpl() { return m_pGameModelImpl; }
+//////////////////////////////////////////////////////////////////////////
+IMSystemManager* IStrategizerEx::IMSysMgr() { return m_pImSysMgr; }
+//////////////////////////////////////////////////////////////////////////
+const char** IStrategizerEx::EngineIdsName() { return Enums; }
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::NotifyMessegeSent(Message* pMsg)
+{
+    auto msgType = pMsg->TypeId();
+    if (msgType == MSG_GameEnd)
+    {
         if (m_param.Phase == PHASE_Offline)
         {
             m_pCaseLearning->Learn();
         }
+#ifdef AIIDE
         else
         {
-            GameEndMessage* pMsg = static_cast<GameEndMessage*>(p_message);
-            
-            GameStatistics stats(pMsg->Data()->IsWinner,
-                pMsg->Data()->MapName,
-                g_Game->Map()->Width(), 
+            GameEndMessage* pEndMsg = static_cast<GameEndMessage*>(pMsg);
+
+            GameStatistics stats(pEndMsg->Data()->IsWinner,
+                pEndMsg->Data()->MapName,
+                g_Game->Map()->Width(),
                 g_Game->Map()->Height(),
-                m_clock.ElapsedGameCycles(),
+                g_Game->GameFrame(),
                 m_pPlanner->Reasoner()->Retainer()->CaseBase()->CaseContainer.size(),
-                pMsg->Data()->Score,
-                pMsg->Data()->EnemyRace);
+                pEndMsg->Data()->Score,
+                pEndMsg->Data()->EnemyRace);
             m_pStatistics->Add(stats);
         }
-        break;
-
-    case MSG_BattleComplete:
-        /*m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
-        m_pPlanner->ExpansionExecution()->StartPlanning();*/
-        break;
-
-    case MSG_PlanComplete:
-        m_attackManager.AddBattle();
-        m_pPlanner->ExpansionExecution()->RootGoal(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[GetTrainOrderInx()]));
-        m_pPlanner->ExpansionExecution()->StartPlanning();
-        break;
+#endif
+    }
+    else if (msgType == MSG_PlanGoalSuccess)
+    {
+        SelectNextStrategyGoal();
     }
 }
 //--------------------------------------------------------------------------------
-void IStrategizerEx::Update(unsigned p_gameCycle)
+void IStrategizerEx::Update()
 {
     try
     {
-        if (m_isFirstUpdate)
-        {
-            m_clock.Reset();
-            m_isFirstUpdate = false;
-        }
-
-        m_clock.Update(p_gameCycle);
-        g_MessagePump->Update(m_clock);
-        g_IMSysMgr.Update(m_clock);
+        g_MessagePump->Update(g_Game->GameFrame());
+        m_pImSysMgr->Update();
 
         if (m_param.Phase == PHASE_Online)
         {
-            if (m_attackManager.Active())
+            if (g_Game->GameFrame() % ReviseSituationInterval == 0)
+                ReviseSituation();
+
+            // Time to kick scouting to know what the enemy is up to
+            if (!m_scoutMgr.IsActive() &&
+                m_pStrategyMgr->IsGoodTimeToScout())
+                m_scoutMgr.Activate();
+
+            m_scoutMgr.Update();
+            m_workersMgr.Update();
+
+            if (m_situation == SITUATION_SafeDevelopmentDefending &&
+                m_pStrategyMgr->IsArmyGoodToPush())
             {
-                m_attackManager.Update(*g_Game, m_clock);
+                auto enemyLoc = m_scoutMgr.GetEnemySpawnLocation();
+
+                // Location not discovered, scouting trials seemed to fail
+                // Needs to perform attack now, lets scout with the army itself
+                if (enemyLoc.IsInf())
+                {
+                    _ASSERTE(!m_scoutMgr.IsEnemySpawnLocationKnown());
+                    enemyLoc = m_scoutMgr.GetSuspectedEnemySpawnLocation();
+                    LogInfo("Enemy spawn location not discovered yet, will attack a suspected location %s", enemyLoc.ToString().c_str());
+                }
+
+                m_combatMgr.AttackEnemy(enemyLoc);
+            }
+            else if (m_situation == SITUATION_UnderSiegePushing)
+            {
+                m_combatMgr.DefendBase();
             }
 
-            m_pPlanner->Update(m_clock);
+            m_combatMgr.Update();
+            m_pPlanner->Update();
         }
     }
     catch (IStrategizer::Exception &e)
     {
         e.To(cout);
-        throw e;
     }
     catch (std::exception &e)
     {
@@ -111,72 +146,157 @@ void IStrategizerEx::Update(unsigned p_gameCycle)
         throw e;
     }
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////-
 IStrategizerEx::~IStrategizerEx()
 {
-    g_IMSysMgr.Finalize();
+    SAFE_DELETE(m_pStrategyMgr);
+    SAFE_DELETE(m_pGameModel);
     g_Game = nullptr;
+    m_pGameModelImpl = nullptr;
+    g_GameImpl = nullptr;
+    m_pImSysMgr->Finalize();
 }
-//----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////-
 bool IStrategizerEx::Init()
 {
+    srand((unsigned)time(nullptr));
+
     // Note that the order of the engine components initialization is intended
     // and any change in the order can result in unexpected behavior
     //
     SharedResource::Init();
     g_Game->Init();
 
+    Vector2 mapCenter = g_Game->Map()->Size() / 2;
+    Vector2 baseDir = mapCenter - g_Game->Self()->StartLocation();
+    m_baseFaceDir.X = (float)baseDir.X;
+    m_baseFaceDir.Y = (float)baseDir.Y;
+    m_baseFaceDir.Normalize();
+
+    m_borders = Circle2(g_Game->Self()->StartLocation(), BordersRadius);
+
     IMSysManagerParam imSysMgrParam;
-    imSysMgrParam.BuildingDataIMCellSize = m_param.BuildingDataIMCellSize;
-    imSysMgrParam.GroundControlIMCellSize = m_param.GrndCtrlIMCellSize;
+    imSysMgrParam.OccupanceIMCellSize = m_param.OccupanceIMCellSize;
+    imSysMgrParam.GrndCtrllIMCellSize = m_param.GrndCtrlIMCellSize;
+    imSysMgrParam.OccupanceIMUpdateInterval = m_param.OccupanceIMUpdateInterval;
+    imSysMgrParam.GrndCtrlIMUpdateInterval = m_param.GrndCtrlIMUpdateInterval;
+    m_pImSysMgr->Init(imSysMgrParam);
 
-    g_IMSysMgr.Init(imSysMgrParam);
-
-    switch(m_param.Phase)
+    if (m_param.Phase == PHASE_Offline)
     {
-    case  PHASE_Offline:
         m_pCaseLearning = shared_ptr<LearningFromHumanDemonstration>(new LearningFromHumanDemonstration(PLAYER_Self, PLAYER_Enemy));
         m_pCaseLearning->Init();
-        break;
 
-    case PHASE_Online:
+    }
+    else if (m_param.Phase == PHASE_Online)
+    {
+        // Init build/train order planner
         m_pPlanner = shared_ptr<OnlineCaseBasedPlannerEx>(new OnlineCaseBasedPlannerEx());
-        DefineArmyTrainOrder();
-        m_pPlanner->Init(g_GoalFactory.GetGoal(GOALEX_TrainArmy, m_armyTrainOrder[m_armyTrainOrderInx]));
-        m_pPlanner->ExpansionExecution()->StartPlanning();
         g_OnlineCaseBasedPlanner = &*m_pPlanner;
-        g_MessagePump->RegisterForMessage(MSG_BattleComplete, this);
-        g_MessagePump->RegisterForMessage(MSG_PlanComplete, this);
-        break;
+        m_pPlanner->Init();
+        // Init Strategy manager
+        m_pStrategyMgr->Init();
+        // Init Scout manager
+        m_scoutMgr.Init();
+        // Init Combat manager
+        m_combatMgr.Init();
+        // Init Workers manager
+        m_workersMgr.Init();
+
+        g_MessagePump->RegisterForMessage(MSG_PlanGoalSuccess, this);
+
+        SelectNextStrategyGoal();
     }
 
     g_MessagePump->RegisterForMessage(MSG_GameEnd, this);
-    g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
-    g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
 
     return true;
 }
-//----------------------------------------------------------------------------------------------
-void IStrategizerEx::DefineArmyTrainOrder()
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::SelectNextStrategyGoal()
 {
     PlanStepParameters params;
-    params[PARAM_AlliedUnitsTotalHP] = 160;
-    params[PARAM_AlliedUnitsTotalDamage] = 196;
-    m_armyTrainOrder.push_back(params);
 
-    params[PARAM_AlliedUnitsTotalHP] = 200;
-    params[PARAM_AlliedUnitsTotalDamage] = 36;
-    m_armyTrainOrder.push_back(params);
-}
-//----------------------------------------------------------------------------------------------
-int IStrategizerEx::GetTrainOrderInx()
-{
-    if (m_armyTrainOrderInx == m_armyTrainOrder.size() - 1)
+    // Game opening plan selection
+    if (g_Game->GameFrame() == 0)
     {
-        return m_armyTrainOrderInx;
+        m_pStrategyMgr->SelectGameOpening();
     }
     else
     {
-        return ++m_armyTrainOrderInx;
+        m_pStrategyMgr->SelectNextStrategy();
     }
+
+    params = m_pStrategyMgr->CurrStrategyGoalParams();
+    _ASSERTE(!params.empty());
+    m_pPlanner->ExpansionExecution()->StartNewPlan(g_GoalFactory.GetGoal(GOALEX_TrainArmy, params));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::DebugDraw()
+{
+    m_combatMgr.DebugDraw();
+    g_Game->DebugDraw();
+
+    g_Game->DebugDrawMapCircle(g_Game->Self()->StartLocation(), BordersRadius, GCLR_Purple);
+    g_Game->DebugDrawMapCircle(g_Game->Self()->StartLocation(), BordersRadius + 2, GCLR_Purple);
+
+    char str[128];
+    sprintf_s(str, "Situation: %s", Enums[m_situation]);
+    g_Game->DebugDrawScreenText(Vector2(5, 5), str, GCLR_White);
+
+    m_pStrategyMgr->DebugDraw();
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::ReviseSituation()
+{
+    bool enemyInBorder = false;
+
+    for (auto& entityR : g_Game->Enemy()->Entities())
+    {
+        if (entityR.second->Exists() &&
+            entityR.second->P(OP_IsVisible) &&
+            m_borders.IsInside(entityR.second->Position()))
+        {
+            enemyInBorder = true;
+            break;
+        }
+    }
+
+    if (enemyInBorder && m_combatMgr.CurrentOrder() == CMBTMGR_Defend)
+        m_situation = SITUATION_UnderSiegeDefending;
+    else if (enemyInBorder && m_combatMgr.CurrentOrder() == CMBTMGR_Attack)
+        m_situation = SITUATION_UnderSiegePushing;
+    else if (!enemyInBorder && m_combatMgr.CurrentOrder() == CMBTMGR_Attack)
+        m_situation = SITUATION_SafeDevelopmentPushing;
+    else if (!enemyInBorder && m_combatMgr.CurrentOrder() == CMBTMGR_Defend)
+        m_situation = SITUATION_SafeDevelopmentDefending;
+    else
+        DEBUG_THROW(NotImplementedException(XcptHere));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::RegisterForMessage(_In_ MessageType msgTypeId, _In_ IStrategizer::IMessagePumpObserver* pObserver)
+{
+    g_MessagePump->RegisterForMessage(msgTypeId, pObserver);
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::SendEngineMessage(_In_ MessageType msgTypeId)
+{
+    g_MessagePump->Send(new Message(g_Game->GameFrame(), msgTypeId));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::SendEngineEntityMessage(_In_ MessageType msgTypeId, _In_ const EntityMessageData& msgData)
+{
+    g_MessagePump->Send(new DataMessage<EntityMessageData>(g_Game->GameFrame(), msgTypeId, new EntityMessageData(msgData)));
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::SetEngineReadWriteDir(_In_ const char* pReadPath, _In_ const char* pWritePath)
+{
+    ENGINE_IO_READ_DIR = pReadPath;
+    ENGINE_IO_WRITE_DIR = pWritePath;
+}
+//////////////////////////////////////////////////////////////////////////
+void IStrategizerEx::DebugDumpIMs()
+{
+    if (m_pStrategyMgr)
+        m_pImSysMgr->DebugDumpIMs();
 }

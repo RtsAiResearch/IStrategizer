@@ -18,6 +18,7 @@
 
 using namespace std;
 using namespace IStrategizer;
+using namespace Unreal;
 
 IdLookupReader::IdLookupReader()
 {

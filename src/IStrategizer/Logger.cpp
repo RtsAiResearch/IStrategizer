@@ -1,7 +1,6 @@
-#ifndef LOGGER_H
 #include "Logger.h"
-#endif
-
+#include "Console.h"
+#include "IStrategizerEx.h"
 #include <fstream>
 #include <cassert>
 #include <crtdefs.h>
@@ -12,6 +11,13 @@
 
 using namespace IStrategizer;
 using namespace std;
+
+#define LOG_FILENAME (ENGINE_IO_WRITE_DIR + "IStrategizerLog.txt")
+
+#ifdef ENABLE_LOG
+CConsole console;
+#endif // _DEBUG
+
 
 void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
 {
@@ -29,12 +35,18 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
     vsprintf_s(buffer1, p_pFormat, formatArgs);
     va_end(formatArgs);
 
-    SYSTEMTIME sysTime;
-    GetLocalTime(&sysTime);
+    //SYSTEMTIME sysTime;
+    //GetLocalTime(&sysTime);
 
-    sprintf_s(buffer2, LogBufferMax, "[%s@%02d:%02d:%02d.%03d@%s] %s\n",
+    //sprintf_s(buffer2, LogBufferMax, "[%s@%02d:%02d:%02d.%03d@%s] %s\n",
+    //    logTypeName[(unsigned)p_type],
+    //    sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
+    //    p_pFun,
+    //    buffer1);
+
+    sprintf_s(buffer2, LogBufferMax, "[%s@%d@%s] %s\n",
         logTypeName[(unsigned)p_type],
-        sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds,
+        (g_Game ? g_Game->GameFrame() : 0),
         p_pFun,
         buffer1);
 
@@ -50,6 +62,7 @@ void Logger::Log(LogType p_type, const char* p_pFun, const char* p_pFormat, ...)
 
 void Logger::InitLogFile()
 {
+#ifdef ENABLE_LOG
     if (!m_isLogFileInitialized)
     {
         m_pen.open(LOG_FILENAME, ios::out);
@@ -57,6 +70,7 @@ void Logger::InitLogFile()
         if (m_pen.is_open())
             m_isLogFileInitialized = true;
     }
+#endif // LOG_ENABLED
 }
 
 void Logger::FinalizeLogFile()

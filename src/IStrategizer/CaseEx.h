@@ -40,21 +40,25 @@ namespace IStrategizer
     ///> class=CaseEx
     class CaseEx : public EngineObject
     {
-		OBJECT_SERIALIZABLE(CaseEx, &m_pGoal, &m_pGameState, &m_trialCount, &m_successCount, &m_pPlan);
+		OBJECT_SERIALIZABLE(CaseEx, &m_pGoal, &m_pGameState, &m_trialCount, &m_successCount, &m_pPlan, &m_name, &m_isGenerated);
     public:
         CaseEx() 
             : m_pGoal(nullptr),
             m_pGameState(nullptr),
             m_trialCount(1),
             m_successCount(1),
-            m_pPlan(nullptr) {};
+            m_pPlan(nullptr),
+			m_name(""),
+			m_isGenerated(false) {}
         
         CaseEx(OlcbpPlan* pPlan, GoalEx* pGoal, RtsGame* pGameState, int trialCount, int successCount)
             : m_pGoal(pGoal),
             m_pGameState(pGameState),
             m_trialCount(trialCount),
             m_successCount(successCount),
-            m_pPlan(pPlan) {}
+            m_pPlan(pPlan),
+			m_name(""),
+			m_isGenerated(false) {}
 
         ~CaseEx()
         {
@@ -77,6 +81,10 @@ namespace IStrategizer
         int SuccessCount() const { return m_successCount; }
         void TrialCount(int val) { m_trialCount = val; }
         void SuccessCount(int val) { m_successCount = val; }
+		const std::string& Name() const { return m_name; }
+		void Name(const std::string& val) { m_name = val; }
+		bool Generated() const { return m_isGenerated; }
+		void Generated(bool val) { m_isGenerated = val; }
 
     private:
         ///> type=GoalEx*
@@ -89,7 +97,11 @@ namespace IStrategizer
         int m_successCount;
         ///> type=OlcbpPlan*
         OlcbpPlan *m_pPlan;
-    };
+		///> type=string
+		std::string m_name;
+		///> type=bool
+		bool m_isGenerated;
+	};
 
     typedef std::set<CaseEx*> CaseSet;
 }

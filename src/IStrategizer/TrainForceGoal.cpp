@@ -9,9 +9,12 @@
 #include "GamePlayer.h"
 #include "GameType.h"
 #include "GoalFactory.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
+
+DECL_SERIALIZABLE(TrainForceGoal);
 
 TrainForceGoal::TrainForceGoal() : GoalEx(GOALEX_TrainForce), m_firstUpdate(true)
 {
@@ -33,17 +36,19 @@ void TrainForceGoal::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 bool TrainForceGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
-    EntityList entities;
-    game.Self()->Entities((EntityClassType)_params[PARAM_EntityClassId], entities);
     int entitiesCount = 0;
     int requiredCount = _params[PARAM_Amount];
+    auto typeId = _params[PARAM_EntityClassId];
+    auto& entities = game.Self()->Entities();
 
-    for (TID unitId : entities)
+    if ((int)entities.size() < requiredCount)
+        return false;
+
+    for (auto& entityR : entities)
     {
-        GameEntity *pEntity = game.Self()->GetEntity(unitId);
-        _ASSERTE(pEntity);
-        entitiesCount += ((g_Assist.IsEntityInState(unitId, (ObjectStateType)_params[PARAM_ObjectStateType]) ||
-            g_Assist.IsEntityInState(unitId, OBJSTATE_Idle)) ? 1 : 0);
+        if (entityR.second->TypeId() == typeId &&
+            entityR.second->P(OP_State) != OBJSTATE_BeingConstructed)
+            ++entitiesCount;
     }
 
     return entitiesCount >= requiredCount;
@@ -60,13 +65,13 @@ vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
     {
         GameEntity *pEntity = game.Self()->GetEntity(entityId);
         _ASSERTE(pEntity);
-        EntityClassType entityType = pEntity->Type();
+        EntityClassType entityType = pEntity->TypeId();
 
         if (m_usedUnits.count(entityId) == 0 &&
-            !game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding) &&
+            !game.GetEntityType(entityType)->P(TP_IsBuilding) &&
             g_Assist.IsEntityObjectReady(entityId) &&
-            ((!game.GetEntityType(entityType)->Attr(ECATTR_IsAttacker)) ||
-            (pEntity->Attr(EOATTR_State) != OBJSTATE_Idle)))
+            ((!game.GetEntityType(entityType)->P(TP_IsAttacker)) ||
+            (pEntity->P(OP_State) != OBJSTATE_Idle)))
         {
             PlanStepParameters params;
             EntityList entities;
@@ -74,7 +79,7 @@ vector<GoalEx*> TrainForceGoal::GetSucceededInstances(RtsGame &game)
             m_trainedUnits[entityType] = entities.size();
             params[PARAM_EntityClassId] = entityType;
             params[PARAM_Amount] = m_trainedUnits[entityType];
-            params[PARAM_ObjectStateType] = pEntity->Attr(EOATTR_State);
+            params[PARAM_ObjectStateType] = pEntity->P(OP_State);
             succeededInstances.push_back(g_GoalFactory.GetGoal(GOALEX_TrainForce, params, true));
             m_usedUnits.insert(entityId);
         }

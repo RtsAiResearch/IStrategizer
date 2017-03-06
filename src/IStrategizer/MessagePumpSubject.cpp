@@ -53,9 +53,9 @@ void MessagePumpSubject::OnMessageSent(Message* p_message)
 
 	LogInfo("Delivering message %s", p_message->ToString());
 
-    if(_messageObserversTable.find((MessageType)p_message->MessageTypeID()) != _messageObserversTable.end())
+    if(_messageObserversTable.find((MessageType)p_message->TypeId()) != _messageObserversTable.end())
     {
-        m_observerList = _messageObserversTable[(MessageType)p_message->MessageTypeID()];
+        m_observerList = _messageObserversTable[(MessageType)p_message->TypeId()];
 
         for(ObserverList::iterator itr = m_observerList->begin();
             itr != m_observerList->end();

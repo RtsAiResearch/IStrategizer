@@ -10,12 +10,14 @@ MessagePump::MessagePump()
     AddMessage(MSG_EntityCreate);
     AddMessage(MSG_EntityDestroy);
     AddMessage(MSG_EntityRenegade);
+    AddMessage(MSG_EntityShow);
+    AddMessage(MSG_EntityHide);
     AddMessage(MSG_GameStart);
     AddMessage(MSG_GameEnd);
     AddMessage(MSG_PlanStructureChange);
-    AddMessage(MSG_PlanComplete);
-    AddMessage(MSG_BattleComplete);
+    AddMessage(MSG_PlanGoalSuccess);
     AddMessage(MSG_GameActionLog);
+    AddMessage(MSG_BaseUnderAttack);
 }
 //----------------------------------------------------------------------------------------------
 MessagePump* MessagePump::Instance()
@@ -38,7 +40,8 @@ void MessagePump::Send(Message* p_message, bool p_immediate)
     }
     else
     {
-		LogInfo("Queuing message %s", p_message->ToString());
+		LogDebugInfo("Queuing message %s", p_message->ToString());
+        _ASSERTE(_messageObserversTable.count(p_message->TypeId()) > 0);
         _messageQueue.push(p_message);
     }
 }
@@ -52,7 +55,7 @@ void MessagePump::DeliverMessage(Message* p_message)
     delete p_message;
 }
 //----------------------------------------------------------------------------------------------
-void MessagePump::Update(const WorldClock& p_clock)
+void MessagePump::Update(int gameFrame)
 {
     Message* m_message;
 

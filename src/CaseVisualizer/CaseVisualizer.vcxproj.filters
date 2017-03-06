@@ -37,10 +37,13 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\moc_CaseView.cpp">
-      <Filter>Generated Files</Filter>
+    <ClCompile Include="CaseGenerator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\moc_CaseVisualizer.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\moc_CaseView.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_CaseVisualizer.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CaseGenerator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

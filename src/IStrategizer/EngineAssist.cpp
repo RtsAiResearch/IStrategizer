@@ -52,7 +52,7 @@ int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_res
 {
     PlayerResources* m_resources = g_Game->GetPlayer(p_playerIndex)->Resources();
 
-    switch(p_resourceId)
+    switch (p_resourceId)
     {
     case RESOURCE_Supply:
         p_availableAmount = m_resources->AvailableSupply();
@@ -70,78 +70,61 @@ int EngineAssist::GetResourceAmount(PlayerType p_playerIndex, ResourceType p_res
     return 0;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, unsigned> p_entityType, PlayerType p_playerType)
+bool EngineAssist::DoesEntityClassExist(pair<EntityClassType, int> p_entityType, ObjectStateType state, bool checkFree, PlayerType p_playerType)
 {
-    GamePlayer* pPlayer;
-    GameEntity* pEntity;
-    EntityList entities;
-    unsigned matches;
-    bool exist;
-    ObjectStateType state;
+    int matches = 0;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
-    _ASSERTE(pPlayer);
-    pPlayer->Entities(p_entityType.first, entities);
+    auto& entities = g_Game->GetPlayer(p_playerType)->Entities();
 
-    exist = false;
-    matches = 0;
-
-    for(int i = 0, size = entities.size(); i < size; ++i)
+    for (auto& entityR : entities)
     {
-        pEntity = pPlayer->GetEntity(entities[i]);
-        _ASSERTE(pEntity);
-        
-        state = (ObjectStateType)pEntity->Attr(EOATTR_State);
+        auto pEntity = entityR.second;
+        auto currState = (ObjectStateType)pEntity->P(OP_State);
 
-        if (pEntity->Type() == p_entityType.first && 
-            !pEntity->IsLocked() && state != OBJSTATE_BeingConstructed)
-            ++matches;
+        if (pEntity->TypeId() == p_entityType.first &&
+            (((state == OBJSTATE_END || state == DONT_CARE) && currState != OBJSTATE_BeingConstructed) ||
+            (state != OBJSTATE_END && currState == state)) &&
+            (!checkFree || !pEntity->IsLocked()))
+        {
+            if (p_entityType.second == DONT_CARE)
+            {
+                return true;
+            }
+            else
+                ++matches;
+        }
     }
 
-    exist = (matches >= p_entityType.second);
-
-    return exist;
+    if (p_entityType.second == DONT_CARE)
+        return matches > 0;
+    else
+        return matches >= p_entityType.second;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
-bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, unsigned> &p_entityTypes, PlayerType p_playerType)
+bool EngineAssist::DoesEntityClassExist(const map<EntityClassType, int> &p_entityTypes, PlayerType p_playerType)
 {
-    GamePlayer* pPlayer;
     GameEntity* pEntity;
-    GameType* pType;
-    EntityList entities;
-    unsigned matches;
+    int matches;
     bool        exist = false;
 
-    pPlayer = g_Game->GetPlayer(p_playerType);
-    _ASSERTE(pPlayer);
-    pPlayer->Entities(entities);
+    auto& entities = g_Game->GetPlayer(p_playerType)->Entities();
 
     exist = true;
 
-    for (map<EntityClassType, unsigned>::const_iterator itr = p_entityTypes.begin();
+    for (auto itr = p_entityTypes.begin();
         itr != p_entityTypes.end(); ++itr)
     {
         matches = 0;
 
-        for (unsigned i = 0, size = entities.size(); i < size; ++i)
+        for (auto& entityR : entities)
         {
-            pEntity = pPlayer->GetEntity(entities[i]);
+            pEntity = entityR.second;
             _ASSERTE(pEntity);
 
-            if (pEntity->Type() == itr->first)
-            {
-                pType = g_Game->GetEntityType(itr->first);
-                _ASSERTE(pType);
-
-                // Building are considered exist if and only if it is constructed
-                if (pType->Attr(ECATTR_IsBuilding))
-                {
-                    if (pEntity->Attr(EOATTR_State) != (int)OBJSTATE_BeingConstructed)
-                        ++matches;
-                }
-                else
-                    ++matches;
-            }
+            // Units are considered exist if and only if it is constructed
+            if (pEntity->TypeId() == itr->first &&
+                pEntity->P(OP_State) != (int)OBJSTATE_BeingConstructed)
+                ++matches;
         }
 
         if (matches < itr->second)
@@ -158,15 +141,17 @@ bool EngineAssist::IsEntityObjectReady(TID p_entityObject, PlayerType p_playerTy
 {
     GamePlayer *pPlayer;
     GameEntity *pEntity;
-    bool exist;
+    bool isReady;
 
     pPlayer = g_Game->GetPlayer(p_playerType);
     _ASSERTE(pPlayer);
 
     pEntity = pPlayer->GetEntity(p_entityObject);
-    exist = (pEntity != nullptr) && (pEntity->Attr(EOATTR_State) != (int)OBJSTATE_BeingConstructed);
+    isReady = pEntity != nullptr &&
+        pEntity->Exists() &&
+        pEntity->P(OP_State) != (int)OBJSTATE_BeingConstructed;
 
-    return exist;
+    return isReady;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::DoesEntityObjectExist(TID p_entityObject, PlayerType p_playerType)
@@ -203,7 +188,7 @@ bool EngineAssist::DoesEntityObjectExist(const EntityList &p_entityObjects, Play
             break;
         }
     }
-    
+
     return exist;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -211,7 +196,7 @@ bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector
 {
     GameEntity* entity = g_Game->Self()->GetEntity(p_entityId);
     _ASSERTE(entity);
-    Vector2 currentPosition = entity->GetPosition();
+    Vector2 currentPosition = entity->Position();
 
     double euclideanDistance = sqrt((double)
         (currentPosition.Y - p_point.Y) * (currentPosition.Y - p_point.Y)
@@ -223,7 +208,6 @@ bool EngineAssist::IsEntityCloseToPoint(IN const TID p_entityId, IN const Vector
 void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_playerType, vector<Expression*>& p_prerequisites)
 {
     WorldResources pReqResources;
-    EntityClassType sourceEntity;
     vector<ResearchType> reqResearches;
     map<EntityClassType, unsigned> reqEntities;
 
@@ -245,14 +229,14 @@ void EngineAssist::GetPrerequisites(int p_entityOrResearchType, PlayerType p_pla
     }
 
     // 3. Source building exist
-    if (BELONG(EntityClassType, p_entityOrResearchType))
-        sourceEntity = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType)->SourceEntity();
-    else
-        sourceEntity = g_Game->GetResearch((ResearchType)p_entityOrResearchType)->SourceEntity();
+    //if (BELONG(EntityClassType, p_entityOrResearchType))
+    //    sourceEntity = g_Game->GetEntityType((EntityClassType)p_entityOrResearchType)->SourceEntity();
+    //else
+    //    sourceEntity = g_Game->GetResearch((ResearchType)p_entityOrResearchType)->SourceEntity();
 
-    _ASSERTE(sourceEntity != ECLASS_END);
-        
-    p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1));
+    //_ASSERTE(sourceEntity != ECLASS_END);
+
+    //p_prerequisites.push_back(new EntityClassExist(p_playerType, sourceEntity, 1));
 
     // 4. Required resources exist
     GetPrerequisiteResources(p_entityOrResearchType, p_playerType, pReqResources);
@@ -269,12 +253,12 @@ void EngineAssist::GetPrerequisiteResources(int p_entityOrResearchType, PlayerTy
 
     pPlayer = g_Game->GetPlayer(p_playerType);
     _ASSERTE(pPlayer);
-        
+
     if (BELONG(ResearchType, p_entityOrResearchType))
     {
         pResearchType = g_Game->GetResearch((ResearchType)p_entityOrResearchType);
         _ASSERTE(pResearchType);
-            
+
         p_resources.Set(pResearchType->RequiredResources());
     }
     else if (BELONG(EntityClassType, p_entityOrResearchType))
@@ -290,7 +274,7 @@ void EngineAssist::GetPrerequisiteResources(int p_entityOrResearchType, PlayerTy
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool EngineAssist::IsEntityInState(TID p_entityObject, ObjectStateType stateType, PlayerType p_playerType)
 {
-    if (stateType == OBJSTATE_END)
+    if (stateType == OBJSTATE_DontCare)
     {
         return IsEntityObjectReady(p_entityObject, p_playerType);
     }
@@ -304,7 +288,7 @@ bool EngineAssist::IsEntityInState(TID p_entityObject, ObjectStateType stateType
         _ASSERTE(pPlayer);
 
         pEntity = pPlayer->GetEntity(p_entityObject);
-        inState = (pEntity != nullptr) && ((ObjectStateType)pEntity->Attr(EOATTR_State) == stateType);
+        inState = (pEntity != nullptr) && ((ObjectStateType)pEntity->P(OP_State) == stateType);
 
         return inState;
     }

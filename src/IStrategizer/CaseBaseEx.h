@@ -2,7 +2,7 @@
 #ifndef CASEBASEEX_H
 #define CASEBASEEX_H
 
-#include "SVector.h"
+#include "SSet.h"
 #include "CaseEx.h"
 #include "EngineObject.h"
 
@@ -13,8 +13,14 @@ namespace IStrategizer
     {
 		OBJECT_SERIALIZABLE(CaseBaseEx, &CaseContainer);
     public:
-        ///> type=vector(CaseEx*)
-        Serialization::SVector<CaseEx*> CaseContainer;
+		CaseEx* NewCase(_In_ GoalType caseGoal);
+		void Delete(_In_ CaseEx* pCase);
+		void DeleteAll();
+		void DeleteAllGeneratedCases();
+        CaseEx* FindByName(const std::string caseName);
+
+        ///> type=set(CaseEx*)
+        Serialization::SSet<CaseEx*> CaseContainer;
     };
 }
 

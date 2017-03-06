@@ -8,8 +8,9 @@ using namespace std;
 
 void BotStatistics::Add(GameStatistics gameStatistics)
 {
+    // FIXME: If read and write dirs are diff this will be a bug
     fstream pen;
-    pen.open(g_StatisticsPath, ios::out | ofstream::app);
+    pen.open(ENGINE_IO_WRITE_DIR, ios::out | ofstream::app);
     pen << gameStatistics.ToString();
     pen.flush();
     pen.close();

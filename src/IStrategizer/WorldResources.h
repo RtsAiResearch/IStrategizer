@@ -11,7 +11,7 @@ namespace IStrategizer
     {
     public:
         static WorldResources FromEntity(int p_entityOrResearchType);
-        WorldResources() : m_supply(0), m_secondary(0), m_primary(0) { }
+        WorldResources() : m_supply(-1), m_secondary(-1), m_primary(-1) { }
         WorldResources(int p_supply, int p_secondary, int p_primary) : m_supply(p_supply), m_secondary(p_secondary), m_primary(p_primary) { }
         void Set(const WorldResources* pOther);
         void Supply (int supply) { m_supply = supply; }
@@ -22,7 +22,7 @@ namespace IStrategizer
         virtual int Supply() const { return m_supply; }
         virtual int Secondary() const { return m_secondary; }
         virtual int Primary() const { return m_primary; }
-        std::string ToString() const;
+		std::string ToString(bool minimal = false) const;
 
     protected:
         bool Acquire();

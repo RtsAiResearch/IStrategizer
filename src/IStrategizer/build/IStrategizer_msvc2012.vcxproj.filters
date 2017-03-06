@@ -25,9 +25,6 @@
     <Filter Include="Header Files\OLCBP\CBR">
       <UniqueIdentifier>{01196cc4-2708-4076-832e-e98f0a0a8d59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\AttackManager">
-      <UniqueIdentifier>{9360ecfa-57aa-4863-83a8-87faa02a9390}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\GameModel">
       <UniqueIdentifier>{17f0fa2c-00a3-4643-bdc6-3811ccfe1ed5}</UniqueIdentifier>
     </Filter>
@@ -52,6 +49,21 @@
     <Filter Include="Header Files\OLCBP\Contingency">
       <UniqueIdentifier>{00fc4716-0edd-4e6b-bc36-81a2c7196232}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{f22ed0d6-838c-4510-afcc-77b724326dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\CombatManager">
+      <UniqueIdentifier>{9360ecfa-57aa-4863-83a8-87faa02a9390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\CombatManager\FSM">
+      <UniqueIdentifier>{bb2e8bb2-a585-47e0-a569-ae52d6b8e105}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DomainKnowledge">
+      <UniqueIdentifier>{36922a5b-325e-4a01-b5c1-eb40b9b54f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\OLCBP\Conditions\Framework">
+      <UniqueIdentifier>{8894476c-c5cb-4a5b-b80f-bcfef283a037}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\IStrategizerEx.h">
@@ -60,34 +72,16 @@
     <ClInclude Include="..\BuildInfrastructureGoal.h">
       <Filter>Header Files\OLCBP\Goals</Filter>
     </ClInclude>
-    <ClInclude Include="..\CollectResourceGoal.h">
-      <Filter>Header Files\OLCBP\Goals</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DestroyEntityTypeGoal.h">
-      <Filter>Header Files\OLCBP\Goals</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DeployArmyGoal.h">
-      <Filter>Header Files\OLCBP\Goals</Filter>
-    </ClInclude>
     <ClInclude Include="..\TrainArmyGoal.h">
       <Filter>Header Files\OLCBP\Goals</Filter>
     </ClInclude>
     <ClInclude Include="..\TrainForceGoal.h">
       <Filter>Header Files\OLCBP\Goals</Filter>
     </ClInclude>
-    <ClInclude Include="..\AttackEntityAction.h">
-      <Filter>Header Files\OLCBP\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AttackGroundAction.h">
-      <Filter>Header Files\OLCBP\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="..\TrainAction.h">
       <Filter>Header Files\OLCBP\Actions</Filter>
     </ClInclude>
     <ClInclude Include="..\BuildActionEx.h">
-      <Filter>Header Files\OLCBP\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GatherResourceAction.h">
       <Filter>Header Files\OLCBP\Actions</Filter>
     </ClInclude>
     <ClInclude Include="..\ResearchAction.h">
@@ -114,15 +108,6 @@
     <ClInclude Include="..\AdapterEx.h">
       <Filter>Header Files\OLCBP\CBR</Filter>
     </ClInclude>
-    <ClInclude Include="..\AttackFSMState.h">
-      <Filter>Header Files\AttackManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AttackManager.h">
-      <Filter>Header Files\AttackManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Battle.h">
-      <Filter>Header Files\AttackManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\CaseBasedReasonerEx.h">
       <Filter>Header Files\OLCBP\CBR</Filter>
     </ClInclude>
@@ -131,15 +116,6 @@
     </ClInclude>
     <ClInclude Include="..\CaseEx.h">
       <Filter>Header Files\OLCBP\CBR</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FSMState.h">
-      <Filter>Header Files\AttackManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FSMMachine.h">
-      <Filter>Header Files\AttackManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\FinishedFSMState.h">
-      <Filter>Header Files\AttackManager</Filter>
     </ClInclude>
     <ClInclude Include="..\GameType.h">
       <Filter>Header Files\GameModel</Filter>
@@ -157,9 +133,6 @@
       <Filter>Header Files\GameModel</Filter>
     </ClInclude>
     <ClInclude Include="..\GameTechTree.h">
-      <Filter>Header Files\GameModel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GameTrace.h">
       <Filter>Header Files\GameModel</Filter>
     </ClInclude>
     <ClInclude Include="..\GoalEx.h">
@@ -189,17 +162,11 @@
     <ClInclude Include="..\MessagePumpSubject.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
-    <ClInclude Include="..\WorldClock.h">
-      <Filter>Header Files\System</Filter>
-    </ClInclude>
     <ClInclude Include="..\WorldResources.h">
       <Filter>Header Files\GameModel</Filter>
     </ClInclude>
     <ClInclude Include="..\WorldMap.h">
       <Filter>Header Files\GameModel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TargetFSMState.h">
-      <Filter>Header Files\AttackManager</Filter>
     </ClInclude>
     <ClInclude Include="..\EngineObject.h">
       <Filter>Header Files\System</Filter>
@@ -213,21 +180,6 @@
     <ClInclude Include="..\RetrieverEx.h">
       <Filter>Header Files\OLCBP\CBR</Filter>
     </ClInclude>
-    <ClInclude Include="..\WinGameGoal.h">
-      <Filter>Header Files\OLCBP\Goals</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CompositeExpression.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\And.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CheckColonyFilterCount.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Comparer.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="..\BuildingDescription.h">
       <Filter>Header Files\InfluenceMaps</Filter>
     </ClInclude>
@@ -240,26 +192,8 @@
     <ClInclude Include="..\AdjListDigraph.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\CrossMap.h">
-      <Filter>Header Files\Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\Collection.h">
       <Filter>Header Files\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ConditionEx.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\True.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ResourceExist.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AbstractionMetaData.h">
-      <Filter>Header Files\Defs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AttributesMetaData.h">
-      <Filter>Header Files\Defs</Filter>
     </ClInclude>
     <ClInclude Include="..\EngineData.h">
       <Filter>Header Files\Defs</Filter>
@@ -270,22 +204,7 @@
     <ClInclude Include="..\EngineAssist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\EntityClassNearArea.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="..\EntityClassExist.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BotStatistics.h">
-      <Filter>Header Files\GameModel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\EventTriggered.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Expression.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\False.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="..\IClonable.h">
@@ -305,9 +224,6 @@
     </ClInclude>
     <ClInclude Include="..\MapArea.h">
       <Filter>Header Files\InfluenceMaps</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MoveAction.h">
-      <Filter>Header Files\OLCBP\Actions</Filter>
     </ClInclude>
     <ClInclude Include="..\GroundControlIM.h">
       <Filter>Header Files\InfluenceMaps</Filter>
@@ -333,15 +249,6 @@
     <ClInclude Include="..\OnlinePlanExpansionExecution.h">
       <Filter>Header Files\OLCBP</Filter>
     </ClInclude>
-    <ClInclude Include="..\Or.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Not.h">
-      <Filter>Header Files\OLCBP\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GameStatistics.h">
-      <Filter>Header Files\GameModel</Filter>
-    </ClInclude>
     <ClInclude Include="..\PlayerResources.h">
       <Filter>Header Files\GameModel</Filter>
     </ClInclude>
@@ -352,9 +259,6 @@
       <Filter>Header Files\System</Filter>
     </ClInclude>
     <ClInclude Include="..\SetOperator.h">
-      <Filter>Header Files\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Vector2.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Logger.h">
@@ -372,20 +276,8 @@
     <ClInclude Include="..\PlayerAttributeExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
-    <ClInclude Include="..\MetaData.h">
-      <Filter>Header Files\Defs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\EngineDefs.h">
-      <Filter>Header Files\Defs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\IStrategizerException.h">
-      <Filter>Header Files\System</Filter>
-    </ClInclude>
     <ClInclude Include="..\Predicate.h">
       <Filter>Header Files\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\RootMetaData.h">
-      <Filter>Header Files\Defs</Filter>
     </ClInclude>
     <ClInclude Include="..\RtsGame.h">
       <Filter>Header Files\GameModel</Filter>
@@ -393,22 +285,139 @@
     <ClInclude Include="..\ResourceDescription.h">
       <Filter>Header Files\InfluenceMaps</Filter>
     </ClInclude>
-    <ClInclude Include="..\SimilarityWeightModel.h">
-      <Filter>Header Files\GameModel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TypesMetaData.h">
-      <Filter>Header Files\Defs</Filter>
-    </ClInclude>
     <ClInclude Include="..\SerializationEssentials.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
     <ClInclude Include="..\Colony.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\IMessagePumpObserver.h">
+    <ClInclude Include="..\NodeSelectionStrategy.h">
+      <Filter>Header Files\OLCBP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FSMState.h">
+      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StackFSM.h">
+      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ArmyController.h">
+      <Filter>Header Files\Managers\CombatManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CombatManager.h">
+      <Filter>Header Files\Managers\CombatManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EntityController.h">
+      <Filter>Header Files\Managers\CombatManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ArmyFSM.h">
+      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Console.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\WorkersManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EntityFSM.h">
+      <Filter>Header Files\Managers\CombatManager\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BuilderExist.h">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TrainerExist.h">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BotStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SimilarityWeightModel.h">
+      <Filter>Header Files\OLCBP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameTrace.h">
+      <Filter>Header Files\OLCBP\LFHD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\RtsAiEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\AttributesMetaData.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\CrossMap.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\EngineDefs.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IStrategizerException.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
-    <ClInclude Include="..\CandidateGathererExist.h">
+    <ClInclude Include="..\Include\MetaData.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\RootMetaData.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\SmartPtr.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Vector2.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IStrategizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScoutManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\TypesMetaData.h">
+      <Filter>Header Files\Defs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StrategyManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\IMessagePumpObserver.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\And.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Comparer.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Not.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Or.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\False.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Expression.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\True.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CompositeExpression.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ConditionEx.h">
+      <Filter>Header Files\OLCBP\Conditions\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ResearcherExist.h">
+      <Filter>Header Files\OLCBP\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScStrategyManager.h">
+      <Filter>Header Files\DomainKnowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ScEntityFSM.h">
+      <Filter>Header Files\DomainKnowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ResourceExist.h">
       <Filter>Header Files\OLCBP\Conditions</Filter>
     </ClInclude>
   </ItemGroup>
@@ -423,12 +432,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\And.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AttackEntityAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AttackGroundAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\BuildActionEx.cpp">
@@ -452,31 +455,16 @@
     <ClCompile Include="..\CellFeature.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\CollectResourceGoal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\CompositeExpression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\ConditionEx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DeployArmyGoal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\DestroyEntityTypeGoal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\EngineAssist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\EntityClassExist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\EntityClassNearArea.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\EventTriggered.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\ExecutionHistory.cpp">
@@ -494,12 +482,6 @@
     <ClCompile Include="..\GameTrace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GatherResourceAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\GoalEx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\GoalFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -515,9 +497,6 @@
     <ClCompile Include="..\IStrategizerEx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\IStrategizerException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\LearningFromHumanDemonstration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -527,9 +506,6 @@
     <ClCompile Include="..\MapArea.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Message.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\MessagePump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -537,9 +513,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\MetaData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MoveAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\OccupanceDataIM.cpp">
@@ -596,12 +569,6 @@
     <ClCompile Include="..\TrainForceGoal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\WinGameGoal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\WorldClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\WorldMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -614,9 +581,6 @@
     <ClCompile Include="..\PlayerAttributeExist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Battle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\OnlinePlanExpansionExecution.Update.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -626,7 +590,70 @@
     <ClCompile Include="..\EngineObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\CandidateGathererExist.cpp">
+    <ClCompile Include="..\GameEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CaseBaseEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NodeSelectionStrategy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CombatManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScoutManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EntityController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EntityFSM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ArmyController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ArmyFSM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\WorkersManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameRace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameTechTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameResearch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IStrategizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BuilderExist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TrainerExist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ResearcherExist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScEntityFSM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ScStrategyManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

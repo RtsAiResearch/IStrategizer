@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include "EngineObject.h"
+#include "EngineData.h"
 
 namespace IStrategizer
 {
@@ -15,12 +16,32 @@ namespace IStrategizer
     ///> class=GameTechTree
     class GameTechTree : public EngineObject
     {
-		OBJECT_SERIALIZABLE(GameTechTree);
+        OBJECT_SERIALIZABLE(GameTechTree, &m_isOnline, &m_cachedAvailResearches, &m_cachedDoneResearches);
+
     public:
+        GameTechTree() :
+            m_playerId(INVALID_TID),
+            m_isOnline(true)
+        {}
+
+        GameTechTree(TID playerId) :
+            m_playerId(playerId),
+            m_isOnline(true)
+        {}
+
         virtual ~GameTechTree() {}
-        virtual bool ResearchDone(ResearchType researchId) const = 0;
-        virtual bool ResearchAvailable(ResearchType researchId) const = 0;
-        virtual void SetOffline(RtsGame* pBelongingGame) = 0;
+        virtual bool ResearchDone(ResearchType researchId) const;
+        virtual bool ResearchAvailable(ResearchType researchId) const;
+        virtual void SetOffline(RtsGame* pBelongingGame);
+
+    private:
+        ///> type=bool
+        bool m_isOnline;
+        ///> type=set(int)
+        Serialization::SSet<ResearchType> m_cachedAvailResearches;
+        ///> type=set(int)
+        Serialization::SSet<ResearchType> m_cachedDoneResearches;
+        TID m_playerId;
     };
 }
 

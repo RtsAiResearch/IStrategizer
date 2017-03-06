@@ -2,48 +2,41 @@
 #include "CaseBaseEx.h"
 #include "Toolbox.h"
 #include "ObjectSerializer.h"
+#include "IStrategizerEx.h"
 #include "RtsGame.h"
 #include "GoalEx.h"
 
 #include <fstream>
+
 using namespace std;
 using namespace IStrategizer;
 
 RetainerEx::RetainerEx() :
-    m_caseBasePath(CASEBASE_FILENAME), 
-    m_caseBaseLoaded(false)
+m_caseBaseLoaded(false)
 {
 }
 //----------------------------------------------------------------------------------------------
 void RetainerEx::ReadCaseBase()
 {
-    LogInfo("Reading case-base %s", m_caseBasePath.c_str());
+    LogInfo("Reading case-base %s", CASEBASE_IO_READ_PATH.c_str());
 
     fstream file;
 
-    file.open(m_caseBasePath.c_str(), ios::in | ios::binary);
+    file.open(CASEBASE_IO_READ_PATH, ios::in | ios::binary);
 
     // Read existing case-base
     if (file.is_open())
     {
         file.close();
-        g_ObjectSerializer.Deserialize(&m_casebase, m_caseBasePath);
+        g_ObjectSerializer.Deserialize(&m_casebase, CASEBASE_IO_READ_PATH);
         m_caseBaseLoaded = true;
-    }
-    // Create case-base if not found
-    else
-    {
-        file.open(m_caseBasePath.c_str(), ios::out | ios::binary);
-        file.close();
-        m_caseBaseLoaded = true;
-        Flush();
     }
 }
 //----------------------------------------------------------------------------------------------
 void RetainerEx::Retain(_In_ CaseEx* pCase)
 {
     if (find(m_casebase.CaseContainer.begin(), m_casebase.CaseContainer.end(), pCase) == m_casebase.CaseContainer.end())
-        m_casebase.CaseContainer.push_back(pCase);
+        m_casebase.CaseContainer.insert(pCase);
 }
 //----------------------------------------------------------------------------------------------
 void RetainerEx::Flush()
@@ -51,7 +44,7 @@ void RetainerEx::Flush()
     if (m_caseBaseLoaded)
     {
         LogInfo("Flushing case-base");
-        g_ObjectSerializer.Serialize(&m_casebase, m_caseBasePath);
+        g_ObjectSerializer.Serialize(&m_casebase, CASEBASE_IO_WRITE_PATH);
     }
     else
     {
@@ -61,16 +54,14 @@ void RetainerEx::Flush()
 //----------------------------------------------------------------------------------------------
 void RetainerEx::ExecuteCommand(const char* p_cmd)
 {
-    if(!strcmp(p_cmd, "flush"))
+    if (!strcmp(p_cmd, "flush"))
     {
         Flush();
-        g_Game->DisplayMessage("flushing case-base has be performed successfully");
+        LogInfo("flushing case-base has be performed successfully");
     }
-    else if(!strcmp(p_cmd, "info"))
+    else if (!strcmp(p_cmd, "info"))
     {
-        char buffer[128];
-        sprintf_s(buffer, "retriever has %d cases", m_casebase.CaseContainer.size());
-        g_Game->DisplayMessage(buffer);
+        LogInfo("retriever has %d cases", m_casebase.CaseContainer.size());
     }
 }
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -78,10 +69,5 @@ RetainerEx::~RetainerEx()
 {
     Flush();
 
-    while (!m_casebase.CaseContainer.empty())
-    {
-        auto& pCase = m_casebase.CaseContainer.back();
-        SAFE_DELETE(pCase);
-        m_casebase.CaseContainer.pop_back();
-    }
+    m_casebase.DeleteAll();
 }

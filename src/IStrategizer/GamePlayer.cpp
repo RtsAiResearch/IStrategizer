@@ -23,22 +23,48 @@
 #include "GameType.h"
 #include "IStrategizerException.h"
 #include "SimilarityWeightModel.h"
+#include "WorldMap.h"
 
 using namespace IStrategizer;
 using namespace std;
 
-GamePlayer::GamePlayer(TID raceId) :
-    m_pResources(nullptr),
-    m_pTechTree(nullptr),
-    m_raceId(raceId),
-    m_isOnline(true)
-{
-    m_colonyCenter = MapArea::Null();
-}
+GamePlayer::GamePlayer() :
+m_playerId(INVALID_TID),
+m_pResources(nullptr),
+m_pTechTree(nullptr),
+m_isOnline(true),
+m_raceId(INVALID_TID),
+m_type(PLAYER_END),
+m_pRace(nullptr)
+{}
+//////////////////////////////////////////////////////////////////////////
+GamePlayer::GamePlayer(TID playerId) :
+m_playerId(playerId),
+m_pResources(new PlayerResources(playerId)),
+m_pTechTree(new GameTechTree(playerId)),
+m_isOnline(true),
+m_colonyCenter(MapArea::Null()),
+m_raceId(g_GameImpl->PlayerRace(playerId)->GameId()),
+m_pRace(g_Game->GetRace(m_raceId)),
+m_type(g_GameImpl->PlayerGetType(playerId))
+{}
 //////////////////////////////////////////////////////////////////////////
 GamePlayer::~GamePlayer()
 {
     Finalize();
+}
+//////////////////////////////////////////////////////////////////////////
+const GameRace* GamePlayer::Race() const
+{
+    if (!m_isOnline)
+        DEBUG_THROW(InvalidOperationException(XcptHere));
+
+    return m_pRace;
+}
+//////////////////////////////////////////////////////////////////////////
+Vector2 GamePlayer::StartLocation() const
+{
+    return UnitPositionFromTilePosition(g_GameImpl->PlayerStartLocation(m_playerId));
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::Init()
@@ -48,6 +74,8 @@ void GamePlayer::Init()
         g_MessagePump->RegisterForMessage(MSG_EntityCreate, this);
         g_MessagePump->RegisterForMessage(MSG_EntityDestroy, this);
         g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityShow, this);
+        g_MessagePump->RegisterForMessage(MSG_EntityHide, this);
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -68,44 +96,58 @@ void GamePlayer::Entities(EntityList& entityIds)
 //////////////////////////////////////////////////////////////////////////
 GameEntity* GamePlayer::GetEntity(TID id)
 {
-    if(m_entities.count(id) == 0)
-    {
-        return nullptr;
-    }
+    _ASSERTE(id != INVALID_TID);
 
-    _ASSERTE(m_entities[id] != nullptr);
+    if (m_entities.count(id) == 0)
+        return nullptr;
+
     return m_entities[id];
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::GetBases(EntityList &basesIds)
+void GamePlayer::GetBases(EntityList &bases)
 {
-    EntityClassType typeId;
-
-    typeId = Race()->GetBaseType();
-
-    basesIds.clear();
-
-    for(EntitiesMap::iterator itr = m_entities.begin();
-        itr != m_entities.end(); ++itr)
-    {
-        if (itr->second->Type() == typeId)
-            basesIds.push_back(itr->first);
-    }
+    EntityClassType typeId = Race()->GetBaseType();
+    Entities(typeId, bases);
 }
 //////////////////////////////////////////////////////////////////////////
-void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds)
+void GamePlayer::GetWorkers(_Out_ EntityList& workers)
+{
+    EntityClassType typeId = Race()->GetWorkerType();
+    Entities(typeId, workers);
+}
+//////////////////////////////////////////////////////////////////////////
+int GamePlayer::WorkersCount() const
+{
+    int count = 0;
+
+    for (auto& entityR : m_entities)
+    {
+        if (entityR.second->Type()->P(TP_IsWorker))
+            ++count;
+    }
+
+    return count;
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::Entities(EntityClassType typeId, EntityList &entityIds, bool checkReadyOnly, bool checkFree)
 {
     entityIds.clear();
-    for(EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
+    for (EntitiesMap::iterator itr = m_entities.begin(); itr != m_entities.end(); ++itr)
     {
-        if (itr->second->Type() == typeId)
+        auto currTypeId = itr->second->TypeId();
+        ObjectStateType currState = (ObjectStateType)itr->second->P(OP_State);
+        bool currIsLocked = !itr->second->IsLocked();
+
+        if (currTypeId == typeId &&
+            (!checkReadyOnly || currState != OBJSTATE_BeingConstructed) &&
+            (!checkFree || !currIsLocked))
             entityIds.push_back(itr->first);
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::NotifyMessegeSent(Message* pMsg)
 {
-    switch (pMsg->MessageTypeID())
+    switch (pMsg->TypeId())
     {
     case MSG_EntityRenegade:
         OnEntityRenegade(pMsg);
@@ -118,12 +160,19 @@ void GamePlayer::NotifyMessegeSent(Message* pMsg)
     case MSG_EntityDestroy:
         OnEntityDestroy(pMsg);
         break;
+
+    case MSG_EntityShow:
+        OnEntityShow(pMsg);
+        break;
+
+    case MSG_EntityHide:
+        OnEntityHide(pMsg);
+        break;
     }
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityCreate(Message* pMsg)
 {
-    GameEntity *pEntity = nullptr;
     TID entityId;
     EntityCreateMessage *pCreateMsg = nullptr;
 
@@ -133,23 +182,27 @@ void GamePlayer::OnEntityCreate(Message* pMsg)
     {
         entityId = pCreateMsg->Data()->EntityId;
 
-        if (m_entities.Contains(entityId))
+        GameEntity* pEntity = nullptr;
+
+        if (!m_entities.Contains(entityId))
         {
-            LogError("Entity %d already exist in Player %s units", entityId, Enums[m_type]);
-            return;
+            LogInfo("Entity %d does not exist in Player %s units, will fetch it from game", entityId, Enums[m_type]);
+            pEntity = new GameEntity(entityId);
+            _ASSERTE(pEntity);
+            m_entities[entityId] = pEntity;
+            pEntity->CacheAttributes();
+        }
+        else
+        {
+            LogInfo("Entity %d already exist in Player %s units, won't fetch it from game", entityId, Enums[m_type]);
+            pEntity = GetEntity(entityId);
         }
 
-        pEntity = FetchEntity(entityId);
-        _ASSERTE(pEntity);
+        g_IMSysMgr.RegisterGameObj(entityId, m_type);
 
-        m_entities[entityId] = pEntity;
-
-        LogInfo("[%s] Unit '%s':%d created at <%d, %d>",
-            Enums[m_type], Enums[pEntity->Type()], pEntity->Id(), pEntity->Attr(EOATTR_Left), pEntity->Attr(EOATTR_Top));
-
-        g_IMSysMgr.RegisterGameObj(entityId, pCreateMsg->Data()->OwnerId);
+        LogInfo("[%s] %s created at %s",
+            Enums[m_type], pEntity->ToString(true).c_str(), pEntity->Position().ToString().c_str());
     }
-
 }
 //////////////////////////////////////////////////////////////////////////
 void GamePlayer::OnEntityDestroy(Message* pMsg)
@@ -165,14 +218,14 @@ void GamePlayer::OnEntityDestroy(Message* pMsg)
         entityId = pDestroyMsg->Data()->EntityId;
         _ASSERTE(m_entities.Contains(entityId));
         pEntity = GetEntity(entityId);
-        pDestroyMsg->Data()->EntityType = pEntity->Type();
+        pDestroyMsg->Data()->EntityType = pEntity->TypeId();
         _ASSERTE(pEntity);
         m_entities.erase(entityId);
 
-        g_IMSysMgr.UnregisterGameObj(entityId);
+        LogInfo("[%s] %s destroyed",
+            Enums[m_type], pEntity->ToString(true).c_str());
 
-        LogInfo("[%s] Unit '%s':%d destroyed",
-            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
+        g_IMSysMgr.UnregisterGameObj(entityId);
 
         Toolbox::MemoryClean(pEntity);
     }
@@ -191,17 +244,21 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
     // I am the unit new owner
     if (pRenMsg->Data()->OwnerId == m_type)
     {
-        _ASSERTE(!m_entities.Contains(entityId));
+        if (!m_entities.Contains(entityId))
+        {
+            pEntity = new GameEntity(entityId);
+            _ASSERTE(pEntity);
+            m_entities[entityId] = pEntity;
+        }
+        else
+        {
+            pEntity = GetEntity(entityId);
+        }
 
-        pEntity = FetchEntity(entityId);
-        _ASSERTE(pEntity);
+        LogInfo("[%s] %s renegaded TO me",
+            Enums[m_type], pEntity->ToString(true).c_str());
 
-        m_entities[entityId] = pEntity;
-
-        LogInfo("[%s] Unit '%s':%d renegaded TO me",
-            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
-
-        g_IMSysMgr.RegisterGameObj(entityId, pRenMsg->Data()->OwnerId);
+        g_IMSysMgr.RegisterGameObj(entityId, m_type);
     }
     // Used to be my unit, but it is not anymore
     else if (pRenMsg->Data()->OwnerId != m_type && m_entities.Contains(entityId))
@@ -211,12 +268,68 @@ void GamePlayer::OnEntityRenegade(Message* pMsg)
 
         m_entities.erase(entityId);
 
+        LogInfo("[%s] %s renegaded from me",
+            Enums[m_type], pEntity->ToString(true).c_str());
+
         g_IMSysMgr.UnregisterGameObj(entityId);
 
-        LogInfo("[%s] Unit '%s':%d renegaded from me",
-            Enums[m_type], Enums[pEntity->Type()], pEntity->Id());
-
         Toolbox::MemoryClean(pEntity);
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::OnEntityShow(Message* pMsg)
+{
+    GameEntity *pEntity = nullptr;
+    TID entityId;
+    EntityShowMessage *pShowMsg = nullptr;
+
+    pShowMsg = (EntityCreateMessage*)pMsg;
+
+    if (pShowMsg->Data()->OwnerId == m_type)
+    {
+        entityId = pShowMsg->Data()->EntityId;
+
+        if (m_entities.Contains(entityId))
+        {
+            LogInfo("Entity %d already exist in Player %s units", entityId, Enums[m_type]);
+            pEntity = GetEntity(entityId);
+        }
+        else
+        {
+            LogInfo("Entity %d does not exist in Player %s units, adding it", entityId, Enums[m_type]);
+            pEntity = new GameEntity(entityId);
+            _ASSERTE(pEntity);
+            m_entities[entityId] = pEntity;
+        }
+
+        LogInfo("[%s] %s showed at %s",
+            Enums[m_type], pEntity->ToString(true).c_str(), pEntity->Position().ToString().c_str());
+
+        g_IMSysMgr.RegisterGameObj(entityId, pShowMsg->Data()->OwnerId);
+    }
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::OnEntityHide(Message* pMsg)
+{
+    TID entityId;
+    EntityShowMessage *pShowMsg = nullptr;
+
+    pShowMsg = (EntityCreateMessage*)pMsg;
+
+    if (pShowMsg->Data()->OwnerId == m_type)
+    {
+        entityId = pShowMsg->Data()->EntityId;
+
+        if (m_entities.Contains(entityId))
+        {
+            LogInfo("Entity %d exist in Player %s units, caching its attributes before being invisible @ Frame %d", entityId, Enums[m_type], g_Game->GameFrame());
+
+            auto pEntity = GetEntity(entityId);
+            pEntity->CacheAttributes();
+
+            LogInfo("[%s] %s hidden from %s",
+                Enums[m_type], pEntity->ToString(true).c_str(), pEntity->Position().ToString().c_str());
+        }
     }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -234,25 +347,21 @@ MapArea GamePlayer::GetColonyMapArea()
         // Note that player having many bases it not supported by the engine
         if (!playerBases.empty())
             pPlayerBase = GetEntity(playerBases[0]);
-        // No base! This is weird but for the case, we will select the first unit position as the player coloney center
+        // No base! This is weird but for the case, we will select the first unit position as the player colony center
         else
         {
-            EntityList    playerEntities;
-
-            Entities(playerEntities);
             // This can't happen, If the player has no entities, then he must be losing
-            _ASSERTE(!playerEntities.empty());
-
-            pPlayerBase = GetEntity(playerEntities[0]);
+            _ASSERTE(!m_entities.empty());
+            pPlayerBase = m_entities.begin()->second;
         }
 
         GameType *pGameType = g_Game->GetEntityType(Race()->GetBaseType());
         _ASSERTE(pGameType);
 
         m_colonyCenter = MapArea(
-            Vector2(pPlayerBase->Attr(EOATTR_Left), pPlayerBase->Attr(EOATTR_Top)),
-            pGameType->Attr(ECATTR_Width),
-            pGameType->Attr(ECATTR_Height));
+            Vector2(pPlayerBase->P(OP_Left), pPlayerBase->P(OP_Top)),
+            pGameType->P(TP_Width),
+            pGameType->P(TP_Height));
     }
 
     return m_colonyCenter;
@@ -271,50 +380,59 @@ void GamePlayer::SetOffline(RtsGame* pBelongingGame)
 int GamePlayer::Attr(PlayerAttribute attribute)
 {
     int amount = 0;
-    EntityClassAttribute classAttribute;
+    EntityTypeProperty classAttribute;
 
     switch (attribute)
     {
-    case PATTR_AlliedUnitsTotalHP:
-        classAttribute = ECATTR_MaxHp;
+    case PATTR_AlliedAttackersTotalHP:
+        classAttribute = TP_MaxHp;
         break;
-    
-    case PATTR_AlliedUnitsTotalDamage:
-        classAttribute = ECATTR_Attack;
+
+    case PATTR_AlliedAttackersTotalDamage:
+        classAttribute = TP_GroundAttack;
         break;
 
     default:
         _ASSERTE(!"Inavlid player attribute!");
-        classAttribute = ECATTR_START;
-        break;    
+        classAttribute = TP_START;
+        break;
     }
 
     for (auto pair : m_entities)
     {
-        GameType* pGameType = g_Game->GetEntityType(pair.second->Type());
+        const GameType* pGameType = pair.second->Type();
 
-        if (!pGameType->Attr(ECATTR_IsCowrad) &&
-            !pGameType->Attr(ECATTR_IsBuilding) &&
-            !pair.second->IsLocked() &&
-            g_Assist.IsEntityObjectReady(pair.first))
+        if (!pGameType->P(TP_IsWorker) &&
+            !pGameType->P(TP_IsBuilding))
         {
-            amount += pGameType->Attr(classAttribute);
+            bool isReady = g_Assist.IsEntityObjectReady(pair.first);
+            if (isReady)
+            {
+                amount += pGameType->P(classAttribute);
+            }
         }
-
     }
 
     return amount;
 }
-
-int GamePlayer::CountEntityTypes(_In_ EntityClassAttribute attr, _In_ int val) const
+//////////////////////////////////////////////////////////////////////////
+int GamePlayer::CountEntityTypes(_In_ EntityTypeProperty attr, _In_ int val) const
 {
     int count = 0;;
 
     for (auto entityEntry : m_entities)
     {
-        if (g_Game->GetEntityType(entityEntry.second->Type())->Attr(attr) == val)
+        if (entityEntry.second->Type()->P(attr) == val)
             ++count;
     }
 
     return count;
+}
+//////////////////////////////////////////////////////////////////////////
+void GamePlayer::DebugDraw()
+{
+    for (auto& entityR : m_entities)
+    {
+        entityR.second->DebugDraw();
+    }
 }

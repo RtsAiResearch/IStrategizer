@@ -10,43 +10,54 @@
 using namespace std;
 using namespace IStrategizer;
 
-Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
-: PlanStepEx(p_actionType, ESTATE_END), _preCondition(nullptr)
+Action::Action(ActionType p_actionType, unsigned p_maxPrepTime, unsigned p_maxExecTime) :
+PlanStepEx(p_actionType, ESTATE_END),
+_preCondition(nullptr)
 {
+    memset(_stateStartTime, 0, sizeof(_stateStartTime));
+    memset(_stateTimeout, 0, sizeof(_stateTimeout));
+
     _stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
-    _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
+    _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTime;
 }
 //////////////////////////////////////////////////////////////////////////
-Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, unsigned p_maxPrepTime,  unsigned p_maxExecTrialTime, unsigned p_maxExecTime)
-: PlanStepEx(p_actionType, ESTATE_END, p_parameters), _preCondition(nullptr)
+Action::Action(ActionType p_actionType, const PlanStepParameters& p_parameters, unsigned p_maxPrepTime, unsigned p_maxExecTime) :
+PlanStepEx(p_actionType, ESTATE_END, p_parameters),
+_preCondition(nullptr)
 {
+    memset(_stateStartTime, 0, sizeof(_stateStartTime));
+    memset(_stateTimeout, 0, sizeof(_stateTimeout));
+
     _stateTimeout[INDEX(ESTATE_NotPrepared, ExecutionStateType)] = p_maxPrepTime;
-    _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTrialTime;
+    _stateTimeout[INDEX(ESTATE_Executing, ExecutionStateType)] = p_maxExecTime;
 }
 //////////////////////////////////////////////////////////////////////////
 Action::~Action()
 {
-	SAFE_DELETE(_preCondition);
+    SAFE_DELETE(_preCondition);
 }
 //////////////////////////////////////////////////////////////////////////
-void Action::State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock)
+void Action::SetState(ExecutionStateType p_state)
 {
-    PlanStepEx::State(p_state, game, p_clock);
+    PlanStepEx::SetState(p_state);
+
+    _stateStartTime[INDEX(p_state, ExecutionStateType)] = g_Game->GameFrame();
 
     switch (p_state)
     {
     case ESTATE_Succeeded:
-        OnSucccess(game, p_clock);
+        OnSucccess();
         break;
     case ESTATE_Failed:
-        OnFailure(game, p_clock);
+        OnFailure();
         break;
     }
 }
-bool Action::PreconditionsSatisfied(RtsGame& game)
+//////////////////////////////////////////////////////////////////////////
+bool Action::PreconditionsSatisfied()
 {
     if (_preCondition == nullptr) { InitializeConditions(); }
-    bool satisfied = _preCondition->Evaluate(game);
+    bool satisfied = _preCondition->Evaluate(*g_Game);
 
     return satisfied;
 }
@@ -57,59 +68,60 @@ void Action::InitializeConditions()
     InitializePreConditions();
 }
 //////////////////////////////////////////////////////////////////////////
-bool Action::Execute(RtsGame& game, const WorldClock& p_clock)
+void Action::Update()
 {
-    _ASSERTE(PlanStepEx::State() == ESTATE_NotPrepared);
+    if (_firstUpdate)
+    {
+        Reset();
+        _firstUpdate = false;
+    }
 
-    LogInfo("Trying to execute action %s", ToString().c_str());
-    return ExecuteAux(game, p_clock);
-}
-//////////////////////////////////////////////////////////////////////////
-void Action::Reset(RtsGame& game, const WorldClock& p_clock)
-{
-    if (PlanStepEx::State() != ESTATE_NotPrepared)
-        State(ESTATE_NotPrepared, game, p_clock);
-}
-//////////////////////////////////////////////////////////////////////////
-void Action::UpdateAux(RtsGame& game, const WorldClock& p_clock)
-{
-    ExecutionStateType state = PlanStepEx::State();
-    
+    if (IsSleeping())
+        return;
+    else if (IsCurrentStateTimeout())
+    {
+        LogInfo(
+            "%s state %s timed-out after %dms",
+            ToString().c_str(),
+            Enums[(int)GetState()],
+            _stateTimeout[INDEX(GetState(), ExecutionStateType)]);
+        SetState(ESTATE_Failed);
+        return;
+    }
+
+    ExecutionStateType state = PlanStepEx::GetState();
+
     switch (state)
     {
     case ESTATE_NotPrepared:
-        if (PreconditionsSatisfied(game))
+        if (PreconditionsSatisfied())
         {
             LogInfo("Preconditions satisfied, trying to execute action %s", ToString().c_str());
 
-            if (Execute(game, p_clock))
+            LogInfo("Trying to execute action %s", ToString().c_str());
+
+            if (Execute())
             {
-                State(ESTATE_Executing, game, p_clock);
+                SetState(ESTATE_Executing);
             }
             else
             {
-                LogInfo("Execution failed for action '%s', do not fail and keep retrying", ToString().c_str());
-                OnFailure(game, p_clock);
-                // It's intentional to comment this block as some actions require retrying.
-                //LogInfo("Execution failed for action %s", ToString().c_str());
-                //State(ESTATE_Failed, game, p_clock);
+                SetState(ESTATE_Failed);
             }
         }
         break;
 
     case ESTATE_Executing:
-        if(AliveConditionsSatisfied(game))
-        { 
-            if (SuccessConditionsSatisfied(game))
-            {
-                State(ESTATE_Succeeded, game, p_clock);
-                m_history.Add(ESTATE_Succeeded);
-            }
+
+        if (SuccessConditionsSatisfied(*g_Game))
+        {
+            SetState(ESTATE_Succeeded);
+            m_history.Add(ESTATE_Succeeded);
         }
-        else
+        else if (!AliveConditionsSatisfied())
         {
             LogInfo("%s alive conditions not satisfied", ToString().c_str());
-            State(ESTATE_Failed, game, p_clock);
+            SetState(ESTATE_Failed);
         }
         break;
     }
@@ -149,3 +161,16 @@ unsigned Action::Hash(bool quantified) const
     unsigned h = MathHelper::SuperFastHash((const char*)&*str.cbegin(), str.size() * sizeof(int));
     return h;
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool Action::IsCurrentStateTimeout()
+{
+    unsigned timeout = _stateTimeout[INDEX(_state, ExecutionStateType)];
+    unsigned startTime = _stateStartTime[INDEX(_state, ExecutionStateType)];
+
+    // 0 means no timeout and thus meaning infinite timeout
+    if (timeout == 0)
+        return false;
+    else
+        return ((g_Game->GameFrame() - startTime) > timeout);
+}
+

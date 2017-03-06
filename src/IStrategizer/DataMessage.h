@@ -3,9 +3,11 @@
 
 #include "Message.h"
 
+#include "RtsAiEngine.h"
 #ifndef ENGINEDATA_H
 #include "EngineData.h"
 #endif
+#include <memory>
 
 namespace IStrategizer
 {
@@ -18,12 +20,11 @@ namespace IStrategizer
             Message(gameFrame, msgType),
             m_pData(pData)
         {}
-        ~DataMessage() { delete m_pData; }
-        const T* Data() const { return m_pData; }
-        T* Data() { return m_pData; }
+        const T* Data() const { return &*m_pData; }
+        T* Data() { return &*m_pData; }
 
     private:
-        T* m_pData;
+        std::shared_ptr<T> m_pData;
     };
 
     // DataMessage that does not own the lifetime of the data object
@@ -46,16 +47,10 @@ namespace IStrategizer
     //----------------------------------------------------------------------------------------------
     typedef DataMessage<std::string> TextMessage;
     //----------------------------------------------------------------------------------------------
-    struct EntityMessageData
-    {
-        EntityClassType EntityType;
-        TID EntityId;
-        PlayerType OwnerId;
-        int X;
-        int Y;
-    };
     typedef DataMessage<EntityMessageData> EntityCreateMessage;
     typedef DataMessage<EntityMessageData> EntityDestroyMessage;
+    typedef DataMessage<EntityMessageData> EntityShowMessage;
+    typedef DataMessage<EntityMessageData> EntityHideMessage;
     //----------------------------------------------------------------------------------------------
     struct GameEndMessageData
     {

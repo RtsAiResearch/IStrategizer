@@ -16,12 +16,9 @@ void CaseLearningHelper::Init()
     g_MessagePump->RegisterForMessage(MSG_EntityRenegade, this);
     g_MessagePump->RegisterForMessage(MSG_GameActionLog, this);
 
-    for(unsigned i = START(GoalType); i < END(GoalType); ++i)
+    for (unsigned i = START(GoalType); i < END(GoalType); ++i)
     {
-        if (i != GOALEX_DestroyEntityType && i != GOALEX_WinGame)
-        {
-            m_goals.push_back(g_GoalFactory.GetGoal((GoalType)i, true));
-        }
+        m_goals.push_back(g_GoalFactory.GetGoal((GoalType)i, true));
     }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------
@@ -54,26 +51,26 @@ void CaseLearningHelper::NotifyMessegeSent(Message* p_message)
     if (p_message == nullptr)
         DEBUG_THROW(InvalidParameterException(XcptHere));
 
-    for (unsigned i = 0; i < m_goals.size() && p_message->GameCycle() > 0; ++i)
+    for (unsigned i = 0; i < m_goals.size() && p_message->GameFrame() > 0; ++i)
     {
-        m_goals[i]->HandleMessage(*g_Game, p_message, dummy);
+        m_goals[i]->HandleMessage(p_message, dummy);
     }
 
-    if (p_message->GameCycle() > 0)
+    if (p_message->GameFrame() > 0)
     {
         succeededGoals = GetSatisfiedGoals();
         for (unsigned i = 0; i < succeededGoals.size(); ++i)
         {
-            m_goalMatrix[p_message->GameCycle()].push_back(succeededGoals[i]);
+            m_goalMatrix[p_message->GameFrame()].push_back(succeededGoals[i]);
         }
     }
 
-    switch(p_message->MessageTypeID())
+    switch (p_message->TypeId())
     {
     case MSG_GameActionLog:
         pTraceMsg = reinterpret_cast<DataMessage<GameTrace>*>(p_message);
 
-        if (pTraceMsg ->Data() == nullptr)
+        if (pTraceMsg->Data() == nullptr)
             DEBUG_THROW(InvalidParameterException(XcptHere));
 
         trace = *pTraceMsg->Data();

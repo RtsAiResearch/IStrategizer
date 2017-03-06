@@ -1,25 +1,21 @@
 #include "ClientMain.h"
 #include "IMView.h"
-#include "BWAPI.h"
-#include "BWAPI\Client.h"
 #include "IStrategizerEx.h"
 #include "DataMessage.h"
 #include "MessagePump.h"
-#include "DefinitionCrossMapping.h"
-#include "StarCraftGame.h"
 #include "IMSystemManager.h"
 #include "InfluenceMap.h"
 #include "IMViewWidget.h"
 #include "WorldClock.h"
 #include "OnlineCaseBasedPlannerEx.h"
 #include "OnlinePlanExpansionExecution.h"
-#include "GameTraceCollector.h"
 #include "GraphScene.h"
 #include "PlanGraphView.h"
 #include "ObjectSerializer.h"
 #include "WorldMap.h"
 #include "GamePlayer.h"
 #include "GameEntity.h"
+#include "AIModuleLoader.h"
 
 #include <stdio.h>
 #include <string>
@@ -34,96 +30,34 @@
 #include <Windows.h>
 
 using namespace IStrategizer;
-using namespace BWAPI;
 using namespace std;
 
-#define TilePositionFromUnitPosition(UnitPos)    (UnitPos / 32)
-#define UnitPositionFromTilePosition(TilePos)    (TilePos * 32)
+ClientMain* g_pClientInst = nullptr;
+
+void ModueOnMatchStart()
+{
+    g_pClientInst->OnMatchStart();
+}
+
+void ModuleOnMatchEnd(bool isWinner)
+{
+    g_pClientInst->OnMatchEnd(isWinner);
+}
 
 ClientMain::ClientMain(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags),
     m_pIStrategizer(nullptr),
-    m_pGameModel(nullptr),
     m_isLearning(false),
     m_pTraceCollector(nullptr),
-    m_enemyPlayerUnitsCollected(false),
     m_pPlanGraphView(nullptr),
     m_pPlanHistoryView(nullptr),
-    m_numGamesPlayed(0)
+    m_numGamesPlayed(0),
+    m_isInGame(false)
 {
+    g_pClientInst = this;
     ui.setupUi(this);
-    IStrategizer::Init();
-    g_MessagePump->RegisterForMessage(MSG_PlanStructureChange, this);
 
     connect(ui.sldHistoryFrame, SIGNAL(valueChanged(int)), SLOT(OneHistorySliderValueChanged()));
-}
-//////////////////////////////////////////////////////////////////////////
-ClientMain::~ClientMain()
-{
-    FinalizeIStrategizer();
-
-    delete m_pTraceCollector;
-}
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::InitIStrategizer()
-{
-    IStrategizerParam param;
-
-    try
-    {
-        m_pGameModel = new StarCraftGame;
-        _ASSERTE(m_pGameModel);
-
-        param.BuildingDataIMCellSize = TILE_SIZE;
-        param.GrndCtrlIMCellSize = TILE_SIZE;
-        param.OccupanceIMUpdateInterval = 250;
-        param.GrndCtrlIMUpdateInterval = 1000;
-
-        if (Broodwar->isReplay())
-        {
-            LogInfo("Learning from replay map: %s", Broodwar->mapFileName().c_str());
-
-            Playerset players = Broodwar->getPlayers();
-            for (auto player : players)
-            {
-                LogInfo("Replay Player[%d]: %s", player->getID(), player->getName().c_str());
-            }
-
-            param.Phase = PHASE_Offline;
-            m_isLearning = true;
-        }
-        else
-        {
-            param.Phase = PHASE_Online;
-            Broodwar->setLocalSpeed(0);
-        }
-
-        m_pIStrategizer = new IStrategizerEx(param, m_pGameModel);
-        _ASSERTE(m_pIStrategizer);
-
-        g_Database.Init();
-
-        if (!m_pIStrategizer->Init())
-        {
-            LogError("Failed to initialize IStrategizer");
-            return;
-        }
-
-        if (param.Phase == PHASE_Offline)
-        {
-            TID selfPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Self);
-            LogInfo("Will learn demonstrations from self Player[%d]", );
-            m_pTraceCollector = new GameTraceCollector(selfPlayerID);
-        }
-
-        // We postpone the IdLookup initialization until the engine is initialized and connected to the engine
-        // and the engine Enums[*] table is fully initialized
-        InitIdLookup();
-    }
-    catch (IStrategizer::Exception& e)
-    {
-        e.To(cout);
-    }
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitIMView()
@@ -158,8 +92,8 @@ void ClientMain::InitIMView()
         ui.tbGrndCtrlIM->layout()->setSpacing(0);
     }
 
-    m_pBldngDataIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_BuildingData));
-    m_pGrndCtrlIMWdgt->SetIM(g_IMSysMgr.GetIM(IM_GroundControl));
+    m_pBldngDataIMWdgt->SetIM(m_pIStrategizer->IMSysMgr()->GetIM(IM_BuildingData));
+    m_pGrndCtrlIMWdgt->SetIM(m_pIStrategizer->IMSysMgr()->GetIM(IM_GroundControl));
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::InitPlannerView()
@@ -195,27 +129,21 @@ void ClientMain::InitIdLookup()
 {
     for (unsigned currID = 0; currID < ENUMS_SIZE; ++currID)
     {
-        if (Enums[currID] != nullptr)
+        if (m_pIStrategizer->EngineIdsName()[currID] != nullptr)
         {
-            string enumStr(Enums[currID]);
+            string enumStr(m_pIStrategizer->EngineIdsName()[currID]);
             m_idLookup.SetByFirst(currID, enumStr);
         }
     }
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::FinalizeIStrategizer()
-{
-    SAFE_DELETE(m_pIStrategizer);
-
-	RtsGame::FinalizeStaticData();
-    SAFE_DELETE(m_pGameModel);
-}
-//////////////////////////////////////////////////////////////////////////
 void ClientMain::showEvent(QShowEvent *pEvent)
 {
-    if (!ClientInitialized())
+    if (!AiModuleLoaderInitialized())
     {
-        InitClient();
+        AiModuleLoaderSetMatchStartCallback(&ModueOnMatchStart);
+        AiModuleLoaderSetMatchEndCallback(&ModuleOnMatchEnd);
+        AiModuleLoaderInit("Yarmouk.dll");
     }
 
     QMainWindow::showEvent(pEvent);
@@ -223,182 +151,78 @@ void ClientMain::showEvent(QShowEvent *pEvent)
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::closeEvent(QCloseEvent *pEvent) 
 {
-    ShutdownClient();
+    AiModuleLoaderShutdown();
     QMainWindow::closeEvent(pEvent);
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnClientLoopStart()
+void ClientMain::OnMatchStart()
 {
+    m_isInGame = true;
+    m_pIStrategizer = (IStrategizerEx*)AIModuleLoaderGetEngine();
+    InitIdLookup();
+    m_pIStrategizer->RegisterForMessage(MSG_PlanStructureChange, this);
+
+    QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiInit));
+}
+//////////////////////////////////////////////////////////////////////////
+void ClientMain::OnMatchEnd(bool p_isWinner)
+{
+    m_isInGame = false;
+    ++m_numGamesPlayed;
+
     QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiFinalize));
     // Give the app time to finalize itself before finalizing the engine
     // FIXME: Replace the sleep with synchronization event for robustness
     Sleep(2000);
-    FinalizeIStrategizer();
 
     // Dump memory leaks if exist
     EngineObject::DumpAliveObjects();
     // Make sure that we start from a clean slate
 
     // Hard Reset is always a bad idea and can cause inconsistency
-	// EngineObject::FreeMemoryPool();
-
-    m_enemyPlayerUnitsCollected = false;
-    InitIStrategizer();
-    QApplication::postEvent(this, new QEvent((QEvent::Type)CLNTEVT_UiInit));
+    // EngineObject::FreeMemoryPool();
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnClientLoopEnd()
+void ClientMain::timerEvent(QTimerEvent *pEvt)
 {
-    ++m_numGamesPlayed;
-}
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::OnSendText(const string& p_text)
-{
-    Broodwar->printf("[IStrategizer] You typed '%s'!",p_text.c_str());
-    TextMessage *pTxtMsg;
-
-    pTxtMsg = new TextMessage(Broodwar->getFrameCount(), MSG_Input, new string(p_text));
-    g_MessagePump->Send(pTxtMsg);
-
-    if (p_text == "export-statics")
-        m_pGameModel->ExportStaticData();
-}
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::OnUnitCreate(BWAPI::Unit p_pUnit)
-{
-    EntityMessageData    *pData = nullptr;
-    EntityCreateMessage    *pMsg = nullptr;
-
-    pData = new EntityMessageData;
-    _ASSERTE(pData);
-
-    _ASSERTE(p_pUnit);
-    pData->EntityId = p_pUnit->getID();
-    pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
-    pData->EntityType = g_Database.EntityMapping.GetByFirst(p_pUnit->getType());
-
-    if (p_pUnit->getType().isBuilding())
+    if (m_isInGame &&
+        m_pIStrategizer &&
+        m_pIStrategizer->Planner() &&
+        m_pIStrategizer->Planner()->ExpansionExecution() &&
+        m_pIStrategizer->Planner()->ExpansionExecution()->Plan())
     {
-        pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x);
-        pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y);
+        m_pIStrategizer->Planner()->ExpansionExecution()->Plan()->Lock();
+
+        if (m_pIStrategizer->GameModelImpl() &&
+            m_pIStrategizer->GameModelImpl()->IsInGame() &&
+            m_pIStrategizer->GameModel()->Self() != nullptr)
+        {
+            UpdateViews();
+            UpdateStatsView();
+        }
+
+        m_pIStrategizer->Planner()->ExpansionExecution()->Plan()->Unlock();
     }
-    else
-    {
-        pData->X = p_pUnit->getLeft();
-        pData->Y = p_pUnit->getTop();
-    }
-
-    pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityCreate, pData);
-    _ASSERTE(pMsg);
-
-    g_MessagePump->Send(pMsg);
-}
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::OnUnitDestroy(BWAPI::Unit p_pUnit)
-{
-    EntityMessageData *pData = nullptr;
-    EntityDestroyMessage    *pMsg = nullptr;
-
-    pData = new EntityMessageData;
-    _ASSERTE(pData);
-
-    _ASSERTE(p_pUnit);
-
-    pData->EntityId = p_pUnit->getID();
-    pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
-
-    if (p_pUnit->getType().isBuilding())
-    {
-        pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x);
-        pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y);
-    }
-    else
-    {
-        pData->X = p_pUnit->getLeft();
-        pData->Y = p_pUnit->getTop();
-    }
-
-    pMsg = new EntityDestroyMessage(Broodwar->getFrameCount(), MSG_EntityDestroy, pData);
-    _ASSERTE(pMsg);
-
-    g_MessagePump->Send(pMsg);
-}
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::OnUnitRenegade(BWAPI::Unit p_pUnit)
-{
-    EntityMessageData *pData = nullptr;
-    EntityCreateMessage *pMsg = nullptr;
-
-    pData = new EntityMessageData;
-    _ASSERTE(pData);
-
-    _ASSERTE(p_pUnit);
-    pData->EntityId = p_pUnit->getID();
-    pData->OwnerId = g_Database.PlayerMapping.GetByFirst(p_pUnit->getPlayer()->getID());
-    pData->EntityType = g_Database.EntityMapping.GetByFirst(p_pUnit->getType());
-
-    if (p_pUnit->getType().isBuilding())
-    {
-        pData->X = UnitPositionFromTilePosition(p_pUnit->getTilePosition().x);
-        pData->Y = UnitPositionFromTilePosition(p_pUnit->getTilePosition().y);
-    }
-    else
-    {
-        pData->X = p_pUnit->getLeft();
-        pData->Y = p_pUnit->getTop();
-    }
-
-    pMsg = new EntityCreateMessage(Broodwar->getFrameCount(), MSG_EntityRenegade, pData);
-    _ASSERTE(pMsg);
-
-    g_MessagePump->Send(pMsg);
-}
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::OnMatchStart()
-{
-    Message *pMsg;
-
-    pMsg = new Message(Broodwar->getFrameCount(), MSG_GameStart);
-    _ASSERTE(pMsg);
-
-    g_MessagePump->Send(pMsg);
-}
-//////////////////////////////////////////////////////////////////////////
-void ClientMain::OnMatchEnd(bool p_isWinner)
-{
-    GameEndMessageData    *pData = nullptr;
-    GameEndMessage        *pMsg = nullptr;
-
-    pData = new GameEndMessageData;
-    _ASSERTE(pData);
-
-    Player player = Broodwar->getPlayer(g_Database.PlayerMapping.GetBySecond(PLAYER_Self));
-    pData->IsWinner = p_isWinner;
-    pData->Score = player->getBuildingScore() + player->getRazingScore() + player->getUnitScore() + player->getCustomScore() + player->getKillScore();
-    pData->MapName = Broodwar->mapFileName();
-    pData->EnemyRace = g_Game->GetRace(Broodwar->getPlayer(g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy))->getRace().getID())->ToString();
-    pMsg = new GameEndMessage(Broodwar->getFrameCount(), MSG_GameEnd, pData);
-    _ASSERTE(pMsg);
-
-    g_MessagePump->Send(pMsg);
 }
 //////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateStatsView()
 {
-    ui.lblGameCyclesData->setText(tr("%1").arg(m_pIStrategizer->Clock().ElapsedGameCycles()));
+    ui.lblGameCyclesData->setText(tr("%1").arg(m_pIStrategizer->GameModel()->Clock().ElapsedGameCycles()));
 
-    EntityList workers;
     map<ObjectStateType, set<TID>> workersState;
+    auto workerType = m_pIStrategizer->GameModel()->Self()->Race()->GetWorkerType();
 
-    m_pGameModel->Self()->Entities(m_pGameModel->Self()->Race()->GetWorkerType(), workers);
-
-    ui.lblWorkersCountData->setText(QString("%1").arg(workers.size()));
-
-    for (auto workerId : workers)
+    int workerCount = 0;
+    for (auto& entityR : m_pIStrategizer->GameModel()->Self()->Entities())
     {
-        GameEntity* worker = m_pGameModel->Self()->GetEntity(workerId);
-        workersState[(ObjectStateType)worker->Attr(EOATTR_State)].insert(worker->Id());
+        if (entityR.second->TypeId() == workerType)
+        {
+            workersState[(ObjectStateType)entityR.second->P(OP_State)].insert(entityR.first);
+            ++workerCount;
+        }
     }
+
+    ui.lblWorkersCountData->setText(QString("%1").arg(workerCount));
 
     QTableWidgetItem* cell = NULL;
     for(int row = 0; row < ui.tblWorkerState->rowCount(); ++row)
@@ -409,7 +233,7 @@ void ClientMain::UpdateStatsView()
         QString txt =QString("[%1]{").arg(workersState[state].size());
         for (auto workerId : workersState[state])
         {
-            auto pEntity = m_pGameModel->Self()->GetEntity(workerId);
+            auto pEntity = m_pIStrategizer->GameModel()->Self()->GetEntity(workerId);
             if (pEntity != nullptr)
             {
                 bool isLocked = pEntity->IsLocked();
@@ -425,7 +249,7 @@ void ClientMain::UpdateStatsView()
 
     ui.tblWorkerState->resizeColumnsToContents();
 
-    ui.lblFPSData->setText(tr("%1").arg(Broodwar->getFPS()));
+    ui.lblFPSData->setText(tr("%1").arg("-"));
 
     int currMemoryUsage = (int)GetProcessUsedMemoryKB();
     ui.lblCurrUsedMemoryData->setText(QString("%1").arg(currMemoryUsage));
@@ -438,54 +262,17 @@ void ClientMain::UpdateStatsView()
 
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnClientUpdate()
-{
-    if (!Broodwar->isReplay() &&
-        !m_enemyPlayerUnitsCollected)
-    {
-        // This to solve the bug that the game does not send  messages about creating enemy units at game start
-        TID enemyPlayerID = g_Database.PlayerMapping.GetBySecond(PLAYER_Enemy);
-        const Unitset &enemyUnits = Broodwar->getPlayer(enemyPlayerID)->getUnits();
-
-        for (Unitset::iterator itr = enemyUnits.begin();
-            itr != enemyUnits.end(); ++itr)
-        {
-            OnUnitCreate(*itr);
-        }
-
-        m_enemyPlayerUnitsCollected = !enemyUnits.empty();
-    }
-
-    try
-    {
-        m_pIStrategizer->Update(Broodwar->getFrameCount());
-    }
-    catch (IStrategizer::Exception &e)
-    {
-        e.To(cout);
-    }
-}
-//////////////////////////////////////////////////////////////////////////
 void ClientMain::UpdateViews()
 {
     for (unsigned i = 0, size = m_IMViews.size(); i < size; ++i)
         m_IMViews[i]->update();
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::OnGameFrame()
-{
-    if (Broodwar->isReplay())
-    {
-        _ASSERTE(m_pTraceCollector);
-        m_pTraceCollector->OnGameFrame();
-    }
-}
-//////////////////////////////////////////////////////////////////////////
 void ClientMain::NotifyMessegeSent(Message* p_pMessage)
 {
     _ASSERTE(p_pMessage != nullptr);
 
-    if (p_pMessage->MessageTypeID() == MSG_PlanStructureChange && m_pPlanGraphView != nullptr )
+    if (p_pMessage->TypeId() == MSG_PlanStructureChange && m_pPlanGraphView != nullptr )
     {
         Message* pPlanChangeMsg = static_cast<Message*>(p_pMessage);
 
@@ -498,7 +285,7 @@ void ClientMain::NotifyMessegeSent(Message* p_pMessage)
         {
             pPlanner->Plan()->Lock();
 
-            shared_ptr<PlanSnapshot> pSnapshot(new PlanSnapshot(pPlanChangeMsg->GameCycle(),
+            shared_ptr<PlanSnapshot> pSnapshot(new PlanSnapshot(pPlanChangeMsg->GameFrame(),
                 shared_ptr<IOlcbpPlan>(pPlanner->Plan()->Clone()),
                 pPlanner->GetContext().Data,
                 pPlanner->GetContext().ActiveGoalSet));
@@ -530,7 +317,7 @@ void ClientMain::InitStatsView()
             workerState != END(ObjectStateType);
             workerState = (ObjectStateType)((int)workerState + 1))
         {
-            QTableWidgetItem* cell = new QTableWidgetItem(QString::fromLocal8Bit(Enums[(int)workerState]));
+            QTableWidgetItem* cell = new QTableWidgetItem(QString::fromLocal8Bit(m_pIStrategizer->EngineIdsName()[(int)workerState]));
             cell->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             QVariant objStateType((int)workerState);
             ui.tblWorkerState->setItem(row, 0, cell);
@@ -552,15 +339,6 @@ void ClientMain::InitStatsView()
     ui.lblGamesPlayedData->setText(QString("%1").arg(m_numGamesPlayed));
 }
 //////////////////////////////////////////////////////////////////////////
-void ClientMain::timerEvent(QTimerEvent *pEvt)
-{
-    if (BroodwarPtr && BroodwarPtr->isInGame())
-    {
-        UpdateViews();
-        UpdateStatsView();
-    }
-}
-//////////////////////////////////////////////////////////////////////////
 bool ClientMain::event(QEvent * pEvt)
 {
     _ASSERTE(pEvt);
@@ -568,7 +346,6 @@ bool ClientMain::event(QEvent * pEvt)
 
     if (evt == CLNTEVT_UiInit)
     {
-
         OnUiInit();
         return true;
     }

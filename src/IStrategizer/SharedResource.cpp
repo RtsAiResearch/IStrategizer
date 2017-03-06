@@ -55,7 +55,7 @@ void SharedResource::Lock(EngineObject *p_pOwner)
             {
                 m_pOwner = p_pOwner;
                 AddResource(this);
-                LogInfo("Action '%s' acquired resource '%s'", m_pOwner->ToString().c_str(), ToString().c_str());
+                LogInfo("'%s' acquired resource '%s'", m_pOwner->ToString().c_str(), ToString().c_str());
             }
             else
                 DEBUG_THROW(AcquireException(XcptHere));
@@ -93,7 +93,7 @@ void SharedResource::Unlock(EngineObject *p_pOwner)
         {
             if (Release())
             {
-                LogInfo("Action '%s' released resource '%s'", m_pOwner->ToString().c_str(), ToString().c_str());
+                LogInfo("'%s' released resource '%s'", m_pOwner->ToString().c_str(), ToString().c_str());
                 m_pOwner = nullptr;
                 RemoveResource(this);
             }
@@ -107,3 +107,12 @@ void SharedResource::Unlock(EngineObject *p_pOwner)
         }
     }
 }
+//////////////////////////////////////////////////////////////////////////
+std::string SharedResource::ToString(bool minimal) const
+{
+	char buff[512];
+	sprintf_s(buff, "Owner=%s", (m_pOwner != nullptr ? m_pOwner->ToString().c_str() : ""));
+	
+	return buff;
+}
+

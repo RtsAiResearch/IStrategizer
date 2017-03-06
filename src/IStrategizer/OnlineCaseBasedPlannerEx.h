@@ -2,14 +2,13 @@
 #define ONLINECASEBASEDPLANNEREX_H
 
 #include <string>
-#include "WorldClock.h"
 #include "EngineData.h"
 
 namespace IStrategizer
 {
     enum PlayerType;
     class GoalEx;
-
+    class RtsGame;
     class OnlinePlanExpansionExecution;
     class CaseBasedReasonerEx;
 
@@ -21,8 +20,8 @@ namespace IStrategizer
 
     public:
         OnlineCaseBasedPlannerEx();
-        void Update(const WorldClock& p_clock);
-        bool Init(GoalEx *p_initialGoal);
+        void Update();
+        bool Init();
         const CaseBasedReasonerEx* Reasoner() const { return _caseBasedReasoner; }
         const OnlinePlanExpansionExecution* ExpansionExecution() const { return _onlineExpansionExecution; }
         OnlinePlanExpansionExecution* ExpansionExecution() { return _onlineExpansionExecution; }

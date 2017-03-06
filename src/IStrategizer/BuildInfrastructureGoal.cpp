@@ -9,9 +9,12 @@
 #include "RtsGame.h"
 #include "PlayerResources.h"
 #include "DataMessage.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
+
+DECL_SERIALIZABLE(BuildInfrastructureGoal);
 
 BuildInfrastructureGoal::BuildInfrastructureGoal() : GoalEx(GOALEX_BuildInfrastructure)
 {
@@ -20,7 +23,7 @@ BuildInfrastructureGoal::BuildInfrastructureGoal() : GoalEx(GOALEX_BuildInfrastr
     m_existingAmount = 0;
 }
 //----------------------------------------------------------------------------------------------
-BuildInfrastructureGoal::BuildInfrastructureGoal(const PlanStepParameters& p_parameters): GoalEx(GOALEX_BuildInfrastructure, p_parameters)
+BuildInfrastructureGoal::BuildInfrastructureGoal(const PlanStepParameters& p_parameters) : GoalEx(GOALEX_BuildInfrastructure, p_parameters)
 {
 }
 //----------------------------------------------------------------------------------------------
@@ -34,7 +37,7 @@ vector<GoalEx*> BuildInfrastructureGoal::GetSucceededInstances(RtsGame &game)
 //----------------------------------------------------------------------------------------------
 void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed)
 {
-    if (p_msg->MessageTypeID() == MSG_EntityCreate || p_msg->MessageTypeID() == MSG_EntityRenegade)
+    if (p_msg->TypeId() == MSG_EntityCreate || p_msg->TypeId() == MSG_EntityRenegade)
     {
         EntityCreateMessage* pMsg = static_cast<EntityCreateMessage*>(p_msg);
         _ASSERTE(pMsg && pMsg->Data());
@@ -43,7 +46,7 @@ void BuildInfrastructureGoal::HandleMessage(RtsGame& game, Message* p_msg, bool&
             return;
 
         EntityClassType entityType = pMsg->Data()->EntityType;
-        if (game.GetEntityType(entityType)->Attr(ECATTR_IsBuilding))
+        if (game.GetEntityType(entityType)->P(TP_IsBuilding))
         {
             PlanStepParameters params;
 
@@ -64,23 +67,15 @@ void BuildInfrastructureGoal::InitializePostConditions()
 //----------------------------------------------------------------------------------------------
 bool BuildInfrastructureGoal::SuccessConditionsSatisfied(RtsGame& game)
 {
-    EntityList entities;
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
     int count = 0;
 
-    if (game.Self()->Race()->GetResourceSource(RESOURCE_Supply) == entityClassType)
+    for (auto& entityR : game.Self()->Entities())
     {
-        count = GetAvailableSupplyBuildingsCount(game);
-    }
-    else
-    {
-        game.Self()->Entities(entityClassType, entities);
-        for (auto building : entities)
+        if (entityR.second->TypeId() == entityClassType &&
+            entityR.second->P(OP_State) != OBJSTATE_BeingConstructed)
         {
-            if (game.Self()->GetEntity(building)->Attr(EOATTR_State) != OBJSTATE_BeingConstructed)
-            {
-                count++;
-            }
+            count++;
         }
     }
 
@@ -92,15 +87,15 @@ void BuildInfrastructureGoal::AdaptParameters(RtsGame& game)
     EntityList entities;
     EntityClassType entityClassType = (EntityClassType)_params[PARAM_EntityClassId];
 
-    if (game.Self()->Race()->GetResourceSource(RESOURCE_Supply) == entityClassType)
-    {
-        m_existingAmount = GetAvailableSupplyBuildingsCount(game);
-    }
-    else
-    {
-        game.Self()->Entities(entityClassType, entities);
-        m_existingAmount = entities.size();
-    }
+    /* if (game.Self()->Race()->GetResourceSource(RESOURCE_Supply) == entityClassType)
+     {
+     m_existingAmount = GetAvailableSupplyBuildingsCount(game);
+     }
+     else
+     {*/
+    game.Self()->Entities(entityClassType, entities);
+    m_existingAmount = entities.size();
+    //}
 
     _params[PARAM_Amount] = _params[PARAM_Amount] - m_existingAmount;
 }

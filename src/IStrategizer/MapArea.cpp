@@ -6,14 +6,15 @@ using namespace std;
 
 MapArea& MapArea::Null()
 {
-    static MapArea nullptrArea(Vector2::Null(), -1, -1);
+    static MapArea nullptrArea(Vector2(-1, -1), -1, -1);
 
     return nullptrArea;
 }
 //////////////////////////////////////////////////////////////////////////
 bool MapArea::IsNull()
 {
-    return m_pos.IsNull() &&
+    return m_pos.X == -1 &&
+        m_pos.Y == -1 &&
         m_width == -1 &&
         m_height == -1;
 }
@@ -34,10 +35,12 @@ bool MapArea::Release()
     return pIM->FreeArea(m_pos, m_width, m_height);
 }
 //////////////////////////////////////////////////////////////////////////
-string MapArea::ToString() const
+string MapArea::ToString(bool minimal) const
 {
-    char str[256];
-    sprintf_s(str, "MapArea(%dx%d,<%d,%d>)", m_width, m_height, m_pos.X, m_pos.Y);
+    char str[512];
+	std::string asResource = SharedResource::ToString();
+
+    sprintf_s(str, "MapArea(%s,%dx%d,<%d,%d>)", asResource.c_str(), m_width, m_height, m_pos.X, m_pos.Y);
     return str;
 }
 

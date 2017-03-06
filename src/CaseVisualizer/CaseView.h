@@ -17,8 +17,6 @@
 #include <hash_map>
 #include "GraphScene.h"
 
-#define GameIdsLookupFilename "IdLookup.txt"
-
 namespace IStrategizer
 {
 	class CaseEx;
@@ -45,7 +43,7 @@ namespace IStrategizer
 		CaseEx* m_currentCase;
 		ParameterEdit* m_paramEditDialog;
 
-		void ViewGoal(GoalEx* p_goal);
+		void ViewCaseGoal(CaseEx* pCase);
 		void ViewGoalParameters(PlanStepParameters* p_params);
 		void ViewGameState(RtsGame* p_gameState);
 		void ViewPlanGraph(GoalEx* p_caseGoal, IOlcbpPlan* p_planGraph);
@@ -59,6 +57,7 @@ namespace IStrategizer
 			void on_txtSuccessCount_textChanged(const QString &p_newText);
 			void OnCellChanged(int p_row, int p_column);
 			void on_tblParameters_itemDoubleClicked(QTableWidgetItem* p_item);
+            void on_txtCaseName_editingFinished();
 	};
 }
 

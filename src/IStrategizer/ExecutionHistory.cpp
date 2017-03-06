@@ -1,7 +1,11 @@
 #include "ExecutionHistory.h"
+#include "ObjectFactory.h"
 
 using namespace IStrategizer;
 using namespace std;
+
+DECL_SERIALIZABLE(ExecutionTrial);
+DECL_SERIALIZABLE(ExecutionHistory);
 
 double ExecutionHistory::GetFailureProbability() const
 {

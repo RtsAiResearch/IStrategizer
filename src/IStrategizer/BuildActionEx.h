@@ -28,14 +28,15 @@ namespace IStrategizer
     public:
         BuildActionEx();
         BuildActionEx(const PlanStepParameters& p_parameters);
-        bool AliveConditionsSatisfied(RtsGame& game);
-        bool SuccessConditionsSatisfied(RtsGame& game);
+        bool AliveConditionsSatisfied();
+        bool SuccessConditionsSatisfied(RtsGame &game);
         bool Equals(PlanStepEx* p_planStep);
 
     protected:
-        void FreeResources(RtsGame &game);
-        bool ExecuteAux(RtsGame& game, const WorldClock& p_clock);
-        void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed);
+        void FreeResources();
+		void Abort();
+        bool Execute();
+        void HandleMessage(Message* p_msg, bool& p_consumed);
         void InitializePostConditions();
         void InitializePreConditions();
 

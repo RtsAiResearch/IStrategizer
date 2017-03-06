@@ -1,12 +1,8 @@
 #include "ResearchAction.h"
 #include "BuildActionEx.h"
 #include "TrainAction.h"
-#include "AttackGroundAction.h"
-#include "AttackEntityAction.h"
 #include "ActionFactory.h"
 #include "CellFeature.h"
-#include "MoveAction.h"
-#include "GatherResourceAction.h"
 
 using namespace IStrategizer;
 using namespace std;
@@ -27,22 +23,6 @@ Action* ActionFactory::GetAction(ActionType p_actionType, const PlanStepParamete
 
     case ACTIONEX_Train:
         m_action = new TrainAction(p_paramaters);
-        break;
-
-    case ACTIONEX_AttackGround:
-        m_action = new AttackGroundAction(p_paramaters);
-        break;
-
-    case ACTIONEX_Move:
-        m_action = new MoveAction(p_paramaters);
-        break;
-
-    case ACTIONEX_AttackEntity:
-        m_action = new AttackEntityAction(p_paramaters);
-         break;
-
-    case ACTIONEX_GatherResource:
-        m_action = new GatherResourceAction(p_paramaters);
         break;
 
     default:
@@ -75,22 +55,6 @@ Action* ActionFactory::GetAction(ActionType p_actionType, bool p_initConditions)
 
     case ACTIONEX_Train:
         m_action = new TrainAction();
-        break;
-
-    case ACTIONEX_AttackGround:
-        m_action = new AttackGroundAction();
-        break;
-
-    case ACTIONEX_Move:
-        m_action = new MoveAction();
-        break;
-
-    case ACTIONEX_AttackEntity:
-        m_action = new AttackEntityAction();
-        break;
-
-    case ACTIONEX_GatherResource:
-        m_action = new GatherResourceAction();
         break;
 
     default:

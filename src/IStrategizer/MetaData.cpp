@@ -1,28 +1,23 @@
 #include "MetaData.h"
-#include "SerializationEssentials.h"
 
 namespace IStrategizer
 {
     const char* Enums[ENUMS_SIZE] = { nullptr };
 
-    void Init()
+    void InitAttributesMetaData();
+    void InitTypesMetaData();
+
+    void IStrategizer::Init()
     {
         static bool initialized = false;
 
         if (initialized)
             return;
 
-        SerializationEssentials::Init();
-        InitAbstractionMetaData();
         InitTypesMetaData();
         InitAttributesMetaData();
 
         initialized = true;
-    }
-    //---------------------------------------------------------------------------
-    void InitAbstractionMetaData()
-    {
-
     }
     //----------------------------------------------------------------------------------------------
     void InitTypesMetaData()
@@ -38,17 +33,18 @@ namespace IStrategizer
         DEFINE(PlayerType);
         DEFINE(ResourceType);
         DEFINE(StepLevelType);
-        DEFINE(StrategyType);
         DEFINE(ExecutionStateType);
         DEFINE(DeployType);
 		DEFINE(MessageType);
+        DEFINE(SituationType);
     };
     //---------------------------------------------------------------------------
     void InitAttributesMetaData()
     {
-        DEFINE(EntityClassAttribute);
-        DEFINE(EntityObjectAttribute);
+        DEFINE(EntityTypeProperty);
+        DEFINE(EntityObjectProperty);
         DEFINE(PlayerAttribute);
         DEFINE(RtsGameModelAttribute);
+        DEFINE(GameStage);
     }
 }

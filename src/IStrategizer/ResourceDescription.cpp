@@ -11,17 +11,17 @@ using namespace IStrategizer;
 //----------------------------------------------------------------------------------------------
 void ResourceDescription::AddEntity(GameEntity *p_entity)
 {
-    EntityClassType typeId = p_entity->Type();
+    EntityClassType typeId = p_entity->TypeId();
     GameType* pType = g_Game->GetEntityType(typeId);
 
     if (!pType)
         return;
 
-    if (pType->Attr(ECATTR_IsPrimaryResource))
+    if (pType->P(TP_IsPrimaryResource))
     {
         ++m_numberOfPrimary;
     }
-    else if (pType->Attr(ECATTR_IsSecondaryResource))
+    else if (pType->P(TP_IsSecondaryResource))
     {
         ++m_numberOfSecondary;
     }
@@ -29,17 +29,17 @@ void ResourceDescription::AddEntity(GameEntity *p_entity)
 //----------------------------------------------------------------------------------------------
 void ResourceDescription::RemoveEntity(GameEntity *p_entity)
 {
-    EntityClassType typeId = p_entity->Type();
+    EntityClassType typeId = p_entity->TypeId();
     GameType* pType = g_Game->GetEntityType(typeId);
 
     if (!pType)
         return;
 
-    if(pType && pType->Attr(ECATTR_IsPrimaryResource))
+    if(pType && pType->P(TP_IsPrimaryResource))
     {
         --m_numberOfPrimary;
     }
-    else if (pType->Attr(ECATTR_IsSecondaryResource))
+    else if (pType->P(TP_IsSecondaryResource))
     {
         --m_numberOfSecondary;
     }

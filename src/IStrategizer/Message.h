@@ -2,29 +2,29 @@
 #define MESSAGE_H
 
 #include "TypesMetaData.h"
+#include "EngineObject.h"
 
 namespace IStrategizer
 {
-    class Message
+    class Message : public EngineObject
     {
     public:
-		Message(unsigned long p_gameCycle, MessageType p_messageTypeID);
-		virtual ~Message();
-        unsigned long GameCycle();
-        int MessageTypeID();
-        bool Delivered();
-        void Delivered(bool p_delivered);
-        int Priority();
-		const char* ToString()  const { return Enums[_messageTypeID]; }
+        Message(unsigned gameFrame, MessageType typeId) :
+            m_gameFrame(gameFrame),
+            m_typeId(typeId)
+        {}
+
+        unsigned GameFrame() const { return m_gameFrame; }
+        MessageType TypeId() const { return m_typeId; }
+        bool Delivered() const { return m_delivered; }
+        void Delivered(bool delivered) { m_delivered = delivered; }
+		const char* ToString()  const { return Enums[m_typeId]; }
 
 	private:
-		MessageType _messageTypeID;
-		unsigned long _gameCycle;
-		bool _delivered;
-		int _priority;
+		MessageType m_typeId;
+		unsigned m_gameFrame;
+		bool m_delivered;
     };
-
-
 }
 
 #endif // MESSAGE_H

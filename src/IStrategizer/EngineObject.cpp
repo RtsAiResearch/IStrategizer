@@ -1,6 +1,7 @@
 #include "EngineObject.h"
 #include "EngineDefs.h"
 #include "MessagePump.h"
+#include "Logger.h"
 #include <unordered_set>
 #define VC_EXTRALEAN
 #define WIN32_LEAN_AND_MEAN
@@ -92,12 +93,12 @@ void EngineObject::DumpAliveObjects()
 //////////////////////////////////////////////////////////////////////////
 EngineObject::EngineObject()
 {
-    LogInfo("EngineObject@0x%x created", (void*)this);
+    LogDebugInfo("EngineObject@0x%x created", (void*)this);
 }
 //////////////////////////////////////////////////////////////////////////
 EngineObject::~EngineObject()
 {
 	g_MessagePump->UnregisterForAllMessages(this);
-    LogInfo("EngineObject@0x%x destroyed", (void*)this);
+    LogDebugInfo("EngineObject@0x%x destroyed", (void*)this);
 }
 //////////////////////////////////////////////////////////////////////////

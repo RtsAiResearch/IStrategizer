@@ -1,10 +1,10 @@
 #ifndef INFLUENCEMAP_H
 #define INFLUENCEMAP_H
 
-#include <list>
 #include "EngineData.h"
 #include "Vector2.h"
 #include "IMSystemManager.h"
+#include <unordered_map>
 
 namespace IStrategizer
 {
@@ -21,7 +21,7 @@ namespace IStrategizer
         TInfData Data;
     };
 
-    typedef std::list<RegObjEntry*> RegObjectList;
+    typedef std::unordered_map<TID, RegObjEntry*> RegObjectMap;
     typedef void (*RegObjCallback)(InfluenceMap *p_pCaller, RegObjEntry *p_pObjEntry);
 
     // This callback is called for each valid cell in a rectangular area
@@ -35,13 +35,22 @@ namespace IStrategizer
 
     struct RegObjEntry
     {
+        RegObjEntry() :
+            ObjId(TID()),
+            LastPosition(-1, -1),
+            Stamped(false),
+            IsAllSidePadded(false),
+            PaddingSize(0) 
+        {}
+
         TID ObjId;
         PlayerType OwnerId;
         Vector2 LastPosition;
         bool Stamped;
         int ObjWidth;
         int ObjHeight;
-        RegObjEntry() : ObjId(TID()), LastPosition(Vector2::Null()), Stamped(false) {}
+        bool IsAllSidePadded;
+        int PaddingSize;
     };
 
     struct IMStatistics
@@ -60,7 +69,7 @@ namespace IStrategizer
     public:
         InfluenceMap(IMType p_typeId) : m_typeId(p_typeId) {}
         virtual ~InfluenceMap();
-        virtual void Update(const WorldClock& p_clock) = 0;
+        virtual void Update() = 0;
         virtual void Init(int p_cellWidth, int p_cellHeight, int p_worldWidth, int p_worldHeight);
         virtual void Reset();
         virtual void RegisterGameObj(TID p_objId, PlayerType p_ownerId);
@@ -68,7 +77,7 @@ namespace IStrategizer
         virtual void StampInfluenceShape(Vector2& p_startPosition, int p_width, int p_height, TInfluence p_value);
         virtual void StampInfluenceGradient(Vector2& p_centerPosition, int p_fastFalloffDistance, int p_slowFalloffDistance, TInfluence p_initValue);
         TInfluence  SumInfluenceShape(Vector2& p_startPosition, int p_width, int p_height);
-        const RegObjectList &RegisteredObjects() const { return m_registeredObjects; }
+        const RegObjectMap &RegisteredObjects() const { return m_registeredObjects; }
         IMType TypeId() const { return m_typeId; }
         int CellSide() const { return m_cellSide; }
         int WorldWidth() const { return m_worldWidth; }
@@ -80,6 +89,7 @@ namespace IStrategizer
         const TCell* Map() const { return m_pMap; }
         void SpiralMove(const Vector2& p_spiralStart, unsigned p_radiusLength, SpiralMovePredicate p_pfnPred, void *p_pParam);
         void ForEachCellInArea(const Vector2& p_areaStartPos, int p_areaWidth, int p_areaHeight, CellPredicate p_pfnPred, void *p_pParam);
+        void DebugDump(const char* pFilename);
 
     protected:
         void FromWorldToGrid(const Vector2 &p_worldPosition, Vector2 &p_gridPosition);
@@ -89,7 +99,7 @@ namespace IStrategizer
         void ResetStats();
         bool InBound(int p_gridX, int p_gridY);
 
-        RegObjectList m_registeredObjects;
+        RegObjectMap m_registeredObjects;
 
         IMStatistics m_statistics;
         int m_cellSide;

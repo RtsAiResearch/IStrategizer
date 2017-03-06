@@ -9,15 +9,15 @@ using namespace IStrategizer;
 void ForceDescription::AddEntity(GameEntity *p_entity)
 {
     m_numberOfUnits++;
-    m_totalHP += p_entity->Attr(EOATTR_Health);
-    m_totalDamage += g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
+    m_totalHP += p_entity->P(OP_Health);
+    m_totalDamage += g_Game->GetEntityType(p_entity->TypeId())->P(TP_GroundAttack);
 }
 //////////////////////////////////////////////////////////////////////////
 void ForceDescription::RemoveEntity(GameEntity *p_entity)
 {
     m_numberOfUnits--;
-    m_totalHP -= p_entity->Attr(EOATTR_Health);
-    m_totalDamage -= g_Game->GetEntityType(p_entity->Type())->Attr(ECATTR_Attack);
+    m_totalHP -= p_entity->P(OP_Health);
+    m_totalDamage -= g_Game->GetEntityType(p_entity->TypeId())->P(TP_GroundAttack);
 }
 //////////////////////////////////////////////////////////////////////////
 void ForceDescription::Clear()

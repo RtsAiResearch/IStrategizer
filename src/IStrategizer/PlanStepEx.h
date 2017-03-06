@@ -12,7 +12,6 @@
 #include "EngineObject.h"
 #include "IClonable.h"
 #include "CellFeature.h"
-#include "WorldClock.h"
 #include "RtsGame.h"
 
 namespace IStrategizer
@@ -25,55 +24,51 @@ namespace IStrategizer
     {
         OBJECT_SERIALIZABLE(PlanStepEx, &_params, &_id);
     public:
-		~PlanStepEx();
         static unsigned GenerateID();
         
+		~PlanStepEx();
 		void Parameter(ParameterType key, int val) { _params[key] = val; }
-		void Parameters(const PlanStepParameters& p_val) { _params.insert(p_val.begin(), p_val.end()); }
+		void Parameters(const PlanStepParameters& p_val);
         void Copy(IClonable* p_dest);
-        virtual void Update(RtsGame& game, const WorldClock& p_clock);
         int StepTypeId() const { return _stepTypeId; }
         int Parameter(int p_parameterName) const { return ContainsParameter(p_parameterName) ? _params.at((ParameterType)p_parameterName) : 0; }
         int ContainsParameter(int p_parameterName) const { return _params.find((ParameterType)p_parameterName) != _params.end(); }
         int Compare(IComparable* p_rhs) { return !Equals((PlanStepEx*)p_rhs); }
         const PlanStepParameters& Parameters() const { return _params; }
-        virtual void HandleMessage(RtsGame& game, Message* p_msg, bool& p_consumed) {}
+        virtual void HandleMessage(Message* p_msg, bool& p_consumed) {}
         virtual void InitializeConditions();
-        virtual void UpdateAux(RtsGame& game, const WorldClock& p_clock) {}
-        virtual void Reset(RtsGame& game, const WorldClock& p_clock) = 0;
-        virtual void State(ExecutionStateType p_state, RtsGame& game, const WorldClock& p_clock);
+		virtual ExecutionStateType GetState() const { return _state; }
+        virtual void SetState(ExecutionStateType p_state);
         virtual bool Equals(PlanStepEx* p_planStep) = 0;
         virtual bool SuccessConditionsSatisfied(RtsGame& game) = 0;
         virtual unsigned Hash(bool quantified = true) const;
         virtual std::string ToString(bool minimal = false) const;
         PlanStepParameters& Parameters() { return _params; }
-        ExecutionStateType State() const { return _state; }
-        StepLevelType LevelType() const { return _stepLevelType; }
         CompositeExpression* PostCondition() { _ASSERTE(_postCondition); return _postCondition; }
         IClonable* Clone();
         unsigned Id() const { return _id; }
         void Id(unsigned id) { _id = id; }
+		void Sleep(unsigned numGameFrames);
+		bool IsSleeping() const { return g_Game->GameFrame() < m_sleepEndGameFrame; }
+		unsigned SleepsCount() const { return m_sleepsCount; }
 
     protected:
-        PlanStepEx();
+		PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
+		PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
+		bool IsCurrentStateTimeout();
+		virtual void InitializePostConditions() = 0;
+
         ///> type=PlanStepParameters
         PlanStepParameters _params;
         ///> type=int
         unsigned _id;
         int _stepTypeId;
-        StepLevelType _stepLevelType;
         CompositeExpression* _postCondition;
-        unsigned _stateStartTime[COUNT(ExecutionStateType)];
-        unsigned _stateTimeout[COUNT(ExecutionStateType)];
         bool _firstUpdate;
         static unsigned s_lastPlanstepID;
-
-        PlanStepEx(int p_stepTypeId, ExecutionStateType p_state);
-        PlanStepEx(int p_stepTypeId, ExecutionStateType p_state, const PlanStepParameters& p_parameters);
-        bool IsCurrentStateTimeout(const WorldClock& p_clock);
-        virtual void InitializePostConditions() = 0;
-
-    private:
+		unsigned m_sleepStartGameFrame;
+		unsigned m_sleepEndGameFrame;
+		unsigned m_sleepsCount;
         ExecutionStateType _state;
     };
     

@@ -11,11 +11,13 @@
 #ifndef CROSSMAP_H
 #include "CrossMap.h"
 #endif
+#include "CaseGenerator.h"
 
 class QToolBar;
 class QButtonGroup;
 
 #define CaseBaseFilter tr("Case-base (*.cb)")
+#define GameIdsLookupFilename "IdLookup.txt"
 
 namespace IStrategizer
 {
@@ -32,28 +34,18 @@ namespace IStrategizer
     public:
         CaseVisualizer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
         ~CaseVisualizer();
-
-        void OpenCaseBase(QString cbFilename);
-        void NewCaseBase();
-        void SaveCaseBaseAs();
-        void SaveCaseBase();
-        void Refresh();
-        CaseEx* NewCase();
-		CaseEx* NewCase(GoalType p_caseGoal);
-        void DeleteCase(CaseEx* pCase);
-        void EditCase();
-        void SelectCase(int caseIdx);
-        void DuplicateCase(CaseEx* pCase);
-
     private:
-        Ui::CaseVisualizerClass ui;
-        CaseBaseEx* m_pCaseBase;
-        CaseView* m_pCaseView;
-        QToolBar* m_pointerToolbar;
-        QButtonGroup* m_pointerTypeGroup;
-        QString m_caseBasePath;
-        ChoosePlanStepDialog* m_goalDialog;
-        CrossMap<unsigned, std::string> m_idLookup;
+		void OpenCaseBase(QString cbFilename);
+		void NewCaseBase();
+		void SaveCaseBaseAs();
+		void SaveCaseBase();
+		void Refresh();
+		CaseEx* NewCase();
+		void EditCase();
+		void SelectCase(int caseIdx);
+		void SelectCase(const CaseEx* pCase);
+		void DuplicateCase(CaseEx* pCase);
+
         bool InitIdLookup();
         void CreateToolBox();
         void VerifyHashCollisions();
@@ -62,10 +54,21 @@ namespace IStrategizer
 		void GenCollectSecondaryResourceCases();
 		void GenSCVTrainForceCases();
 		void GenBuildRefineryCases();
+        bool IsIndexInRange(int idx);
+
+		Ui::CaseVisualizerClass ui;
+		CaseBaseEx* m_pCaseBase;
+		CaseView* m_pCaseView;
+		QToolBar* m_pointerToolbar;
+		QButtonGroup* m_pointerTypeGroup;
+		QString m_caseBasePath;
+		ChoosePlanStepDialog* m_goalDialog;
+		CrossMap<unsigned, std::string> m_idLookup;
+		CaseGenerator m_cbGen;
 
         private slots:
             void on_actionSaveAs_triggered();
-            void on_actionShow_triggered();
+            void on_actionRefresh_triggered();
             void on_lstCases_itemSelectionChanged();
             void on_btnDeleteCase_clicked();
             void on_btnNewCase_clicked();
@@ -76,7 +79,9 @@ namespace IStrategizer
             void PointerGroupClicked(int);
 			void on_btnDuplicateCase_clicked();
             void on_btnReloadCB_clicked();
-			void on_btnGenSCVPlans_clicked();
+			void on_btnGenCases_clicked();
+			void on_btnDelGenCases_clicked();
+            void on_btnCalcArmyPower_clicked();
 	};
 }
 

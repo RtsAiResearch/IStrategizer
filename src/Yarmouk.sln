@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{B086163D-D289-4E97-B657-61096F84C73C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{31A66C37-EBCA-4C42-B7B1-650F772D0282}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IStrategizer", "IStrategizer\build\IStrategizer_msvc2012.vcxproj", "{0E83C355-2FEB-4072-A99E-38882D5FBCBB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2} = {DD11FDAE-53EA-4613-AD3A-1E5D636C90D2}
+		{F31617ED-0C0C-4D22-96A0-1779F9E366F5} = {F31617ED-0C0C-4D22-96A0-1779F9E366F5}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Yarmouk", "IStrategizerBWAPIModule\build\Yarmouk.vcxproj", "{24BB696F-9333-47CE-BBAD-805B353F9026}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0E83C355-2FEB-4072-A99E-38882D5FBCBB} = {0E83C355-2FEB-4072-A99E-38882D5FBCBB}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{75688934-4CA0-461A-8A39-3127F2391B4D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjectSerializer", "ObjectSerializer\ObjectSerializer.vcxproj", "{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnrealCompiler", "UnrealCompiler\UnrealCompiler.vcxproj", "{F31617ED-0C0C-4D22-96A0-1779F9E366F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E83C355-2FEB-4072-A99E-38882D5FBCBB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0E83C355-2FEB-4072-A99E-38882D5FBCBB}.Debug|Win32.Build.0 = Debug|Win32
+		{0E83C355-2FEB-4072-A99E-38882D5FBCBB}.Release|Win32.ActiveCfg = Release|Win32
+		{0E83C355-2FEB-4072-A99E-38882D5FBCBB}.Release|Win32.Build.0 = Release|Win32
+		{24BB696F-9333-47CE-BBAD-805B353F9026}.Debug|Win32.ActiveCfg = Debug|Win32
+		{24BB696F-9333-47CE-BBAD-805B353F9026}.Debug|Win32.Build.0 = Debug|Win32
+		{24BB696F-9333-47CE-BBAD-805B353F9026}.Release|Win32.ActiveCfg = Release|Win32
+		{24BB696F-9333-47CE-BBAD-805B353F9026}.Release|Win32.Build.0 = Release|Win32
+		{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2}.Debug|Win32.Build.0 = Debug|Win32
+		{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2}.Release|Win32.ActiveCfg = Release|Win32
+		{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2}.Release|Win32.Build.0 = Release|Win32
+		{F31617ED-0C0C-4D22-96A0-1779F9E366F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F31617ED-0C0C-4D22-96A0-1779F9E366F5}.Debug|Win32.Build.0 = Debug|Win32
+		{F31617ED-0C0C-4D22-96A0-1779F9E366F5}.Release|Win32.ActiveCfg = Release|Win32
+		{F31617ED-0C0C-4D22-96A0-1779F9E366F5}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{24BB696F-9333-47CE-BBAD-805B353F9026} = {B086163D-D289-4E97-B657-61096F84C73C}
+		{0E83C355-2FEB-4072-A99E-38882D5FBCBB} = {31A66C37-EBCA-4C42-B7B1-650F772D0282}
+		{DD11FDAE-53EA-4613-AD3A-1E5D636C90D2} = {75688934-4CA0-461A-8A39-3127F2391B4D}
+		{F31617ED-0C0C-4D22-96A0-1779F9E366F5} = {75688934-4CA0-461A-8A39-3127F2391B4D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		Qt5Version = Qt5.3.1_msvc2013
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+EndGlobal

@@ -2,7 +2,6 @@
 #define IMSYSTEMMANAGER_H
 
 #include "EngineData.h"
-#include "WorldClock.h"
 #include <vector>
 
 namespace IStrategizer
@@ -21,32 +20,31 @@ namespace IStrategizer
     {
         unsigned GrndCtrlIMUpdateInterval;
         unsigned OccupanceIMUpdateInterval;
-        int BuildingDataIMCellSize;
-        int GroundControlIMCellSize;
+        int OccupanceIMCellSize;
+        int GrndCtrllIMCellSize;
     };
 
     class IMSystemManager
     {
     public:
-        void Update(const WorldClock& p_clock);
+        void Update();
         void RegisterGameObj(TID p_objId, PlayerType p_ownerId);
         void UnregisterGameObj(TID p_objId);
         void RegisterIM(InfluenceMap *p_pMap, IMType p_mapTypeId);
         void Init(const IMSysManagerParam& p_param);
         void Finalize();
         InfluenceMap* GetIM(IMType p_mapTypeId);
+        void DebugDumpIMs();
         static IMSystemManager& Instance() { static IMSystemManager inst; return inst; }
 
     private:
         IMSystemManager()
-        : m_initialized(false),
-        m_lastUpdateTimeMs(0)
+        : m_initialized(false)
         {}
 
         bool m_initialized;
         IMContainer m_managedMaps;
         IMSysManagerParam m_params;
-        unsigned m_lastUpdateTimeMs;
     };
 
 #define g_IMSysMgr IMSystemManager::Instance()

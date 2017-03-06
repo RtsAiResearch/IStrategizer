@@ -15,13 +15,13 @@ bool ConditionEx::Equals(const Expression* p_rhs) const
         return false;
 
     bool m_equal = (_conditionType == m_rhs->_conditionType) &&
-                    (_conditionParameters.size() == m_rhs->_conditionParameters.size());
+                    (m_params.size() == m_rhs->m_params.size());
 
     if(!m_equal)
         return false;
 
-    for (PlanStepParameters::const_iterator i = _conditionParameters.begin(), j = m_rhs->_conditionParameters.begin();
-         m_equal && i != _conditionParameters.end(); ++i, ++j)
+    for (PlanStepParameters::const_iterator i = m_params.begin(), j = m_rhs->m_params.begin();
+         m_equal && i != m_params.end(); ++i, ++j)
     {
         if ((*i).first == PARAM_Amount && (*j).first == PARAM_Amount)
         {
@@ -95,6 +95,6 @@ void ConditionEx::Copy(IClonable* p_dest)
     ConditionEx* m_dest = static_cast<ConditionEx*>(p_dest);
 
     m_dest->_conditionType = _conditionType;
-    m_dest->_conditionParameters.insert(_conditionParameters.begin(), _conditionParameters.end());
+    m_dest->m_params.insert(m_params.begin(), m_params.end());
     m_dest->_playerType = _playerType;
 }

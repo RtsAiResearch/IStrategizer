@@ -212,7 +212,7 @@ GraphNodeView::NodeStyle GraphNodeView::GetStyle()
 //////////////////////////////////////////////////////////////////////////
 void GraphNodeView::OnUpdate()
 {
-	m_state = m_pNodeModel->State();
+	m_state = m_pNodeModel->GetState();
 
 	if (m_pNodeData != nullptr)
 	{

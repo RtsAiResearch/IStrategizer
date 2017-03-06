@@ -42,7 +42,7 @@
           <x>0</x>
           <y>0</y>
           <width>300</width>
-          <height>398</height>
+          <height>382</height>
          </rect>
         </property>
         <attribute name="label">
@@ -70,7 +70,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QTableWidget" name="tblParameters">
            <property name="font">
             <font>
@@ -106,6 +106,9 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLineEdit" name="txtCaseName"/>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="Game State">
@@ -114,7 +117,7 @@
           <x>0</x>
           <y>0</y>
           <width>300</width>
-          <height>398</height>
+          <height>382</height>
          </rect>
         </property>
         <attribute name="label">
@@ -167,8 +170,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>300</width>
+          <height>382</height>
          </rect>
         </property>
         <attribute name="label">

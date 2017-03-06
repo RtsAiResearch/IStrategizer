@@ -8,6 +8,7 @@
 #include <vector>
 #include <queue>
 #include <unordered_set>
+#include <deque>
 
 namespace IStrategizer
 {
@@ -28,10 +29,13 @@ namespace IStrategizer
 
         typedef std::set<NodeID> NodeSet;
         typedef const std::set<NodeID>& ConstNodeSetRef;
+        typedef std::set<NodeID>& NodeSetRef;
 
         typedef std::vector<NodeID> NodeList;
 
         typedef std::queue<NodeID> NodeQueue;
+
+        typedef std::deque<NodeID> NodeDQueue;
 
         typedef std::map<NodeID, std::set<NodeID>> NodeMap;
 
